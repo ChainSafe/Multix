@@ -1,0 +1,68 @@
+{
+  "name": "multisig-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.11",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
+    "@polkadot/api": "^9.6.1",
+    "@polkadot/extension-dapp": "^0.44.6",
+    "@polkadot/react-identicon": "2.9.12",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.2.0",
+    "@types/node": "^18.11.5",
+    "@types/react": "^18.0.22",
+    "@types/react-dom": "^18.0.7",
+    "@vitejs/plugin-react": "^2.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.4.2",
+    "styled-components": "^5.3.6",
+    "typescript": "^4.8.4",
+    "vite": "^3.1.8",
+    "vite-plugin-svgr": "^2.2.2"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-ternary": "^2.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "scripts": {
+    "start": "vite --port 3333",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "lint": "eslint 'src/**/*.{js,ts,tsx}'",
+    "lint:types": "tsc --pretty",
+    "lint:fix": "yarn run lint --fix"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not ie <= 99",
+      "not android <= 4.4.4",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "resolutions": {
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
+  }
+}
