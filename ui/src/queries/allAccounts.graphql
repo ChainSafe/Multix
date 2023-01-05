@@ -1,0 +1,5 @@
+query allAccounts($first: Int!) {
+    accounts(limit: $first) {
+        id
+    }
+}

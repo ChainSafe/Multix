@@ -23,5 +23,28 @@
     "react",
     "jsx-a11y"
   ],
-  "rules": {}
+  "rules": {},
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*tsx",
+        "*.js",
+        "*.jsx"
+      ],
+      "processor": "@graphql-eslint/graphql"
+    },
+    {
+      "files": [
+        "*.graphql"
+      ],
+      "extends": "plugin:@graphql-eslint/schema-recommended",
+      "rules": {
+        "@graphql-eslint/known-type-names": "error"
+      },
+      "parserOptions": {
+        "schema": "http://localhost:4350/graphql"
+      }
+    }
+  ]
 }

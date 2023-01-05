@@ -40,6 +40,8 @@
   },
   "include": [
     "src/**/*",
-    "**/*.config.ts"
+    "**/*.config.ts",
+    "**/types-and-hooks.tsx",
+    "**/codegen.ts"
   ]
 }

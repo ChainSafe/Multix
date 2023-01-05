@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@graphql-codegen/typescript-react-query": "^4.0.6",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.11",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@polkadot/api": "^9.6.1",
     "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/react-identicon": "2.9.12",
+    "@tanstack/react-query": "^4.20.9",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -17,15 +19,20 @@
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
     "@vitejs/plugin-react": "^2.1.0",
+    "graphql": "^16.6.0",
+    "graphql-request": "^5.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.4.2",
     "styled-components": "^5.3.6",
-    "typescript": "^4.8.4",
+    "typescript": "^4.9.4",
     "vite": "^3.1.8",
     "vite-plugin-svgr": "^2.2.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.16.3",
+    "@graphql-codegen/client-preset": "1.2.5",
+    "@graphql-eslint/eslint-plugin": "^3.14.3",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
@@ -46,7 +53,8 @@
     "serve": "vite preview",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "lint:types": "tsc --pretty",
-    "lint:fix": "yarn run lint --fix"
+    "lint:fix": "yarn run lint --fix",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "browserslist": {
     "production": [
