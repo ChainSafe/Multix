@@ -1,10 +1,10 @@
-import React from "react"
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Landing from "./pages/Landing"
-import { Header } from "./containers/Header"
+import Creation from "./pages/Creation"
+import { Header } from "./components/Header"
 import Container from "@mui/material/Container"
-import { UserSpace } from "./containers/UserSpace"
+import { UserSpace } from "./components/UserSpace"
 import { AccountContextProvider } from "./contexts/AccountsContext"
 import { ApiContextProvider } from "./contexts/ApiContext"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -29,6 +29,10 @@ const App = () => {
                   <Route
                     path="/"
                     element={<Landing />}
+                  />
+                  <Route
+                    path="/create"
+                    element={<Creation />}
                   />
                 </Routes>
               </UserSpace>

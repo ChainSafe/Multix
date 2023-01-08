@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
-    "query allAccounts($first: Int!) {\n  accounts(limit: $first) {\n    id\n  }\n}": types.AllAccountsDocument,
+    "query MultisigsByAccounts($accounts: [String!]) {\n  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {\n    id\n    createdAt\n    proxy {\n      id\n    }\n    signers {\n      signer {\n        id\n      }\n    }\n    threshold\n  }\n}": types.MultisigsByAccountsDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query allAccounts($first: Int!) {\n  accounts(limit: $first) {\n    id\n  }\n}"): (typeof documents)["query allAccounts($first: Int!) {\n  accounts(limit: $first) {\n    id\n  }\n}"];
+export function graphql(source: "query MultisigsByAccounts($accounts: [String!]) {\n  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {\n    id\n    createdAt\n    proxy {\n      id\n    }\n    signers {\n      signer {\n        id\n      }\n    }\n    threshold\n  }\n}"): (typeof documents)["query MultisigsByAccounts($accounts: [String!]) {\n  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {\n    id\n    createdAt\n    proxy {\n      id\n    }\n    signers {\n      signer {\n        id\n      }\n    }\n    threshold\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -769,30 +769,40 @@ export type WhereIdInput = {
   id: Scalars['String'];
 };
 
-export type AllAccountsQueryVariables = Exact<{
-  first: Scalars['Int'];
+export type MultisigsByAccountsQueryVariables = Exact<{
+  accounts?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
-export type AllAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string }> };
+export type MultisigsByAccountsQuery = { __typename?: 'Query', multisigs: Array<{ __typename?: 'Multisig', id: string, createdAt: any, threshold: number, proxy?: { __typename?: 'Account', id: string } | null, signers: Array<{ __typename?: 'AccountMultisig', signer: { __typename?: 'Account', id: string } }> }> };
 
 
-export const AllAccountsDocument = `
-    query allAccounts($first: Int!) {
-  accounts(limit: $first) {
+export const MultisigsByAccountsDocument = `
+    query MultisigsByAccounts($accounts: [String!]) {
+  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {
     id
+    createdAt
+    proxy {
+      id
+    }
+    signers {
+      signer {
+        id
+      }
+    }
+    threshold
   }
 }
     `;
-export const useAllAccountsQuery = <
-      TData = AllAccountsQuery,
+export const useMultisigsByAccountsQuery = <
+      TData = MultisigsByAccountsQuery,
       TError = unknown
     >(
-      variables: AllAccountsQueryVariables,
-      options?: UseQueryOptions<AllAccountsQuery, TError, TData>
+      variables?: MultisigsByAccountsQueryVariables,
+      options?: UseQueryOptions<MultisigsByAccountsQuery, TError, TData>
     ) =>
-    useQuery<AllAccountsQuery, TError, TData>(
-      ['allAccounts', variables],
-      fetchData<AllAccountsQuery, AllAccountsQueryVariables>(AllAccountsDocument, variables),
+    useQuery<MultisigsByAccountsQuery, TError, TData>(
+      variables === undefined ? ['MultisigsByAccounts'] : ['MultisigsByAccounts', variables],
+      fetchData<MultisigsByAccountsQuery, MultisigsByAccountsQueryVariables>(MultisigsByAccountsDocument, variables),
       options
     );

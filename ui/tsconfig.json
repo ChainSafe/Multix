@@ -42,6 +42,7 @@
     "src/**/*",
     "**/*.config.ts",
     "**/types-and-hooks.tsx",
-    "**/codegen.ts"
+    "**/codegen.ts",
+    "graphql.config.js"
   ]
 }

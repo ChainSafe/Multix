@@ -1,0 +1,15 @@
+query MultisigsByAccounts($accounts: [String!]) {
+  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {
+    id
+    createdAt
+    proxy {
+      id
+    }
+    signers {
+      signer {
+        id
+      }
+    }
+    threshold
+  }
+}

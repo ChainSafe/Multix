@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, useCallback } from "react"
+import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { web3Accounts, web3Enable, web3FromSource } from "@polkadot/extension-dapp"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { DAPP_NAME } from "../constants/substrate"
@@ -13,6 +13,7 @@ type AccountContextProps = {
 export interface IAccountContext {
   selectedAddress?: string
   accountList?: InjectedAccountWithMeta[]
+  addressList: string[]
   selectAccount: (address: string) => void
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
   isAccountLoading: boolean
@@ -30,6 +31,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensionNotFound, setExtensionNotFound] = useState(false)
   const [isAccountListEmpty, setIsAccountListEmpty] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
+  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
@@ -105,6 +107,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       value={{
         selectedAddress,
         accountList,
+        addressList,
         selectAccount,
         isAccountLoading,
         extensionNotFound,

@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import styled from "styled-components";
 // import { useApi } from "../contexts/ApiContext";
 import { Button } from "@mui/material";
 import NewTxModal from "../components/modals/NewTx";
-import { useAllAccountsQuery } from "../../types-and-hooks";
+import { useMultisigsByAccountsQuery } from "../../types-and-hooks";
+import { useAccountList } from "../contexts/AccountsContext";
 
 interface Props {
   className?: string
@@ -13,12 +14,14 @@ const Landing = ({ className }: Props) => {
 
   // const { api, isApiReady } = useApi()
   const [isNewTxModalOpen, setIsNewTxModalOpen] = useState(false)
+  const { addressList } = useAccountList()
+  const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
 
-
-
-  const { data, isFetching } = useAllAccountsQuery({ first: 10 })
-  console.log('data', data)
-  console.log('isFetching', isFetching)
+  useEffect(() => {
+    if (!!error) {
+      console.error(error)
+    }
+  })
 
   const onClose = useCallback(() => {
     setIsNewTxModalOpen(false)
@@ -31,8 +34,36 @@ const Landing = ({ className }: Props) => {
 
   return (
     <div className={className}>
-      <Button onClick={onOpenModal}>New Tx</Button>
-      {isNewTxModalOpen && <NewTxModal onClose={onClose} />}
+      <>
+        {!!error && (
+          <div>
+            error...
+          </div>
+        )}
+        {isLoading && (
+          <div>
+            Loading...
+          </div>
+        )}
+        {!isLoading && data?.multisigs.length === 0 && (
+          <div>
+            No multisig found for your accounts
+          </div>
+        )}
+        {data?.multisigs.map((multisig) =>
+          <div key={multisig.id}>
+            {multisig.threshold}/{multisig.signers.length} {multisig.proxy?.id}
+            <ul>
+              {multisig.signers.map(({ signer }) =>
+                <li key={signer.id}>{signer.id}</li>
+              )}
+            </ul>
+          </div>
+        )}
+
+        <Button onClick={onOpenModal}>New Tx</Button>
+        {isNewTxModalOpen && <NewTxModal onClose={onClose} />}
+      </>
     </div>
   )
 }
