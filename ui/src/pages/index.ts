@@ -1,3 +1,2 @@
-export * as Creation from "./Creation"
-export * as Landing from "./Landing"
-export * as Swap from "./Swap"
+export { default as Creation } from "./Creation"
+export { default as Landing } from "./Landing"

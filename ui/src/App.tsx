@@ -1,7 +1,6 @@
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Landing from "./pages/Landing"
-import Creation from "./pages/Creation"
+import { Creation, Landing } from "./pages"
 import { Header } from "./components/Header"
 import Container from "@mui/material/Container"
 import { UserSpace } from "./components/UserSpace"
