@@ -1,8 +1,11 @@
 import { Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
-// import { useApi } from "../contexts/ApiContext";
+import { useApi } from "../contexts/ApiContext";
 import SignatorySelection from "../components/SignatorySelection";
+import { encodeAddress, createKeyMulti } from "@polkadot/util-crypto";
+import { config } from "../config";
+import { useAccountList } from "../contexts/AccountsContext";
 
 interface Props {
   className?: string
@@ -22,10 +25,52 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<Signatory[]>([])
   const [activeStep, setActiveStep] = useState(0)
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep])
+  const { api, isApiReady } = useApi()
+  const [threshold, setThreshold] = useState(2)
+  const { selectedSigner, selectedAddress } = useAccountList()
 
-  const handleCreate = useCallback(() => {
-    // boom
-  }, [])
+
+  const handleCreate = useCallback(async () => {
+    if (!isApiReady) {
+      console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAddress) {
+      console.error('no selected address')
+      return
+    }
+
+    const signatoriesAddresses = signatories.map(({ address }) => address)
+
+    if (!signatoriesAddresses.includes(selectedAddress)) {
+      console.error('selected account not part of signatories')
+      return
+    }
+
+    const otherSignatories = signatoriesAddresses.filter((sig) => sig !== selectedAddress)
+    const multiAddress = encodeAddress(createKeyMulti(signatoriesAddresses, threshold), config.prefix)
+    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
+    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
+    const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
+    const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
+
+    batchCall.signAndSend(selectedAddress, { signer: selectedSigner }, ({ events = [], status }) => {
+      console.log('Transaction status:', status.type);
+
+      if (status.isInBlock) {
+        console.log('Included at block hash', status.asInBlock.toHex());
+        console.log('Events:');
+
+        events.forEach(({ event: { data, method, section }, phase }) => {
+          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
+        });
+      } else if (status.isFinalized) {
+        console.log('Finalized block hash', status.asFinalized.toHex());
+      }
+    });
+
+  }, [api, isApiReady, selectedAddress, selectedSigner, signatories, threshold])
 
   return (
     <Grid
@@ -89,7 +134,7 @@ const MultisigCreation = ({ className }: Props) => {
           Back
         </Button>
         <Button
-          onClick={() => isLastStep ? handleCreate : setActiveStep(activeStep + 1)}
+          onClick={() => isLastStep ? handleCreate() : setActiveStep(activeStep + 1)}
         >
           {isLastStep
             ? "Create"
