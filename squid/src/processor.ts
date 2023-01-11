@@ -4,12 +4,13 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { In } from 'typeorm'
 import { config } from './config'
-import { Account, AccountMultisig, Multisig, MultisigCall } from './model/models'
+import { Account, AccountMultisig, Multisig } from './model/models'
 import { SystemRemarkCall } from './types/calls'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { encodeId } from './util/accountEncoding'
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getAccountMultisigId, getMultisigCallId, getOrCreateAccounts } from './util'
+import { getMultisigAddress, getAccountMultisigId, getMultisigCallId, getOrCreateAccounts, getOriginAccountId } from './util'
+import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies } from './processorHandlers'
 
 
 const processor = new SubstrateBatchProcessor()
@@ -70,18 +71,11 @@ const processor = new SubstrateBatchProcessor()
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
-type NewProxies = Map<string, string>
-interface NewMultisigsInfo extends Omit<Multisig, "signers" | "proxy" | "multisigsCalls"> {
-    signatories: string[]
-}
-interface MultisigCallInfo extends Omit<MultisigCall, "multisig"> {
-    multisigAddress: string
-}
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     const newMultisigsInfo: NewMultisigsInfo[] = []
     const newProxies: NewProxies = new Map()
-    const multisigCalls: MultisigCallInfo[] = []
+    const newMultisigCalls: MultisigCallInfo[] = []
 
     for (let block of ctx.blocks) {
         const { items } = block
@@ -107,14 +101,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 newMultisigsInfo.push(newMulti)
 
                 const blockNumber = block.header.height
-                multisigCalls.push({
+                newMultisigCalls.push({
                     id: getMultisigCallId(newMulti.id, blockNumber, item.extrinsic.indexInBlock),
                     blockNumber,
                     info: method,
                     multisigAddress: newMulti.id,
                     timestamp
                 })
-
             }
 
             if (item.name === ("Proxy.PureCreated")) {
@@ -127,48 +120,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         }
     }
 
-    newMultisigsInfo.length && await processNewMultisigs(ctx, newMultisigsInfo)
-    // newMultisigs.length && await processNewMultisigs(ctx, newMultisigs)
-    // multisigEvents.length && await ctx.store.save(multisigEvents)
-    newProxies.size && await processNewProxies(ctx, newProxies)
+    newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
+    newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
+    newProxies.size && await handleNewProxies(ctx, newProxies)
 })
-
-// const allNames = getAllBlockNames(block)
-// const multisigCallIndex = allNames.indexOf("Multisig.as_multi")
-// for (let item of items) {
-//     if (item.name === 'System.remark' && multisigCallIndex > -1) {
-//         if (!item.call.success || !item.call.origin) continue
-
-//         const signer = getOriginAccountId(item.call.origin)
-//         const call = normalizeCall(ctx, item)
-
-//         const [prefix, version, interaction, ...args] = call.message.split('::')
-
-//         // we only support v1 skip current item if it's not the expected version
-//         if (prefix !== MULTI_PREFIX || version !== '1') continue
-
-//         switch (interaction) {
-//             case MultisigInteraction.CREATE:
-//                 const creationRes = await handleMultisigCreation(ctx, signer, block, multisigCallIndex)
-
-//                 if (!creationRes) {
-//                     ctx.log.error(`No multisig to create at block ${block.header.height}`)
-//                     break;
-//                 }
-
-//                 const { multisigEvent, threshold, signatories } = creationRes
-//                 multisigEvents.push(multisigEvent)
-//                 newMultisigs.push({ threshold, signatories })
-//                 break
-//         }
-//     }
-
-// Get info for first multisig call
-// if (item.name === 'Multisig.as_multi') {
-// const allNames = items.map((item) => item.name)
-// ctx.log.info(allNames)
-// ctx.log.info("====> Multisig.asMulti args")
-// }
 
 /**
  * {
@@ -286,16 +241,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 }
  */
 
-//     if (item.name === ("Proxy.PureCreated")) {
-//         const { pure, who } = item.event.args
-//         // ctx.log.info(`pure ${pure}`)
-//         // ctx.log.info(`who ${who}`)
-
-//         newProxies.set(encodeAddress(who, config.prefix), encodeAddress(pure, config.prefix))
-//     }
-// }
-// }
-
 // Proxy.PureCreated {
 //     "kind": "event",
 //     "name": "Proxy.PureCreated",
@@ -321,72 +266,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 // }
 
 
-//     newMultisigs.length && await processNewMultisigs(ctx, newMultisigs)
-//     multisigEvents.length && await ctx.store.save(multisigEvents)
-//     newProxies.size && await processNewProxies(ctx, newProxies)
-// })
 
-const processNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]) => {
-    for (let { signatories, threshold, id, createdAt } of multisigs) {
-        // const multiAddress = encodeAddress(createKeyMulti(signers, threshold), config.prefix)
-
-        // persist all accounts
-        const accounts = await getOrCreateAccounts(ctx, signatories)
-        // const accounts = await Promise.all(accountPromise)
-
-        const newMultisig = new Multisig({
-            id,
-            threshold,
-            createdAt,
-        })
-
-        // persist the multisig
-        ctx.store.save(newMultisig)
-
-        const newAccountMultisig = accounts.map((account) => {
-            return new AccountMultisig({
-                id: getAccountMultisigId(newMultisig.id, account.id),
-                multisig: newMultisig,
-                signer: account
-            })
-        })
-
-        ctx.store.save(newAccountMultisig)
-    }
-}
-
-const processNewProxies = async (ctx: Ctx, proxyMap: NewProxies) => {
-
-    const newProxies = [...proxyMap.values()].map((proxy) => new Account({
-        id: proxy,
-    }))
-
-    await ctx.store.save(newProxies)
-
-    // ctx.log.info(`proxyMap ${JsonLog([...proxyMap.entries()])}`)
-
-    const multiSigsToUpdate = await ctx.store
-        .findBy(Multisig, { id: In([...proxyMap.keys()]) })
-
-
-    const updatedMultisigs = multiSigsToUpdate
-        .map((multi) => {
-            const associatedProxy = newProxies.find(proxy => proxy.id === proxyMap.get(multi.id))
-
-            // ctx.log.info(`proxy: ${JsonLog(associatedProxy)}`)
-            if (associatedProxy === undefined) {
-                ctx.log.error(`No associated proxy found ${newProxies}`)
-                return
-            }
-
-            multi.proxy = associatedProxy
-            // ctx.log.info(`multi: ${JsonLog(multi)}`)
-            return multi
-        })
-        .filter(multi => multi !== undefined)
-
-    await ctx.store.save(updatedMultisigs as Multisig[])
-}
 
 // async function processRmrkEvents(ctx: Ctx, rmrkEvents: RmrkEvent[]) {
 //     let accountIds = new Set<string>()
@@ -466,19 +346,6 @@ const processNewProxies = async (ctx: Ctx, proxyMap: NewProxies) => {
 //     }
 // }
 
-function normalizeCall(ctx: Ctx, item: CallItem<'System.remark', { call: { args: true } }>) {
-    let c = new SystemRemarkCall(ctx, item.call)
-
-    if (c.isV9190) {
-        let data = c.asV9190
-        return {
-            message: Buffer.from(data.remark).toString('utf-8'),
-        }
-    } else {
-        throw new UknownVersionError()
-    }
-}
-
 // function getAccount(m: Map<string, Account>, id: string): Account {
 //     let acc = m.get(id)
 //     if (acc == null) {
@@ -489,21 +356,3 @@ function normalizeCall(ctx: Ctx, item: CallItem<'System.remark', { call: { args:
 //     return acc
 // }
 
-export function getOriginAccountId(origin: any): string {
-    if (origin && origin.__kind === 'system' && origin.value.__kind === 'Signed') {
-        const id = origin.value.value
-        if (id.__kind === 'Id') {
-            return encodeId(decodeHex(id.value))
-        } else {
-            return encodeId(decodeHex(id))
-        }
-    } else {
-        throw new Error('Unexpected origin')
-    }
-}
-
-class UknownVersionError extends Error {
-    constructor() {
-        super('Unknown version')
-    }
-}
