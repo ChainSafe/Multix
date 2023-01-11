@@ -1,0 +1,21 @@
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Multisig} from "./multisig.model"
+import {Account} from "./account.model"
+
+@Entity_()
+export class AccountMultisig {
+  constructor(props?: Partial<AccountMultisig>) {
+    Object.assign(this, props)
+  }
+
+  @PrimaryColumn_()
+  id!: string
+
+  @Index_()
+  @ManyToOne_(() => Multisig, {nullable: true})
+  multisig!: Multisig
+
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  signer!: Account
+}

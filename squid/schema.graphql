@@ -1,0 +1,50 @@
+type Account @entity {
+  id: ID!
+  rmrkNfts: [RmrkNFT!] @derivedFrom(field: "owner")
+  multisigs: [AccountMultisig] @derivedFrom(field: "signer")
+}
+
+type RmrkNFT @entity {
+  id: ID!
+  symbol: String
+  transferable: Boolean
+  collection: String!
+  sn: String
+  owner: Account
+  metadata: String
+  parent: RmrkNFT
+  children: [RmrkNFT!] @derivedFrom(field: "parent")
+}
+
+### MULTISIG ###
+
+enum MultisigInteraction {
+  CALL
+  MIGRATE
+}
+
+type Multisig @entity {
+  id: ID!
+  proxy: Account
+  signers: [AccountMultisig!] @derivedFrom(field: "multisig")
+  threshold: Int!
+  createdAt: DateTime!
+  multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
+
+}
+
+type MultisigCall @entity {
+  id: ID!
+  blockNumber: Int!
+  timestamp: DateTime!
+  multisig: Multisig
+  info: String # some more info tbd
+  # interaction: MultisigInteraction!
+}
+
+# entity for linking accounts and multisigs
+type AccountMultisig @entity {
+  id: ID!
+  multisig: Multisig!
+  signer: Account!
+}

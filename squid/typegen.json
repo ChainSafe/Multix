@@ -1,0 +1,15 @@
+{
+  "outDir": "src/types",
+  "specVersions": "https://rococo.archive.subsquid.io/graphql",
+  "events": [
+    "Proxy.PureCreated",
+    "Multisig.NewMultisig"
+  ],
+  "calls": [
+    "System.remark",
+    "Balances.transfer_keep_alive",
+    "Proxy.proxy",
+    "Multisig.as_multi"
+  ],
+  "storage": []
+}
