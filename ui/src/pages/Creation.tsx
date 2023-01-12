@@ -6,6 +6,7 @@ import SignatorySelection from "../components/SignatorySelection";
 import { encodeAddress, createKeyMulti } from "@polkadot/util-crypto";
 import { config } from "../config";
 import { useAccountList } from "../contexts/AccountsContext";
+import ThresholdSelection from "../components/ThresholdSelection";
 
 interface Props {
   className?: string
@@ -23,12 +24,25 @@ const steps = [
 ]
 const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<Signatory[]>([])
-  const [activeStep, setActiveStep] = useState(0)
-  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep])
+  const [currentStep, setCurrentStep] = useState(0)
+  const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady } = useApi()
-  const [threshold, setThreshold] = useState(2)
+  const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAddress } = useAccountList()
+  const canGoNext = useMemo(() => {
 
+    // need a threshold set
+    if (currentStep === 1 && threshold === undefined) {
+      return false
+    }
+
+    // need at least 2 signatories
+    if (currentStep === 0 && signatories.length < 2) {
+      return false
+    }
+
+    return true
+  }, [currentStep, signatories.length, threshold])
 
   const handleCreate = useCallback(async () => {
     if (!isApiReady) {
@@ -45,6 +59,11 @@ const MultisigCreation = ({ className }: Props) => {
 
     if (!signatoriesAddresses.includes(selectedAddress)) {
       console.error('selected account not part of signatories')
+      return
+    }
+
+    if (!threshold) {
+      console.error("Threshold is invalid", threshold)
       return
     }
 
@@ -83,7 +102,7 @@ const MultisigCreation = ({ className }: Props) => {
         xs={12}
         md={4}
       >
-        <h1 className="title">{steps[activeStep]}</h1>
+        <h1 className="title">{steps[currentStep]}</h1>
       </Grid>
 
       <Grid
@@ -97,27 +116,46 @@ const MultisigCreation = ({ className }: Props) => {
       >
         <Box className="stepsContainer">
           <Stepper
-            activeStep={activeStep}
+            activeStep={currentStep}
             alternativeLabel
           >
             {steps.map((step, index) => (
               <Step
                 className="stepItem"
                 key={step}
-                onClick={() => { activeStep > index && setActiveStep(index) }}
+                onClick={() => { currentStep > index && setCurrentStep(index) }}
               >
-                <StepLabel>{activeStep === index ? "" : step}</StepLabel>
+                <StepLabel>{currentStep === index ? "" : step}</StepLabel>
               </Step>
             ))}
           </Stepper>
         </Box>
       </Grid>
       <Grid container item xs={12}>
-        {activeStep === 0 && (
-          <SignatorySelection
-            setSignatories={setSignatories}
-            signatories={signatories}
-          />
+        {currentStep === 0 && (
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <SignatorySelection
+              setSignatories={setSignatories}
+              signatories={signatories}
+            />
+          </Grid>
+        )}
+        {currentStep === 1 && (
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <ThresholdSelection
+              setThreshold={setThreshold}
+              threshold={threshold}
+              signatoriesNumber={signatories.length}
+            />
+          </Grid>
         )}
       </Grid>
       <Grid
@@ -128,13 +166,14 @@ const MultisigCreation = ({ className }: Props) => {
         className="buttonContainer"
       >
         <Button
-          disabled={activeStep === 0}
-          onClick={() => setActiveStep(activeStep - 1)}
+          disabled={currentStep === 0}
+          onClick={() => setCurrentStep(currentStep - 1)}
         >
           Back
         </Button>
         <Button
-          onClick={() => isLastStep ? handleCreate() : setActiveStep(activeStep + 1)}
+          disabled={!canGoNext}
+          onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
         >
           {isLastStep
             ? "Create"

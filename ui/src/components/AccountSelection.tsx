@@ -16,6 +16,7 @@ interface Props {
   addSignatory?: (address: string) => void
   value?: string
   inputLabel?: string
+  currentSignatories?: string[]
 }
 
 const filterOptions = createFilterOptions({
@@ -30,23 +31,43 @@ const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
     ? option
     : option.address
 }
-const AccountSelection = ({ className, addSignatory, disabled = false, value, inputLabel = "Account" }: Props) => {
+const AccountSelection = ({ className, addSignatory, disabled = false, value, inputLabel = "Account", currentSignatories = [] }: Props) => {
   const { accountList = [] } = useAccountList()
   const [selected, setSelected] = useState(value)
-  const isError = useMemo(() => !!selected && !isValidAddress(selected), [selected])
+  const [errorMessage, setErrorMessage] = useState("")
   const ref = useRef<HTMLInputElement>(null)
+  const dedupedSignatories = useMemo(() => {
+    return accountList.filter((account) => !currentSignatories.includes(account.address))
+  }, [accountList, currentSignatories])
 
   const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
+    setErrorMessage("")
     const value = getOptionLabel(val)
     setSelected(value)
   }, [])
 
   const onAddSignatory = useCallback(() => {
-    if (selected && !isError && !!addSignatory) {
+
+    if (!selected) {
+      return
+    }
+
+    if (!isValidAddress(selected)) {
+      setErrorMessage("Invalid address")
+      return
+    }
+
+    if (currentSignatories.includes(selected)) {
+      setErrorMessage("Signatory already added")
+      return
+    }
+
+    if (!!addSignatory) {
       addSignatory(selected)
       setSelected("")
     }
-  }, [addSignatory, isError, selected])
+
+  }, [addSignatory, currentSignatories, selected])
 
   const handleSpecialKeys = useCallback((e: any) => {
     if (['Enter', "Escape"].includes(e.key)) {
@@ -60,7 +81,7 @@ const AccountSelection = ({ className, addSignatory, disabled = false, value, in
         freeSolo
         selectOnFocus
         filterOptions={filterOptions}
-        options={accountList}
+        options={dedupedSignatories}
         renderOption={(props, option) => (
           <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props}>
             <Identicon
@@ -76,8 +97,8 @@ const AccountSelection = ({ className, addSignatory, disabled = false, value, in
           <TextField
             {...params}
             inputRef={ref}
-            error={isError}
-            helperText={isError && "Invalid address"}
+            error={!!errorMessage}
+            helperText={errorMessage}
             label={inputLabel}
             InputProps={{
               ...params.InputProps,

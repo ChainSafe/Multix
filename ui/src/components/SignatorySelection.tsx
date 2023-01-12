@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { useCallback } from "react";
 import styled from "styled-components";
 import { Signatory } from "../pages/Creation";
@@ -25,12 +25,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
   }, [setSignatories, signatories])
 
   return (
-    <Grid
-      item
-      xs={12}
-      md={6}
-      className={className}
-    >
+    <Box className={className}   >
       <>
         {signatories.map(({ address }, index) => (
           <div
@@ -59,12 +54,12 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
           </div>
         )}
         <AccountSelection
+          currentSignatories={signatories.map(s => s.address)}
           addSignatory={addSignatory}
           value=""
         />
       </>
-
-    </Grid>
+    </Box>
   )
 }
 
