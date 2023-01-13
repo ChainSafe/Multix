@@ -1,12 +1,13 @@
 import { Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
-import { useApi } from "../contexts/ApiContext";
-import SignatorySelection from "../components/SignatorySelection";
+import { useApi } from "../../contexts/ApiContext";
+import SignatorySelection from "../../components/SignatorySelection";
 import { encodeAddress, createKeyMulti } from "@polkadot/util-crypto";
-import { config } from "../config";
-import { useAccountList } from "../contexts/AccountsContext";
-import ThresholdSelection from "../components/ThresholdSelection";
+import { config } from "../../config";
+import { useAccountList } from "../../contexts/AccountsContext";
+import ThresholdSelection from "./ThresholdSelection";
+import Summary from "./Summary";
 
 interface Props {
   className?: string
@@ -154,6 +155,18 @@ const MultisigCreation = ({ className }: Props) => {
               setThreshold={setThreshold}
               threshold={threshold}
               signatoriesNumber={signatories.length}
+            />
+          </Grid>
+        )}
+        {currentStep === 2 && (
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <Summary
+              signatories={signatories}
+              threshold={threshold}
             />
           </Grid>
         )}

@@ -44,7 +44,7 @@ export const Header: React.FC = () => {
             component="div"
             sx={{ flexGrow: 1 }}
           >
-            Multisig-UI
+            Multix
           </Typography>
           {selectedAddress && (
             <>

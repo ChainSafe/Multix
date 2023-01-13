@@ -4,7 +4,7 @@ import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { DAPP_NAME } from "../constants/substrate"
 import { Signer } from "@polkadot/api/types"
 
-const LOCALSTORAGE_KEY = "multisig-ui.selectedAccount"
+const LOCALSTORAGE_KEY = "multix.selectedAccount"
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]

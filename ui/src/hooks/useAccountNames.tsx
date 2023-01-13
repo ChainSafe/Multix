@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 
 export type AccountNames = { [address: string]: string }
 
-const LOCALSTORAGE_ACCOUNT_KEY = "multisig-ui.accountNames"
+const LOCALSTORAGE_ACCOUNT_KEY = "multix.accountNames"
 
 export const useAccountNames = () => {
     const [accoutNames, setAccountNames] = useState<AccountNames>({})

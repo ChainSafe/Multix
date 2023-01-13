@@ -1,1 +1,1 @@
-export const DAPP_NAME = "Multisig-UI"
+export const DAPP_NAME = "Multix"

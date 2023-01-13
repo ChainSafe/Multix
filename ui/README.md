@@ -1,4 +1,4 @@
-# Getting started with Multisig-UI
+# Getting started with Multix
 
 This UI is meant to be run alongside an indexer as presented in `../squid`
 

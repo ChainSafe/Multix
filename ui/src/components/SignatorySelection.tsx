@@ -34,7 +34,6 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
           >
             <AccountSelection
               className="accountDropdown"
-              addSignatory={addSignatory}
               disabled
               value={address}
               inputLabel={`Account ${index + 1}`}
