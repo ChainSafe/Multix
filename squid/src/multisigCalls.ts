@@ -71,6 +71,7 @@ export const handleMultisigCall = (multisigArgs: any) => {
     return {
         otherSignatories: encodedOtherSignatories,
         threshold: multisigArgs["threshold"],
-        method: `${multisigArgs.call.__kind}.${multisigArgs.call.value.__kind}`
+        method: `${multisigArgs.call.__kind}.${multisigArgs.call.value.__kind}`,
+        args: JSON.stringify(multisigArgs.call.value)
     }
 }

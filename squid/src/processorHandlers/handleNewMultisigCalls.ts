@@ -14,11 +14,11 @@ export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: Multisi
         .findBy(Multisig, { id: In([...multisigAddresses]) })
         .then((q) => new Map(q.map((i) => [i.id, i])))
 
-    for (let { blockNumber, id, info, multisigAddress, timestamp } of newMultisigCalls) {
+    for (let { blockHash, id, callIndex, multisigAddress, timestamp } of newMultisigCalls) {
         multisigCalls.push(new MultisigCall({
             id,
-            blockNumber,
-            info,
+            blockHash,
+            callIndex,
             multisig: multisigs.get(multisigAddress),
             timestamp
         }))

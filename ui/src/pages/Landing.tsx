@@ -1,27 +1,102 @@
-import React, { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components";
-// import { useApi } from "../contexts/ApiContext";
 import { Button } from "@mui/material";
 import NewTxModal from "../components/modals/NewTx";
-import { useMultisigsByAccountsQuery } from "../../types-and-hooks";
-import { useAccountList } from "../contexts/AccountsContext";
+import { useApi } from "../contexts/ApiContext";
+import { useMultisig } from "../contexts/MultisigContext";
+import { usePendingTx } from "../hooks/usePendingTx";
 
 interface Props {
   className?: string
 }
 
-const Landing = ({ className }: Props) => {
+const getMultisigMethodAndArgs = (extrinsic: Record<string, any> | undefined | null): any => {
+  if (!extrinsic) return
+  const { method, section, args } = extrinsic
 
-  // const { api, isApiReady } = useApi()
+  if (method === "asMulti" && section === "multisig") {
+    return args.call
+  }
+
+  if (!!args?.call) {
+    const res = getMultisigMethodAndArgs(args.call)
+    return res
+  }
+
+  if (!!args?.calls && Array.isArray(args.calls)) {
+
+    let res: any = undefined
+    args.calls.forEach((arg: any) => {
+      if (!!res) return
+      res = getMultisigMethodAndArgs(arg)
+      return res
+    })
+
+    return res
+  }
+}
+
+interface AggregatedData {
+  callData?: string;
+  info?: {
+    name: string;
+    args: Record<string, any>
+  }
+}
+
+const Landing = ({ className }: Props) => {
+  const { api, isApiReady } = useApi()
   const [isNewTxModalOpen, setIsNewTxModalOpen] = useState(false)
-  const { addressList } = useAccountList()
-  const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
+  const { isLoading, multisigList, selectedMultisig } = useMultisig()
+  const { data } = usePendingTx(selectedMultisig?.id)
+  const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
 
   useEffect(() => {
-    if (!!error) {
-      console.error(error)
+    if (!isApiReady) {
+      return
     }
-  })
+
+    setAggregatedData([])
+
+    if (!data || !data.length) {
+      return
+    }
+
+    const agregatedDataPromise = data.map(async (pendingTx) => {
+      const blockHash = await api.rpc.chain.getBlockHash(pendingTx.info.when.height);
+      const signedBlock = await api.rpc.chain.getBlock(blockHash)
+
+      const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
+      // @ts-ignore
+      const res = getMultisigMethodAndArgs(ext?.toHuman()?.method)
+      const call = api.tx[res.section][res.method](...Object.values(res.args))
+      console.log('call hash', call.toHex())
+      console.log('call method', call.method.hash.toHex())
+
+      if (call.method.hash.toHex() !== pendingTx.hash) {
+        console.log('oops', call.toHex(), pendingTx.hash)
+        return {}
+      }
+
+      return {
+        callData: call.toHex(),
+        info: {
+          name: `${res.section}.${res.method}`,
+          args: res.args
+        }
+      }
+    })
+
+    Promise.all(agregatedDataPromise)
+      .then((res) => {
+        setAggregatedData(res)
+      })
+      .catch(console.error)
+
+    // const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
+    // console.log('proxyTx hex', proxyTx.toHex())
+    // console.log('proxyTx hash', proxyTx.method.hash.toHex())
+  }, [api, data, isApiReady, selectedMultisig])
 
   const onClose = useCallback(() => {
     setIsNewTxModalOpen(false)
@@ -35,31 +110,27 @@ const Landing = ({ className }: Props) => {
   return (
     <div className={className}>
       <>
-        {!!error && (
-          <div>
-            error...
-          </div>
-        )}
         {isLoading && (
           <div>
             Loading...
           </div>
         )}
-        {!isLoading && data?.multisigs.length === 0 && (
+        {!isLoading && multisigList.length === 0 && (
           <div>
             No multisig found for your accounts
           </div>
         )}
-        {data?.multisigs.map((multisig) =>
-          <div key={multisig.id}>
-            {multisig.threshold}/{multisig.signers.length} {multisig.proxy?.id}
+        {selectedMultisig &&
+          <div key={selectedMultisig.id}>
+            {selectedMultisig.threshold}/{selectedMultisig.signers.length} {selectedMultisig.proxy?.id}
             <ul>
-              {multisig.signers.map(({ signer }) =>
+              {selectedMultisig.signers.map(({ signer }) =>
                 <li key={signer.id}>{signer.id}</li>
               )}
             </ul>
           </div>
-        )}
+        }
+        {!!data.length && !!aggregatedData.length && JSON.stringify(aggregatedData)}
 
         <Button onClick={onOpenModal}>New Tx</Button>
         {isNewTxModalOpen && <NewTxModal onClose={onClose} />}

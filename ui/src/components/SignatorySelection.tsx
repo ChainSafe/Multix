@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Signatory } from "../pages/Creation";
 import AccountSelection from "./AccountSelection";
 import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Props {
@@ -25,11 +26,11 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
   }, [setSignatories, signatories])
 
   return (
-    <Box className={className}   >
+    <Box className={className}>
       <>
         {signatories.map(({ address }, index) => (
           <div
-            className="accountSelection"
+            className="selectedList"
             key={address}
           >
             <AccountSelection
@@ -39,7 +40,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
               inputLabel={`Account ${index + 1}`}
             />
             <IconButton
-              className="deleteButton"
+              className="signatoryButton"
               aria-label="delete"
               onClick={() => removeSignatory(index)}
             >
@@ -52,32 +53,48 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
             New signatory...
           </div>
         )}
-        <AccountSelection
-          currentSignatories={signatories.map(s => s.address)}
-          addSignatory={addSignatory}
-          value=""
-        />
+        <Box className="addSignatoryField">
+          <AccountSelection
+            className="accountDropdown"
+            currentSignatories={signatories.map(s => s.address)}
+            addSignatory={addSignatory}
+            value=""
+          />
+          <IconButton
+            className="signatoryButton"
+            aria-label="add"
+            onClick={() => {
+              //noop
+            }}
+          >
+            <AddIcon />
+          </IconButton>
+        </Box>
       </>
     </Box>
   )
 }
 
 export default styled(SignatorySelection)(({ theme }) => `
-    .accountSelection {
-        margin-bottom: 1rem;
-        display: flex;
+  .selectedList{
+    margin-bottom: 1rem;
+  }
 
-        .accountDropdown {
-            flex: 1;
-        }
-        
-        .deleteButton {
-            margin-left: 1rem;
-        }
-    }
+  .signatoryButton {
+    margin-left: 1rem;
+    width: 3rem;
+  }
+  .accountDropdown {
+          flex: 1;
+      }
 
-    .additionText {
-        margin-top: .5rem;
-        margin-bottom: .5rem;
-    }
+  .selectedList, .addSignatoryField {
+    display: flex;
+  }
+
+
+  .additionText {
+      margin-top: .5rem;
+      margin-bottom: .5rem;
+  }
 `)

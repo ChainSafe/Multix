@@ -7,6 +7,7 @@ import { UserSpace } from "./components/UserSpace"
 import { AccountContextProvider } from "./contexts/AccountsContext"
 import { ApiContextProvider } from "./contexts/ApiContext"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MultisigContextProvider } from "./contexts/MultisigContext"
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -14,29 +15,27 @@ const App = () => {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AccountContextProvider>
-          <ApiContextProvider>
-            <Header />
-            <Container
-              fixed
-              sx={{ paddingTop: "6rem" }}>
-              <UserSpace>
-                <Routes>
-                  {/* <Route
-                  path="/"
-                  element={<Swap />}
-                /> */}
-                  <Route
-                    path="/"
-                    element={<Landing />}
-                  />
-                  <Route
-                    path="/create"
-                    element={<Creation />}
-                  />
-                </Routes>
-              </UserSpace>
-            </Container>
-          </ApiContextProvider>
+          <MultisigContextProvider>
+            <ApiContextProvider>
+              <Header />
+              <Container
+                fixed
+                sx={{ paddingTop: "6rem" }}>
+                <UserSpace>
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={<Landing />}
+                    />
+                    <Route
+                      path="/create"
+                      element={<Creation />}
+                    />
+                  </Routes>
+                </UserSpace>
+              </Container>
+            </ApiContextProvider>
+          </MultisigContextProvider>
         </AccountContextProvider>
       </QueryClientProvider>
     </BrowserRouter>

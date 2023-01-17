@@ -9,7 +9,7 @@ import { SystemRemarkCall } from './types/calls'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { encodeId } from './util/accountEncoding'
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getAccountMultisigId, getMultisigCallId, getOrCreateAccounts, getOriginAccountId } from './util'
+import { getMultisigAddress, getAccountMultisigId, getMultisigCallId, getOrCreateAccounts, getOriginAccountId, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies } from './processorHandlers'
 
 
@@ -45,17 +45,19 @@ const processor = new SubstrateBatchProcessor()
             },
         },
     } as const)
-    .addCall('Multisig.as_multi', {
-        data: {
-            call: {
-                args: true,
-                origin: true,
-            },
-            extrinsic: {
-                indexInBlock: true
-            }
-        },
-    } as const)
+    .addCall('Multisig.as_multi'
+        // {
+        // data: {
+        //     call: {
+        //         args: true,
+        //         origin: true,
+        //     },
+        //     extrinsic: {
+        //         indexInBlock: true
+        //     }
+        // },
+        // } as const
+    )
     .addEvent('Proxy.PureCreated', {
         data: {
             event: {
@@ -85,9 +87,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 if (!item.call.success || !item.call.origin) continue
 
                 const signer = getOriginAccountId(item.call.origin)
-                const args = item.call.args;
+                const callArgs = item.call.args;
 
-                const { method, otherSignatories, threshold } = handleMultisigCall(args)
+                ctx.log.info(JsonLog(item))
+
+                const { method, otherSignatories, threshold, args } = handleMultisigCall(callArgs)
                 const signers = [signer, ...otherSignatories]
                 const timestamp = new Date(block.header.timestamp)
 
@@ -99,12 +103,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 }
 
                 newMultisigsInfo.push(newMulti)
-
                 const blockNumber = block.header.height
+                const blockHash = block.header.hash
+
                 newMultisigCalls.push({
                     id: getMultisigCallId(newMulti.id, blockNumber, item.extrinsic.indexInBlock),
-                    blockNumber,
-                    info: method,
+                    blockHash,
+                    callIndex: item.extrinsic.indexInBlock,
                     multisigAddress: newMulti.id,
                     timestamp
                 })

@@ -1,19 +1,6 @@
 type Account @entity {
   id: ID!
-  rmrkNfts: [RmrkNFT!] @derivedFrom(field: "owner")
   multisigs: [AccountMultisig] @derivedFrom(field: "signer")
-}
-
-type RmrkNFT @entity {
-  id: ID!
-  symbol: String
-  transferable: Boolean
-  collection: String!
-  sn: String
-  owner: Account
-  metadata: String
-  parent: RmrkNFT
-  children: [RmrkNFT!] @derivedFrom(field: "parent")
 }
 
 ### MULTISIG ###
@@ -35,11 +22,10 @@ type Multisig @entity {
 
 type MultisigCall @entity {
   id: ID!
-  blockNumber: Int!
+  blockHash: String!
   timestamp: DateTime!
   multisig: Multisig
-  info: String # some more info tbd
-  # interaction: MultisigInteraction!
+  callIndex: Int!
 }
 
 # entity for linking accounts and multisigs

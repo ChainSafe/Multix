@@ -7,10 +7,10 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.11",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
-    "@polkadot/api": "^9.6.1",
-    "@polkadot/extension-dapp": "^0.44.6",
-    "@polkadot/react-identicon": "2.9.12",
-    "@polkadot/util-crypto": "^10.2.3",
+    "@polkadot/api": "^9.11.3",
+    "@polkadot/extension-dapp": "^0.44.8",
+    "@polkadot/react-identicon": "^2.10.1",
+    "@polkadot/util-crypto": "^10.2.6",
     "@tanstack/react-query": "^4.20.9",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^13.4.0",
@@ -35,6 +35,7 @@
     "@graphql-codegen/cli": "2.16.3",
     "@graphql-codegen/client-preset": "1.2.5",
     "@graphql-eslint/eslint-plugin": "^3.14.3",
+    "@polkadot/typegen": "^9.11.3",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
@@ -56,7 +57,9 @@
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "lint:types": "tsc --pretty",
     "lint:fix": "yarn run lint --fix",
-    "codegen": "graphql-codegen --config graphql.config.json"
+    "codegen": "graphql-codegen --config graphql.config.json",
+    "generate:type-from-defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --endpoint ./node-metadata.json --package src/interfaces --input ./src/interfaces",
+    "generate:types-from-chain": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --endpoint wss://rococo-rpc.polkadot.io --output ./src/interfaces"
   },
   "browserslist": {
     "production": [

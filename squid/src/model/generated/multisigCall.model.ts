@@ -10,8 +10,8 @@ export class MultisigCall {
   @PrimaryColumn_()
   id!: string
 
-  @Column_("int4", {nullable: false})
-  blockNumber!: number
+  @Column_("text", {nullable: false})
+  blockHash!: string
 
   @Column_("timestamp with time zone", {nullable: false})
   timestamp!: Date
@@ -20,6 +20,6 @@ export class MultisigCall {
   @ManyToOne_(() => Multisig, {nullable: true})
   multisig!: Multisig | undefined | null
 
-  @Column_("text", {nullable: true})
-  info!: string | undefined | null
+  @Column_("int4", {nullable: false})
+  callIndex!: number
 }

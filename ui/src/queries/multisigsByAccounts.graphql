@@ -11,5 +11,11 @@ query MultisigsByAccounts($accounts: [String!]) {
       }
     }
     threshold
+    multisigsCalls {
+      id
+      blockHash
+      timestamp
+      callIndex
+    }
   }
 }
