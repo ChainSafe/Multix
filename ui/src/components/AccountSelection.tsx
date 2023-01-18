@@ -6,9 +6,7 @@ import { useAccountList } from "../contexts/AccountsContext";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { isValidAddress } from "../utils";
-
-const ICON_SIZE = 30
-const ICON_THEME = "polkadot"
+import { ICON_THEME, ICON_SIZE } from "../constants";
 
 interface Props {
   className?: string;

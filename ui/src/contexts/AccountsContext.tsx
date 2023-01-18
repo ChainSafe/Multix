@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { web3Accounts, web3Enable, web3FromSource } from "@polkadot/extension-dapp"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
-import { DAPP_NAME } from "../constants/substrate"
+import { DAPP_NAME } from "../constants"
 import { Signer } from "@polkadot/api/types"
 
 const LOCALSTORAGE_KEY = "multix.selectedAccount"

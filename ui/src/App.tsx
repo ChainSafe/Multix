@@ -1,6 +1,6 @@
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { Creation, Landing } from "./pages"
+import { Creation, Home } from "./pages"
 import { Header } from "./components/Header"
 import Container from "@mui/material/Container"
 import { UserSpace } from "./components/UserSpace"
@@ -25,7 +25,7 @@ const App = () => {
                   <Routes>
                     <Route
                       path="/"
-                      element={<Landing />}
+                      element={<Home />}
                     />
                     <Route
                       path="/create"

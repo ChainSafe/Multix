@@ -14,6 +14,7 @@ export interface IMultisigContext {
   multisigAddressList: string[]
   isLoading: boolean,
   selectMultisig: (multi: MultisigsByAccountsQuery["multisigs"][0]) => void
+  selectedHasProxy: boolean
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -23,6 +24,7 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   const [multisigList, setMultisigList] = useState<IMultisigContext['multisigList']>([])
   const { addressList } = useAccountList()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
+  const selectedHasProxy = useMemo(() => !!selectedMultisig?.proxy?.id, [selectedMultisig?.proxy?.id])
 
   useEffect(() => {
     if (!!error) {
@@ -85,6 +87,7 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
         multisigAddressList,
         selectMultisig,
         isLoading,
+        selectedHasProxy,
       }}
     >
       {children}

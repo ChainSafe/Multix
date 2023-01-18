@@ -1,1 +1,2 @@
-export { isValidAddress } from "./isValidAddress"
+export * from "./isValidAddress"
+export * from "./getMultisigMethodAndArgs"
