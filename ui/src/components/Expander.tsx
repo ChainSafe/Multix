@@ -7,10 +7,11 @@ interface Props {
   className?: string;
   title: string
   content: ReactNode
+  expanded?: boolean
 }
 
-const Expander = ({ className = '', title, content }: Props) => {
-  const [open, setOpen] = useState(false);
+const Expander = ({ className = '', title, content, expanded = false }: Props) => {
+  const [open, setOpen] = useState(expanded);
 
   return (
     <Box

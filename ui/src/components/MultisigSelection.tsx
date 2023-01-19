@@ -4,9 +4,7 @@ import { useCallback, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useMultisig } from "../contexts/MultisigContext";
-
-const ICON_SIZE = 30
-const ICON_THEME = "polkadot"
+import { ICON_THEME, ICON_SIZE } from "../constants";
 
 interface Props {
   className?: string;

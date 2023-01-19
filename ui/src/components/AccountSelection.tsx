@@ -45,7 +45,6 @@ const AccountSelection = ({ className, addSignatory, disabled = false, value, in
   }, [])
 
   const onAddSignatory = useCallback(() => {
-
     if (!selected) {
       return
     }
@@ -113,7 +112,6 @@ const AccountSelection = ({ className, addSignatory, disabled = false, value, in
             }}
             onKeyDown={handleSpecialKeys}
           />
-
         )}
         getOptionLabel={getOptionLabel}
         onInputChange={onChangeAutocomplete}

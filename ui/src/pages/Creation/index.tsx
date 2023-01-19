@@ -29,7 +29,7 @@ const MultisigCreation = ({ className }: Props) => {
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAddress } = useAccountList()
+  const { selectedSigner, selectedAccount } = useAccountList()
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -51,14 +51,14 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    if (!selectedAddress) {
+    if (!selectedAccount) {
       console.error('no selected address')
       return
     }
 
     const signatoriesAddresses = signatories.map(({ address }) => address)
 
-    if (!signatoriesAddresses.includes(selectedAddress)) {
+    if (!signatoriesAddresses.includes(selectedAccount.address)) {
       console.error('selected account not part of signatories')
       return
     }
@@ -68,14 +68,14 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = signatoriesAddresses.filter((sig) => sig !== selectedAddress)
+    const otherSignatories = signatoriesAddresses.filter((sig) => sig !== selectedAccount.address)
     const multiAddress = encodeAddress(createKeyMulti(signatoriesAddresses, threshold), config.prefix)
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
     const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
 
-    batchCall.signAndSend(selectedAddress, { signer: selectedSigner }, ({ events = [], status }) => {
+    batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, ({ events = [], status }) => {
       console.log('Transaction status:', status.type);
 
       if (status.isInBlock) {
@@ -90,7 +90,7 @@ const MultisigCreation = ({ className }: Props) => {
       }
     });
 
-  }, [api, isApiReady, selectedAddress, selectedSigner, signatories, threshold])
+  }, [api, isApiReady, selectedAccount, selectedSigner, signatories, threshold])
 
   return (
     <Grid

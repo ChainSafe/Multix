@@ -11,10 +11,10 @@ type AccountContextProps = {
 }
 
 export interface IAccountContext {
-  selectedAddress?: string
+  selectedAccount?: InjectedAccountWithMeta
   accountList?: InjectedAccountWithMeta[]
   addressList: string[]
-  selectAccount: (address: string) => void
+  selectAccount: (account: InjectedAccountWithMeta) => void
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
   isAccountLoading: boolean
   extensionNotFound: boolean
@@ -25,8 +25,8 @@ export interface IAccountContext {
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
-  const [selectedAddress, setSelected] = useState<string>("")
   const [accountList, setAccountList] = useState<InjectedAccountWithMeta[]>([])
+  const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(accountList[0])
   const [isAccountLoading, setIsAccountLoading] = useState(false)
   const [extensionNotFound, setExtensionNotFound] = useState(false)
   const [isAccountListEmpty, setIsAccountListEmpty] = useState(false)
@@ -37,9 +37,9 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     return accountList.find(account => account.address === address)
   }, [accountList])
 
-  const selectAccount = useCallback(async (address: string) => {
-    localStorage.setItem(LOCALSTORAGE_KEY, address)
-    setSelected(address)
+  const selectAccount = useCallback((account: InjectedAccountWithMeta) => {
+    localStorage.setItem(LOCALSTORAGE_KEY, account.address)
+    setSelected(account)
   }, [])
 
   const getaccountList = useCallback(async (): Promise<undefined> => {
@@ -65,18 +65,14 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
     if (accountList.length > 0) {
       const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_KEY)
+      const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
 
-      if (!previousAccountAddress) {
-        selectAccount(accountList[0].address)
-      } else {
-        selectAccount(previousAccountAddress)
-      }
-
+      selectAccount(account || accountList[0])
     }
 
     setIsAccountLoading(false)
     return
-  }, [selectAccount])
+  }, [getAccountByAddress, selectAccount])
 
   useEffect(() => {
     if (!accountList.length) {
@@ -85,17 +81,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [accountList, getaccountList])
 
   useEffect(() => {
-    if (!selectedAddress) return
+    if (!selectedAccount) return
 
     // to be able to retrieve the signer interface from this account
     // we can use web3FromSource which will return an InjectedExtension type
-    const account = getAccountByAddress(selectedAddress)
-    if (!account) {
-      console.error('No account found for this address')
-      return
-    }
 
-    web3FromSource(account.meta.source).then(
+    web3FromSource(selectedAccount.meta.source).then(
       (injector) => {
         setSelectedSigner(injector.signer)
       }).catch(console.error);
@@ -105,7 +96,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   return (
     <AccountContext.Provider
       value={{
-        selectedAddress,
+        selectedAccount: selectedAccount,
         accountList,
         addressList,
         selectAccount,

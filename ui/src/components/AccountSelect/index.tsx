@@ -17,8 +17,8 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
     return null
   }
 
-  const handleSelect = (address: string) => () => {
-    selectAccount(address)
+  const handleSelect = (account: typeof accountList[0]) => () => {
+    selectAccount(account)
     onClose()
   }
 
@@ -32,7 +32,7 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
       {accountList.map((account) => (
         <MenuItem
           key={account.address}
-          onClick={handleSelect(account.address)}>
+          onClick={handleSelect(account)}>
           <CardHeader
             avatar={
               <IconButton sx={{ p: 0 }}>

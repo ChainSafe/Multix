@@ -11,7 +11,7 @@ interface Props {
 }
 export const UserSpace = ({ children, className }: Props) => {
   const { isApiReady } = useApi()
-  const { extensionNotFound, isAccountListEmpty, isAccountLoading, selectedAddress } = useAccountList()
+  const { extensionNotFound, isAccountListEmpty, isAccountLoading, selectedAccount } = useAccountList()
   // const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
 
   // const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,12 +41,14 @@ export const UserSpace = ({ children, className }: Props) => {
     )
   }
 
-  if (selectedAddress) return <>{children}</>
+  console.log('selectedAccount', selectedAccount)
+
+  if (selectedAccount) return <>{children}</>
 
   if (extensionNotFound)
     return (
       <Center>
-        <h1>Please install the <a
+        <h1>Please install an extension such as <a
           href="https://polkadot.js.org/extension/"
           target={"_blank"}
           rel="noreferrer"
