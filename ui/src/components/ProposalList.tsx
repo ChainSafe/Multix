@@ -31,7 +31,6 @@ interface Props {
 const getMultisigInfo = (c: ISanitizedCall) => {
   if (typeof c.method !== "string" && c.method.pallet === "multisig") {
     if (c.method.method === "asMulti" && typeof c.args.call?.method !== "string") {
-      console.log('here', c.args.call?.hash)
       return {
         name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
         hash: c.args.call?.hash,
@@ -121,8 +120,14 @@ const ProposalList = ({ className }: Props) => {
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
         const { callData, info } = agg
+        const isProposer = !!info?.depositor && selectedMultisigSignerList.includes(info.depositor)
         const neededSigners = getDifference(selectedMultisigSignerList, info?.approvals)
         const possibleSigners = getIntersection(addressList, neededSigners)
+
+        if (isProposer) {
+          possibleSigners.push(info.depositor)
+        }
+
         return (
           <Paper
             className="callWrapper"
@@ -136,9 +141,9 @@ const ProposalList = ({ className }: Props) => {
             <CallInfo
               aggregatedData={agg}
               children={
-                possibleSigners.length > 0 && (
+                (isProposer || possibleSigners.length > 0) && (
                   <div className="buttonWrapper">
-                    <Button onClick={onOpenModal}>Sign</Button>
+                    <Button onClick={onOpenModal}>Review</Button>
                   </div>
                 )
               }

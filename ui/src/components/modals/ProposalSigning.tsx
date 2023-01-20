@@ -22,45 +22,62 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
   const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
   const [addedCallData, setAddedCallData] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const canSubmit = useMemo(() => {
     if (!threshold) return false
     return proposalData.info?.approvals.length === threshold - 1
   }, [proposalData, threshold])
   const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
-  const onApprove = useCallback(async () => {
-    setIsSubmitting(true)
+  const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
+
+  const onSign = useCallback(async (isApproving: boolean) => {
     const otherSigners = selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address)
 
     if (!threshold) {
-      console.error('Threshold is undefined')
+      const error = 'Threshold is undefined'
+      console.error(error)
+      setErrorMessage(error)
       return
     }
 
     if (!proposalData?.hash) {
-      console.error('hash is undefined')
-      return
-    }
-
-    if (!isApiReady) {
-      console.error('api is not ready')
-      return
-    }
-
-    if (!selectedAccount) {
-      console.error('no selected address')
+      const error = 'hash is undefined'
+      console.error(error)
+      setErrorMessage(error)
       return
     }
 
     if (!proposalData?.info?.when.height) {
-      console.error('no time point')
+      const error = 'no time point'
+      console.error(error)
+      setErrorMessage(error)
       return
     }
 
+    if (!isApiReady) {
+      const error = 'api is not ready'
+      console.error(error)
+      setErrorMessage(error)
+      return
+    }
+
+    if (!selectedAccount) {
+      const error = 'no selected address'
+      console.error(error)
+      setErrorMessage(error)
+      return
+    }
+
+    setIsSubmitting(true)
     let tx: SubmittableExtrinsic<"promise">
 
-    // If we can submit the proposal and have the call data
-    if (canSubmit && (proposalData.callData || !!addedCallData)) {
+    // if it's a rejection we can do it right away
+    if (!isApproving) {
+      tx = api.tx.multisig.cancelAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash)
+
+      // If we can submit the proposal and have the call data
+    } else if (isApproving && canSubmit && (proposalData.callData || !!addedCallData)) {
       const call = api.createType('Call', proposalData.callData || addedCallData)
       const weight = await (await api.tx(call).paymentInfo(selectedAccount.address)).weight;
       tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, weight)
@@ -74,6 +91,8 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
     }
 
     tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, ({ events = [], status }) => {
+      setIsSubmitting(false)
+      onClose()
       console.log('Transaction status:', status.type);
 
       if (status.isInBlock) {
@@ -87,11 +106,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
         console.log('Finalized block hash', status.asFinalized.toHex());
       }
     });
-  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, addedCallData, selectedSigner, api])
-
-  const onReject = useCallback(() => {
-    setIsSubmitting(true)
-  }, [])
+  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, addedCallData, selectedSigner, api, onClose])
 
   return <Dialog
     fullWidth
@@ -112,19 +127,23 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
         <Grid item xs={12} md={11} className="callInfo">
           <CallInfo aggregatedData={proposalData} expanded />
         </Grid>
+        {!!errorMessage &&
+          <Grid item xs={12} md={11} className="errorMessage">
+            {errorMessage}
+          </Grid>}
         <Grid item xs={12} className="buttonContainer">
-          <Button
-            onClick={onReject}
+          {isProposerSelected && <Button
+            onClick={() => onSign(false)}
             disabled={isSubmitting}
           >
-            Reject
-          </Button>
-          <Button
-            onClick={onApprove}
+            Cancel
+          </Button>}
+          {!isProposerSelected && <Button
+            onClick={() => onSign(true)}
             disabled={isSubmitting}
           >
             Approve
-          </Button>
+          </Button>}
         </Grid>
       </Grid>
     </DialogContent>
