@@ -23,7 +23,8 @@ export const Header: React.FC = () => {
               <Button
                 component={Link}
                 to="/"
-                sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}>
+                sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
+              >
                 Home
               </Button>
               <Button

@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useContext, useMemo } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
@@ -7,12 +7,13 @@ import { ICON_SIZE, ICON_THEME } from "../constants";
 import { getDisplayAddress } from "../utils/getDisplayAddress";
 import ProposalList from "../components/ProposalList";
 import { Link } from "react-router-dom";
+import { useToasts } from "../contexts/ToastContext";
 
 interface Props {
   className?: string
 }
 
-const Landing = ({ className }: Props) => {
+const Home = ({ className }: Props) => {
   const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
   const displayAddress = useMemo(() => (selectedHasProxy ? selectedMultisig?.proxy?.id : selectedMultisig?.id) || "", [selectedHasProxy, selectedMultisig])
 
@@ -91,7 +92,7 @@ const Landing = ({ className }: Props) => {
   )
 }
 
-export default styled(Landing)(({ theme }) => `
+export default styled(Home)(({ theme }) => `
   padding: 1rem;
 
   .loader {
