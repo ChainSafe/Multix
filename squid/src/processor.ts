@@ -58,6 +58,9 @@ const processor = new SubstrateBatchProcessor()
         // },
         // } as const
     )
+    .addCall('Multisig.approve_as_multi')
+    .addCall('Multisig.cancel_as_multi')
+    .addCall('Multisig.as_multi_threshold_1')
     .addEvent('Proxy.PureCreated', {
         data: {
             event: {

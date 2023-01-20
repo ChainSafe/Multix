@@ -41,8 +41,6 @@ export const UserSpace = ({ children, className }: Props) => {
     )
   }
 
-  console.log('selectedAccount', selectedAccount)
-
   if (selectedAccount) return <>{children}</>
 
   if (extensionNotFound)

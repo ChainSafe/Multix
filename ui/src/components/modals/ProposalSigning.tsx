@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccountList } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
@@ -7,6 +7,7 @@ import { useMultisig } from "../../contexts/MultisigContext";
 import CallInfo from "../CallInfo";
 import { AggregatedData } from "../ProposalList";
 import SignerSelection from "../SignerSelection";
+import { SubmittableExtrinsic } from "@polkadot/api/types";
 
 interface Props {
   onClose: () => void
@@ -20,10 +21,15 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
-
+  const [addedCallData, setAddedCallData] = useState("")
+  const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
+  const canSubmit = useMemo(() => {
+    if (!threshold) return false
+    return proposalData.info?.approvals.length === threshold - 1
+  }, [proposalData, threshold])
+  const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
   const onApprove = useCallback(async () => {
     setIsSubmitting(true)
-    const threshold = selectedMultisig?.threshold
     const otherSigners = selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address)
 
     if (!threshold) {
@@ -31,8 +37,8 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
       return
     }
 
-    if (!proposalData?.hash || !proposalData?.callData || !proposalData?.call) {
-      console.error('proposalData is not fully filled', proposalData)
+    if (!proposalData?.hash) {
+      console.error('hash is undefined')
       return
     }
 
@@ -51,12 +57,21 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
       return
     }
 
-    const weight = (await proposalData.call.paymentInfo(selectedAccount.address)).weight;
+    let tx: SubmittableExtrinsic<"promise">
 
-    const tx = proposalData.info?.approvals.length === threshold - 1
-      ? api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData, weight)
-      : api.tx.multisig.approveAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash, weight)
+    // If we can submit the proposal and have the call data
+    if (canSubmit && (proposalData.callData || !!addedCallData)) {
+      const call = api.createType('Call', proposalData.callData || addedCallData)
+      const weight = await (await api.tx(call).paymentInfo(selectedAccount.address)).weight;
+      tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, weight)
 
+      // if we can't submit, all we need is the call hash
+    } else if (!canSubmit && proposalData.hash) {
+      tx = api.tx.multisig.approveAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash, 0)
+    } else {
+      console.error('We donnot have the required data to submit the call')
+      return
+    }
 
     tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, ({ events = [], status }) => {
       console.log('Transaction status:', status.type);
@@ -72,7 +87,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
         console.log('Finalized block hash', status.asFinalized.toHex());
       }
     });
-  }, [selectedMultisig, selectedMultisigSignerList, proposalData, isApiReady, selectedAccount, api, selectedSigner])
+  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, addedCallData, selectedSigner, api])
 
   const onReject = useCallback(() => {
     setIsSubmitting(true)
@@ -94,7 +109,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
         </Grid>
         <Grid item xs={0} md={5} />
         <Grid item xs={0} md={1} />
-        <Grid item xs={12} md={6} className="callInfo">
+        <Grid item xs={12} md={11} className="callInfo">
           <CallInfo aggregatedData={proposalData} expanded />
         </Grid>
         <Grid item xs={12} className="buttonContainer">

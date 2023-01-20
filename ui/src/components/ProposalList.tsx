@@ -3,26 +3,48 @@ import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { PendingTx, usePendingTx } from "../hooks/usePendingTx";
 import GestureIcon from '@mui/icons-material/Gesture';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 import { useMultisig } from "../contexts/MultisigContext";
 import { ApiPromise } from "@polkadot/api";
 import { useApi } from "../contexts/ApiContext";
-import { getDifference, getIntersection, getMultisigMethodAndArgs } from "../utils";
+import { getDifference, getIntersection } from "../utils";
 import { useAccountList } from "../contexts/AccountsContext";
 import ProposalSigningModal from "./modals/ProposalSigning";
 import CallInfo from "./CallInfo";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
+import { ISanitizedCall, parseGenericCall } from "../utils/decode";
+import { GenericCall } from '@polkadot/types';
+import { AnyJson } from '@polkadot/types/types'
 
 export interface AggregatedData {
-  call?: SubmittableExtrinsic<"promise", any>;
-  callData?: string;
+  // call?: GenericCall<AnyTuple> | false;
+  callData?: `0x${string}`;
   hash?: string;
   name?: string;
-  args?: Record<string, any>
+  args?: AnyJson;
   info?: PendingTx["info"]
 }
 
 interface Props {
   className?: string;
+}
+
+const getMultisigInfo = (c: ISanitizedCall) => {
+  if (typeof c.method !== "string" && c.method.pallet === "multisig") {
+    if (c.method.method === "asMulti" && typeof c.args.call?.method !== "string") {
+      console.log('here', c.args.call?.hash)
+      return {
+        name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
+        hash: c.args.call?.hash,
+        callData: c.args.callData
+      }
+    } else {
+      return {
+        name: "Unkown call",
+        hash: undefined,
+        callData: undefined
+      }
+    }
+  }
 }
 
 const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) => pendingTxData.map(async (pendingTx) => {
@@ -31,25 +53,22 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
   const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
 
-  // FIXME as any
-  const res = getMultisigMethodAndArgs((ext?.toHuman() as any)?.method)
-  const call = api.tx[res.section][res.method](...Object.values(res.args))
-  const callHash = call.method.hash.toHex()
-  const callData = call.toHex().replace("0x2804", "0x")
-  console.log('call data', callData)
-  console.log('method hash', callHash)
+  const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+  // console.log('decoded', decoded)
+  const { name, hash, callData } = getMultisigInfo(decoded) || {}
 
-  if (callHash !== pendingTx.hash) {
-    console.log('oops we didnot find the right extrinsic', call.toHex(), pendingTx.hash)
-    return {}
+  if (!!hash && hash !== pendingTx.hash) {
+    console.log('oops we didnot find the right extrinsic', hash, pendingTx.hash)
+    return
   }
 
+  const call = !!hash && ext.registry.createType('Call', callData)
+
   return {
-    call,
     callData,
-    hash: callHash,
-    name: `${res.section}.${res.method}`,
-    args: res.args,
+    hash: hash || pendingTx.hash,
+    name,
+    args: call && call.toHuman().args,
     info: pendingTx.info
   }
 })
@@ -84,7 +103,8 @@ const ProposalList = ({ className }: Props) => {
 
     Promise.all(agregatedDataPromise)
       .then((res) => {
-        setAggregatedData(res)
+        const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
+        setAggregatedData(filtered)
       })
       .catch(console.error)
 
@@ -108,13 +128,21 @@ const ProposalList = ({ className }: Props) => {
             className="callWrapper"
             key={`${index}-${callData}`}
           >
-            <GestureIcon className="callIcon" />
-            <CallInfo aggregatedData={agg} />
-            {possibleSigners.length > 0 && (
-              <div className="buttonWrapper">
-                <Button onClick={onOpenModal}>Sign</Button>
-              </div>
-            )}
+            {!agg.callData
+              ? <QuestionMarkIcon className="callIcon unknownCall" />
+              : <GestureIcon className="callIcon" />
+            }
+
+            <CallInfo
+              aggregatedData={agg}
+              children={
+                possibleSigners.length > 0 && (
+                  <div className="buttonWrapper">
+                    <Button onClick={onOpenModal}>Sign</Button>
+                  </div>
+                )
+              }
+            />
             {isSigningModalOpen && (
               <ProposalSigningModal
                 possibleSigners={possibleSigners}
@@ -139,6 +167,7 @@ export default styled(ProposalList)(({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;
+    margin-bottom: 1rem;
   }
 
   .callIcon {
@@ -146,6 +175,11 @@ export default styled(ProposalList)(({ theme }) => `
     background-color: #ebebeb;
     margin: .5rem;
     padding: 1rem;
+    height: auto;
+
+    &.unknownCall {
+      height: 5rem;
+    }
   }
 
   .callName {
