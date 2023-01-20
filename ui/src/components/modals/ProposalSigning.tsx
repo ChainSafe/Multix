@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccountList } from "../../contexts/AccountsContext";
@@ -138,16 +138,15 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
     setIsSubmitting(true)
     let tx: SubmittableExtrinsic<"promise">
 
-    // if it's a rejection we can do it right away
+    // if it's a rejection we can send it right away, no need for weight or calldata
     if (!isApproving) {
       tx = api.tx.multisig.cancelAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash)
 
       // If we can submit the proposal and have the call data
-    } else if (isApproving && canSubmit && callInfo.call && callInfo.weight) {
-
+    } else if (canSubmit && callInfo.call && callInfo.weight) {
       tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, callInfo.weight)
 
-      // if we can't submit, all we need is the call hash
+      // if we can't submit yet (more signatures required), all we need is the call hash
     } else if (!canSubmit && proposalData.hash) {
       tx = api.tx.multisig.approveAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash, 0)
     } else {
@@ -170,7 +169,12 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           const { data, method, section } = event
           console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
 
-          if (!!event && api.events.system.ExtrinsicFailed.is(event)) {
+          if (api.events.system.ExtrinsicSuccess.is(event)) {
+            addToast({ title: "Tx succeeded", type: "success" })
+            onSuccess()
+          }
+
+          if (api.events.system.ExtrinsicFailed.is(event)) {
             // extract the data for this event
             const [dispatchError] = data;
 
@@ -189,25 +193,8 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
             errorInfo && addToast({ title: errorInfo, type: "error" })
           }
         });
-
-      } else if (status.isFinalized && !errorInfo) {
-        const success = events.find(
-          ({ event }) => event.method === "ExtrinsicSuccess"
-        );
-        const failed = events.find(
-          ({ event }) => event.method === "ExtrinsicFailed"
-        );
-
+      } else if (status.isFinalized) {
         console.log('Finalized block hash', status.asFinalized.toHex());
-
-        if (success) {
-          addToast({ title: "Tx finalized", type: "success" })
-          onSuccess()
-        } else if (failed) {
-          addToast({ title: `Tx failed ${failed.toHuman(true)}`, type: "error" })
-        } else {
-          addToast({ title: "Unknown extrinsic result", type: "error" })
-        }
       }
     }).catch((error: Error) => {
       setIsSubmitting(false)
@@ -217,7 +204,6 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")
-    console.log('event', event.target.value)
     setAddedCallData(event.target.value)
   }, [])
 
@@ -236,7 +222,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           <SignerSelection possibleSigners={possibleSigners} onChange={() => setErrorMessage("")} />
         </Grid>
         <Grid item xs={0} md={5} />
-        {!isProposerSelected && !!needAddedCallData && (
+        {!isProposerSelected && needAddedCallData && (
           <>
             <Grid item xs={0} md={1} />
             <Grid item xs={12} md={6}>
@@ -246,7 +232,6 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
                 onChange={onAddedCallDataChange}
                 value={addedCallData}
                 fullWidth
-              // disabled={!!callInfo.method && !errorMessage}
               />
             </Grid>
             <Grid item xs={0} md={5} />
@@ -261,7 +246,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
             </Grid>
           </>
         )}
-        {!!needAddedCallData && !!callInfo.method && needAddedCallData && (
+        {!!needAddedCallData && !!callInfo.method && (
           <>
             <Grid item xs={0} md={1} />
             <Grid item xs={12} md={11} className="callInfo">
@@ -286,7 +271,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           }
           {!isProposerSelected && <Button
             onClick={() => onSign(true)}
-            disabled={isSubmitting || (!!needAddedCallData && !callInfo.method)}
+            disabled={isSubmitting || (needAddedCallData && !callInfo.method)}
           >
             Approve
           </Button>}
