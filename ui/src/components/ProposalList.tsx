@@ -75,7 +75,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 const ProposalList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
   const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
-  const { data: pendingTxData, isLoading: isLoadingPendingTxs } = usePendingTx(selectedMultisig?.id)
+  const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccountList()
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
@@ -153,6 +153,7 @@ const ProposalList = ({ className }: Props) => {
                 possibleSigners={possibleSigners}
                 onClose={onClose}
                 proposalData={agg}
+                onSuccess={refresh}
               />
             )}
           </Paper>

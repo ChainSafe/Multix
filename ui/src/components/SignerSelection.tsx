@@ -10,9 +10,10 @@ import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 interface Props {
   className?: string;
   possibleSigners: string[];
+  onChange: () => void;
 }
 
-const getOptionLabel = (option: string | InjectedAccountWithMeta | null | undefined) => {
+const getOptionLabel = (option: string | InjectedAccountWithMeta | null | undefined,) => {
   if (!option) return ""
 
   return typeof option === "string"
@@ -20,7 +21,7 @@ const getOptionLabel = (option: string | InjectedAccountWithMeta | null | undefi
     : option.address
 }
 
-const SignerSelection = ({ className, possibleSigners }: Props) => {
+const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   const { selectAccount, selectedAccount, accountList } = useAccountList()
   const signersList = useMemo(() =>
     accountList?.filter((account) => possibleSigners.includes(account.address)) || []
@@ -45,8 +46,8 @@ const SignerSelection = ({ className, possibleSigners }: Props) => {
 
   const onChangeSigner = useCallback((_: any, newSelected: typeof signersList[0] | null | undefined) => {
     newSelected && selectAccount(newSelected)
-
-  }, [selectAccount])
+    onChange()
+  }, [onChange, selectAccount])
 
   // const handleSpecialKeys = useCallback((e: any) => {
   //   if (['Enter', "Escape"].includes(e.key)) {

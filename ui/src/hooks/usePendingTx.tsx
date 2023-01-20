@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
 import { WhenInfo } from "../types"
 
@@ -12,7 +12,7 @@ export const usePendingTx = (multisigAddress?: string) => {
   const [data, setData] = useState<PendingTx[]>([])
   const dataRef = useRef<PendingTx[]>([])
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     dataRef.current = []
     setData(dataRef.current)
 
@@ -43,5 +43,9 @@ export const usePendingTx = (multisigAddress?: string) => {
       .catch(console.error)
   }, [api, isApiReady, multisigAddress])
 
-  return { isLoading, data: dataRef.current }
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  return { isLoading, data: dataRef.current, refresh }
 }

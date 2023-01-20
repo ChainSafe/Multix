@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccountList } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
@@ -8,16 +8,26 @@ import CallInfo from "../CallInfo";
 import { AggregatedData } from "../ProposalList";
 import SignerSelection from "../SignerSelection";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
+import { GenericCall } from "@polkadot/types";
 import { useToasts } from "../../contexts/ToastContext";
+import { Weight } from "@polkadot/types/interfaces";
 
 interface Props {
   onClose: () => void
   className?: string
   possibleSigners: string[]
   proposalData: AggregatedData
+  onSuccess: () => void
 }
 
-const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: Props) => {
+interface SubmittingCall {
+  call?: GenericCall
+  method?: string;
+  section?: string;
+  weight?: Weight;
+}
+
+const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
@@ -32,6 +42,60 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
   }, [proposalData, threshold])
   const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
   const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
+  const [callInfo, setCallInfo] = useState<SubmittingCall>({})
+  console.log('callInfo', callInfo)
+
+  useEffect(() => {
+    if (isProposerSelected) {
+      setAddedCallData("")
+      setErrorMessage("")
+    }
+  }, [isProposerSelected])
+
+  useEffect(() => {
+    // the proposer doesn't need the call data
+    if (isProposerSelected) {
+      return
+    }
+
+    if (!api) {
+      return
+    }
+
+    if (!proposalData.callData && !addedCallData) {
+      return
+    }
+
+    if (!selectedAccount) {
+      return
+    }
+
+    let call: GenericCall
+    try {
+      call = api.createType('Call', proposalData.callData || addedCallData)
+    } catch {
+      setCallInfo({})
+      return
+    }
+
+    if (call.hash.toHex() !== proposalData.hash) {
+      setErrorMessage('The callData provided doesnot match')
+      setCallInfo({})
+      return
+    }
+
+    api.tx(call).paymentInfo(selectedAccount.address).then(
+      ({ weight }) => {
+        setCallInfo({
+          call,
+          weight,
+          method: call.method,
+          section: call.section
+        })
+      }
+    )
+
+  }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
 
   const onSign = useCallback(async (isApproving: boolean) => {
     const otherSigners = selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address)
@@ -44,28 +108,28 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
     }
 
     if (!proposalData?.hash) {
-      const error = 'hash is undefined'
+      const error = 'Hash is undefined'
       console.error(error)
       setErrorMessage(error)
       return
     }
 
     if (!proposalData?.info?.when.height) {
-      const error = 'no time point'
+      const error = 'No time point found'
       console.error(error)
       setErrorMessage(error)
       return
     }
 
     if (!isApiReady) {
-      const error = 'api is not ready'
+      const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
       return
     }
 
     if (!selectedAccount) {
-      const error = 'no selected address'
+      const error = 'No selected address'
       console.error(error)
       setErrorMessage(error)
       return
@@ -79,10 +143,9 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
       tx = api.tx.multisig.cancelAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash)
 
       // If we can submit the proposal and have the call data
-    } else if (isApproving && canSubmit && (proposalData.callData || !!addedCallData)) {
-      const call = api.createType('Call', proposalData.callData || addedCallData)
-      const weight = await (await api.tx(call).paymentInfo(selectedAccount.address)).weight;
-      tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, weight)
+    } else if (isApproving && canSubmit && callInfo.call && callInfo.weight) {
+
+      tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, callInfo.weight)
 
       // if we can't submit, all we need is the call hash
     } else if (!canSubmit && proposalData.hash) {
@@ -139,6 +202,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
 
         if (success) {
           addToast({ title: "Tx finalized", type: "success" })
+          onSuccess()
         } else if (failed) {
           addToast({ title: `Tx failed ${failed.toHuman(true)}`, type: "error" })
         } else {
@@ -149,7 +213,13 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, addedCallData, selectedSigner, api, onClose, addToast])
+  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, api, addedCallData, onClose, addToast, onSuccess])
+
+  const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setErrorMessage("")
+    console.log('event', event.target.value)
+    setAddedCallData(event.target.value)
+  }, [])
 
   return <Dialog
     fullWidth
@@ -163,29 +233,60 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData }: 
       <Grid container>
         <Grid item xs={0} md={1} />
         <Grid item xs={12} md={6}>
-          <SignerSelection possibleSigners={possibleSigners} />
+          <SignerSelection possibleSigners={possibleSigners} onChange={() => setErrorMessage("")} />
         </Grid>
         <Grid item xs={0} md={5} />
+        {!isProposerSelected && !!needAddedCallData && (
+          <>
+            <Grid item xs={0} md={1} />
+            <Grid item xs={12} md={6}>
+              <TextField
+                className="addedCallData"
+                label="Call data"
+                onChange={onAddedCallDataChange}
+                value={addedCallData}
+                fullWidth
+              // disabled={!!callInfo.method && !errorMessage}
+              />
+            </Grid>
+            <Grid item xs={0} md={5} />
+          </>
+        )}
+
+        {!needAddedCallData && (
+          <>
+            <Grid item xs={0} md={1} />
+            <Grid item xs={12} md={11} className="callInfo">
+              <CallInfo aggregatedData={proposalData} expanded />
+            </Grid>
+          </>
+        )}
+        {!!needAddedCallData && !!callInfo.method && needAddedCallData && (
+          <>
+            <Grid item xs={0} md={1} />
+            <Grid item xs={12} md={11} className="callInfo">
+              <h4>{callInfo.method}.{callInfo.section}</h4>
+            </Grid>
+          </>
+        )}
         <Grid item xs={0} md={1} />
-        <Grid item xs={12} md={11} className="callInfo">
-          <CallInfo aggregatedData={proposalData} expanded />
+        <Grid item xs={12} md={11} className="errorMessage">
+          {!!errorMessage &&
+            errorMessage
+          }
         </Grid>
-        {!!errorMessage &&
-          <Grid item xs={12} md={11} className="errorMessage">
-            {errorMessage}
-          </Grid>}
         <Grid item xs={12} className="buttonContainer">
           {isProposerSelected &&
             <Button
               onClick={() => onSign(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              Reject
             </Button>
           }
           {!isProposerSelected && <Button
             onClick={() => onSign(true)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || (!!needAddedCallData && !callInfo.method)}
           >
             Approve
           </Button>}
@@ -200,4 +301,14 @@ export default styled(ProposalSigning)(({ theme }) => `
     text-align: right;
     margin-top: 1rem;
   }
+
+  .addedCallData {
+    margin-top: 1rem;
+  }
+
+  .errorMessage {
+    margin-top: 0.5rem;
+    color: firebrick;
+  }
+
 `)
