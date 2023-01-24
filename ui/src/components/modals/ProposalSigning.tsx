@@ -259,7 +259,7 @@ export default styled(ProposalSigning)(({ theme }) => `
 
   .errorMessage {
     margin-top: 0.5rem;
-    color: firebrick;
+    color: ${theme.custom.text.errorColor};
   }
 
 `)

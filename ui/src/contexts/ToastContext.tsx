@@ -22,7 +22,6 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
     const toasts = useRef<Toast[]>([])
 
     const removeToast = useCallback((toastId: number) => {
-        console.log('remove', toastId)
         toasts.current = toasts.current.filter((toast) => toast.id !== toastId)
         setToastQueue(toasts.current)
     }, [toasts])

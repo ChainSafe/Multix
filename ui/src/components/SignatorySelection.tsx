@@ -15,13 +15,13 @@ interface Props {
 const SignatorySelection = ({ className, signatories, setSignatories }: Props) => {
 
   const addSignatory = useCallback((newSignatory: string) => {
-    const newSet = [...signatories, newSignatory]
-    setSignatories(newSet)
+    const newSignatories = [...signatories, newSignatory]
+    setSignatories(newSignatories)
   }, [setSignatories, signatories])
 
   const removeSignatory = useCallback((indexToDelete: number) => {
-    const newSet = signatories.filter((_, index) => indexToDelete !== index)
-    setSignatories(newSet)
+    const newSignatories = signatories.filter((_, index) => indexToDelete !== index)
+    setSignatories(newSignatories)
   }, [setSignatories, signatories])
 
   return (

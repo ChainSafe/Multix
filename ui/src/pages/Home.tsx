@@ -1,6 +1,6 @@
-import { useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
-import { Box, Button, Chip, CircularProgress, Grid } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
 import Identicon from "@polkadot/react-identicon";
 import { ICON_SIZE, ICON_THEME } from "../constants";
@@ -8,14 +8,26 @@ import { getDisplayAddress } from "../utils/getDisplayAddress";
 import ProposalList from "../components/ProposalList";
 import { Link } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
+import SendIcon from '@mui/icons-material/Send';
+import Send from "../components/modals/Send";
+import { usePendingTx } from "../hooks/usePendingTx";
 
 interface Props {
   className?: string
 }
 
 const Home = ({ className }: Props) => {
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
+  const { refresh } = usePendingTx()
   const displayAddress = useMemo(() => (selectedHasProxy ? selectedMultisig?.proxy?.id : selectedMultisig?.id) || "", [selectedHasProxy, selectedMultisig])
+
+  const onClose = useCallback(() => setIsSendModalOpen(false), [])
+
+  const onSuccess = useCallback(() => {
+    onClose()
+    refresh()
+  }, [onClose, refresh])
 
   return (
     <Grid
@@ -54,6 +66,13 @@ const Home = ({ className }: Props) => {
                   className="identicon"
                 />
                 {getDisplayAddress(displayAddress)}
+                <IconButton
+                  className="sendButton"
+                  aria-label="send"
+                  onClick={() => setIsSendModalOpen(true)}
+                >
+                  <SendIcon />
+                </IconButton>
               </div>
             </div>
             <div className="signatoriesWrapper">
@@ -79,6 +98,12 @@ const Home = ({ className }: Props) => {
           <ProposalList />
         </div>
       </Grid>
+      {isSendModalOpen && (
+        <Send
+          onClose={onClose}
+          onSuccess={onSuccess}
+        />
+      )}
     </Grid>
   )
 }
@@ -97,7 +122,7 @@ export default styled(Home)(({ theme }) => `
   .threshold {
     position: relative;
     top: -1rem;
-    background-color: #ebebeb;
+    background-color: ${theme.custom.background.backgroundColorLightGray};
     margin-right: -0.5rem;
   }
 
@@ -119,5 +144,10 @@ export default styled(Home)(({ theme }) => `
     & > h3 {
       margin-bottom: 0;
     }
+  }
+
+  .sendButton {
+    margin-left: 1rem;
+    height: 2.5rem;
   }
 `)

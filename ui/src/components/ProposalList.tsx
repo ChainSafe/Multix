@@ -15,6 +15,7 @@ import { ISanitizedCall, parseGenericCall } from "../utils/decode";
 import { GenericCall } from '@polkadot/types';
 import { AnyJson } from '@polkadot/types/types';
 import FlareIcon from '@mui/icons-material/Flare';
+import { argsToArgsConfig } from "graphql/type/definition";
 
 export interface AggregatedData {
   callData?: `0x${string}`;
@@ -28,22 +29,42 @@ interface Props {
   className?: string;
 }
 
-const getMultisigInfo = (c: ISanitizedCall) => {
-  if (typeof c.method !== "string" && c.method.pallet === "multisig") {
-    if (c.method.method === "asMulti" && typeof c.args.call?.method !== "string") {
-      return {
-        name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
-        hash: c.args.call?.hash,
-        callData: c.args.callData
+const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
+  const result: Partial<AggregatedData>[] = []
+
+  const getCallResult = (c: ISanitizedCall) => {
+    if (typeof c.method !== "string" && c.method.pallet === "multisig") {
+      if (c.method.method === "asMulti" && typeof c.args.call?.method !== "string") {
+        result.push({
+          name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
+          hash: c.args.call?.hash,
+          callData: c.args.callData as AggregatedData['callData']
+        })
+      } else {
+        return {
+          name: "Unkown call",
+          hash: undefined,
+          callData: undefined
+        }
       }
+      // this is not a multisig call
+      // try to dig deeper
     } else {
-      return {
-        name: "Unkown call",
-        hash: undefined,
-        callData: undefined
+      if (!!c.args.calls) {
+        for (const call of c.args.calls) {
+          getCallResult(call)
+        }
+      } else if (!!c.args.call) {
+        getCallResult(c.args.call)
+      } else {
+        // this is not interresting to us
+        // console.error("Unexpected call", c)
       }
     }
   }
+
+  getCallResult(c)
+  return result
 }
 
 const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) => pendingTxData.map(async (pendingTx) => {
@@ -54,12 +75,24 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
   const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
   // console.log('decoded', decoded)
-  const { name, hash, callData } = getMultisigInfo(decoded) || {}
+  const multisigInfos = getMultisigInfo(decoded) || {}
 
-  if (!!hash && hash !== pendingTx.hash) {
-    console.log('oops we didnot find the right extrinsic', hash, pendingTx.hash)
+  // console.log(multisigInfos)
+
+  const info = multisigInfos.find(({ name, hash, callData }) => {
+    if (!!hash && hash === pendingTx.hash) {
+      return { name, hash, callData }
+    }
+
+    return false
+  })
+
+  if (!info) {
+    console.log('oops we didnot find the right extrinsic', multisigInfos, pendingTx.hash)
     return
   }
+
+  const { name, hash, callData } = info
 
   const call = !!hash && ext.registry.createType('Call', callData)
 
@@ -71,6 +104,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     info: pendingTx.info
   }
 })
+// })
 
 const ProposalList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
@@ -196,7 +230,7 @@ export default styled(ProposalList)(({ theme }) => `
 
   .callIcon {
     font-size: 7rem;
-    background-color: #ebebeb;
+    background-color: ${theme.custom.background.backgroundColorLightGray};
     margin: .5rem;
     padding: 1rem;
     height: auto;

@@ -9,6 +9,7 @@ export const theme = createTheme({
     custom: {
         text: {
             addressColorLightGray: '#777575',
+            errorColor: "firebrick"
         },
         background: {
             backgroundColorLightGray: '#ebebeb'
