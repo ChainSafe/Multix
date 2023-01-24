@@ -3,19 +3,17 @@ import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
 import SignatorySelection from "../../components/SignatorySelection";
-import { encodeAddress, createKeyMulti } from "@polkadot/util-crypto";
+import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-crypto";
 import { config } from "../../config";
 import { useAccountList } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import Summary from "./Summary";
+import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useNavigate } from "react-router-dom";
+import { useToasts } from "../../contexts/ToastContext";
 
 interface Props {
   className?: string
-}
-
-export interface Signatory {
-  address: string
-  name?: string
 }
 
 const steps = [
@@ -24,12 +22,15 @@ const steps = [
   "Review"
 ]
 const MultisigCreation = ({ className }: Props) => {
-  const [signatories, setSignatories] = useState<Signatory[]>([])
+  const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount } = useAccountList()
+  const navigate = useNavigate()
+  const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/") })
+  const { addToast } = useToasts()
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -56,9 +57,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const signatoriesAddresses = signatories.map(({ address }) => address)
-
-    if (!signatoriesAddresses.includes(selectedAccount.address)) {
+    if (!signatories.includes(selectedAccount.address)) {
       console.error('selected account not part of signatories')
       return
     }
@@ -68,29 +67,20 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = signatoriesAddresses.filter((sig) => sig !== selectedAccount.address)
-    const multiAddress = encodeAddress(createKeyMulti(signatoriesAddresses, threshold), config.prefix)
+    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
+    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), config.prefix)
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
     const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
 
-    batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, ({ events = [], status }) => {
-      console.log('Transaction status:', status.type);
 
-      if (status.isInBlock) {
-        console.log('Included at block hash', status.asInBlock.toHex());
-        console.log('Events:');
+    batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .catch((error: Error) => {
+        addToast({ title: error.message, type: "error" })
+      })
 
-        events.forEach(({ event: { data, method, section }, phase }) => {
-          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
-        });
-      } else if (status.isFinalized) {
-        console.log('Finalized block hash', status.asFinalized.toHex());
-      }
-    });
-
-  }, [api, isApiReady, selectedAccount, selectedSigner, signatories, threshold])
+  }, [addToast, api, isApiReady, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
 
   return (
     <Grid

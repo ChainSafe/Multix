@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { useAccountList } from "../contexts/AccountsContext"
 
 export type AccountNames = { [address: string]: string }
 
@@ -6,6 +7,16 @@ const LOCALSTORAGE_ACCOUNT_KEY = "multix.accountNames"
 
 export const useAccountNames = () => {
     const [accoutNames, setAccountNames] = useState<AccountNames>({})
+    const { getAccountByAddress } = useAccountList()
+
+    const getNamesWithExtension = useCallback((address: string) => {
+        const extensionAccount = getAccountByAddress(address)
+        if (extensionAccount) {
+            return extensionAccount.meta.name
+        }
+
+        return accoutNames[address] || ""
+    }, [accoutNames, getAccountByAddress])
 
     const loadNames = useCallback(() => {
         const names = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
@@ -54,5 +65,6 @@ export const useAccountNames = () => {
         deleteName,
         saveNames,
         loadNames,
+        getNamesWithExtension
     }
 }

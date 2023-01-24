@@ -1,33 +1,36 @@
 import { Box, Chip, Paper } from "@mui/material";
 import styled from "styled-components";
-import { Signatory } from ".";
-import AccountSelection from "../../components/AccountSelection";
+import AccountDisplay from "../../components/AccountDisplay";
+import SignerSelection from "../../components/SignerSelection";
+import { useAccountList } from "../../contexts/AccountsContext";
+import { getIntersection } from "../../utils";
 
 interface Props {
   className?: string;
   threshold?: number;
-  signatories: Signatory[]
+  signatories: string[]
 }
 
 const Summary = ({ className, threshold, signatories }: Props) => {
-
+  const { addressList } = useAccountList()
+  const possibleSigners = getIntersection(addressList, signatories)
 
 
   return (
     <Box className={className} >
-      <h4>You are about to create a MultiX with these signers:</h4>
+      <h3>You are about to create a MultiX with:</h3>
       <Paper elevation={2} className="paper">
-        {signatories.map((signatory, index) => (
-          <AccountSelection
+        <h4 className="threshold">
+          Threshold: <Chip label={`${threshold}/${signatories.length}`} />
+        </h4>
+        <h4>Signatories:</h4>
+        {signatories.map((signatory) => (
+          <AccountDisplay
+            key={signatory}
+            address={signatory}
             className="account"
-            disabled
-            value={signatory.address}
-            inputLabel={`Account ${index + 1}`}
           />
         ))}
-        <Box className="threshold">
-          Threshold <Chip label={`${threshold}/${signatories.length}`} />
-        </Box>
       </Paper>
       <Box className="explainer">
         In the next step you will send a transaction to:
@@ -43,13 +46,16 @@ const Summary = ({ className, threshold, signatories }: Props) => {
           </li>
         </ul>
       </Box>
+      <Box>
+        <SignerSelection possibleSigners={possibleSigners} />
+      </Box>
     </Box>
   )
 }
 
 export default styled(Summary)(({ theme }) => `
-  .account {
-    margin-bottom: 1rem;
+  .account:last-child {
+    margin-bottom: 0;
   }
 
   .paper {
@@ -58,6 +64,7 @@ export default styled(Summary)(({ theme }) => `
   }
 
   .threshold {
-    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
   }
 `)

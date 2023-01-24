@@ -7,7 +7,7 @@ type ToastContextProps = {
     children: React.ReactNode | React.ReactNode[]
 }
 
-interface IToastContext {
+export interface IToastContext {
     addToast: (toastParams: Omit<Toast, "id">) => number
     removeToast: (toastId: number) => void
     removeAllToasts: () => void

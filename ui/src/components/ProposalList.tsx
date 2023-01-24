@@ -13,10 +13,10 @@ import ProposalSigningModal from "./modals/ProposalSigning";
 import CallInfo from "./CallInfo";
 import { ISanitizedCall, parseGenericCall } from "../utils/decode";
 import { GenericCall } from '@polkadot/types';
-import { AnyJson } from '@polkadot/types/types'
+import { AnyJson } from '@polkadot/types/types';
+import FlareIcon from '@mui/icons-material/Flare';
 
 export interface AggregatedData {
-  // call?: GenericCall<AnyTuple> | false;
   callData?: `0x${string}`;
   hash?: string;
   name?: string;
@@ -117,6 +117,10 @@ const ProposalList = ({ className }: Props) => {
       <CircularProgress />
     </Box>)
     }
+    {!pendingTxData.length && !isLoadingPendingTxs && (
+      <Paper className="noCall" >
+        <FlareIcon className="noCallIcon" />
+        <div className="noCallText">You're all set!</div></Paper>)}
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
         const { callData, info } = agg
@@ -164,6 +168,20 @@ const ProposalList = ({ className }: Props) => {
 }
 
 export default styled(ProposalList)(({ theme }) => `
+  .noCallIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .noCall {
+    background-color: ${theme.custom.background.backgroundColorLightGray};
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+
   .loader {
     display: flex;
     justify-content: center;

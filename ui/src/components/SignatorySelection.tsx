@@ -1,22 +1,21 @@
 import { Box } from "@mui/material";
 import { useCallback } from "react";
 import styled from "styled-components";
-import { Signatory } from "../pages/Creation";
 import AccountSelection from "./AccountSelection";
 import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountDisplay from "./AccountDisplay";
 
 interface Props {
   className?: string;
-  signatories: Signatory[]
-  setSignatories: React.Dispatch<React.SetStateAction<Signatory[]>>
+  signatories: string[]
+  setSignatories: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const SignatorySelection = ({ className, signatories, setSignatories }: Props) => {
 
   const addSignatory = useCallback((newSignatory: string) => {
-    const newSet = [...signatories, { address: newSignatory }]
+    const newSet = [...signatories, newSignatory]
     setSignatories(newSet)
   }, [setSignatories, signatories])
 
@@ -27,50 +26,37 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
 
   return (
     <Box className={className}>
-      <>
-        {signatories.map(({ address }, index) => (
-          <div
-            className="selectedList"
-            key={address}
-          >
-            <AccountSelection
-              className="accountDropdown"
-              disabled
-              value={address}
-              inputLabel={`Account ${index + 1}`}
-            />
-            <IconButton
-              className="signatoryButton"
-              aria-label="delete"
-              onClick={() => removeSignatory(index)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        ))}
-        {signatories.length > 0 && (
-          <div className="additionText">
-            New signatory...
-          </div>
-        )}
-        <Box className="addSignatoryField">
-          <AccountSelection
-            className="accountDropdown"
-            currentSignatories={signatories.map(s => s.address)}
-            addSignatory={addSignatory}
-            value=""
-          />
+      {signatories.map((address, index) => (
+        <div
+          className="selectedList"
+          key={address}
+        >
+          <AccountDisplay address={address} />
           <IconButton
-            className="signatoryButton"
-            aria-label="add"
-            onClick={() => {
-              //noop
-            }}
+            className="deleteButton"
+            aria-label="delete"
+            onClick={() => removeSignatory(index)}
           >
-            <AddIcon />
+            <DeleteIcon />
           </IconButton>
-        </Box>
-      </>
+        </div>
+      ))}
+      {signatories.length > 0 && (
+        <div className="additionText">
+          New signatory...
+        </div>
+      )}
+      <Box className="addSignatoryField">
+        <AccountSelection
+          className="accountDropdown"
+          currentSignatories={signatories}
+          addSignatory={addSignatory}
+          withName
+          withAddButton
+          //make sure the first state is empty
+          value=""
+        />
+      </Box>
     </Box>
   )
 }
@@ -80,12 +66,13 @@ export default styled(SignatorySelection)(({ theme }) => `
     margin-bottom: 1rem;
   }
 
-  .signatoryButton {
+  .deleteButton, .addButton {
     margin-left: 1rem;
-    width: 3rem;
+    height: 2.5rem;
   }
   .accountDropdown {
           flex: 1;
+          align-items: center;
       }
 
   .selectedList, .addSignatoryField {

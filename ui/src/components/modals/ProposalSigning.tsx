@@ -11,6 +11,8 @@ import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { GenericCall } from "@polkadot/types";
 import { useToasts } from "../../contexts/ToastContext";
 import { Weight } from "@polkadot/types/interfaces";
+import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { sortAddresses } from '@polkadot/util-crypto';
 
 interface Props {
   onClose: () => void
@@ -43,7 +45,12 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
   const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
   const [callInfo, setCallInfo] = useState<SubmittingCall>({})
-  console.log('callInfo', callInfo)
+  const onIsSubmitting = useCallback(() => {
+    setIsSubmitting(false)
+    onClose()
+  }, [onClose])
+
+  const signCallback = useGetSigningCallback({ onSuccess, onIsSubmitting })
 
   useEffect(() => {
     if (isProposerSelected) {
@@ -98,7 +105,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
 
   const onSign = useCallback(async (isApproving: boolean) => {
-    const otherSigners = selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address)
+    const otherSigners = sortAddresses(selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -154,53 +161,12 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       return
     }
 
-    tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, ({ events = [], status }) => {
-      setIsSubmitting(false)
-      onClose()
-      addToast({ title: `Tx status: ${status.type}`, type: "loading" })
-      console.log('Transaction status:', status.type);
-      let errorInfo;
-
-      if (status.isInBlock) {
-        console.log('Included at block hash', status.asInBlock.toHex());
-        console.log('Events:');
-
-        events.forEach(({ event, phase }) => {
-          const { data, method, section } = event
-          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
-
-          if (api.events.system.ExtrinsicSuccess.is(event)) {
-            addToast({ title: "Tx succeeded", type: "success" })
-            onSuccess()
-          }
-
-          if (api.events.system.ExtrinsicFailed.is(event)) {
-            // extract the data for this event
-            const [dispatchError] = data;
-
-            // decode the error
-            if ((dispatchError as any).isModule) {
-              // for module errors, we have the section indexed, lookup
-              // (For specific known errors, we can also do a check against the
-              // api.errors.<module>.<ErrorName>.is(dispatchError.asModule) guard)
-              const decoded = api.registry.findMetaError((dispatchError as any).asModule);
-
-              errorInfo = `${decoded.docs} - ${decoded.section}.${decoded.name}`;
-            } else {
-              // Other, CannotLookup, BadOrigin, no extra info
-              errorInfo = dispatchError.toString();
-            }
-            errorInfo && addToast({ title: errorInfo, type: "error" })
-          }
-        });
-      } else if (status.isFinalized) {
-        console.log('Finalized block hash', status.asFinalized.toHex());
-      }
-    }).catch((error: Error) => {
+    tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback
+    ).catch((error: Error) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, api, addedCallData, onClose, addToast, onSuccess])
+  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")

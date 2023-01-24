@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react"
+import { useMemo } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
@@ -7,7 +7,7 @@ import { ICON_SIZE, ICON_THEME } from "../constants";
 import { getDisplayAddress } from "../utils/getDisplayAddress";
 import ProposalList from "../components/ProposalList";
 import { Link } from "react-router-dom";
-import { useToasts } from "../contexts/ToastContext";
+import AccountDisplay from "../components/AccountDisplay";
 
 interface Props {
   className?: string
@@ -60,17 +60,8 @@ const Home = ({ className }: Props) => {
               <h3>Signatories</h3>
               <ul className="addressList">
                 {selectedMultisig.signers.map(({ signer }) =>
-                  <li
-                    key={signer.id}
-                    className="address"
-                  >
-                    <Identicon
-                      value={signer.id}
-                      size={ICON_SIZE}
-                      theme={ICON_THEME}
-                      className="identicon"
-                    />
-                    {getDisplayAddress(signer.id)}
+                  <li key={signer.id} >
+                    <AccountDisplay address={signer.id} />
                   </li>
                 )}
               </ul>
@@ -114,7 +105,7 @@ export default styled(Home)(({ theme }) => `
     list-style-type: none;
   }
 
-  .address, .multisigHeader {
+  .multisigHeader {
     display: flex;
     align-items: center;
     margin-bottom: .5rem;
