@@ -1,32 +1,22 @@
-import { Badge, Box } from "@mui/material";
-import Identicon from "@polkadot/react-identicon";
+import { Box } from "@mui/material";
 import styled from "styled-components";
-import { ICON_SIZE, ICON_THEME } from "../constants";
 import { useAccountNames } from "../hooks/useAccountNames";
+import { AccountLabel } from "../types";
 import { getDisplayAddress } from "../utils/getDisplayAddress";
+import AccountBadge from "./AccountBadge";
 
 interface Props {
   address: string;
   className?: string
-  badge?: string
+  badge?: AccountLabel
 }
-const AccountDisplay = ({ className, address, badge = "" }: Props) => {
+
+const AccountDisplay = ({ className, address, badge }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const displayName = getNamesWithExtension(address)
 
-  const AccountIcon = () => <Identicon
-    value={address}
-    size={ICON_SIZE}
-    theme={ICON_THEME}
-    className="identicon"
-  />
-
   return <Box className={className}>
-    {!!badge
-      ? <Badge color="secondary" badgeContent={badge} anchorOrigin={{ horizontal: "left", vertical: "top" }} >
-        <AccountIcon />
-      </Badge>
-      : <AccountIcon />}
+    <AccountBadge badge={badge} address={address} />
     <Box className="nameAddressWrapper">
       <div className="name">{displayName}</div>
       <div className="address">{getDisplayAddress(address)}</div>

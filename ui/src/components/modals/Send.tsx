@@ -38,18 +38,20 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
   const possibleOrigin = useMemo(() =>
     [
       {
-        address: selectedMultisig?.id,
-        name: selectedMultisig && accoutNames[selectedMultisig.id],
-        meta: {
-          isProxy: false
-        }
-      },
-      {
         address: selectedMultisig?.proxy?.id,
         name: selectedMultisig?.proxy && accoutNames[selectedMultisig.proxy.id],
         meta: {
-          isProxy: true
+          isProxy: true,
+          isMulti: false
         },
+      },
+      {
+        address: selectedMultisig?.id,
+        name: selectedMultisig && accoutNames[selectedMultisig.id],
+        meta: {
+          isProxy: false,
+          isMulti: true
+        }
       }
     ]
       .filter(a => !!a.address) as ProxyOrMultisig[]

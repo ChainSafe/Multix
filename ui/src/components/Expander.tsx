@@ -5,7 +5,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface Props {
   className?: string;
-  title: string
+  title: ReactNode
   content: ReactNode
   expanded?: boolean
 }
@@ -19,7 +19,7 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
       onClick={() => setOpen(!open)}
     >
       <div className="titleWrapper">
-        <KeyboardArrowRightIcon className={`${open ? "rotated" : ""} icon`} />
+        <KeyboardArrowRightIcon className={`${open ? "rotated" : ""} expanderIcon`} />
         {title}
       </div>
       <Collapse in={open}>
@@ -38,7 +38,7 @@ flex-direction: column;
   display: flex;
 }
 
-.icon {
+.expanderIcon {
   transition: transform 0.2s ease-in-out;
     &.rotated {
       transform: rotate(90deg)

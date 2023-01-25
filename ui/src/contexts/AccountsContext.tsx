@@ -1,10 +1,11 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { web3Accounts, web3Enable, web3FromSource } from "@polkadot/extension-dapp"
+import { web3Enable, web3FromSource, web3AccountsSubscribe } from "@polkadot/extension-dapp"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { DAPP_NAME } from "../constants"
 import { Signer } from "@polkadot/api/types"
 
-const LOCALSTORAGE_KEY = "multix.selectedAccount"
+const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = "multix.selectedAccount"
+const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = "multix.canConnectToExtension"
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -20,6 +21,8 @@ export interface IAccountContext {
   extensionNotFound: boolean
   isAccountListEmpty: boolean
   selectedSigner?: Signer
+  allowConnectionToExtension: () => void
+  isAllowedToConnectToExtension: boolean
 }
 
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
@@ -32,17 +35,26 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [isAccountListEmpty, setIsAccountListEmpty] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
   const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
+  const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
   }, [accountList])
 
+  const allowConnectionToExtension = useCallback(() => {
+    localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, "true");
+    setIsAllowedToConnectToExtension(true)
+  }, [])
+
   const selectAccount = useCallback((account: InjectedAccountWithMeta) => {
-    localStorage.setItem(LOCALSTORAGE_KEY, account.address)
+    localStorage.setItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY, account.address)
     setSelected(account)
   }, [])
 
   const getaccountList = useCallback(async (): Promise<undefined> => {
+    if (!isAllowedToConnectToExtension) return
+
+    setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
 
     if (extensions.length === 0) {
@@ -53,32 +65,41 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       setExtensionNotFound(false)
     }
 
-    const accountList = await web3Accounts()
+    web3AccountsSubscribe((accountList) => {
+      if (accountList.length === 0) {
+        setIsAccountListEmpty(true)
+        setIsAccountLoading(false)
+        return
+      }
 
-    if (accountList.length === 0) {
-      setIsAccountListEmpty(true)
-      setIsAccountLoading(false)
-      return
-    }
+      setAccountList(accountList)
 
-    setAccountList(accountList)
+      if (accountList.length > 0) {
+        const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
+        const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
 
-    if (accountList.length > 0) {
-      const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_KEY)
-      const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
+        selectAccount(account || accountList[0])
+      }
+    })
+      .finally(() => setIsAccountLoading(false))
+      .catch(console.error)
 
-      selectAccount(account || accountList[0])
-    }
-
-    setIsAccountLoading(false)
-    return
-  }, [getAccountByAddress, selectAccount])
+  }, [getAccountByAddress, isAllowedToConnectToExtension, selectAccount])
 
   useEffect(() => {
     if (!accountList.length) {
       getaccountList()
     }
   }, [accountList, getaccountList])
+
+  useEffect(() => {
+    if (!isAllowedToConnectToExtension) {
+      const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
+      if (previouslyAllowed === "true") {
+        setIsAllowedToConnectToExtension(true)
+      }
+    }
+  }, [isAllowedToConnectToExtension])
 
   useEffect(() => {
     if (!selectedAccount) return
@@ -104,7 +125,9 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         extensionNotFound,
         isAccountListEmpty,
         getAccountByAddress,
-        selectedSigner
+        selectedSigner,
+        allowConnectionToExtension,
+        isAllowedToConnectToExtension,
       }}
     >
       {children}

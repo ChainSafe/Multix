@@ -7,10 +7,12 @@ import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-cry
 import { config } from "../../config";
 import { useAccountList } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
+import NameSelection from "./NameSelection"
 import Summary from "./Summary";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
+import { useAccountNames } from "../../hooks/useAccountNames";
 
 interface Props {
   className?: string
@@ -18,7 +20,7 @@ interface Props {
 
 const steps = [
   "Signatories",
-  "Threshold",
+  "Threshold & Name",
   "Review"
 ]
 const MultisigCreation = ({ className }: Props) => {
@@ -31,6 +33,8 @@ const MultisigCreation = ({ className }: Props) => {
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/") })
   const { addToast } = useToasts()
+  const [name, setName] = useState("")
+  const { addName } = useAccountNames()
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -74,13 +78,14 @@ const MultisigCreation = ({ className }: Props) => {
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
     const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
 
+    addName(name, multiAddress)
 
     batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addToast, api, isApiReady, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, api, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
 
   return (
     <Grid
@@ -146,6 +151,10 @@ const MultisigCreation = ({ className }: Props) => {
               threshold={threshold}
               signatoriesNumber={signatories.length}
             />
+            <NameSelection
+              setName={setName}
+              name={name}
+            />
           </Grid>
         )}
         {currentStep === 2 && (
@@ -157,6 +166,7 @@ const MultisigCreation = ({ className }: Props) => {
             <Summary
               signatories={signatories}
               threshold={threshold}
+              name={name}
             />
           </Grid>
         )}

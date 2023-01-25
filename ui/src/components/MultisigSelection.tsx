@@ -1,11 +1,11 @@
-import { Autocomplete, Badge, Box, InputAdornment, TextField } from "@mui/material";
-import Identicon from "@polkadot/react-identicon";
+import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import { useCallback, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useMultisig } from "../contexts/MultisigContext";
-import { ICON_THEME, ICON_SIZE } from "../constants";
 import AccountDisplay from "./AccountDisplay";
+import AccountBadge from "./AccountBadge";
+import { useAccountNames } from "../hooks/useAccountNames";
 
 interface Props {
   className?: string;
@@ -14,23 +14,23 @@ interface Props {
 const MultisigSelection = ({ className }: Props) => {
   const { multisigList, selectedMultisig, selectMultisig } = useMultisig()
   const ref = useRef<HTMLInputElement>(null)
+  const isSelectedProxy = useMemo(() => !!selectedMultisig?.proxy?.id, [selectedMultisig])
   const addressToShow = useMemo(() => selectedMultisig?.proxy?.id || selectedMultisig?.id, [selectedMultisig])
-
+  const { accoutNames } = useAccountNames()
   const filterOptions = createFilterOptions({
     ignoreCase: true,
     stringify: (option: typeof selectedMultisig) => `${option?.proxy?.id}${option?.id}` || "" // need to add the name here+ option.meta.name,
   });
 
-  const getOptionLabel = useCallback((option: string | typeof selectedMultisig | null) => {
-    if (!option) return ""
+  const getOptionLabel = useCallback((option: typeof selectedMultisig) => {
+    const addressToSearch = option?.proxy?.id || option?.id
 
-    return typeof option === "string"
-      ? option
-      : option?.proxy?.id || option?.id
-  }, [])
+    const name = !!addressToSearch && accoutNames[addressToSearch]
+    return name || addressToSearch || "No name"
+  }, [accoutNames])
 
 
-  const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultisig) => {
+  const onChange = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultisig) => {
     if (!val) return
 
     selectMultisig(val)
@@ -42,12 +42,6 @@ const MultisigSelection = ({ className }: Props) => {
       ref?.current?.blur()
     }
   }, [])
-
-  const AccountIcon = () => <Identicon
-    value={addressToShow}
-    theme={ICON_THEME}
-    size={ICON_SIZE}
-  />
 
   if (multisigList.length === 0) {
     return null
@@ -64,7 +58,7 @@ const MultisigSelection = ({ className }: Props) => {
         const displayAddress = isProxy ? option?.proxy?.id : option?.id
 
         return (
-          <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "1.5rem !important", flexShrink: 0 }} {...props}>
+          <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "1.5rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
             <AccountDisplay
               address={displayAddress || ""}
               badge={isProxy ? "proxy" : "multi"}
@@ -79,25 +73,20 @@ const MultisigSelection = ({ className }: Props) => {
           label=""
           InputProps={{
             ...params.InputProps,
-            type: 'search',
             startAdornment: (
               <InputAdornment position="start">
-                <Badge
-                  color="secondary"
-                  badgeContent={selectedMultisig?.proxy?.id ? "proxy" : "multi"}
-                  anchorOrigin={{ horizontal: "left", vertical: "top" }}
-                >
-                  <AccountIcon />
-                </Badge>
+                <AccountBadge
+                  address={addressToShow}
+                  badge={isSelectedProxy ? "proxy" : "multi"}
+                />
               </InputAdornment>
             ),
           }}
-          value={addressToShow}
           onKeyDown={handleSpecialKeys}
         />
       )}
       getOptionLabel={getOptionLabel}
-      onChange={onChangeAutocomplete}
+      onChange={onChange}
       value={selectedMultisig || multisigList[0]}
     />
   )
@@ -105,6 +94,11 @@ const MultisigSelection = ({ className }: Props) => {
 
 export default styled(MultisigSelection)(({ theme }) => `
   flex: 1;
+  text-align: right;
+
+  .MuiTextField-root {
+    max-width: 20rem;
+  }
 
   .MuiInputBase-root {
     background-color: white;

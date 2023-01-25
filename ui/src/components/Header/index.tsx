@@ -3,8 +3,10 @@ import React from "react"
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
 import MultisigSelection from "../MultisigSelection"
+import { useAccountList } from "../../contexts/AccountsContext"
 
 export const Header: React.FC = () => {
+  const { accountList } = useAccountList()
 
   return (
     <AppBar>
@@ -18,26 +20,28 @@ export const Header: React.FC = () => {
           >
             Multix
           </Typography>
-          <>
-            <Box sx={{ flexGrow: 1, display: "flex" }}>
-              <Button
-                component={Link}
-                to="/"
-                sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
-              >
-                Home
-              </Button>
-              <Button
-                component={Link}
-                to="/create"
-                sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
-              >
-                Create New
-              </Button>
+          {!!accountList?.length && (
+            <>
+              <Box sx={{ flexGrow: 1, display: "flex" }}>
+                <Button
+                  component={Link}
+                  to="/"
+                  sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
+                >
+                  Home
+                </Button>
+                <Button
+                  component={Link}
+                  to="/create"
+                  sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
+                >
+                  Create New
+                </Button>
 
-            </Box>
-            <MultisigSelection />
-          </>
+              </Box>
+              <MultisigSelection />
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

@@ -29,6 +29,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
   return (
     <Box className={className} >
       <TextField
+        fullWidth
         error={!!error}
         helperText={error}
         label="Threshold"
@@ -45,5 +46,5 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
 }
 
 export default styled(ThresholdSelection)(({ theme }) => `
-//
+  margin-bottom: 1rem;
 `)

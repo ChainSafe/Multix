@@ -11,6 +11,7 @@ import AccountDisplay from "../components/AccountDisplay";
 import SendIcon from '@mui/icons-material/Send';
 import Send from "../components/modals/Send";
 import { usePendingTx } from "../hooks/usePendingTx";
+import Expander from "../components/Expander";
 
 interface Props {
   className?: string
@@ -58,10 +59,26 @@ const Home = ({ className }: Props) => {
                 label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
               /></h3>
               <div className="multisigHeader">
-                <AccountDisplay
-                  address={displayAddress}
-                  badge={selectedHasProxy ? "proxy" : "multi"}
-                />
+                {selectedHasProxy
+                  ? <Expander
+                    title={<AccountDisplay
+                      className="proxy"
+                      address={selectedMultisig?.proxy?.id || ""}
+                      badge="proxy"
+                    />}
+                    content={<AccountDisplay
+                      className="multisig"
+                      address={selectedMultisig?.id || ""}
+                      badge="multi"
+                    />}
+
+                  />
+                  : <AccountDisplay
+                    className="multisigSolo"
+                    address={selectedMultisig?.id || ""}
+                    badge="multi"
+                  />}
+
                 <IconButton
                   className="sendButton"
                   aria-label="send"
@@ -112,15 +129,20 @@ export default styled(Home)(({ theme }) => `
     justify-content: center;
   }
 
-  .multisigHeader {
-    position: relative
+  .proxy, .multisig {
+    margin-bottom: 0;
+  }
+
+  .multisig {
+    margin: 1rem 0 0 2rem;
+  }
+
+  .expanderIcon {
+    align-self: flex-end;
   }
 
   .threshold {
-    /* position: relative; */
-    /* top: -1rem; */
     background-color: ${theme.custom.background.backgroundColorLightGray};
-    /* margin-right: -0.5rem; */
   }
 
   .addressList {
@@ -130,7 +152,6 @@ export default styled(Home)(({ theme }) => `
   .multisigHeader {
     display: flex;
     align-items: center;
-    margin-bottom: .5rem;
   }
 
   .identicon {
@@ -146,5 +167,8 @@ export default styled(Home)(({ theme }) => `
   .sendButton {
     margin-left: 1rem;
     height: 2.5rem;
+  }
+  .titleWrapper {
+    align-items: center;
   }
 `)

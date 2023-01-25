@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
+import { useAccountNames } from "../hooks/useAccountNames"
 import { useAccountList } from "./AccountsContext"
 
 const LOCALSTORAGE_KEY = "multix.selectedMultisig"
@@ -31,6 +32,7 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
     selectedMultisig?.signers.map(({ signer }) => signer.id) || [],
     [selectedMultisig?.signers]
   )
+  const { accoutNames, addName } = useAccountNames()
 
   useEffect(() => {
     if (!!error) {
@@ -43,6 +45,16 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
       setMultisigList(data.multisigs)
     }
   }, [data, error])
+
+  const updateProxyNames = useCallback(() => {
+    multisigList.forEach(multisig => {
+      const multi = multisig.id
+      const proxy = multisig.proxy?.id
+      if (multi && accoutNames[multi] && proxy && !accoutNames[proxy]) {
+        addName(accoutNames[multi], proxy)
+      }
+    })
+  }, [accoutNames, addName, multisigList])
 
   const getMultisigByAddress = useCallback((address?: string) => {
     if (!address) return undefined
@@ -67,12 +79,14 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
 
   useEffect(() => {
     if (multisigList.length && !selectedMultisig) {
+      updateProxyNames()
+
       const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
       const previouslySelected = multiAddress && getMultisigByAddress(multiAddress)
 
       setSelectedMultisig(previouslySelected || multisigList[0])
     }
-  }, [getMultisigByAddress, multisigList, selectedMultisig])
+  }, [getMultisigByAddress, multisigList, selectedMultisig, updateProxyNames])
 
   const multisigAddressList = useMemo(
     () => multisigList

@@ -4,3 +4,5 @@ export interface WhenInfo {
     depositor: string
     when: { height: number; index: number }
 }
+
+export type AccountLabel = "proxy" | "multi"

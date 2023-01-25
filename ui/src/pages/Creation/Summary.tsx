@@ -9,17 +9,21 @@ interface Props {
   className?: string;
   threshold?: number;
   signatories: string[]
+  name: string
 }
 
-const Summary = ({ className, threshold, signatories }: Props) => {
+const Summary = ({ className, threshold, signatories, name }: Props) => {
   const { addressList } = useAccountList()
   const possibleSigners = getIntersection(addressList, signatories)
 
 
   return (
     <Box className={className} >
-      <h3>You are about to create a MultiX with:</h3>
+      <h3>You are about to create a Multisig:</h3>
       <Paper elevation={2} className="paper">
+        <h4 className="name">
+          {name}
+        </h4>
         <h4 className="threshold">
           Threshold: <Chip label={`${threshold}/${signatories.length}`} />
         </h4>
@@ -36,17 +40,15 @@ const Summary = ({ className, threshold, signatories }: Props) => {
         In the next step you will send a transaction to:
         <ul>
           <li>
-            create a Multix (proxy)
+            send funds to the Multisig to create a Proxy
           </li>
           <li>
-            send funds to the multisig to create the Multix
-          </li>
-          <li>
-            other signatories must approve it before the Multix is ready to us.
+            create a Multig proxy
           </li>
         </ul>
+        Other signatories must approve the proxy creation before the it is ready use.
       </Box>
-      <Box>
+      <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
       </Box>
     </Box>
@@ -63,8 +65,13 @@ export default styled(Summary)(({ theme }) => `
     margin-bottom: 1rem
   }
 
-  .threshold {
+  .threshold, .name {
     margin-bottom: 1.5rem;
     margin-top: 0;
+  }
+
+  .signerSelection {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
   }
 `)

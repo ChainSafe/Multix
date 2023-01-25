@@ -1,7 +1,6 @@
 import React from "react"
 import { Center } from "../../components/layout/Center"
-import { Box, CircularProgress } from "@mui/material"
-// import { AccountSelect } from "../AccountSelect"
+import { Box, Button, CircularProgress } from "@mui/material"
 import { useAccountList } from "../../contexts/AccountsContext"
 import { useApi } from "../../contexts/ApiContext"
 
@@ -11,16 +10,15 @@ interface Props {
 }
 export const UserSpace = ({ children, className }: Props) => {
   const { isApiReady } = useApi()
-  const { extensionNotFound, isAccountListEmpty, isAccountLoading, selectedAccount } = useAccountList()
-  // const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
+  const { isAllowedToConnectToExtension, extensionNotFound, isAccountListEmpty, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccountList()
 
-  // const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-  //   setAnchorElUser(event.currentTarget)
-  // }
-
-  // const handleCloseUserMenu = () => {
-  //   setAnchorElUser(null)
-  // }
+  if (!isAllowedToConnectToExtension) {
+    return <Center>
+      <h1>Multix is an interface to manage complex multisigs.</h1>
+      <p>Connect an extension to interact with the Multix.</p>
+      <Button onClick={allowConnectionToExtension}>Connect</Button>
+    </Center>
+  }
 
   if (!isApiReady || isAccountLoading) {
     return (
@@ -36,7 +34,10 @@ export const UserSpace = ({ children, className }: Props) => {
         }}
       >
         <CircularProgress />
-        Connecting to the node at {import.meta.env.VITE_WS_PROVIDER}
+        {isAccountLoading
+          ? "Loading accounts"
+          : `Connecting to the node at ${import.meta.env.VITE_WS_PROVIDER}`
+        }
       </Box>
     )
   }
@@ -107,16 +108,5 @@ export const UserSpace = ({ children, className }: Props) => {
       <CircularProgress />
       Loading accounts...
     </Box>
-    // <Center>
-    //   <Button
-    //     variant="outlined"
-    //     endIcon={<KeyboardArrowDownIcon />}
-    //     onClick={handleOpenUserMenu}>
-    //   Select an account
-    //   </Button>
-    //   <AccountSelect
-    //     anchorEl={anchorElUser}
-    //     onClose={handleCloseUserMenu} />
-    // </Center>
   )
 }

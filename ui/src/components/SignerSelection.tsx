@@ -1,11 +1,12 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { ICON_SIZE, ICON_THEME } from "../constants";
 import { useAccountList } from "../contexts/AccountsContext";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
+import AccountDisplay from "./AccountDisplay";
 
 interface Props {
   className?: string;
@@ -13,12 +14,10 @@ interface Props {
   onChange?: () => void;
 }
 
-const getOptionLabel = (option: string | InjectedAccountWithMeta | null | undefined,) => {
+const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
   if (!option) return ""
 
-  return typeof option === "string"
-    ? option
-    : option.address
+  return option.meta.name || ""
 }
 
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
@@ -26,7 +25,6 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   const signersList = useMemo(() =>
     accountList?.filter((account) => possibleSigners.includes(account.address)) || []
     , [accountList, possibleSigners])
-
 
   useEffect(() => {
     if (!selectedAccount) {
@@ -44,7 +42,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
     stringify: (option: typeof selectedAccount) => `${option?.address}${option?.meta.name}` || ""
   });
 
-  const onChangeSigner = useCallback((_: any, newSelected: typeof signersList[0] | null | undefined) => {
+  const onChangeSigner = useCallback((_: any, newSelected: typeof signersList[0]) => {
     newSelected && selectAccount(newSelected)
     onChange && onChange()
   }, [onChange, selectAccount])
@@ -59,15 +57,9 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       className={className}
       options={signersList}
       filterOptions={filterOptions}
-      renderOption={(props, option) => (
-        <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props}>
-          <Identicon
-            className="renderOptionIdenticon"
-            value={option?.address}
-            theme={ICON_THEME}
-            size={ICON_SIZE}
-          />
-          {option?.address} - {option?.meta.name}
+      renderOption={(props, option, index) => (
+        <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "1.5rem !important", flexShrink: 0 }} {...props} key={option?.address}>
+          <AccountDisplay address={option?.address || ""} />
         </Box>
       )}
       renderInput={(params) => (
@@ -76,7 +68,6 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
           label="Signing with"
           InputProps={{
             ...params.InputProps,
-            type: 'search',
             startAdornment: (
               <InputAdornment position="start">
                 <Identicon
@@ -91,7 +82,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       )}
       getOptionLabel={getOptionLabel}
       onChange={onChangeSigner}
-      value={selectedAccount}
+      value={selectedAccount || signersList[0]}
     />
   )
 }

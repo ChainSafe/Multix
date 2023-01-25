@@ -109,7 +109,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
         filterOptions={filterOptions}
         options={dedupedSignatories}
         renderOption={(props, option) => (
-          <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props}>
+          <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props} key={option.address}>
             <Identicon
               className="renderOptionIdenticon"
               value={option.address}
@@ -128,7 +128,6 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
             label={inputLabel}
             InputProps={{
               ...params.InputProps,
-              type: 'search',
               startAdornment: (
                 !!selected
                   ? <InputAdornment position="start">

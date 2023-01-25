@@ -23,7 +23,7 @@ export const usePendingTx = (multisigAddress?: string) => {
     setIsLoading(true)
     const newData: typeof data = []
 
-    api.query.multisig.multisigs.entries(multisigAddress)
+    !!api?.query?.multisig?.multisigs && api.query.multisig.multisigs.entries(multisigAddress)
       .then((res) => {
         res.forEach((storage) => {
           const hash = (storage[0].toHuman() as Array<string>)[1]
@@ -39,8 +39,12 @@ export const usePendingTx = (multisigAddress?: string) => {
       .finally(() => {
         dataRef.current = newData
         setData(dataRef.current)
+        setIsLoading(false)
       })
       .catch(console.error)
+
+    setIsLoading(false)
+
   }, [api, isApiReady, multisigAddress])
 
   useEffect(() => {

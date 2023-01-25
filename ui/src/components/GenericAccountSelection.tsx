@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { ICON_THEME, ICON_SIZE } from "../constants";
 import AccountDisplay from "./AccountDisplay";
+import { useAccountNames } from "../hooks/useAccountNames";
 
 export interface AccountBaseInfo {
   address: string
@@ -21,9 +22,8 @@ interface Props {
 }
 
 const GenericAccountSelection = ({ className, accountList = [], value, onChange, label = "" }: Props) => {
-  // const { multisigList, selectedMultisig, selectMultisig } = useMultisig()
   const inputRef = useRef<HTMLInputElement>(null)
-  // const addressToShow = useMemo(() => selectedMultisig?.proxy?.id || selectedMultisig?.id, [selectedMultisig])
+  const { getNamesWithExtension } = useAccountNames()
 
   const filterOptions = createFilterOptions({
     ignoreCase: true,
@@ -31,8 +31,8 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
   });
 
   const getOptionLabel = useCallback((option: typeof accountList[0]) => {
-    return option.address
-  }, [])
+    return getNamesWithExtension(value.address) || option.address
+  }, [getNamesWithExtension, value.address])
 
   const onInputBlur = useCallback(() => {
     inputRef.current?.setSelectionRange(0, 0)
@@ -62,10 +62,20 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
       disableClearable
       filterOptions={filterOptions}
       options={accountList}
-      renderOption={(props, option) =>
-        <Box component="li" key={option.address} {...props}>
-          <AccountDisplay address={option.address} />
+      renderOption={(props, option) => {
+        return <Box component="li" {...props} key={option.address}>
+          <AccountDisplay
+            address={option.address}
+            badge={
+              option.meta.isProxy
+                ? "proxy"
+                : option.meta.isMulti
+                  ? "multi"
+                  : undefined
+            }
+          />
         </Box>
+      }
       }
       renderInput={(params) => (
         <TextField
@@ -75,6 +85,7 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
           InputProps={{
             ...params.InputProps,
             startAdornment: (
+              // FIXME add badge here
               <InputAdornment position="start">
                 <Identicon
                   value={value.address}
