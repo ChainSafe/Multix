@@ -1,10 +1,11 @@
-import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
+import { Autocomplete, Badge, Box, InputAdornment, TextField } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
 import { useCallback, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useMultisig } from "../contexts/MultisigContext";
 import { ICON_THEME, ICON_SIZE } from "../constants";
+import AccountDisplay from "./AccountDisplay";
 
 interface Props {
   className?: string;
@@ -42,6 +43,12 @@ const MultisigSelection = ({ className }: Props) => {
     }
   }, [])
 
+  const AccountIcon = () => <Identicon
+    value={addressToShow}
+    theme={ICON_THEME}
+    size={ICON_SIZE}
+  />
+
   if (multisigList.length === 0) {
     return null
   }
@@ -55,19 +62,13 @@ const MultisigSelection = ({ className }: Props) => {
       renderOption={(props, option) => {
         const isProxy = !!option?.proxy?.id
         const displayAddress = isProxy ? option?.proxy?.id : option?.id
-        const namePrefix = !isProxy
-          ? "No proxy - "
-          : ""
 
         return (
-          <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props}>
-            <Identicon
-              className="renderOptionIdenticon"
-              value={displayAddress}
-              theme={ICON_THEME}
-              size={ICON_SIZE}
+          <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "1.5rem !important", flexShrink: 0 }} {...props}>
+            <AccountDisplay
+              address={displayAddress || ""}
+              badge={isProxy ? "proxy" : "multi"}
             />
-            {namePrefix}{displayAddress}
           </Box>
         )
       }}
@@ -81,11 +82,13 @@ const MultisigSelection = ({ className }: Props) => {
             type: 'search',
             startAdornment: (
               <InputAdornment position="start">
-                <Identicon
-                  value={addressToShow}
-                  theme={ICON_THEME}
-                  size={ICON_SIZE}
-                />
+                <Badge
+                  color="secondary"
+                  badgeContent={selectedMultisig?.proxy?.id ? "proxy" : "multi"}
+                  anchorOrigin={{ horizontal: "left", vertical: "top" }}
+                >
+                  <AccountIcon />
+                </Badge>
               </InputAdornment>
             ),
           }}

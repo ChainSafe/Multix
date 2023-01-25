@@ -15,7 +15,6 @@ import { ISanitizedCall, parseGenericCall } from "../utils/decode";
 import { GenericCall } from '@polkadot/types';
 import { AnyJson } from '@polkadot/types/types';
 import FlareIcon from '@mui/icons-material/Flare';
-import { argsToArgsConfig } from "graphql/type/definition";
 
 export interface AggregatedData {
   callData?: `0x${string}`;
@@ -104,7 +103,6 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     info: pendingTx.info
   }
 })
-// })
 
 const ProposalList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])

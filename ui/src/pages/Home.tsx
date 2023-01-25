@@ -53,19 +53,15 @@ const Home = ({ className }: Props) => {
         {selectedMultisig &&
           <>
             <div className="headerWrapper">
-              <h3>Multisig{selectedHasProxy ? " (proxy)" : ""}</h3>
+              <h3>Multisig                 <Chip
+                className="threshold"
+                label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
+              /></h3>
               <div className="multisigHeader">
-                <Chip
-                  className="threshold"
-                  label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
+                <AccountDisplay
+                  address={displayAddress}
+                  badge={selectedHasProxy ? "proxy" : "multi"}
                 />
-                <Identicon
-                  value={displayAddress}
-                  size={ICON_SIZE}
-                  theme={ICON_THEME}
-                  className="identicon"
-                />
-                {getDisplayAddress(displayAddress)}
                 <IconButton
                   className="sendButton"
                   aria-label="send"
@@ -119,11 +115,12 @@ export default styled(Home)(({ theme }) => `
   .multisigHeader {
     position: relative
   }
+
   .threshold {
-    position: relative;
-    top: -1rem;
+    /* position: relative; */
+    /* top: -1rem; */
     background-color: ${theme.custom.background.backgroundColorLightGray};
-    margin-right: -0.5rem;
+    /* margin-right: -0.5rem; */
   }
 
   .addressList {
