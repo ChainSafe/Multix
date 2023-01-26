@@ -14,7 +14,7 @@ export const UserSpace = ({ children, className }: Props) => {
 
   if (!isAllowedToConnectToExtension) {
     return <Center>
-      <h1>Multix is an interface to manage complex multisigs.</h1>
+      <h1>Multix is an interface to easily manage complex multisigs.</h1>
       <p>Connect an extension to interact with the Multix.</p>
       <Button onClick={allowConnectionToExtension}>Connect</Button>
     </Center>
