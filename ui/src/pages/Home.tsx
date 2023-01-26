@@ -1,10 +1,7 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
-import Identicon from "@polkadot/react-identicon";
-import { ICON_SIZE, ICON_THEME } from "../constants";
-import { getDisplayAddress } from "../utils/getDisplayAddress";
 import ProposalList from "../components/ProposalList";
 import { Link } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
@@ -21,7 +18,6 @@ const Home = ({ className }: Props) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
   const { refresh } = usePendingTx()
-  const displayAddress = useMemo(() => (selectedHasProxy ? selectedMultisig?.proxy?.id : selectedMultisig?.id) || "", [selectedHasProxy, selectedMultisig])
 
   const onClose = useCallback(() => setIsSendModalOpen(false), [])
 
@@ -44,6 +40,9 @@ const Home = ({ className }: Props) => {
         {isLoading && (
           <Box className="loader">
             <CircularProgress />
+            <div>
+              Loading your multisigs...
+            </div>
           </Box>
         )}
         {!isLoading && !multisigQueryError && multisigList.length === 0 && (
@@ -127,6 +126,8 @@ export default styled(Home)(({ theme }) => `
   .loader {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 
   .proxy, .multisig {

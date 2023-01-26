@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
+    "subscription AllMultisigCalls {\n  multisigCalls(limit: 10, orderBy: timestamp_DESC) {\n    blockHash\n    callIndex\n    id\n    timestamp\n  }\n}": types.AllMultisigCallsDocument,
     "query MultisigsByAccounts($accounts: [String!]) {\n  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {\n    id\n    createdAt\n    proxy {\n      id\n    }\n    signers {\n      signer {\n        id\n      }\n    }\n    threshold\n    multisigsCalls {\n      id\n      blockHash\n      timestamp\n      callIndex\n    }\n  }\n}": types.MultisigsByAccountsDocument,
 };
 
@@ -30,6 +31,10 @@ const documents = {
 **/
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "subscription AllMultisigCalls {\n  multisigCalls(limit: 10, orderBy: timestamp_DESC) {\n    blockHash\n    callIndex\n    id\n    timestamp\n  }\n}"): (typeof documents)["subscription AllMultisigCalls {\n  multisigCalls(limit: 10, orderBy: timestamp_DESC) {\n    blockHash\n    callIndex\n    id\n    timestamp\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,0 +1,8 @@
+subscription AllMultisigCalls {
+  multisigCalls(limit: 10, orderBy: timestamp_DESC) {
+    blockHash
+    callIndex
+    id
+    timestamp
+  }
+}

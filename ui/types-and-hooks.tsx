@@ -538,6 +538,11 @@ export type WhereIdInput = {
   id: Scalars['String'];
 };
 
+export type AllMultisigCallsSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllMultisigCallsSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
+
 export type MultisigsByAccountsQueryVariables = Exact<{
   accounts?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
@@ -546,6 +551,16 @@ export type MultisigsByAccountsQueryVariables = Exact<{
 export type MultisigsByAccountsQuery = { __typename?: 'Query', multisigs: Array<{ __typename?: 'Multisig', id: string, createdAt: any, threshold: number, proxy?: { __typename?: 'Account', id: string } | null, signers: Array<{ __typename?: 'AccountMultisig', signer: { __typename?: 'Account', id: string } }>, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }> }> };
 
 
+export const AllMultisigCallsDocument = `
+    subscription AllMultisigCalls {
+  multisigCalls(limit: 10, orderBy: timestamp_DESC) {
+    blockHash
+    callIndex
+    id
+    timestamp
+  }
+}
+    `;
 export const MultisigsByAccountsDocument = `
     query MultisigsByAccounts($accounts: [String!]) {
   multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {

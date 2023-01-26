@@ -40,11 +40,11 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
           callData: c.args.callData as AggregatedData['callData']
         })
       } else {
-        return {
+        result.push({
           name: "Unkown call",
-          hash: undefined,
+          hash: (c.args?.call_hash as Uint8Array).toString() || undefined,
           callData: undefined
-        }
+        })
       }
       // this is not a multisig call
       // try to dig deeper
@@ -55,9 +55,6 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
         }
       } else if (!!c.args.call) {
         getCallResult(c.args.call)
-      } else {
-        // this is not interresting to us
-        // console.error("Unexpected call", c)
       }
     }
   }
@@ -73,10 +70,11 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
   const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
 
   const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+  // console.log('pendingTxData', pendingTxData)
   // console.log('decoded', decoded)
   const multisigInfos = getMultisigInfo(decoded) || {}
 
-  // console.log(multisigInfos)
+  // console.log("multisigInfos", multisigInfos)
 
   const info = multisigInfos.find(({ name, hash, callData }) => {
     if (!!hash && hash === pendingTx.hash) {
@@ -93,7 +91,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
   const { name, hash, callData } = info
 
-  const call = !!hash && ext.registry.createType('Call', callData)
+  const call = !!callData && !!hash && ext.registry.createType('Call', callData)
 
   return {
     callData,

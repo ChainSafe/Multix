@@ -1,9 +1,6 @@
-import { BatchBlock, decodeHex } from '@subsquid/substrate-processor'
+import { decodeHex } from '@subsquid/substrate-processor'
 // import { MultisigEvent, MultisigInteraction } from './model'
-import { Ctx, Item } from './processor'
 import { encodeId } from './util/accountEncoding'
-import { getOrCreateAccount } from './util/entities'
-import { JsonLog } from './util/JsonLog'
 
 // export interface MultisigCreationRes {
 //     multisigEvent: MultisigEvent;
@@ -71,7 +68,5 @@ export const handleMultisigCall = (multisigArgs: any) => {
     return {
         otherSignatories: encodedOtherSignatories,
         threshold: multisigArgs["threshold"],
-        method: `${multisigArgs.call.__kind}.${multisigArgs.call.value.__kind}`,
-        args: JSON.stringify(multisigArgs.call.value)
     }
 }

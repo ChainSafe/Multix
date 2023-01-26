@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccountList } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
@@ -57,7 +57,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
       .filter(a => !!a.address) as ProxyOrMultisig[]
     , [accoutNames, selectedMultisig])
   const signCallback = useGetSigningCallback({ onSuccess, onIsSubmitting })
-  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo | undefined>()
+  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
 
   const onSign = useCallback(async () => {
     const otherSigners = sortAddresses(selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address))
@@ -125,7 +125,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
           <GenericAccountSelection
             accountList={possibleOrigin}
             onChange={setSelectedOrigin}
-            value={selectedOrigin || possibleOrigin[0]}
+            value={selectedOrigin}
             label="Multisig / Proxy"
           />
         </Grid>

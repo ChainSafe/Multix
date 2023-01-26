@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
 import { WhenInfo } from "../types"
+import { useMultisigCallSubscription } from "./useMultisigCallsSubscription";
 
 export interface PendingTx {
   hash: string;
@@ -50,6 +51,10 @@ export const usePendingTx = (multisigAddress?: string) => {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  // re-fetch the on-chain if some new event appeared for any of the 
+  // multisig we are watching 
+  useMultisigCallSubscription({ onUpdate: refresh })
 
   return { isLoading, data: dataRef.current, refresh }
 }

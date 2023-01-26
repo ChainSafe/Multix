@@ -1,17 +1,14 @@
 import { lookupArchive } from '@subsquid/archive-registry'
-import { BatchContext, BatchProcessorItem, decodeHex, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
+import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
-import { In } from 'typeorm'
 import { config } from './config'
-import { Account, AccountMultisig, Multisig } from './model/models'
-import { SystemRemarkCall } from './types/calls'
 import { encodeAddress } from '@polkadot/util-crypto';
-import { encodeId } from './util/accountEncoding'
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getAccountMultisigId, getMultisigCallId, getOrCreateAccounts, getOriginAccountId, JsonLog } from './util'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies } from './processorHandlers'
 
+const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
@@ -45,19 +42,7 @@ const processor = new SubstrateBatchProcessor()
             },
         },
     } as const)
-    .addCall('Multisig.as_multi'
-        // {
-        // data: {
-        //     call: {
-        //         args: true,
-        //         origin: true,
-        //     },
-        //     extrinsic: {
-        //         indexInBlock: true
-        //     }
-        // },
-        // } as const
-    )
+    .addCall('Multisig.as_multi')
     .addCall('Multisig.approve_as_multi')
     .addCall('Multisig.cancel_as_multi')
     .addCall('Multisig.as_multi_threshold_1')
@@ -82,19 +67,22 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     const newProxies: NewProxies = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
 
-    for (let block of ctx.blocks) {
+    for (const block of ctx.blocks) {
         const { items } = block
 
-        for (let item of items) {
-            if (item.name === 'Multisig.as_multi') {
-                if (!item.call.success || !item.call.origin) continue
+        for (const item of items) {
+            if (supportedMultisigCalls.includes(item.name)) {
+                const callItem = item as CallItem<"*", true>
 
-                const signer = getOriginAccountId(item.call.origin)
-                const callArgs = item.call.args;
+                ctx.log.info(`${callItem.name} - block: ${block.header.height}`)
+                if (!callItem.call.success || !callItem.call.origin) continue
 
-                ctx.log.info(JsonLog(item))
+                const signer = getOriginAccountId(callItem.call.origin)
+                const callArgs = callItem.call.args;
 
-                const { method, otherSignatories, threshold, args } = handleMultisigCall(callArgs)
+                ctx.log.info(JsonLog(callItem))
+
+                const { otherSignatories, threshold } = handleMultisigCall(callArgs)
                 const signers = [signer, ...otherSignatories]
                 const timestamp = new Date(block.header.timestamp)
 
@@ -110,9 +98,9 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 const blockHash = block.header.hash
 
                 newMultisigCalls.push({
-                    id: getMultisigCallId(newMulti.id, blockNumber, item.extrinsic.indexInBlock),
+                    id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock),
                     blockHash,
-                    callIndex: item.extrinsic.indexInBlock,
+                    callIndex: callItem.extrinsic.indexInBlock,
                     multisigAddress: newMulti.id,
                     timestamp
                 })
