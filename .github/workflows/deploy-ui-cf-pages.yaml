@@ -10,6 +10,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./ui/
     permissions:
       contents: read
       deployments: write
@@ -19,8 +22,9 @@ jobs:
         with:
           cache: yarn
           node-version: "16"
-      - run: cd ui && yarn install --frozen-lockfile
-      - run: cd ui && yarn build
+          # cache-dependancy-path: "ui/yarn.lock"
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
         env:
           VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
           VITE_GRAPHQL_WS_PROVIDER: "ws://localhost:4350/graphql"
