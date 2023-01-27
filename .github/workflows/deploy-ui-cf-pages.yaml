@@ -22,7 +22,7 @@ jobs:
         with:
           cache: yarn
           node-version: "16"
-          # cache-dependancy-path: "ui/yarn.lock"
+          cache-dependency-path: "ui/yarn.lock"
       - run: yarn install --frozen-lockfile
       - run: yarn build
         env:
