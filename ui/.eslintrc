@@ -46,5 +46,8 @@
         "schema": "http://localhost:4350/graphql"
       }
     }
+  ],
+  "ignorePatterns": [
+    "src/interfaces/**/*"
   ]
 }

@@ -40,15 +40,12 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
             return
         }
 
-        console.log('loading from storage', names)
         setAccountNames(JSON.parse(names))
     }, [setAccountNames])
 
     const saveNames = useCallback(() => {
         if (!Object.entries(accountNames).length) return
-        console.log(' SaveNames - accountNames length', Object.entries(accountNames).length)
 
-        console.log('saving...', accountNames)
         localStorage.setItem(LOCALSTORAGE_ACCOUNT_KEY, JSON.stringify(accountNames))
     }, [accountNames])
 

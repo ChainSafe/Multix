@@ -18,7 +18,7 @@ export const Header: React.FC = () => {
             component="div"
             sx={{ flexGrow: 1 }}
           >
-            Multix
+            Multix.
           </Typography>
           {!!accountList?.length && (
             <>
