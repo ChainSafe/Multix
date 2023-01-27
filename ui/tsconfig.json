@@ -44,5 +44,8 @@
     "**/types-and-hooks.tsx",
     "**/codegen.ts",
     "graphql.config.js"
+  ],
+  "exclude": [
+    "src/interfaces/**/*"
   ]
 }

@@ -21,7 +21,7 @@ const Summary = ({ className, threshold, signatories, name }: Props) => {
     <Box className={className} >
       <h3>You are about to create a Multisig:</h3>
       <Paper elevation={2} className="paper">
-        <h4 className="name">
+        <h4 className="nameSummary">
           {name}
         </h4>
         <h4 className="threshold">
@@ -57,6 +57,10 @@ const Summary = ({ className, threshold, signatories, name }: Props) => {
 
 export default styled(Summary)(({ theme }) => `
   .account:last-child {
+    margin-bottom: 1rem;
+  }
+
+  .account:last-child {
     margin-bottom: 0;
   }
 
@@ -65,7 +69,7 @@ export default styled(Summary)(({ theme }) => `
     margin-bottom: 1rem
   }
 
-  .threshold, .name {
+  .threshold, .nameSummary {
     margin-bottom: 1.5rem;
     margin-top: 0;
   }

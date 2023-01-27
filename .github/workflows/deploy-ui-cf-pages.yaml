@@ -1,0 +1,35 @@
+name: CloudFlare Deploy - Multix
+on:
+  push:
+    branches: ["main"]
+    paths: ["ui/**/*"]
+  pull_request:
+    branches: ["main"]
+    paths: ["ui/**/*"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: "16"
+      - run: yarn install --frozen-lockfile
+      - run: cd ui && yarn build
+        env:
+          VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
+          VITE_GRAPHQL_WS_PROVIDER: "ws://localhost:4350/graphql"
+          VITE_GRAPHQL_HTTP_PROVIDER: "http://localhost:4350/graphql"
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 2238a825c5aca59233eab1f221f7aefb
+          projectName: multix
+          directory: ./ui/build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
