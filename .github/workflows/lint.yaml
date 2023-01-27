@@ -1,0 +1,29 @@
+name: Lint
+on:
+  pull_request:
+    paths: ["ui/**/*"]
+jobs:
+  extract:
+    name: eslint
+    runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./ui/
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: set user
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+    # use node module caching
+    - uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+    - name: install packages
+      run: yarn install --immutable
+
+    - name: lint
+      run: yarn lint

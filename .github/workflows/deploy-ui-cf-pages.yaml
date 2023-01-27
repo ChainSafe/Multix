@@ -23,7 +23,7 @@ jobs:
           cache: yarn
           node-version: "16"
           cache-dependency-path: "ui/yarn.lock"
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn build
         env:
           VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
