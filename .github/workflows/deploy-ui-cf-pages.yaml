@@ -19,7 +19,7 @@ jobs:
         with:
           cache: yarn
           node-version: "16"
-      - run: yarn install --frozen-lockfile
+      - run: cd ui && yarn install --frozen-lockfile
       - run: cd ui && yarn build
         env:
           VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
