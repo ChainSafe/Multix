@@ -117,7 +117,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   return (
     <AccountContext.Provider
       value={{
-        selectedAccount: selectedAccount,
+        selectedAccount,
         accountList,
         addressList,
         selectAccount,

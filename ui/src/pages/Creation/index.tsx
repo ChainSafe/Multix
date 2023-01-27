@@ -12,7 +12,7 @@ import Summary from "./Summary";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
-import { useAccountNames } from "../../hooks/useAccountNames";
+import { useAccountNames } from "../../contexts/AccountNamesContext";
 
 interface Props {
   className?: string

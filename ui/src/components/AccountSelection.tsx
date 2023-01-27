@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { isValidAddress } from "../utils";
 import { ICON_THEME, ICON_SIZE } from "../constants";
-import { useAccountNames } from "../hooks/useAccountNames"
+import { useAccountNames } from "../contexts/AccountNamesContext"
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -40,7 +40,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
   const [selected, setSelected] = useState(value)
   const [errorMessage, setErrorMessage] = useState("")
   const ref = useRef<HTMLInputElement>(null)
-  const { accoutNames, addName } = useAccountNames()
+  const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState("")
   const dedupedSignatories = useMemo(() => {
     return accountList.filter((account) => !currentSignatories.includes(account.address))
@@ -52,11 +52,11 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
 
 
   useEffect(() => {
-    const previouslyNameAccount = selected && accoutNames[selected]
+    const previouslyNameAccount = selected && accountNames[selected]
     if (previouslyNameAccount) {
       setName(previouslyNameAccount)
     }
-  }, [accoutNames, selected])
+  }, [accountNames, selected])
 
   const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
     setErrorMessage("")

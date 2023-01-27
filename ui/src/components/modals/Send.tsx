@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccountList } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
@@ -10,7 +10,7 @@ import { useToasts } from "../../contexts/ToastContext";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
-import { useAccountNames } from "../../hooks/useAccountNames";
+import { useAccountNames } from "../../contexts/AccountNamesContext";
 
 interface Props {
   onClose: () => void
@@ -29,7 +29,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
   const { selectedAccount, selectedSigner } = useAccountList()
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
-  const { accoutNames } = useAccountNames()
+  const { accountNames } = useAccountNames()
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const onIsSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -39,7 +39,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
     [
       {
         address: selectedMultisig?.proxy?.id,
-        name: selectedMultisig?.proxy && accoutNames[selectedMultisig.proxy.id],
+        name: selectedMultisig?.proxy && accountNames[selectedMultisig.proxy.id],
         meta: {
           isProxy: true,
           isMulti: false
@@ -47,7 +47,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
       },
       {
         address: selectedMultisig?.id,
-        name: selectedMultisig && accoutNames[selectedMultisig.id],
+        name: selectedMultisig && accountNames[selectedMultisig.id],
         meta: {
           isProxy: false,
           isMulti: true
@@ -55,7 +55,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
       }
     ]
       .filter(a => !!a.address) as ProxyOrMultisig[]
-    , [accoutNames, selectedMultisig])
+    , [accountNames, selectedMultisig])
   const signCallback = useGetSigningCallback({ onSuccess, onIsSubmitting })
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
 
@@ -126,7 +126,6 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
             accountList={possibleOrigin}
             onChange={setSelectedOrigin}
             value={selectedOrigin}
-            label="Multisig / Proxy"
           />
         </Grid>
         <Grid item xs={12} md={2}>
@@ -175,5 +174,4 @@ export default styled(Send)(({ theme }) => `
     margin-top: 0.5rem;
     color: ${theme.custom.text.errorColor};
   }
-
 `)

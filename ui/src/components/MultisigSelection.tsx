@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useMultisig } from "../contexts/MultisigContext";
 import AccountDisplay from "./AccountDisplay";
-import AccountBadge from "./AccountBadge";
-import { useAccountNames } from "../hooks/useAccountNames";
+import IdenticonBadge from "./IdenticonBadge";
+import { useAccountNames } from "../contexts/AccountNamesContext";
 
 interface Props {
   className?: string;
@@ -16,18 +16,18 @@ const MultisigSelection = ({ className }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
   const isSelectedProxy = useMemo(() => !!selectedMultisig?.proxy?.id, [selectedMultisig])
   const addressToShow = useMemo(() => selectedMultisig?.proxy?.id || selectedMultisig?.id, [selectedMultisig])
-  const { accoutNames } = useAccountNames()
+  const { accountNames } = useAccountNames()
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedMultisig) => `${option?.proxy?.id}${option?.id}` || "" // need to add the name here+ option.meta.name,
+    stringify: (option: typeof selectedMultisig) => `${option?.proxy?.id}${option?.id}` || ""
   });
 
   const getOptionLabel = useCallback((option: typeof selectedMultisig) => {
     const addressToSearch = option?.proxy?.id || option?.id
 
-    const name = !!addressToSearch && accoutNames[addressToSearch]
-    return name || addressToSearch || "No name"
-  }, [accoutNames])
+    const name = !!addressToSearch && accountNames[addressToSearch]
+    return name || addressToSearch as string
+  }, [accountNames])
 
 
   const onChange = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultisig) => {
@@ -35,7 +35,6 @@ const MultisigSelection = ({ className }: Props) => {
 
     selectMultisig(val)
   }, [selectMultisig])
-
 
   const handleSpecialKeys = useCallback((e: any) => {
     if (['Enter', "Escape"].includes(e.key)) {
@@ -58,7 +57,7 @@ const MultisigSelection = ({ className }: Props) => {
         const displayAddress = isProxy ? option?.proxy?.id : option?.id
 
         return (
-          <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "1.5rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
+          <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
             <AccountDisplay
               address={displayAddress || ""}
               badge={isProxy ? "proxy" : "multi"}
@@ -75,7 +74,7 @@ const MultisigSelection = ({ className }: Props) => {
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <AccountBadge
+                <IdenticonBadge
                   address={addressToShow}
                   badge={isSelectedProxy ? "proxy" : "multi"}
                 />

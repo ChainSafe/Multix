@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
-import { useAccountNames } from "../hooks/useAccountNames"
+import { useAccountNames } from "./AccountNamesContext"
 import { useAccountList } from "./AccountsContext"
 
 const LOCALSTORAGE_KEY = "multix.selectedMultisig"
@@ -32,7 +32,7 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
     selectedMultisig?.signers.map(({ signer }) => signer.id) || [],
     [selectedMultisig?.signers]
   )
-  const { accoutNames, addName } = useAccountNames()
+  const { accountNames, addName } = useAccountNames()
 
   useEffect(() => {
     if (!!error) {
@@ -50,11 +50,11 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
     multisigList.forEach(multisig => {
       const multi = multisig.id
       const proxy = multisig.proxy?.id
-      if (multi && accoutNames[multi] && proxy && !accoutNames[proxy]) {
-        addName(accoutNames[multi], proxy)
+      if (multi && accountNames[multi] && proxy && !accountNames[proxy]) {
+        addName(accountNames[multi], proxy)
       }
     })
-  }, [accoutNames, addName, multisigList])
+  }, [accountNames, addName, multisigList])
 
   const getMultisigByAddress = useCallback((address?: string) => {
     if (!address) return undefined

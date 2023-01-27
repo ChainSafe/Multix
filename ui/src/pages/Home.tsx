@@ -9,6 +9,9 @@ import SendIcon from '@mui/icons-material/Send';
 import Send from "../components/modals/Send";
 import { usePendingTx } from "../hooks/usePendingTx";
 import Expander from "../components/Expander";
+import OptionsMenu, { MenuOption } from "../components/OptionsMenu";
+import EditIcon from "@mui/icons-material/Edit"
+import EditNames from "../components/modals/EditNames";
 
 interface Props {
   className?: string
@@ -18,13 +21,22 @@ const Home = ({ className }: Props) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
   const { refresh } = usePendingTx()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
+  const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
 
-  const onClose = useCallback(() => setIsSendModalOpen(false), [])
-
-  const onSuccess = useCallback(() => {
-    onClose()
+  const onSuccessSendModal = useCallback(() => {
+    onCloseSendModal()
     refresh()
-  }, [onClose, refresh])
+  }, [onCloseSendModal, refresh])
+
+  const options: MenuOption[] = [
+    {
+      text: "Edit names",
+      icon: <EditIcon />,
+      onClick: () => setIsEditModalOpen(true)
+    }
+  ]
 
   return (
     <Grid
@@ -53,7 +65,7 @@ const Home = ({ className }: Props) => {
         {selectedMultisig &&
           <>
             <div className="headerWrapper">
-              <h3>Multisig                 <Chip
+              <h3>Multisig <Chip
                 className="threshold"
                 label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
               /></h3>
@@ -70,14 +82,12 @@ const Home = ({ className }: Props) => {
                       address={selectedMultisig?.id || ""}
                       badge="multi"
                     />}
-
                   />
                   : <AccountDisplay
                     className="multisigSolo"
                     address={selectedMultisig?.id || ""}
                     badge="multi"
                   />}
-
                 <IconButton
                   className="sendButton"
                   aria-label="send"
@@ -85,6 +95,7 @@ const Home = ({ className }: Props) => {
                 >
                   <SendIcon />
                 </IconButton>
+                <OptionsMenu options={options} />
               </div>
             </div>
             <div className="signatoriesWrapper">
@@ -112,8 +123,13 @@ const Home = ({ className }: Props) => {
       </Grid>
       {isSendModalOpen && (
         <Send
-          onClose={onClose}
-          onSuccess={onSuccess}
+          onClose={onCloseSendModal}
+          onSuccess={onSuccessSendModal}
+        />
+      )}
+      {isEditModalOpen && (
+        <EditNames
+          onClose={onCloseEditModal}
         />
       )}
     </Grid>
@@ -148,6 +164,9 @@ export default styled(Home)(({ theme }) => `
 
   .addressList {
     list-style-type: none;
+    > li {
+      margin-bottom: 1rem;
+    }
   }
 
   .multisigHeader {

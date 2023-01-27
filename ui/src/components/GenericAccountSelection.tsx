@@ -1,11 +1,10 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
-import Identicon from "@polkadot/react-identicon";
 import { useCallback, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
-import { ICON_THEME, ICON_SIZE } from "../constants";
 import AccountDisplay from "./AccountDisplay";
-import { useAccountNames } from "../hooks/useAccountNames";
+import { useAccountNames } from "../contexts/AccountNamesContext";
+import IdenticonBadge from "./IdenticonBadge";
 
 export interface AccountBaseInfo {
   address: string
@@ -63,7 +62,7 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
       filterOptions={filterOptions}
       options={accountList}
       renderOption={(props, option) => {
-        return <Box component="li" {...props} key={option.address}>
+        return <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important" }} {...props} key={option.address}>
           <AccountDisplay
             address={option.address}
             badge={
@@ -85,12 +84,16 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
           InputProps={{
             ...params.InputProps,
             startAdornment: (
-              // FIXME add badge here
               <InputAdornment position="start">
-                <Identicon
-                  value={value.address}
-                  theme={ICON_THEME}
-                  size={ICON_SIZE}
+                <IdenticonBadge
+                  address={value.address}
+                  badge={
+                    value.meta?.isProxy
+                      ? "proxy"
+                      : value.meta?.isMulti
+                        ? "multi"
+                        : undefined
+                  }
                 />
               </InputAdornment>
             ),

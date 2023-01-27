@@ -10,7 +10,7 @@ interface Props {
     address?: string
 }
 
-export const AccountBadge = ({ className, badge, address }: Props) => {
+export const IdenticonBadge = ({ className, badge, address }: Props) => {
 
     const AccountIcon = () => <Identicon
         value={address}
@@ -37,7 +37,7 @@ export const AccountBadge = ({ className, badge, address }: Props) => {
 
 }
 
-export default styled(AccountBadge)(({ theme }) => `
+export default styled(IdenticonBadge)(({ theme }) => `
     /* &.blue > .MuiBadge-badge {
         background-color: blue
     } */
