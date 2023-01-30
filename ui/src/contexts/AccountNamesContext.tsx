@@ -50,12 +50,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     }, [accountNames])
 
     const addName = useCallback((name: string, address: string) => {
-        if (!accountNames) return
-
-        const newNames = accountNames
-        newNames[address] = name;
-        setAccountNames(newNames);
-
+        setAccountNames({ ...accountNames, ...{ [address]: name } });
     }, [accountNames, setAccountNames])
 
     const addNames = useCallback((newAdditions: AccountNames) => {
