@@ -25,10 +25,10 @@ jobs:
           cache-dependency-path: "ui/yarn.lock"
       - run: yarn install --immutable
       - run: yarn build
-        env:
-          VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
-          VITE_GRAPHQL_WS_PROVIDER: "ws://161.35.70.117:4350/graphql"
-          VITE_GRAPHQL_HTTP_PROVIDER: "http://161.35.70.117:4350/graphql"
+        # env:
+        #   VITE_WS_PROVIDER: "wss://rococo-rpc.polkadot.io"
+        #   VITE_GRAPHQL_WS_PROVIDER: "ws://161.35.70.117:4350/graphql"
+        #   VITE_GRAPHQL_HTTP_PROVIDER: "http://161.35.70.117:4350/graphql"
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
