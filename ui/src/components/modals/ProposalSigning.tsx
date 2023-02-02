@@ -45,12 +45,12 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
   const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
   const [callInfo, setCallInfo] = useState<SubmittingCall>({})
-  const onIsSubmitting = useCallback(() => {
+  const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
   }, [onClose])
 
-  const signCallback = useGetSigningCallback({ onSuccess, onIsSubmitting })
+  const signCallback = useGetSigningCallback({ onSuccess, onSubmitting })
 
   useEffect(() => {
     if (isProposerSelected) {

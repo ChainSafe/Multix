@@ -117,6 +117,7 @@ const ProposalList = ({ className }: Props) => {
   const onOpenModal = useCallback(() => {
     setIsSigningModalOpen(true)
   }, [])
+
   useEffect(() => {
     if (!isApiReady) {
       return

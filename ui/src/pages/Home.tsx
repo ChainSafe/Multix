@@ -30,6 +30,10 @@ const Home = ({ className }: Props) => {
     refresh()
   }, [onCloseSendModal, refresh])
 
+  const onFinalizedSendModal = useCallback(() => {
+    refresh()
+  }, [refresh])
+
   const options: MenuOption[] = [
     {
       text: "Edit names",
@@ -125,6 +129,7 @@ const Home = ({ className }: Props) => {
         <Send
           onClose={onCloseSendModal}
           onSuccess={onSuccessSendModal}
+          onFinalized={onFinalizedSendModal}
         />
       )}
       {isEditModalOpen && (

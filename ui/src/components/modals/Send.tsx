@@ -17,6 +17,7 @@ interface Props {
   onClose: () => void
   className?: string
   onSuccess: () => void
+  onFinalized: () => void
 }
 
 interface ProxyOrMultisig extends AccountBaseInfo {
@@ -30,7 +31,7 @@ export interface EasySetupOption {
 
 const getEasySetupOptionLabel = (option: EasySetupOption) => option.title
 
-const Send = ({ onClose, className, onSuccess }: Props) => {
+const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
@@ -40,7 +41,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
 
-  const onIsSubmitting = useCallback(() => {
+  const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
   }, [onClose])
@@ -75,7 +76,7 @@ const Send = ({ onClose, className, onSuccess }: Props) => {
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(easySetupOptions[0])
 
-  const signCallback = useGetSigningCallback({ onSuccess, onIsSubmitting })
+  const signCallback = useGetSigningCallback({ onSuccess, onSubmitting, onFinalized })
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
 
   const onSign = useCallback(async () => {
