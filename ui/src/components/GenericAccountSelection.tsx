@@ -8,8 +8,10 @@ import IdenticonBadge from "./IdenticonBadge";
 
 export interface AccountBaseInfo {
   address: string
-  name: string
-  meta: { [index: string]: any }
+  meta?: {
+    isProxy?: boolean
+    isMulti?: boolean
+  }
 }
 
 interface Props {
@@ -26,12 +28,12 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
 
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof accountList[0]) => `${option.address}${option.name}`
+    stringify: (option: typeof accountList[0]) => `${option.address}${getOptionLabel(option)}`
   });
 
   const getOptionLabel = useCallback((option: typeof accountList[0]) => {
-    return getNamesWithExtension(value.address) || option.address
-  }, [getNamesWithExtension, value.address])
+    return getNamesWithExtension(option.address) || option.address
+  }, [getNamesWithExtension])
 
   const onInputBlur = useCallback(() => {
     inputRef.current?.setSelectionRange(0, 0)
@@ -66,9 +68,9 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
           <AccountDisplay
             address={option.address}
             badge={
-              option.meta.isProxy
+              option.meta?.isProxy
                 ? "proxy"
-                : option.meta.isMulti
+                : option.meta?.isMulti
                   ? "multi"
                   : undefined
             }
