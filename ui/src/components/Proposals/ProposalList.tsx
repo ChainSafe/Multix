@@ -1,20 +1,17 @@
-import { Box, Button, CircularProgress, Paper } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { Box, CircularProgress, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { PendingTx, usePendingTx } from "../hooks/usePendingTx";
-import GestureIcon from '@mui/icons-material/Gesture';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
-import { useMultisig } from "../contexts/MultisigContext";
+import { PendingTx, usePendingTx } from "../../hooks/usePendingTx";
+import { useMultisig } from "../../contexts/MultisigContext";
 import { ApiPromise } from "@polkadot/api";
-import { useApi } from "../contexts/ApiContext";
-import { getDifference, getIntersection } from "../utils";
-import { useAccountList } from "../contexts/AccountsContext";
-import ProposalSigningModal from "./modals/ProposalSigning";
-import CallInfo from "./CallInfo";
-import { ISanitizedCall, parseGenericCall } from "../utils/decode";
+import { useApi } from "../../contexts/ApiContext";
+import { getDifference, getIntersection } from "../../utils";
+import { useAccountList } from "../../contexts/AccountsContext";
+import { ISanitizedCall, parseGenericCall } from "../../utils/decode";
 import { GenericCall } from '@polkadot/types';
 import { AnyJson } from '@polkadot/types/types';
 import FlareIcon from '@mui/icons-material/Flare';
+import Proposal from "./Proposal";
 
 export interface AggregatedData {
   callData?: `0x${string}`;
@@ -108,15 +105,6 @@ const ProposalList = ({ className }: Props) => {
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccountList()
-  const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
-
-  const onClose = useCallback(() => {
-    setIsSigningModalOpen(false)
-  }, [])
-
-  const onOpenModal = useCallback(() => {
-    setIsSigningModalOpen(true)
-  }, [])
 
   useEffect(() => {
     if (!isApiReady) {
@@ -163,36 +151,13 @@ const ProposalList = ({ className }: Props) => {
           possibleSigners.push(info.depositor)
         }
 
-        return (
-          <Paper
-            className="callWrapper"
-            key={`${index}-${callData}`}
-          >
-            {!agg.callData
-              ? <QuestionMarkIcon className="callIcon unknownCall" />
-              : <GestureIcon className="callIcon" />
-            }
-
-            <CallInfo
-              aggregatedData={agg}
-              children={
-                (isProposer || possibleSigners.length > 0) && (
-                  <div className="buttonWrapper">
-                    <Button onClick={onOpenModal}>Review</Button>
-                  </div>
-                )
-              }
-            />
-            {isSigningModalOpen && (
-              <ProposalSigningModal
-                possibleSigners={possibleSigners}
-                onClose={onClose}
-                proposalData={agg}
-                onSuccess={refresh}
-              />
-            )}
-          </Paper>
-        )
+        return <Proposal
+          key={`${index}-${callData}`}
+          aggregatedData={agg}
+          isProposer={isProposer}
+          onSuccess={refresh}
+          possibleSigners={possibleSigners}
+        />
       })
     )}
   </Box>
@@ -218,13 +183,6 @@ export default styled(ProposalList)(({ theme }) => `
     justify-content: center;
   }
 
-  .callWrapper {
-    display: flex;
-    flex-direction: row;
-    margin-left: .5rem;
-    margin-bottom: 1rem;
-  }
-
   .callIcon {
     font-size: 7rem;
     background-color: ${theme.custom.background.backgroundColorLightGray};
@@ -242,11 +200,5 @@ export default styled(ProposalList)(({ theme }) => `
     margin-left: .5rem;
   }
 
-  .buttonWrapper {
-    flex: 1;
-    align-self: flex-end;
-    text-align: end;
-    margin-right: .5rem;
-    margin-bottom: .5rem;
-  }
+
 `)

@@ -5,7 +5,7 @@ import { useAccountList } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
 import { useMultisig } from "../../contexts/MultisigContext";
 import CallInfo from "../CallInfo";
-import { AggregatedData } from "../ProposalList";
+import { AggregatedData } from "../Proposals/ProposalList";
 import SignerSelection from "../SignerSelection";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { GenericCall } from "@polkadot/types";

@@ -1,6 +1,6 @@
 import Expander from "./Expander";
 import styled from "styled-components";
-import { AggregatedData } from "./ProposalList";
+import { AggregatedData } from "./Proposals/ProposalList";
 import { AnyJson } from "@polkadot/types/types";
 import { ReactNode, useMemo } from "react";
 import AccountDisplay from "./AccountDisplay";
