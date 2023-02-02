@@ -14,9 +14,11 @@ export const useGetSigningCallback = ({ onIsSubmitting, onSuccess }: Args) => {
 
   return ({ events = [], status }: ISubmittableResult) => {
     onIsSubmitting && onIsSubmitting()
-    status.type === "Broadcast" && addToast({ title: `Tx broadcasted`, type: "loading" })
+
+    status.isBroadcast && addToast({ title: `Tx broadcasted`, type: "loading" })
     console.log('Transaction status:', status.type);
-    let errorInfo;
+    let errorInfo = "";
+    let toastErrorShown = false
 
     if (status.isInBlock) {
       console.log('Included at block hash', status.asInBlock.toHex());
@@ -26,12 +28,29 @@ export const useGetSigningCallback = ({ onIsSubmitting, onSuccess }: Args) => {
         const { data, method, section } = event
         console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
 
+        // check if proxy has an error
+        if (api.events.proxy.ProxyExecuted.is(event)) {
+
+          // extract the data for this event
+          const [dispatchError]: any = data.toJSON();
+
+          // if proxy has an error
+          if (dispatchError?.err?.module) {
+            const mod = dispatchError.err.module
+            const error = api.registry.findMetaError(
+              new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
+            )
+
+            errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
+          }
+        }
+
         if (api.events.system.ExtrinsicSuccess.is(event)) {
-          addToast({ title: "Tx succeeded", type: "success" })
+          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "loading" })
           onSuccess && onSuccess()
         }
 
-        if (api.events.system.ExtrinsicFailed.is(event)) {
+        if (!errorInfo && api.events.system.ExtrinsicFailed.is(event)) {
           // extract the data for this event
           const [dispatchError] = data;
 
@@ -47,10 +66,16 @@ export const useGetSigningCallback = ({ onIsSubmitting, onSuccess }: Args) => {
             // Other, CannotLookup, BadOrigin, no extra info
             errorInfo = dispatchError.toString();
           }
-          errorInfo && addToast({ title: errorInfo, type: "error" })
+        }
+
+        if (!!errorInfo && !toastErrorShown) {
+          addToast({ title: errorInfo, type: "error" })
+          // prevent showing several errors
+          toastErrorShown = true
         }
       });
     } else if (status.isFinalized) {
+      !toastErrorShown && addToast({ title: "Tx finalized", type: "success" })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
   }

@@ -15,6 +15,13 @@ const registry = new TypeRegistry()
 export interface IApiContext {
   api: ApiPromise // From @polkadot/api\
   isApiReady: boolean
+  chainInfo?: ChainInfoHuman
+}
+
+interface ChainInfoHuman {
+  ss58Format: string
+  tokenDecimals: string[]
+  tokenSymbol: string[]
 }
 
 const ApiContext = createContext<IApiContext | undefined>(undefined)
@@ -23,6 +30,7 @@ const ApiContext = createContext<IApiContext | undefined>(undefined)
 const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   const WS_PROVIDER = import.meta.env.VITE_WS_PROVIDER
   const provider = new WsProvider(WS_PROVIDER)
+  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
   const [apiPromise, setApiPromise] = useState<ApiPromise>(
     new ApiPromise({ provider, types })
   )
@@ -43,12 +51,14 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
     // might be connecting to a different node, or the node might have changed
     // settings.
     apiPromise.isReady
-      .then(() => {
+      .then((api) => {
         if (types) {
           registry.register(types)
         }
 
         setIsReady(true)
+        const info = api.registry.getChainProperties()
+        setChainInfo(info?.toHuman() as unknown as ChainInfoHuman)
       })
       .catch(e => console.error(e))
   }, [apiPromise.isReady, types])
@@ -63,7 +73,8 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
     <ApiContext.Provider
       value={{
         api: apiPromise,
-        isApiReady: isReady
+        isApiReady: isReady,
+        chainInfo
       }}
     >
       {children}
