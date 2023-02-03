@@ -43,7 +43,7 @@ const Summary = ({ className, threshold, signatories, name }: Props) => {
             send funds to the Multisig to create a Proxy
           </li>
           <li>
-            create a Multig proxy
+            create a Multisig proxy
           </li>
         </ul>
         Other signatories must approve the proxy creation before the it is ready use.

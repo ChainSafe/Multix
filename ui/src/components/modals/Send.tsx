@@ -34,7 +34,7 @@ const getEasySetupOptionLabel = (option: EasySetupOption) => option.title
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
+  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
@@ -80,7 +80,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
 
   const onSign = useCallback(async () => {
-    const otherSigners = sortAddresses(selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address))
+    const otherSigners = sortAddresses(selectedMultisigSignatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -129,7 +129,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignerList, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast])
+  }, [selectedMultisigSignatories, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast])
 
   const onChangeEasySetupOtion = useCallback((_: any, value: EasySetupOption | null) => {
     value && setSelectedEasyOption(value)
@@ -164,7 +164,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         </Grid>
         <Grid item xs={12} md={10}>
           <SignerSelection
-            possibleSigners={selectedMultisigSignerList}
+            possibleSigners={selectedMultisigSignatories}
             onChange={() => setErrorMessage("")
             } />
         </Grid>

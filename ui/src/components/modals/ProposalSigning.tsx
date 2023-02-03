@@ -32,7 +32,7 @@ interface SubmittingCall {
 const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
+  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
@@ -105,7 +105,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
 
   const onSign = useCallback(async (isApproving: boolean) => {
-    const otherSigners = sortAddresses(selectedMultisigSignerList.filter((signer) => signer !== selectedAccount?.address))
+    const otherSigners = sortAddresses(selectedMultisigSignatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -166,7 +166,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignerList, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
+  }, [selectedMultisigSignatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")

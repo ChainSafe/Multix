@@ -6,13 +6,14 @@ import { ReactNode, useMemo } from "react";
 import AccountDisplay from "./AccountDisplay";
 import { formatBalance } from "@polkadot/util";
 import { useApi } from "../contexts/ApiContext";
-
+import { isProxyCall } from "../utils/isProxyCall";
 
 interface Props {
   aggregatedData: AggregatedData
   expanded?: boolean
   children?: ReactNode
   className?: string
+  badge?: string
 }
 
 const createUlTree = (args: AnyJson, isBalancesTransfer: boolean, decimals: number, unit: string) => {
@@ -46,8 +47,9 @@ const createUlTree = (args: AnyJson, isBalancesTransfer: boolean, decimals: numb
 
 const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
   const { args, name } = agg
+  const isProxy = isProxyCall(name);
 
-  if (name !== "proxy.proxy" || !(args as { [index: string]: AnyJson; })?.call) {
+  if (!isProxy || !(args as { [index: string]: AnyJson; })?.call) {
     return agg
   }
 
@@ -63,7 +65,7 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
 
 }
 
-const CallInfo = ({ aggregatedData, expanded = false, children, className }: Props) => {
+const CallInfo = ({ aggregatedData, expanded = false, children, className, badge }: Props) => {
   const { args, name } = filterProxyProxy(aggregatedData)
   const { chainInfo } = useApi()
   const isBalancesTransferAlike = useMemo(() =>

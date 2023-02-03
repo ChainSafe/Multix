@@ -11,7 +11,7 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
+  const { selectedMultisig, selectedMultisigSignatories: selectedMultisigSignerList } = useMultisig()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
 

@@ -29,12 +29,7 @@ const NameSelection = ({ className, name, setName }: Props) => {
         fullWidth
         error={!!error}
         helperText={error}
-        label="Name"
-        // InputProps={{
-        //   endAdornment: (
-        //     <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
-        //   ),
-        // }}
+        label="Multisig name"
         value={name}
         onChange={handleChange}
       />

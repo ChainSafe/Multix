@@ -101,7 +101,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
 const ProposalList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
-  const { selectedMultisig, selectedMultisigSignerList } = useMultisig()
+  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccountList()
@@ -139,14 +139,17 @@ const ProposalList = ({ className }: Props) => {
     {!pendingTxData.length && !isLoadingPendingTxs && (
       <Paper className="noCall" >
         <FlareIcon className="noCallIcon" />
-        <div className="noCallText">You're all set!</div></Paper>)}
+        <div className="noCallText">You're all set!</div>
+      </Paper>
+    )}
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
         const { callData, info } = agg
-        const isProposer = !!info?.depositor && selectedMultisigSignerList.includes(info.depositor)
-        const neededSigners = getDifference(selectedMultisigSignerList, info?.approvals)
-        const possibleSigners = getIntersection(addressList, neededSigners)
+        const neededSigners = getDifference(selectedMultisigSignatories, info?.approvals)
+        const possibleSigners = getIntersection(neededSigners, addressList)
+        const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 
+        // if we have the proposer in the extension it can always reject the proposal
         if (isProposer) {
           possibleSigners.push(info.depositor)
         }
@@ -182,23 +185,4 @@ export default styled(ProposalList)(({ theme }) => `
     display: flex;
     justify-content: center;
   }
-
-  .callIcon {
-    font-size: 7rem;
-    background-color: ${theme.custom.background.backgroundColorLightGray};
-    margin: .5rem;
-    padding: 1rem;
-    height: auto;
-
-    &.unknownCall {
-      height: 5rem;
-    }
-  }
-
-  .callName {
-    margin-top: 0.5rem;
-    margin-left: .5rem;
-  }
-
-
 `)
