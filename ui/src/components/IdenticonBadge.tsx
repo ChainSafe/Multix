@@ -1,5 +1,6 @@
 import { Badge } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
+import { useMemo } from "react";
 import styled from "styled-components";
 import { ICON_SIZE, ICON_THEME } from "../constants";
 import { AccountLabel } from "../types";
@@ -19,13 +20,14 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
         className="identicon"
     />
 
+    const appliedClass = useMemo(() => badge === "proxy"
+        ? "blue"
+        : "red", [badge])
+
     if (!badge) {
         return <AccountIcon />
     }
 
-    const appliedClass = badge === "proxy"
-        ? "blue"
-        : "red"
     return <Badge
         className={`${className} ${appliedClass}`}
         color="primary"

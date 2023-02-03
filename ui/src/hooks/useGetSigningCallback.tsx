@@ -3,17 +3,18 @@ import { useApi } from '../contexts/ApiContext'
 import { useToasts } from '../contexts/ToastContext'
 
 interface Args {
-  onIsSubmitting?: () => void
+  onSubmitting?: () => void
   onSuccess?: () => void
+  onFinalized?: () => void
 }
 
-export const useGetSigningCallback = ({ onIsSubmitting, onSuccess }: Args) => {
+export const useGetSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
 
 
   return ({ events = [], status }: ISubmittableResult) => {
-    onIsSubmitting && onIsSubmitting()
+    onSubmitting && onSubmitting()
 
     status.isBroadcast && addToast({ title: `Tx broadcasted`, type: "loading" })
     console.log('Transaction status:', status.type);
@@ -75,6 +76,7 @@ export const useGetSigningCallback = ({ onIsSubmitting, onSuccess }: Args) => {
         }
       });
     } else if (status.isFinalized) {
+      onFinalized && onFinalized()
       !toastErrorShown && addToast({ title: "Tx finalized", type: "success" })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
