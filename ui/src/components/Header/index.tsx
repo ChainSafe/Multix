@@ -35,7 +35,7 @@ export const Header: React.FC = () => {
                   to="/create"
                   sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
                 >
-                  Create New
+                  New Multisig
                 </Button>
 
               </Box>
