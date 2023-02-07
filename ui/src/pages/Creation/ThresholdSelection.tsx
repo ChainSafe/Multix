@@ -16,8 +16,8 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
     setError("")
     const value = Number(event.target.value)
 
-    if (Number.isNaN(value) || value > signatoriesNumber || value < 1) {
-      setError(`Threshold must be between 1 and ${signatoriesNumber}`)
+    if (Number.isNaN(value) || value > signatoriesNumber || value < 2) {
+      setError(`Threshold must be between 2 and ${signatoriesNumber}`)
       setThreshold(undefined)
 
       return

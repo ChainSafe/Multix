@@ -31,14 +31,14 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount } = useAccountList()
   const navigate = useNavigate()
-  const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/") })
+  const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
   const canGoNext = useMemo(() => {
 
     // need a threshold set
-    if (currentStep === 1 && threshold === undefined) {
+    if (currentStep === 1 && (threshold === undefined || threshold < 2)) {
       return false
     }
 
@@ -98,9 +98,8 @@ const MultisigCreation = ({ className }: Props) => {
         xs={12}
         md={4}
       >
-        <h1 className="title">{steps[currentStep]}</h1>
+        <h1 className="title">{steps[currentStep] || ""}</h1>
       </Grid>
-
       <Grid
         item
         container
@@ -199,6 +198,8 @@ const MultisigCreation = ({ className }: Props) => {
 }
 
 export default styled(MultisigCreation)(({ theme }) => `
+  padding-bottom: 2rem;
+
   .stepItem {
     cursor: pointer;
   }
