@@ -87,9 +87,9 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [getAccountByAddress, isAllowedToConnectToExtension, selectAccount])
 
   useEffect(() => {
-    if (!accountList.length) {
-      getaccountList()
-    }
+    if (accountList.length > 0) return
+
+    getaccountList()
   }, [accountList, getaccountList])
 
   useEffect(() => {
