@@ -3,7 +3,7 @@ import styled from "styled-components"
 import CallInfo from "../CallInfo"
 import GestureIcon from '@mui/icons-material/Gesture';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
-import { AggregatedData } from "./ProposalList";
+import { AggregatedData } from "./TransactionList";
 import { useCallback, useMemo, useState } from "react";
 import ProposalSigningModal from "../modals/ProposalSigning";
 import { Badge } from "@mui/material";
@@ -18,7 +18,7 @@ interface Props {
   onSuccess: () => void
 }
 
-const Proposal = ({ className, aggregatedData, isProposer, possibleSigners, onSuccess }: Props) => {
+const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, onSuccess }: Props) => {
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
   // FIXME this is duplicated
@@ -70,7 +70,7 @@ const Proposal = ({ className, aggregatedData, isProposer, possibleSigners, onSu
   )
 }
 
-export default styled(Proposal)(({ theme }) => `
+export default styled(Transaction)(({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;

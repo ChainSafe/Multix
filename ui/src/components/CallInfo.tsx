@@ -1,12 +1,12 @@
 import Expander from "./Expander";
 import styled from "styled-components";
-import { AggregatedData } from "./Proposals/ProposalList";
+import { AggregatedData } from "./Transactions/TransactionList";
 import { AnyJson } from "@polkadot/types/types";
 import { ReactNode, useMemo } from "react";
 import AccountDisplay from "./AccountDisplay";
-import { formatBalance } from "@polkadot/util";
 import { useApi } from "../contexts/ApiContext";
 import { isProxyCall } from "../utils/isProxyCall";
+import { formatBnBalance } from "../utils/formatBnBalance";
 
 interface Props {
   aggregatedData: AggregatedData
@@ -32,9 +32,9 @@ const createUlTree = (args: AnyJson, isBalancesTransfer: boolean, decimals: numb
 
       // show nice value
       if (isBalancesTransfer && key === "value") {
-        const balance = formatBalance(value.replace(/,/g, ""), { decimals, withSi: false, withZero: true })
+        const balance = formatBnBalance(value.replace(/,/g, ""), decimals, { withThousandDelimitor: true, tokenSymbol: unit, numberAfterComma: 4 })
         return <li key={key}>
-          {key}: {`${balance} ${unit}`}
+          {key}: {balance}
         </li>
       }
 
