@@ -7,6 +7,7 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 
 * node 16.x
 * docker
+* docker-compose
 
 ## Quickly running the sample
 
@@ -39,6 +40,22 @@ make process
 #    and run
 make serve
 ```
+
+### Involved ports
+
+By default the indexer exposes prometheus metrics at http://localhost:33045
+The graphql server and playground is available at http://localhost:4350/graphql
+
+## Docker setup
+
+The database used for the indexer is a Postgres launched in a Docker.
+If you have no migration to do, and the project is built already, you can launch the docker with the db and the indexer using:
+```bash
+docker-compose up -d
+node -r dotenv/config lib/processor.js
+```
+
+This corresponds to `make up` and `make process` from the above steps.
 
 ## Dev flow
 
