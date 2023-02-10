@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { web3Enable, web3FromSource, web3AccountsSubscribe } from "@polkadot/extension-dapp"
+import { web3Enable, web3FromSource, web3AccountsSubscribe, isWeb3Injected } from "@polkadot/extension-dapp"
 import { InjectedAccountWithMeta, InjectedExtension } from "@polkadot/extension-inject/types"
 import { DAPP_NAME } from "../constants"
 import { Signer } from "@polkadot/api/types"
@@ -41,6 +41,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   console.log('accountList', accountList)
   console.log('isExtensionError', isExtensionError)
   console.log('extensions', extensions)
+  console.log('isWeb3Injected', isWeb3Injected)
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
@@ -73,7 +74,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
-
     web3AccountsSubscribe((accountList) => {
       console.log('accountList from web3AccountSub', accountList)
       if (accountList.length === 0) {
@@ -97,12 +97,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (accountList.length > 0) return
+    if (accountList.length > 0 || !isWeb3Injected) return
 
     // don't request before explicitely asking
-    if (!isAllowedToConnectToExtension) return
+    if (isAllowedToConnectToExtension || isWeb3Injected) {
+      getaccountList()
+    }
 
-    getaccountList()
   }, [accountList, getaccountList, isAllowedToConnectToExtension])
 
   useEffect(() => {
@@ -141,7 +142,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
-        isAllowedToConnectToExtension,
+        isAllowedToConnectToExtension: isAllowedToConnectToExtension || isWeb3Injected,
       }}
     >
       {children}
