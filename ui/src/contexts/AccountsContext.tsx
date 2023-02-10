@@ -34,8 +34,14 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensionNotFound, setExtensionNotFound] = useState(false)
   const [isAccountListEmpty, setIsAccountListEmpty] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
-  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
+  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
+
+  console.log('isAccountLoading', isAccountLoading)
+  console.log('isAllowedToConnectToExtension', isAllowedToConnectToExtension)
+  console.log('accountList', accountList)
+  console.log('extensionNotFound', extensionNotFound)
+  console.log('isAccountListEmpty', isAccountListEmpty)
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
@@ -52,10 +58,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [])
 
   const getaccountList = useCallback(async (): Promise<undefined> => {
+    console.log('getAccountList')
     if (!isAllowedToConnectToExtension) return
 
     setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
+    console.log("extensions", extensions)
 
     if (extensions.length === 0) {
       setExtensionNotFound(true)
@@ -66,6 +74,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     }
 
     web3AccountsSubscribe((accountList) => {
+      console.log('accountList from web3AccountSub', accountList)
       if (accountList.length === 0) {
         setIsAccountListEmpty(true)
         setIsAccountLoading(false)
@@ -94,7 +103,9 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
+      console.log('check local storage')
       const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
+      console.log('previouslyAllowed', previouslyAllowed)
       if (previouslyAllowed === "true") {
         setIsAllowedToConnectToExtension(true)
       }
