@@ -34,7 +34,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
   const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
-  const [extensions, setExtensions] = useState<InjectedExtension[]>([])
+  const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
+  const [timeoutElapsed, setTimoutElapsed] = useState(false)
 
   console.log('isAccountLoading', isAccountLoading)
   console.log('isAllowedToConnectToExtension', isAllowedToConnectToExtension)
@@ -57,18 +58,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     setSelected(account)
   }, [])
 
-  useEffect(() => {
-    if (!isAllowedToConnectToExtension) return
-
-    if (isAccountLoading) return
-
-    if (extensions.length === 0 && !accountList.length) {
-      setIsExtensionError(true)
-    }
-  }, [accountList, extensions, isAccountLoading, isAllowedToConnectToExtension])
-
   const getaccountList = useCallback(async (): Promise<void> => {
-    console.log('getAccountList')
+    console.log('--> getAccountList')
 
     setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
@@ -94,6 +85,26 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       .catch(console.error)
 
   }, [getAccountByAddress, selectAccount])
+
+  useEffect(() => {
+    if (!isAllowedToConnectToExtension) return
+
+    if (isAccountLoading) return
+
+    if (extensions?.length === 0 && !accountList.length) {
+      if (!timeoutElapsed && isAllowedToConnectToExtension) {
+        // give it another chance #ugly hack
+        // race condition see https://github.com/polkadot-js/extension/issues/938
+        console.log('--> another chance in 500ms')
+        setTimeout(() => {
+          getaccountList()
+          setTimoutElapsed(true)
+        }, 500)
+      } else {
+        setIsExtensionError(true)
+      }
+    }
+  }, [accountList, extensions, getaccountList, isAccountLoading, isAllowedToConnectToExtension, timeoutElapsed])
 
   useEffect(() => {
     // don't request if we have accounts
