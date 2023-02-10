@@ -11,7 +11,7 @@ import { ISanitizedCall, parseGenericCall } from "../../utils/decode";
 import { GenericCall } from '@polkadot/types';
 import { AnyJson } from '@polkadot/types/types';
 import FlareIcon from '@mui/icons-material/Flare';
-import Proposal from "./Proposal";
+import Transaction from "./Transaction";
 
 export interface AggregatedData {
   callData?: `0x${string}`;
@@ -99,7 +99,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
   }
 })
 
-const ProposalList = ({ className }: Props) => {
+const TransactionList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
   const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
@@ -154,7 +154,7 @@ const ProposalList = ({ className }: Props) => {
           possibleSigners.push(info.depositor)
         }
 
-        return <Proposal
+        return <Transaction
           key={`${index}-${callData}`}
           aggregatedData={agg}
           isProposer={isProposer}
@@ -166,7 +166,7 @@ const ProposalList = ({ className }: Props) => {
   </Box>
 }
 
-export default styled(ProposalList)(({ theme }) => `
+export default styled(TransactionList)(({ theme }) => `
   .noCallIcon {
     font-size: 3rem;
     margin-bottom: 1rem;

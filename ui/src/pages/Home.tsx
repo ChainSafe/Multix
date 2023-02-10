@@ -2,7 +2,7 @@ import { useCallback, useState } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
-import ProposalList from "../components/Proposals/ProposalList";
+import ProposalList from "../components/Transactions/TransactionList";
 import { Link } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
 import SendIcon from '@mui/icons-material/Send';
@@ -121,7 +121,7 @@ const Home = ({ className }: Props) => {
         md={6}
       >
         <div className="actionWrapper">
-          <h3>Proposals</h3>
+          <h3>Transactions</h3>
           <ProposalList />
         </div>
       </Grid>
