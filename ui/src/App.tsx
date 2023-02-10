@@ -23,10 +23,10 @@ const App = () => {
       <ToastContextProvider>
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
-            <AccountContextProvider>
-              <AccountNamesContextProvider>
-                <MultisigContextProvider>
-                  <ApiContextProvider>
+            <ApiContextProvider>
+              <AccountContextProvider>
+                <AccountNamesContextProvider>
+                  <MultisigContextProvider>
                     <Header />
                     <Container
                       fixed
@@ -48,10 +48,10 @@ const App = () => {
                         </Routes>
                       </UserSpace>
                     </Container>
-                  </ApiContextProvider>
-                </MultisigContextProvider>
-              </AccountNamesContextProvider>
-            </AccountContextProvider>
+                  </MultisigContextProvider>
+                </AccountNamesContextProvider>
+              </AccountContextProvider>
+            </ApiContextProvider>
           </QueryClientProvider>
         </BrowserRouter>
       </ToastContextProvider>

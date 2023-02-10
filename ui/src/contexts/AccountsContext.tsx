@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { web3Enable, web3FromSource, web3AccountsSubscribe } from "@polkadot/extension-dapp"
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
+import { web3Enable, web3FromSource, web3AccountsSubscribe, isWeb3Injected } from "@polkadot/extension-dapp"
+import { InjectedAccountWithMeta, InjectedExtension } from "@polkadot/extension-inject/types"
 import { DAPP_NAME } from "../constants"
 import { Signer } from "@polkadot/api/types"
 
@@ -18,8 +18,7 @@ export interface IAccountContext {
   selectAccount: (account: InjectedAccountWithMeta) => void
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
   isAccountLoading: boolean
-  extensionNotFound: boolean
-  isAccountListEmpty: boolean
+  isExtensionError: boolean
   selectedSigner?: Signer
   allowConnectionToExtension: () => void
   isAllowedToConnectToExtension: boolean
@@ -31,11 +30,18 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [accountList, setAccountList] = useState<InjectedAccountWithMeta[]>([])
   const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(accountList[0])
   const [isAccountLoading, setIsAccountLoading] = useState(false)
-  const [extensionNotFound, setExtensionNotFound] = useState(false)
-  const [isAccountListEmpty, setIsAccountListEmpty] = useState(false)
+  const [isExtensionError, setIsExtensionError] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
-  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
+  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
+  const [extensions, setExtensions] = useState<InjectedExtension[]>([])
+
+  console.log('isAccountLoading', isAccountLoading)
+  console.log('isAllowedToConnectToExtension', isAllowedToConnectToExtension)
+  console.log('accountList', accountList)
+  console.log('isExtensionError', isExtensionError)
+  console.log('extensions', extensions)
+  console.log('isWeb3Injected', isWeb3Injected)
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
@@ -51,24 +57,27 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     setSelected(account)
   }, [])
 
-  const getaccountList = useCallback(async (): Promise<undefined> => {
+  useEffect(() => {
     if (!isAllowedToConnectToExtension) return
+
+    if (isAccountLoading) return
+
+    if (extensions.length === 0 && !accountList.length) {
+      setIsExtensionError(true)
+    }
+  }, [accountList, extensions, isAccountLoading, isAllowedToConnectToExtension])
+
+  const getaccountList = useCallback(async (): Promise<void> => {
+    console.log('getAccountList')
 
     setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
-
-    if (extensions.length === 0) {
-      setExtensionNotFound(true)
-      setIsAccountLoading(false)
-      return
-    } else {
-      setExtensionNotFound(false)
-    }
+    setExtensions(extensions)
 
     web3AccountsSubscribe((accountList) => {
+      console.log('accountList from web3AccountSub', accountList)
       if (accountList.length === 0) {
-        setIsAccountListEmpty(true)
-        setIsAccountLoading(false)
+        setIsExtensionError(true)
         return
       }
 
@@ -84,17 +93,24 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
 
-  }, [getAccountByAddress, isAllowedToConnectToExtension, selectAccount])
+  }, [getAccountByAddress, selectAccount])
 
   useEffect(() => {
-    if (!accountList.length) {
+    // don't request if we have accounts
+    if (accountList.length > 0) return
+
+    // don't request before explicitely asking
+    if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-  }, [accountList, getaccountList])
+
+  }, [accountList, getaccountList, isAllowedToConnectToExtension])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
+      console.log('check local storage')
       const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
+      console.log('previouslyAllowed', previouslyAllowed)
       if (previouslyAllowed === "true") {
         setIsAllowedToConnectToExtension(true)
       }
@@ -122,8 +138,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         addressList,
         selectAccount,
         isAccountLoading,
-        extensionNotFound,
-        isAccountListEmpty,
+        isExtensionError,
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
@@ -135,12 +150,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   )
 }
 
-const useAccountList = () => {
+const useAccounts = () => {
   const context = useContext(AccountContext)
   if (context === undefined) {
-    throw new Error("useAccountList must be used within a AccountContextProvider")
+    throw new Error("useAccounts must be used within a AccountContextProvider")
   }
   return context
 }
 
-export { AccountContextProvider, useAccountList }
+export { AccountContextProvider, useAccounts }

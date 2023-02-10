@@ -6,7 +6,7 @@ import { useMultisig } from "../../contexts/MultisigContext";
 import { ApiPromise } from "@polkadot/api";
 import { useApi } from "../../contexts/ApiContext";
 import { getDifference, getIntersection } from "../../utils";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import { ISanitizedCall, parseGenericCall } from "../../utils/decode";
 import { GenericCall } from '@polkadot/types';
 import { AnyJson } from '@polkadot/types/types';
@@ -104,7 +104,7 @@ const TransactionList = ({ className }: Props) => {
   const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
   const { api, isApiReady } = useApi()
-  const { addressList } = useAccountList()
+  const { addressList } = useAccounts()
 
   useEffect(() => {
     if (!isApiReady) {

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { ICON_SIZE, ICON_THEME } from "../constants";
-import { useAccountList } from "../contexts/AccountsContext";
+import { useAccounts } from "../contexts/AccountsContext";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import AccountDisplay from "./AccountDisplay";
 
@@ -21,7 +21,7 @@ const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
 }
 
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
-  const { selectAccount, selectedAccount, accountList } = useAccountList()
+  const { selectAccount, selectedAccount, accountList } = useAccounts()
   const signersList = useMemo(() =>
     accountList?.filter((account) => possibleSigners.includes(account.address)) || []
     , [accountList, possibleSigners])

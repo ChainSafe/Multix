@@ -1,9 +1,9 @@
 import { useMemo } from "react"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
-import { useAccountList } from "../contexts/AccountsContext"
+import { useAccounts } from "../contexts/AccountsContext"
 
 export const useGetAccountBaseFromAccountList = () => {
-    const { accountList } = useAccountList()
+    const { accountList } = useAccounts()
 
 
     const accountBase = useMemo((): AccountBaseInfo[] =>
