@@ -2,7 +2,7 @@ import { Box, Chip, Paper } from "@mui/material";
 import styled from "styled-components";
 import AccountDisplay from "../../components/AccountDisplay";
 import SignerSelection from "../../components/SignerSelection";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Summary = ({ className, threshold, signatories, name }: Props) => {
-  const { addressList } = useAccountList()
+  const { addressList } = useAccounts()
   const possibleSigners = getIntersection(addressList, signatories)
 
 

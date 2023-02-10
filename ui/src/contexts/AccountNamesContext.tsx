@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
-import { useAccountList } from "./AccountsContext"
+import { useAccounts } from "./AccountsContext"
 
 export type AccountNames = { [address: string]: string }
 
@@ -21,7 +21,7 @@ const AccountNamesContext = createContext<IAccountNamesContext | undefined>(unde
 
 const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => {
     const [accountNames, setAccountNames] = useState<AccountNames>({})
-    const { getAccountByAddress } = useAccountList()
+    const { getAccountByAddress } = useAccounts()
 
     const getNamesWithExtension = useCallback((address: string) => {
         const extensionAccount = getAccountByAddress(address)

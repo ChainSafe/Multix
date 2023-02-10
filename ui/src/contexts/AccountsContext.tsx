@@ -97,10 +97,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (accountList.length > 0 || !isWeb3Injected) return
+    if (accountList.length > 0) return
 
     // don't request before explicitely asking
-    if (isAllowedToConnectToExtension || isWeb3Injected) {
+    if (isAllowedToConnectToExtension) {
       getaccountList()
     }
 
@@ -142,7 +142,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
-        isAllowedToConnectToExtension: isAllowedToConnectToExtension || isWeb3Injected,
+        isAllowedToConnectToExtension,
       }}
     >
       {children}
@@ -150,12 +150,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   )
 }
 
-const useAccountList = () => {
+const useAccounts = () => {
   const context = useContext(AccountContext)
   if (context === undefined) {
-    throw new Error("useAccountList must be used within a AccountContextProvider")
+    throw new Error("useAccounts must be used within a AccountContextProvider")
   }
   return context
 }
 
-export { AccountContextProvider, useAccountList }
+export { AccountContextProvider, useAccounts }

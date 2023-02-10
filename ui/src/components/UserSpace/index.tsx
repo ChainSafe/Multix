@@ -1,7 +1,7 @@
 import React from "react"
 import { Center } from "../../components/layout/Center"
 import { Box, Button, CircularProgress } from "@mui/material"
-import { useAccountList } from "../../contexts/AccountsContext"
+import { useAccounts } from "../../contexts/AccountsContext"
 import { useApi } from "../../contexts/ApiContext"
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 export const UserSpace = ({ children, className }: Props) => {
   const { isApiReady } = useApi()
-  const { isAllowedToConnectToExtension, isExtensionError, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccountList()
+  const { isAllowedToConnectToExtension, isExtensionError, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccounts()
 
   if (!isAllowedToConnectToExtension) {
     return <Center>

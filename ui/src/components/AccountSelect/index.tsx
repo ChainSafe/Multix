@@ -2,7 +2,7 @@ import React from "react"
 import { CardHeader, IconButton, Menu, MenuItem } from "@mui/material"
 import { Identicon } from "@polkadot/react-identicon"
 import { MenuProps } from "@mui/material/Menu/Menu"
-import { useAccountList } from "../../contexts/AccountsContext"
+import { useAccounts } from "../../contexts/AccountsContext"
 
 interface Props extends Omit<MenuProps, "open" | "onClose" | "anchorEl"> {
   anchorEl: null | HTMLElement
@@ -11,7 +11,7 @@ interface Props extends Omit<MenuProps, "open" | "onClose" | "anchorEl"> {
 
 export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) => {
 
-  const { accountList, selectAccount } = useAccountList()
+  const { accountList, selectAccount } = useAccounts()
 
   if (!accountList) {
     return null
