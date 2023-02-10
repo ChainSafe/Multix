@@ -10,7 +10,7 @@ interface Props {
 }
 export const UserSpace = ({ children, className }: Props) => {
   const { isApiReady } = useApi()
-  const { isAllowedToConnectToExtension, extensionNotFound, isAccountListEmpty, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccountList()
+  const { isAllowedToConnectToExtension, isExtensionError, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccountList()
 
   if (!isAllowedToConnectToExtension) {
     return <Center>
@@ -44,10 +44,10 @@ export const UserSpace = ({ children, className }: Props) => {
 
   if (selectedAccount) return <>{children}</>
 
-  if (extensionNotFound)
+  if (isExtensionError)
     return (
       <Center>
-        <h1>Please install an extension such as <a
+        <h1>No account found. Please create at least one in an extension such as <a
           href="https://polkadot.js.org/extension/"
           target={"_blank"}
           rel="noreferrer"
@@ -55,13 +55,6 @@ export const UserSpace = ({ children, className }: Props) => {
           Polkadot.js extension
         </a>
         </h1>
-      </Center>
-    )
-
-  if (isAccountListEmpty)
-    return (
-      <Center>
-        <h1>Please create at least an account in the extension</h1>
       </Center>
     )
 
