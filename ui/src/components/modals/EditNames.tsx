@@ -11,7 +11,7 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultisig, selectedMultisigSignatories: selectedMultisigSignerList } = useMultisig()
+  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
 
@@ -51,7 +51,7 @@ const EditNames = ({ onClose, className }: Props) => {
         </Grid>
         <Grid item xs={12}>
           <h4>Signatories</h4>
-          {selectedMultisigSignerList.map(signer => <AccountEditName
+          {selectedMultisigSignatories.map(signer => <AccountEditName
             key={signer}
             className='accountEdition'
             address={signer}

@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
 import SignatorySelection from "../../components/SignatorySelection";
 import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-crypto";
-import { config } from "../../config";
 import { useAccountList } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import NameSelection from "./NameSelection"
@@ -27,7 +26,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, isApiReady } = useApi()
+  const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount } = useAccountList()
   const navigate = useNavigate()
@@ -56,6 +55,11 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
+    if (!chainInfo?.ss58Format) {
+      console.error('no ss58Format from chainInfo')
+      return
+    }
+
     if (!selectedAccount) {
       console.error('no selected address')
       return
@@ -72,7 +76,7 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), config.prefix)
+    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), Number(chainInfo.ss58Format))
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
@@ -85,7 +89,7 @@ const MultisigCreation = ({ className }: Props) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addName, addToast, api, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, api, chainInfo, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
 
   return (
     <Grid

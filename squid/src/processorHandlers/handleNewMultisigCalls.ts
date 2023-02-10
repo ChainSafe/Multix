@@ -1,5 +1,5 @@
 import { In } from "typeorm";
-import { Multisig, MultisigCall } from "../model";
+import { Account, MultisigCall } from "../model";
 import { Ctx } from "../processor";
 
 export interface MultisigCallInfo extends Omit<MultisigCall, "multisig"> {
@@ -11,7 +11,7 @@ export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: Multisi
     const multisigCalls: MultisigCall[] = []
 
     const multisigs = await ctx.store
-        .findBy(Multisig, { id: In([...multisigAddresses]) })
+        .findBy(Account, { id: In([...multisigAddresses]) })
         .then((q) => new Map(q.map((i) => [i.id, i])))
 
     for (let { blockHash, id, callIndex, multisigAddress, timestamp } of newMultisigCalls) {

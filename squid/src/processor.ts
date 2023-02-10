@@ -7,6 +7,7 @@ import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
 import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies } from './processorHandlers'
+import { Account } from './model'
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
@@ -80,7 +81,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 const signer = getOriginAccountId(callItem.call.origin)
                 const callArgs = callItem.call.args;
 
-                ctx.log.info(JsonLog(callItem))
+                // ctx.log.info(JsonLog(callItem))
 
                 const { otherSignatories, threshold } = handleMultisigCall(callArgs)
                 const signers = [signer, ...otherSignatories]
@@ -88,10 +89,12 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
                 const newMulti = {
                     id: getMultisigAddress(signers, threshold),
-                    threshold: threshold,
+                    threshold,
                     signatories: signers,
-                    createdAt: timestamp
-                }
+                    createdAt: timestamp,
+                    isMultisig: true,
+                    isPureProxy: false,
+                } as NewMultisigsInfo
 
                 newMultisigsInfo.push(newMulti)
                 const blockNumber = block.header.height
@@ -260,9 +263,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 //         }
 //     }
 // }
-
-
-
 
 // async function processRmrkEvents(ctx: Ctx, rmrkEvents: RmrkEvent[]) {
 //     let accountIds = new Set<string>()

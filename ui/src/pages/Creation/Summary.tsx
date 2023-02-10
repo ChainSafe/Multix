@@ -1,29 +1,55 @@
 import { Box, Chip, Paper } from "@mui/material";
+import { useMemo } from "react";
 import styled from "styled-components";
 import AccountDisplay from "../../components/AccountDisplay";
 import SignerSelection from "../../components/SignerSelection";
 import { useAccountList } from "../../contexts/AccountsContext";
+import { useMultisig } from "../../contexts/MultisigContext";
 import { getIntersection } from "../../utils";
 
 interface Props {
   className?: string;
   threshold?: number;
   signatories: string[]
-  name: string
+  name?: string
+  proxyAddress?: string
+  isSwapSummary?: boolean
 }
 
-const Summary = ({ className, threshold, signatories, name }: Props) => {
+const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false }: Props) => {
   const { addressList } = useAccountList()
-  const possibleSigners = getIntersection(addressList, signatories)
+  const { selectedMultisigSignatories } = useMultisig()
+  const possibleSigners = useMemo(() => {
+    return isSwapSummary
+      ? getIntersection(addressList, selectedMultisigSignatories)
+      : getIntersection(addressList, signatories)
+  }, [addressList, isSwapSummary, selectedMultisigSignatories, signatories])
 
+  if (isSwapSummary && !proxyAddress) {
+    console.log('ProxyAddress undefined while being a swap summary')
+    return null
+  }
 
   return (
     <Box className={className} >
-      <h3>You are about to create a Multisig:</h3>
+      {
+        isSwapSummary && proxyAddress
+          ? <>
+            <h3>You are about to change the Multisig controlling:</h3>
+            <AccountDisplay
+              address={proxyAddress}
+              badge="proxy"
+              className="proxyName"
+            />
+          </>
+          : <h3>You are about to create a Multisig:</h3>
+      }
       <Paper elevation={2} className="paper">
-        <h4 className="nameSummary">
-          {name}
-        </h4>
+        {!!name && (
+          <h4 className="nameSummary">
+            {name}
+          </h4>
+        )}
         <h4 className="threshold">
           Threshold: <Chip label={`${threshold}/${signatories.length}`} />
         </h4>
@@ -39,14 +65,20 @@ const Summary = ({ className, threshold, signatories, name }: Props) => {
       <Box className="explainer">
         In the next step you will send a transaction to:
         <ul>
-          <li>
-            send funds to the Multisig to create a Proxy
-          </li>
-          <li>
-            create a Multisig proxy
-          </li>
+          {
+            isSwapSummary
+              ? <>
+                <li>Add the new Multisig to the current Proxy</li>
+                <li>Remove the old Multisig</li>
+              </>
+              : <>
+                <li>send funds to the new Multisig to create a Proxy</li>
+                <li>create a Multisig proxy</li>
+              </>
+          }
+
         </ul>
-        Other signatories must approve the proxy creation before the it is ready use.
+        Other signatories must approve this transaction before it is ready use.
       </Box>
       <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
@@ -77,5 +109,10 @@ export default styled(Summary)(({ theme }) => `
   .signerSelection {
     margin-top: 2rem;
     margin-bottom: 3rem;
+  }
+
+  .proxyName {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 `)

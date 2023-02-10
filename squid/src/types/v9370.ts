@@ -5,7 +5,7 @@ export interface Timepoint {
     index: number
 }
 
-export type Call = Call_System | Call_Babe | Call_Timestamp | Call_Indices | Call_Balances | Call_Authorship | Call_Session | Call_Grandpa | Call_ImOnline | Call_Democracy | Call_Council | Call_TechnicalCommittee | Call_PhragmenElection | Call_TechnicalMembership | Call_Treasury | Call_Claims | Call_Utility | Call_Identity | Call_Society | Call_Recovery | Call_Vesting | Call_Scheduler | Call_Proxy | Call_Multisig | Call_Preimage | Call_Bounties | Call_ChildBounties | Call_Tips | Call_Gilt | Call_Configuration | Call_ParasShared | Call_ParaInclusion | Call_ParaInherent | Call_Paras | Call_Initializer | Call_Dmp | Call_Ump | Call_Hrmp | Call_ParasDisputes | Call_ParasSlashing | Call_Registrar | Call_Slots | Call_Auctions | Call_Crowdloan | Call_XcmPallet | Call_ParasSudoWrapper | Call_AssignedSlots | Call_ValidatorManager | Call_StateTrieMigration | Call_Sudo
+export type Call = Call_System | Call_Babe | Call_Timestamp | Call_Indices | Call_Balances | Call_Authorship | Call_Session | Call_Grandpa | Call_ImOnline | Call_Democracy | Call_Council | Call_TechnicalCommittee | Call_PhragmenElection | Call_TechnicalMembership | Call_Treasury | Call_Claims | Call_Utility | Call_Identity | Call_Society | Call_Recovery | Call_Vesting | Call_Scheduler | Call_Proxy | Call_Multisig | Call_Preimage | Call_Bounties | Call_ChildBounties | Call_Tips | Call_Nis | Call_NisCounterpartBalances | Call_Configuration | Call_ParasShared | Call_ParaInclusion | Call_ParaInherent | Call_Paras | Call_Initializer | Call_Dmp | Call_Ump | Call_Hrmp | Call_ParasDisputes | Call_ParasSlashing | Call_Registrar | Call_Slots | Call_Auctions | Call_Crowdloan | Call_XcmPallet | Call_ParasSudoWrapper | Call_AssignedSlots | Call_ValidatorManager | Call_StateTrieMigration | Call_Sudo
 
 export interface Call_System {
     __kind: 'System'
@@ -147,9 +147,14 @@ export interface Call_Tips {
     value: TipsCall
 }
 
-export interface Call_Gilt {
-    __kind: 'Gilt'
-    value: GiltCall
+export interface Call_Nis {
+    __kind: 'Nis'
+    value: NisCall
+}
+
+export interface Call_NisCounterpartBalances {
+    __kind: 'NisCounterpartBalances'
+    value: NisCounterpartBalancesCall
 }
 
 export interface Call_Configuration {
@@ -322,15 +327,7 @@ export interface ProxyType_Society {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
-
-/**
- * A dispatch that will fill the block weight up to the given ratio.
- */
-export interface SystemCall_fill_block {
-    __kind: 'fill_block'
-    ratio: number
-}
+export type SystemCall = SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
 
 /**
  * Make some on-chain remark.
@@ -2129,18 +2126,18 @@ export interface ClaimsCall_move_claim {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch
+export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
 
 /**
  * Send a batch of dispatch calls.
  * 
- * May be called from any origin.
+ * May be called from any origin except `None`.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then call are dispatch without checking origin filter. (This includes
- * bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then the calls are dispatched without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -2182,13 +2179,13 @@ export interface UtilityCall_as_derivative {
  * Send a batch of dispatch calls and atomically execute them.
  * The whole transaction will rollback and fail if any of the calls failed.
  * 
- * May be called from any origin.
+ * May be called from any origin except `None`.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then call are dispatch without checking origin filter. (This includes
- * bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then the calls are dispatched without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -2221,13 +2218,13 @@ export interface UtilityCall_dispatch_as {
  * Send a batch of dispatch calls.
  * Unlike `batch`, it allows errors and won't interrupt.
  * 
- * May be called from any origin.
+ * May be called from any origin except `None`.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then call are dispatch without checking origin filter. (This includes
- * bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then the calls are dispatch without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -2236,6 +2233,20 @@ export interface UtilityCall_dispatch_as {
 export interface UtilityCall_force_batch {
     __kind: 'force_batch'
     calls: Call[]
+}
+
+/**
+ * Dispatch a function call with a specified weight.
+ * 
+ * This function does not check the weight of the call, and instead allows the
+ * Root origin to specify the weight of the call.
+ * 
+ * The dispatch origin for this call must be _Root_.
+ */
+export interface UtilityCall_with_weight {
+    __kind: 'with_weight'
+    call: Call
+    weight: Weight
 }
 
 /**
@@ -3770,7 +3781,7 @@ export interface BountiesCall_propose_bounty {
  * Approve a bounty proposal. At a later time, the bounty will be funded and become active
  * and the original deposit will be returned.
  * 
- * May only be called from `T::ApproveOrigin`.
+ * May only be called from `T::SpendOrigin`.
  * 
  * # <weight>
  * - O(1).
@@ -3784,7 +3795,7 @@ export interface BountiesCall_approve_bounty {
 /**
  * Assign a curator to a funded bounty.
  * 
- * May only be called from `T::ApproveOrigin`.
+ * May only be called from `T::SpendOrigin`.
  * 
  * # <weight>
  * - O(1).
@@ -4280,24 +4291,22 @@ export interface TipsCall_slash_tip {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type GiltCall = GiltCall_place_bid | GiltCall_retract_bid | GiltCall_set_target | GiltCall_thaw
+export type NisCall = NisCall_place_bid | NisCall_retract_bid | NisCall_fund_deficit | NisCall_thaw
 
 /**
- * Place a bid for a gilt to be issued.
+ * Place a bid.
  * 
  * Origin must be Signed, and account must have at least `amount` in free balance.
  * 
- * - `amount`: The amount of the bid; these funds will be reserved. If the bid is
- * successfully elevated into an issued gilt, then these funds will continue to be
- * reserved until the gilt expires. Must be at least `MinFreeze`.
- * - `duration`: The number of periods for which the funds will be locked if the gilt is
- * issued. It will expire only after this period has elapsed after the point of issuance.
- * Must be greater than 1 and no more than `QueueCount`.
+ * - `amount`: The amount of the bid; these funds will be reserved, and if/when
+ *   consolidated, removed. Must be at least `MinBid`.
+ * - `duration`: The number of periods before which the newly consolidated bid may be
+ *   thawed. Must be greater than 1 and no more than `QueueCount`.
  * 
  * Complexities:
  * - `Queues[duration].len()` (just take max).
  */
-export interface GiltCall_place_bid {
+export interface NisCall_place_bid {
     __kind: 'place_bid'
     amount: bigint
     duration: number
@@ -4312,43 +4321,161 @@ export interface GiltCall_place_bid {
  * - `amount`: The amount of the previous bid.
  * - `duration`: The duration of the previous bid.
  */
-export interface GiltCall_retract_bid {
+export interface NisCall_retract_bid {
     __kind: 'retract_bid'
     amount: bigint
     duration: number
 }
 
 /**
- * Set target proportion of gilt-funds.
+ * Ensure we have sufficient funding for all potential payouts.
  * 
- * Origin must be `AdminOrigin`.
- * 
- * - `target`: The target proportion of effective issued funds that should be under gilts
- * at any one time.
+ * - `origin`: Must be accepted by `FundOrigin`.
  */
-export interface GiltCall_set_target {
-    __kind: 'set_target'
-    target: bigint
+export interface NisCall_fund_deficit {
+    __kind: 'fund_deficit'
 }
 
 /**
- * Remove an active but expired gilt. Reserved funds under gilt are freed and balance is
- * adjusted to ensure that the funds grow or shrink to maintain the equivalent proportion
- * of effective total issued funds.
+ * Reduce or remove an outstanding receipt, placing the according proportion of funds into
+ * the account of the owner.
  * 
- * Origin must be Signed and the account must be the owner of the gilt of the given index.
- * 
- * - `index`: The index of the gilt to be thawed.
+ * - `origin`: Must be Signed and the account must be the owner of the receipt `index` as
+ *   well as any fungible counterpart.
+ * - `index`: The index of the receipt.
+ * - `portion`: If `Some`, then only the given portion of the receipt should be thawed. If
+ *   `None`, then all of it should be.
  */
-export interface GiltCall_thaw {
+export interface NisCall_thaw {
     __kind: 'thaw'
     index: number
+    portion: (bigint | undefined)
 }
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ConfigurationCall = ConfigurationCall_set_validation_upgrade_cooldown | ConfigurationCall_set_validation_upgrade_delay | ConfigurationCall_set_code_retention_period | ConfigurationCall_set_max_code_size | ConfigurationCall_set_max_pov_size | ConfigurationCall_set_max_head_data_size | ConfigurationCall_set_parathread_cores | ConfigurationCall_set_parathread_retries | ConfigurationCall_set_group_rotation_frequency | ConfigurationCall_set_chain_availability_period | ConfigurationCall_set_thread_availability_period | ConfigurationCall_set_scheduling_lookahead | ConfigurationCall_set_max_validators_per_core | ConfigurationCall_set_max_validators | ConfigurationCall_set_dispute_period | ConfigurationCall_set_dispute_post_conclusion_acceptance_period | ConfigurationCall_set_dispute_max_spam_slots | ConfigurationCall_set_dispute_conclusion_by_time_out_period | ConfigurationCall_set_no_show_slots | ConfigurationCall_set_n_delay_tranches | ConfigurationCall_set_zeroth_delay_tranche_width | ConfigurationCall_set_needed_approvals | ConfigurationCall_set_relay_vrf_modulo_samples | ConfigurationCall_set_max_upward_queue_count | ConfigurationCall_set_max_upward_queue_size | ConfigurationCall_set_max_downward_message_size | ConfigurationCall_set_ump_service_total_weight | ConfigurationCall_set_max_upward_message_size | ConfigurationCall_set_max_upward_message_num_per_candidate | ConfigurationCall_set_hrmp_open_request_ttl | ConfigurationCall_set_hrmp_sender_deposit | ConfigurationCall_set_hrmp_recipient_deposit | ConfigurationCall_set_hrmp_channel_max_capacity | ConfigurationCall_set_hrmp_channel_max_total_size | ConfigurationCall_set_hrmp_max_parachain_inbound_channels | ConfigurationCall_set_hrmp_max_parathread_inbound_channels | ConfigurationCall_set_hrmp_channel_max_message_size | ConfigurationCall_set_hrmp_max_parachain_outbound_channels | ConfigurationCall_set_hrmp_max_parathread_outbound_channels | ConfigurationCall_set_hrmp_max_message_num_per_candidate | ConfigurationCall_set_ump_max_individual_weight | ConfigurationCall_set_pvf_checking_enabled | ConfigurationCall_set_pvf_voting_ttl | ConfigurationCall_set_minimum_validation_upgrade_delay | ConfigurationCall_set_bypass_consistency_check
+export type NisCounterpartBalancesCall = NisCounterpartBalancesCall_transfer | NisCounterpartBalancesCall_set_balance | NisCounterpartBalancesCall_force_transfer | NisCounterpartBalancesCall_transfer_keep_alive | NisCounterpartBalancesCall_transfer_all | NisCounterpartBalancesCall_force_unreserve
+
+/**
+ * Transfer some liquid free balance to another account.
+ * 
+ * `transfer` will set the `FreeBalance` of the sender and receiver.
+ * If the sender's account is below the existential deposit as a result
+ * of the transfer, the account will be reaped.
+ * 
+ * The dispatch origin for this call must be `Signed` by the transactor.
+ * 
+ * # <weight>
+ * - Dependent on arguments but not critical, given proper implementations for input config
+ *   types. See related functions below.
+ * - It contains a limited number of reads and writes internally and no complex
+ *   computation.
+ * 
+ * Related functions:
+ * 
+ *   - `ensure_can_withdraw` is always called internally but has a bounded complexity.
+ *   - Transferring balances to accounts that did not exist before will cause
+ *     `T::OnNewAccount::on_new_account` to be called.
+ *   - Removing enough funds from an account will trigger `T::DustRemoval::on_unbalanced`.
+ *   - `transfer_keep_alive` works the same way as `transfer`, but has an additional check
+ *     that the transfer will not kill the origin account.
+ * ---------------------------------
+ * - Origin account is already in memory, so no DB operations for them.
+ * # </weight>
+ */
+export interface NisCounterpartBalancesCall_transfer {
+    __kind: 'transfer'
+    dest: MultiAddress
+    value: bigint
+}
+
+/**
+ * Set the balances of a given account.
+ * 
+ * This will alter `FreeBalance` and `ReservedBalance` in storage. it will
+ * also alter the total issuance of the system (`TotalIssuance`) appropriately.
+ * If the new free or reserved balance is below the existential deposit,
+ * it will reset the account nonce (`frame_system::AccountNonce`).
+ * 
+ * The dispatch origin for this call is `root`.
+ */
+export interface NisCounterpartBalancesCall_set_balance {
+    __kind: 'set_balance'
+    who: MultiAddress
+    newFree: bigint
+    newReserved: bigint
+}
+
+/**
+ * Exactly as `transfer`, except the origin must be root and the source account may be
+ * specified.
+ * # <weight>
+ * - Same as transfer, but additional read and write because the source account is not
+ *   assumed to be in the overlay.
+ * # </weight>
+ */
+export interface NisCounterpartBalancesCall_force_transfer {
+    __kind: 'force_transfer'
+    source: MultiAddress
+    dest: MultiAddress
+    value: bigint
+}
+
+/**
+ * Same as the [`transfer`] call, but with a check that the transfer will not kill the
+ * origin account.
+ * 
+ * 99% of the time you want [`transfer`] instead.
+ * 
+ * [`transfer`]: struct.Pallet.html#method.transfer
+ */
+export interface NisCounterpartBalancesCall_transfer_keep_alive {
+    __kind: 'transfer_keep_alive'
+    dest: MultiAddress
+    value: bigint
+}
+
+/**
+ * Transfer the entire transferable balance from the caller account.
+ * 
+ * NOTE: This function only attempts to transfer _transferable_ balances. This means that
+ * any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
+ * transferred by this function. To ensure that this function results in a killed account,
+ * you might need to prepare the account by removing any reference counters, storage
+ * deposits, etc...
+ * 
+ * The dispatch origin of this call must be Signed.
+ * 
+ * - `dest`: The recipient of the transfer.
+ * - `keep_alive`: A boolean to determine if the `transfer_all` operation should send all
+ *   of the funds the account has, causing the sender account to be killed (false), or
+ *   transfer everything except at least the existential deposit, which will guarantee to
+ *   keep the sender account alive (true). # <weight>
+ * - O(1). Just like transfer, but reading the user's transferable balance first.
+ *   #</weight>
+ */
+export interface NisCounterpartBalancesCall_transfer_all {
+    __kind: 'transfer_all'
+    dest: MultiAddress
+    keepAlive: boolean
+}
+
+/**
+ * Unreserve some balance from a user by force.
+ * 
+ * Can only be called by ROOT.
+ */
+export interface NisCounterpartBalancesCall_force_unreserve {
+    __kind: 'force_unreserve'
+    who: MultiAddress
+    amount: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type ConfigurationCall = ConfigurationCall_set_validation_upgrade_cooldown | ConfigurationCall_set_validation_upgrade_delay | ConfigurationCall_set_code_retention_period | ConfigurationCall_set_max_code_size | ConfigurationCall_set_max_pov_size | ConfigurationCall_set_max_head_data_size | ConfigurationCall_set_parathread_cores | ConfigurationCall_set_parathread_retries | ConfigurationCall_set_group_rotation_frequency | ConfigurationCall_set_chain_availability_period | ConfigurationCall_set_thread_availability_period | ConfigurationCall_set_scheduling_lookahead | ConfigurationCall_set_max_validators_per_core | ConfigurationCall_set_max_validators | ConfigurationCall_set_dispute_period | ConfigurationCall_set_dispute_post_conclusion_acceptance_period | ConfigurationCall_set_dispute_conclusion_by_time_out_period | ConfigurationCall_set_no_show_slots | ConfigurationCall_set_n_delay_tranches | ConfigurationCall_set_zeroth_delay_tranche_width | ConfigurationCall_set_needed_approvals | ConfigurationCall_set_relay_vrf_modulo_samples | ConfigurationCall_set_max_upward_queue_count | ConfigurationCall_set_max_upward_queue_size | ConfigurationCall_set_max_downward_message_size | ConfigurationCall_set_ump_service_total_weight | ConfigurationCall_set_max_upward_message_size | ConfigurationCall_set_max_upward_message_num_per_candidate | ConfigurationCall_set_hrmp_open_request_ttl | ConfigurationCall_set_hrmp_sender_deposit | ConfigurationCall_set_hrmp_recipient_deposit | ConfigurationCall_set_hrmp_channel_max_capacity | ConfigurationCall_set_hrmp_channel_max_total_size | ConfigurationCall_set_hrmp_max_parachain_inbound_channels | ConfigurationCall_set_hrmp_max_parathread_inbound_channels | ConfigurationCall_set_hrmp_channel_max_message_size | ConfigurationCall_set_hrmp_max_parachain_outbound_channels | ConfigurationCall_set_hrmp_max_parathread_outbound_channels | ConfigurationCall_set_hrmp_max_message_num_per_candidate | ConfigurationCall_set_ump_max_individual_weight | ConfigurationCall_set_pvf_checking_enabled | ConfigurationCall_set_pvf_voting_ttl | ConfigurationCall_set_minimum_validation_upgrade_delay | ConfigurationCall_set_bypass_consistency_check
 
 /**
  * Set the validation upgrade cooldown.
@@ -4475,14 +4602,6 @@ export interface ConfigurationCall_set_dispute_period {
  */
 export interface ConfigurationCall_set_dispute_post_conclusion_acceptance_period {
     __kind: 'set_dispute_post_conclusion_acceptance_period'
-    new: number
-}
-
-/**
- * Set the maximum number of dispute spam slots.
- */
-export interface ConfigurationCall_set_dispute_max_spam_slots {
-    __kind: 'set_dispute_max_spam_slots'
     new: number
 }
 
@@ -6420,7 +6539,7 @@ export interface V2WeightLimit_Limited {
 export interface ParaGenesisArgs {
     genesisHead: Uint8Array
     validationCode: Uint8Array
-    parachain: boolean
+    paraKind: boolean
 }
 
 export type SlotLeasePeriodStart = SlotLeasePeriodStart_Current | SlotLeasePeriodStart_Next
@@ -8001,7 +8120,7 @@ export interface V0NetworkId_Kusama {
     __kind: 'Kusama'
 }
 
-export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial
+export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial | V0BodyId_Defense | V0BodyId_Administration | V0BodyId_Treasury
 
 export interface V0BodyId_Unit {
     __kind: 'Unit'
@@ -8031,6 +8150,18 @@ export interface V0BodyId_Legislative {
 
 export interface V0BodyId_Judicial {
     __kind: 'Judicial'
+}
+
+export interface V0BodyId_Defense {
+    __kind: 'Defense'
+}
+
+export interface V0BodyId_Administration {
+    __kind: 'Administration'
+}
+
+export interface V0BodyId_Treasury {
+    __kind: 'Treasury'
 }
 
 export type V0BodyPart = V0BodyPart_Voice | V0BodyPart_Members | V0BodyPart_Fraction | V0BodyPart_AtLeastProportion | V0BodyPart_MoreThanProportion

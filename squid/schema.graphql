@@ -1,36 +1,47 @@
 type Account @entity {
   id: ID!
   multisigs: [AccountMultisig] @derivedFrom(field: "signer")
-}
-
-### MULTISIG ###
-
-enum MultisigInteraction {
-  CALL
-  MIGRATE
-}
-
-type Multisig @entity {
-  id: ID!
-  proxy: Account
+  isPureProxy: Boolean
+  # it's the origin and has proxy accounts, a pure must have some
+  proxied: [ProxyAccount!] @derivedFrom(field: "origin")
+  # it's proxing / doing stuff on behalf of an origin account 
+  proxy: [ProxyAccount!] @derivedFrom(field: "proxy")
+  isMultisig: Boolean
   signers: [AccountMultisig!] @derivedFrom(field: "multisig")
-  threshold: Int!
-  createdAt: DateTime!
+  threshold: Int
+  createdAt: DateTime
   multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
-
 }
 
 type MultisigCall @entity {
   id: ID!
   blockHash: String!
   timestamp: DateTime!
-  multisig: Multisig
+  multisig: Account
   callIndex: Int!
 }
 
 # entity for linking accounts and multisigs
 type AccountMultisig @entity {
   id: ID!
-  multisig: Multisig!
+  multisig: Account!
   signer: Account!
+}
+
+# entity for linking proxys
+type ProxyAccount @entity {
+  id: ID!
+  origin: Account
+  proxy: Account
+  type: ProxyType
+}
+
+enum ProxyType {
+  Any
+  Governance
+  NonTransfer
+  IdentityJudgement
+  CancelProxy
+  Auction
+  Society
 }

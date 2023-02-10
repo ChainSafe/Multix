@@ -1,5 +1,5 @@
 import { Box, InputAdornment, TextField } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -12,19 +12,40 @@ interface Props {
 const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNumber }: Props) => {
   const [error, setError] = useState("")
 
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setError("")
-    const value = Number(event.target.value)
+  const validateThreshold = useCallback((value: number) => {
+    if (signatoriesNumber <= 1) {
+      setError(`You need at least 2 signatories`)
+      setThreshold(undefined)
+
+      return false
+    }
 
     if (Number.isNaN(value) || value > signatoriesNumber || value < 2) {
       setError(`Threshold must be between 2 and ${signatoriesNumber}`)
       setThreshold(undefined)
 
-      return
+      return false
     }
 
-    setThreshold(value)
+    return true
   }, [setThreshold, signatoriesNumber])
+
+  useEffect(() => {
+    if (threshold && signatoriesNumber) {
+      validateThreshold(threshold)
+    }
+  }, [signatoriesNumber, threshold, validateThreshold])
+
+
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setError("")
+    const value = Number(event.target.value)
+
+    const isValid = validateThreshold(value)
+
+
+    isValid && setThreshold(value)
+  }, [setThreshold, validateThreshold])
 
   return (
     <Box className={className} >

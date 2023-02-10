@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
 import { useMultisig } from "../contexts/MultisigContext";
@@ -12,7 +12,8 @@ import Expander from "../components/Expander";
 import OptionsMenu, { MenuOption } from "../components/OptionsMenu";
 import EditIcon from "@mui/icons-material/Edit"
 import EditNames from "../components/modals/EditNames";
-
+import LockResetIcon from '@mui/icons-material/LockReset';
+import ChangeMultisig from "../components/modals/ChangeMultisig";
 interface Props {
   className?: string
 }
@@ -22,8 +23,10 @@ const Home = ({ className }: Props) => {
   const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
+  const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
 
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
@@ -34,13 +37,26 @@ const Home = ({ className }: Props) => {
     refresh()
   }, [refresh])
 
-  const options: MenuOption[] = [
-    {
-      text: "Edit names",
-      icon: <EditIcon />,
-      onClick: () => setIsEditModalOpen(true)
-    }
-  ]
+  const options: MenuOption[] = useMemo(() => {
+    const opts = [
+      {
+        text: "Edit names",
+        icon: <EditIcon />,
+        onClick: () => setIsEditModalOpen(true)
+      }
+    ]
+
+    // allow rotation only for the multisigs with a proxy
+    selectedHasProxy && opts.push(
+      {
+        text: "Edit multisig",
+        icon: <LockResetIcon />,
+        onClick: () => setIsChangeMultiModalOpen(true)
+      }
+    )
+
+    return opts
+  }, [selectedHasProxy])
 
   return (
     <Grid
@@ -135,6 +151,11 @@ const Home = ({ className }: Props) => {
       {isEditModalOpen && (
         <EditNames
           onClose={onCloseEditModal}
+        />
+      )}
+      {isChangeMultiModalOpen && (
+        <ChangeMultisig
+          onClose={onCloseChangeMultiModal}
         />
       )}
     </Grid>
