@@ -50,7 +50,6 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   )
   const { accountNames, addName } = useAccountNames()
 
-  console.log('multiProxyList', multiProxyList)
   useEffect(() => {
     if (!!error) {
       console.error(error)

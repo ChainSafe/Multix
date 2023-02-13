@@ -57,7 +57,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       },
       {
         // FIXME this will not work well with several multisigs
-        address: selectedMultiProxy?.multisigs[0].threshold,
+        address: selectedMultiProxy?.multisigs[0].address,
         meta: {
           isProxy: false,
           isMulti: true
