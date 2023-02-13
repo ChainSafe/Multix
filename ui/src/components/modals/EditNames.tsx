@@ -11,7 +11,7 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
 
@@ -44,14 +44,14 @@ const EditNames = ({ onClose, className }: Props) => {
           <h4>Multisig & Proxy</h4>
           <AccountEditName
             className='accountEdition'
-            address={selectedMultisig?.id || ""}
-            proxyAddress={selectedMultisig?.proxy?.id}
+            address={selectedMultiProxy?.multisigs[0].address || ""}
+            proxyAddress={selectedMultiProxy?.proxy}
             onNameChange={onNameChange}
           />
         </Grid>
         <Grid item xs={12}>
           <h4>Signatories</h4>
-          {selectedMultisigSignatories.map(signer => <AccountEditName
+          {selectedMultiProxySignatories.map(signer => <AccountEditName
             key={signer}
             className='accountEdition'
             address={signer}

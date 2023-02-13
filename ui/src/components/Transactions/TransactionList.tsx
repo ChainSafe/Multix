@@ -101,8 +101,8 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
 const TransactionList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
-  const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
+  const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccountList()
 
@@ -129,7 +129,7 @@ const TransactionList = ({ className }: Props) => {
     // const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     // console.log('proxyTx hex', proxyTx.toHex())
     // console.log('proxyTx hash', proxyTx.method.hash.toHex())
-  }, [api, pendingTxData, isApiReady, selectedMultisig])
+  }, [api, pendingTxData, isApiReady, selectedMultiProxy])
 
   return <Box className={className}>
     {isLoadingPendingTxs && (<Box className="loader">
@@ -145,7 +145,7 @@ const TransactionList = ({ className }: Props) => {
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
         const { callData, info } = agg
-        const neededSigners = getDifference(selectedMultisigSignatories, info?.approvals)
+        const neededSigners = getDifference(selectedMultiProxySignatories, info?.approvals)
         const possibleSigners = getIntersection(neededSigners, addressList)
         const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 

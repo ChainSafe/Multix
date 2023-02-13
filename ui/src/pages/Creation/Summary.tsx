@@ -18,12 +18,12 @@ interface Props {
 
 const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false }: Props) => {
   const { addressList } = useAccountList()
-  const { selectedMultisigSignatories } = useMultisig()
+  const { selectedMultiProxySignatories } = useMultisig()
   const possibleSigners = useMemo(() => {
     return isSwapSummary
-      ? getIntersection(addressList, selectedMultisigSignatories)
+      ? getIntersection(addressList, selectedMultiProxySignatories)
       : getIntersection(addressList, signatories)
-  }, [addressList, isSwapSummary, selectedMultisigSignatories, signatories])
+  }, [addressList, isSwapSummary, selectedMultiProxySignatories, signatories])
 
   if (isSwapSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')

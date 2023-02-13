@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
+import { MultiProxy } from "../contexts/MultisigContext";
 import { WhenInfo } from "../types"
 import { useMultisigCallSubscription } from "./useMultisigCallsSubscription";
 
@@ -7,7 +8,7 @@ export interface PendingTx {
   hash: string;
   info: WhenInfo;
 }
-export const usePendingTx = (multisigAddress?: string) => {
+export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(false)
   const { isApiReady, api } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
@@ -19,12 +20,13 @@ export const usePendingTx = (multisigAddress?: string) => {
 
     if (!isApiReady) return
 
-    if (!multisigAddress) return
+    if (!multiProxy) return
 
     setIsLoading(true)
     const newData: typeof data = []
 
-    !!api?.query?.multisig?.multisigs && api.query.multisig.multisigs.entries(multisigAddress)
+    // FIXME this only taked one multisig into account
+    !!api?.query?.multisig?.multisigs && api.query.multisig.multisigs.entries(multiProxy.multisigs[0].address)
       .then((res) => {
         res.forEach((storage) => {
           const hash = (storage[0].toHuman() as Array<string>)[1]
@@ -46,7 +48,7 @@ export const usePendingTx = (multisigAddress?: string) => {
 
     setIsLoading(false)
 
-  }, [api, isApiReady, multisigAddress])
+  }, [api, isApiReady, multiProxy])
 
   useEffect(() => {
     refresh()

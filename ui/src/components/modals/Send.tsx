@@ -34,11 +34,12 @@ const getEasySetupOptionLabel = (option: EasySetupOption) => option.title
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
-  const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
+  // FIXME this will not work well with several multisigs
+  const threshold = useMemo(() => selectedMultiProxy?.multisigs[0].threshold, [selectedMultiProxy])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
 
   const onSubmitting = useCallback(() => {
@@ -48,14 +49,15 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const possibleOrigin = useMemo(() =>
     [
       {
-        address: selectedMultisig?.proxy?.id,
+        address: selectedMultiProxy?.proxy,
         meta: {
           isProxy: true,
           isMulti: false
         },
       },
       {
-        address: selectedMultisig?.id,
+        // FIXME this will not work well with several multisigs
+        address: selectedMultiProxy?.multisigs[0].threshold,
         meta: {
           isProxy: false,
           isMulti: true
@@ -63,7 +65,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       }
     ]
       .filter(a => !!a.address) as ProxyOrMultisig[]
-    , [selectedMultisig])
+    , [selectedMultiProxy])
 
   const easySetupOptions: EasySetupOption[] = useMemo(() => [
     {
@@ -80,7 +82,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
 
   const onSign = useCallback(async () => {
-    const otherSigners = sortAddresses(selectedMultisigSignatories.filter((signer) => signer !== selectedAccount?.address))
+    const otherSigners = sortAddresses(selectedMultiProxySignatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -129,7 +131,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignatories, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast])
+  }, [selectedMultiProxySignatories, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast])
 
   const onChangeEasySetupOtion = useCallback((_: any, value: EasySetupOption | null) => {
     value && setSelectedEasyOption(value)
@@ -164,7 +166,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         </Grid>
         <Grid item xs={12} md={10}>
           <SignerSelection
-            possibleSigners={selectedMultisigSignatories}
+            possibleSigners={selectedMultiProxySignatories}
             onChange={() => setErrorMessage("")
             } />
         </Grid>

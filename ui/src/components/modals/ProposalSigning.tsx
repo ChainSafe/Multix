@@ -32,12 +32,13 @@ interface SubmittingCall {
 const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
   const { selectedAccount, selectedSigner } = useAccountList()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
-  const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
+  // FIX me this will break if several multisigs
+  const threshold = useMemo(() => selectedMultiProxy?.multisigs[0].threshold, [selectedMultiProxy])
   const canSubmit = useMemo(() => {
     if (!threshold) return false
     return proposalData.info?.approvals.length === threshold - 1
@@ -105,7 +106,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
 
   const onSign = useCallback(async (isApproving: boolean) => {
-    const otherSigners = sortAddresses(selectedMultisigSignatories.filter((signer) => signer !== selectedAccount?.address))
+    const otherSigners = sortAddresses(selectedMultiProxySignatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -166,7 +167,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultisigSignatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
+  }, [selectedMultiProxySignatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")

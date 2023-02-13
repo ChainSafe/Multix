@@ -24,15 +24,16 @@ type Step = "selection" | "summary"
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
   const { addNames } = useAccountNames()
   const { addToast } = useToasts()
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { selectedAccount, selectedSigner } = useAccountList()
   const [newNames, setNewNames] = useState<AccountNames>({})
-  const [threshold, setThreshold] = useState<number | undefined>(selectedMultisig?.threshold)
-  const [newSignatories, setNewSignatories] = useState<string[]>(selectedMultisigSignatories)
+  // FIXME this will break
+  const [threshold, setThreshold] = useState<number | undefined>(selectedMultiProxy?.multisigs[0].threshold)
+  const [newSignatories, setNewSignatories] = useState<string[]>(selectedMultiProxySignatories)
   const [currentStep, setCurrentStep] = useState<Step>("selection")
   const { addName, accountNames } = useAccountNames()
 
@@ -71,7 +72,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!selectedMultisigSignatories.includes(selectedAccount.address)) {
+    if (!selectedMultiProxySignatories.includes(selectedAccount.address)) {
       console.error("selected account not part of current multisig's signatories")
       return
     }
@@ -81,7 +82,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(selectedMultisigSignatories.filter((sig) => sig !== selectedAccount.address))
+    const otherSignatories = sortAddresses(selectedMultiProxySignatories.filter((sig) => sig !== selectedAccount.address))
     const multiAddress = encodeAddress(createKeyMulti(newSignatories, threshold), Number(chainInfo?.ss58Format))
     const addProxyTx = api.tx.proxy.addProxy(multiAddress, "Any", 0)
     const proxyTx = api.tx.proxy.proxy(selectedAccount.address, null, addProxyTx)
@@ -90,7 +91,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     const batchCall = api.tx.utility.batch([transferTx, multiSigCall])
 
     // Add the current name to the new Multisig
-    const currentProxyName = selectedMultisig?.proxy?.id && accountNames[selectedMultisig.proxy.id]
+    const currentProxyName = selectedMultiProxy?.proxy && accountNames[selectedMultiProxy.proxy]
     currentProxyName && addName(currentProxyName, multiAddress)
 
     batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
@@ -98,7 +99,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [isApiReady, chainInfo, selectedAccount, selectedMultisigSignatories, threshold, newSignatories, api, selectedMultisig, accountNames, addName, selectedSigner, signCallBack, addToast])
+  }, [isApiReady, chainInfo, selectedAccount, selectedMultiProxySignatories, threshold, newSignatories, api, selectedMultiProxy, accountNames, addName, selectedSigner, signCallBack, addToast])
 
 
 
@@ -126,7 +127,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               <h4>Proxy</h4>
               <Box className="subSection">
                 <AccountDisplay
-                  address={selectedMultisig?.proxy?.id || ""}
+                  address={selectedMultiProxy?.proxy || ""}
                   badge="proxy"
                 />
               </Box>
@@ -156,7 +157,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
           <Summary
             signatories={newSignatories}
             threshold={threshold}
-            proxyAddress={selectedMultisig?.proxy?.id}
+            proxyAddress={selectedMultiProxy?.proxy}
             isSwapSummary
           />
         )}

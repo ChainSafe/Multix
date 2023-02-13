@@ -1,39 +1,56 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
+import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
 import { useAccountNames } from "./AccountNamesContext"
 import { useAccountList } from "./AccountsContext"
 
-const LOCALSTORAGE_KEY = "multix.selectedMultisig"
+const LOCALSTORAGE_KEY = "multix.selectedMultiProxy"
 
-type MultisigContextProps = {
+interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
 }
 
+export interface MultisigAggregated {
+  address: string;
+  signatories?: string[];
+  threshold?: number;
+}
+
+export interface MultiProxy {
+  proxy?: string;
+  multisigCalls?: MultisigCall[]
+  multisigs: MultisigAggregated[]
+}
+
 export interface IMultisigContext {
-  selectedMultisig?: MultisigsByAccountsQuery["multisigs"][0]
-  multisigList: MultisigsByAccountsQuery["multisigs"]
-  multisigAddressList: string[]
+  selectedMultiProxy?: MultiProxy
+  multiProxyList: MultiProxy[]
   isLoading: boolean,
-  selectMultisig: (multi: MultisigsByAccountsQuery["multisigs"][0]) => void
+  selectMultiProxy: (multi: MultiProxy) => void
   selectedHasProxy: boolean
   error: unknown
-  selectedMultisigSignatories: string[]
+  selectedMultiProxySignatories: string[]
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
+const getSignatoriesFromAccount = (account: MultisigsByAccountsQuery["accounts"][0]) => {
+  return account.signers.map(({ signer }) => signer.id)
+}
+
 const MultisigContextProvider = ({ children }: MultisigContextProps) => {
-  const [selectedMultisig, setSelectedMultisig] = useState<IMultisigContext['selectedMultisig']>(undefined)
-  const [multisigList, setMultisigList] = useState<IMultisigContext['multisigList']>([])
+  const [selectedMultiProxy, setSelectedMultiProxy] = useState<IMultisigContext['selectedMultiProxy']>(undefined)
+  const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
   const { addressList } = useAccountList()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
-  const selectedHasProxy = useMemo(() => !!selectedMultisig?.proxy?.id, [selectedMultisig?.proxy?.id])
-  const selectedMultisigSignatories = useMemo(() =>
-    selectedMultisig?.signers.map(({ signer }) => signer.id) || [],
-    [selectedMultisig?.signers]
+  const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  const selectedMultiProxySignatories = useMemo(() =>
+    // FIXME this won't be nice with several multisigs
+    selectedMultiProxy?.multisigs[0].signatories || [],
+    [selectedMultiProxy]
   )
   const { accountNames, addName } = useAccountNames()
 
+  console.log('multiProxyList', multiProxyList)
   useEffect(() => {
     if (!!error) {
       console.error(error)
@@ -41,59 +58,117 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   }, [error])
 
   useEffect(() => {
-    if (!error && data?.multisigs) {
-      setMultisigList(data.multisigs)
+    if (!error && data?.accounts) {
+      // map of the pure proxy addresses and the multisigs associated
+      const proxyMap = new Map<string, Omit<MultiProxy, "proxy">>()
+      const res: MultiProxy[] = []
+
+      // iterate through the multisigs
+      data.accounts.forEach((account) => {
+        const pureProxyIndex = account.proxy.findIndex((proxy) => !!proxy.origin?.isPureProxy)
+
+        // it should all be multisigs cf the query
+        // if this account has a pureProxy
+        if (account.isMultisig && pureProxyIndex >= 0) {
+          const proxyAddress = account.proxy[pureProxyIndex]?.origin?.id
+
+          if (!proxyAddress) {
+            // all accounts at this point have a pure proxy
+            // this should never happel
+            console.error('Unexpectedly, the account does not have a proxy', account)
+            return
+          }
+
+          // add this pureProxy to the set with the multisig infos and calls
+          const previousMultisigsForProxy = proxyMap.get(proxyAddress)?.multisigs || []
+          // console.log('previousMultisigsForProxy', previousMultisigsForProxy.length)
+          const previousMultisigCalls = proxyMap.get(proxyAddress)?.multisigCalls || []
+          // console.log('previousMultisigCalls', previousMultisigCalls.length)
+          const newMultisigForProxy = {
+            address: account.id,
+            signatories: getSignatoriesFromAccount(account),
+            threshold: account?.threshold || undefined
+          }
+
+          proxyMap.set(proxyAddress, {
+            multisigs: [...previousMultisigsForProxy, newMultisigForProxy],
+            multisigCalls: [...previousMultisigCalls, ...account.multisigsCalls]
+          })
+        } else if (account.isMultisig && pureProxyIndex < 0) {
+          // if they don't have a proxy
+          res.push({
+            proxy: undefined,
+            multisigs: [{
+              address: account.id,
+              signatories: getSignatoriesFromAccount(account),
+              threshold: account.threshold
+            }]
+          } as MultiProxy)
+        } else {
+          console.error("Unexpected account, it should be a multisig", account)
+        }
+      })
+
+      // flatten out proxyMap
+      const proxyArray = Array.from(proxyMap.entries()).map(([proxy, agg]) => ({
+        proxy,
+        multisigs: agg.multisigs,
+        multisigCalls: agg.multisigCalls
+      }) as MultiProxy)
+
+      res.push(...proxyArray)
+
+      setMultisigList(res)
     }
   }, [data, error])
 
   const updateProxyNames = useCallback(() => {
-    multisigList.forEach(multisig => {
-      const multi = multisig.id
-      const proxy = multisig.proxy?.id
+    multiProxyList.forEach(multiProxy => {
+      const multi = multiProxy.multisigs[0].address
+      const proxy = multiProxy.proxy
       if (multi && accountNames[multi] && proxy && !accountNames[proxy]) {
         addName(accountNames[multi], proxy)
       }
     })
-  }, [accountNames, addName, multisigList])
+  }, [accountNames, addName, multiProxyList])
 
-  const getMultisigByAddress = useCallback((address?: string) => {
+  const getMultiProxyByAddress = useCallback((address?: string) => {
     if (!address) return undefined
 
-    return multisigList.find(multisig => multisig?.id === address)
-  }, [multisigList])
+    return multiProxyList.find(multiProxy =>
+      // either by proxy address
+      multiProxy?.proxy === address
+      // or by multisig address
+      || multiProxy.multisigs.some(multisig => multisig.address === address))
+  }, [multiProxyList])
 
-  const selectMultisig = useCallback(async (newMulti: typeof selectedMultisig) => {
-    if (!newMulti) {
+  const selectMultisig = useCallback(async (newMulti: typeof selectedMultiProxy) => {
+    const addressToUse = newMulti?.proxy || newMulti?.multisigs[0].address
+
+    if (!addressToUse) {
       return
     }
 
-    localStorage.setItem(LOCALSTORAGE_KEY, newMulti?.id)
-    const multi = getMultisigByAddress(newMulti?.id)
+    localStorage.setItem(LOCALSTORAGE_KEY, addressToUse)
+    const multi = getMultiProxyByAddress(addressToUse)
 
     if (!multi) {
       return
     }
 
-    setSelectedMultisig(multi)
-  }, [getMultisigByAddress])
+    setSelectedMultiProxy(multi)
+  }, [getMultiProxyByAddress])
 
   useEffect(() => {
-    if (multisigList.length && !selectedMultisig) {
+    if (multiProxyList.length && !selectedMultiProxy) {
       updateProxyNames()
 
       const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
-      const previouslySelected = multiAddress && getMultisigByAddress(multiAddress)
+      const previouslySelected = multiAddress && getMultiProxyByAddress(multiAddress)
 
-      setSelectedMultisig(previouslySelected || multisigList[0])
+      setSelectedMultiProxy(previouslySelected || multiProxyList[0])
     }
-  }, [getMultisigByAddress, multisigList, selectedMultisig, updateProxyNames])
-
-  const multisigAddressList = useMemo(
-    () => multisigList
-      .map(a => a.proxy?.id)
-      .filter(address => !!address) as string[],
-    [multisigList]
-  )
+  }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy, updateProxyNames])
 
   // const getMultisigByProxyAddress = useCallback((address: string) => {
   //   return multisigList.find(multisig => multisig.proxy?.id === address)
@@ -102,14 +177,13 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   return (
     <MultisigContext.Provider
       value={{
-        selectedMultisig,
-        multisigList,
-        multisigAddressList,
-        selectMultisig,
+        selectedMultiProxy: selectedMultiProxy,
+        multiProxyList: multiProxyList,
+        selectMultiProxy: selectMultisig,
         isLoading,
         selectedHasProxy,
         error,
-        selectedMultisigSignatories
+        selectedMultiProxySignatories
       }}
     >
       {children}

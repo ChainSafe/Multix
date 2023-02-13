@@ -20,7 +20,7 @@ interface Props {
 
 const Home = ({ className }: Props) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
+  const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultisig()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
@@ -77,35 +77,36 @@ const Home = ({ className }: Props) => {
             </div>
           </Box>
         )}
-        {!isLoading && !multisigQueryError && multisigList.length === 0 && (
+        {!isLoading && !multisigQueryError && multiProxyList.length === 0 && (
           <div>
             No multisig found for your accounts. <Button component={Link} to="/create" >Create one!</Button>
           </div>
         )}
-        {selectedMultisig &&
+        {selectedMultiProxy &&
           <>
             <div className="headerWrapper">
               <h3>Multisig <Chip
                 className="threshold"
-                label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
+                label={`${selectedMultiProxy.multisigs[0].threshold}/${selectedMultiProxy.multisigs[0]?.signatories?.length}`}
               /></h3>
               <div className="multisigHeader">
                 {selectedHasProxy
                   ? <Expander
                     title={<AccountDisplay
                       className="proxy"
-                      address={selectedMultisig?.proxy?.id || ""}
+                      address={selectedMultiProxy?.proxy || ""}
                       badge="proxy"
                     />}
+                    // FIXME this doesnt work any more with several multisigs
                     content={<AccountDisplay
                       className="multisig"
-                      address={selectedMultisig?.id || ""}
+                      address={selectedMultiProxy?.multisigs[0].address || ""}
                       badge="multi"
                     />}
                   />
                   : <AccountDisplay
                     className="multisigSolo"
-                    address={selectedMultisig?.id || ""}
+                    address={selectedMultiProxy?.multisigs[0].address || ""}
                     badge="multi"
                   />}
                 <IconButton
@@ -121,9 +122,9 @@ const Home = ({ className }: Props) => {
             <div className="signatoriesWrapper">
               <h3>Signatories</h3>
               <ul className="addressList">
-                {selectedMultisig.signers.map(({ signer }) =>
-                  <li key={signer.id} >
-                    <AccountDisplay address={signer.id} />
+                {selectedMultiProxy.multisigs[0]?.signatories?.map((signatory) =>
+                  <li key={signatory} >
+                    <AccountDisplay address={signatory} />
                   </li>
                 )}
               </ul>

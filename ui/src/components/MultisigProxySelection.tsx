@@ -11,30 +11,31 @@ interface Props {
   className?: string;
 }
 
-const MultisigSelection = ({ className }: Props) => {
-  const { multisigList, selectedMultisig, selectMultisig } = useMultisig()
+const MultiProxySelection = ({ className }: Props) => {
+  const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultisig()
   const ref = useRef<HTMLInputElement>(null)
-  const isSelectedProxy = useMemo(() => !!selectedMultisig?.proxy?.id, [selectedMultisig])
-  const addressToShow = useMemo(() => selectedMultisig?.proxy?.id || selectedMultisig?.id, [selectedMultisig])
+  const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  // We only support one multisigs if they have no proxy
+  const addressToShow = useMemo(() => selectedMultiProxy?.proxy || selectedMultiProxy?.multisigs[0].address, [selectedMultiProxy])
   const { accountNames } = useAccountNames()
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedMultisig) => `${option?.proxy?.id}${option?.id}` || ""
+    stringify: (option: typeof selectedMultiProxy) => `${option?.proxy}${option?.multisigs[0].address}` || ""
   });
 
-  const getOptionLabel = useCallback((option: typeof selectedMultisig) => {
-    const addressToSearch = option?.proxy?.id || option?.id
+  const getOptionLabel = useCallback((option: typeof selectedMultiProxy) => {
+    const addressToSearch = option?.proxy || option?.multisigs[0].address
 
     const name = !!addressToSearch && accountNames[addressToSearch]
     return name || addressToSearch as string
   }, [accountNames])
 
 
-  const onChange = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultisig) => {
+  const onChange = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultiProxy) => {
     if (!val) return
 
-    selectMultisig(val)
-  }, [selectMultisig])
+    selectMultiProxy(val)
+  }, [selectMultiProxy])
 
   const handleSpecialKeys = useCallback((e: any) => {
     if (['Enter', "Escape"].includes(e.key)) {
@@ -42,7 +43,7 @@ const MultisigSelection = ({ className }: Props) => {
     }
   }, [])
 
-  if (multisigList.length === 0) {
+  if (multiProxyList.length === 0) {
     return null
   }
 
@@ -51,10 +52,10 @@ const MultisigSelection = ({ className }: Props) => {
       className={className}
       disableClearable
       filterOptions={filterOptions}
-      options={multisigList}
+      options={multiProxyList}
       renderOption={(props, option) => {
-        const isProxy = !!option?.proxy?.id
-        const displayAddress = isProxy ? option?.proxy?.id : option?.id
+        const isProxy = !!option?.proxy
+        const displayAddress = isProxy ? option?.proxy : option?.multisigs[0].address
 
         return (
           <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
@@ -86,12 +87,12 @@ const MultisigSelection = ({ className }: Props) => {
       )}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
-      value={selectedMultisig || multisigList[0]}
+      value={selectedMultiProxy || multiProxyList[0]}
     />
   )
 }
 
-export default styled(MultisigSelection)(({ theme }) => `
+export default styled(MultiProxySelection)(({ theme }) => `
   flex: 1;
   text-align: right;
 
