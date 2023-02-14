@@ -45,13 +45,21 @@ const BalancesTransfer = ({ className, onSetExtrinsic }: Props) => {
         onSetExtrinsic(api.tx.balances.transfer(toAddress, value))
     }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
 
-    const onAddressDestChange = useCallback((account?: AccountBaseInfo) => {
+    const onAddressDestChange = useCallback((account?: AccountBaseInfo | string) => {
         if (!account) {
             return
         }
 
-        setSelected(account)
-        setToAddress(account.address)
+        if (typeof account === "string") {
+            setToAddress(account)
+            setSelected({
+                address: account
+            })
+        } else {
+            setToAddress(account.address)
+            setSelected(account)
+        }
+
     }, [])
 
     const onAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +76,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic }: Props) => {
                 onChange={onAddressDestChange}
                 value={selected}
                 label="to"
+                allowAnyAddressInput={true}
             />
             <TextField
                 className="amount"

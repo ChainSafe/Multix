@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import ProposalSigningModal from "../modals/ProposalSigning";
 import { Badge } from "@mui/material";
 import { isProxyCall } from "../../utils";
+import { AccountBadge } from "../../types";
 
 
 interface Props {
@@ -39,7 +40,7 @@ const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, o
       <Badge
         className={`badge ${appliedClass}`}
         color="primary"
-        badgeContent={isProxy ? "proxy" : "multi"}
+        badgeContent={isProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
         anchorOrigin={{ horizontal: "left", vertical: "top" }}
       >
         {!aggregatedData.callData
