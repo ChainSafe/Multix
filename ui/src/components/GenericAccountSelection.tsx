@@ -28,7 +28,7 @@ const getBadge = (account: AccountBaseInfo | string) => {
   return typeof account === "string"
     ? undefined
     : account.meta?.isProxy
-      ? AccountBadge.PROXY
+      ? AccountBadge.PURE
       : account.meta?.isMulti
         ? AccountBadge.MULTI
         : undefined

@@ -6,6 +6,6 @@ export interface WhenInfo {
 }
 
 export enum AccountBadge {
-    PROXY = "proxy",
+    PURE = "pure",
     MULTI = "multi"
 }

@@ -96,7 +96,7 @@ const Home = ({ className }: Props) => {
                     title={<AccountDisplay
                       className="proxy"
                       address={selectedMultiProxy?.proxy || ""}
-                      badge={AccountBadge.PROXY}
+                      badge={AccountBadge.PURE}
                     />}
                     // FIXME this doesnt work any more with several multisigs
                     content={<AccountDisplay

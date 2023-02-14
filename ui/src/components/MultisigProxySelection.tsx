@@ -62,7 +62,7 @@ const MultiProxySelection = ({ className }: Props) => {
           <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
             <AccountDisplay
               address={displayAddress || ""}
-              badge={isProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
+              badge={isProxy ? AccountBadge.PURE : AccountBadge.MULTI}
             />
           </Box>
         )
@@ -78,7 +78,7 @@ const MultiProxySelection = ({ className }: Props) => {
               <InputAdornment position="start">
                 <IdenticonBadge
                   address={addressToShow}
-                  badge={isSelectedProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
+                  badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
                 />
               </InputAdornment>
             ),

@@ -9,7 +9,7 @@ import ThresholdSelection from "../../pages/Creation/ThresholdSelection";
 import SignatorySelection from "../SignatorySelection";
 import Summary from "../../pages/Creation/Summary";
 import { useApi } from "../../contexts/ApiContext";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-crypto";
 import { useNavigate } from "react-router-dom";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
@@ -29,7 +29,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { addToast } = useToasts()
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
-  const { selectedAccount, selectedSigner } = useAccountList()
+  const { selectedAccount, selectedSigner } = useAccounts()
   const [newNames, setNewNames] = useState<AccountNames>({})
   // FIXME this will break
   const [threshold, setThreshold] = useState<number | undefined>(selectedMultiProxy?.multisigs[0].threshold)

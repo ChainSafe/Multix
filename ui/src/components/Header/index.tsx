@@ -2,7 +2,7 @@ import AppBar from "@mui/material/AppBar"
 import React from "react"
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
-import MultisigSelection from "../MultisigProxySelection"
+import MultiProxySelection from "../MultisigProxySelection"
 import { useAccounts } from "../../contexts/AccountsContext"
 
 export const Header: React.FC = () => {
@@ -39,7 +39,7 @@ export const Header: React.FC = () => {
                 </Button>
 
               </Box>
-              <MultisigSelection />
+              <MultiProxySelection />
             </>
           )}
         </Toolbar>

@@ -20,7 +20,7 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
         className="identicon"
     />
 
-    const appliedClass = useMemo(() => badge === AccountBadge.PROXY
+    const appliedClass = useMemo(() => badge === AccountBadge.PURE
         ? "blue"
         : "red", [badge])
 

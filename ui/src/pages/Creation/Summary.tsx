@@ -39,7 +39,7 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
             <h3>You are about to change the Multisig controlling:</h3>
             <AccountDisplay
               address={proxyAddress}
-              badge={AccountBadge.PROXY}
+              badge={AccountBadge.PURE}
               className="proxyName"
             />
           </>
