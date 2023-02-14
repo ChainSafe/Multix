@@ -6,6 +6,7 @@ import SignerSelection from "../../components/SignerSelection";
 import { useMultisig } from "../../contexts/MultisigContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
+import { AccountBadge } from "../../types";
 
 interface Props {
   className?: string;
@@ -38,7 +39,7 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
             <h3>You are about to change the Multisig controlling:</h3>
             <AccountDisplay
               address={proxyAddress}
-              badge="proxy"
+              badge={AccountBadge.PROXY}
               className="proxyName"
             />
           </>
