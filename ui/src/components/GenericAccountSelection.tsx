@@ -38,7 +38,6 @@ const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) =
   return option.address === value.address
 }
 
-
 const GenericAccountSelection = ({ className, accountList = [], value, onChange, label = "", allowAnyAddressInput = false }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -51,7 +50,6 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
       return option
     }
 
-    // return option.address
     return getNamesWithExtension(option.address) || option.address
   }, [getNamesWithExtension])
 
