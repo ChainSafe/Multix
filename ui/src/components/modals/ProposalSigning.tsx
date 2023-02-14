@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
 import { useMultisig } from "../../contexts/MultisigContext";
 import CallInfo from "../CallInfo";
@@ -33,7 +33,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
-  const { selectedAccount, selectedSigner } = useAccountList()
+  const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()

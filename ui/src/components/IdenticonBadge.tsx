@@ -3,11 +3,11 @@ import Identicon from "@polkadot/react-identicon";
 import { useMemo } from "react";
 import styled from "styled-components";
 import { ICON_SIZE, ICON_THEME } from "../constants";
-import { AccountLabel } from "../types";
+import { AccountBadge } from "../types";
 
 interface Props {
     className?: string;
-    badge?: AccountLabel
+    badge?: AccountBadge
     address?: string
 }
 
@@ -20,7 +20,7 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
         className="identicon"
     />
 
-    const appliedClass = useMemo(() => badge === "proxy"
+    const appliedClass = useMemo(() => badge === AccountBadge.PROXY
         ? "blue"
         : "red", [badge])
 

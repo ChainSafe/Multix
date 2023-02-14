@@ -2,7 +2,7 @@ import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useAccountList } from "../contexts/AccountsContext";
+import { useAccounts } from "../contexts/AccountsContext";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { isValidAddress } from "../utils";
@@ -36,7 +36,7 @@ const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
     : option.address
 }
 const AccountSelection = ({ className, addSignatory, addressDisabled = false, nameDisabled = false, value, inputLabel = "Account", currentSignatories = [], withName = false, withAddButton = false }: Props) => {
-  const { accountList = [], getAccountByAddress } = useAccountList()
+  const { accountList = [], getAccountByAddress } = useAccounts()
   const [selected, setSelected] = useState(value)
   const [errorMessage, setErrorMessage] = useState("")
   const ref = useRef<HTMLInputElement>(null)
@@ -60,6 +60,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
 
   const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
     setErrorMessage("")
+    setName("")
     const value = getOptionLabel(val)
     setSelected(value)
   }, [])

@@ -14,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit"
 import EditNames from "../components/modals/EditNames";
 import LockResetIcon from '@mui/icons-material/LockReset';
 import ChangeMultisig from "../components/modals/ChangeMultisig";
+import { AccountBadge } from "../types";
 interface Props {
   className?: string
 }
@@ -95,19 +96,19 @@ const Home = ({ className }: Props) => {
                     title={<AccountDisplay
                       className="proxy"
                       address={selectedMultiProxy?.proxy || ""}
-                      badge="proxy"
+                      badge={AccountBadge.PROXY}
                     />}
                     // FIXME this doesnt work any more with several multisigs
                     content={<AccountDisplay
                       className="multisig"
                       address={selectedMultiProxy?.multisigs[0].address || ""}
-                      badge="multi"
+                      badge={AccountBadge.MULTI}
                     />}
                   />
                   : <AccountDisplay
                     className="multisigSolo"
                     address={selectedMultiProxy?.multisigs[0].address || ""}
-                    badge="multi"
+                    badge={AccountBadge.MULTI}
                   />}
                 <IconButton
                   className="sendButton"

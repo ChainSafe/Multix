@@ -1,7 +1,7 @@
 import { Grid, TextField } from "@mui/material"
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
-import { useAccountList } from "../contexts/AccountsContext"
+import { useAccounts } from "../contexts/AccountsContext"
 import { useAccountNames } from "../contexts/AccountNamesContext"
 import AccountDisplay from "./AccountDisplay"
 
@@ -19,7 +19,7 @@ interface Props {
 
 const AccountEditName = ({ address, onNameChange, className, proxyAddress }: Props) => {
     const { getNamesWithExtension } = useAccountNames()
-    const { addressList } = useAccountList()
+    const { addressList } = useAccounts()
     const [name, setName] = useState("")
     const isExtensionAccount = useMemo(() => addressList.includes(address), [address, addressList])
 

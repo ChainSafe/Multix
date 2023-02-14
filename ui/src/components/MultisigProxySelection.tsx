@@ -6,6 +6,7 @@ import { useMultisig } from "../contexts/MultisigContext";
 import AccountDisplay from "./AccountDisplay";
 import IdenticonBadge from "./IdenticonBadge";
 import { useAccountNames } from "../contexts/AccountNamesContext";
+import { AccountBadge } from "../types";
 
 interface Props {
   className?: string;
@@ -61,7 +62,7 @@ const MultiProxySelection = ({ className }: Props) => {
           <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important", flexShrink: 0 }} {...props} key={displayAddress}>
             <AccountDisplay
               address={displayAddress || ""}
-              badge={isProxy ? "proxy" : "multi"}
+              badge={isProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
             />
           </Box>
         )
@@ -77,7 +78,7 @@ const MultiProxySelection = ({ className }: Props) => {
               <InputAdornment position="start">
                 <IdenticonBadge
                   address={addressToShow}
-                  badge={isSelectedProxy ? "proxy" : "multi"}
+                  badge={isSelectedProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
                 />
               </InputAdornment>
             ),

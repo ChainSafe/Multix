@@ -1,7 +1,7 @@
 import { Autocomplete, Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
 import { useMultisig } from "../../contexts/MultisigContext";
 import SignerSelection from "../SignerSelection";
@@ -35,7 +35,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
-  const { selectedAccount, selectedSigner } = useAccountList()
+  const { selectedAccount, selectedSigner } = useAccounts()
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
   // FIXME this will not work well with several multisigs

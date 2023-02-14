@@ -3,10 +3,10 @@ import React from "react"
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
 import MultisigSelection from "../MultisigProxySelection"
-import { useAccountList } from "../../contexts/AccountsContext"
+import { useAccounts } from "../../contexts/AccountsContext"
 
 export const Header: React.FC = () => {
-  const { accountList } = useAccountList()
+  const { accountList } = useAccounts()
 
   return (
     <AppBar>

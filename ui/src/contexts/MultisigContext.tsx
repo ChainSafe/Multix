@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
 import { useAccountNames } from "./AccountNamesContext"
-import { useAccountList } from "./AccountsContext"
+import { useAccounts } from "./AccountsContext"
 
 const LOCALSTORAGE_KEY = "multix.selectedMultiProxy"
 
@@ -40,7 +40,7 @@ const getSignatoriesFromAccount = (account: MultisigsByAccountsQuery["accounts"]
 const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   const [selectedMultiProxy, setSelectedMultiProxy] = useState<IMultisigContext['selectedMultiProxy']>(undefined)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
-  const { addressList } = useAccountList()
+  const { addressList } = useAccounts()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   const selectedMultiProxySignatories = useMemo(() =>

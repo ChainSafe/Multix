@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
 import SignatorySelection from "../../components/SignatorySelection";
 import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-crypto";
-import { useAccountList } from "../../contexts/AccountsContext";
+import { useAccounts } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import NameSelection from "./NameSelection"
 import Summary from "./Summary";
@@ -28,7 +28,7 @@ const MultisigCreation = ({ className }: Props) => {
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount } = useAccountList()
+  const { selectedSigner, selectedAccount } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
