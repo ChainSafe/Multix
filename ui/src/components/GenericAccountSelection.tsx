@@ -1,10 +1,11 @@
-import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
-import { useCallback, useRef } from "react";
+import { Autocomplete, Box, FilterOptionsState, InputAdornment, TextField } from "@mui/material";
+import { useCallback, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import AccountDisplay from "./AccountDisplay";
 import { useAccountNames } from "../contexts/AccountNamesContext";
 import IdenticonBadge from "./IdenticonBadge";
+import { AccountBadge } from "../types";
 
 export interface AccountBaseInfo {
   address: string
@@ -20,38 +21,83 @@ interface Props {
   onChange: (account: AccountBaseInfo) => void
   value: AccountBaseInfo
   label?: string
+  allowAnyAddressInput?: boolean
 }
 
-const GenericAccountSelection = ({ className, accountList = [], value, onChange, label = "" }: Props) => {
+const getBadge = (account: AccountBaseInfo | string) => {
+  return typeof account === "string"
+    ? undefined
+    : account.meta?.isProxy
+      ? AccountBadge.PROXY
+      : account.meta?.isMulti
+        ? AccountBadge.MULTI
+        : undefined
+}
+
+const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) => {
+  return option.address === value.address
+}
+
+
+const GenericAccountSelection = ({ className, accountList = [], value, onChange, label = "", allowAnyAddressInput = false }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
+  const valueAddress = useMemo(() => typeof value === "string" ? value : value.address, [value])
+  const valueBadge = useMemo(() => getBadge(value), [value])
 
-  const filterOptions = createFilterOptions({
-    ignoreCase: true,
-    stringify: (option: typeof accountList[0]) => `${option.address}${getOptionLabel(option)}`
-  });
+  const getOptionLabel = useCallback((option: typeof accountList[0] | string) => {
+    // this applies to allowAnyAddressInput === true
+    if (typeof option === "string") {
+      return option
+    }
 
-  const getOptionLabel = useCallback((option: typeof accountList[0]) => {
+    // return option.address
     return getNamesWithExtension(option.address) || option.address
   }, [getNamesWithExtension])
 
+  const filter = useMemo(() => createFilterOptions({
+    ignoreCase: true,
+    stringify: (option: typeof accountList[0]) => `${option.address}${getOptionLabel(option)}`
+  }), [getOptionLabel]);
+
+  const filterOptions = useCallback((options: AccountBaseInfo[], state: FilterOptionsState<AccountBaseInfo>): AccountBaseInfo[] => {
+    const filtered = filter(options, state);
+
+    const { inputValue } = state;
+
+    // Suggest the creation of a new value
+    const isExisting = filtered.length !== 0
+    if (inputValue !== '' && !isExisting) {
+      filtered.push({
+        address: inputValue,
+      });
+    }
+
+    return filtered;
+  }, [filter])
+
   const onInputBlur = useCallback(() => {
     inputRef.current?.setSelectionRange(0, 0)
+    // inputRef?.current?.blur()
   }, [])
 
-  const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: typeof accountList[0]) => {
-    if (!val) return
+  const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: AccountBaseInfo | string) => {
+    if (typeof val === "string") {
+      onChange({
+        address: val
+      })
+    } else {
+      onChange(val)
+    }
     onInputBlur()
-
-    onChange(val)
   }, [onChange, onInputBlur])
 
 
   const handleSpecialKeys = useCallback((e: any) => {
     if (['Enter', "Escape"].includes(e.key)) {
-      inputRef?.current?.blur()
+      onInputBlur()
     }
-  }, [])
+  }, [onInputBlur])
 
   if (accountList.length === 0) {
     return null
@@ -59,6 +105,11 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
 
   return (
     <Autocomplete
+      isOptionEqualToValue={isOptionEqualToValue}
+      freeSolo={allowAnyAddressInput}
+      selectOnFocus={allowAnyAddressInput}
+      clearOnBlur={allowAnyAddressInput}
+      handleHomeEndKeys={allowAnyAddressInput}
       className={className}
       disableClearable
       filterOptions={filterOptions}
@@ -67,17 +118,10 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
         return <Box component="li" sx={{ mr: ".5rem", pt: ".8rem !important", pl: "2rem !important" }} {...props} key={option.address}>
           <AccountDisplay
             address={option.address}
-            badge={
-              option.meta?.isProxy
-                ? "proxy"
-                : option.meta?.isMulti
-                  ? "multi"
-                  : undefined
-            }
+            badge={getBadge(option)}
           />
         </Box>
-      }
-      }
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -88,14 +132,8 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
             startAdornment: (
               <InputAdornment position="start">
                 <IdenticonBadge
-                  address={value.address}
-                  badge={
-                    value.meta?.isProxy
-                      ? "proxy"
-                      : value.meta?.isMulti
-                        ? "multi"
-                        : undefined
-                  }
+                  address={valueAddress}
+                  badge={valueBadge}
                 />
               </InputAdornment>
             ),

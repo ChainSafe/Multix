@@ -5,4 +5,7 @@ export interface WhenInfo {
     when: { height: number; index: number }
 }
 
-export type AccountLabel = "proxy" | "multi"
+export enum AccountBadge {
+    PROXY = "proxy",
+    MULTI = "multi"
+}

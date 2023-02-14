@@ -12,6 +12,7 @@ import Expander from "../components/Expander";
 import OptionsMenu, { MenuOption } from "../components/OptionsMenu";
 import EditIcon from "@mui/icons-material/Edit"
 import EditNames from "../components/modals/EditNames";
+import { AccountBadge } from "../types";
 
 interface Props {
   className?: string
@@ -79,18 +80,18 @@ const Home = ({ className }: Props) => {
                     title={<AccountDisplay
                       className="proxy"
                       address={selectedMultisig?.proxy?.id || ""}
-                      badge="proxy"
+                      badge={AccountBadge.PROXY}
                     />}
                     content={<AccountDisplay
                       className="multisig"
                       address={selectedMultisig?.id || ""}
-                      badge="multi"
+                      badge={AccountBadge.MULTI}
                     />}
                   />
                   : <AccountDisplay
                     className="multisigSolo"
                     address={selectedMultisig?.id || ""}
-                    badge="multi"
+                    badge={AccountBadge.MULTI}
                   />}
                 <IconButton
                   className="sendButton"

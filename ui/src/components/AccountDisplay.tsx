@@ -2,14 +2,14 @@ import { Box } from "@mui/material";
 import { useMemo } from "react";
 import styled from "styled-components";
 import { useAccountNames } from "../contexts/AccountNamesContext";
-import { AccountLabel } from "../types";
+import { AccountBadge } from "../types";
 import { getDisplayAddress } from "../utils/getDisplayAddress";
 import IdenticonBadge from "./IdenticonBadge";
 
 interface Props {
   address: string;
   className?: string
-  badge?: AccountLabel
+  badge?: AccountBadge
   withName?: boolean
 }
 

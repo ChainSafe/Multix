@@ -60,6 +60,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
 
   const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
     setErrorMessage("")
+    setName("")
     const value = getOptionLabel(val)
     setSelected(value)
   }, [])
