@@ -6,7 +6,7 @@ import { config } from './config'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
 import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
-import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies, NewProxy, NewPureProxies, ProxyRemoval } from './processorHandlers'
+import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy, ProxyRemoval } from './processorHandlers'
 import { ProxyType } from './model'
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
@@ -70,9 +70,9 @@ export type Ctx = BatchContext<Store, Item>
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     const newMultisigsInfo: NewMultisigsInfo[] = []
-    const newPureProxies: NewPureProxies = new Map()
+    const newPureProxies: NewPureProxy[] = []
     const newMultisigCalls: MultisigCallInfo[] = []
-    const newProxies: NewProxies = []
+    const newProxies: NewProxy[] = []
     const proxyRemovals: ProxyRemoval[] = []
 
     for (const block of ctx.blocks) {
@@ -122,7 +122,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 // ctx.log.info(`pure ${pure}`)
                 // ctx.log.info(`who ${who}`)
 
-                newPureProxies.set(encodeAddress(who, config.prefix), {
+                newPureProxies.push({
+                    who: encodeAddress(who, config.prefix),
                     pure: encodeAddress(pure, config.prefix),
                     delay: null
                 })
@@ -145,7 +146,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
     newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
-    newPureProxies.size && await handleNewPureProxies(ctx, newPureProxies)
+    newPureProxies.length && await handleNewPureProxies(ctx, newPureProxies)
     newProxies.length && await handleNewProxies(ctx, newProxies)
 })
 

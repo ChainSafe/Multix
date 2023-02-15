@@ -1,39 +1,47 @@
-import { In } from "typeorm"
 import { Account, ProxyAccount, ProxyType } from "../model"
 import { Ctx } from "../processor"
+import { getOrCreateAccounts } from "../util";
 import { getProxyAccountId } from "../util/getProxyAccountId"
 
-export type NewPureProxies = Map<string, {
+export interface NewPureProxy {
+    who: string;
     pure: string;
     delay: number | null;
-}>
+}
 
-export const handleNewPureProxies = async (ctx: Ctx, proxyMap: NewPureProxies) => {
+export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[]) => {
+    const dedupNewPureProxies = newPureProxies.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+            t.who === value.who && t.pure === value.pure && t.delay === value.delay
+        ))
+    )
 
-    const newPureProxies = [...proxyMap.values()].map(({ pure }) => new Account({
+    const dedupPure = new Set<string>()
+    const dedupWho = new Set<string>()
+
+    dedupNewPureProxies.forEach(({ who, pure }) => {
+        dedupPure.add(pure)
+        dedupWho.add(who)
+    })
+
+    const pureProxiestoSave = Array.from(dedupPure.values()).map((pure) => new Account({
         id: pure,
         isMultisig: false,
         isPureProxy: true,
     }))
 
-    await ctx.store.save(newPureProxies)
+    // save all new pure proxies
+    await ctx.store.save(pureProxiestoSave)
 
-    const delegatorAccounts = Array.from(proxyMap.values()).map(({ pure }) => pure)
-    const delegateeAccounts = [...proxyMap.keys()]
-
-    const allAccountWithPossibleDubplicate = await ctx.store
-        .findBy(Account, { id: In([...delegateeAccounts, ...delegatorAccounts]) })
-
-    // deduplicate accounts
-    const accountSet = new Map<string, Account>()
-    allAccountWithPossibleDubplicate.forEach((account) => accountSet.set(account.id, account))
+    // get or create who accounts
+    const whoAccounts = await getOrCreateAccounts(ctx, Array.from(dedupWho.values()))
 
     const proxyAccounts: ProxyAccount[] = []
-    for (let [who, { pure, delay }] of proxyMap.entries()) {
+    for (let { who, pure, delay } of dedupNewPureProxies) {
         proxyAccounts.push(new ProxyAccount({
             id: getProxyAccountId(who, pure, ProxyType.Any, delay),
-            delegator: accountSet.get(pure),
-            delegatee: accountSet.get(who),
+            delegator: pureProxiestoSave.find(({ id }) => pure === id),
+            delegatee: whoAccounts.find(({ id }) => who === id),
             type: ProxyType.Any,
             delay
         }))

@@ -3,10 +3,14 @@ import { Ctx } from "../processor"
 import { getOrCreateAccounts } from "../util"
 import { getProxyAccountId } from "../util/getProxyAccountId"
 
-export type NewProxy = { delegator: string, delegatee: string, type: ProxyType, delay: number }
-export type NewProxies = NewProxy[]
+export interface NewProxy {
+    delegator: string;
+    delegatee: string;
+    type: ProxyType;
+    delay: number;
+}
 
-export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxies) => {
+export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
 
     // using a set to make sure we don't have dublicates
     const allAccountsStringSet = new Set<string>()
