@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
-import { useMultisig } from "../contexts/MultisigContext";
+import { useMultiProxy } from "../contexts/MultiProxyContext";
 import ProposalList from "../components/Transactions/TransactionList";
 import { Link } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
@@ -21,7 +21,7 @@ interface Props {
 
 const Home = ({ className }: Props) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultisig()
+  const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultiProxy()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)

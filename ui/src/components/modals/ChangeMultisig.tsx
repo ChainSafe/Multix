@@ -1,7 +1,7 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
 import { OnChangeArgs } from "../AccountEditName";
 import AccountDisplay from "../AccountDisplay";
@@ -25,7 +25,7 @@ type Step = "selection" | "summary"
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
   const { addNames } = useAccountNames()
   const { addToast } = useToasts()
   const navigate = useNavigate()

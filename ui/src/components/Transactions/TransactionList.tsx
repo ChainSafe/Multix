@@ -2,7 +2,7 @@ import { Box, CircularProgress, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { PendingTx, usePendingTx } from "../../hooks/usePendingTx";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { ApiPromise } from "@polkadot/api";
 import { useApi } from "../../contexts/ApiContext";
 import { getDifference, getIntersection } from "../../utils";
@@ -101,7 +101,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
 const TransactionList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccounts()

@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import CallInfo from "../CallInfo";
 import { AggregatedData } from "../Transactions/TransactionList";
 import SignerSelection from "../SignerSelection";
@@ -32,7 +32,7 @@ interface SubmittingCall {
 const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")

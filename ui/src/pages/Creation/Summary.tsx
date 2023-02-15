@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import styled from "styled-components";
 import AccountDisplay from "../../components/AccountDisplay";
 import SignerSelection from "../../components/SignerSelection";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
 import { AccountBadge } from "../../types";
@@ -19,7 +19,7 @@ interface Props {
 
 const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false }: Props) => {
   const { addressList } = useAccounts()
-  const { selectedMultiProxySignatories } = useMultisig()
+  const { selectedMultiProxySignatories } = useMultiProxy()
   const possibleSigners = useMemo(() => {
     return isSwapSummary
       ? getIntersection(addressList, selectedMultiProxySignatories)

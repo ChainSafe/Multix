@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
-import { MultiProxy } from "../contexts/MultisigContext";
+import { MultiProxy } from "../contexts/MultiProxyContext";
 import { WhenInfo } from "../types"
 import { useMultisigCallSubscription } from "./useMultisigCallsSubscription";
 

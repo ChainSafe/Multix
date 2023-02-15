@@ -37,7 +37,7 @@ const getSignatoriesFromAccount = (account: MultisigsByAccountsQuery["accounts"]
   return account.signatories.map(({ signatory }) => signatory.id)
 }
 
-const MultisigContextProvider = ({ children }: MultisigContextProps) => {
+const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [selectedMultiProxy, setSelectedMultiProxy] = useState<IMultisigContext['selectedMultiProxy']>(undefined)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
   const { addressList } = useAccounts()
@@ -190,7 +190,7 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
   )
 }
 
-const useMultisig = () => {
+const useMultiProxy = () => {
   const context = useContext(MultisigContext)
   if (context === undefined) {
     throw new Error("useMultisigList must be used within a MultisigContextProvider")
@@ -198,4 +198,4 @@ const useMultisig = () => {
   return context
 }
 
-export { MultisigContextProvider, useMultisig }
+export { MultiProxyContextProvider, useMultiProxy }

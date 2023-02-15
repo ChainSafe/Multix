@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
 import AccountEditName, { OnChangeArgs } from "../AccountEditName";
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultisig()
+  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
 

@@ -2,7 +2,7 @@ import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import { useCallback, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
-import { useMultisig } from "../contexts/MultisigContext";
+import { useMultiProxy } from "../contexts/MultiProxyContext";
 import AccountDisplay from "./AccountDisplay";
 import IdenticonBadge from "./IdenticonBadge";
 import { useAccountNames } from "../contexts/AccountNamesContext";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const MultiProxySelection = ({ className }: Props) => {
-  const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultisig()
+  const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
   const ref = useRef<HTMLInputElement>(null)
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
