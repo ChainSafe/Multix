@@ -5,9 +5,9 @@ import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { config } from './config'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
-import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy, ProxyRemoval } from './processorHandlers'
-import { ProxyType } from './model'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId } from './util'
+import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy, ProxyRemoval } from './processorHandlers'
+import { getProxyTypeFromRaw } from './util/getProxyTypeFromRaw'
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
@@ -137,9 +137,24 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 newProxies.push({
                     delegator: encodeAddress(delegator, config.prefix),
                     delegatee: encodeAddress(delegatee, config.prefix),
-                    type: (<any>ProxyType)[proxyType.__kind],
+                    type: getProxyTypeFromRaw(proxyType),
                     delay
                 } as NewProxy)
+            }
+
+            if (item.name === ("Proxy.ProxyRemoved")) {
+                const { delegator, delegatee, proxyType, delay } = item.event.args
+                // ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
+                // ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
+                // ctx.log.info(`-----> remove proxyType ${getProxyTypeFromRaw(proxyType)}`)
+                // ctx.log.info(`-----> remove delay ${delay}`)
+
+                proxyRemovals.push({
+                    delegator: encodeAddress(delegator, config.prefix),
+                    delegatee: encodeAddress(delegatee, config.prefix),
+                    type: getProxyTypeFromRaw(proxyType),
+                    delay
+                } as ProxyRemoval)
             }
         }
     }
@@ -148,6 +163,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
     newPureProxies.length && await handleNewPureProxies(ctx, newPureProxies)
     newProxies.length && await handleNewProxies(ctx, newProxies)
+    proxyRemovals.length && await handleProxyRemovals(ctx, proxyRemovals)
 })
 
 /**

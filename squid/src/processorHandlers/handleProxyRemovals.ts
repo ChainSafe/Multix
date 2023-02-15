@@ -14,8 +14,9 @@ export const handleProxyRemovals = async (ctx: Ctx, proxyRemovals: ProxyRemoval[
         proxyAccountIdSet.add(id)
     })
 
+    // ctx.log.info(`Set of id to remove ${Array.from(proxyAccountIdSet)}`)
     const toRemove = await ctx.store.findBy(ProxyAccount, { id: In([...Array.from(proxyAccountIdSet.values())]) })
-    ctx.log.info(`--> Remove ${toRemove.map(({ delegatee, delegator }) => `${delegatee} x ${delegator}`)}`)
+    // ctx.log.info(`--> Removed ${toRemove.map((proxyAccount) => JSON.stringify(proxyAccount))}`)
 
     await ctx.store.remove(toRemove)
 }

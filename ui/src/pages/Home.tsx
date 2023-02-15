@@ -147,16 +147,18 @@ const Home = ({ className }: Props) => {
           </>
         }
       </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-      >
-        <div className="actionWrapper">
-          <h3>Transactions</h3>
-          <ProposalList />
-        </div>
-      </Grid>
+      {multiProxyList.length > 0 && (
+        <Grid
+          item
+          xs={12}
+          md={6}
+        >
+          <div className="actionWrapper">
+            <h3>Transactions</h3>
+            <ProposalList />
+          </div>
+        </Grid>
+      )}
       {isSendModalOpen && (
         <Send
           onClose={onCloseSendModal}
