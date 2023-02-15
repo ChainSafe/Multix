@@ -94,8 +94,8 @@ const Home = ({ className }: Props) => {
           </div>
         )}
         {selectedMultiProxy &&
-          <>
-            <div className="headerWrapper">
+          <div className="multiProxyWrapper">
+            <div className="multiProxyColumn">
               {selectedHasProxy && (
                 <div className="pureHeader">
                   <AccountDisplay
@@ -132,19 +132,18 @@ const Home = ({ className }: Props) => {
                   )
                 })
               }
-              <div className="multisigHeader">
-                <IconButton
-                  className="sendButton"
-                  aria-label="send"
-                  onClick={() => setIsSendModalOpen(true)}
-                >
-                  <SendIcon />
-                </IconButton>
-                <OptionsMenu options={options} />
-              </div>
             </div>
-
-          </>
+            <div className="buttonColumn">
+              <IconButton
+                className="sendButton"
+                aria-label="send"
+                onClick={() => setIsSendModalOpen(true)}
+              >
+                <SendIcon />
+              </IconButton>
+              <OptionsMenu options={options} />
+            </div>
+          </div>
         }
       </Grid>
       {multiProxyList.length > 0 && (
@@ -207,13 +206,14 @@ export default styled(Home)(({ theme }) => `
   }
 
   .addressList {
+    padding-inline-start: 0;
     list-style-type: none;
     > li {
       margin-bottom: 1rem;
     }
   }
 
-  .multisigHeader {
+  .multiProxyWrapper {
     display: flex;
     align-items: center;
   }
@@ -226,6 +226,7 @@ export default styled(Home)(({ theme }) => `
     & > h2 {
       margin-bottom: 0;
     }
+    margin-left: 2rem;
   }
 
   .sendButton {
@@ -234,5 +235,23 @@ export default styled(Home)(({ theme }) => `
   }
   .titleWrapper {
     align-items: center;
+  }
+
+  .multiProxyColumn {
+    flex: 1;
+    min-width: 0;
+
+    & > h3 {
+      margin-top: 0;
+    }
+  }
+
+  .buttonColumn {
+    display: flex;
+    align-self: flex-start;
+  }
+
+  .pureHeader {
+    margin-bottom: 1rem;
   }
 `)
