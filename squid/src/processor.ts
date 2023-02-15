@@ -6,8 +6,8 @@ import { config } from './config'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
 import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
-import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies } from './processorHandlers'
-import { Account } from './model'
+import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, MultisigCallInfo, NewMultisigsInfo, NewProxies, NewProxy, NewPureProxies, ProxyRemoval } from './processorHandlers'
+import { ProxyType } from './model'
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
@@ -43,6 +43,11 @@ const processor = new SubstrateBatchProcessor()
             },
         },
     } as const)
+    .addCall('Proxy.add_proxy')
+    .addCall('Proxy.remove_proxy')
+    .addCall('Proxy.remove_proxies')
+    .addEvent('Proxy.ProxyAdded')
+    .addEvent('Proxy.ProxyRemoved')
     .addCall('Multisig.as_multi')
     .addCall('Multisig.approve_as_multi')
     .addCall('Multisig.cancel_as_multi')
@@ -65,8 +70,10 @@ export type Ctx = BatchContext<Store, Item>
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     const newMultisigsInfo: NewMultisigsInfo[] = []
-    const newProxies: NewProxies = new Map()
+    const newPureProxies: NewPureProxies = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
+    const newProxies: NewProxies = []
+    const proxyRemovals: ProxyRemoval[] = []
 
     for (const block of ctx.blocks) {
         const { items } = block
@@ -75,7 +82,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             if (supportedMultisigCalls.includes(item.name)) {
                 const callItem = item as CallItem<"*", true>
 
-                ctx.log.info(`${callItem.name} - block: ${block.header.height}`)
+                // ctx.log.info(`${callItem.name} - block: ${block.header.height}`)
                 if (!callItem.call.success || !callItem.call.origin) continue
 
                 const signer = getOriginAccountId(callItem.call.origin)
@@ -84,13 +91,13 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 // ctx.log.info(JsonLog(callItem))
 
                 const { otherSignatories, threshold } = handleMultisigCall(callArgs)
-                const signers = [signer, ...otherSignatories]
+                const signatories = [signer, ...otherSignatories]
                 const timestamp = new Date(block.header.timestamp)
 
                 const newMulti = {
-                    id: getMultisigAddress(signers, threshold),
+                    id: getMultisigAddress(signatories, threshold),
                     threshold,
-                    signatories: signers,
+                    newSignatories: signatories,
                     createdAt: timestamp,
                     isMultisig: true,
                     isPureProxy: false,
@@ -111,17 +118,35 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
             if (item.name === ("Proxy.PureCreated")) {
                 const { pure, who } = item.event.args
+                // ctx.log.info(`${block.header.height}`)
                 // ctx.log.info(`pure ${pure}`)
                 // ctx.log.info(`who ${who}`)
 
-                newProxies.set(encodeAddress(who, config.prefix), encodeAddress(pure, config.prefix))
+                newPureProxies.set(encodeAddress(who, config.prefix), {
+                    pure: encodeAddress(pure, config.prefix),
+                    delay: null
+                })
+            }
+
+            if (item.name === ("Proxy.ProxyAdded")) {
+                const { delegator, delegatee, proxyType, delay } = item.event.args
+                // ctx.log.info(`-----> delegator ${encodeAddress(delegator, config.prefix)}`)
+                // ctx.log.info(`-----> delegatee ${encodeAddress(delegatee, config.prefix)}`)
+
+                newProxies.push({
+                    delegator: encodeAddress(delegator, config.prefix),
+                    delegatee: encodeAddress(delegatee, config.prefix),
+                    type: (<any>ProxyType)[proxyType.__kind],
+                    delay
+                } as NewProxy)
             }
         }
     }
 
     newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
-    newProxies.size && await handleNewProxies(ctx, newProxies)
+    newPureProxies.size && await handleNewPureProxies(ctx, newPureProxies)
+    newProxies.length && await handleNewProxies(ctx, newProxies)
 })
 
 /**

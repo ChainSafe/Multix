@@ -1,59 +1,36 @@
-import { In } from "typeorm"
 import { Account, ProxyAccount, ProxyType } from "../model"
 import { Ctx } from "../processor"
+import { getOrCreateAccounts } from "../util"
 import { getProxyAccountId } from "../util/getProxyAccountId"
 
-export type NewProxies = Map<string, string>
+export type NewProxy = { delegator: string, delegatee: string, type: ProxyType, delay: number }
+export type NewProxies = NewProxy[]
 
-export const handleNewProxies = async (ctx: Ctx, proxyMap: NewProxies) => {
+export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxies) => {
 
-    const newProxies = [...proxyMap.values()].map((proxy) => new Account({
-        id: proxy,
-        isMultisig: false,
-        isPureProxy: true,
-    }))
+    // using a set to make sure we don't have dublicates
+    const allAccountsStringSet = new Set<string>()
 
-    await ctx.store.save(newProxies)
+    newProxies.forEach(({ delegatee, delegator }) => {
+        allAccountsStringSet.add(delegatee)
+        allAccountsStringSet.add(delegator)
+    })
 
+    const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()))
+
+    const accountMap = new Map<string, Account>()
+    accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
     const proxyAccounts: ProxyAccount[] = []
 
-    const accountsToUpdate = await ctx.store
-        .findBy(Account, { id: In([...proxyMap.keys(), ...proxyMap.values()]) })
-
-    const accountSet = new Map<string, Account>()
-    accountsToUpdate.forEach((account) => accountSet.set(account.id, account))
-
-    for (let [who, pure] of proxyMap.entries()) {
+    for (let { delegatee, delegator, delay, type } of newProxies) {
         proxyAccounts.push(new ProxyAccount({
-            id: getProxyAccountId(who, pure),
-            origin: accountSet.get(pure),
-            proxy: accountSet.get(who),
-            type: ProxyType.Any
+            id: getProxyAccountId(delegatee, delegator, type, delay),
+            delegator: accountMap.get(delegator),
+            delegatee: accountMap.get(delegatee),
+            type,
+            delay
         }))
     }
 
     await ctx.store.save(proxyAccounts)
-
-    // ctx.log.info(`proxyMap ${JsonLog([...proxyMap.entries()])}`)
-
-    // const multiSigsToUpdate = await ctx.store
-    //     .findBy(Account, { id: In([...proxyMap.keys()]) })
-
-    // const updatedMultisigs = multiSigsToUpdate
-    //     .map((multi) => {
-    //         const associatedProxy = newProxies.find(proxy => proxy.id === proxyMap.get(multi.id))
-
-    //         // ctx.log.info(`proxy: ${JsonLog(associatedProxy)}`)
-    //         if (associatedProxy === undefined) {
-    //             ctx.log.error(`No associated proxy found ${newProxies}`)
-    //             return
-    //         }
-
-    //         multi.proxy = associatedProxy
-    //         // ctx.log.info(`multi: ${JsonLog(multi)}`)
-    //         return multi
-    //     })
-    //     .filter(multi => multi !== undefined)
-
-    // await ctx.store.save(updatedMultisigs as Multisig[])
 }

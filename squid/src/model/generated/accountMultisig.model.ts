@@ -16,5 +16,5 @@ export class AccountMultisig {
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-    signer!: Account
+    signatory!: Account
 }

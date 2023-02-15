@@ -1,5 +1,5 @@
 query MultisigsByAccounts($accounts: [String!]) {
-  accounts(where: {AND: {isMultisig_eq: true, signers_some: {signer: {id_in: $accounts}}}}) {
+  accounts(where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}) {
     id
     createdAt
     isMultisig
@@ -11,19 +11,19 @@ query MultisigsByAccounts($accounts: [String!]) {
       timestamp
       callIndex
     }
-    signers {
-      signer {
+    signatories {
+      signatory {
         id
       }
     }
-    proxy {
+    deletateeFor {
       id
       type
-      origin {
+      delegator {
         id
         isPureProxy
       }
-      proxy {
+      delegatee {
         id
         isPureProxy
       }

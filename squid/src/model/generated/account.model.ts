@@ -12,23 +12,23 @@ export class Account {
     @PrimaryColumn_()
     id!: string
 
-    @OneToMany_(() => AccountMultisig, e => e.signer)
+    @OneToMany_(() => AccountMultisig, e => e.signatory)
     multisigs!: AccountMultisig[]
 
     @Column_("bool", {nullable: true})
     isPureProxy!: boolean | undefined | null
 
-    @OneToMany_(() => ProxyAccount, e => e.origin)
-    proxied!: ProxyAccount[]
+    @OneToMany_(() => ProxyAccount, e => e.delegator)
+    delegatorFor!: ProxyAccount[]
 
-    @OneToMany_(() => ProxyAccount, e => e.proxy)
-    proxy!: ProxyAccount[]
+    @OneToMany_(() => ProxyAccount, e => e.delegatee)
+    deletateeFor!: ProxyAccount[]
 
     @Column_("bool", {nullable: true})
     isMultisig!: boolean | undefined | null
 
     @OneToMany_(() => AccountMultisig, e => e.multisig)
-    signers!: AccountMultisig[]
+    signatories!: AccountMultisig[]
 
     @Column_("int4", {nullable: true})
     threshold!: number | undefined | null

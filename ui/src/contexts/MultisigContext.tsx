@@ -34,7 +34,7 @@ export interface IMultisigContext {
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
 const getSignatoriesFromAccount = (account: MultisigsByAccountsQuery["accounts"][0]) => {
-  return account.signers.map(({ signer }) => signer.id)
+  return account.signatories.map(({ signatory }) => signatory.id)
 }
 
 const MultisigContextProvider = ({ children }: MultisigContextProps) => {
@@ -64,12 +64,12 @@ const MultisigContextProvider = ({ children }: MultisigContextProps) => {
 
       // iterate through the multisigs
       data.accounts.forEach((account) => {
-        const pureProxyIndex = account.proxy.findIndex((proxy) => !!proxy.origin?.isPureProxy)
+        const pureProxyIndex = account.deletateeFor.findIndex((delegatee) => !!delegatee.delegator?.isPureProxy)
 
         // it should all be multisigs cf the query
         // if this account has a pureProxy
         if (account.isMultisig && pureProxyIndex >= 0) {
-          const proxyAddress = account.proxy[pureProxyIndex]?.origin?.id
+          const proxyAddress = account.deletateeFor[pureProxyIndex]?.delegator?.id
 
           if (!proxyAddress) {
             // all accounts at this point have a pure proxy

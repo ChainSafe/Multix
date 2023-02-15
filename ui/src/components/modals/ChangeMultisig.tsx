@@ -14,6 +14,7 @@ import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-cry
 import { useNavigate } from "react-router-dom";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useToasts } from "../../contexts/ToastContext";
+import { AccountBadge } from "../../types";
 
 interface Props {
   onClose: () => void
@@ -128,7 +129,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               <Box className="subSection">
                 <AccountDisplay
                   address={selectedMultiProxy?.proxy || ""}
-                  badge="proxy"
+                  badge={AccountBadge.PURE}
                 />
               </Box>
             </Grid>

@@ -18,15 +18,31 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   createdAt?: Maybe<Scalars['DateTime']>;
+  delegatorFor: Array<ProxyAccount>;
+  deletateeFor: Array<ProxyAccount>;
   id: Scalars['String'];
   isMultisig?: Maybe<Scalars['Boolean']>;
   isPureProxy?: Maybe<Scalars['Boolean']>;
   multisigs: Array<AccountMultisig>;
   multisigsCalls: Array<MultisigCall>;
-  proxied: Array<ProxyAccount>;
-  proxy: Array<ProxyAccount>;
-  signers: Array<AccountMultisig>;
+  signatories: Array<AccountMultisig>;
   threshold?: Maybe<Scalars['Int']>;
+};
+
+
+export type AccountDelegatorForArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
+  where?: InputMaybe<ProxyAccountWhereInput>;
+};
+
+
+export type AccountDeletateeForArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
+  where?: InputMaybe<ProxyAccountWhereInput>;
 };
 
 
@@ -46,23 +62,7 @@ export type AccountMultisigsCallsArgs = {
 };
 
 
-export type AccountProxiedArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
-  where?: InputMaybe<ProxyAccountWhereInput>;
-};
-
-
-export type AccountProxyArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
-  where?: InputMaybe<ProxyAccountWhereInput>;
-};
-
-
-export type AccountSignersArgs = {
+export type AccountSignatoriesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountMultisigOrderByInput>>;
@@ -79,7 +79,7 @@ export type AccountMultisig = {
   __typename?: 'AccountMultisig';
   id: Scalars['String'];
   multisig: Account;
-  signer: Account;
+  signatory: Account;
 };
 
 export type AccountMultisigEdge = {
@@ -101,16 +101,16 @@ export enum AccountMultisigOrderByInput {
   MultisigIsPureProxyDesc = 'multisig_isPureProxy_DESC',
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
-  SignerCreatedAtAsc = 'signer_createdAt_ASC',
-  SignerCreatedAtDesc = 'signer_createdAt_DESC',
-  SignerIdAsc = 'signer_id_ASC',
-  SignerIdDesc = 'signer_id_DESC',
-  SignerIsMultisigAsc = 'signer_isMultisig_ASC',
-  SignerIsMultisigDesc = 'signer_isMultisig_DESC',
-  SignerIsPureProxyAsc = 'signer_isPureProxy_ASC',
-  SignerIsPureProxyDesc = 'signer_isPureProxy_DESC',
-  SignerThresholdAsc = 'signer_threshold_ASC',
-  SignerThresholdDesc = 'signer_threshold_DESC'
+  SignatoryCreatedAtAsc = 'signatory_createdAt_ASC',
+  SignatoryCreatedAtDesc = 'signatory_createdAt_DESC',
+  SignatoryIdAsc = 'signatory_id_ASC',
+  SignatoryIdDesc = 'signatory_id_DESC',
+  SignatoryIsMultisigAsc = 'signatory_isMultisig_ASC',
+  SignatoryIsMultisigDesc = 'signatory_isMultisig_DESC',
+  SignatoryIsPureProxyAsc = 'signatory_isPureProxy_ASC',
+  SignatoryIsPureProxyDesc = 'signatory_isPureProxy_DESC',
+  SignatoryThresholdAsc = 'signatory_threshold_ASC',
+  SignatoryThresholdDesc = 'signatory_threshold_DESC'
 }
 
 export type AccountMultisigWhereInput = {
@@ -135,8 +135,8 @@ export type AccountMultisigWhereInput = {
   id_startsWith?: InputMaybe<Scalars['String']>;
   multisig?: InputMaybe<AccountWhereInput>;
   multisig_isNull?: InputMaybe<Scalars['Boolean']>;
-  signer?: InputMaybe<AccountWhereInput>;
-  signer_isNull?: InputMaybe<Scalars['Boolean']>;
+  signatory?: InputMaybe<AccountWhereInput>;
+  signatory_isNull?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type AccountMultisigsConnection = {
@@ -171,6 +171,12 @@ export type AccountWhereInput = {
   createdAt_lte?: InputMaybe<Scalars['DateTime']>;
   createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
   createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  delegatorFor_every?: InputMaybe<ProxyAccountWhereInput>;
+  delegatorFor_none?: InputMaybe<ProxyAccountWhereInput>;
+  delegatorFor_some?: InputMaybe<ProxyAccountWhereInput>;
+  deletateeFor_every?: InputMaybe<ProxyAccountWhereInput>;
+  deletateeFor_none?: InputMaybe<ProxyAccountWhereInput>;
+  deletateeFor_some?: InputMaybe<ProxyAccountWhereInput>;
   id_contains?: InputMaybe<Scalars['String']>;
   id_containsInsensitive?: InputMaybe<Scalars['String']>;
   id_endsWith?: InputMaybe<Scalars['String']>;
@@ -200,15 +206,9 @@ export type AccountWhereInput = {
   multisigs_every?: InputMaybe<AccountMultisigWhereInput>;
   multisigs_none?: InputMaybe<AccountMultisigWhereInput>;
   multisigs_some?: InputMaybe<AccountMultisigWhereInput>;
-  proxied_every?: InputMaybe<ProxyAccountWhereInput>;
-  proxied_none?: InputMaybe<ProxyAccountWhereInput>;
-  proxied_some?: InputMaybe<ProxyAccountWhereInput>;
-  proxy_every?: InputMaybe<ProxyAccountWhereInput>;
-  proxy_none?: InputMaybe<ProxyAccountWhereInput>;
-  proxy_some?: InputMaybe<ProxyAccountWhereInput>;
-  signers_every?: InputMaybe<AccountMultisigWhereInput>;
-  signers_none?: InputMaybe<AccountMultisigWhereInput>;
-  signers_some?: InputMaybe<AccountMultisigWhereInput>;
+  signatories_every?: InputMaybe<AccountMultisigWhereInput>;
+  signatories_none?: InputMaybe<AccountMultisigWhereInput>;
+  signatories_some?: InputMaybe<AccountMultisigWhereInput>;
   threshold_eq?: InputMaybe<Scalars['Int']>;
   threshold_gt?: InputMaybe<Scalars['Int']>;
   threshold_gte?: InputMaybe<Scalars['Int']>;
@@ -339,9 +339,10 @@ export type PageInfo = {
 
 export type ProxyAccount = {
   __typename?: 'ProxyAccount';
+  delay?: Maybe<Scalars['Int']>;
+  delegatee?: Maybe<Account>;
+  delegator?: Maybe<Account>;
   id: Scalars['String'];
-  origin?: Maybe<Account>;
-  proxy?: Maybe<Account>;
   type?: Maybe<ProxyType>;
 };
 
@@ -352,28 +353,30 @@ export type ProxyAccountEdge = {
 };
 
 export enum ProxyAccountOrderByInput {
+  DelayAsc = 'delay_ASC',
+  DelayDesc = 'delay_DESC',
+  DelegateeCreatedAtAsc = 'delegatee_createdAt_ASC',
+  DelegateeCreatedAtDesc = 'delegatee_createdAt_DESC',
+  DelegateeIdAsc = 'delegatee_id_ASC',
+  DelegateeIdDesc = 'delegatee_id_DESC',
+  DelegateeIsMultisigAsc = 'delegatee_isMultisig_ASC',
+  DelegateeIsMultisigDesc = 'delegatee_isMultisig_DESC',
+  DelegateeIsPureProxyAsc = 'delegatee_isPureProxy_ASC',
+  DelegateeIsPureProxyDesc = 'delegatee_isPureProxy_DESC',
+  DelegateeThresholdAsc = 'delegatee_threshold_ASC',
+  DelegateeThresholdDesc = 'delegatee_threshold_DESC',
+  DelegatorCreatedAtAsc = 'delegator_createdAt_ASC',
+  DelegatorCreatedAtDesc = 'delegator_createdAt_DESC',
+  DelegatorIdAsc = 'delegator_id_ASC',
+  DelegatorIdDesc = 'delegator_id_DESC',
+  DelegatorIsMultisigAsc = 'delegator_isMultisig_ASC',
+  DelegatorIsMultisigDesc = 'delegator_isMultisig_DESC',
+  DelegatorIsPureProxyAsc = 'delegator_isPureProxy_ASC',
+  DelegatorIsPureProxyDesc = 'delegator_isPureProxy_DESC',
+  DelegatorThresholdAsc = 'delegator_threshold_ASC',
+  DelegatorThresholdDesc = 'delegator_threshold_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  OriginCreatedAtAsc = 'origin_createdAt_ASC',
-  OriginCreatedAtDesc = 'origin_createdAt_DESC',
-  OriginIdAsc = 'origin_id_ASC',
-  OriginIdDesc = 'origin_id_DESC',
-  OriginIsMultisigAsc = 'origin_isMultisig_ASC',
-  OriginIsMultisigDesc = 'origin_isMultisig_DESC',
-  OriginIsPureProxyAsc = 'origin_isPureProxy_ASC',
-  OriginIsPureProxyDesc = 'origin_isPureProxy_DESC',
-  OriginThresholdAsc = 'origin_threshold_ASC',
-  OriginThresholdDesc = 'origin_threshold_DESC',
-  ProxyCreatedAtAsc = 'proxy_createdAt_ASC',
-  ProxyCreatedAtDesc = 'proxy_createdAt_DESC',
-  ProxyIdAsc = 'proxy_id_ASC',
-  ProxyIdDesc = 'proxy_id_DESC',
-  ProxyIsMultisigAsc = 'proxy_isMultisig_ASC',
-  ProxyIsMultisigDesc = 'proxy_isMultisig_DESC',
-  ProxyIsPureProxyAsc = 'proxy_isPureProxy_ASC',
-  ProxyIsPureProxyDesc = 'proxy_isPureProxy_DESC',
-  ProxyThresholdAsc = 'proxy_threshold_ASC',
-  ProxyThresholdDesc = 'proxy_threshold_DESC',
   TypeAsc = 'type_ASC',
   TypeDesc = 'type_DESC'
 }
@@ -381,6 +384,19 @@ export enum ProxyAccountOrderByInput {
 export type ProxyAccountWhereInput = {
   AND?: InputMaybe<Array<ProxyAccountWhereInput>>;
   OR?: InputMaybe<Array<ProxyAccountWhereInput>>;
+  delay_eq?: InputMaybe<Scalars['Int']>;
+  delay_gt?: InputMaybe<Scalars['Int']>;
+  delay_gte?: InputMaybe<Scalars['Int']>;
+  delay_in?: InputMaybe<Array<Scalars['Int']>>;
+  delay_isNull?: InputMaybe<Scalars['Boolean']>;
+  delay_lt?: InputMaybe<Scalars['Int']>;
+  delay_lte?: InputMaybe<Scalars['Int']>;
+  delay_not_eq?: InputMaybe<Scalars['Int']>;
+  delay_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  delegatee?: InputMaybe<AccountWhereInput>;
+  delegatee_isNull?: InputMaybe<Scalars['Boolean']>;
+  delegator?: InputMaybe<AccountWhereInput>;
+  delegator_isNull?: InputMaybe<Scalars['Boolean']>;
   id_contains?: InputMaybe<Scalars['String']>;
   id_containsInsensitive?: InputMaybe<Scalars['String']>;
   id_endsWith?: InputMaybe<Scalars['String']>;
@@ -398,10 +414,6 @@ export type ProxyAccountWhereInput = {
   id_not_in?: InputMaybe<Array<Scalars['String']>>;
   id_not_startsWith?: InputMaybe<Scalars['String']>;
   id_startsWith?: InputMaybe<Scalars['String']>;
-  origin?: InputMaybe<AccountWhereInput>;
-  origin_isNull?: InputMaybe<Scalars['Boolean']>;
-  proxy?: InputMaybe<AccountWhereInput>;
-  proxy_isNull?: InputMaybe<Scalars['Boolean']>;
   type_eq?: InputMaybe<ProxyType>;
   type_in?: InputMaybe<Array<ProxyType>>;
   type_isNull?: InputMaybe<Scalars['Boolean']>;
@@ -639,7 +651,7 @@ export type MultisigsByAccountsQueryVariables = Exact<{
 }>;
 
 
-export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signers: Array<{ __typename?: 'AccountMultisig', signer: { __typename?: 'Account', id: string } }>, proxy: Array<{ __typename?: 'ProxyAccount', id: string, type?: ProxyType | null, origin?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null, proxy?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null }> }> };
+export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, deletateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type?: ProxyType | null, delegator?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null, delegatee?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null }> }> };
 
 
 export const AllMultisigCallsDocument = `
@@ -655,7 +667,7 @@ export const AllMultisigCallsDocument = `
 export const MultisigsByAccountsDocument = `
     query MultisigsByAccounts($accounts: [String!]) {
   accounts(
-    where: {AND: {isMultisig_eq: true, signers_some: {signer: {id_in: $accounts}}}}
+    where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}
   ) {
     id
     createdAt
@@ -668,19 +680,19 @@ export const MultisigsByAccountsDocument = `
       timestamp
       callIndex
     }
-    signers {
-      signer {
+    signatories {
+      signatory {
         id
       }
     }
-    proxy {
+    deletateeFor {
       id
       type
-      origin {
+      delegator {
         id
         isPureProxy
       }
-      proxy {
+      delegatee {
         id
         isPureProxy
       }

@@ -1,13 +1,13 @@
 type Account @entity {
   id: ID!
-  multisigs: [AccountMultisig] @derivedFrom(field: "signer")
+  multisigs: [AccountMultisig] @derivedFrom(field: "signatory")
   isPureProxy: Boolean
-  # it's the origin and has proxy accounts, a pure must have some
-  proxied: [ProxyAccount!] @derivedFrom(field: "origin")
-  # it's proxing / doing stuff on behalf of an origin account 
-  proxy: [ProxyAccount!] @derivedFrom(field: "proxy")
+  # it's the origin/delegator for another proxy accounts, a pure must have some
+  delegatorFor: [ProxyAccount!] @derivedFrom(field: "delegator")
+  # it's the delegatee/doing stuff on behalf of another account 
+  deletateeFor: [ProxyAccount!] @derivedFrom(field: "delegatee")
   isMultisig: Boolean
-  signers: [AccountMultisig!] @derivedFrom(field: "multisig")
+  signatories: [AccountMultisig!] @derivedFrom(field: "multisig")
   threshold: Int
   createdAt: DateTime
   multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
@@ -25,15 +25,16 @@ type MultisigCall @entity {
 type AccountMultisig @entity {
   id: ID!
   multisig: Account!
-  signer: Account!
+  signatory: Account!
 }
 
-# entity for linking proxys
+# entity for linking proxies
 type ProxyAccount @entity {
   id: ID!
-  origin: Account
-  proxy: Account
+  delegator: Account!
+  delegatee: Account!
   type: ProxyType
+  delay: Int
 }
 
 enum ProxyType {
