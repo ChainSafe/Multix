@@ -22,7 +22,8 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
   const { selectedMultiProxySignatories } = useMultiProxy()
   const possibleSigners = useMemo(() => {
     return isSwapSummary
-      ? getIntersection(addressList, selectedMultiProxySignatories)
+      // for a swap we can only select the account that are part of both the old and the new multisig
+      ? getIntersection(addressList, getIntersection(selectedMultiProxySignatories, signatories))
       : getIntersection(addressList, signatories)
   }, [addressList, isSwapSummary, selectedMultiProxySignatories, signatories])
 
@@ -48,7 +49,7 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
       <Paper elevation={2} className="paper">
         {!!name && (
           <h4 className="nameSummary">
-            {name}
+            Name: <span className="name">{name}</span>
           </h4>
         )}
         <h4 className="threshold">
@@ -64,16 +65,17 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
         ))}
       </Paper>
       <Box className="explainer">
-        In the next step you will send a transaction to:
+        In the next step you will send 2 transactions to:
         <ul>
           {
             isSwapSummary
               ? <>
-                <li>Add the new Multisig to the current Proxy</li>
-                <li>Remove the old Multisig</li>
+                <li>Add the new Multisig to the current Pure proxy</li>
+                <li>Remove the old Mltisig</li>
+                <li>Both transactions must be accepted in the right order, by the multisig signatories</li>
               </>
               : <>
-                <li>send funds to the new Multisig to create a Proxy</li>
+                <li>send funds to the new Multisig to create a Pure proxy</li>
                 <li>create a Multisig proxy</li>
               </>
           }
@@ -115,5 +117,9 @@ export default styled(Summary)(({ theme }) => `
   .proxyName {
     padding-left: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  .name {
+    font-weight: normal;
   }
 `)

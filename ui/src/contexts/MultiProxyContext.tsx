@@ -43,6 +43,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const { addressList } = useAccounts()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  // FIXME we should get rid of this alltogether
   const selectedMultiProxySignatories = useMemo(() =>
     // FIXME this won't be nice with several multisigs
     selectedMultiProxy?.multisigs[0].signatories || [],

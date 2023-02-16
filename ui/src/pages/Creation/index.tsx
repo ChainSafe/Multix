@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
 import SignatorySelection from "../../components/SignatorySelection";
@@ -28,12 +28,14 @@ const MultisigCreation = ({ className }: Props) => {
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount } = useAccounts()
+  const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
+  const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
+  const [errorMessage, setErrorMessage] = useState("")
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -46,8 +48,21 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // one of our account must be part of ths signatories
+    if (currentStep === 0 && !ownAccountPartOfSignatories) {
+      return false
+    }
+
     return true
-  }, [currentStep, signatories.length, threshold])
+  }, [currentStep, ownAccountPartOfSignatories, signatories, threshold])
+
+  useEffect(() => {
+    setErrorMessage("")
+
+    if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
+      setErrorMessage("At least one of your account must be a signatory")
+    }
+  }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreate = useCallback(async () => {
     if (!isApiReady) {
@@ -80,7 +95,7 @@ const MultisigCreation = ({ className }: Props) => {
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
-    const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
+    const batchCall = api.tx.utility.batchAll([transferTx, multiSigProxyCall])
 
     addName(name, multiAddress)
 
@@ -180,22 +195,30 @@ const MultisigCreation = ({ className }: Props) => {
         xs={12}
         justifyContent="center"
         className="buttonContainer"
+        flexDirection="column"
       >
-        <Button
-          disabled={currentStep === 0}
-          onClick={() => setCurrentStep(currentStep - 1)}
-        >
-          Back
-        </Button>
-        <Button
-          disabled={!canGoNext}
-          onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
-        >
-          {isLastStep
-            ? "Create"
-            : "Next"
-          }
-        </Button>
+        {!!errorMessage && (
+          <div className="errorMessage">
+            {errorMessage}
+          </div>
+        )}
+        <div className="buttonWrapper">
+          <Button
+            disabled={currentStep === 0}
+            onClick={() => setCurrentStep(currentStep - 1)}
+          >
+            Back
+          </Button>
+          <Button
+            disabled={!canGoNext}
+            onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
+          >
+            {isLastStep
+              ? "Create"
+              : "Next"
+            }
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )
@@ -214,5 +237,14 @@ export default styled(MultisigCreation)(({ theme }) => `
 
   .buttonContainer button:first-child {
     margin-right: 2rem;
+  }
+
+  .errorMessage {
+    margin-top: 0.5rem;
+    color: ${theme.custom.text.errorColor};
+  }
+
+  .buttonWrapper {
+    align-self: center;
   }
 `)
