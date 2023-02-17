@@ -29,6 +29,7 @@ export interface IMultisigContext {
   selectedHasProxy: boolean
   error: unknown
   selectedMultiProxySignatories: string[]
+  getMultisigByAddress: (address: string) => MultisigAggregated | undefined
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -142,6 +143,10 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       || multiProxy.multisigs.some(multisig => multisig.address === address))
   }, [multiProxyList])
 
+  const getMultisigByAddress = useCallback((address: string) => {
+    return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
+  }, [selectedMultiProxy?.multisigs])
+
   const selectMultisig = useCallback(async (newMulti: typeof selectedMultiProxy) => {
     const addressToUse = newMulti?.proxy || newMulti?.multisigs[0].address
 
@@ -183,7 +188,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         isLoading,
         selectedHasProxy,
         error,
-        selectedMultiProxySignatories
+        selectedMultiProxySignatories,
+        getMultisigByAddress
       }}
     >
       {children}

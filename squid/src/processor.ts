@@ -125,7 +125,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 newPureProxies.push({
                     who: encodeAddress(who, config.prefix),
                     pure: encodeAddress(pure, config.prefix),
-                    delay: null
+                    delay: 0
                 })
             }
 
@@ -138,14 +138,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     delegator: encodeAddress(delegator, config.prefix),
                     delegatee: encodeAddress(delegatee, config.prefix),
                     type: getProxyTypeFromRaw(proxyType),
-                    delay
+                    delay: Number(delay) || 0
                 } as NewProxy)
             }
 
             if (item.name === ("Proxy.ProxyRemoved")) {
                 const { delegator, delegatee, proxyType, delay } = item.event.args
-                // ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
-                // ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
+                ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
+                ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
                 // ctx.log.info(`-----> remove proxyType ${getProxyTypeFromRaw(proxyType)}`)
                 // ctx.log.info(`-----> remove delay ${delay}`)
 
@@ -153,7 +153,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                     delegator: encodeAddress(delegator, config.prefix),
                     delegatee: encodeAddress(delegatee, config.prefix),
                     type: getProxyTypeFromRaw(proxyType),
-                    delay
+                    delay: Number(delay) || 0
                 } as ProxyRemoval)
             }
         }

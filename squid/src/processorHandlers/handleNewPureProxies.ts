@@ -6,7 +6,7 @@ import { getProxyAccountId } from "../util/getProxyAccountId"
 export interface NewPureProxy {
     who: string;
     pure: string;
-    delay: number | null;
+    delay: number;
 }
 
 export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[]) => {

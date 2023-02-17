@@ -116,7 +116,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   const signCallBack1 = useGetSigningCallback({ onSuccess: onMakeSecondCall })
 
-  // first we add the new multisig as an any proxy
+  // first we add the new multisig as an any proxy of the pure proxy, by the old multisig
   const onFirstCall = useCallback(async () => {
     if (!isApiReady) {
       console.error('api is not ready')

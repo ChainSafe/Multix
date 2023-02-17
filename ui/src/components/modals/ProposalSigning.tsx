@@ -32,20 +32,22 @@ interface SubmittingCall {
 const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
+  const { getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
-  // FIX me this will break if several multisigs
-  const threshold = useMemo(() => selectedMultiProxy?.multisigs[0].threshold, [selectedMultiProxy])
+  const multisig = useMemo(() => getMultisigByAddress(proposalData.from), [getMultisigByAddress, proposalData])
+  const threshold = useMemo(() => multisig?.threshold, [multisig])
+  const signatories = useMemo(() => multisig?.signatories || [], [multisig])
+  const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
+  const [callInfo, setCallInfo] = useState<SubmittingCall>({})
   const canSubmit = useMemo(() => {
     if (!threshold) return false
     return proposalData.info?.approvals.length === threshold - 1
   }, [proposalData, threshold])
   const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
-  const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
-  const [callInfo, setCallInfo] = useState<SubmittingCall>({})
+
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
@@ -106,7 +108,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
 
   const onSign = useCallback(async (isApproving: boolean) => {
-    const otherSigners = sortAddresses(selectedMultiProxySignatories.filter((signer) => signer !== selectedAccount?.address))
+    const otherSigners = sortAddresses(signatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -167,7 +169,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultiProxySignatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
+  }, [signatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")

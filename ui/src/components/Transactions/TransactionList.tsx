@@ -19,6 +19,7 @@ export interface AggregatedData {
   name?: string;
   args?: AnyJson;
   info?: PendingTx["info"]
+  from: string;
 }
 
 interface Props {
@@ -95,13 +96,14 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     hash: hash || pendingTx.hash,
     name,
     args: call && call.toHuman().args,
-    info: pendingTx.info
-  }
+    info: pendingTx.info,
+    from: pendingTx.from
+  } as AggregatedData
 })
 
 const TransactionList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
   const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccounts()
@@ -144,8 +146,9 @@ const TransactionList = ({ className }: Props) => {
     )}
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
-        const { callData, info } = agg
-        const neededSigners = getDifference(selectedMultiProxySignatories, info?.approvals)
+        const { callData, info, from } = agg
+        const multisigSignatories = getMultisigByAddress(from)?.signatories || []
+        const neededSigners = getDifference(multisigSignatories, info?.approvals)
         const possibleSigners = getIntersection(neededSigners, addressList)
         const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 
