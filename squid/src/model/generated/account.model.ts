@@ -22,7 +22,7 @@ export class Account {
     delegatorFor!: ProxyAccount[]
 
     @OneToMany_(() => ProxyAccount, e => e.delegatee)
-    deletateeFor!: ProxyAccount[]
+    delegateeFor!: ProxyAccount[]
 
     @Column_("bool", {nullable: true})
     isMultisig!: boolean | undefined | null

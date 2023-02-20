@@ -16,7 +16,7 @@ query MultisigsByAccounts($accounts: [String!]) {
         id
       }
     }
-    deletateeFor {
+    delegateeFor {
       id
       type
       delegator {

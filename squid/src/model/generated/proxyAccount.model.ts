@@ -13,15 +13,15 @@ export class ProxyAccount {
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-    delegator!: Account | undefined | null
+    delegator!: Account
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-    delegatee!: Account | undefined | null
+    delegatee!: Account
 
-    @Column_("varchar", {length: 17, nullable: true})
-    type!: ProxyType | undefined | null
+    @Column_("varchar", {length: 17, nullable: false})
+    type!: ProxyType
 
-    @Column_("int4", {nullable: true})
-    delay!: number | undefined | null
+    @Column_("int4", {nullable: false})
+    delay!: number
 }

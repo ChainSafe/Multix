@@ -65,23 +65,25 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
         ))}
       </Paper>
       <Box className="explainer">
-        In the next step you will send 2 transactions to:
-        <ul>
-          {
-            isSwapSummary
-              ? <>
+        {
+          isSwapSummary
+            ? <>
+              In the next step you will sign 2 transactions to:
+              <ul>
                 <li>Add the new Multisig to the current Pure proxy</li>
                 <li>Remove the old Mltisig</li>
-                <li>Both transactions must be accepted in the right order, by the multisig signatories</li>
-              </>
-              : <>
-                <li>send funds to the new Multisig to create a Pure proxy</li>
-                <li>create a Multisig proxy</li>
-              </>
-          }
-
-        </ul>
-        Other signatories must approve this transaction before it is ready use.
+              </ul>
+              Other signatories must approve this transaction before it is ready use.
+            </>
+            : <>
+              In the next step you will send 1 batch transaction to:
+              <ul>
+                <li>send funds to the new Multisig (required to create a Pure proxy)</li>
+                <li>create the Pure proxy</li>
+              </ul>
+              Other signatories must approve both transactions before the change is effective.
+            </>
+        }
       </Box>
       <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
@@ -91,35 +93,35 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
 }
 
 export default styled(Summary)(({ theme }) => `
-  .account:last-child {
-    margin-bottom: 1rem;
+        .account:last-child {
+          margin - bottom: 1rem;
   }
 
-  .account:last-child {
-    margin-bottom: 0;
+        .account:last-child {
+          margin - bottom: 0;
   }
 
-  .paper {
-    padding: 2rem;
-    margin-bottom: 1rem
+        .paper {
+          padding: 2rem;
+        margin-bottom: 1rem
   }
 
-  .threshold, .nameSummary {
-    margin-bottom: 1.5rem;
-    margin-top: 0;
+        .threshold, .nameSummary {
+          margin - bottom: 1.5rem;
+        margin-top: 0;
   }
 
-  .signerSelection {
-    margin-top: 2rem;
-    margin-bottom: 3rem;
+        .signerSelection {
+          margin - top: 2rem;
+        margin-bottom: 3rem;
   }
 
-  .proxyName {
-    padding-left: 1.5rem;
-    margin-bottom: 1.5rem;
+        .proxyName {
+          padding - left: 1.5rem;
+        margin-bottom: 1.5rem;
   }
 
-  .name {
-    font-weight: normal;
+        .name {
+          font - weight: normal;
   }
-`)
+        `)

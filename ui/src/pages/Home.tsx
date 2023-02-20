@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
-import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from "@mui/material";
 import { useMultiProxy } from "../contexts/MultiProxyContext";
 import ProposalList from "../components/Transactions/TransactionList";
 import { Link } from "react-router-dom";
@@ -109,7 +109,7 @@ const Home = ({ className }: Props) => {
               {
                 selectedMultiProxy.multisigs.map((multisig) => {
                   return (
-                    <div className="multisigWrapper" key={multisig.address}>
+                    <Paper className="multisigWrapper" key={multisig.address}>
                       <AccountDisplay
                         className="multisig"
                         address={multisig.address || ""}
@@ -128,7 +128,7 @@ const Home = ({ className }: Props) => {
                           )}
                         </ul>
                       </div>
-                    </div>
+                    </Paper>
                   )
                 })
               }
@@ -207,6 +207,7 @@ export default styled(Home)(({ theme }) => `
 
   .addressList {
     padding-inline-start: 0;
+    margin-block-end: 0;
     list-style-type: none;
     > li {
       margin-bottom: 1rem;
@@ -253,5 +254,10 @@ export default styled(Home)(({ theme }) => `
 
   .pureHeader {
     margin-bottom: 1rem;
+  }
+
+  .multisigWrapper {
+    padding: .5rem 0;
+    margin-bottom: .5rem;
   }
 `)

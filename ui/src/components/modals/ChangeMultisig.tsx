@@ -10,7 +10,6 @@ import Summary from "../../pages/Creation/Summary";
 import { useApi } from "../../contexts/ApiContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-crypto";
-import { useNavigate } from "react-router-dom";
 import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useToasts } from "../../contexts/ToastContext";
 import { AccountBadge } from "../../types";
@@ -27,11 +26,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy } = useMultiProxy()
   const { addToast } = useToasts()
-  const navigate = useNavigate()
-  const signCallBack2 = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
+  const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [newNames, setNewNames] = useState<AccountNames>({})
-  // FIXME this will break we need a selector
+  // FIXME we need a selector
   const selectedMultisig = useMemo(() => selectedMultiProxy?.multisigs[0], [selectedMultiProxy?.multisigs])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)

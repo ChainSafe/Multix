@@ -25,6 +25,7 @@ const MultiProxySelection = ({ className }: Props) => {
   });
 
   const getOptionLabel = useCallback((option: typeof selectedMultiProxy) => {
+    // We only support one multisigs if they have no proxy
     const addressToSearch = option?.proxy || option?.multisigs[0].address
 
     const name = !!addressToSearch && accountNames[addressToSearch]

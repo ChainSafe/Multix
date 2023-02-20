@@ -12,7 +12,6 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
 
         // persist all accounts
         const accounts = await getOrCreateAccounts(ctx, newSignatories)
-        // const accounts = await Promise.all(accountPromise)
 
         const newMultisig = new Account({
             id,

@@ -61,42 +61,45 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   useEffect(() => {
     if (!error && data?.accounts) {
       // map of the pure proxy addresses and the multisigs associated
-      const proxyMap = new Map<string, Omit<MultiProxy, "proxy">>()
+      const pureProxyMap = new Map<string, Omit<MultiProxy, "proxy">>()
       const res: MultiProxy[] = []
 
       // iterate through the multisigs
       data.accounts.forEach((account) => {
-        const pureProxyIndex = account.deletateeFor.findIndex((delegatee) => !!delegatee.delegator?.isPureProxy)
+        // one multisig could be a delegatee for multiple
+        const pureProxyAddresses = account.delegateeFor.map((delegatee) => {
+          // finding all the accounts that are pure proxy
+          if (!!delegatee.delegator?.isPureProxy) {
+            return delegatee.delegator.id
+          }
+
+          return undefined
+        })
+          .filter((address) => address !== undefined) as string[]
 
         // it should all be multisigs cf the query
-        // if this account has a pureProxy
-        if (account.isMultisig && pureProxyIndex >= 0) {
-          const proxyAddress = account.deletateeFor[pureProxyIndex]?.delegator?.id
+        // if this account has at least a pureProxy
+        if (account.isMultisig && pureProxyAddresses?.length > 0) {
+          pureProxyAddresses.forEach((pureProxyAddress) => {
+            // add this pureProxy to the set with the multisig infos and calls
+            const previousMultisigsForProxy = pureProxyMap.get(pureProxyAddress)?.multisigs || []
+            // console.log('previousMultisigsForProxy', previousMultisigsForProxy.length)
+            const previousMultisigCalls = pureProxyMap.get(pureProxyAddress)?.multisigCalls || []
+            // console.log('previousMultisigCalls', previousMultisigCalls.length)
+            const newMultisigForProxy = {
+              address: account.id,
+              signatories: getSignatoriesFromAccount(account),
+              threshold: account?.threshold || undefined
+            }
 
-          if (!proxyAddress) {
-            // all accounts at this point have a pure proxy
-            // this should never happel
-            console.error('Unexpectedly, the account does not have a proxy', account)
-            return
-          }
-
-          // add this pureProxy to the set with the multisig infos and calls
-          const previousMultisigsForProxy = proxyMap.get(proxyAddress)?.multisigs || []
-          // console.log('previousMultisigsForProxy', previousMultisigsForProxy.length)
-          const previousMultisigCalls = proxyMap.get(proxyAddress)?.multisigCalls || []
-          // console.log('previousMultisigCalls', previousMultisigCalls.length)
-          const newMultisigForProxy = {
-            address: account.id,
-            signatories: getSignatoriesFromAccount(account),
-            threshold: account?.threshold || undefined
-          }
-
-          proxyMap.set(proxyAddress, {
-            multisigs: [...previousMultisigsForProxy, newMultisigForProxy],
-            multisigCalls: [...previousMultisigCalls, ...account.multisigsCalls]
+            pureProxyMap.set(pureProxyAddress, {
+              multisigs: [...previousMultisigsForProxy, newMultisigForProxy],
+              multisigCalls: [...previousMultisigCalls, ...account.multisigsCalls]
+            })
           })
-        } else if (account.isMultisig && pureProxyIndex < 0) {
-          // if they don't have a proxy
+        } else if (account.isMultisig && pureProxyAddresses.length === 0) {
+          console.log('---> here we are')
+          // if this multisig doesn't have a proxy
           res.push({
             proxy: undefined,
             multisigs: [{
@@ -111,7 +114,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       })
 
       // flatten out proxyMap
-      const proxyArray = Array.from(proxyMap.entries()).map(([proxy, agg]) => ({
+      const proxyArray = Array.from(pureProxyMap.entries()).map(([proxy, agg]) => ({
         proxy,
         multisigs: agg.multisigs,
         multisigCalls: agg.multisigCalls

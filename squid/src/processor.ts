@@ -5,7 +5,7 @@ import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { config } from './config'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId } from './util'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy, ProxyRemoval } from './processorHandlers'
 import { getProxyTypeFromRaw } from './util/getProxyTypeFromRaw'
 
@@ -17,16 +17,17 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://rococo-rpc.polkadot.io',
     })
     .setBlockRange({
-        from: config.blockStart,
+        // from: config.blockStart,
+        from: 4133970
     })
-    .addCall('System.remark', {
-        data: {
-            call: {
-                args: true,
-                origin: true,
-            },
-        },
-    } as const)
+    // .addCall('System.remark', {
+    //     data: {
+    //         call: {
+    //             args: true,
+    //             origin: true,
+    //         },
+    //     },
+    // } as const)
     .addCall('Proxy.proxy', {
         data: {
             call: {
@@ -35,14 +36,14 @@ const processor = new SubstrateBatchProcessor()
             },
         },
     } as const)
-    .addCall('Balances.transfer_keep_alive', {
-        data: {
-            call: {
-                args: true,
-                origin: true,
-            },
-        },
-    } as const)
+    // .addCall('Balances.transfer_keep_alive', {
+    //     data: {
+    //         call: {
+    //             args: true,
+    //             origin: true,
+    //         },
+    //     },
+    // } as const)
     .addCall('Proxy.add_proxy')
     .addCall('Proxy.remove_proxy')
     .addCall('Proxy.remove_proxies')
@@ -89,7 +90,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 const callArgs = callItem.call.args;
 
                 // ctx.log.info(JsonLog(callItem))
-
                 const { otherSignatories, threshold } = handleMultisigCall(callArgs)
                 const signatories = [signer, ...otherSignatories]
                 const timestamp = new Date(block.header.timestamp)
@@ -144,8 +144,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
             if (item.name === ("Proxy.ProxyRemoved")) {
                 const { delegator, delegatee, proxyType, delay } = item.event.args
-                ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
-                ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
+                // ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
+                // ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
                 // ctx.log.info(`-----> remove proxyType ${getProxyTypeFromRaw(proxyType)}`)
                 // ctx.log.info(`-----> remove delay ${delay}`)
 

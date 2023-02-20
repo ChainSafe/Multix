@@ -18,8 +18,8 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   createdAt?: Maybe<Scalars['DateTime']>;
+  delegateeFor: Array<ProxyAccount>;
   delegatorFor: Array<ProxyAccount>;
-  deletateeFor: Array<ProxyAccount>;
   id: Scalars['String'];
   isMultisig?: Maybe<Scalars['Boolean']>;
   isPureProxy?: Maybe<Scalars['Boolean']>;
@@ -30,7 +30,7 @@ export type Account = {
 };
 
 
-export type AccountDelegatorForArgs = {
+export type AccountDelegateeForArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
@@ -38,7 +38,7 @@ export type AccountDelegatorForArgs = {
 };
 
 
-export type AccountDeletateeForArgs = {
+export type AccountDelegatorForArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
@@ -171,12 +171,12 @@ export type AccountWhereInput = {
   createdAt_lte?: InputMaybe<Scalars['DateTime']>;
   createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
   createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  delegateeFor_every?: InputMaybe<ProxyAccountWhereInput>;
+  delegateeFor_none?: InputMaybe<ProxyAccountWhereInput>;
+  delegateeFor_some?: InputMaybe<ProxyAccountWhereInput>;
   delegatorFor_every?: InputMaybe<ProxyAccountWhereInput>;
   delegatorFor_none?: InputMaybe<ProxyAccountWhereInput>;
   delegatorFor_some?: InputMaybe<ProxyAccountWhereInput>;
-  deletateeFor_every?: InputMaybe<ProxyAccountWhereInput>;
-  deletateeFor_none?: InputMaybe<ProxyAccountWhereInput>;
-  deletateeFor_some?: InputMaybe<ProxyAccountWhereInput>;
   id_contains?: InputMaybe<Scalars['String']>;
   id_containsInsensitive?: InputMaybe<Scalars['String']>;
   id_endsWith?: InputMaybe<Scalars['String']>;
@@ -339,11 +339,11 @@ export type PageInfo = {
 
 export type ProxyAccount = {
   __typename?: 'ProxyAccount';
-  delay?: Maybe<Scalars['Int']>;
-  delegatee?: Maybe<Account>;
-  delegator?: Maybe<Account>;
+  delay: Scalars['Int'];
+  delegatee: Account;
+  delegator: Account;
   id: Scalars['String'];
-  type?: Maybe<ProxyType>;
+  type: ProxyType;
 };
 
 export type ProxyAccountEdge = {
@@ -651,7 +651,7 @@ export type MultisigsByAccountsQueryVariables = Exact<{
 }>;
 
 
-export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, deletateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type?: ProxyType | null, delegator?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null, delegatee?: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } | null }> }> };
+export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
 export const AllMultisigCallsDocument = `
@@ -685,7 +685,7 @@ export const MultisigsByAccountsDocument = `
         id
       }
     }
-    deletateeFor {
+    delegateeFor {
       id
       type
       delegator {
