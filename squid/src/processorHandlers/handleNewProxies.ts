@@ -1,9 +1,9 @@
 import { Account, ProxyAccount, ProxyType } from "../model"
 import { Ctx } from "../processor"
 import { getOrCreateAccounts } from "../util"
-import { getProxyAccountId } from "../util/getProxyAccountId"
 
 export interface NewProxy {
+    id: string;
     delegator: string;
     delegatee: string;
     type: ProxyType;
@@ -12,7 +12,7 @@ export interface NewProxy {
 
 export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
 
-    // using a set to make sure we don't have dublicates
+    // Aggregate all accounts we deal with using a set to make sure we don't have dublicates
     const allAccountsStringSet = new Set<string>()
 
     newProxies.forEach(({ delegatee, delegator }) => {
@@ -26,9 +26,9 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
     accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
     const proxyAccounts: ProxyAccount[] = []
 
-    for (let { delegatee, delegator, delay, type } of newProxies) {
+    for (let { id, delegatee, delegator, delay, type } of newProxies) {
         proxyAccounts.push(new ProxyAccount({
-            id: getProxyAccountId(delegatee, delegator, type, delay),
+            id,
             delegator: accountMap.get(delegator),
             delegatee: accountMap.get(delegatee),
             type,

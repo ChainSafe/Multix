@@ -98,7 +98,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             })
           })
         } else if (account.isMultisig && pureProxyAddresses.length === 0) {
-          console.log('---> here we are')
           // if this multisig doesn't have a proxy
           res.push({
             proxy: undefined,

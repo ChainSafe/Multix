@@ -2,7 +2,7 @@ import AppBar from "@mui/material/AppBar"
 import React from "react"
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
-import MultiProxySelection from "../MultisigProxySelection"
+import MultiProxySelection from "../MultiProxySelection"
 import { useAccounts } from "../../contexts/AccountsContext"
 
 export const Header: React.FC = () => {

@@ -6,8 +6,8 @@ import { config } from './config'
 import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
 import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
-import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy, ProxyRemoval } from './processorHandlers'
-import { getProxyTypeFromRaw } from './util/getProxyTypeFromRaw'
+import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
+import { getProxyInfoFromArgs } from './util/getProxyInfoFromArgs'
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
@@ -17,8 +17,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://rococo-rpc.polkadot.io',
     })
     .setBlockRange({
-        // from: config.blockStart,
-        from: 4133970
+        from: config.blockStart,
     })
     // .addCall('System.remark', {
     //     data: {
@@ -73,8 +72,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     const newMultisigsInfo: NewMultisigsInfo[] = []
     const newPureProxies: NewPureProxy[] = []
     const newMultisigCalls: MultisigCallInfo[] = []
-    const newProxies: NewProxy[] = []
-    const proxyRemovals: ProxyRemoval[] = []
+    const newProxies: Map<string, NewProxy> = new Map()
+    const proxyRemovalIds: Set<string> = new Set()
 
     for (const block of ctx.blocks) {
         const { items } = block
@@ -130,40 +129,52 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
 
             if (item.name === ("Proxy.ProxyAdded")) {
-                const { delegator, delegatee, proxyType, delay } = item.event.args
+                // const { delegator, delegatee, proxyType, delay } = item.event.args
                 // ctx.log.info(`-----> delegator ${encodeAddress(delegator, config.prefix)}`)
                 // ctx.log.info(`-----> delegatee ${encodeAddress(delegatee, config.prefix)}`)
 
-                newProxies.push({
-                    delegator: encodeAddress(delegator, config.prefix),
-                    delegatee: encodeAddress(delegatee, config.prefix),
-                    type: getProxyTypeFromRaw(proxyType),
-                    delay: Number(delay) || 0
-                } as NewProxy)
+                const newProxy = getProxyInfoFromArgs(item)
+                newProxies.set(newProxy.id, newProxy)
             }
 
             if (item.name === ("Proxy.ProxyRemoved")) {
-                const { delegator, delegatee, proxyType, delay } = item.event.args
+                // const { delegator, delegatee, proxyType, delay } = item.event.args
                 // ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
                 // ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
                 // ctx.log.info(`-----> remove proxyType ${getProxyTypeFromRaw(proxyType)}`)
                 // ctx.log.info(`-----> remove delay ${delay}`)
 
-                proxyRemovals.push({
-                    delegator: encodeAddress(delegator, config.prefix),
-                    delegatee: encodeAddress(delegatee, config.prefix),
-                    type: getProxyTypeFromRaw(proxyType),
-                    delay: Number(delay) || 0
-                } as ProxyRemoval)
+                const proxyRemoval = getProxyInfoFromArgs(item)
+                if (newProxies.has(proxyRemoval.id)) {
+                    newProxies.delete(proxyRemoval.id)
+                    ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
+                } else {
+                    proxyRemovalIds.add(proxyRemoval.id)
+                    ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
+                }
             }
         }
     }
 
+    // const dups = new Map<string, Record<string, number>>()
+
+    // newProxies.forEach((np) => {
+    //     const ant = dups.get(np.id)
+    //     dups.set(np.id, { "new": (ant?.new || 0) + 1 })
+    // })
+
+    // proxyRemovalIds.forEach((id) => {
+    //     const ant = dups.get(id)
+    //     dups.set(id, { ...ant, "removal": (ant?.removal || 0) + 1 })
+    // })
+
+    // ctx.log.info(`-----> dups ${Array.from(dups).map(([id, rec]) => `${id}: add ${rec.new} rem ${rec.removal}`)}`)
+
     newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
     newPureProxies.length && await handleNewPureProxies(ctx, newPureProxies)
-    newProxies.length && await handleNewProxies(ctx, newProxies)
-    proxyRemovals.length && await handleProxyRemovals(ctx, proxyRemovals)
+    newProxies.size && await handleNewProxies(ctx, Array.from(newProxies).map(([_, newProxy]) => newProxy))
+    proxyRemovalIds.size && await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values()))
 })
 
 /**
