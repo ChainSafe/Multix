@@ -14,6 +14,7 @@ import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useToasts } from "../../contexts/ToastContext";
 import { AccountBadge } from "../../types";
 import { getIntersection } from "../../utils";
+import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
 
 interface Props {
   onClose: () => void
@@ -29,8 +30,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [newNames, setNewNames] = useState<AccountNames>({})
-  // FIXME we need a selector
-  const selectedMultisig = useMemo(() => selectedMultiProxy?.multisigs[0], [selectedMultiProxy?.multisigs])
+  const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
   const [newSignatories, setNewSignatories] = useState<string[]>(selectedMultisig?.signatories || [])
@@ -40,6 +40,19 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const ownAccountPartOfAllSignatories = useMemo(() => getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories)).length > 0
     , [addressList, newSignatories, selectedMultisig?.signatories])
   const isCallStep = useMemo(() => currentStep === "call1" || currentStep === "call2", [currentStep])
+  const multisigList = useMemo(() =>
+    selectedMultiProxy?.multisigs.map(({ address }) => ({
+      address,
+      meta: {
+        isMulti: true
+      }
+    } as AccountBaseInfo)) || []
+    , [selectedMultiProxy])
+
+  const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
+    const selected = selectedMultiProxy?.multisigs.find(({ address }) => address === account.address)
+    setSelectedMultisig(selected)
+  }, [selectedMultiProxy])
 
   const handleClose = useCallback(() => {
     if (!isCallStep) {
@@ -189,6 +202,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   badge={AccountBadge.PURE}
                 />
               </Box>
+              {multisigList.length > 1 && (
+                <>
+                  <h4>Multisig</h4>
+                  <GenericAccountSelection
+                    className="multiSelection"
+                    accountList={multisigList}
+                    onChange={handleMultisigSelection}
+                    value={multisigList?.find(({ address }) => address === selectedMultisig?.address) || {} as AccountBaseInfo}
+                    label=""
+                  />
+                </>
+              )}
             </Grid>
             <Grid item xs={12}>
               <h4>Signatories</h4>
