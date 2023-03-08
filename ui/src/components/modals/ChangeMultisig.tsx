@@ -29,7 +29,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { addToast } = useToasts()
   const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
-  const [newNames, setNewNames] = useState<AccountNames>({})
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
@@ -68,16 +67,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const onGoBack = useCallback(() => {
     setCurrentStep("selection")
   }, [])
-
-  // const onNameChange = useCallback(({ name, addresses }: OnChangeArgs) => {
-  //   const uniqueAddresses = addresses.filter(address => !!address) as string[]
-
-  //   const namesToBeAdded = uniqueAddresses.reduce((previousValue: AccountNames, currentValue: string) => {
-  //     return { ...previousValue, [currentValue]: name }
-  //   }, {} as AccountNames)
-
-  //   setNewNames({ ...newNames, ...namesToBeAdded })
-  // }, [newNames])
 
   // the new multisig will remove the old one here
   const onMakeSecondCall = useCallback(() => {
@@ -148,7 +137,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    addNames(newNames)
     setCurrentStep("call1")
 
     const otherOldSignatories = sortAddresses(selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address))
@@ -166,7 +154,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, addNames, newNames, newSignatories, api.tx.proxy, api.tx.multisig, selectedMultiProxy, accountNames, addName, selectedSigner, signCallBack1, addToast])
+  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api.tx.proxy, api.tx.multisig, selectedMultiProxy, accountNames, addName, selectedSigner, signCallBack1, addToast])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {
