@@ -5,7 +5,6 @@
   },
   "extends": [
     "react-app",
-    "plugin:jsx-a11y/recommended",
     "prettier",
     "plugin:react-hooks/recommended"
   ],
@@ -20,8 +19,7 @@
     "project": "./tsconfig.json"
   },
   "plugins": [
-    "react",
-    "jsx-a11y"
+    "react"
   ],
   "rules": {},
   "overrides": [

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
+import { AccountBaseInfo } from "../components/GenericAccountSelection"
 import { useAccountNames } from "./AccountNamesContext"
 import { useAccounts } from "./AccountsContext"
 
@@ -28,8 +29,8 @@ export interface IMultisigContext {
   selectMultiProxy: (multi: MultiProxy) => void
   selectedHasProxy: boolean
   error: unknown
-  selectedMultiProxySignatories: string[]
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
+  getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -44,12 +45,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const { addressList } = useAccounts()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
-  // FIXME we should get rid of this alltogether
-  const selectedMultiProxySignatories = useMemo(() =>
-    // FIXME this won't be nice with several multisigs
-    selectedMultiProxy?.multisigs[0].signatories || [],
-    [selectedMultiProxy]
-  )
   const { accountNames, addName } = useAccountNames()
 
   useEffect(() => {
@@ -149,7 +144,15 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
   }, [selectedMultiProxy?.multisigs])
 
-  const selectMultisig = useCallback(async (newMulti: typeof selectedMultiProxy) => {
+  const getMultisigAsAccountBaseInfo = () =>
+    selectedMultiProxy?.multisigs.map(({ address }) => ({
+      address,
+      meta: {
+        isMulti: true
+      }
+    } as AccountBaseInfo)) || []
+
+  const selectMultiProxy = useCallback((newMulti: typeof selectedMultiProxy) => {
     const addressToUse = newMulti?.proxy || newMulti?.multisigs[0].address
 
     if (!addressToUse) {
@@ -177,21 +180,17 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy, updateProxyNames])
 
-  // const getMultisigByProxyAddress = useCallback((address: string) => {
-  //   return multisigList.find(multisig => multisig.proxy?.id === address)
-  // }, [multisigList])
-
   return (
     <MultisigContext.Provider
       value={{
-        selectedMultiProxy: selectedMultiProxy,
+        selectedMultiProxy,
         multiProxyList: multiProxyList,
-        selectMultiProxy: selectMultisig,
+        selectMultiProxy: selectMultiProxy,
         isLoading,
         selectedHasProxy,
         error,
-        selectedMultiProxySignatories,
-        getMultisigByAddress
+        getMultisigByAddress,
+        getMultisigAsAccountBaseInfo
       }}
     >
       {children}

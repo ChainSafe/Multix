@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
@@ -11,9 +11,21 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
+  const { selectedMultiProxy } = useMultiProxy()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
+  const signatories: string[] = useMemo(() => {
+    if (!selectedMultiProxy) return []
+
+    const sig = new Set<string>()
+    selectedMultiProxy?.multisigs.forEach(({ signatories }) => {
+      signatories?.forEach((signatory) => {
+        sig.add(signatory)
+      })
+    })
+
+    return Array.from(sig.values())
+  }, [selectedMultiProxy])
 
   const onSave = useCallback(async () => {
     addNames(newNames)
@@ -51,10 +63,10 @@ const EditNames = ({ onClose, className }: Props) => {
         </Grid>
         <Grid item xs={12}>
           <h4>Signatories</h4>
-          {selectedMultiProxySignatories.map(signer => <AccountEditName
-            key={signer}
+          {signatories.map((signatory) => <AccountEditName
+            key={signatory}
             className='accountEdition'
-            address={signer}
+            address={signatory}
             onNameChange={onNameChange}
           />)}
         </Grid>

@@ -20,10 +20,6 @@ interface Props {
   onFinalized: () => void
 }
 
-interface ProxyOrMultisig extends AccountBaseInfo {
-  meta: { isProxy: boolean }
-}
-
 export interface EasySetupOption {
   title: string;
   component: ReactNode
@@ -34,38 +30,44 @@ const getEasySetupOptionLabel = (option: EasySetupOption) => option.title
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultiProxy, selectedMultiProxySignatories } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
-  // FIXME this will not work well with several multisigs
-  const threshold = useMemo(() => selectedMultiProxy?.multisigs[0].threshold, [selectedMultiProxy])
+  const possibleOrigin = useMemo(() => {
+    const proxyBaseInfo = {
+      address: selectedMultiProxy?.proxy,
+      meta: {
+        isProxy: true,
+        isMulti: false
+      },
+    } as AccountBaseInfo
+
+    return [proxyBaseInfo, ...getMultisigAsAccountBaseInfo()].filter(a => !!a.address) as AccountBaseInfo[]
+  }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
+  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
+  const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
+  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
+    , [getMultisigAsAccountBaseInfo])
+
+  const threshold = useMemo(() => selectedOrigin.meta?.isMulti
+    ? getMultisigByAddress(selectedOrigin.address)?.threshold
+    : selectedMultisig?.threshold
+    , [getMultisigByAddress, selectedMultisig, selectedOrigin])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
   }, [onClose])
-  const possibleOrigin = useMemo(() =>
-    [
-      {
-        address: selectedMultiProxy?.proxy,
-        meta: {
-          isProxy: true,
-          isMulti: false
-        },
-      },
-      {
-        // FIXME this will not work well with several multisigs
-        address: selectedMultiProxy?.multisigs[0].address,
-        meta: {
-          isProxy: false,
-          isMulti: true
-        }
-      }
-    ]
-      .filter(a => !!a.address) as ProxyOrMultisig[]
-    , [selectedMultiProxy])
+
+  const handleSelectOrigin = useCallback((account: AccountBaseInfo) => {
+    setSelectedOrigin(account)
+    account.meta?.isMulti
+      ? setSelectedMultisig(getMultisigByAddress(account.address))
+      : setSelectedMultisig(selectedMultiProxy?.multisigs[0])
+
+  }, [getMultisigByAddress, selectedMultiProxy])
 
   const easySetupOptions: EasySetupOption[] = useMemo(() => [
     {
@@ -79,10 +81,19 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [selectedEasyOption, setSelectedEasyOption] = useState(easySetupOptions[0])
 
   const signCallback = useGetSigningCallback({ onSuccess, onSubmitting, onFinalized })
-  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
+
+  const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
+    const selected = getMultisigByAddress(account.address)
+    setSelectedMultisig(selected)
+  }, [getMultisigByAddress])
 
   const onSign = useCallback(async () => {
-    const otherSigners = sortAddresses(selectedMultiProxySignatories.filter((signer) => signer !== selectedAccount?.address))
+    if (!selectedMultisig?.signatories) {
+      console.error('selected multisig is undefined')
+      return
+    }
+
+    const otherSigners = sortAddresses(selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address))
 
     if (!threshold) {
       const error = 'Threshold is undefined'
@@ -119,7 +130,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     // the proxy is selected
     if (selectedOrigin.meta?.isProxy) {
       tx = api.tx.proxy.proxy(selectedOrigin.address, null, transfer)
-      // the multisig is selected
+      // a multisig is selected
     } else {
       tx = transfer
     }
@@ -131,7 +142,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [selectedMultiProxySignatories, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast])
+  }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast, selectedMultisig])
 
   const onChangeEasySetupOtion = useCallback((_: any, value: EasySetupOption | null) => {
     value && setSelectedEasyOption(value)
@@ -157,18 +168,35 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         <Grid item xs={12} md={10}>
           <GenericAccountSelection
             accountList={possibleOrigin}
-            onChange={setSelectedOrigin}
+            onChange={handleSelectOrigin}
             value={selectedOrigin}
           />
         </Grid>
+        {selectedOrigin.meta?.isProxy && multisigList.length > 1 && (
+          <>
+            <Grid item xs={12} md={2} >
+              <h4>Using</h4>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <GenericAccountSelection
+                className="multiSelection"
+                accountList={multisigList}
+                onChange={handleMultisigSelection}
+                value={multisigList.find(({ address }) => address === selectedMultisig?.address) || multisigList[0]}
+                label=""
+              />
+            </Grid>
+          </>
+        )}
         <Grid item xs={12} md={2}>
           <h4>Signing with</h4>
         </Grid>
         <Grid item xs={12} md={10}>
-          <SignerSelection
-            possibleSigners={selectedMultiProxySignatories}
+          {<SignerSelection
+            possibleSigners={selectedMultisig?.signatories || []}
             onChange={() => setErrorMessage("")
             } />
+          }
         </Grid>
         <Grid item xs={0} md={1} />
         <Grid item xs={12} md={11} className="errorMessage">

@@ -25,7 +25,7 @@ type Step = "selection" | "summary" | "call1" | "call2"
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
-  const { selectedMultiProxy } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
   const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
@@ -40,19 +40,13 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const ownAccountPartOfAllSignatories = useMemo(() => getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories)).length > 0
     , [addressList, newSignatories, selectedMultisig?.signatories])
   const isCallStep = useMemo(() => currentStep === "call1" || currentStep === "call2", [currentStep])
-  const multisigList = useMemo(() =>
-    selectedMultiProxy?.multisigs.map(({ address }) => ({
-      address,
-      meta: {
-        isMulti: true
-      }
-    } as AccountBaseInfo)) || []
-    , [selectedMultiProxy])
+  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
+    , [getMultisigAsAccountBaseInfo])
 
-  const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
-    const selected = selectedMultiProxy?.multisigs.find(({ address }) => address === account.address)
+  const handleMultisigSelection = useCallback(({ address }: AccountBaseInfo) => {
+    const selected = getMultisigByAddress(address)
     setSelectedMultisig(selected)
-  }, [selectedMultiProxy])
+  }, [getMultisigByAddress])
 
   const handleClose = useCallback(() => {
     if (!isCallStep) {
@@ -209,7 +203,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                     className="multiSelection"
                     accountList={multisigList}
                     onChange={handleMultisigSelection}
-                    value={multisigList?.find(({ address }) => address === selectedMultisig?.address) || {} as AccountBaseInfo}
+                    value={multisigList.find(({ address }) => address === selectedMultisig?.address) || multisigList[0]}
                     label=""
                   />
                 </>
@@ -252,7 +246,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             <Box className="loader">
               <CircularProgress />
               <div>
-                Tx {currentStep === 'call1' ? "1" : "2"} in progress..
+                Please review and sign the {currentStep === 'call1' ? "1st" : "2nd"} transaction..
               </div>
             </Box>
           </Grid>

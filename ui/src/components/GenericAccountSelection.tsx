@@ -45,7 +45,7 @@ const GenericAccountSelection = ({ className, accountList = [], value, onChange,
   const valueBadge = useMemo(() => getBadge(value), [value])
 
   const getOptionLabel = useCallback((option: typeof accountList[0] | string) => {
-    // this applies to allowAnyAddressInput === true
+    // this happens when allowAnyAddressInput === true and users enter a string manually
     if (typeof option === "string") {
       return option
     }
