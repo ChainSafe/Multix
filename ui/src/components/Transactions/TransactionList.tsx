@@ -39,7 +39,7 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
         })
       } else {
         result.push({
-          name: "Unkown call",
+          name: "Unknown call",
           hash: (c.args?.call_hash as Uint8Array).toString() || undefined,
           callData: undefined
         })

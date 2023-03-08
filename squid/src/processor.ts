@@ -19,14 +19,6 @@ const processor = new SubstrateBatchProcessor()
     .setBlockRange({
         from: config.blockStart,
     })
-    // .addCall('System.remark', {
-    //     data: {
-    //         call: {
-    //             args: true,
-    //             origin: true,
-    //         },
-    //     },
-    // } as const)
     .addCall('Proxy.proxy', {
         data: {
             call: {
@@ -35,23 +27,15 @@ const processor = new SubstrateBatchProcessor()
             },
         },
     } as const)
-    // .addCall('Balances.transfer_keep_alive', {
-    //     data: {
-    //         call: {
-    //             args: true,
-    //             origin: true,
-    //         },
-    //     },
-    // } as const)
-    .addCall('Proxy.add_proxy')
-    .addCall('Proxy.remove_proxy')
-    .addCall('Proxy.remove_proxies')
-    .addEvent('Proxy.ProxyAdded')
-    .addEvent('Proxy.ProxyRemoved')
+    // .addCall('Proxy.add_proxy')
+    // .addCall('Proxy.remove_proxy')
+    // .addCall('Proxy.remove_proxies')
     .addCall('Multisig.as_multi')
     .addCall('Multisig.approve_as_multi')
     .addCall('Multisig.cancel_as_multi')
     .addCall('Multisig.as_multi_threshold_1')
+    .addEvent('Proxy.ProxyRemoved')
+    .addEvent('Proxy.ProxyAdded')
     .addEvent('Proxy.PureCreated', {
         data: {
             event: {
@@ -147,10 +131,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 const proxyRemoval = getProxyInfoFromArgs(item)
                 if (newProxies.has(proxyRemoval.id)) {
                     newProxies.delete(proxyRemoval.id)
-                    ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
+                    // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
                 } else {
                     proxyRemovalIds.add(proxyRemoval.id)
-                    ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
+                    // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
                 }
             }
         }
