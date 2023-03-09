@@ -247,7 +247,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               )}
               {currentStep === 'call2' && (
                 <div>
-                  Please sign the 2nd transaction remove the old multisig.
+                  Please sign the 2nd transaction to remove the old multisig.
                 </div>
               )}
             </Box>

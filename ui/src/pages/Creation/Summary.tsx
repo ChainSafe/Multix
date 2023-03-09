@@ -79,10 +79,10 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
             ? <>
               In the next step you will sign 2 transactions to:
               <ul>
-                <li>Add the new Multisig to the current Pure proxy</li>
-                <li>Remove the old Mltisig</li>
+                <li>add the new Multisig to the current Pure proxy</li>
+                <li>remove the old Multisig</li>
               </ul>
-              Other signatories must approve this transaction before it is ready use.
+              Other signatories will need to approve these transactions.
             </>
             : <>
               In the next step you will send 1 batch transaction to:
@@ -90,7 +90,7 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
                 <li>send funds to the new Multisig (required to create a Pure proxy)</li>
                 <li>create the Pure proxy</li>
               </ul>
-              Other signatories must approve both transactions before the change is effective.
+              Other signatories will need to approve this transaction.
             </>
         }
       </Box>
@@ -112,11 +112,11 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
 
 export default styled(Summary)(({ theme }) => `
   .account:last-child {
-    margin - bottom: 1rem;
+    margin-bottom: 1rem;
   }
 
   .account:last-child {
-    margin - bottom: 0;
+    margin-bottom: 0;
   }
 
   .paper {
