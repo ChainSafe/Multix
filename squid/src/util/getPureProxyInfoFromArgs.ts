@@ -16,8 +16,8 @@ export const getPureProxyInfoFromArgs = (item: EventItem<"Proxy.PureCreated", ty
 
     return ({
         id,
-        who: encodeAddress(who, config.prefix),
-        pure: encodeAddress(pure, config.prefix),
+        who: _who,
+        pure: _pure,
         delay,
         type
     })

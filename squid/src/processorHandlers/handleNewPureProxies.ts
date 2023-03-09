@@ -12,16 +12,6 @@ export interface NewPureProxy {
 }
 
 export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[]) => {
-    // const dedupNewPureProxies = newPureProxies.filter((value, index, self) => {
-    //     const res = index === self.findIndex((t) => (
-    //         t.who === value.who && t.pure === value.pure && t.delay === value.delay
-    //     ))
-    //     if (res === )
-    //     return res
-    // }
-
-    // )
-
     const dedupPure = new Set<string>()
     const dedupWho = new Set<string>()
 
