@@ -34,7 +34,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
   const [newSignatories, setNewSignatories] = useState<string[]>(selectedMultisig?.signatories || [])
   const [currentStep, setCurrentStep] = useState<Step>("selection")
-  const { addName, addNames, accountNames } = useAccountNames()
+  const { addNames, accountNames } = useAccountNames()
   const [errorMessage, setErrorMessage] = useState("")
   const ownAccountPartOfAllSignatories = useMemo(() => getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories)).length > 0
     , [addressList, newSignatories, selectedMultisig?.signatories])
@@ -148,13 +148,19 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     // Add the current name to the new Multisig
     const currentProxyName = selectedMultiProxy?.proxy && accountNames[selectedMultiProxy.proxy]
-    currentProxyName && addName(currentProxyName, newMultiAddress)
+    const currentMultisigName = accountNames[selectedMultisig.address] || ""
+    const newMultisigName = `${currentProxyName} - new ${new Date().toLocaleDateString()}`
+    const oldMultisigName = `${currentMultisigName} - old`
+    addNames({
+      [newMultiAddress]: newMultisigName,
+      [selectedMultisig.address]: oldMultisigName
+    })
 
     multiSigCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api.tx.proxy, api.tx.multisig, selectedMultiProxy, accountNames, addName, selectedSigner, signCallBack1, addToast])
+  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api, selectedMultiProxy, accountNames, addNames, selectedSigner, signCallBack1, addToast])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {
@@ -233,9 +239,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
           >
             <Box className="loader">
               <CircularProgress />
-              <div>
-                Please review and sign the {currentStep === 'call1' ? "1st" : "2nd"} transaction..
-              </div>
+              {currentStep === 'call1' && (
+                <div>
+                  Please sign the 1st transaction to create the new multisig.
+                </div>
+              )}
+              {currentStep === 'call2' && (
+                <div>
+                  Please sign the 2nd transaction remove the old multisig.
+                </div>
+              )}
             </Box>
           </Grid>
         )}
