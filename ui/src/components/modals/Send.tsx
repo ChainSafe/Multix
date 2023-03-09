@@ -65,6 +65,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     setSelectedOrigin(account)
     account.meta?.isMulti
       ? setSelectedMultisig(getMultisigByAddress(account.address))
+      // if the proxy is selected as origin, select the first multisig as a "from"
       : setSelectedMultisig(selectedMultiProxy?.multisigs[0])
 
   }, [getMultisigByAddress, selectedMultiProxy])

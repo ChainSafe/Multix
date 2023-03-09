@@ -53,13 +53,29 @@ const EditNames = ({ onClose, className }: Props) => {
     <DialogContent className="generalContainer">
       <Grid container>
         <Grid item xs={12}>
-          <h4>Multisig & Proxy</h4>
-          <AccountEditName
-            className='accountEdition'
-            address={selectedMultiProxy?.multisigs[0].address || ""}
-            proxyAddress={selectedMultiProxy?.proxy}
-            onNameChange={onNameChange}
-          />
+          {!!selectedMultiProxy?.proxy &&
+            <>
+              <h4>Proxy</h4>
+              <AccountEditName
+                className='accountEdition'
+                address={selectedMultiProxy.proxy || ""}
+                onNameChange={onNameChange}
+              />
+            </>
+          }
+        </Grid>
+        <Grid item xs={12}>
+          <h4>{!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1 ? "Multisigs" : "Multisig"}</h4>
+          {
+            selectedMultiProxy?.multisigs.map(({ address }) =>
+              <AccountEditName
+                key={address}
+                className='accountEdition'
+                address={address}
+                onNameChange={onNameChange}
+              />
+            )
+          }
         </Grid>
         <Grid item xs={12}>
           <h4>Signatories</h4>
