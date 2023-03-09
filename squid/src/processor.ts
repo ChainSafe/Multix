@@ -28,11 +28,10 @@ export const dataCall = {
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
-
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        archive: lookupArchive('rococo', { release: 'FireSquid' }),
-        chain: 'wss://rococo-rpc.polkadot.io',
+        archive: lookupArchive(config.archiveName, { release: 'FireSquid' }),
+        chain: config.ws,
     })
     .setBlockRange({
         from: config.blockStart,
