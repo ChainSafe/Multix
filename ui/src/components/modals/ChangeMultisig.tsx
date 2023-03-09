@@ -52,6 +52,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       onClose()
     } else {
       //FIXME we need to allow to close this if something went wrong
+      // logged in https://github.com/ChainSafe/Multix/issues/37
       console.error("You can't close the modal in this state")
     }
   }, [isCallStep, onClose])
