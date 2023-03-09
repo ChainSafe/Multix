@@ -9,7 +9,25 @@ import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } fr
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
 import { getProxyInfoFromArgs } from './util/getProxyInfoFromArgs'
 
+export const dataEvent = {
+    data: {
+        event: {
+            args: true,
+        }
+    }
+} as const
+
+export const dataCall = {
+    data: {
+        call: {
+            args: true,
+            origin: true,
+        },
+    },
+} as const
+
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
+
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
@@ -19,34 +37,17 @@ const processor = new SubstrateBatchProcessor()
     .setBlockRange({
         from: config.blockStart,
     })
-    .addCall('Proxy.proxy', {
-        data: {
-            call: {
-                args: true,
-                origin: true,
-            },
-        },
-    } as const)
-    // .addCall('Proxy.add_proxy')
-    // .addCall('Proxy.remove_proxy')
-    // .addCall('Proxy.remove_proxies')
-    .addCall('Multisig.as_multi')
-    .addCall('Multisig.approve_as_multi')
-    .addCall('Multisig.cancel_as_multi')
-    .addCall('Multisig.as_multi_threshold_1')
-    .addEvent('Proxy.ProxyRemoved')
-    .addEvent('Proxy.ProxyAdded')
-    .addEvent('Proxy.PureCreated', {
-        data: {
-            event: {
-                args: true,
-                extrinsic: {
-                    hash: true,
-                    fee: true
-                }
-            }
-        }
-    } as const)
+    // .addCall('Proxy.add_proxy', dataCall)
+    // .addCall('Proxy.remove_proxy', dataCall)
+    // .addCall('Proxy.remove_proxies', dataCall)
+    .addCall('Proxy.proxy', dataCall)
+    .addCall('Multisig.as_multi', dataCall)
+    .addCall('Multisig.approve_as_multi', dataCall)
+    .addCall('Multisig.cancel_as_multi', dataCall)
+    .addCall('Multisig.as_multi_threshold_1', dataCall)
+    .addEvent('Proxy.PureCreated', dataEvent)
+    .addEvent('Proxy.ProxyAdded', dataEvent)
+    .addEvent('Proxy.ProxyRemoved', dataEvent)
 
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -66,13 +67,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             if (supportedMultisigCalls.includes(item.name)) {
                 const callItem = item as CallItem<"*", true>
 
-                // ctx.log.info(`${callItem.name} - block: ${block.header.height}`)
                 if (!callItem.call.success || !callItem.call.origin) continue
 
                 const signer = getOriginAccountId(callItem.call.origin)
                 const callArgs = callItem.call.args;
 
-                // ctx.log.info(JsonLog(callItem))
                 const { otherSignatories, threshold } = handleMultisigCall(callArgs)
                 const signatories = [signer, ...otherSignatories]
                 const timestamp = new Date(block.header.timestamp)
@@ -113,22 +112,16 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
 
             if (item.name === ("Proxy.ProxyAdded")) {
-                // const { delegator, delegatee, proxyType, delay } = item.event.args
-                // ctx.log.info(`-----> delegator ${encodeAddress(delegator, config.prefix)}`)
-                // ctx.log.info(`-----> delegatee ${encodeAddress(delegatee, config.prefix)}`)
-
                 const newProxy = getProxyInfoFromArgs(item)
+                // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
+                // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
                 newProxies.set(newProxy.id, newProxy)
             }
 
             if (item.name === ("Proxy.ProxyRemoved")) {
-                // const { delegator, delegatee, proxyType, delay } = item.event.args
-                // ctx.log.info(`-----> remove delegator ${encodeAddress(delegator, config.prefix)}`)
-                // ctx.log.info(`-----> remove delegatee ${encodeAddress(delegatee, config.prefix)}`)
-                // ctx.log.info(`-----> remove proxyType ${getProxyTypeFromRaw(proxyType)}`)
-                // ctx.log.info(`-----> remove delay ${delay}`)
-
                 const proxyRemoval = getProxyInfoFromArgs(item)
+                // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
+                // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
                 if (newProxies.has(proxyRemoval.id)) {
                     newProxies.delete(proxyRemoval.id)
                     // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
@@ -139,20 +132,6 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
         }
     }
-
-    // const dups = new Map<string, Record<string, number>>()
-
-    // newProxies.forEach((np) => {
-    //     const ant = dups.get(np.id)
-    //     dups.set(np.id, { "new": (ant?.new || 0) + 1 })
-    // })
-
-    // proxyRemovalIds.forEach((id) => {
-    //     const ant = dups.get(id)
-    //     dups.set(id, { ...ant, "removal": (ant?.removal || 0) + 1 })
-    // })
-
-    // ctx.log.info(`-----> dups ${Array.from(dups).map(([id, rec]) => `${id}: add ${rec.new} rem ${rec.removal}`)}`)
 
     newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)

@@ -3,8 +3,9 @@ import { encodeAddress } from '@polkadot/util-crypto';
 import { config } from '../config'
 import { getProxyTypeFromRaw } from "./getProxyTypeFromRaw";
 import { getProxyAccountId } from "./getProxyAccountId";
+import { dataEvent } from "../processor"
 
-export const getProxyInfoFromArgs = (item: EventItem<"Proxy.ProxyAdded" | "Proxy.ProxyRemoved", true>) => {
+export const getProxyInfoFromArgs = (item: EventItem<"Proxy.ProxyAdded" | "Proxy.ProxyRemoved", typeof dataEvent['data']>) => {
     const { delegator, delegatee, proxyType, delay } = item.event.args
     const _delegator = encodeAddress(delegator, config.prefix)
     const _delegatee = encodeAddress(delegatee, config.prefix)
