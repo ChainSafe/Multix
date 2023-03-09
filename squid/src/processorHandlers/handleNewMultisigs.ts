@@ -7,10 +7,10 @@ export interface NewMultisigsInfo extends Account {
 }
 
 export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]) => {
-    for (let { newSignatories, threshold, id, createdAt, isMultisig, isPureProxy } of multisigs) {
-        // const multiAddress = encodeAddress(createKeyMulti(signers, threshold), config.prefix)
+    const newMultisigs: Map<string, Account> = new Map()
+    const newAccountMultisigs: Map<string, AccountMultisig> = new Map()
 
-        // persist all accounts
+    for (let { newSignatories, threshold, id, createdAt, isMultisig, isPureProxy } of multisigs) {
         const accounts = await getOrCreateAccounts(ctx, newSignatories)
 
         const newMultisig = new Account({
@@ -21,17 +21,20 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
             isPureProxy
         })
 
-        // persist the multisig
-        await ctx.store.save(newMultisig)
+        newMultisigs.set(id, newMultisig)
 
-        const newAccountMultisig = accounts.map((account) => {
-            return new AccountMultisig({
-                id: getAccountMultisigId(newMultisig.id, account.id),
+        accounts.forEach((account) => {
+            const newAccountMultisigId = getAccountMultisigId(newMultisig.id, account.id)
+
+            const newAccountMultisig = new AccountMultisig({
+                id: newAccountMultisigId,
                 multisig: newMultisig,
                 signatory: account
             })
+            newAccountMultisigs.set(newAccountMultisigId, newAccountMultisig)
         })
-
-        await ctx.store.save(newAccountMultisig)
     }
+
+    await ctx.store.save(Array.from(newMultisigs.values()))
+    await ctx.store.save(Array.from(newAccountMultisigs.values()))
 }
