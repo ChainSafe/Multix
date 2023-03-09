@@ -3,11 +3,9 @@ import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subs
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { config } from './config'
-import { encodeAddress } from '@polkadot/util-crypto';
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId, JsonLog } from './util'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
-import { getProxyInfoFromArgs } from './util/getProxyInfoFromArgs'
 
 export const dataEvent = {
     data: {
@@ -53,7 +51,7 @@ export type Ctx = BatchContext<Store, Item>
 
 processor.run(new TypeormDatabase(), async (ctx) => {
     const newMultisigsInfo: NewMultisigsInfo[] = []
-    const newPureProxies: NewPureProxy[] = []
+    const newPureProxies: Map<string, NewPureProxy> = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
     const newProxies: Map<string, NewProxy> = new Map()
     const proxyRemovalIds: Set<string> = new Set()
@@ -97,16 +95,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
             }
 
             if (item.name === ("Proxy.PureCreated")) {
-                const { pure, who } = item.event.args
-                // ctx.log.info(`${block.header.height}`)
-                // ctx.log.info(`pure ${pure}`)
-                // ctx.log.info(`who ${who}`)
+                const newPureProxy = getPureProxyInfoFromArgs(item)
+                // ctx.log.info(`pure ${newPureProxy.pure}`)
+                // ctx.log.info(`who ${newPureProxy.who}`)
 
-                newPureProxies.push({
-                    who: encodeAddress(who, config.prefix),
-                    pure: encodeAddress(pure, config.prefix),
-                    delay: 0
-                })
+                newPureProxies.set(newPureProxy.id, newPureProxy)
             }
 
             if (item.name === ("Proxy.ProxyAdded")) {
@@ -133,8 +126,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
     newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
     newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
-    newPureProxies.length && await handleNewPureProxies(ctx, newPureProxies)
-    newProxies.size && await handleNewProxies(ctx, Array.from(newProxies).map(([_, newProxy]) => newProxy))
+    newPureProxies.size && await handleNewPureProxies(ctx, Array.from(newPureProxies.values()))
+    newProxies.size && await handleNewProxies(ctx, Array.from(newProxies.values()))
     proxyRemovalIds.size && await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values()))
 })
 

@@ -4,22 +4,28 @@ import { getOrCreateAccounts } from "../util";
 import { getProxyAccountId } from "../util/getProxyAccountId"
 
 export interface NewPureProxy {
+    id: string
     who: string;
     pure: string;
     delay: number;
+    type: ProxyType;
 }
 
 export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[]) => {
-    const dedupNewPureProxies = newPureProxies.filter((value, index, self) =>
-        index === self.findIndex((t) => (
-            t.who === value.who && t.pure === value.pure && t.delay === value.delay
-        ))
-    )
+    // const dedupNewPureProxies = newPureProxies.filter((value, index, self) => {
+    //     const res = index === self.findIndex((t) => (
+    //         t.who === value.who && t.pure === value.pure && t.delay === value.delay
+    //     ))
+    //     if (res === )
+    //     return res
+    // }
+
+    // )
 
     const dedupPure = new Set<string>()
     const dedupWho = new Set<string>()
 
-    dedupNewPureProxies.forEach(({ who, pure }) => {
+    newPureProxies.forEach(({ who, pure }) => {
         dedupPure.add(pure)
         dedupWho.add(who)
     })
@@ -37,12 +43,12 @@ export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProx
     const whoAccounts = await getOrCreateAccounts(ctx, Array.from(dedupWho.values()))
 
     const proxyAccounts: ProxyAccount[] = []
-    for (let { who, pure, delay } of dedupNewPureProxies) {
+    for (let { id, who, pure, delay, type } of newPureProxies) {
         proxyAccounts.push(new ProxyAccount({
             id: getProxyAccountId(who, pure, ProxyType.Any, delay),
             delegator: pureProxiestoSave.find(({ id }) => pure === id),
             delegatee: whoAccounts.find(({ id }) => who === id),
-            type: ProxyType.Any,
+            type,
             delay
         }))
     }
