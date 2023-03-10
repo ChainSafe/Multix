@@ -1,17 +1,18 @@
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import styled from "styled-components";
-import { Box, Button, Chip, CircularProgress, Grid, IconButton } from "@mui/material";
-import { useMultisig } from "../contexts/MultisigContext";
+import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from "@mui/material";
+import { useMultiProxy } from "../contexts/MultiProxyContext";
 import ProposalList from "../components/Transactions/TransactionList";
 import { Link } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
 import SendIcon from '@mui/icons-material/Send';
 import Send from "../components/modals/Send";
 import { usePendingTx } from "../hooks/usePendingTx";
-import Expander from "../components/Expander";
 import OptionsMenu, { MenuOption } from "../components/OptionsMenu";
 import EditIcon from "@mui/icons-material/Edit"
 import EditNames from "../components/modals/EditNames";
+import LockResetIcon from '@mui/icons-material/LockReset';
+import ChangeMultisig from "../components/modals/ChangeMultisig";
 import { AccountBadge } from "../types";
 
 interface Props {
@@ -20,11 +21,13 @@ interface Props {
 
 const Home = ({ className }: Props) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const { isLoading, multisigList, selectedMultisig, selectedHasProxy, error: multisigQueryError } = useMultisig()
+  const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultiProxy()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
+  const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
 
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
@@ -35,13 +38,44 @@ const Home = ({ className }: Props) => {
     refresh()
   }, [refresh])
 
-  const options: MenuOption[] = [
-    {
-      text: "Edit names",
-      icon: <EditIcon />,
-      onClick: () => setIsEditModalOpen(true)
-    }
-  ]
+  const options: MenuOption[] = useMemo(() => {
+    const opts = [
+      {
+        text: "Edit names",
+        icon: <EditIcon />,
+        onClick: () => setIsEditModalOpen(true)
+      }
+    ]
+
+    // allow rotation only for the multisigs with a proxy
+    selectedHasProxy && opts.push(
+      {
+        text: "Edit multisig",
+        icon: <LockResetIcon />,
+        onClick: () => setIsChangeMultiModalOpen(true)
+      }
+    )
+
+    return opts
+  }, [selectedHasProxy])
+
+
+  if (isLoading) {
+    return (
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
+        <Box className="loader">
+          <CircularProgress />
+          <div>
+            Loading your multisigs...
+          </div>
+        </Box>
+      </Grid>
+    )
+  }
 
   return (
     <Grid
@@ -54,78 +88,76 @@ const Home = ({ className }: Props) => {
         xs={12}
         md={6}
       >
-        {isLoading && (
-          <Box className="loader">
-            <CircularProgress />
-            <div>
-              Loading your multisigs...
-            </div>
-          </Box>
-        )}
-        {!isLoading && !multisigQueryError && multisigList.length === 0 && (
+        {!isLoading && !multisigQueryError && multiProxyList.length === 0 && (
           <div>
             No multisig found for your accounts. <Button component={Link} to="/create" >Create one!</Button>
           </div>
         )}
-        {selectedMultisig &&
-          <>
-            <div className="headerWrapper">
-              <h3>Multisig <Chip
-                className="threshold"
-                label={`${selectedMultisig.threshold}/${selectedMultisig.signers.length}`}
-              /></h3>
-              <div className="multisigHeader">
-                {selectedHasProxy
-                  ? <Expander
-                    title={<AccountDisplay
-                      className="proxy"
-                      address={selectedMultisig?.proxy?.id || ""}
-                      badge={AccountBadge.PROXY}
-                    />}
-                    content={<AccountDisplay
-                      className="multisig"
-                      address={selectedMultisig?.id || ""}
-                      badge={AccountBadge.MULTI}
-                    />}
+        {selectedMultiProxy &&
+          <div className="multiProxyWrapper">
+            <div className="multiProxyColumn">
+              {selectedHasProxy && (
+                <div className="pureHeader">
+                  <AccountDisplay
+                    className="proxy"
+                    address={selectedMultiProxy?.proxy || ""}
+                    badge={AccountBadge.PURE}
                   />
-                  : <AccountDisplay
-                    className="multisigSolo"
-                    address={selectedMultisig?.id || ""}
-                    badge={AccountBadge.MULTI}
-                  />}
-                <IconButton
-                  className="sendButton"
-                  aria-label="send"
-                  onClick={() => setIsSendModalOpen(true)}
-                >
-                  <SendIcon />
-                </IconButton>
-                <OptionsMenu options={options} />
-              </div>
+                </div>
+              )}
+              <h3>{selectedMultiProxy.multisigs.length > 1 ? "Multisigs" : "Multisig"}</h3>
+              {
+                selectedMultiProxy.multisigs.map((multisig) => {
+                  return (
+                    <Paper className="multisigWrapper" key={multisig.address}>
+                      <AccountDisplay
+                        className="multisig"
+                        address={multisig.address || ""}
+                        badge={AccountBadge.MULTI}
+                      />
+                      <div className="signatoriesWrapper">
+                        <h4>Signatories <Chip
+                          className="threshold"
+                          label={`${multisig.threshold}/${multisig.signatories?.length}`}
+                        /></h4>
+                        <ul className="addressList">
+                          {multisig?.signatories?.map((signatory) =>
+                            <li key={signatory} >
+                              <AccountDisplay address={signatory} />
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </Paper>
+                  )
+                })
+              }
             </div>
-            <div className="signatoriesWrapper">
-              <h3>Signatories</h3>
-              <ul className="addressList">
-                {selectedMultisig.signers.map(({ signer }) =>
-                  <li key={signer.id} >
-                    <AccountDisplay address={signer.id} />
-                  </li>
-                )}
-              </ul>
+            <div className="buttonColumn">
+              <IconButton
+                className="sendButton"
+                aria-label="send"
+                onClick={() => setIsSendModalOpen(true)}
+              >
+                <SendIcon />
+              </IconButton>
+              <OptionsMenu options={options} />
             </div>
-          </>
+          </div>
         }
       </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-      >
-        <div className="actionWrapper">
-          <h3>Transactions</h3>
-          <ProposalList />
-        </div>
-      </Grid>
+      {multiProxyList.length > 0 && (
+        <Grid
+          item
+          xs={12}
+          md={6}
+        >
+          <div className="actionWrapper">
+            <h3>Transactions</h3>
+            <ProposalList />
+          </div>
+        </Grid>
+      )}
       {isSendModalOpen && (
         <Send
           onClose={onCloseSendModal}
@@ -136,6 +168,11 @@ const Home = ({ className }: Props) => {
       {isEditModalOpen && (
         <EditNames
           onClose={onCloseEditModal}
+        />
+      )}
+      {isChangeMultiModalOpen && (
+        <ChangeMultisig
+          onClose={onCloseChangeMultiModal}
         />
       )}
     </Grid>
@@ -169,13 +206,15 @@ export default styled(Home)(({ theme }) => `
   }
 
   .addressList {
+    padding-inline-start: 0;
+    margin-block-end: 0;
     list-style-type: none;
     > li {
       margin-bottom: 1rem;
     }
   }
 
-  .multisigHeader {
+  .multiProxyWrapper {
     display: flex;
     align-items: center;
   }
@@ -185,9 +224,10 @@ export default styled(Home)(({ theme }) => `
   }
 
   .signatoriesWrapper {
-    & > h3 {
+    & > h2 {
       margin-bottom: 0;
     }
+    margin-left: 2rem;
   }
 
   .sendButton {
@@ -196,5 +236,28 @@ export default styled(Home)(({ theme }) => `
   }
   .titleWrapper {
     align-items: center;
+  }
+
+  .multiProxyColumn {
+    flex: 1;
+    min-width: 0;
+
+    & > h3 {
+      margin-top: 0;
+    }
+  }
+
+  .buttonColumn {
+    display: flex;
+    align-self: flex-start;
+  }
+
+  .pureHeader {
+    margin-bottom: 1rem;
+  }
+
+  .multisigWrapper {
+    padding: .5rem 0;
+    margin-bottom: .5rem;
   }
 `)

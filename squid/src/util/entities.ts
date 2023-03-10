@@ -1,7 +1,7 @@
 import { In } from "typeorm"
 import { Account } from "../model"
 import { Ctx } from "../processor"
-import { JsonLog } from "./JsonLog"
+// import { JsonLog } from "./JsonLog"
 
 export async function getOrCreateAccount(ctx: Ctx, id: string): Promise<Account> {
     let account = await ctx.store.get(Account, id)

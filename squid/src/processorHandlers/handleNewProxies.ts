@@ -1,38 +1,40 @@
-import { In } from "typeorm"
-import { Account, Multisig } from "../model"
+import { Account, ProxyAccount, ProxyType } from "../model"
 import { Ctx } from "../processor"
+import { getOrCreateAccounts } from "../util"
 
-export type NewProxies = Map<string, string>
+export interface NewProxy {
+    id: string;
+    delegator: string;
+    delegatee: string;
+    type: ProxyType;
+    delay: number;
+}
 
-export const handleNewProxies = async (ctx: Ctx, proxyMap: NewProxies) => {
+export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
 
-    const newProxies = [...proxyMap.values()].map((proxy) => new Account({
-        id: proxy,
-    }))
+    // Aggregate all accounts we deal with using a set to make sure we don't have dublicates
+    const allAccountsStringSet = new Set<string>()
 
-    await ctx.store.save(newProxies)
+    newProxies.forEach(({ delegatee, delegator }) => {
+        allAccountsStringSet.add(delegatee)
+        allAccountsStringSet.add(delegator)
+    })
 
-    // ctx.log.info(`proxyMap ${JsonLog([...proxyMap.entries()])}`)
+    const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()))
 
-    const multiSigsToUpdate = await ctx.store
-        .findBy(Multisig, { id: In([...proxyMap.keys()]) })
+    const accountMap = new Map<string, Account>()
+    accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
+    const proxyAccounts: ProxyAccount[] = []
 
+    for (let { id, delegatee, delegator, delay, type } of newProxies) {
+        proxyAccounts.push(new ProxyAccount({
+            id,
+            delegator: accountMap.get(delegator),
+            delegatee: accountMap.get(delegatee),
+            type,
+            delay
+        }))
+    }
 
-    const updatedMultisigs = multiSigsToUpdate
-        .map((multi) => {
-            const associatedProxy = newProxies.find(proxy => proxy.id === proxyMap.get(multi.id))
-
-            // ctx.log.info(`proxy: ${JsonLog(associatedProxy)}`)
-            if (associatedProxy === undefined) {
-                ctx.log.error(`No associated proxy found ${newProxies}`)
-                return
-            }
-
-            multi.proxy = associatedProxy
-            // ctx.log.info(`multi: ${JsonLog(multi)}`)
-            return multi
-        })
-        .filter(multi => multi !== undefined)
-
-    await ctx.store.save(updatedMultisigs as Multisig[])
+    await ctx.store.save(proxyAccounts)
 }

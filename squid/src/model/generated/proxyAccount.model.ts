@@ -1,25 +1,27 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {Account} from "./account.model"
+import {ProxyType} from "./_proxyType"
 
 @Entity_()
-export class MultisigCall {
-    constructor(props?: Partial<MultisigCall>) {
+export class ProxyAccount {
+    constructor(props?: Partial<ProxyAccount>) {
         Object.assign(this, props)
     }
 
     @PrimaryColumn_()
     id!: string
 
-    @Column_("text", {nullable: false})
-    blockHash!: string
-
-    @Column_("timestamp with time zone", {nullable: false})
-    timestamp!: Date
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    delegator!: Account
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-    multisig!: Account | undefined | null
+    delegatee!: Account
+
+    @Column_("varchar", {length: 17, nullable: false})
+    type!: ProxyType
 
     @Column_("int4", {nullable: false})
-    callIndex!: number
+    delay!: number
 }

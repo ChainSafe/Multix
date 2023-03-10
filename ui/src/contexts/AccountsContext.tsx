@@ -37,12 +37,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
 
-  console.log('isAccountLoading', isAccountLoading)
-  console.log('isAllowedToConnectToExtension', isAllowedToConnectToExtension)
-  console.log('accountList', accountList)
-  console.log('isExtensionError', isExtensionError)
-  console.log('extensions', extensions)
-  console.log('isWeb3Injected', isWeb3Injected)
 
   const getAccountByAddress = useCallback((address: string) => {
     return accountList.find(account => account.address === address)
@@ -59,14 +53,11 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [])
 
   const getaccountList = useCallback(async (): Promise<void> => {
-    console.log('--> getAccountList')
-
     setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
     web3AccountsSubscribe((accountList) => {
-      console.log('accountList from web3AccountSub', accountList)
       if (accountList.length === 0) {
         setIsExtensionError(true)
         return
@@ -95,7 +86,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       if (!timeoutElapsed && isAllowedToConnectToExtension) {
         // give it another chance #ugly hack
         // race condition see https://github.com/polkadot-js/extension/issues/938
-        console.log('--> another chance in 500ms')
         setTimeout(() => {
           getaccountList()
           setTimoutElapsed(true)
@@ -119,9 +109,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
-      console.log('check local storage')
       const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
-      console.log('previouslyAllowed', previouslyAllowed)
       if (previouslyAllowed === "true") {
         setIsAllowedToConnectToExtension(true)
       }

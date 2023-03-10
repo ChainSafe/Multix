@@ -1,21 +1,32 @@
 query MultisigsByAccounts($accounts: [String!]) {
-  multisigs(where: {signers_some: {signer: {id_in: $accounts}}}) {
+  accounts(where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}) {
     id
     createdAt
-    proxy {
-      id
-    }
-    signers {
-      signer {
-        id
-      }
-    }
+    isMultisig
+    isPureProxy
     threshold
     multisigsCalls {
       id
       blockHash
       timestamp
       callIndex
+    }
+    signatories {
+      signatory {
+        id
+      }
+    }
+    delegateeFor {
+      id
+      type
+      delegator {
+        id
+        isPureProxy
+      }
+      delegatee {
+        id
+        isPureProxy
+      }
     }
   }
 }

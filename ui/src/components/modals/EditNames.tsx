@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
 import AccountEditName, { OnChangeArgs } from "../AccountEditName";
 
@@ -11,9 +11,21 @@ interface Props {
 }
 
 const EditNames = ({ onClose, className }: Props) => {
-  const { selectedMultisig, selectedMultisigSignatories: selectedMultisigSignerList } = useMultisig()
+  const { selectedMultiProxy } = useMultiProxy()
   const { addNames } = useAccountNames()
   const [newNames, setNewNames] = useState<AccountNames>({})
+  const signatories: string[] = useMemo(() => {
+    if (!selectedMultiProxy) return []
+
+    const sig = new Set<string>()
+    selectedMultiProxy?.multisigs.forEach(({ signatories }) => {
+      signatories?.forEach((signatory) => {
+        sig.add(signatory)
+      })
+    })
+
+    return Array.from(sig.values())
+  }, [selectedMultiProxy])
 
   const onSave = useCallback(async () => {
     addNames(newNames)
@@ -41,20 +53,36 @@ const EditNames = ({ onClose, className }: Props) => {
     <DialogContent className="generalContainer">
       <Grid container>
         <Grid item xs={12}>
-          <h4>Multisig & Proxy</h4>
-          <AccountEditName
-            className='accountEdition'
-            address={selectedMultisig?.id || ""}
-            proxyAddress={selectedMultisig?.proxy?.id}
-            onNameChange={onNameChange}
-          />
+          {!!selectedMultiProxy?.proxy &&
+            <>
+              <h4>Proxy</h4>
+              <AccountEditName
+                className='accountEdition'
+                address={selectedMultiProxy.proxy || ""}
+                onNameChange={onNameChange}
+              />
+            </>
+          }
+        </Grid>
+        <Grid item xs={12}>
+          <h4>{!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1 ? "Multisigs" : "Multisig"}</h4>
+          {
+            selectedMultiProxy?.multisigs.map(({ address }) =>
+              <AccountEditName
+                key={address}
+                className='accountEdition'
+                address={address}
+                onNameChange={onNameChange}
+              />
+            )
+          }
         </Grid>
         <Grid item xs={12}>
           <h4>Signatories</h4>
-          {selectedMultisigSignerList.map(signer => <AccountEditName
-            key={signer}
+          {signatories.map((signatory) => <AccountEditName
+            key={signatory}
             className='accountEdition'
-            address={signer}
+            address={signatory}
             onNameChange={onNameChange}
           />)}
         </Grid>

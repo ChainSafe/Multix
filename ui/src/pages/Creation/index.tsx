@@ -1,10 +1,9 @@
 import { Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
 import SignatorySelection from "../../components/SignatorySelection";
 import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-crypto";
-import { config } from "../../config";
 import { useAccounts } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import NameSelection from "./NameSelection"
@@ -27,14 +26,16 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, isApiReady } = useApi()
+  const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount } = useAccounts()
+  const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
+  const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
+  const [errorMessage, setErrorMessage] = useState("")
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -47,12 +48,30 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // one of our account must be part of ths signatories
+    if (currentStep === 0 && !ownAccountPartOfSignatories) {
+      return false
+    }
+
     return true
-  }, [currentStep, signatories.length, threshold])
+  }, [currentStep, ownAccountPartOfSignatories, signatories, threshold])
+
+  useEffect(() => {
+    setErrorMessage("")
+
+    if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
+      setErrorMessage("At least one of your account must be a signatory")
+    }
+  }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreate = useCallback(async () => {
     if (!isApiReady) {
       console.error('api is not ready')
+      return
+    }
+
+    if (!chainInfo?.ss58Format) {
+      console.error('no ss58Format from chainInfo')
       return
     }
 
@@ -72,11 +91,11 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), config.prefix)
+    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), Number(chainInfo.ss58Format))
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
-    const batchCall = api.tx.utility.batch([transferTx, multiSigProxyCall])
+    const batchCall = api.tx.utility.batchAll([transferTx, multiSigProxyCall])
 
     addName(name, multiAddress)
 
@@ -85,7 +104,7 @@ const MultisigCreation = ({ className }: Props) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addName, addToast, api, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, api, chainInfo, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
 
   return (
     <Grid
@@ -176,22 +195,30 @@ const MultisigCreation = ({ className }: Props) => {
         xs={12}
         justifyContent="center"
         className="buttonContainer"
+        flexDirection="column"
       >
-        <Button
-          disabled={currentStep === 0}
-          onClick={() => setCurrentStep(currentStep - 1)}
-        >
-          Back
-        </Button>
-        <Button
-          disabled={!canGoNext}
-          onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
-        >
-          {isLastStep
-            ? "Create"
-            : "Next"
-          }
-        </Button>
+        {!!errorMessage && (
+          <div className="errorMessage">
+            {errorMessage}
+          </div>
+        )}
+        <div className="buttonWrapper">
+          <Button
+            disabled={currentStep === 0}
+            onClick={() => setCurrentStep(currentStep - 1)}
+          >
+            Back
+          </Button>
+          <Button
+            disabled={!canGoNext}
+            onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
+          >
+            {isLastStep
+              ? "Create"
+              : "Next"
+            }
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )
@@ -210,5 +237,14 @@ export default styled(MultisigCreation)(({ theme }) => `
 
   .buttonContainer button:first-child {
     margin-right: 2rem;
+  }
+
+  .errorMessage {
+    margin-top: 0.5rem;
+    color: ${theme.custom.text.errorColor};
+  }
+
+  .buttonWrapper {
+    align-self: center;
   }
 `)

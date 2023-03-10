@@ -16,22 +16,36 @@ interface Props {
   badge?: string
 }
 
-const createUlTree = (args: AnyJson, isBalancesTransfer: boolean, decimals: number, unit: string) => {
+interface CreateTreeParams {
+  args: AnyJson
+  decimals: number
+  unit: string
+  name?: string
+}
+const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   if (!args) return
+  if (!name) return
+
+  const isBalancesTransferAlike = !!["balances.transfer", "balances.transferKeepAlive"].includes(name)
+  const isProxyCreationDeletion = !!["proxy.addProxy", "proxy.removeProxy"].includes(name)
 
   return <ul className="params">
     {Object.entries(args).map(([key, value]) => {
       const destAddress = value.Id
 
       // show nice dest
-      if (isBalancesTransfer && key === "dest" && typeof destAddress === "string") {
+      if ((
+        (isBalancesTransferAlike && key === "dest") ||
+        (isProxyCreationDeletion && key === "delegate")
+      ) && typeof destAddress === "string"
+      ) {
         return <li key={key}>
           {key}: {<AccountDisplay address={destAddress} />}
         </li>
       }
 
       // show nice value
-      if (isBalancesTransfer && key === "value") {
+      if (isBalancesTransferAlike && key === "value") {
         const balance = formatBnBalance(value.replace(/,/g, ""), decimals, { withThousandDelimitor: true, tokenSymbol: unit, numberAfterComma: 4 })
         return <li key={key}>
           {key}: {balance}
@@ -39,7 +53,7 @@ const createUlTree = (args: AnyJson, isBalancesTransfer: boolean, decimals: numb
       }
 
       return (<li key={key}>
-        {key}: {typeof value === "object" ? createUlTree(value, isBalancesTransfer, decimals, unit) : value}
+        {key}: {typeof value === "object" ? createUlTree({ name, args: value, decimals, unit }) : value}
       </li>)
     })}
   </ul>
@@ -68,9 +82,6 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
 const CallInfo = ({ aggregatedData, expanded = false, children, className, badge }: Props) => {
   const { args, name } = filterProxyProxy(aggregatedData)
   const { chainInfo } = useApi()
-  const isBalancesTransferAlike = useMemo(() =>
-    !!name && !!["balances.transfer", "balances.transferKeepAlive"].includes(name)
-    , [name])
   const decimals = useMemo(() => Number(chainInfo?.tokenDecimals[0]), [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol[0] || "", [chainInfo])
 
@@ -79,7 +90,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
     {args && <Expander
       expanded={expanded}
       title="Params"
-      content={createUlTree(args, isBalancesTransferAlike, decimals, unit)}
+      content={createUlTree({ name, args, decimals, unit })}
     />}
     {children}
   </div>

@@ -13,11 +13,10 @@ export interface OnChangeArgs {
 interface Props {
     className?: string
     address: string
-    proxyAddress?: string
     onNameChange: (args: OnChangeArgs) => void
 }
 
-const AccountEditName = ({ address, onNameChange, className, proxyAddress }: Props) => {
+const AccountEditName = ({ address, onNameChange, className }: Props) => {
     const { getNamesWithExtension } = useAccountNames()
     const { addressList } = useAccounts()
     const [name, setName] = useState("")
@@ -34,9 +33,8 @@ const AccountEditName = ({ address, onNameChange, className, proxyAddress }: Pro
     const onChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = event.target.value
         setName(value)
-        onNameChange({ addresses: [address, proxyAddress], name: value })
-
-    }, [address, proxyAddress, onNameChange])
+        onNameChange({ addresses: [address], name: value })
+    }, [address, onNameChange])
 
     return (
         <Grid
@@ -52,7 +50,7 @@ const AccountEditName = ({ address, onNameChange, className, proxyAddress }: Pro
                 alignItems="center"
             >
                 <AccountDisplay
-                    address={proxyAddress || address}
+                    address={address}
                     withName={false}
                 />
             </Grid>

@@ -7,7 +7,7 @@ import { UserSpace } from "./components/UserSpace"
 import { AccountContextProvider } from "./contexts/AccountsContext"
 import { ApiContextProvider } from "./contexts/ApiContext"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { MultisigContextProvider } from "./contexts/MultisigContext"
+import { MultiProxyContextProvider } from "./contexts/MultiProxyContext"
 import { ToastContextProvider } from "./contexts/ToastContext"
 import { theme } from "./theme"
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
@@ -26,7 +26,7 @@ const App = () => {
             <ApiContextProvider>
               <AccountContextProvider>
                 <AccountNamesContextProvider>
-                  <MultisigContextProvider>
+                  <MultiProxyContextProvider>
                     <Header />
                     <Container
                       fixed
@@ -48,7 +48,7 @@ const App = () => {
                         </Routes>
                       </UserSpace>
                     </Container>
-                  </MultisigContextProvider>
+                  </MultiProxyContextProvider>
                 </AccountNamesContextProvider>
               </AccountContextProvider>
             </ApiContextProvider>

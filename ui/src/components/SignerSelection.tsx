@@ -27,7 +27,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
     , [accountList, possibleSigners])
 
   useEffect(() => {
-    if (!selectedAccount) {
+    if (!selectedAccount || signersList.length === 0) {
       return
     }
 

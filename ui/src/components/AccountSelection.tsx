@@ -160,6 +160,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
         className="addButton"
         aria-label="add"
         onClick={onAddSignatory}
+        disabled={!selected}
       >
         <AddIcon />
       </IconButton>}

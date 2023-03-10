@@ -69,10 +69,10 @@ export default styled(SignatorySelection)(({ theme }) => `
   .deleteButton, .addButton {
     margin-left: 1rem;
     height: 2.5rem;
+    align-self: center;
   }
   .accountDropdown {
           flex: 1;
-          align-items: center;
       }
 
   .selectedList, .addSignatoryField {

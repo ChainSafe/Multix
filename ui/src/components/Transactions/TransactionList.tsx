@@ -2,7 +2,7 @@ import { Box, CircularProgress, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { PendingTx, usePendingTx } from "../../hooks/usePendingTx";
-import { useMultisig } from "../../contexts/MultisigContext";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { ApiPromise } from "@polkadot/api";
 import { useApi } from "../../contexts/ApiContext";
 import { getDifference, getIntersection } from "../../utils";
@@ -19,6 +19,7 @@ export interface AggregatedData {
   name?: string;
   args?: AnyJson;
   info?: PendingTx["info"]
+  from: string;
 }
 
 interface Props {
@@ -38,7 +39,7 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
         })
       } else {
         result.push({
-          name: "Unkown call",
+          name: "Unknown call",
           hash: (c.args?.call_hash as Uint8Array).toString() || undefined,
           callData: undefined
         })
@@ -95,14 +96,15 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     hash: hash || pendingTx.hash,
     name,
     args: call && call.toHuman().args,
-    info: pendingTx.info
-  }
+    info: pendingTx.info,
+    from: pendingTx.from
+  } as AggregatedData
 })
 
 const TransactionList = ({ className }: Props) => {
   const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
-  const { selectedMultisig, selectedMultisigSignatories } = useMultisig()
-  const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultisig?.id)
+  const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
+  const { data: pendingTxData, isLoading: isLoadingPendingTxs, refresh } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccounts()
 
@@ -129,7 +131,7 @@ const TransactionList = ({ className }: Props) => {
     // const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     // console.log('proxyTx hex', proxyTx.toHex())
     // console.log('proxyTx hash', proxyTx.method.hash.toHex())
-  }, [api, pendingTxData, isApiReady, selectedMultisig])
+  }, [api, pendingTxData, isApiReady, selectedMultiProxy])
 
   return <Box className={className}>
     {isLoadingPendingTxs && (<Box className="loader">
@@ -144,8 +146,9 @@ const TransactionList = ({ className }: Props) => {
     )}
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
-        const { callData, info } = agg
-        const neededSigners = getDifference(selectedMultisigSignatories, info?.approvals)
+        const { callData, info, from } = agg
+        const multisigSignatories = getMultisigByAddress(from)?.signatories || []
+        const neededSigners = getDifference(multisigSignatories, info?.approvals)
         const possibleSigners = getIntersection(neededSigners, addressList)
         const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 

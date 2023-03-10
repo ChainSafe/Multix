@@ -40,7 +40,7 @@ const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, o
       <Badge
         className={`badge ${appliedClass}`}
         color="primary"
-        badgeContent={isProxy ? AccountBadge.PROXY : AccountBadge.MULTI}
+        badgeContent={isProxy ? AccountBadge.PURE : AccountBadge.MULTI}
         anchorOrigin={{ horizontal: "left", vertical: "top" }}
       >
         {!aggregatedData.callData
