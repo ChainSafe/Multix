@@ -33,11 +33,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic }: Props) => {
             return
         }
 
-        const decimals = Number(chainInfo?.tokenDecimals)
+        const decimals = chainInfo?.tokenDecimals || 0
 
-        if (Number.isNaN(decimals)) {
+        if (!decimals) {
             setAmountError("Invalid network decimals")
-
         }
 
         const value = Number(amount) * Math.pow(10, decimals)
@@ -87,7 +86,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic }: Props) => {
                 error={!!amountError}
                 InputProps={{
                     endAdornment: (
-                        <InputAdornment position="end">{chainInfo?.tokenSymbol[0] || ""}</InputAdornment>
+                        <InputAdornment position="end">{chainInfo?.tokenSymbol || ""}</InputAdornment>
                     ),
                 }}
             />

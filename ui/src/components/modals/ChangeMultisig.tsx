@@ -107,7 +107,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, newSignatories, newThreshold, api, selectedMultisig, selectedMultiProxy, selectedSigner, signCallBack2, addToast])
+  }, [isApiReady, chainInfo, selectedAccount, newSignatories, newThreshold, api, selectedMultisig, selectedMultiProxy, selectedSigner, signCallBack2, addToast])
 
   const signCallBack1 = useGetSigningCallback({ onSuccess: onMakeSecondCall })
 
@@ -141,7 +141,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep("call1")
 
     const otherOldSignatories = sortAddresses(selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address))
-    const newMultiAddress = encodeAddress(createKeyMulti(newSignatories, newThreshold), Number(chainInfo?.ss58Format))
+    const newMultiAddress = encodeAddress(createKeyMulti(newSignatories, newThreshold), chainInfo?.ss58Format)
     const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, "Any", 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
@@ -161,7 +161,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api, selectedMultiProxy, accountNames, addNames, selectedSigner, signCallBack1, addToast])
+  }, [isApiReady, chainInfo, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api, selectedMultiProxy, accountNames, addNames, selectedSigner, signCallBack1, addToast])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {

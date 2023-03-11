@@ -8,6 +8,10 @@ import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
 import { AccountBadge } from "../../types";
 import GenericAccountSelection, { AccountBaseInfo } from "../../components/GenericAccountSelection";
+import BalanceWarning from "../../components/BalanceWarning";
+import BN from "bn.js"
+import { formatBnBalance } from "../../utils/formatBnBalance";
+import { useApi } from "../../contexts/ApiContext";
 
 interface Props {
   className?: string;
@@ -16,14 +20,18 @@ interface Props {
   name?: string
   proxyAddress?: string
   isSwapSummary?: boolean
+  balanceMin?: BN
+  isBalanceError?: boolean
 }
 
-const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false }: Props) => {
+const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false, balanceMin, isBalanceError }: Props) => {
   const { addressList } = useAccounts()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
     , [getMultisigAsAccountBaseInfo])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
+  const { chainInfo } = useApi()
+
   const possibleSigners = useMemo(() => {
     return isSwapSummary
       // for a swap we can only select the account that are part of both the old and the new multisig
@@ -106,6 +114,10 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
       <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
       </Box>
+      {isBalanceError && balanceMin &&
+        <BalanceWarning text={`The selected account requires at least ${formatBnBalance(balanceMin, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })
+          }`} />
+      }
     </Box>
   )
 }
