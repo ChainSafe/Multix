@@ -82,8 +82,8 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
 const CallInfo = ({ aggregatedData, expanded = false, children, className, badge }: Props) => {
   const { args, name } = filterProxyProxy(aggregatedData)
   const { chainInfo } = useApi()
-  const decimals = useMemo(() => Number(chainInfo?.tokenDecimals[0]), [chainInfo])
-  const unit = useMemo(() => chainInfo?.tokenSymbol[0] || "", [chainInfo])
+  const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
+  const unit = useMemo(() => chainInfo?.tokenSymbol || "", [chainInfo])
 
   return <div className={className}>
     <h4 className="callName">{name}</h4>

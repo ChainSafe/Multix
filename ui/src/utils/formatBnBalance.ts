@@ -10,7 +10,7 @@ function removeTrailingZeros(value: string) {
     return value.replace(/0+$/, '');
 }
 
-export const formatBnBalance = (value: BN | string, tokenDecimals: number, { numberAfterComma, withThousandDelimitor = true, tokenSymbol }: Options): string => {
+export const formatBnBalance = (value: BN | string, tokenDecimals = 0, { numberAfterComma, withThousandDelimitor = true, tokenSymbol }: Options): string => {
     const valueString = value.toString();
 
     let suffix = '';
@@ -21,7 +21,7 @@ export const formatBnBalance = (value: BN | string, tokenDecimals: number, { num
         prefix = valueString.slice(0, valueString.length - tokenDecimals);
     } else {
         prefix = '0';
-        suffix = valueString.padStart(tokenDecimals - 1, '0');
+        suffix = valueString.padStart(tokenDecimals, '0');
     }
 
     suffix = removeTrailingZeros(suffix)

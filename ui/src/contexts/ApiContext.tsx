@@ -19,6 +19,12 @@ export interface IApiContext {
 }
 
 interface ChainInfoHuman {
+  ss58Format: number
+  tokenDecimals: number
+  tokenSymbol: string
+}
+
+interface RawChainInfoHuman {
   ss58Format: string
   tokenDecimals: string[]
   tokenSymbol: string[]
@@ -58,7 +64,13 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 
         setIsReady(true)
         const info = api.registry.getChainProperties()
-        setChainInfo(info?.toHuman() as unknown as ChainInfoHuman)
+        const raw = info?.toHuman() as unknown as RawChainInfoHuman
+
+        setChainInfo({
+          ss58Format: Number(raw?.ss58Format) || 0,
+          tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
+          tokenSymbol: raw?.tokenSymbol[0] || ""
+        })
       })
       .catch(e => console.error(e))
   }, [apiPromise.isReady, types])

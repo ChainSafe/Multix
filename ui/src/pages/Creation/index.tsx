@@ -12,6 +12,9 @@ import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
 import { useAccountNames } from "../../contexts/AccountNamesContext";
+import { useCheckBalance } from "../../hooks/useCheckBalance";
+import { useGetCreationNeededFunds } from "../../hooks/useGetCreationNeededFunds";
+import { useGetPureProxyCreationNeededFunds } from "../../hooks/useGetPureProxyCreationNeededFunds";
 
 interface Props {
   className?: string
@@ -36,6 +39,10 @@ const MultisigCreation = ({ className }: Props) => {
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
   const [errorMessage, setErrorMessage] = useState("")
+  const { min } = useGetCreationNeededFunds({ threshold, signatories })
+  const { pureProxyCreationNeededFunds } = useGetPureProxyCreationNeededFunds()
+  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(min), [min, pureProxyCreationNeededFunds])
+  const { isLoading: isCheckingBalance, isValid: isEnoughBalance } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -53,8 +60,13 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // if the minimum balance isn't met
+    if (currentStep === 2 && !isEnoughBalance) {
+      return false
+    }
+
     return true
-  }, [currentStep, ownAccountPartOfSignatories, signatories, threshold])
+  }, [currentStep, isEnoughBalance, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
     setErrorMessage("")
@@ -91,10 +103,11 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), Number(chainInfo.ss58Format))
+    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
-    const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
+    // Some funds are needed on the multisig for the pure proxy creation
+    const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
     const batchCall = api.tx.utility.batchAll([transferTx, multiSigProxyCall])
 
     addName(name, multiAddress)
@@ -104,7 +117,7 @@ const MultisigCreation = ({ className }: Props) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addName, addToast, api, chainInfo, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, api, chainInfo, isApiReady, name, pureProxyCreationNeededFunds, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
 
   return (
     <Grid
@@ -185,6 +198,8 @@ const MultisigCreation = ({ className }: Props) => {
               signatories={signatories}
               threshold={threshold}
               name={name}
+              isBalanceError={!isCheckingBalance && !isEnoughBalance}
+              balanceMin={neededBalance}
             />
           </Grid>
         )}
