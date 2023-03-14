@@ -1,7 +1,6 @@
-import { IconButton, Snackbar } from "@mui/material"
 import React, { useCallback, useRef, useState } from "react"
-import { Toast, default as ToastContent } from "../components/ToastContent"
-import CloseIcon from '@mui/icons-material/Close';
+import ToastBar from "../components/ToastBar"
+import { Toast } from "../components/ToastContent"
 
 type ToastContextProps = {
     children: React.ReactNode | React.ReactNode[]
@@ -56,25 +55,7 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
             }}
         >
             {toastQueue.map((toast) =>
-                <Snackbar
-                    open={true}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                    autoHideDuration={6000}
-                    onClose={() => removeToast(toast.id)}
-                    key={toast.id}
-                    action={<IconButton
-                        size="small"
-                        aria-label="close"
-                        color="inherit"
-                        onClick={() => removeToast(toast.id)}
-                    >
-                        <CloseIcon fontSize="small" />
-                    </IconButton>}
-                    message={<ToastContent
-                        toast={toast}
-                        key={toast.id}
-                    />}
-                />
+                <ToastBar toast={toast} key={toast.id} />
             )}
             {children}
         </ToastContext.Provider>

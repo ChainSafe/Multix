@@ -9,20 +9,18 @@ export interface Toast {
     id: number
     type: ToastType
     title: string
-    testId?: string
 }
 
 export interface ToastContentProps {
     className?: string
-    toast: Toast
+    type: ToastType
+    title: string
 }
 
-const ToastContent = ({ toast, className }: ToastContentProps) => {
-    const { type, title } = toast
+const ToastContent = ({ type, title, className }: ToastContentProps) => {
     return (
         <div
             className={className}
-            data-testid={`toast-${toast.testId}`}
         >
 
             <div className='iconContainer'>
@@ -30,7 +28,7 @@ const ToastContent = ({ toast, className }: ToastContentProps) => {
                     ? <CheckCircleOutlineIcon className="toastIcon" />
                     : type === "loading"
                         ? <CircularProgress className="toastIcon" />
-                        : <ErrorOutlineIcon className="toastIcon" />
+                        : <ErrorOutlineIcon className="toastIcon errorIcon" />
                 }
             </div>
             <Box
@@ -54,6 +52,10 @@ export default styled(ToastContent)(({ theme }) => `
 
     .toastIcon {
         font-size: 2.5rem;
+    }
+
+    .errorIcon {
+        color: ${theme.custom.text.errorColor}
     }
 
 `)
