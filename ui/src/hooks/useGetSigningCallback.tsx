@@ -29,21 +29,26 @@ export const useGetSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: 
         const { data, method, section } = event
         console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
 
-        // check if proxy has an error
-        if (api.events.proxy.ProxyExecuted.is(event)) {
-
+        // check if multisig or proxy has an error
+        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event)) {
           // extract the data for this event
-          const [dispatchError]: any = data.toJSON();
+          const dataJSON = data.toJSON() as { [index: string]: any; }[];
 
-          // if proxy has an error
-          if (dispatchError?.err?.module) {
-            const mod = dispatchError.err.module
-            const error = api.registry.findMetaError(
-              new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
-            )
+          Array.isArray(dataJSON) && dataJSON.some((dispatchError) => {
+            if (dispatchError?.err?.module) {
+              const mod = dispatchError.err.module
+              const error = api.registry.findMetaError(
+                new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
+              )
 
-            errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
-          }
+              errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
+
+              // stop looping we found an error
+              return true
+            }
+
+            return false
+          })
         }
 
         if (api.events.system.ExtrinsicSuccess.is(event)) {
@@ -51,6 +56,7 @@ export const useGetSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: 
           onSuccess && onSuccess()
         }
 
+        // if the extrinsic fails alltogether
         if (!errorInfo && api.events.system.ExtrinsicFailed.is(event)) {
           // extract the data for this event
           const [dispatchError] = data;
@@ -77,7 +83,7 @@ export const useGetSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: 
       });
     } else if (status.isFinalized) {
       onFinalized && onFinalized()
-      !toastErrorShown && addToast({ title: "Tx finalized", type: "success" })
+      !errorInfo && addToast({ title: "Tx finalized", type: "success" })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
   }
