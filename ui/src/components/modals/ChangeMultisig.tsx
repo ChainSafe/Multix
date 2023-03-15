@@ -10,11 +10,15 @@ import Summary from "../../pages/Creation/Summary";
 import { useApi } from "../../contexts/ApiContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-crypto";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { useToasts } from "../../contexts/ToastContext";
 import { AccountBadge } from "../../types";
 import { getIntersection } from "../../utils";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
+import { useProxyAdditionNeededFunds } from "../../hooks/useProxyAdditionNeededFunds";
+import { useCheckBalance } from "../../hooks/useCheckBalance";
+import Warning from "../Warning";
+import { formatBnBalance } from "../../utils/formatBnBalance";
 
 interface Props {
   onClose: () => void
@@ -27,7 +31,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
-  const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
+  const signCallBack2 = useSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
@@ -39,6 +43,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const ownAccountPartOfAllSignatories = useMemo(() => getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories)).length > 0
     , [addressList, newSignatories, selectedMultisig?.signatories])
   const isCallStep = useMemo(() => currentStep === "call1" || currentStep === "call2", [currentStep])
+  const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
+  const { isValid: hasProxyEnoughFunds } = useCheckBalance({ min: proxyAdditionNeededFunds, address: selectedMultiProxy?.proxy })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
     , [getMultisigAsAccountBaseInfo])
 
@@ -109,7 +115,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       })
   }, [isApiReady, chainInfo, selectedAccount, newSignatories, newThreshold, api, selectedMultisig, selectedMultiProxy, selectedSigner, signCallBack2, addToast])
 
-  const signCallBack1 = useGetSigningCallback({ onSuccess: onMakeSecondCall })
+  const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall })
 
   // first we add the new multisig as an any proxy of the pure proxy, by the old multisig
   const onFirstCall = useCallback(async () => {
@@ -184,6 +190,9 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         {currentStep === 'selection' && (
           <>
             <Grid item xs={12}>
+              {!hasProxyEnoughFunds && (
+                <Warning text={`The pure account doesn't have enough funds. It needs at least ${formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })}`} />
+              )}
               <h4>Pure proxy (unchanged)</h4>
               <Box className="subSection">
                 <AccountDisplay
@@ -268,7 +277,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
           )}
           {!isCallStep && (
             <Button
-              disabled={!!errorMessage}
+              disabled={!!errorMessage || !hasProxyEnoughFunds}
               onClick={onClickNext}
             >{
                 currentStep === "selection"

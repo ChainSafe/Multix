@@ -4,7 +4,7 @@ import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
 import { useCallback, useEffect, useState } from "react";
-import { useGetAccountBaseFromAccountList } from "../../hooks/useGetAccountBaseFromAccountList";
+import { useAccountBaseFromAccountList } from "../../hooks/useAccountBaseFromAccountList";
 import { useApi } from "../../contexts/ApiContext";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic }: Props) => {
-    const acountBase = useGetAccountBaseFromAccountList()
+    const acountBase = useAccountBaseFromAccountList()
     const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
     const [toAddress, setToAddress] = useState(acountBase[0].address)
     const { api, isApiReady, chainInfo } = useApi()

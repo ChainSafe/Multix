@@ -11,7 +11,7 @@ import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { GenericCall } from "@polkadot/types";
 import { useToasts } from "../../contexts/ToastContext";
 import { Weight } from "@polkadot/types/interfaces";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 
 interface Props {
@@ -53,7 +53,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
     onClose()
   }, [onClose])
 
-  const signCallback = useGetSigningCallback({ onSuccess, onSubmitting })
+  const signCallback = useSigningCallback({ onSuccess, onSubmitting })
 
   useEffect(() => {
     if (isProposerSelected) {

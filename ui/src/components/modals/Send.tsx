@@ -8,7 +8,7 @@ import SignerSelection from "../SignerSelection";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
 import { useToasts } from "../../contexts/ToastContext";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
 import BalancesTransfer from "../EasySetup/BalancesTransfer";
@@ -81,7 +81,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(easySetupOptions[0])
 
-  const signCallback = useGetSigningCallback({ onSuccess, onSubmitting, onFinalized })
+  const signCallback = useSigningCallback({ onSuccess, onSubmitting, onFinalized })
 
   const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
     const selected = getMultisigByAddress(account.address)

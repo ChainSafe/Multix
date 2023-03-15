@@ -6,7 +6,7 @@ interface Props {
     text: string
 }
 
-const BalanceWarning = ({ className, text }: Props) => {
+const Warning = ({ className, text }: Props) => {
 
     return <Alert className={className} severity="warning">
         {text}
@@ -14,6 +14,6 @@ const BalanceWarning = ({ className, text }: Props) => {
 }
 
 
-export default styled(BalanceWarning)(({ theme }) => `
+export default styled(Warning)(({ theme }) => `
 
   `)

@@ -8,7 +8,7 @@ import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
 import { AccountBadge } from "../../types";
 import GenericAccountSelection, { AccountBaseInfo } from "../../components/GenericAccountSelection";
-import BalanceWarning from "../../components/BalanceWarning";
+import BalanceWarning from "../../components/Warning";
 import BN from "bn.js"
 import { formatBnBalance } from "../../utils/formatBnBalance";
 import { useApi } from "../../contexts/ApiContext";

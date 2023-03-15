@@ -7,7 +7,7 @@ interface Props {
     signatories: string[]
 }
 
-export const useGetCreationNeededFunds = ({ threshold, signatories }: Props) => {
+export const useMultisigBatchCreationNeededFunds = ({ threshold, signatories }: Props) => {
     const { isApiReady, api, chainInfo } = useApi()
     const [min, setMin] = useState(new BN(0))
 
@@ -43,5 +43,5 @@ export const useGetCreationNeededFunds = ({ threshold, signatories }: Props) => 
 
     }, [api, chainInfo, isApiReady, signatories, threshold])
 
-    return { min }
+    return { multisigBatchCreationNeededFunds: min }
 }

@@ -8,13 +8,13 @@ import { useAccounts } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import NameSelection from "./NameSelection"
 import Summary from "./Summary";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
 import { useAccountNames } from "../../contexts/AccountNamesContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
-import { useGetCreationNeededFunds } from "../../hooks/useGetCreationNeededFunds";
-import { useGetPureProxyCreationNeededFunds } from "../../hooks/useGetPureProxyCreationNeededFunds";
+import { useMultisigBatchCreationNeededFunds } from "../../hooks/useMultisigCreationNeededFunds";
+import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
 
 interface Props {
   className?: string
@@ -33,15 +33,15 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
-  const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
+  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
   const [errorMessage, setErrorMessage] = useState("")
-  const { min } = useGetCreationNeededFunds({ threshold, signatories })
-  const { pureProxyCreationNeededFunds } = useGetPureProxyCreationNeededFunds()
-  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(min), [min, pureProxyCreationNeededFunds])
+  const { multisigBatchCreationNeededFunds } = useMultisigBatchCreationNeededFunds({ threshold, signatories })
+  const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
+  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigBatchCreationNeededFunds), [multisigBatchCreationNeededFunds, pureProxyCreationNeededFunds])
   const { isLoading: isCheckingBalance, isValid: isEnoughBalance } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 
