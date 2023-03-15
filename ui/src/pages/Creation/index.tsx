@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
 import { useAccountNames } from "../../contexts/AccountNamesContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
-import { useMultisigBatchCreationNeededFunds } from "../../hooks/useMultisigCreationNeededFunds";
+import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
 
 interface Props {
@@ -39,8 +39,53 @@ const MultisigCreation = ({ className }: Props) => {
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
   const [errorMessage, setErrorMessage] = useState("")
-  const { multisigBatchCreationNeededFunds } = useMultisigBatchCreationNeededFunds({ threshold, signatories })
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
+  const multiAddress = useMemo(() => {
+    if (!threshold) {
+      return
+    }
+
+    if (!chainInfo?.ss58Format) {
+      return
+    }
+
+    return encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
+  }, [chainInfo, signatories, threshold])
+  const batchCall = useMemo(() => {
+    if (!isApiReady) {
+      // console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      // console.error('no selected address')
+      return
+    }
+
+    if (!signatories.includes(selectedAccount.address)) {
+      // console.error('selected account not part of signatories')
+      return
+    }
+
+    if (!threshold) {
+      // console.error("Threshold is invalid", threshold)
+      return
+    }
+
+    if (!multiAddress) {
+      return
+    }
+
+    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
+
+    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
+    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
+    // Some funds are needed on the multisig for the pure proxy creation
+    const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
+    return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
+  }, [api, isApiReady, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
+
+  const { multisigBatchCreationNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
   const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigBatchCreationNeededFunds), [multisigBatchCreationNeededFunds, pureProxyCreationNeededFunds])
   const { isLoading: isCheckingBalance, isValid: isEnoughBalance } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
@@ -77,47 +122,20 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreate = useCallback(async () => {
-    if (!isApiReady) {
-      console.error('api is not ready')
-      return
-    }
 
-    if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
-      return
-    }
-
-    if (!selectedAccount) {
+    if (!selectedAccount || !batchCall) {
       console.error('no selected address')
       return
     }
 
-    if (!signatories.includes(selectedAccount.address)) {
-      console.error('selected account not part of signatories')
-      return
-    }
-
-    if (!threshold) {
-      console.error("Threshold is invalid", threshold)
-      return
-    }
-
-    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
-    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
-    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
-    // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
-    const batchCall = api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-
-    addName(name, multiAddress)
+    multiAddress && addName(name, multiAddress)
 
     batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addName, addToast, api, chainInfo, isApiReady, name, pureProxyCreationNeededFunds, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, batchCall, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
 
   return (
     <Grid
