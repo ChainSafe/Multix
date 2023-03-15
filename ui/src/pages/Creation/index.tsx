@@ -85,8 +85,8 @@ const MultisigCreation = ({ className }: Props) => {
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [api, isApiReady, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
 
-  const { multisigProposalCreationNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
-  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalCreationNeededFunds), [multisigProposalCreationNeededFunds, pureProxyCreationNeededFunds])
+  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
+  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds), [multisigProposalNeededFunds, pureProxyCreationNeededFunds])
   const { isLoading: isCheckingBalance, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 

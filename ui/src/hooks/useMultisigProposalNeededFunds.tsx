@@ -6,7 +6,7 @@ import { ISubmittableResult } from "@polkadot/types/types";
 
 interface Props {
     threshold?: number
-    signatories: string[]
+    signatories?: string[]
     call?: SubmittableExtrinsic<"promise", ISubmittableResult>
 }
 
@@ -15,7 +15,7 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
     const [min, setMin] = useState(new BN(0))
 
     useEffect(() => {
-        if (!isApiReady || signatories.length < 2) return
+        if (!isApiReady || !signatories || signatories.length < 2) return
 
         if (!chainInfo?.tokenDecimals) return
 
@@ -40,5 +40,5 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
 
     }, [api, call, chainInfo, isApiReady, signatories, threshold])
 
-    return { multisigProposalCreationNeededFunds: min }
+    return { multisigProposalNeededFunds: min }
 }

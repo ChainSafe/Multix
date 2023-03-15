@@ -1,5 +1,5 @@
 import { Autocomplete, Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
@@ -12,6 +12,9 @@ import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
 import BalancesTransfer from "../EasySetup/BalancesTransfer";
+import Warning from "../Warning";
+import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
+import { useCheckBalance } from "../../hooks/useCheckBalance";
 
 interface Props {
   onClose: () => void
@@ -55,6 +58,58 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     : selectedMultisig?.threshold
     , [getMultisigByAddress, selectedMultisig, selectedOrigin])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
+  const multisigTx = useMemo(() => {
+    if (!selectedMultisig?.signatories) {
+      console.error('selected multisig is undefined')
+      return
+    }
+
+    const otherSigners = sortAddresses(selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address))
+
+    if (!threshold) {
+      return
+    }
+
+    if (!isApiReady) {
+      return
+    }
+
+    if (!selectedAccount || !selectedOrigin) {
+      return
+    }
+
+    if (!extrinsicToCall) {
+      return
+    }
+
+    let tx: SubmittableExtrinsic<"promise">
+
+    // the proxy is selected
+    if (selectedOrigin.meta?.isProxy) {
+      tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
+      // a multisig is selected
+    } else {
+      tx = extrinsicToCall
+    }
+
+    return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, 0)
+  }, [api, extrinsicToCall, isApiReady, selectedAccount, selectedMultisig, selectedOrigin, threshold])
+
+  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories: selectedMultisig?.signatories, call: multisigTx })
+  const { isLoading: isSignerBalancCheckLoading, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: multisigProposalNeededFunds, address: selectedAccount?.address })
+
+  useEffect(() => {
+    if (isSignerBalancCheckLoading) {
+      return
+    }
+
+    setErrorMessage("")
+
+    if (!hasSignerEnoughFunds) {
+      setErrorMessage("The selected signatory doens't have enough funds to submit this transaction")
+    }
+
+  }, [])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -67,20 +122,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       ? setSelectedMultisig(getMultisigByAddress(account.address))
       // if the proxy is selected as origin, select the first multisig as a "from"
       : setSelectedMultisig(selectedMultiProxy?.multisigs[0])
-
   }, [getMultisigByAddress, selectedMultiProxy])
 
   const easySetupOptions: EasySetupOption[] = useMemo(() => [
     {
       title: "Send tokens",
       component: <BalancesTransfer
+        from={selectedOrigin.address}
         onSetExtrinsic={setExtrinsicToCall}
+        onSetErrorMessage={setErrorMessage}
       />
     }
-  ], [])
+  ], [selectedOrigin])
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(easySetupOptions[0])
-
   const signCallback = useSigningCallback({ onSuccess, onSubmitting, onFinalized })
 
   const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
@@ -89,13 +144,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [getMultisigByAddress])
 
   const onSign = useCallback(async () => {
-    if (!selectedMultisig?.signatories) {
-      console.error('selected multisig is undefined')
-      return
-    }
-
-    const otherSigners = sortAddresses(selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address))
-
     if (!threshold) {
       const error = 'Threshold is undefined'
       console.error(error)
@@ -124,26 +172,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    setIsSubmitting(true)
-    let tx: SubmittableExtrinsic<"promise">
-    const transfer = extrinsicToCall
-
-    // the proxy is selected
-    if (selectedOrigin.meta?.isProxy) {
-      tx = api.tx.proxy.proxy(selectedOrigin.address, null, transfer)
-      // a multisig is selected
-    } else {
-      tx = transfer
+    if (!multisigTx) {
+      return
     }
 
-    const multisigTx = api.tx.multisig.asMulti(threshold, otherSigners, null, tx, 0)
+    setIsSubmitting(true)
 
     multisigTx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback
     ).catch((error: Error) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, api, selectedSigner, signCallback, addToast, selectedMultisig])
+  }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
 
   const onChangeEasySetupOtion = useCallback((_: any, value: EasySetupOption | null) => {
     value && setSelectedEasyOption(value)
@@ -199,12 +239,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             } />
           }
         </Grid>
-        <Grid item xs={0} md={1} />
-        <Grid item xs={12} md={11} className="errorMessage">
-          {!!errorMessage &&
-            errorMessage
-          }
-        </Grid>
         <Grid item xs={12} md={2} >
           <h4>Transaction</h4>
         </Grid>
@@ -224,10 +258,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         <Grid item xs={12} md={10} className="errorMessage">
           {selectedEasyOption.component}
         </Grid>
+        {!!errorMessage && (
+          <>
+            <Grid item xs={0} md={2} />
+            <Grid item xs={12} md={10} className="errorMessage">
+              <Warning text={errorMessage} />
+            </Grid>
+          </>
+        )}
         <Grid item xs={12} className="buttonContainer">
           <Button
             onClick={onSign}
-            disabled={isSubmitting || !extrinsicToCall}
+            disabled={!!errorMessage || isSubmitting || !extrinsicToCall}
           >
             Send
           </Button>
