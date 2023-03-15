@@ -77,17 +77,17 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-
     const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     // Some funds are needed on the multisig for the pure proxy creation
     const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
+
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [api, isApiReady, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
 
-  const { multisigBatchCreationNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
-  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigBatchCreationNeededFunds), [multisigBatchCreationNeededFunds, pureProxyCreationNeededFunds])
-  const { isLoading: isCheckingBalance, isValid: isEnoughBalance } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
+  const { multisigProposalCreationNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
+  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalCreationNeededFunds), [multisigProposalCreationNeededFunds, pureProxyCreationNeededFunds])
+  const { isLoading: isCheckingBalance, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -106,12 +106,12 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     // if the minimum balance isn't met
-    if (currentStep === 2 && !isEnoughBalance) {
+    if (currentStep === 2 && !hasSignerEnoughFunds) {
       return false
     }
 
     return true
-  }, [currentStep, isEnoughBalance, ownAccountPartOfSignatories, signatories, threshold])
+  }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
     setErrorMessage("")
@@ -216,7 +216,7 @@ const MultisigCreation = ({ className }: Props) => {
               signatories={signatories}
               threshold={threshold}
               name={name}
-              isBalanceError={!isCheckingBalance && !isEnoughBalance}
+              isBalanceError={!isCheckingBalance && !hasSignerEnoughFunds}
               balanceMin={neededBalance}
             />
           </Grid>

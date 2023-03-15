@@ -2,7 +2,7 @@ import { Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Grid
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
-import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
+import { useAccountNames } from "../../contexts/AccountNamesContext";
 import AccountDisplay from "../AccountDisplay";
 import ThresholdSelection from "../../pages/Creation/ThresholdSelection";
 import SignatorySelection from "../SignatorySelection";

@@ -40,5 +40,5 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
 
     }, [api, call, chainInfo, isApiReady, signatories, threshold])
 
-    return { multisigBatchCreationNeededFunds: min }
+    return { multisigProposalCreationNeededFunds: min }
 }
