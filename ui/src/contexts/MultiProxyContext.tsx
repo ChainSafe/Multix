@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
-import { useAccountNames } from "./AccountNamesContext"
 import { useAccounts } from "./AccountsContext"
 
 const LOCALSTORAGE_KEY = "multix.selectedMultiProxy"
@@ -45,7 +44,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const { addressList } = useAccounts()
   const { data, isLoading, error } = useMultisigsByAccountsQuery({ accounts: addressList })
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
-  const { accountNames, addName } = useAccountNames()
 
   useEffect(() => {
     if (!!error) {
@@ -120,22 +118,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [data, error])
 
-  const updateNewPureProxyNames = useCallback(() => {
-    // make sure all pure proxies have a defined name
-    // the new ones generaly don't
-    multiProxyList.forEach(multiProxy => {
-      if (!multiProxy.proxy) return
-
-      // We take arbitrarily the name of the first multisig
-      // as there is likely only one
-      const multi = multiProxy.multisigs[0].address
-      const proxy = multiProxy.proxy
-      if (multi && accountNames[multi] && proxy && !accountNames[proxy]) {
-        addName(`${accountNames[multi]} - pure`, proxy)
-      }
-    })
-  }, [accountNames, addName, multiProxyList])
-
   const getMultiProxyByAddress = useCallback((address?: string) => {
     if (!address) return undefined
 
@@ -178,14 +160,12 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   useEffect(() => {
     if (multiProxyList.length > 0 && !selectedMultiProxy) {
-      updateNewPureProxyNames()
-
       const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
       const previouslySelected = multiAddress && getMultiProxyByAddress(multiAddress)
 
       setSelectedMultiProxy(previouslySelected || multiProxyList[0])
     }
-  }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy, updateNewPureProxyNames])
+  }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
   return (
     <MultisigContext.Provider
