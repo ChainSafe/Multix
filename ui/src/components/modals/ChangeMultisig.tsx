@@ -2,7 +2,6 @@ import { Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Grid
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
-import { AccountNames, useAccountNames } from "../../contexts/AccountNamesContext";
 import AccountDisplay from "../AccountDisplay";
 import ThresholdSelection from "../../pages/Creation/ThresholdSelection";
 import SignatorySelection from "../SignatorySelection";
@@ -10,11 +9,16 @@ import Summary from "../../pages/Creation/Summary";
 import { useApi } from "../../contexts/ApiContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-crypto";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { useToasts } from "../../contexts/ToastContext";
 import { AccountBadge } from "../../types";
 import { getIntersection } from "../../utils";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
+import { useProxyAdditionNeededFunds } from "../../hooks/useProxyAdditionNeededFunds";
+import { useCheckBalance } from "../../hooks/useCheckBalance";
+import Warning from "../Warning";
+import { formatBnBalance } from "../../utils/formatBnBalance";
+import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 
 interface Props {
   onClose: () => void
@@ -27,20 +31,101 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
-  const signCallBack2 = useGetSigningCallback({ onSuccess: onClose })
+  const signCallBack2 = useSigningCallback({ onSuccess: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
   const [newSignatories, setNewSignatories] = useState<string[]>(selectedMultisig?.signatories || [])
   const [currentStep, setCurrentStep] = useState<Step>("selection")
-  const { addNames, accountNames } = useAccountNames()
   const [errorMessage, setErrorMessage] = useState("")
   const ownAccountPartOfAllSignatories = useMemo(() => getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories)).length > 0
     , [addressList, newSignatories, selectedMultisig?.signatories])
   const isCallStep = useMemo(() => currentStep === "call1" || currentStep === "call2", [currentStep])
+  const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
+  const { isValid: hasProxyEnoughFunds } = useCheckBalance({ min: proxyAdditionNeededFunds, address: selectedMultiProxy?.proxy })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
     , [getMultisigAsAccountBaseInfo])
+
+  const firstCall = useMemo(() => {
+    if (!isApiReady) {
+      console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      console.error('no selected address')
+      return
+    }
+
+    if (!chainInfo?.ss58Format) {
+      console.error('no ss58Format from chainInfo')
+      return
+    }
+
+
+    if (!selectedMultisig?.signatories?.includes(selectedAccount.address)) {
+      console.error("selected account not part of current multisig's signatories")
+      return
+    }
+
+    if (!oldThreshold || !newThreshold) {
+      console.error("One of the threshold is invalid", oldThreshold, newThreshold)
+      return
+    }
+
+    const otherOldSignatories = sortAddresses(selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address))
+    const newMultiAddress = encodeAddress(createKeyMulti(newSignatories, newThreshold), chainInfo?.ss58Format)
+    const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, "Any", 0)
+    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
+    // call with the old multisig
+    return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, 0)
+  }, [api, chainInfo, isApiReady, newSignatories, newThreshold, oldThreshold, selectedAccount, selectedMultiProxy?.proxy, selectedMultisig])
+
+  const secondCall = useMemo(() => {
+    if (!isApiReady) {
+      console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      console.error('no selected address')
+      return
+    }
+
+    if (!chainInfo?.ss58Format) {
+      console.error('no ss58Format from chainInfo')
+      return
+    }
+
+    if (!newSignatories.includes(selectedAccount.address)) {
+      console.error("selected account not part of new multisig's signatories")
+      return
+    }
+
+    if (!newThreshold) {
+      console.error("Threshold is invalid", newThreshold)
+      return
+    }
+
+    const otherNewSignatories = sortAddresses(newSignatories.filter((sig) => sig !== selectedAccount.address))
+    const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, "Any", 0)
+    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, removeProxyTx)
+    return api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, 0)
+  }, [api, chainInfo, isApiReady, newSignatories, newThreshold, selectedAccount, selectedMultiProxy, selectedMultisig])
+
+  const { multisigProposalNeededFunds: firstCallNeededFunds } = useMultisigProposalNeededFunds({ call: firstCall, signatories: selectedMultisig?.signatories, threshold: oldThreshold })
+  const { multisigProposalNeededFunds: secondCallNeededFunds } = useMultisigProposalNeededFunds({ call: secondCall, signatories: newSignatories, threshold: newThreshold })
+  const neededBalance = useMemo(() => firstCallNeededFunds.add(secondCallNeededFunds), [firstCallNeededFunds, secondCallNeededFunds])
+  const { isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
+
+  useEffect(() => {
+    if (!selectedMultisig?.signatories) {
+      return
+    }
+
+    setNewSignatories(selectedMultisig.signatories)
+  }, [selectedMultisig])
 
   const handleMultisigSelection = useCallback(({ address }: AccountBaseInfo) => {
     const selected = getMultisigByAddress(address)
@@ -69,99 +154,55 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep("selection")
   }, [])
 
-  // the new multisig will remove the old one here
+  // the new multisig will remove the old one from the proxy list
   const onMakeSecondCall = useCallback(() => {
     if (!isApiReady) {
       console.error('api is not ready')
       return
     }
 
-    if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
-      return
-    }
-
     if (!selectedAccount) {
       console.error('no selected address')
       return
     }
 
-    if (!newSignatories.includes(selectedAccount.address)) {
-      console.error("selected account not part of new multisig's signatories")
-      return
-    }
-
-    if (!newThreshold) {
-      console.error("Threshold is invalid", newThreshold)
+    if (!secondCall) {
       return
     }
 
     setCurrentStep("call2")
 
-    const otherNewSignatories = sortAddresses(newSignatories.filter((sig) => sig !== selectedAccount.address))
-    const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, "Any", 0)
-    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, removeProxyTx)
-    const multiSigCall = api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, 0)
-
-    multiSigCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
+    secondCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, newSignatories, newThreshold, api, selectedMultisig, selectedMultiProxy, selectedSigner, signCallBack2, addToast])
+  }, [isApiReady, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast])
 
-  const signCallBack1 = useGetSigningCallback({ onSuccess: onMakeSecondCall })
+  const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall })
 
-  // first we add the new multisig as an any proxy of the pure proxy, by the old multisig
+  // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
   const onFirstCall = useCallback(async () => {
     if (!isApiReady) {
       console.error('api is not ready')
       return
     }
 
-    if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
-      return
-    }
-
     if (!selectedAccount) {
       console.error('no selected address')
       return
     }
 
-    if (!selectedMultisig?.signatories?.includes(selectedAccount.address)) {
-      console.error("selected account not part of current multisig's signatories")
-      return
-    }
-
-    if (!oldThreshold || !newThreshold) {
-      console.error("One of the threshold is invalid", oldThreshold, newThreshold)
+    if (!firstCall) {
       return
     }
 
     setCurrentStep("call1")
 
-    const otherOldSignatories = sortAddresses(selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address))
-    const newMultiAddress = encodeAddress(createKeyMulti(newSignatories, newThreshold), Number(chainInfo?.ss58Format))
-    const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, "Any", 0)
-    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
-    // call with the old multisig
-    const multiSigCall = api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, 0)
-
-    // Add the current name to the new Multisig
-    const currentProxyName = selectedMultiProxy?.proxy && accountNames[selectedMultiProxy.proxy]
-    const currentMultisigName = accountNames[selectedMultisig.address] || ""
-    const newMultisigName = `${currentProxyName} - new ${new Date().toLocaleDateString()}`
-    const oldMultisigName = `${currentMultisigName} - old`
-    addNames({
-      [newMultiAddress]: newMultisigName,
-      [selectedMultisig.address]: oldMultisigName
-    })
-
-    multiSigCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
+    firstCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
-  }, [isApiReady, chainInfo?.ss58Format, selectedAccount, selectedMultisig, oldThreshold, newThreshold, newSignatories, api, selectedMultiProxy, accountNames, addNames, selectedSigner, signCallBack1, addToast])
+  }, [isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {
@@ -184,6 +225,9 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         {currentStep === 'selection' && (
           <>
             <Grid item xs={12}>
+              {!hasProxyEnoughFunds && (
+                <Warning text={`The pure account doesn't have enough funds. It needs at least ${formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })}`} />
+              )}
               <h4>Pure proxy (unchanged)</h4>
               <Box className="subSection">
                 <AccountDisplay
@@ -231,6 +275,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             threshold={newThreshold}
             proxyAddress={selectedMultiProxy?.proxy}
             isSwapSummary
+            balanceMin={neededBalance}
+            isBalanceError={!hasSignerEnoughFunds}
           />
         )}
         {(currentStep === 'call1' || currentStep === 'call2') && (
@@ -268,7 +314,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
           )}
           {!isCallStep && (
             <Button
-              disabled={!!errorMessage}
+              disabled={!!errorMessage || !hasProxyEnoughFunds || !hasSignerEnoughFunds}
               onClick={onClickNext}
             >{
                 currentStep === "selection"

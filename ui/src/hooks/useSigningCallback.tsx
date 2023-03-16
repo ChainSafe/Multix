@@ -8,7 +8,7 @@ interface Args {
   onFinalized?: () => void
 }
 
-export const useGetSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Args) => {
+export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
 

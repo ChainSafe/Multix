@@ -8,10 +8,13 @@ import { useAccounts } from "../../contexts/AccountsContext";
 import ThresholdSelection from "./ThresholdSelection";
 import NameSelection from "./NameSelection"
 import Summary from "./Summary";
-import { useGetSigningCallback } from "../../hooks/useGetSigningCallback";
+import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../contexts/ToastContext";
 import { useAccountNames } from "../../contexts/AccountNamesContext";
+import { useCheckBalance } from "../../hooks/useCheckBalance";
+import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
+import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
 
 interface Props {
   className?: string
@@ -30,12 +33,61 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
-  const signCallBack = useGetSigningCallback({ onSuccess: () => navigate("/creation-success") })
+  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/creation-success") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
   const [errorMessage, setErrorMessage] = useState("")
+  const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
+  const multiAddress = useMemo(() => {
+    if (!threshold) {
+      return
+    }
+
+    if (!chainInfo?.ss58Format) {
+      return
+    }
+
+    return encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
+  }, [chainInfo, signatories, threshold])
+  const batchCall = useMemo(() => {
+    if (!isApiReady) {
+      // console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      // console.error('no selected address')
+      return
+    }
+
+    if (!signatories.includes(selectedAccount.address)) {
+      // console.error('selected account not part of signatories')
+      return
+    }
+
+    if (!threshold) {
+      // console.error("Threshold is invalid", threshold)
+      return
+    }
+
+    if (!multiAddress) {
+      return
+    }
+
+    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
+    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
+    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
+    // Some funds are needed on the multisig for the pure proxy creation
+    const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
+
+    return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
+  }, [api, isApiReady, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
+
+  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
+  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds), [multisigProposalNeededFunds, pureProxyCreationNeededFunds])
+  const { isLoading: isCheckingBalance, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -53,8 +105,13 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // if the minimum balance isn't met
+    if (currentStep === 2 && !hasSignerEnoughFunds) {
+      return false
+    }
+
     return true
-  }, [currentStep, ownAccountPartOfSignatories, signatories, threshold])
+  }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
     setErrorMessage("")
@@ -65,46 +122,20 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreate = useCallback(async () => {
-    if (!isApiReady) {
-      console.error('api is not ready')
-      return
-    }
 
-    if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
-      return
-    }
-
-    if (!selectedAccount) {
+    if (!selectedAccount || !batchCall) {
       console.error('no selected address')
       return
     }
 
-    if (!signatories.includes(selectedAccount.address)) {
-      console.error('selected account not part of signatories')
-      return
-    }
-
-    if (!threshold) {
-      console.error("Threshold is invalid", threshold)
-      return
-    }
-
-    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const multiAddress = encodeAddress(createKeyMulti(signatories, threshold), Number(chainInfo.ss58Format))
-    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
-    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
-    const transferTx = api.tx.balances.transfer(multiAddress, 1000000000000)
-    const batchCall = api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-
-    addName(name, multiAddress)
+    multiAddress && addName(name, multiAddress)
 
     batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
       })
 
-  }, [addName, addToast, api, chainInfo, isApiReady, name, selectedAccount, selectedSigner, signCallBack, signatories, threshold])
+  }, [addName, addToast, batchCall, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
 
   return (
     <Grid
@@ -185,6 +216,8 @@ const MultisigCreation = ({ className }: Props) => {
               signatories={signatories}
               threshold={threshold}
               name={name}
+              isBalanceError={!isCheckingBalance && !hasSignerEnoughFunds}
+              balanceMin={neededBalance}
             />
           </Grid>
         )}

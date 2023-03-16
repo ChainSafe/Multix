@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
 import { useAccounts } from "../contexts/AccountsContext"
 
-export const useGetAccountBaseFromAccountList = () => {
+export const useAccountBaseFromAccountList = () => {
     const { accountList } = useAccounts()
 
 
