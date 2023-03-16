@@ -19,6 +19,7 @@ import { useCheckBalance } from "../../hooks/useCheckBalance";
 import Warning from "../Warning";
 import { formatBnBalance } from "../../utils/formatBnBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 interface Props {
   onClose: () => void
@@ -31,7 +32,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
-  const signCallBack2 = useSigningCallback({ onSuccess: onClose })
+  const signCallBack2 = useSigningCallback({ onSuccess: onClose, onError: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
@@ -46,31 +47,32 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { isValid: hasProxyEnoughFunds } = useCheckBalance({ min: proxyAdditionNeededFunds, address: selectedMultiProxy?.proxy })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
     , [getMultisigAsAccountBaseInfo])
+  const [callError, setCallError] = useState("")
 
   const firstCall = useMemo(() => {
     if (!isApiReady) {
-      console.error('api is not ready')
+      // console.error('api is not ready')
       return
     }
 
     if (!selectedAccount) {
-      console.error('no selected address')
+      // console.error('no selected address')
       return
     }
 
     if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
+      // console.error('no ss58Format from chainInfo')
       return
     }
 
 
     if (!selectedMultisig?.signatories?.includes(selectedAccount.address)) {
-      console.error("selected account not part of current multisig's signatories")
+      // console.error("selected account not part of current multisig's signatories")
       return
     }
 
     if (!oldThreshold || !newThreshold) {
-      console.error("One of the threshold is invalid", oldThreshold, newThreshold)
+      // console.error("One of the threshold is invalid", oldThreshold, newThreshold)
       return
     }
 
@@ -84,27 +86,27 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   const secondCall = useMemo(() => {
     if (!isApiReady) {
-      console.error('api is not ready')
+      // console.error('api is not ready')
       return
     }
 
     if (!selectedAccount) {
-      console.error('no selected address')
+      // console.error('no selected address')
       return
     }
 
     if (!chainInfo?.ss58Format) {
-      console.error('no ss58Format from chainInfo')
+      // console.error('no ss58Format from chainInfo')
       return
     }
 
     if (!newSignatories.includes(selectedAccount.address)) {
-      console.error("selected account not part of new multisig's signatories")
+      // console.error("selected account not part of new multisig's signatories")
       return
     }
 
     if (!newThreshold) {
-      console.error("Threshold is invalid", newThreshold)
+      // console.error("Threshold is invalid", newThreshold)
       return
     }
 
@@ -132,15 +134,17 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setSelectedMultisig(selected)
   }, [getMultisigByAddress])
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((_: any, reason: "backdropClick" | "escapeKeyDown") => {
+    // Prevent closing unless the calls aren't made yet.
+    // a dedicated close button is present for this step
     if (!isCallStep) {
       onClose()
-    } else {
-      //FIXME we need to allow to close this if something went wrong
-      // logged in https://github.com/ChainSafe/Multix/issues/37
-      console.error("You can't close the modal in this state")
     }
   }, [isCallStep, onClose])
+
+  const onErrorCallback = useCallback((errorMessage?: string) => {
+    !!errorMessage && setCallError(errorMessage)
+  }, [])
 
   useEffect(() => {
     setErrorMessage("")
@@ -156,6 +160,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   // the new multisig will remove the old one from the proxy list
   const onMakeSecondCall = useCallback(() => {
+    // do not fire the second call if the first had an error
+    if (!!callError) {
+      console.error('the first call had an error')
+      return
+    }
+
     if (!isApiReady) {
       console.error('api is not ready')
       return
@@ -175,10 +185,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     secondCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
+        onErrorCallback(error.message)
       })
-  }, [isApiReady, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast])
+  }, [isApiReady, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast, callError, onErrorCallback])
 
-  const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall })
+  const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall, onError: onErrorCallback })
 
   // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
   const onFirstCall = useCallback(async () => {
@@ -201,8 +212,9 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     firstCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
       .catch((error: Error) => {
         addToast({ title: error.message, type: "error" })
+        onErrorCallback(error.message)
       })
-  }, [isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast])
+  }, [isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast, onErrorCallback])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {
@@ -286,13 +298,25 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             spacing={2}
           >
             <Box className="loader">
-              <CircularProgress />
-              {currentStep === 'call1' && (
+              {!!callError
+                ? <ErrorOutlineIcon className="errorIcon" />
+                : <CircularProgress />
+              }
+              {
+                !!callError && (
+                  <div className="callErrorMessage">
+                    {callError.includes("multisig.NoTimepoint")
+                      ? "The exact same operation is already pending approval."
+                      : "An error occured"}
+                  </div>
+                )
+              }
+              {!callError && currentStep === 'call1' && (
                 <div>
                   Please sign the 1st transaction to create the new multisig.
                 </div>
               )}
-              {currentStep === 'call2' && (
+              {!callError && currentStep === 'call2' && (
                 <div>
                   Please sign the 2nd transaction to remove the old multisig.
                 </div>
@@ -323,6 +347,9 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   : "Save"
               }
             </Button>
+          )}
+          {isCallStep && !!callError && (
+            <Button onClick={onClose} >Close</Button>
           )}
         </Grid>
       </Grid>
@@ -357,5 +384,14 @@ export default styled(ChangeMultisig)(({ theme }) => `
     flex-direction: column;
     width: 100%;
     padding: 1rem;
+  }
+
+  .errorIcon {
+    font-size: 4rem;
+  }
+
+  .callErrorMessage {
+    text-align: center;
+    margin-top: 1rem;
   }
 `)

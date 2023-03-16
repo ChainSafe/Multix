@@ -5,10 +5,11 @@ import { useToasts } from '../contexts/ToastContext'
 interface Args {
   onSubmitting?: () => void
   onSuccess?: () => void
+  onError?: (message?: string) => void
   onFinalized?: () => void
 }
 
-export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Args) => {
+export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
 
@@ -42,7 +43,6 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Arg
               )
 
               errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
-
               // stop looping we found an error
               return true
             }
@@ -77,13 +77,14 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized }: Arg
 
         if (!!errorInfo && !toastErrorShown) {
           addToast({ title: errorInfo, type: "error" })
+          onError && onError(errorInfo)
           // prevent showing several errors
           toastErrorShown = true
         }
       });
     } else if (status.isFinalized) {
       onFinalized && onFinalized()
-      !errorInfo && addToast({ title: "Tx finalized", type: "success" })
+      // !errorInfo && addToast({ title: "Tx finalized", type: "success" })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
   }
