@@ -16,7 +16,7 @@ interface Props {
     onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
-const BalancesTransfer = ({ className, from, onSetExtrinsic, onSetErrorMessage }: Props) => {
+const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
     const acountBase = useAccountBaseFromAccountList()
     const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
     const [toAddress, setToAddress] = useState(acountBase[0].address)
@@ -27,13 +27,7 @@ const BalancesTransfer = ({ className, from, onSetExtrinsic, onSetErrorMessage }
     const { isLoading, isValid } = useCheckBalance({ min: amount, address: from })
 
     useEffect(() => {
-        if (isLoading) {
-            setAmountError("")
-            onSetErrorMessage("")
-            return
-        }
-
-        if (!isValid) {
+        if (!isLoading && !isValid) {
             onSetErrorMessage("Origin address balance too low")
         }
     }, [isLoading, isValid, onSetErrorMessage])

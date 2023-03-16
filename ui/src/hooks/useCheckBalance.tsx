@@ -20,6 +20,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
         api.derive.balances.account(address, (info: DeriveBalancesAccount) => {
             setIsLoading(false)
             setIsValid(info.freeBalance.gt(min))
+            // console.log('info.freeBalance', info.freeBalance.toString(), address)
         })
             .then(unsub => { unsubscribe = unsub; })
             .catch(console.error)

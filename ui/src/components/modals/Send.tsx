@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../../contexts/AccountsContext";
@@ -22,13 +22,6 @@ interface Props {
   onSuccess: () => void
   onFinalized: () => void
 }
-
-export interface EasySetupOption {
-  title: string;
-  component: ReactNode
-}
-
-const getEasySetupOptionLabel = (option: EasySetupOption) => option.title
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { api, isApiReady } = useApi()
@@ -124,18 +117,16 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       : setSelectedMultisig(selectedMultiProxy?.multisigs[0])
   }, [getMultisigByAddress, selectedMultiProxy])
 
-  const easySetupOptions: EasySetupOption[] = useMemo(() => [
-    {
-      title: "Send tokens",
-      component: <BalancesTransfer
-        from={selectedOrigin.address}
-        onSetExtrinsic={setExtrinsicToCall}
-        onSetErrorMessage={setErrorMessage}
-      />
-    }
-  ], [selectedOrigin])
+  const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => ({
+    "Send tokens": <BalancesTransfer
+      from={selectedOrigin.address}
+      onSetExtrinsic={setExtrinsicToCall}
+      onSetErrorMessage={setErrorMessage}
+    />
+  })
+    , [selectedOrigin])
 
-  const [selectedEasyOption, setSelectedEasyOption] = useState(easySetupOptions[0])
+  const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])
   const signCallback = useSigningCallback({ onSuccess, onSubmitting, onFinalized })
 
   const handleMultisigSelection = useCallback((account: AccountBaseInfo) => {
@@ -185,8 +176,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     });
   }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
 
-  const onChangeEasySetupOption = useCallback((_: any, value: EasySetupOption | null) => {
-    value && setSelectedEasyOption(value)
+  const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
+    setSelectedEasyOption(event.target.value)
   }, [])
 
   if (!possibleOrigin) {
@@ -243,20 +234,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           <h4>Transaction</h4>
         </Grid>
         <Grid item xs={12} md={10} >
-          <Autocomplete
-            disablePortal
+          <Select
             className="easySetupOption"
-            disableClearable
-            options={easySetupOptions}
-            getOptionLabel={getEasySetupOptionLabel}
-            renderInput={(params) => <TextField {...params} label="Transaction" />}
-            onChange={onChangeEasySetupOption}
             value={selectedEasyOption}
-          />
+            onChange={onChangeEasySetupOption}
+            fullWidth
+          >
+            {Object.keys(easySetupOptions).map((key) =>
+              <MenuItem key={key} value={key}>{key}</MenuItem>
+            )}
+          </Select>
         </Grid>
         <Grid item xs={0} md={2} />
         <Grid item xs={12} md={10} className="errorMessage">
-          {selectedEasyOption.component}
+          {easySetupOptions[selectedEasyOption]}
         </Grid>
         {!!errorMessage && (
           <>
@@ -286,6 +277,10 @@ export default styled(Send)(({ theme }) => `
       padding-right: 3rem;
     }
     padding-top: 0.3rem;
+  }
+
+  .easySetupOption {
+    margin-top: 0.5rem
   }
 
   .buttonContainer {
