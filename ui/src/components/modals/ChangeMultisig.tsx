@@ -119,8 +119,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const neededBalance = useMemo(() => firstCallNeededFunds.add(secondCallNeededFunds), [firstCallNeededFunds, secondCallNeededFunds])
   const { isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
 
-  console.log('neededBalance', neededBalance.toString())
-
   useEffect(() => {
     if (!selectedMultisig?.signatories) {
       return
