@@ -109,7 +109,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       setErrorMessage("The selected signatory doens't have enough funds to submit this transaction")
     }
 
-  }, [])
+  }, [hasSignerEnoughFunds, isSignerBalancCheckLoading])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -185,7 +185,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     });
   }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
 
-  const onChangeEasySetupOtion = useCallback((_: any, value: EasySetupOption | null) => {
+  const onChangeEasySetupOption = useCallback((_: any, value: EasySetupOption | null) => {
     value && setSelectedEasyOption(value)
   }, [])
 
@@ -250,7 +250,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             options={easySetupOptions}
             getOptionLabel={getEasySetupOptionLabel}
             renderInput={(params) => <TextField {...params} label="Transaction" />}
-            onChange={onChangeEasySetupOtion}
+            onChange={onChangeEasySetupOption}
             value={selectedEasyOption}
           />
         </Grid>

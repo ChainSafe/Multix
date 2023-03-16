@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useApi } from "../contexts/ApiContext"
 import BN from "bn.js"
-import { formatBnBalance } from "../utils/formatBnBalance";
 
 export const usePureProxyCreationNeededFunds = () => {
     const { isApiReady, api, chainInfo } = useApi()
@@ -23,7 +22,7 @@ export const usePureProxyCreationNeededFunds = () => {
         const survive = (api.consts.balances.existentialDeposit as unknown as BN).muln(2)
 
         setMin(reserved.add(survive))
-        console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
+        // console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
     }, [api, chainInfo, isApiReady])
 
     return { pureProxyCreationNeededFunds: min }
