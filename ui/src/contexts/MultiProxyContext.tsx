@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
 import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
-import { useAccountNames } from "./AccountNamesContext"
 import { useAccounts } from "./AccountsContext"
 
 const LOCALSTORAGE_KEY = "multix.selectedMultiProxy"
