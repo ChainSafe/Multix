@@ -277,6 +277,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             isSwapSummary
             balanceMin={neededBalance}
             isBalanceError={!hasSignerEnoughFunds}
+            selectedMultisig={selectedMultisig}
           />
         )}
         {(currentStep === 'call1' || currentStep === 'call2') && (
@@ -314,7 +315,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
           )}
           {!isCallStep && (
             <Button
-              disabled={!!errorMessage || !hasProxyEnoughFunds || !hasSignerEnoughFunds}
+              disabled={!!errorMessage || !hasProxyEnoughFunds || (currentStep === "summary" && !hasSignerEnoughFunds)}
               onClick={onClickNext}
             >{
                 currentStep === "selection"

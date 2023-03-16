@@ -1,13 +1,12 @@
 import { Box, Chip, Paper } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled from "styled-components";
 import AccountDisplay from "../../components/AccountDisplay";
 import SignerSelection from "../../components/SignerSelection";
-import { useMultiProxy } from "../../contexts/MultiProxyContext";
+import { MultiProxy } from "../../contexts/MultiProxyContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { getIntersection } from "../../utils";
 import { AccountBadge } from "../../types";
-import GenericAccountSelection, { AccountBaseInfo } from "../../components/GenericAccountSelection";
 import BalanceWarning from "../../components/Warning";
 import BN from "bn.js"
 import { formatBnBalance } from "../../utils/formatBnBalance";
@@ -22,14 +21,11 @@ interface Props {
   isSwapSummary?: boolean
   balanceMin?: BN
   isBalanceError?: boolean
+  selectedMultisig?: MultiProxy["multisigs"][0] // this is only relevant for swaps
 }
 
-const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false, balanceMin, isBalanceError }: Props) => {
+const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwapSummary = false, balanceMin, isBalanceError, selectedMultisig }: Props) => {
   const { addressList } = useAccounts()
-  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
-  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
-    , [getMultisigAsAccountBaseInfo])
-  const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const { chainInfo } = useApi()
 
   const possibleSigners = useMemo(() => {
@@ -38,11 +34,6 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
       ? getIntersection(addressList, getIntersection(selectedMultisig?.signatories, signatories))
       : getIntersection(addressList, signatories)
   }, [addressList, isSwapSummary, selectedMultisig, signatories])
-
-  const handleMultisigSelection = useCallback(({ address }: AccountBaseInfo) => {
-    const selected = getMultisigByAddress(address)
-    setSelectedMultisig(selected)
-  }, [getMultisigByAddress])
 
   if (isSwapSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')
@@ -102,15 +93,6 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
             </>
         }
       </Box>
-      {multisigList.length > 1 && (
-        <GenericAccountSelection
-          className="multiSelection"
-          accountList={multisigList}
-          onChange={handleMultisigSelection}
-          value={multisigList.find(({ address }) => address === selectedMultisig?.address) || multisigList[0]}
-          label="Using multisig"
-        />
-      )}
       <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
       </Box>
@@ -141,9 +123,6 @@ export default styled(Summary)(({ theme }) => `
     margin-top: 0;
   }
 
-  .multiSelection {
-    margin-top: 2rem;
-  }
 
   .signerSelection {
     margin-top: 1rem;
