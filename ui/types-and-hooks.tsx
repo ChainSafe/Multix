@@ -641,10 +641,12 @@ export type WhereIdInput = {
   id: Scalars['String'];
 };
 
-export type AllMultisigCallsSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
+  multisigs?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
 
 
-export type AllMultisigCallsSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
+export type MultisigCallsByMultisigIdSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
 
 export type MultisigsByAccountsQueryVariables = Exact<{
   accounts?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -654,9 +656,13 @@ export type MultisigsByAccountsQueryVariables = Exact<{
 export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
-export const AllMultisigCallsDocument = `
-    subscription AllMultisigCalls {
-  multisigCalls(limit: 10, orderBy: timestamp_DESC) {
+export const MultisigCallsByMultisigIdDocument = `
+    subscription MultisigCallsByMultisigId($multisigs: [String!]) {
+  multisigCalls(
+    limit: 10
+    orderBy: timestamp_DESC
+    where: {multisig: {id_in: $multisigs}}
+  ) {
     blockHash
     callIndex
     id

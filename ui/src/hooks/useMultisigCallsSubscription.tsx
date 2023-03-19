@@ -1,15 +1,16 @@
 import { useSubscription } from "react-query-subscription";
 import { Client, createClient, SubscribePayload } from "graphql-ws";
 import { Observable } from "rxjs";
-import { AllMultisigCallsDocument, AllMultisigCallsSubscription } from "../../types-and-hooks";
+import { MultisigCallsByMultisigIdDocument, MultisigCallsByMultisigIdSubscription } from "../../types-and-hooks";
+import { useMemo } from "react";
 
 interface Args {
     onUpdate: Function
+    multisigs: string[]
 }
 
-export const useMultisigCallSubscription = ({ onUpdate }: Args) => {
-
-    const client = createClient({ url: import.meta.env.VITE_GRAPHQL_WS_PROVIDER });
+export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
+    const client = useMemo(() => createClient({ url: import.meta.env.VITE_GRAPHQL_WS_PROVIDER }), []);
 
     /**
      * @see https://github.com/enisdenjo/graphql-ws#observable
@@ -25,34 +26,39 @@ export const useMultisigCallSubscription = ({ onUpdate }: Args) => {
                     observer.next(data.data)
                 },
                 error: (err) => observer.error(err),
-                complete: () => observer.complete(),
+                complete: () => {
+                    observer.complete()
+                },
             })
         );
     }
 
 
-
-    //   const { data, isLoading: isSubsriptionLoading, isError, error } = 
-    useSubscription(
-        ["KeyAllMultisigCalls"],
-        () => fromWsClientSubscription<{ multisigCalls: AllMultisigCallsSubscription }>(client, {
-            query: AllMultisigCallsDocument,
+    const { isError, error } = useSubscription(
+        [`KeyMultisigCallsByMultisigId-${multisigs}`],
+        () => fromWsClientSubscription<{ multisigCalls: MultisigCallsByMultisigIdSubscription }>(client, {
+            query: MultisigCallsByMultisigIdDocument,
+            variables: {
+                multisigs,
+            },
         }),
         {
             // options
         }
     );
 
-    //   if (isSubsriptionLoading) {
-    //     return <div>Loading...</div>;
-    //   }
-    //   if (isError) {
-    //     console.error(error)
-    //     return (
-    //       <div role="alert">
-    //         {error?.message || 'Unknown error'}
-    //       </div>
-    //     );
-    //   }
+    if (isError) {
+        console.error('subscription error', error)
+    }
+
+    // if (isSubsriptionLoading) {
+    //     console.log('subscription loading', multisigs);
+    // }
+
+    // console.log('status', status)
+    // if (isSuccess) {
+    //     console.log('is success', data)
+    // }
+    // console.log('subscription data', data)
     //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 }
