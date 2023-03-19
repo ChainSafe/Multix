@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
 import { MultiProxy } from "../contexts/MultiProxyContext";
 import { WhenInfo } from "../types"
@@ -13,12 +13,9 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(false)
   const { isApiReady, api } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
-  const dataRef = useRef<PendingTx[]>([])
   const multisigs = useMemo(() => multiProxy?.multisigs.map(({ address }) => address) || [], [multiProxy])
 
   const refresh = useCallback(() => {
-    dataRef.current = []
-    setData(dataRef.current)
 
     if (!isApiReady) return
 
@@ -42,8 +39,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         })
       })
       .finally(() => {
-        dataRef.current = newData
-        setData(dataRef.current)
+        setData(newData)
         setIsLoading(false)
       })
       .catch(console.error)
@@ -57,5 +53,5 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   // multisig we are watching 
   useMultisigCallSubscription({ onUpdate: refresh, multisigs })
 
-  return { isLoading, data: dataRef.current, refresh }
+  return { isLoading, data, refresh }
 }

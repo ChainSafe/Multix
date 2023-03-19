@@ -5,7 +5,7 @@ import { MultisigCallsByMultisigIdDocument, MultisigCallsByMultisigIdSubscriptio
 import { useMemo } from "react";
 
 interface Args {
-    onUpdate: Function
+    onUpdate: () => void
     multisigs: string[]
 }
 
@@ -21,10 +21,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
     ) {
         return new Observable<TData | null>((observer) =>
             client.subscribe<TData>(payload, {
-                next: (data) => {
-                    onUpdate(data.data);
-                    observer.next(data.data)
-                },
+                next: (data) => observer.next(data.data),
                 error: (err) => observer.error(err),
                 complete: () => {
                     observer.complete()
@@ -43,6 +40,9 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
             },
         }),
         {
+            onData: () => {
+                onUpdate();
+            }
             // options
         }
     );

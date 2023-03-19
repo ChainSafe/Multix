@@ -19,8 +19,8 @@ import { useCheckBalance } from "../../hooks/useCheckBalance";
 interface Props {
   onClose: () => void
   className?: string
-  onSuccess: () => void
-  onFinalized: () => void
+  onSuccess?: () => void
+  onFinalized?: () => void
 }
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
