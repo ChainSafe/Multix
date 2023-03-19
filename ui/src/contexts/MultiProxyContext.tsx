@@ -171,8 +171,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     <MultisigContext.Provider
       value={{
         selectedMultiProxy,
-        multiProxyList: multiProxyList,
-        selectMultiProxy: selectMultiProxy,
+        multiProxyList,
+        selectMultiProxy,
         isLoading,
         selectedHasProxy,
         error,
