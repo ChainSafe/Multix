@@ -10,20 +10,20 @@ export interface PendingTx {
   info: WhenInfo;
 }
 export const usePendingTx = (multiProxy?: MultiProxy) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const { isApiReady, api } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
   const multisigs = useMemo(() => multiProxy?.multisigs.map(({ address }) => address) || [], [multiProxy])
 
   const refresh = useCallback(() => {
-
     if (!isApiReady) return
 
     if (!multiProxy) return
 
     if (!api?.query?.multisig?.multisigs) return
 
-    setIsLoading(true)
+    !isLoading && setIsLoading(true)
+
     const newData: typeof data = []
 
     const callsPromises = multiProxy.multisigs.map((multisig) => api.query.multisig.multisigs.entries(multisig.address))

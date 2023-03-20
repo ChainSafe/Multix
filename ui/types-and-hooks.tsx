@@ -653,7 +653,7 @@ export type MultisigsByAccountsQueryVariables = Exact<{
 }>;
 
 
-export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
+export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
 export const MultisigCallsByMultisigIdDocument = `
@@ -680,12 +680,6 @@ export const MultisigsByAccountsDocument = `
     isMultisig
     isPureProxy
     threshold
-    multisigsCalls {
-      id
-      blockHash
-      timestamp
-      callIndex
-    }
     signatories {
       signatory {
         id

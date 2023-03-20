@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { MultisigCall, MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
+import { MultisigsByAccountsQuery, useMultisigsByAccountsQuery } from "../../types-and-hooks"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
 import { useAccounts } from "./AccountsContext"
 
@@ -17,7 +17,6 @@ export interface MultisigAggregated {
 
 export interface MultiProxy {
   proxy?: string;
-  multisigCalls?: MultisigCall[]
   multisigs: MultisigAggregated[]
 }
 
@@ -76,9 +75,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
           pureProxyAddresses.forEach((pureProxyAddress) => {
             // add this pureProxy to the set with the multisig infos and calls
             const previousMultisigsForProxy = pureProxyMap.get(pureProxyAddress)?.multisigs || []
-            // console.log('previousMultisigsForProxy', previousMultisigsForProxy.length)
-            const previousMultisigCalls = pureProxyMap.get(pureProxyAddress)?.multisigCalls || []
-            // console.log('previousMultisigCalls', previousMultisigCalls.length)
+
             const newMultisigForProxy = {
               address: account.id,
               signatories: getSignatoriesFromAccount(account),
@@ -86,8 +83,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             }
 
             pureProxyMap.set(pureProxyAddress, {
-              multisigs: [...previousMultisigsForProxy, newMultisigForProxy],
-              multisigCalls: [...previousMultisigCalls, ...account.multisigsCalls]
+              multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
             })
           })
         } else if (account.isMultisig && pureProxyAddresses.length === 0) {
@@ -109,7 +105,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       const proxyArray = Array.from(pureProxyMap.entries()).map(([proxy, agg]) => ({
         proxy,
         multisigs: agg.multisigs,
-        multisigCalls: agg.multisigCalls
       }) as MultiProxy)
 
       res.push(...proxyArray)

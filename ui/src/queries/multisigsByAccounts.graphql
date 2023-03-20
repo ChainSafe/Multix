@@ -5,12 +5,6 @@ query MultisigsByAccounts($accounts: [String!]) {
     isMultisig
     isPureProxy
     threshold
-    multisigsCalls {
-      id
-      blockHash
-      timestamp
-      callIndex
-    }
     signatories {
       signatory {
         id
