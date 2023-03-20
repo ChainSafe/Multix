@@ -1,7 +1,7 @@
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Creation, Home } from "./pages"
-import { Header } from "./components/Header"
+import Header from "./components/Header"
 import Container from "@mui/material/Container"
 import { UserSpace } from "./components/UserSpace"
 import { AccountContextProvider } from "./contexts/AccountsContext"
