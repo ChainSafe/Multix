@@ -22,7 +22,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
 
     if (!api?.query?.multisig?.multisigs) return
 
-    !isLoading && setIsLoading(true)
+    setIsLoading(true)
 
     const newData: typeof data = []
 
