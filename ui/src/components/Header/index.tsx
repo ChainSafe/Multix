@@ -1,15 +1,19 @@
 import AppBar from "@mui/material/AppBar"
-import React from "react"
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
 import MultiProxySelection from "../MultiProxySelection"
 import { useAccounts } from "../../contexts/AccountsContext"
+import styled from "styled-components";
 
-export const Header: React.FC = () => {
+interface Props {
+  className?: string
+}
+
+const Header = ({ className }: Props) => {
   const { accountList } = useAccounts()
 
   return (
-    <AppBar>
+    <AppBar className={className}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -22,22 +26,21 @@ export const Header: React.FC = () => {
           </Typography>
           {!!accountList?.length && (
             <>
-              <Box sx={{ flexGrow: 1, display: "flex" }}>
+              <Box className="buttonContainer">
                 <Button
                   component={Link}
                   to="/"
-                  sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
+                  className="buttonHeader"
                 >
                   Home
                 </Button>
                 <Button
                   component={Link}
                   to="/create"
-                  sx={{ my: 2, color: "white", display: "block", "&:hover": { backgroundColor: "white", color: "black" } }}
+                  className="buttonHeader"
                 >
                   New Multisig
                 </Button>
-
               </Box>
               <MultiProxySelection />
             </>
@@ -47,3 +50,20 @@ export const Header: React.FC = () => {
     </AppBar>
   )
 }
+
+export default styled(Header)(({ theme }) => `
+  .buttonContainer {
+    flex-grow: 1;
+    display: flex;
+  }
+
+  .buttonHeader {
+    color: ${theme.palette.primary.white};
+    text-align: center;
+    display: block;
+    &:hover { 
+      background-color: ${theme.palette.primary.white};
+      color: ${theme.palette.primary.black}; 
+    }
+  }
+`)
