@@ -307,7 +307,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   <div className="callErrorMessage">
                     {callError.includes("multisig.NoTimepoint")
                       ? "The exact same operation is already pending approval."
-                      : "An error occured"}
+                      : "An error occurred"}
                   </div>
                 )
               }

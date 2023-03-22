@@ -12,7 +12,6 @@ import { ToastContextProvider } from "./contexts/ToastContext"
 import { theme } from "./theme"
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from "./contexts/AccountNamesContext"
-import Success from "./pages/Success"
 
 
 const App = () => {
@@ -40,10 +39,6 @@ const App = () => {
                           <Route
                             path="/create"
                             element={<Creation />}
-                          />
-                          <Route
-                            path="/creation-success"
-                            element={<Success />}
                           />
                         </Routes>
                       </UserSpace>

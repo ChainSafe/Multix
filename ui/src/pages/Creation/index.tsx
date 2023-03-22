@@ -33,7 +33,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
-  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/creation-success") })
+  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/?isNew=1") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
