@@ -16,13 +16,14 @@ import ChangeMultisig from "../components/modals/ChangeMultisig";
 import { AccountBadge } from "../types";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SuccessCreation from "../components/SuccessCreation";
+import NewMulisigAlert from "../components/NewMulisigAlert";
 
 interface Props {
   className?: string
 }
 
 const Home = ({ className }: Props) => {
-  const [searchParams] = useSearchParams({ isNew: "0" });
+  const [searchParams, setSearchParams] = useSearchParams({ creationInProgress: "false" });
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultiProxy()
   const { refresh } = usePendingTx()
@@ -31,7 +32,8 @@ const Home = ({ className }: Props) => {
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
   const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
-  const isNew = useMemo(() => searchParams.get('isNew') === "1", [searchParams])
+  const creationInProgress = useMemo(() => searchParams.get('creationInProgress') === "true", [searchParams])
+  const [isNewMultisigAlertOpen, setIsNewMultisigAlertOpen] = useState(true)
 
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
@@ -41,6 +43,11 @@ const Home = ({ className }: Props) => {
   const onFinalizedSendModal = useCallback(() => {
     refresh()
   }, [refresh])
+
+  const onClosenewMultisigAlert = useCallback(() => {
+    setIsNewMultisigAlertOpen(false)
+    setSearchParams({ creationInProgress: "false" })
+  }, [setSearchParams])
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
@@ -62,8 +69,6 @@ const Home = ({ className }: Props) => {
 
     return opts
   }, [selectedHasProxy])
-
-  console.log("isNew", isNew)
 
   if (isLoading) {
     return (
@@ -111,7 +116,7 @@ const Home = ({ className }: Props) => {
       >
         <Box className="loader">
           {
-            isNew
+            creationInProgress
               ? <SuccessCreation />
               : <div>
                 No multisig found for your accounts. <Button component={Link} to="/create" >Create one!</Button>
@@ -129,6 +134,9 @@ const Home = ({ className }: Props) => {
       container
       spacing={2}
     >
+      {!!creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
+        <NewMulisigAlert onClose={onClosenewMultisigAlert} />
+      )}
       <Grid
         item
         xs={12}
