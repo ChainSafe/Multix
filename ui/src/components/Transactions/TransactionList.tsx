@@ -147,8 +147,17 @@ const TransactionList = ({ className }: Props) => {
     {!!pendingTxData.length && (
       aggregatedData.map((agg, index) => {
         const { callData, info, from } = agg
-        const multisigSignatories = getMultisigByAddress(from)?.signatories || []
-        const neededSigners = getDifference(multisigSignatories, info?.approvals)
+        const multisig = getMultisigByAddress(from)
+
+        if (!info || !multisig?.threshold) return null
+
+        console.log('info?.approvals.length >= multisig.threshold', info?.approvals.length >= multisig.threshold)
+        const multisigSignatories = multisig?.signatories || []
+        // if the threshold is met, but the transaction is still not executed
+        // it means we need one signtory to submit with asMulti
+        const neededSigners = info?.approvals.length >= multisig.threshold
+          ? multisigSignatories
+          : getDifference(multisigSignatories, info?.approvals)
         const possibleSigners = getIntersection(neededSigners, addressList)
         const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 
