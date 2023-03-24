@@ -150,7 +150,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setErrorMessage("")
 
     if (!ownAccountPartOfAllSignatories && newSignatories.length >= 2) {
-      setErrorMessage("One of your account must be part of both the old and the new multisig")
+      setErrorMessage("One of your accounts must be part of the new multisig")
     }
   }, [ownAccountPartOfAllSignatories, newSignatories])
 
@@ -326,9 +326,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         )}
         <Grid item xs={12} className="buttonContainer">
           {!!errorMessage && (
-            <div className="errorMessage">
-              {errorMessage}
-            </div>
+            <Warning className="errorMessage" text={errorMessage} />
           )}
           {currentStep === "summary" && (
             <Button
@@ -373,8 +371,7 @@ export default styled(ChangeMultisig)(({ theme }) => `
   }
 
   .errorMessage {
-    margin-top: 0.5rem;
-    color: ${theme.custom.text.errorColor};
+    margin-bottom: 1rem;
   }
 
   .loader {
