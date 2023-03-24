@@ -105,6 +105,8 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
 }
 
 export default styled(Summary)(({ theme }) => `
+  width: 100%;
+  
   .account:last-child {
     margin-bottom: 1rem;
   }

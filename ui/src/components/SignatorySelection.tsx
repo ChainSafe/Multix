@@ -92,7 +92,6 @@ export default styled(SignatorySelection)(({ theme }) => `
     display: flex;
   }
 
-
   .additionText {
       margin-top: .5rem;
       margin-bottom: .5rem;
