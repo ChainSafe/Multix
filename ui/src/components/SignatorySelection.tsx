@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { useCallback } from "react";
 import styled from "styled-components";
 import AccountSelection from "./AccountSelection";
@@ -26,25 +26,29 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
 
   return (
     <Box className={className}>
-      {signatories.map((address, index) => (
-        <div
-          className="selectedList"
-          key={address}
-        >
-          <AccountDisplay address={address} />
-          <IconButton
-            className="deleteButton"
-            aria-label="delete"
-            onClick={() => removeSignatory(index)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      ))}
       {signatories.length > 0 && (
-        <div className="additionText">
-          New signatory...
-        </div>
+        <>
+          <div className="additionText">
+            Selected:
+          </div>
+          <Paper className="selectedList">
+            {signatories.map((address, index) => (
+              <div key={address} className="selectedSignatory">
+                <AccountDisplay address={address} />
+                <IconButton
+                  className="deleteButton"
+                  aria-label="delete"
+                  onClick={() => removeSignatory(index)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            ))}
+          </Paper>
+          <div className="additionText">
+            New signatory...
+          </div>
+        </>
       )}
       <Box className="addSignatoryField">
         <AccountSelection
@@ -62,8 +66,17 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
 }
 
 export default styled(SignatorySelection)(({ theme }) => `
-  .selectedList{
+  .selectedList {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .selectedSignatory {
     margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .deleteButton, .addButton {
@@ -75,7 +88,7 @@ export default styled(SignatorySelection)(({ theme }) => `
           flex: 1;
       }
 
-  .selectedList, .addSignatoryField {
+  .selectedSignatory, .addSignatoryField {
     display: flex;
   }
 
