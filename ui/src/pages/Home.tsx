@@ -61,7 +61,7 @@ const Home = ({ className }: Props) => {
     // allow rotation only for the multisigs with a proxy
     selectedHasProxy && opts.push(
       {
-        text: "Edit multisig",
+        text: "Change multisig",
         icon: <LockResetIcon />,
         onClick: () => setIsChangeMultiModalOpen(true)
       }
