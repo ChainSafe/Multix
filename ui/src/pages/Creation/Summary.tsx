@@ -121,6 +121,9 @@ export default styled(Summary)(({ theme }) => `
   .threshold, .nameSummary {
     margin-bottom: 1.5rem;
     margin-top: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
 
