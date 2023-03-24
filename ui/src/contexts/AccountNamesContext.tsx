@@ -9,12 +9,13 @@ type AccountNamesContextProps = {
     children: React.ReactNode | React.ReactNode[]
 }
 
+const MAX_NAME_LENGTH = 50
+
 export interface IAccountNamesContext {
     accountNames: AccountNames
     getNamesWithExtension: (address: string) => string | undefined
     addName: (name: string, address: string) => void
     addNames: (newAdditions: AccountNames) => void
-    deleteName: (address: string) => void
 }
 
 const AccountNamesContext = createContext<IAccountNamesContext | undefined>(undefined)
@@ -50,23 +51,19 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     }, [accountNames])
 
     const addName = useCallback((name: string, address: string) => {
-        setAccountNames({ ...accountNames, ...{ [address]: name } });
+        setAccountNames({ ...accountNames, ...{ [address]: name.slice(0, MAX_NAME_LENGTH) } });
     }, [accountNames, setAccountNames])
 
     const addNames = useCallback((newAdditions: AccountNames) => {
-        const newNames = { ...accountNames, ...newAdditions }
+        const truncated = Object
+            .entries(newAdditions)
+            .reduce((acc, [address, name]) => ({
+                ...acc,
+                [address]: name.slice(0, MAX_NAME_LENGTH)
+            }), {})
+        const newNames = { ...accountNames, ...truncated }
         setAccountNames(newNames);
-
     }, [accountNames])
-
-    const deleteName = useCallback((address: string) => {
-        if (!accountNames) return
-
-        const newNames = accountNames
-        delete newNames[address];
-        setAccountNames(newNames);
-
-    }, [accountNames, setAccountNames])
 
     useEffect(() => {
         loadNames()
@@ -87,7 +84,6 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
                 accountNames,
                 addName,
                 addNames,
-                deleteName,
                 getNamesWithExtension
             }}
         >

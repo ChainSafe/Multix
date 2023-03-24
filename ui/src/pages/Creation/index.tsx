@@ -33,7 +33,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
-  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/creation-success") })
+  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/?creationInProgress=true") })
   const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
@@ -137,6 +137,16 @@ const MultisigCreation = ({ className }: Props) => {
 
   }, [addName, addToast, batchCall, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
 
+  const goNext = useCallback(() => {
+    window.scrollTo(0, 0)
+    isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)
+  }, [currentStep, handleCreate, isLastStep])
+
+  const goBack = useCallback(() => {
+    window.scrollTo(0, 0)
+    setCurrentStep(currentStep - 1)
+  }, [currentStep])
+
   return (
     <Grid
       className={className}
@@ -238,13 +248,13 @@ const MultisigCreation = ({ className }: Props) => {
         <div className="buttonWrapper">
           <Button
             disabled={currentStep === 0}
-            onClick={() => setCurrentStep(currentStep - 1)}
+            onClick={goBack}
           >
             Back
           </Button>
           <Button
             disabled={!canGoNext}
-            onClick={() => isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)}
+            onClick={goNext}
           >
             {isLastStep
               ? "Create"

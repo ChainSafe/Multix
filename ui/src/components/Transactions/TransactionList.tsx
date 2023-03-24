@@ -113,9 +113,8 @@ const TransactionList = ({ className }: Props) => {
       return
     }
 
-    setAggregatedData([])
-
     if (!pendingTxData || !pendingTxData.length) {
+      setAggregatedData([])
       return
     }
 
@@ -127,10 +126,6 @@ const TransactionList = ({ className }: Props) => {
         setAggregatedData(filtered)
       })
       .catch(console.error)
-
-    // const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
-    // console.log('proxyTx hex', proxyTx.toHex())
-    // console.log('proxyTx hash', proxyTx.method.hash.toHex())
   }, [api, pendingTxData, isApiReady, selectedMultiProxy])
 
   return <Box className={className}>

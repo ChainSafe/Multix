@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import AccountDisplay from "../AccountDisplay";
@@ -29,6 +29,7 @@ interface Props {
 type Step = "selection" | "summary" | "call1" | "call2"
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
@@ -150,11 +151,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setErrorMessage("")
 
     if (!ownAccountPartOfAllSignatories && newSignatories.length >= 2) {
-      setErrorMessage("One of your account must be part of both the old and the new multisig")
+      setErrorMessage("One of your accounts must be part of the new multisig")
     }
   }, [ownAccountPartOfAllSignatories, newSignatories])
 
   const onGoBack = useCallback(() => {
+    modalRef.current && modalRef.current.scrollTo(0, 0)
     setCurrentStep("selection")
   }, [])
 
@@ -220,6 +222,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     if (currentStep === 'summary') {
       onFirstCall()
     } else {
+      modalRef.current && modalRef.current.scrollTo(0, 0)
       setCurrentStep("summary")
     }
   }, [currentStep, onFirstCall])
@@ -232,7 +235,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     className={className}
   >
     <DialogTitle>Change multisig</DialogTitle>
-    <DialogContent className="generalContainer">
+    <DialogContent
+      className="generalContainer"
+      ref={modalRef}
+    >
       <Grid container>
         {currentStep === 'selection' && (
           <>
@@ -307,7 +313,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   <div className="callErrorMessage">
                     {callError.includes("multisig.NoTimepoint")
                       ? "The exact same operation is already pending approval."
-                      : "An error occured"}
+                      : "An error occurred"}
                   </div>
                 )
               }
@@ -326,9 +332,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         )}
         <Grid item xs={12} className="buttonContainer">
           {!!errorMessage && (
-            <div className="errorMessage">
-              {errorMessage}
-            </div>
+            <Warning className="errorMessage" text={errorMessage} />
           )}
           {currentStep === "summary" && (
             <Button
@@ -373,8 +377,7 @@ export default styled(ChangeMultisig)(({ theme }) => `
   }
 
   .errorMessage {
-    margin-top: 0.5rem;
-    color: ${theme.custom.text.errorColor};
+    margin-bottom: 1rem;
   }
 
   .loader {

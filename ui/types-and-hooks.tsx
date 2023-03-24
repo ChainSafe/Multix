@@ -1,5 +1,5 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { fetchData } from './src/fetcher';
+import { } from '@tanstack/react-query';
+// import { fetchData } from './src/fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -648,12 +648,12 @@ export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
 
 export type MultisigCallsByMultisigIdSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
 
-export type MultisigsByAccountsQueryVariables = Exact<{
+export type MultisigsByAccountsSubscriptionVariables = Exact<{
   accounts?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
-export type MultisigsByAccountsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, multisigsCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, timestamp: any, callIndex: number }>, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
+export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
 export const MultisigCallsByMultisigIdDocument = `
@@ -671,7 +671,7 @@ export const MultisigCallsByMultisigIdDocument = `
 }
     `;
 export const MultisigsByAccountsDocument = `
-    query MultisigsByAccounts($accounts: [String!]) {
+    subscription MultisigsByAccounts($accounts: [String!]) {
   accounts(
     where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}
   ) {
@@ -680,12 +680,6 @@ export const MultisigsByAccountsDocument = `
     isMultisig
     isPureProxy
     threshold
-    multisigsCalls {
-      id
-      blockHash
-      timestamp
-      callIndex
-    }
     signatories {
       signatory {
         id
@@ -706,15 +700,3 @@ export const MultisigsByAccountsDocument = `
   }
 }
     `;
-export const useMultisigsByAccountsQuery = <
-      TData = MultisigsByAccountsQuery,
-      TError = unknown
-    >(
-      variables?: MultisigsByAccountsQueryVariables,
-      options?: UseQueryOptions<MultisigsByAccountsQuery, TError, TData>
-    ) =>
-    useQuery<MultisigsByAccountsQuery, TError, TData>(
-      variables === undefined ? ['MultisigsByAccounts'] : ['MultisigsByAccounts', variables],
-      fetchData<MultisigsByAccountsQuery, MultisigsByAccountsQueryVariables>(MultisigsByAccountsDocument, variables),
-      options
-    );
