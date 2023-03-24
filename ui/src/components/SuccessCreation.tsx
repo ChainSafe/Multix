@@ -1,13 +1,12 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import styled from "styled-components";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { Link } from "react-router-dom"
 
 interface Props {
   className?: string;
 }
 
-const Success = ({ className }: Props) => {
+const SuccessCreation = ({ className }: Props) => {
 
   return (
     <Box className={className} >
@@ -20,8 +19,8 @@ const Success = ({ className }: Props) => {
           item
           xs={12}
           sm={4}
-          md={3}
-          lg={3}
+          md={4}
+          lg={4}
         >
           <AccessTimeIcon className="icon" />
         </Grid>
@@ -29,25 +28,20 @@ const Success = ({ className }: Props) => {
           item
           xs={12}
           sm={8}
-          md={9}
-          lg={9}
+          md={8}
+          lg={8}
         >
-          <h4>
-            Good things take time! Refresh the home page ~30s after the tx finalization.
+          <h4 className="explainer">
+            It shouldn't take more than 30s.<br />
+            This page will refresh automatically.
           </h4>
-          <Button
-            component={Link}
-            to="/"
-          >
-            Home
-          </Button>
         </Grid>
       </Grid>
     </Box>
   )
 }
 
-export default styled(Success)(({ theme }) => `
+export default styled(SuccessCreation)(({ theme }) => `
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -63,5 +57,9 @@ export default styled(Success)(({ theme }) => `
     font-size: 10rem;
     color: ${theme.custom.text.addressColorLightGray};
     text-align: center;
+  }
+
+  .explainer {
+    margin-left: 1rem;
   }
 `)

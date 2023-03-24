@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from "@mui/material";
 import { useMultiProxy } from "../contexts/MultiProxyContext";
 import ProposalList from "../components/Transactions/TransactionList";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import AccountDisplay from "../components/AccountDisplay";
 import SendIcon from '@mui/icons-material/Send';
 import Send from "../components/modals/Send";
@@ -14,12 +14,16 @@ import EditNames from "../components/modals/EditNames";
 import LockResetIcon from '@mui/icons-material/LockReset';
 import ChangeMultisig from "../components/modals/ChangeMultisig";
 import { AccountBadge } from "../types";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import SuccessCreation from "../components/SuccessCreation";
+import NewMulisigAlert from "../components/NewMulisigAlert";
 
 interface Props {
   className?: string
 }
 
 const Home = ({ className }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams({ creationInProgress: "false" });
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const { isLoading, multiProxyList, selectedMultiProxy, selectedHasProxy, error: multisigQueryError } = useMultiProxy()
   const { refresh } = usePendingTx()
@@ -28,6 +32,8 @@ const Home = ({ className }: Props) => {
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
   const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
+  const creationInProgress = useMemo(() => searchParams.get('creationInProgress') === "true", [searchParams])
+  const [isNewMultisigAlertOpen, setIsNewMultisigAlertOpen] = useState(true)
 
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
@@ -37,6 +43,11 @@ const Home = ({ className }: Props) => {
   const onFinalizedSendModal = useCallback(() => {
     refresh()
   }, [refresh])
+
+  const onClosenewMultisigAlert = useCallback(() => {
+    setIsNewMultisigAlertOpen(false)
+    setSearchParams({ creationInProgress: "false" })
+  }, [setSearchParams])
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
@@ -59,7 +70,6 @@ const Home = ({ className }: Props) => {
     return opts
   }, [selectedHasProxy])
 
-
   if (isLoading) {
     return (
       <Grid
@@ -77,22 +87,61 @@ const Home = ({ className }: Props) => {
     )
   }
 
+  if (!!multisigQueryError) {
+    return (
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
+        <Box className="loader">
+          <div className="multisigErrorMessage">
+            <ErrorOutlineIcon className="errorIcon" />
+            <>
+              An error occurred.<br />
+              {multisigQueryError}
+            </>
+          </div>
+        </Box>
+      </Grid>
+    )
+  }
+
+  if (multiProxyList.length === 0) {
+    return (
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
+        <Box className="loader">
+          {
+            creationInProgress
+              ? <SuccessCreation />
+              : <div>
+                No multisig found for your accounts. <Button component={Link} to="/create" >Create one!</Button>
+              </div>
+          }
+        </Box>
+      </Grid>
+    )
+  }
+
+
   return (
     <Grid
       className={className}
       container
       spacing={2}
     >
+      {!!creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
+        <NewMulisigAlert onClose={onClosenewMultisigAlert} />
+      )}
       <Grid
         item
         xs={12}
         md={6}
       >
-        {!isLoading && !multisigQueryError && multiProxyList.length === 0 && (
-          <div>
-            No multisig found for your accounts. <Button component={Link} to="/create" >Create one!</Button>
-          </div>
-        )}
         {selectedMultiProxy &&
           <div className="multiProxyWrapper">
             <div className="multiProxyColumn">
@@ -187,6 +236,8 @@ export default styled(Home)(({ theme }) => `
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    width: 100%;
+    padding: 1rem;
   }
 
   .proxy, .multisig {
@@ -259,5 +310,10 @@ export default styled(Home)(({ theme }) => `
   .multisigWrapper {
     padding: .5rem 0;
     margin-bottom: .5rem;
+  }
+
+  .multisigErrorMessage {
+    text-align: center;
+    margin-top: 1rem;
   }
 `)

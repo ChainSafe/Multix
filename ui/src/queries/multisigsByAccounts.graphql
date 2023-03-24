@@ -1,16 +1,10 @@
-query MultisigsByAccounts($accounts: [String!]) {
+subscription MultisigsByAccounts($accounts: [String!]) {
   accounts(where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}) {
     id
     createdAt
     isMultisig
     isPureProxy
     threshold
-    multisigsCalls {
-      id
-      blockHash
-      timestamp
-      callIndex
-    }
     signatories {
       signatory {
         id
