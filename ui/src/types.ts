@@ -1,4 +1,4 @@
-export interface WhenInfo {
+export interface MultisigStorageInfo {
     approvals: string[]
     deposit: number
     depositor: string

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
 import { MultiProxy } from "../contexts/MultiProxyContext";
-import { WhenInfo } from "../types"
+import { MultisigStorageInfo } from "../types"
 import { useMultisigCallSubscription } from "./useMultisigCallsSubscription";
 
 export interface PendingTx {
   from: string;
   hash: string;
-  info: WhenInfo;
+  info: MultisigStorageInfo;
 }
 export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(true)
@@ -32,7 +32,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         res1.forEach((res, index) => {
           res.forEach((storage) => {
             const hash = (storage[0].toHuman() as Array<string>)[1]
-            const info = storage[1].toJSON() as unknown as WhenInfo
+            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
 
             newData.push({ hash, info, from: multiProxy.multisigs[index].address })
           })

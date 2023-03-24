@@ -113,9 +113,8 @@ const TransactionList = ({ className }: Props) => {
       return
     }
 
-    setAggregatedData([])
-
     if (!pendingTxData || !pendingTxData.length) {
+      setAggregatedData([])
       return
     }
 
