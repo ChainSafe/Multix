@@ -13,6 +13,7 @@ import { useToasts } from "../../contexts/ToastContext";
 import { Weight } from "@polkadot/types/interfaces";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
+import { MultisigStorageInfo } from "../../types";
 
 interface Props {
   onClose: () => void
@@ -42,11 +43,10 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const signatories = useMemo(() => multisig?.signatories || [], [multisig])
   const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
   const [callInfo, setCallInfo] = useState<SubmittingCall>({})
-  const canSubmit = useMemo(() => {
-    if (!threshold) return false
-    return proposalData.info?.approvals.length === threshold - 1
-  }, [proposalData, threshold])
-  const needAddedCallData = useMemo(() => canSubmit && !proposalData.callData, [canSubmit, proposalData])
+  const needCallData = useMemo(() =>
+    // if we don't have the calldata and it's the last approval
+    !!threshold && proposalData.info?.approvals.length === threshold - 1 && !proposalData.callData
+    , [proposalData, threshold])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -145,6 +145,33 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       return
     }
 
+    if (!multisig) {
+      const error = 'No selected multisig'
+      console.error(error)
+      setErrorMessage(error)
+      return
+    }
+
+    // In case the proposal has been approved between the last couple block
+    // and the proposal in the indexer hasn't been updated we should query the latest state 
+    // right before sending the tx.
+    const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
+
+    let amountOfSigner = 0
+    callStorage.some((storage) => {
+      const hash = (storage[0].toHuman() as Array<string>)[1]
+      if (proposalData.hash === hash) {
+        const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+        amountOfSigner = info.approvals.length
+
+        return true
+      }
+
+      return false
+    })
+
+    const shouldSubmit = amountOfSigner >= threshold - 1
+
     setIsSubmitting(true)
     let tx: SubmittableExtrinsic<"promise">
 
@@ -153,11 +180,11 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       tx = api.tx.multisig.cancelAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash)
 
       // If we can submit the proposal and have the call data
-    } else if (canSubmit && callInfo.call && callInfo.weight) {
+    } else if (shouldSubmit && callInfo.call && callInfo.weight) {
       tx = api.tx.multisig.asMulti(threshold, otherSigners, proposalData.info.when, proposalData.callData || addedCallData, callInfo.weight)
 
       // if we can't submit yet (more signatures required), all we need is the call hash
-    } else if (!canSubmit && proposalData.hash) {
+    } else if (!shouldSubmit && proposalData.hash) {
       tx = api.tx.multisig.approveAsMulti(threshold, otherSigners, proposalData.info.when, proposalData.hash, 0)
     } else {
       console.error('We donnot have the required data to submit the call')
@@ -169,7 +196,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [signatories, threshold, proposalData, isApiReady, selectedAccount, canSubmit, callInfo, selectedSigner, signCallback, api, addedCallData, addToast])
+  }, [signatories, threshold, proposalData, isApiReady, selectedAccount, multisig, api, callInfo, selectedSigner, signCallback, addedCallData, addToast])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")
@@ -191,7 +218,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           <SignerSelection possibleSigners={possibleSigners} onChange={() => setErrorMessage("")} />
         </Grid>
         <Grid item xs={0} md={5} />
-        {!isProposerSelected && needAddedCallData && (
+        {!isProposerSelected && needCallData && (
           <>
             <Grid item xs={0} md={1} />
             <Grid item xs={12} md={6}>
@@ -207,7 +234,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           </>
         )}
 
-        {!needAddedCallData && (
+        {!needCallData && (
           <>
             <Grid item xs={0} md={1} />
             <Grid item xs={12} md={11} className="callInfo">
@@ -215,7 +242,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
             </Grid>
           </>
         )}
-        {!!needAddedCallData && !!callInfo.method && (
+        {!!needCallData && !!callInfo.method && (
           <>
             <Grid item xs={0} md={1} />
             <Grid item xs={12} md={11} className="callInfo">
@@ -240,7 +267,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           }
           {!isProposerSelected && <Button
             onClick={() => onSign(true)}
-            disabled={isSubmitting || (needAddedCallData && !callInfo.method)}
+            disabled={isSubmitting || (needCallData && !callInfo.method)}
           >
             Approve
           </Button>}
