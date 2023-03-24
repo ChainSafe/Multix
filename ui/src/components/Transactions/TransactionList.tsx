@@ -146,10 +146,10 @@ const TransactionList = ({ className }: Props) => {
 
         if (!info || !multisig?.threshold) return null
 
-        console.log('info?.approvals.length >= multisig.threshold', info?.approvals.length >= multisig.threshold)
         const multisigSignatories = multisig?.signatories || []
         // if the threshold is met, but the transaction is still not executed
         // it means we need one signtory to submit with asMulti
+        // so any signatory should be able to approve (again)
         const neededSigners = info?.approvals.length >= multisig.threshold
           ? multisigSignatories
           : getDifference(multisigSignatories, info?.approvals)
