@@ -8,6 +8,7 @@ import { useAccountBaseFromAccountList } from "../../hooks/useAccountBaseFromAcc
 import { useApi } from "../../contexts/ApiContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import BN from "bn.js"
+import { inputToBn } from "../../utils";
 
 interface Props {
     className?: string
@@ -69,17 +70,27 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         const decimals = chainInfo?.tokenDecimals || 0
 
         if (!decimals) {
-            setAmountError("Invalid network decimals")
+            onSetErrorMessage("Invalid network decimals")
+            setAmount(new BN(0))
             return
         }
 
         setAmountError("")
         onSetErrorMessage("")
 
-        setAmountString(event.target.value)
-        // FIXME handle number with BN and validate them https://github.com/ChainSafe/Multix/issues/49
-        const value = Number(event.target.value) * Math.pow(10, decimals)
-        setAmount(new BN(value))
+        const stringInput = event.target.value
+        setAmountString(stringInput)
+
+        if (stringInput.includes(",")) {
+            setAmountError("Commas detected, use a point as decimal separator")
+            onSetErrorMessage("Invalid amount")
+            setAmount(new BN(0))
+            return
+        }
+
+        const bnResult = inputToBn(decimals, stringInput)
+
+        setAmount(bnResult)
     }, [chainInfo, onSetErrorMessage])
 
     if (!selected) return null
