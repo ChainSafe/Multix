@@ -27,7 +27,7 @@ export interface IMultisigContext {
   isLoading: boolean,
   selectMultiProxy: (multi: MultiProxy) => void
   selectedHasProxy: boolean
-  error: unknown
+  error: Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
 }
@@ -108,12 +108,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [])
 
   const { isLoading, error } = useMultisigsByAccountSubscription({ accounts: addressList, onUpdate: refreshAccounList })
-
-  useEffect(() => {
-    if (!!error) {
-      console.error(error)
-    }
-  }, [error])
 
   // useEffect(() => {
   //   console.log('--> refresh', data)

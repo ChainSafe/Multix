@@ -4,7 +4,7 @@ import { useApi } from "../contexts/ApiContext"
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
 
 export interface Props {
-    min: BN
+    min?: BN
     address?: string
 }
 
@@ -13,7 +13,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
     const [hasEnoughFreeBalance, setHasEnoughFreeBalance] = useState(false)
 
     useEffect(() => {
-        if (!isApiReady || !address) return
+        if (!isApiReady || !address || !min) return
 
 
         let unsubscribe: () => void;

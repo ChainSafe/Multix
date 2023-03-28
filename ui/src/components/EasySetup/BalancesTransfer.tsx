@@ -23,7 +23,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     const [toAddress, setToAddress] = useState(acountBase[0].address)
     const { api, isApiReady, chainInfo } = useApi()
     const [amountString, setAmountString] = useState("")
-    const [amount, setAmount] = useState(new BN(0))
+    const [amount, setAmount] = useState<BN | undefined>()
     const [amountError, setAmountError] = useState("")
     const { hasEnoughFreeBalance } = useCheckBalance({ min: amount, address: from })
     const maxValue = useMemo(() => getGlobalMaxValue(128), [])
@@ -32,10 +32,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
         onSetErrorMessage("")
 
-        if (!hasEnoughFreeBalance) {
+        if (!!amount && !hasEnoughFreeBalance) {
             onSetErrorMessage('"From" address balance too low')
         }
-    }, [hasEnoughFreeBalance, onSetErrorMessage])
+    }, [amount, hasEnoughFreeBalance, onSetErrorMessage])
 
     useEffect(() => {
         if (!isApiReady) {
