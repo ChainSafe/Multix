@@ -3,12 +3,12 @@ import styled from "styled-components";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccountBaseFromAccountList } from "../../hooks/useAccountBaseFromAccountList";
 import { useApi } from "../../contexts/ApiContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import BN from "bn.js"
-import { inputToBn } from "../../utils";
+import { getGlobalMaxValue, inputToBn } from "../../utils";
 
 interface Props {
     className?: string
@@ -26,6 +26,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     const [amount, setAmount] = useState(new BN(0))
     const [amountError, setAmountError] = useState("")
     const { hasEnoughFreeBalance } = useCheckBalance({ min: amount, address: from })
+    const maxValue = useMemo(() => getGlobalMaxValue(128), [])
 
     useEffect(() => {
 
@@ -78,6 +79,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
             return
         }
 
+
         setAmountError("")
 
         const stringInput = event.target.value
@@ -92,8 +94,14 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
         const bnResult = inputToBn(decimals, stringInput)
 
+        if (bnResult.gte(maxValue)) {
+            setAmountError("Amount too large")
+            onSetErrorMessage("Amount too large")
+            return
+        }
+
         setAmount(bnResult)
-    }, [chainInfo, onSetErrorMessage])
+    }, [chainInfo, maxValue, onSetErrorMessage])
 
     if (!selected) return null
 

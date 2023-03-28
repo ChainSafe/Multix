@@ -7,7 +7,7 @@ const DEFAULT_BITLENGTH = 32 as BitLength;
 
 export type BitLength = 8 | 16 | 32 | 64 | 128 | 256;
 
-function getGlobalMaxValue(bitLength?: number): BN {
+export function getGlobalMaxValue(bitLength?: number): BN {
     return BN_TWO.pow(new BN(bitLength || DEFAULT_BITLENGTH)).isub(BN_ONE);
 }
 

@@ -15,6 +15,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
     useEffect(() => {
         if (!isApiReady || !address) return
 
+
         let unsubscribe: () => void;
 
         api.derive.balances.account(address, (info: DeriveBalancesAccount) => {
