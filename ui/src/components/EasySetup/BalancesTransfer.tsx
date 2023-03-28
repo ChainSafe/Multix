@@ -29,9 +29,11 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
     useEffect(() => {
         if (!isLoading && !isValid) {
-            onSetErrorMessage("Origin address balance too low")
+            onSetErrorMessage('"From" address balance too low')
         }
-    }, [isLoading, isValid, onSetErrorMessage])
+
+        // amount is needed to update the error message accordingly
+    }, [isLoading, isValid, onSetErrorMessage, amount])
 
     useEffect(() => {
         if (!isApiReady) {

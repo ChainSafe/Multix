@@ -14,6 +14,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        console.log('min', address, min.toString())
         if (!isApiReady || !address) return
         let unsubscribe: () => void;
 
