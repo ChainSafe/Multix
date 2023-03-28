@@ -45,7 +45,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     , [addressList, newSignatories, selectedMultisig?.signatories])
   const isCallStep = useMemo(() => currentStep === "call1" || currentStep === "call2", [currentStep])
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
-  const { isValid: hasProxyEnoughFunds } = useCheckBalance({ min: proxyAdditionNeededFunds, address: selectedMultiProxy?.proxy })
+  const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({ min: proxyAdditionNeededFunds, address: selectedMultiProxy?.proxy })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
     , [getMultisigAsAccountBaseInfo])
   const [callError, setCallError] = useState("")
@@ -120,7 +120,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { multisigProposalNeededFunds: firstCallNeededFunds } = useMultisigProposalNeededFunds({ call: firstCall, signatories: selectedMultisig?.signatories, threshold: oldThreshold })
   const { multisigProposalNeededFunds: secondCallNeededFunds } = useMultisigProposalNeededFunds({ call: secondCall, signatories: newSignatories, threshold: newThreshold })
   const neededBalance = useMemo(() => firstCallNeededFunds.add(secondCallNeededFunds), [firstCallNeededFunds, secondCallNeededFunds])
-  const { isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
 
   useEffect(() => {
     if (!selectedMultisig?.signatories) {

@@ -10,17 +10,15 @@ export interface Props {
 
 export const useCheckBalance = ({ min, address }: Props) => {
     const { isApiReady, api } = useApi()
-    const [isValid, setIsValid] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+    const [hasEnoughFreeBalance, setHasEnoughFreeBalance] = useState(false)
 
     useEffect(() => {
-        console.log('min', address, min.toString())
         if (!isApiReady || !address) return
+
         let unsubscribe: () => void;
 
         api.derive.balances.account(address, (info: DeriveBalancesAccount) => {
-            setIsLoading(false)
-            setIsValid(info.freeBalance.gt(min))
+            setHasEnoughFreeBalance(info.freeBalance.gte(min))
             // console.log('info.freeBalance', info.freeBalance.toString(), address)
         })
             .then(unsub => { unsubscribe = unsub; })
@@ -30,9 +28,6 @@ export const useCheckBalance = ({ min, address }: Props) => {
 
     }, [address, api, isApiReady, min])
 
-    return {
-        isLoading,
-        isValid
-    }
+    return { hasEnoughFreeBalance }
 
 } 

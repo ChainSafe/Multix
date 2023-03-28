@@ -25,15 +25,16 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     const [amountString, setAmountString] = useState("")
     const [amount, setAmount] = useState(new BN(0))
     const [amountError, setAmountError] = useState("")
-    const { isLoading, isValid } = useCheckBalance({ min: amount, address: from })
+    const { hasEnoughFreeBalance } = useCheckBalance({ min: amount, address: from })
 
     useEffect(() => {
-        if (!isLoading && !isValid) {
+
+        onSetErrorMessage("")
+
+        if (!hasEnoughFreeBalance) {
             onSetErrorMessage('"From" address balance too low')
         }
-
-        // amount is needed to update the error message accordingly
-    }, [isLoading, isValid, onSetErrorMessage, amount])
+    }, [hasEnoughFreeBalance, onSetErrorMessage])
 
     useEffect(() => {
         if (!isApiReady) {
@@ -44,7 +45,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
             return
         }
 
-        if (!amount || amount.isZero()) {
+        if (!amount) {
             return
         }
 
@@ -69,7 +70,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }, [])
 
     const onAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const decimals = chainInfo?.tokenDecimals || 0
+        const decimals = chainInfo?.tokenDecimals
 
         if (!decimals) {
             onSetErrorMessage("Invalid network decimals")
@@ -78,7 +79,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         }
 
         setAmountError("")
-        onSetErrorMessage("")
 
         const stringInput = event.target.value
         setAmountString(stringInput)
