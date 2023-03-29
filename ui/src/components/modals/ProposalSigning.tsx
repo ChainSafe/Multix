@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../../contexts/AccountsContext";
@@ -43,6 +43,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const signatories = useMemo(() => multisig?.signatories || [], [multisig])
   const isProposerSelected = useMemo(() => proposalData?.info?.depositor === selectedAccount?.address, [proposalData, selectedAccount])
   const [callInfo, setCallInfo] = useState<SubmittingCall>({})
+  const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
   const needCallData = useMemo(() =>
     // if we don't have the calldata and it's the last approval
     !!threshold && proposalData.info?.approvals.length === threshold - 1 && !proposalData.callData
@@ -62,13 +63,13 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
     }
   }, [isProposerSelected])
 
-  useEffect(() => {
+  const getCallInfo = useCallback(async () => {
     // the proposer doesn't need the call data
     if (isProposerSelected) {
       return
     }
 
-    if (!api) {
+    if (!api || !isApiReady) {
       return
     }
 
@@ -83,7 +84,8 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
     let call: GenericCall
     try {
       call = api.createType('Call', proposalData.callData || addedCallData)
-    } catch {
+    } catch (error) {
+      console.error(error)
       setCallInfo({})
       return
     }
@@ -94,7 +96,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       return
     }
 
-    api.tx(call).paymentInfo(selectedAccount.address).then(
+    return api.tx(call).paymentInfo(selectedAccount.address).then(
       ({ weight }) => {
         setCallInfo({
           call,
@@ -104,8 +106,16 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
         })
       }
     )
+  }, [addedCallData, api, isApiReady, isProposerSelected, proposalData, selectedAccount])
 
-  }, [addedCallData, api, isProposerSelected, proposalData, selectedAccount])
+  useEffect(() => {
+    setIsGettingCallInfo(true)
+
+    getCallInfo()
+      .catch(console.error)
+      .finally(() => setIsGettingCallInfo(false))
+
+  }, [getCallInfo])
 
   const onSign = useCallback(async (isApproving: boolean) => {
     const otherSigners = sortAddresses(signatories.filter((signer) => signer !== selectedAccount?.address))
@@ -257,7 +267,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
           }
         </Grid>
         <Grid item xs={12} className="buttonContainer">
-          {isProposerSelected &&
+          {!isGettingCallInfo && isProposerSelected &&
             <Button
               onClick={() => onSign(false)}
               disabled={isSubmitting}
@@ -265,12 +275,19 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
               Reject
             </Button>
           }
-          {!isProposerSelected && <Button
-            onClick={() => onSign(true)}
-            disabled={isSubmitting || (needCallData && !callInfo.method)}
-          >
-            Approve
-          </Button>}
+          {!isGettingCallInfo && !isProposerSelected && (
+            <Button
+              onClick={() => onSign(true)}
+              disabled={isSubmitting || (needCallData && !callInfo.method)}
+            >
+              Approve
+            </Button>
+          )}
+          {!!isGettingCallInfo && (
+            <Button disabled>
+              <CircularProgress />
+            </Button>
+          )}
         </Grid>
       </Grid>
     </DialogContent>

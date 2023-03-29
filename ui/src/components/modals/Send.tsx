@@ -89,20 +89,16 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [api, extrinsicToCall, isApiReady, selectedAccount, selectedMultisig, selectedOrigin, threshold])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories: selectedMultisig?.signatories, call: multisigTx })
-  const { isLoading: isSignerBalancCheckLoading, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: multisigProposalNeededFunds, address: selectedAccount?.address })
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({ min: multisigProposalNeededFunds, address: selectedAccount?.address })
 
   useEffect(() => {
-    if (isSignerBalancCheckLoading) {
-      return
-    }
-
     setErrorMessage("")
 
     if (!hasSignerEnoughFunds) {
       setErrorMessage("The selected signatory doens't have enough funds to submit this transaction")
     }
 
-  }, [hasSignerEnoughFunds, isSignerBalancCheckLoading])
+  }, [hasSignerEnoughFunds])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)

@@ -87,7 +87,7 @@ const MultisigCreation = ({ className }: Props) => {
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
   const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds), [multisigProposalNeededFunds, pureProxyCreationNeededFunds])
-  const { isLoading: isCheckingBalance, isValid: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
   const canGoNext = useMemo(() => {
 
     // need a threshold set
@@ -226,7 +226,7 @@ const MultisigCreation = ({ className }: Props) => {
               signatories={signatories}
               threshold={threshold}
               name={name}
-              isBalanceError={!isCheckingBalance && !hasSignerEnoughFunds}
+              isBalanceError={!hasSignerEnoughFunds}
               balanceMin={neededBalance}
             />
           </Grid>

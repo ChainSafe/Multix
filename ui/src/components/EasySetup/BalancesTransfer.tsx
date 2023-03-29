@@ -3,11 +3,12 @@ import styled from "styled-components";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccountBaseFromAccountList } from "../../hooks/useAccountBaseFromAccountList";
 import { useApi } from "../../contexts/ApiContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import BN from "bn.js"
+import { getGlobalMaxValue, inputToBn } from "../../utils";
 
 interface Props {
     className?: string
@@ -22,15 +23,19 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     const [toAddress, setToAddress] = useState(acountBase[0].address)
     const { api, isApiReady, chainInfo } = useApi()
     const [amountString, setAmountString] = useState("")
-    const [amount, setAmount] = useState(new BN(0))
+    const [amount, setAmount] = useState<BN | undefined>()
     const [amountError, setAmountError] = useState("")
-    const { isLoading, isValid } = useCheckBalance({ min: amount, address: from })
+    const { hasEnoughFreeBalance } = useCheckBalance({ min: amount, address: from })
+    const maxValue = useMemo(() => getGlobalMaxValue(128), [])
 
     useEffect(() => {
-        if (!isLoading && !isValid) {
-            onSetErrorMessage("Origin address balance too low")
+
+        onSetErrorMessage("")
+
+        if (!!amount && !hasEnoughFreeBalance) {
+            onSetErrorMessage('"From" address balance too low')
         }
-    }, [isLoading, isValid, onSetErrorMessage])
+    }, [amount, hasEnoughFreeBalance, onSetErrorMessage])
 
     useEffect(() => {
         if (!isApiReady) {
@@ -41,7 +46,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
             return
         }
 
-        if (!amount || amount.isZero()) {
+        if (!amount) {
             return
         }
 
@@ -66,21 +71,37 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }, [])
 
     const onAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const decimals = chainInfo?.tokenDecimals || 0
+        const decimals = chainInfo?.tokenDecimals
 
         if (!decimals) {
-            setAmountError("Invalid network decimals")
+            onSetErrorMessage("Invalid network decimals")
+            setAmount(new BN(0))
             return
         }
 
-        setAmountError("")
-        onSetErrorMessage("")
 
-        setAmountString(event.target.value)
-        // FIXME handle number with BN and validate them https://github.com/ChainSafe/Multix/issues/49
-        const value = Number(event.target.value) * Math.pow(10, decimals)
-        setAmount(new BN(value))
-    }, [chainInfo, onSetErrorMessage])
+        setAmountError("")
+
+        const stringInput = event.target.value
+        setAmountString(stringInput)
+
+        if (stringInput.includes(",")) {
+            setAmountError("Commas detected, use a point as decimal separator")
+            onSetErrorMessage("Invalid amount")
+            setAmount(new BN(0))
+            return
+        }
+
+        const bnResult = inputToBn(decimals, stringInput)
+
+        if (bnResult.gte(maxValue)) {
+            setAmountError("Amount too large")
+            onSetErrorMessage("Amount too large")
+            return
+        }
+
+        setAmount(bnResult)
+    }, [chainInfo, maxValue, onSetErrorMessage])
 
     if (!selected) return null
 
