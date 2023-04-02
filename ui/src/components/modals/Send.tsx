@@ -52,7 +52,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     : selectedMultisig?.threshold
     , [getMultisigByAddress, selectedMultisig, selectedOrigin])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
-  console.log("error", easyOptionErrorMessage)
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
       console.error('selected multisig is undefined')
