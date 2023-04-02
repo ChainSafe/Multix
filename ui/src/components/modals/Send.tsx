@@ -28,6 +28,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
+  const [easyOptionErrorMessage, setEasyOptionErrorMessageorMessage] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const { addToast } = useToasts()
   const possibleOrigin = useMemo(() => {
@@ -92,13 +93,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({ min: multisigProposalNeededFunds, address: selectedAccount?.address })
 
   useEffect(() => {
-    setErrorMessage("")
-
-    if (!hasSignerEnoughFunds) {
-      setErrorMessage("The selected signatory doens't have enough funds to submit this transaction")
+    if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
+      setErrorMessage(`The "Signing with" account doens't have enough funds to submit this transaction`)
     }
 
-  }, [hasSignerEnoughFunds])
+  }, [hasSignerEnoughFunds, multisigProposalNeededFunds])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -117,7 +116,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     "Send tokens": <BalancesTransfer
       from={selectedOrigin.address}
       onSetExtrinsic={setExtrinsicToCall}
-      onSetErrorMessage={setErrorMessage}
+      onSetErrorMessage={setEasyOptionErrorMessageorMessage}
     />
   })
     , [selectedOrigin])
@@ -220,11 +219,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           <h4>Signing with</h4>
         </Grid>
         <Grid item xs={12} md={10}>
-          {<SignerSelection
+          <SignerSelection
             possibleSigners={selectedMultisig?.signatories || []}
-            onChange={() => setErrorMessage("")
-            } />
-          }
+            onChange={() => setErrorMessage("")}
+          />
         </Grid>
         <Grid item xs={12} md={2} >
           <h4>Transaction</h4>
@@ -245,18 +243,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         <Grid item xs={12} md={10} className="errorMessage">
           {easySetupOptions[selectedEasyOption]}
         </Grid>
-        {!!errorMessage && (
+        {(!!easyOptionErrorMessage || !!errorMessage) && (
           <>
             <Grid item xs={0} md={2} />
             <Grid item xs={12} md={10} className="errorMessage">
-              <Warning text={errorMessage} />
+              <Warning text={easyOptionErrorMessage || errorMessage} />
             </Grid>
           </>
         )}
         <Grid item xs={12} className="buttonContainer">
           <Button
             onClick={onSign}
-            disabled={!!errorMessage || isSubmitting || !extrinsicToCall}
+            disabled={!!easyOptionErrorMessage || !!errorMessage || isSubmitting || !extrinsicToCall}
           >
             Send
           </Button>
