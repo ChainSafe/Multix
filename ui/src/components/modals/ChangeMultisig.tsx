@@ -51,7 +51,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [callError, setCallError] = useState("")
 
   const firstCall = useMemo(() => {
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       // console.error('api is not ready')
       return
     }
@@ -86,7 +86,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [api, chainInfo, isApiReady, newSignatories, newThreshold, oldThreshold, selectedAccount, selectedMultiProxy?.proxy, selectedMultisig])
 
   const secondCall = useMemo(() => {
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       // console.error('api is not ready')
       return
     }
@@ -168,7 +168,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       console.error('api is not ready')
       return
     }
@@ -189,13 +189,13 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         addToast({ title: error.message, type: "error" })
         onErrorCallback(error.message)
       })
-  }, [isApiReady, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast, callError, onErrorCallback])
+  }, [callError, isApiReady, api, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast, onErrorCallback])
 
   const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall, onError: onErrorCallback })
 
   // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
   const onFirstCall = useCallback(async () => {
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       console.error('api is not ready')
       return
     }
@@ -216,7 +216,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         addToast({ title: error.message, type: "error" })
         onErrorCallback(error.message)
       })
-  }, [isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast, onErrorCallback])
+  }, [api, isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast, onErrorCallback])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {

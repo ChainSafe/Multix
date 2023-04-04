@@ -16,7 +16,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   const multisigs = useMemo(() => multiProxy?.multisigs.map(({ address }) => address) || [], [multiProxy])
 
   const refresh = useCallback(() => {
-    if (!isApiReady) return
+    if (!isApiReady || !api) return
 
     if (!multiProxy) return
 

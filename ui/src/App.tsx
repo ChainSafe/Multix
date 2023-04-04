@@ -12,6 +12,7 @@ import { ToastContextProvider } from "./contexts/ToastContext"
 import { theme } from "./theme"
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from "./contexts/AccountNamesContext"
+import { NetworkContextProvider } from "./contexts/NetworkContext"
 
 
 const App = () => {
@@ -22,31 +23,33 @@ const App = () => {
       <ToastContextProvider>
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
-            <ApiContextProvider>
-              <AccountContextProvider>
-                <AccountNamesContextProvider>
-                  <MultiProxyContextProvider>
-                    <Header />
-                    <Container
-                      fixed
-                      sx={{ paddingTop: "6rem" }}>
-                      <UserSpace>
-                        <Routes>
-                          <Route
-                            path="/"
-                            element={<Home />}
-                          />
-                          <Route
-                            path="/create"
-                            element={<Creation />}
-                          />
-                        </Routes>
-                      </UserSpace>
-                    </Container>
-                  </MultiProxyContextProvider>
-                </AccountNamesContextProvider>
-              </AccountContextProvider>
-            </ApiContextProvider>
+            <NetworkContextProvider>
+              <ApiContextProvider>
+                <AccountContextProvider>
+                  <AccountNamesContextProvider>
+                    <MultiProxyContextProvider>
+                      <Header />
+                      <Container
+                        fixed
+                        sx={{ paddingTop: "6rem" }}>
+                        <UserSpace>
+                          <Routes>
+                            <Route
+                              path="/"
+                              element={<Home />}
+                            />
+                            <Route
+                              path="/create"
+                              element={<Creation />}
+                            />
+                          </Routes>
+                        </UserSpace>
+                      </Container>
+                    </MultiProxyContextProvider>
+                  </AccountNamesContextProvider>
+                </AccountContextProvider>
+              </ApiContextProvider>
+            </NetworkContextProvider>
           </QueryClientProvider>
         </BrowserRouter>
       </ToastContextProvider>

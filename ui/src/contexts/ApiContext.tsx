@@ -1,9 +1,10 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { ApiOptions } from "@polkadot/api/types"
 import { TypeRegistry } from "@polkadot/types"
 import { useState, useEffect, createContext, useContext } from "react"
-import { useDidUpdateEffect } from "../hooks/useDidUpdateEffect"
+// import { useDidUpdateEffect } from "../hooks/useDidUpdateEffect"
+import { useNetwork } from "./NetworkContext"
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -13,7 +14,7 @@ type ApiContextProps = {
 const registry = new TypeRegistry()
 
 export interface IApiContext {
-  api: ApiPromise // From @polkadot/api\
+  api?: ApiPromise
   isApiReady: boolean
   chainInfo?: ChainInfoHuman
 }
@@ -34,28 +35,33 @@ const ApiContext = createContext<IApiContext | undefined>(undefined)
 
 
 const ApiContextProvider = ({ children, types }: ApiContextProps) => {
-  const WS_PROVIDER = import.meta.env.VITE_WS_PROVIDER
-  const provider = new WsProvider(WS_PROVIDER)
+  const { selectedNetworkInfo } = useNetwork()
+  const provider = useMemo(() => !!selectedNetworkInfo?.rpcUrl && new WsProvider(selectedNetworkInfo?.rpcUrl), [selectedNetworkInfo])
   const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [apiPromise, setApiPromise] = useState<ApiPromise>(
-    new ApiPromise({ provider, types })
-  )
+  const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
   const [isReady, setIsReady] = useState(false)
 
-  useDidUpdateEffect(() => {
-    // We want to fetch all the information again each time we reconnect. We
-    // might be connecting to a different node, or the node might have changed
-    // settings.
-    // setApiPromise(new ApiPromise({ provider, types, rpc }))
+  useEffect(() => {
+    if (!provider) return
+
     setApiPromise(new ApiPromise({ provider, types }))
 
     setIsReady(false)
-  })
+    return () => {
+      console.log('<---disconnecting')
+      !!apiPromise && apiPromise.disconnect()
+    }
+
+    // prevent an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, types])
 
   useEffect(() => {
-    // We want to fetch all the information again each time we reconnect. We
-    // might be connecting to a different node, or the node might have changed
-    // settings.
+
+    if (!apiPromise) return
+
+    !!provider && console.log('---> connecting to', provider.endpoint)
+
     apiPromise.isReady
       .then((api) => {
         if (types) {
@@ -73,13 +79,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         })
       })
       .catch(e => console.error(e))
-  }, [apiPromise.isReady, types])
-
-
-  if (!WS_PROVIDER) {
-    console.error("REACT_APP_WS_PROVIDER not set")
-    return null
-  }
+  }, [apiPromise, provider, types])
 
   return (
     <ApiContext.Provider

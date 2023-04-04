@@ -3,16 +3,6 @@
 This UI is meant to be run alongside an indexer as presented in `../squid`
 
 
-### Environment file
-
-To start simply, you can rename `.env.example` into `.env`.
-
-```
-VITE_WS_PROVIDER="wss://rococo-rpc.polkadot.io"
-VITE_GRAPHQL_HTTP_PROVIDER="ws://localhost:4350/graphql"
-VITE_GRAPHQL_WS_PROVIDER="http://localhost:4350/graphql"
-```
-
 ## Available scripts
 
 In the project directory, you can run:

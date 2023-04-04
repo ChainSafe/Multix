@@ -22,6 +22,10 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
     let errorInfo = "";
     let toastErrorShown = false
 
+    if (!api) {
+      return
+    }
+
     if (status.isInBlock) {
       console.log('Included at block hash', status.asInBlock.toHex());
       console.log('Events:');

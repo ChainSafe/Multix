@@ -3,6 +3,7 @@ import { Center } from "../../components/layout/Center"
 import { Box, Button, CircularProgress } from "@mui/material"
 import { useAccounts } from "../../contexts/AccountsContext"
 import { useApi } from "../../contexts/ApiContext"
+import { useNetwork } from "../../contexts/NetworkContext"
 
 interface Props {
   className?: string
@@ -11,6 +12,7 @@ interface Props {
 export const UserSpace = ({ children, className }: Props) => {
   const { isApiReady } = useApi()
   const { isAllowedToConnectToExtension, isExtensionError, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccounts()
+  const { selectedNetworkInfo } = useNetwork()
 
   if (!isAllowedToConnectToExtension) {
     return <Center>
@@ -36,7 +38,7 @@ export const UserSpace = ({ children, className }: Props) => {
         <CircularProgress />
         {isAccountLoading
           ? "Loading accounts"
-          : `Connecting to the node at ${import.meta.env.VITE_WS_PROVIDER}`
+          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`
         }
       </Box>
     )

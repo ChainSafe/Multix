@@ -13,7 +13,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
     const [hasEnoughFreeBalance, setHasEnoughFreeBalance] = useState(false)
 
     useEffect(() => {
-        if (!isApiReady || !address || !min) return
+        if (!isApiReady || !api || !address || !min) return
 
 
         let unsubscribe: () => void;
