@@ -3,7 +3,6 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { ApiOptions } from "@polkadot/api/types"
 import { TypeRegistry } from "@polkadot/types"
 import { useState, useEffect, createContext, useContext } from "react"
-// import { useDidUpdateEffect } from "../hooks/useDidUpdateEffect"
 import { useNetwork } from "./NetworkContext"
 
 type ApiContextProps = {
