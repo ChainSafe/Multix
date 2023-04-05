@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { SupportedNetworks, networkArray, networkList } from "../constants"
+import { SupportedNetworks, networkList } from "../constants"
 
 const LOCALSTORAGE_SELECTED_NETWORK = "multix.selectedNetwork"
 
@@ -16,12 +16,13 @@ export interface NetworkInfo {
 }
 
 export interface IToastContext {
-  selectNetwork: (network: SupportedNetworks) => void
+  selectNetwork: (network: string) => void
   selectedNetworkInfo?: NetworkInfo
   selectedNetwork?: SupportedNetworks
 }
 
 const NetworkContext = React.createContext<IToastContext | undefined>(undefined)
+const isSupportedNetwork = (network: string): network is SupportedNetworks => !!networkList[network as SupportedNetworks]
 
 const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const [selectedNetworkInfo, setSelectedNetworkInfo] = useState<NetworkInfo | undefined>()
@@ -29,11 +30,11 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const [searchParams, setSearchParams] = useSearchParams({ network: "" });
 
   const selectNetwork = useCallback((network: string) => {
-    const newSelectedNetwork = networkList[network]
+    const newSelectedNetwork = isSupportedNetwork(network)
 
     if (!newSelectedNetwork) return
 
-    setSelectedNetworkInfo(newSelectedNetwork)
+    setSelectedNetworkInfo(networkList[network])
     setSelectedNetwork(network)
     setSearchParams({ network })
     localStorage.setItem(LOCALSTORAGE_SELECTED_NETWORK, network)
@@ -43,8 +44,8 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
     if (!selectedNetwork) {
       const networkParam = searchParams.get("network")
 
-      if (!!networkParam && networkArray.includes(networkParam as SupportedNetworks)) {
-        selectNetwork(networkParam as SupportedNetworks)
+      if (!!networkParam) {
+        selectNetwork(networkParam)
         return
       }
 
