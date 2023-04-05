@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import MultiProxySelection from "../MultiProxySelection"
 import { useAccounts } from "../../contexts/AccountsContext"
 import styled from "styled-components";
+import NetworkSelection from "../NetworkSelection"
 
 interface Props {
   className?: string
@@ -45,6 +46,7 @@ const Header = ({ className }: Props) => {
               <MultiProxySelection />
             </>
           )}
+          <NetworkSelection />
         </Toolbar>
       </Container>
     </AppBar>

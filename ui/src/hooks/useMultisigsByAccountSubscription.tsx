@@ -11,9 +11,10 @@ interface Args {
 }
 
 export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) => {
-    const { selectedNetworkInfo } = useNetwork()
+    const { selectedNetworkInfo, selectedNetwork } = useNetwork()
     const client = useMemo(() => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || "" }), [selectedNetworkInfo?.wsGraphqlUrl]);
 
+    console.log("client", selectedNetworkInfo?.wsGraphqlUrl, client)
     /**
      * @see https://github.com/enisdenjo/graphql-ws#observable
      */
@@ -37,7 +38,7 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
     }
 
     const { isError, error, data, isLoading } = useSubscription(
-        [`KeyMultisigsByAccount-${accounts}`],
+        [`KeyMultisigsByAccount-${accounts}-${selectedNetwork}`],
         () => {
             return fromWsClientSubscription<{ accounts: MultisigsByAccountsSubscription['accounts'] }>(client, {
                 query: MultisigsByAccountsDocument,

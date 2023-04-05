@@ -11,7 +11,7 @@ interface Args {
 }
 
 export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
-    const { selectedNetworkInfo } = useNetwork()
+    const { selectedNetworkInfo, selectedNetwork } = useNetwork()
     const client = useMemo(() => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || "" }), [selectedNetworkInfo?.wsGraphqlUrl]);
 
     /**
@@ -34,7 +34,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
 
 
     const { isError, error } = useSubscription(
-        [`KeyMultisigCallsByMultisigId-${multisigs}`],
+        [`KeyMultisigCallsByMultisigId-${multisigs}-${selectedNetwork}`],
         () => fromWsClientSubscription<{ multisigCalls: MultisigCallsByMultisigIdSubscription }>(client, {
             query: MultisigCallsByMultisigIdDocument,
             variables: {
