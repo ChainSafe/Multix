@@ -46,7 +46,7 @@ const Header = ({ className }: Props) => {
               <MultiProxySelection />
             </>
           )}
-          <NetworkSelection />
+          {/* <NetworkSelection /> */}
         </Toolbar>
       </Container>
     </AppBar>
