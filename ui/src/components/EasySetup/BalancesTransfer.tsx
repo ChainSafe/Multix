@@ -29,13 +29,12 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     const maxValue = useMemo(() => getGlobalMaxValue(128), [])
 
     useEffect(() => {
-
-        onSetErrorMessage("")
-
         if (!!amount && !hasEnoughFreeBalance) {
             onSetErrorMessage('"From" address balance too low')
+        } else {
+            onSetErrorMessage("")
         }
-    }, [amount, hasEnoughFreeBalance, onSetErrorMessage])
+    }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
     useEffect(() => {
         if (!isApiReady || !api) {
@@ -71,6 +70,9 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }, [])
 
     const onAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setAmountError("")
+        onSetErrorMessage("")
+
         const decimals = chainInfo?.tokenDecimals
 
         if (!decimals) {
@@ -80,13 +82,11 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         }
 
 
-        setAmountError("")
-
-        const stringInput = event.target.value
+        const stringInput = event.target.value.trim()
         setAmountString(stringInput)
 
-        if (stringInput.includes(",")) {
-            setAmountError("Commas detected, use a point as decimal separator")
+        if (!stringInput.match("^[0-9]+([.][0-9]+)?$")) {
+            setAmountError('Only numbers and "." are accepted.')
             onSetErrorMessage("Invalid amount")
             setAmount(new BN(0))
             return
