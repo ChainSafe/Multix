@@ -44,10 +44,11 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   useEffect(() => {
     if (!provider) return
 
+    console.log('---> connecting to', provider.endpoint)
     setApiPromise(new ApiPromise({ provider, types }))
 
-    setIsReady(false)
     return () => {
+      setIsReady(false)
       console.log('<---disconnecting')
       !!apiPromise && apiPromise.disconnect()
     }
@@ -58,9 +59,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 
   useEffect(() => {
 
-    if (!apiPromise) return
-
-    !!provider && console.log('---> connecting to', provider.endpoint)
+    if (!apiPromise || !provider || isReady) return
 
     apiPromise.isReady
       .then((api) => {
@@ -79,7 +78,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         })
       })
       .catch(e => console.error(e))
-  }, [apiPromise, provider, types])
+  }, [apiPromise, isReady, provider, types])
 
   return (
     <ApiContext.Provider

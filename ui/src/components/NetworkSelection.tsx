@@ -42,9 +42,11 @@ const NetworkSelection = ({ className }: Props) => {
 export default styled(NetworkSelection)(({ theme }) => `
     min-width: 10rem;
     background-color: ${theme.palette.primary.white};
-
+    margin-left: 0.5rem;
+    
     .MuiSelect-select {
-        display: flex;
+      display: flex;
+      height: 1rem;
     }
 
     .networkName {
