@@ -64,7 +64,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       return
     }
 
@@ -137,7 +137,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
@@ -169,7 +169,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       setIsSubmitting(false)
       addToast({ title: error.message, type: "error" })
     });
-  }, [threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
+  }, [api, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
 
   const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
     setSelectedEasyOption(event.target.value)

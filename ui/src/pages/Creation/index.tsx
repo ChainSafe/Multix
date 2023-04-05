@@ -52,7 +52,7 @@ const MultisigCreation = ({ className }: Props) => {
     return encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
   }, [chainInfo, signatories, threshold])
   const batchCall = useMemo(() => {
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       // console.error('api is not ready')
       return
     }

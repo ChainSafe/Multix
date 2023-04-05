@@ -109,7 +109,7 @@ const TransactionList = ({ className }: Props) => {
   const { addressList } = useAccounts()
 
   useEffect(() => {
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       return
     }
 

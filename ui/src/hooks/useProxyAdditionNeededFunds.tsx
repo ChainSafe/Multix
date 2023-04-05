@@ -7,7 +7,7 @@ export const useProxyAdditionNeededFunds = () => {
     const [min, setMin] = useState(new BN(0))
 
     useEffect(() => {
-        if (!isApiReady) return
+        if (!isApiReady || !api) return
 
         if (!chainInfo?.tokenDecimals) return
 

@@ -15,7 +15,7 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
     const [min, setMin] = useState(new BN(0))
 
     useEffect(() => {
-        if (!isApiReady || !signatories || signatories.length < 2) return
+        if (!isApiReady || !api || !signatories || signatories.length < 2) return
 
         if (!chainInfo?.tokenDecimals) return
 

@@ -37,7 +37,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
     useEffect(() => {
-        if (!isApiReady) {
+        if (!isApiReady || !api) {
             return
         }
 

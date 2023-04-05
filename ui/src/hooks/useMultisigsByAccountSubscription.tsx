@@ -3,6 +3,7 @@ import { Client, createClient, SubscribePayload } from "graphql-ws";
 import { Observable } from "rxjs";
 import { MultisigsByAccountsDocument, MultisigsByAccountsSubscription } from "../../types-and-hooks";
 import { useMemo } from "react";
+import { useNetwork } from "../contexts/NetworkContext";
 
 interface Args {
     onUpdate: (data: MultisigsByAccountsSubscription | null) => void
@@ -10,7 +11,8 @@ interface Args {
 }
 
 export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) => {
-    const client = useMemo(() => createClient({ url: import.meta.env.VITE_GRAPHQL_WS_PROVIDER }), []);
+    const { selectedNetworkInfo, selectedNetwork } = useNetwork()
+    const client = useMemo(() => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || "" }), [selectedNetworkInfo?.wsGraphqlUrl]);
 
     /**
      * @see https://github.com/enisdenjo/graphql-ws#observable
@@ -35,7 +37,7 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
     }
 
     const { isError, error, data, isLoading } = useSubscription(
-        [`KeyMultisigsByAccount-${accounts}`],
+        [`KeyMultisigsByAccount-${accounts}-${selectedNetwork}`],
         () => {
             return fromWsClientSubscription<{ accounts: MultisigsByAccountsSubscription['accounts'] }>(client, {
                 query: MultisigsByAccountsDocument,

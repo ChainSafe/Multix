@@ -141,7 +141,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
       return
     }
 
-    if (!isApiReady) {
+    if (!isApiReady || !api) {
       const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
