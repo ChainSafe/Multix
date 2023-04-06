@@ -11,6 +11,7 @@ import { useToasts } from "../../contexts/ToastContext";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
+import ManualExtrinsic from "../EasySetup/ManualExtrinsic";
 import BalancesTransfer from "../EasySetup/BalancesTransfer";
 import Warning from "../Warning";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
@@ -115,6 +116,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
   const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => ({
     "Send tokens": <BalancesTransfer
+      from={selectedOrigin.address}
+      onSetExtrinsic={setExtrinsicToCall}
+      onSetErrorMessage={setErrorMessage}
+    />,
+    "Manual extrinsic": <ManualExtrinsic
       from={selectedOrigin.address}
       onSetExtrinsic={setExtrinsicToCall}
       onSetErrorMessage={setErrorMessage}
