@@ -1,11 +1,11 @@
-import { lookupArchive } from '@subsquid/archive-registry'
+import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
 import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
-import { config } from './config'
 import { handleMultisigCall } from './multisigCalls'
 import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs, JsonLog } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
+import { Env } from './util/Env'
 
 export const dataEvent = {
     data: {
@@ -24,15 +24,16 @@ export const dataCall = {
     },
 } as const
 
-const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 
+const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
+export const env = new Env().getEnv()
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        archive: lookupArchive(config.archiveName, { release: 'FireSquid' }),
-        chain: config.ws,
+        archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, { release: 'FireSquid' }),
+        chain: env.rpcWs,
     })
     .setBlockRange({
-        from: config.blockStart,
+        from: Number(env.blockstart),
     })
     // .addCall('Proxy.add_proxy', dataCall)
     // .addCall('Proxy.remove_proxy', dataCall)

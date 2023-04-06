@@ -237,6 +237,21 @@ Type definitions (`typesBundle`) can be given to squid tools in two forms:
 All fields in types bundle are optional and applied on top of a fixed set of well known
 frame types.
 
+## Environment variables
+
+The following environment variables are expected. You can copy `.env.example` into `.env`
+```
+DB_PORT=5432
+GQL_PORT=4350
+SQD_DEBUG=sqd:processor:mapping
+
+# rococo
+BLOCK_START=3510000 # this is the starging block of the indexer
+PREFIX=42 # the ss58 prefix for the chain
+RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
+ARCHIVE_NAME="rococo" # the archive name from subsquid archives
+```
+
 ## Differences from polkadot.js
 
 Polkadot.js provides lots of [specialized classes](https://polkadot.js.org/docs/api/start/types.basics) for various types of data. 
