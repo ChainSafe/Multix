@@ -9,13 +9,13 @@ export const ICON_THEME = "polkadot"
 export const networkList = {
     "kusama": {
         rpcUrl: "wss://kusama-rpc.polkadot.io",
-        httpGraphqlUrl: "http://api.multix.chainsafe.io/graphql",
+        httpGraphqlUrl: "https://api.multix.chainsafe.io/graphql",
         wsGraphqlUrl: "wss://api.multix.chainsafe.io/graphql",
         logo: chainsKusamaSVG
     } as NetworkInfo,
     "rococo": {
         rpcUrl: "wss://rococo-rpc.polkadot.io",
-        httpGraphqlUrl: "http://api.multix.chainsafe.io/graphql",
+        httpGraphqlUrl: "https://api.multix.chainsafe.io/graphql",
         wsGraphqlUrl: "wss://api.multix.chainsafe.io/graphql",
         logo: chainsRococoSVG
     } as NetworkInfo
