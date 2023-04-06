@@ -1,9 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField, Tooltip } from "@mui/material";
 import styled from "styled-components";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useApi } from "../../contexts/ApiContext";
+import paramConversion from "../../utils/paramConversion";
 
 interface Props {
     className?: string
@@ -12,25 +13,95 @@ interface Props {
     onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
+interface ParamField {
+    name: string
+    type: string
+    optional: boolean
+}
+
+interface FormState {
+    palletRpc: string
+    callable: string
+    inputParams: any[]
+}
+
+const initFormState = {
+    palletRpc: '',
+    callable: '',
+    inputParams: [] as any[],
+} as FormState
+
 const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
+
+const transformParams = (
+    paramFields: ParamField[],
+    inputParams: any[],
+    opts = { emptyAsNull: true }
+) => {
+    // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
+    //   Otherwise, it will not be added
+    const paramVal = inputParams.map(inputParam => {
+        // To cater the js quirk that `null` is a type of `object`.
+        if (
+            typeof inputParam === 'object' &&
+            inputParam !== null &&
+            typeof inputParam.value === 'string'
+        ) {
+            return inputParam.value.trim()
+        } else if (typeof inputParam === 'string') {
+            return inputParam.trim()
+        }
+        return inputParam
+    })
+    const params = paramFields.map((field, ind) => ({
+        ...field,
+        value: paramVal[ind] || null,
+    }))
+
+    return params.reduce((memo, { type = 'string', value }) => {
+        if (value == null || value === '')
+            return opts.emptyAsNull ? [...memo, null] : memo
+
+        let converted = value
+
+        // Deal with a vector
+        if (type.indexOf('Vec<') >= 0) {
+            converted = converted.split(',').map(e => e.trim())
+            converted = converted.map(single =>
+                isNumType(type)
+                    ? single.indexOf('.') >= 0
+                        ? Number.parseFloat(single)
+                        : Number.parseInt(single)
+                    : single
+            )
+            return [...memo, converted]
+        }
+
+        // Deal with a single value
+        if (isNumType(type)) {
+            converted =
+                converted.indexOf('.') >= 0
+                    ? Number.parseFloat(converted)
+                    : Number.parseInt(converted)
+        }
+        return [...memo, converted]
+    }, [])
+}
+
+const isNumType = (type: string) =>
+    paramConversion.num.includes(type)
 
 const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
     const { api, isApiReady, chainInfo } = useApi()
     const [palletRPCs, setPalletRPCs] = useState<any[]>([])
     const [callables, setCallables] = useState<any[]>([])
-    const [paramFields, setParamFields] = useState<any[]>([])
-
-    console.log('palletRPCs', palletRPCs)
-    console.log('callables', callables)
-    const initFormState = {
-        palletRpc: '',
-        callable: '',
-        inputParams: [],
-    }
-
+    const [paramFields, setParamFields] = useState<ParamField[]>([])
     const [formState, setFormState] = useState(initFormState)
     const { palletRpc, callable, inputParams } = formState
-
+    console.log('formState', formState)
+    console.log('palletRPCs', palletRPCs)
+    console.log('callables', callables)
+    console.log('paramFields', paramFields)
     const updatePalletRPCs = useCallback(() => {
         if (!api) {
             return
@@ -48,7 +119,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
             return
         }
 
-        const callables = Object.keys(api.tx)
+        const callables = Object.keys(api.tx[palletRpc])
             .sort()
             .map(c => ({ key: c, value: c, text: c }))
         setCallables(callables)
@@ -60,35 +131,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
             return
         }
 
-        let paramFields: any[] = []
-
-        // if (interxType === 'QUERY') {
-        //     const metaType = api.query[palletRpc][callable].meta.type
-        //     if (metaType.isPlain) {
-        //         // Do nothing as `paramFields` is already set to []
-        //     } else if (metaType.isMap) {
-        //         paramFields = [
-        //             {
-        //                 name: metaType.asMap.key.toString(),
-        //                 type: metaType.asMap.key.toString(),
-        //                 optional: false,
-        //             },
-        //         ]
-        //     } else if (metaType.isDoubleMap) {
-        //         paramFields = [
-        //             {
-        //                 name: metaType.asDoubleMap.key1.toString(),
-        //                 type: metaType.asDoubleMap.key1.toString(),
-        //                 optional: false,
-        //             },
-        //             {
-        //                 name: metaType.asDoubleMap.key2.toString(),
-        //                 type: metaType.asDoubleMap.key2.toString(),
-        //                 optional: false,
-        //             },
-        //         ]
-        //     }
-        // } else if (interxType === 'EXTRINSIC') {
+        let paramFields: ParamField[] = []
         const metaArgs = api.tx[palletRpc][callable].meta.args
 
         if (metaArgs && metaArgs.length > 0) {
@@ -98,23 +141,6 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
                 optional: argIsOptional(arg),
             }))
         }
-        // } else if (interxType === 'RPC') {
-        //     let metaParam = []
-
-        //     if (jsonrpc[palletRpc] && jsonrpc[palletRpc][callable]) {
-        //         metaParam = jsonrpc[palletRpc][callable].params
-        //     }
-
-        //     if (metaParam.length > 0) {
-        //         paramFields = metaParam.map(arg => ({
-        //             name: arg.name,
-        //             type: arg.type,
-        //             optional: arg.isOptional || false,
-        //         }))
-        //     }
-        // } else if (interxType === 'CONSTANT') {
-        //     paramFields = []
-        // }
 
         setParamFields(paramFields)
     }, [api, callable, palletRpc])
@@ -123,27 +149,29 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     useEffect(updateCallables, [updateCallables])
     useEffect(updateParamFields, [updateParamFields])
 
-    // const onPalletCallableParamChange = useCallback((_, data) => {
-    //     setFormState(formState => {
-    //         let res
-    //         const { state, value } = data
-    //         if (typeof state === 'object') {
-    //             // Input parameter updated
-    //             const {
-    //                 ind,
-    //                 paramField: { type },
-    //             } = state
-    //             const inputParams = [...formState.inputParams]
-    //             inputParams[ind] = { type, value }
-    //             res = { ...formState, inputParams }
-    //         } else if (state === 'palletRpc') {
-    //             res = { ...formState, [state]: value, callable: '', inputParams: [] }
-    //         } else if (state === 'callable') {
-    //             res = { ...formState, [state]: value, inputParams: [] }
-    //         }
-    //         return res
-    //     })
-    // }, [])
+    const onPalletCallableParamChange = useCallback((event: SelectChangeEvent<string>, state: string) => {
+
+        setFormState(formState => {
+            const value = event.target.value
+            if (state === 'palletRpc') {
+                return { ...formState, [state]: value, callable: '', inputParams: [] }
+            } else if (state === 'callable') {
+                return { ...formState, [state]: value, inputParams: [] }
+            }
+
+            return initFormState
+        })
+    }, [])
+
+    const onParamChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, { ind, paramField }: { ind: number, paramField: ParamField }) => {
+
+        setFormState(formState => {
+            // Input parameter updated
+            const inputParams = [...formState.inputParams]
+            inputParams[ind] = { type: paramField.type, value: event.target.value }
+            return { ...formState, inputParams }
+        })
+    }, [])
 
     useEffect(() => {
         if (!isApiReady || !api) {
@@ -156,12 +184,72 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
 
     return (
         <Box className={className}>
+            <FormControl>
+                <Select
+                    className="palletSelection"
+                    displayEmpty
+                    placeholder="Pallets / RPC"
+                    // label="Pallet"
+                    onChange={(event) => onPalletCallableParamChange(event, "palletRpc")}
+                    value={palletRpc}
+                    renderValue={(value) => {
+                        if (!value) {
+                            return "Pallet";
+                        }
 
-        </Box>
+                        return value
+                    }}
+                >
+                    {palletRPCs.map(({ text }) =>
+                        <MenuItem key={text} value={text} sx={{}}>
+                            <div className="pallet">{text}</div>
+                        </MenuItem>
+                    )}
+                </Select>
+            </FormControl>
+            <FormControl>
+                <Select
+                    displayEmpty
+                    placeholder="Callables"
+                    onChange={(event) => onPalletCallableParamChange(event, "callable")}
+                    value={callable}
+                    renderValue={(value) => {
+                        if (!value) {
+                            return "Method";
+                        }
+
+                        return value
+                    }}
+                >
+                    {callables.map(({ text }) =>
+                        <MenuItem key={text} value={text} sx={{}}>
+                            <div className="networkName">{text}</div>
+                        </MenuItem>
+                    )}
+                </Select>
+            </FormControl>
+            {paramFields.map((paramField, ind) => (
+                // <FormControl key={`${paramField.name}-${paramField.type}`}>
+                <Tooltip
+                    title={paramField.optional ? "Optional" : ""}
+                    key={`${paramField.name}-${paramField.type}`}
+                >
+                    <TextField
+                        placeholder={paramField.type}
+                        type="text"
+                        label={paramField.name}
+                        value={inputParams[ind] ? inputParams[ind].value : ''}
+                        onChange={(event) => onParamChange(event, { ind, paramField })}
+                    />
+                </Tooltip>
+            ))}
+        </Box >
     )
 }
 
 
 export default styled(ManualExtrinsic)(({ theme }) => `
-
+    .palletSelection {
+        margin-right: .5rem;
+    }
 `)
