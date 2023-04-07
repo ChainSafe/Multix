@@ -20,6 +20,7 @@ import Warning from "../Warning";
 import { formatBnBalance } from "../../utils/formatBnBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
 
 interface Props {
   onClose: () => void
@@ -29,6 +30,7 @@ interface Props {
 type Step = "selection" | "summary" | "call1" | "call2"
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const modalRef = useRef<HTMLDivElement | null>(null);
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
@@ -186,10 +188,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     secondCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
       .catch((error: Error) => {
-        addToast({ title: error.message, type: "error" })
+        addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(secondCall.hash.toHex()) })
         onErrorCallback(error.message)
       })
-  }, [callError, isApiReady, api, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast, onErrorCallback])
+  }, [callError, isApiReady, api, selectedAccount, secondCall, selectedSigner, signCallBack2, addToast, getSubscanExtrinsicLink, onErrorCallback])
 
   const signCallBack1 = useSigningCallback({ onSuccess: onMakeSecondCall, onError: onErrorCallback })
 
@@ -213,10 +215,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     firstCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
       .catch((error: Error) => {
-        addToast({ title: error.message, type: "error" })
+        addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(firstCall.hash.toHex()) })
         onErrorCallback(error.message)
       })
-  }, [api, isApiReady, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast, onErrorCallback])
+  }, [isApiReady, api, selectedAccount, firstCall, selectedSigner, signCallBack1, addToast, getSubscanExtrinsicLink, onErrorCallback])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {

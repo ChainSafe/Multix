@@ -14,6 +14,7 @@ import { Weight } from "@polkadot/types/interfaces";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import { MultisigStorageInfo } from "../../types";
+import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
 
 interface Props {
   onClose: () => void
@@ -31,6 +32,7 @@ interface SubmittingCall {
 }
 
 const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, onSuccess }: Props) => {
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress } = useMultiProxy()
@@ -204,9 +206,9 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
     tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback
     ).catch((error: Error) => {
       setIsSubmitting(false)
-      addToast({ title: error.message, type: "error" })
+      addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(tx.hash.toHex()) })
     });
-  }, [signatories, threshold, proposalData, isApiReady, selectedAccount, multisig, api, callInfo, selectedSigner, signCallback, addedCallData, addToast])
+  }, [signatories, threshold, proposalData, isApiReady, api, selectedAccount, multisig, callInfo, selectedSigner, signCallback, addedCallData, addToast, getSubscanExtrinsicLink])
 
   const onAddedCallDataChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setErrorMessage("")
