@@ -16,6 +16,7 @@ import BalancesTransfer from "../EasySetup/BalancesTransfer";
 import Warning from "../Warning";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
+import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
 
 interface Props {
   onClose: () => void
@@ -25,6 +26,7 @@ interface Props {
 }
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
@@ -178,9 +180,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     multisigTx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback
     ).catch((error: Error) => {
       setIsSubmitting(false)
-      addToast({ title: error.message, type: "error" })
+      addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(multisigTx.hash.toHex()) })
     });
-  }, [api, threshold, isApiReady, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast])
+  }, [threshold, isApiReady, api, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback, addToast, getSubscanExtrinsicLink])
 
   const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
     setSelectedEasyOption(event.target.value)

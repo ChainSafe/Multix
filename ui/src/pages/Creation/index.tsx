@@ -15,6 +15,7 @@ import { useAccountNames } from "../../contexts/AccountNamesContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
+import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
 
 interface Props {
   className?: string
@@ -26,6 +27,7 @@ const steps = [
   "Review"
 ]
 const MultisigCreation = ({ className }: Props) => {
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
@@ -132,10 +134,10 @@ const MultisigCreation = ({ className }: Props) => {
 
     batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
-        addToast({ title: error.message, type: "error" })
+        addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(batchCall.hash.toHex()) })
       })
 
-  }, [addName, addToast, batchCall, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
+  }, [addName, addToast, batchCall, getSubscanExtrinsicLink, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
