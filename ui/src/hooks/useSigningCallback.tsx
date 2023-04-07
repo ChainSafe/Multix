@@ -1,6 +1,7 @@
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useApi } from '../contexts/ApiContext'
 import { useToasts } from '../contexts/ToastContext'
+import { useGetSubscanLinks } from './useSubscanLink'
 
 interface Args {
   onSubmitting?: () => void
@@ -12,13 +13,17 @@ interface Args {
 export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
 
-
-  return ({ events = [], status }: ISubmittableResult) => {
+  return ({ events = [], status, txHash }: ISubmittableResult) => {
     onSubmitting && onSubmitting()
-
-    status.isBroadcast && addToast({ title: `Tx broadcasted`, type: "loading" })
     console.log('Transaction status:', status.type);
+    const link = getSubscanExtrinsicLink(txHash.toHex())
+
+    if (status.isBroadcast) {
+      addToast({ title: `Tx broadcasted`, type: "loading", link })
+    }
+
     let errorInfo = "";
     let toastErrorShown = false
 
@@ -56,7 +61,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         }
 
         if (api.events.system.ExtrinsicSuccess.is(event)) {
-          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "loading" })
+          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "loading", link })
           onSuccess && onSuccess()
         }
 
@@ -80,7 +85,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         }
 
         if (!!errorInfo && !toastErrorShown) {
-          addToast({ title: errorInfo, type: "error" })
+          addToast({ title: errorInfo, type: "error", link })
           onError && onError(errorInfo)
           // prevent showing several errors
           toastErrorShown = true
@@ -88,7 +93,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
       });
     } else if (status.isFinalized) {
       onFinalized && onFinalized()
-      // !errorInfo && addToast({ title: "Tx finalized", type: "success" })
+      // !errorInfo && addToast({ title: "Tx finalized", type: "success", link })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
   }

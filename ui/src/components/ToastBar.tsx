@@ -11,7 +11,8 @@ interface Props {
 }
 
 const ToastBar = ({ toast }: Props) => {
-    const { id, title, type } = toast
+    const { id, title, type, link } = toast
+    console.log('link', link)
     const { removeToast } = useToasts()
 
     const handleClose = useCallback((event: React.SyntheticEvent | Event, reason?: string) => {
@@ -44,6 +45,8 @@ const ToastBar = ({ toast }: Props) => {
                 type={type}
                 title={title}
                 key={id}
+                id={id}
+                link={link}
             />
         }
 
