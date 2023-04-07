@@ -1,7 +1,7 @@
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import styled from "styled-components"
 import { useNetwork } from "../contexts/NetworkContext"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { networkList } from "../constants"
 
 interface Props {
@@ -10,6 +10,13 @@ interface Props {
 
 const NetworkSelection = ({ className }: Props) => {
   const { selectedNetwork, selectNetwork } = useNetwork()
+  // if no ws endpoint is set (in the env) for local nodes
+  // we filter it out
+  const networksToShow = useMemo(() =>
+    networkList.local.wsGraphqlUrl
+      ? Object.entries(networkList)
+      : Object.entries(networkList).filter(([name]) => name !== "local")
+    , [])
 
   const handleNetworkSelection = useCallback((event: SelectChangeEvent<string>) => {
     selectNetwork(event.target.value)
@@ -25,7 +32,7 @@ const NetworkSelection = ({ className }: Props) => {
       value={selectedNetwork}
       onChange={handleNetworkSelection}
     >
-      {Object.entries(networkList).map(([networkName, info]) =>
+      {networksToShow.map(([networkName, info]) =>
         <MenuItem key={networkName} value={networkName} sx={{ "img": { maxHeight: "2rem", mr: ".5rem", borderRadius: "50%" } }}>
           <img
             className="networkLogo"
