@@ -1,18 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { SupportedNetworks, networkList } from "../constants"
+import { NetworkInfo, SupportedNetworks, networkList } from "../constants"
 
 const LOCALSTORAGE_SELECTED_NETWORK = "multix.selectedNetwork"
 
 type NetworkContextProps = {
   children: React.ReactNode | React.ReactNode[]
-}
-
-export interface NetworkInfo {
-  rpcUrl: string
-  httpGraphqlUrl: string
-  wsGraphqlUrl: string
-  logo: string
 }
 
 export interface IToastContext {
@@ -32,7 +25,10 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const selectNetwork = useCallback((network: string) => {
     const newSelectedNetwork = isSupportedNetwork(network)
 
-    if (!newSelectedNetwork) return
+    if (!newSelectedNetwork) {
+      console.error('This network is not supported', network)
+      return
+    }
 
     setSelectedNetworkInfo(networkList[network])
     setSelectedNetwork(network)
@@ -44,14 +40,16 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
     if (!selectedNetwork) {
       const networkParam = searchParams.get("network")
 
+      // connect to the node set in the query string
       if (!!networkParam) {
         selectNetwork(networkParam)
         return
       }
 
+      // connect the the previously selected network
       const previouslysSelectedNetwork = localStorage.getItem(LOCALSTORAGE_SELECTED_NETWORK)
       if (!!previouslysSelectedNetwork && previouslysSelectedNetwork.includes(networkParam as SupportedNetworks)) {
-        selectNetwork(networkParam as SupportedNetworks)
+        selectNetwork(previouslysSelectedNetwork as SupportedNetworks)
         return
       }
 
