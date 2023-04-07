@@ -9,7 +9,7 @@ import { getDifference, getIntersection } from "../../utils";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { ISanitizedCall, parseGenericCall } from "../../utils/decode";
 import { GenericCall } from '@polkadot/types';
-import { AnyJson } from '@polkadot/types/types';
+import { AnyJson, AnyTuple } from '@polkadot/types/types';
 import FlareIcon from '@mui/icons-material/Flare';
 import Transaction from "./Transaction";
 
@@ -89,7 +89,13 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
 
   const { name, hash, callData } = info
 
-  const call = !!callData && !!hash && ext.registry.createType('Call', callData)
+  let call: false | GenericCall<AnyTuple> = false
+  try {
+    call = !!callData && !!hash && ext.registry.createType('Call', callData)
+  } catch (error) {
+    console.error("Error in TransactionList")
+    console.error(error)
+  }
 
   return {
     callData,

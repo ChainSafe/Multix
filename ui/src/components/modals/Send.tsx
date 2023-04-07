@@ -79,15 +79,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
     let tx: SubmittableExtrinsic<"promise">
 
-    // the proxy is selected
-    if (selectedOrigin.meta?.isProxy) {
-      tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
-      // a multisig is selected
-    } else {
-      tx = extrinsicToCall
-    }
+    try {
+      // the proxy is selected
+      if (selectedOrigin.meta?.isProxy) {
+        tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
+        // a multisig is selected
+      } else {
+        tx = extrinsicToCall
+      }
 
-    return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, 0)
+      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, 0)
+    } catch (e) {
+      console.error('Error in multisigTx')
+      console.error(e)
+    }
   }, [api, extrinsicToCall, isApiReady, selectedAccount, selectedMultisig, selectedOrigin, threshold])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories: selectedMultisig?.signatories, call: multisigTx })
