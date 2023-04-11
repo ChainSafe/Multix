@@ -31,7 +31,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
 
   return <ul className="params">
     {Object.entries(args).map(([key, value]) => {
-      const destAddress = value.Id
+      const destAddress = value?.Id
 
       // show nice dest
       if ((
