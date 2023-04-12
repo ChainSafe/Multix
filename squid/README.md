@@ -240,7 +240,7 @@ frame types.
 ## Environment variables
 
 The following environment variables are expected. You can copy `.env.example` into `.env`
-```
+```bash
 DB_PORT=5432
 GQL_PORT=4350
 SQD_DEBUG=sqd:processor:mapping
