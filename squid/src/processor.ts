@@ -8,128 +8,128 @@ import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNew
 import { Env } from './util/Env'
 
 export const dataEvent = {
-    data: {
-        event: {
-            args: true,
-        }
+  data: {
+    event: {
+      args: true,
     }
+  }
 } as const
 
 export const dataCall = {
-    data: {
-        call: {
-            args: true,
-            origin: true,
-        },
+  data: {
+    call: {
+      args: true,
+      origin: true,
     },
+  },
 } as const
 
 
 const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
 export const env = new Env().getEnv()
 const processor = new SubstrateBatchProcessor()
-    .setDataSource({
-        archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, { release: 'FireSquid' }),
-        chain: env.rpcWs,
-    })
-    .setBlockRange({
-        from: Number(env.blockstart),
-    })
-    // .addCall('Proxy.add_proxy', dataCall)
-    // .addCall('Proxy.remove_proxy', dataCall)
-    // .addCall('Proxy.remove_proxies', dataCall)
-    .addCall('Proxy.proxy', dataCall)
-    .addCall('Multisig.as_multi', dataCall)
-    .addCall('Multisig.approve_as_multi', dataCall)
-    .addCall('Multisig.cancel_as_multi', dataCall)
-    .addCall('Multisig.as_multi_threshold_1', dataCall)
-    .addEvent('Proxy.PureCreated', dataEvent)
-    .addEvent('Proxy.ProxyAdded', dataEvent)
-    .addEvent('Proxy.ProxyRemoved', dataEvent)
+  .setDataSource({
+    archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, { release: 'FireSquid' }),
+    chain: env.rpcWs,
+  })
+  .setBlockRange({
+    from: Number(env.blockstart),
+  })
+  // .addCall('Proxy.add_proxy', dataCall)
+  // .addCall('Proxy.remove_proxy', dataCall)
+  // .addCall('Proxy.remove_proxies', dataCall)
+  .addCall('Proxy.proxy', dataCall)
+  .addCall('Multisig.as_multi', dataCall)
+  .addCall('Multisig.approve_as_multi', dataCall)
+  .addCall('Multisig.cancel_as_multi', dataCall)
+  .addCall('Multisig.as_multi_threshold_1', dataCall)
+  .addEvent('Proxy.PureCreated', dataEvent)
+  .addEvent('Proxy.ProxyAdded', dataEvent)
+  .addEvent('Proxy.ProxyRemoved', dataEvent)
 
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
 processor.run(new TypeormDatabase(), async (ctx) => {
-    const newMultisigsInfo: NewMultisigsInfo[] = []
-    const newPureProxies: Map<string, NewPureProxy> = new Map()
-    const newMultisigCalls: MultisigCallInfo[] = []
-    const newProxies: Map<string, NewProxy> = new Map()
-    const proxyRemovalIds: Set<string> = new Set()
+  const newMultisigsInfo: NewMultisigsInfo[] = []
+  const newPureProxies: Map<string, NewPureProxy> = new Map()
+  const newMultisigCalls: MultisigCallInfo[] = []
+  const newProxies: Map<string, NewProxy> = new Map()
+  const proxyRemovalIds: Set<string> = new Set()
 
-    for (const block of ctx.blocks) {
-        const { items } = block
+  for (const block of ctx.blocks) {
+    const { items } = block
 
-        for (const item of items) {
-            if (supportedMultisigCalls.includes(item.name)) {
-                const callItem = item as CallItem<"*", true>
+    for (const item of items) {
+      if (supportedMultisigCalls.includes(item.name)) {
+        const callItem = item as CallItem<"*", true>
 
-                if (!callItem.call.success || !callItem.call.origin) continue
+        if (!callItem.call.success || !callItem.call.origin) continue
 
-                const signer = getOriginAccountId(callItem.call.origin)
-                const callArgs = callItem.call.args;
+        const signer = getOriginAccountId(callItem.call.origin)
+        const callArgs = callItem.call.args;
 
-                const { otherSignatories, threshold } = handleMultisigCall(callArgs)
-                const signatories = [signer, ...otherSignatories]
-                const timestamp = new Date(block.header.timestamp)
+        const { otherSignatories, threshold } = handleMultisigCall(callArgs)
+        const signatories = [signer, ...otherSignatories]
+        const timestamp = new Date(block.header.timestamp)
 
-                const newMulti = {
-                    id: getMultisigAddress(signatories, threshold),
-                    threshold,
-                    newSignatories: signatories,
-                    createdAt: timestamp,
-                    isMultisig: true,
-                    isPureProxy: false,
-                } as NewMultisigsInfo
+        const newMulti = {
+          id: getMultisigAddress(signatories, threshold),
+          threshold,
+          newSignatories: signatories,
+          createdAt: timestamp,
+          isMultisig: true,
+          isPureProxy: false,
+        } as NewMultisigsInfo
 
-                newMultisigsInfo.push(newMulti)
-                const blockNumber = block.header.height
-                const blockHash = block.header.hash
+        newMultisigsInfo.push(newMulti)
+        const blockNumber = block.header.height
+        const blockHash = block.header.hash
 
-                newMultisigCalls.push({
-                    id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock),
-                    blockHash,
-                    callIndex: callItem.extrinsic.indexInBlock,
-                    multisigAddress: newMulti.id,
-                    timestamp
-                })
-            }
+        newMultisigCalls.push({
+          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock),
+          blockHash,
+          callIndex: callItem.extrinsic.indexInBlock,
+          multisigAddress: newMulti.id,
+          timestamp
+        })
+      }
 
-            if (item.name === ("Proxy.PureCreated")) {
-                const newPureProxy = getPureProxyInfoFromArgs(item)
-                // ctx.log.info(`pure ${newPureProxy.pure}`)
-                // ctx.log.info(`who ${newPureProxy.who}`)
+      if (item.name === ("Proxy.PureCreated")) {
+        const newPureProxy = getPureProxyInfoFromArgs(item)
+        // ctx.log.info(`pure ${newPureProxy.pure}`)
+        // ctx.log.info(`who ${newPureProxy.who}`)
 
-                newPureProxies.set(newPureProxy.id, newPureProxy)
-            }
+        newPureProxies.set(newPureProxy.id, newPureProxy)
+      }
 
-            if (item.name === ("Proxy.ProxyAdded")) {
-                const newProxy = getProxyInfoFromArgs(item)
-                // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
-                // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-                newProxies.set(newProxy.id, newProxy)
-            }
+      if (item.name === ("Proxy.ProxyAdded")) {
+        const newProxy = getProxyInfoFromArgs(item)
+        // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
+        // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
+        newProxies.set(newProxy.id, newProxy)
+      }
 
-            if (item.name === ("Proxy.ProxyRemoved")) {
-                const proxyRemoval = getProxyInfoFromArgs(item)
-                // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
-                // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
-                if (newProxies.has(proxyRemoval.id)) {
-                    newProxies.delete(proxyRemoval.id)
-                    // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
-                } else {
-                    proxyRemovalIds.add(proxyRemoval.id)
-                    // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
-                }
-            }
+      if (item.name === ("Proxy.ProxyRemoved")) {
+        const proxyRemoval = getProxyInfoFromArgs(item)
+        // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
+        // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
+        if (newProxies.has(proxyRemoval.id)) {
+          newProxies.delete(proxyRemoval.id)
+          // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
+        } else {
+          proxyRemovalIds.add(proxyRemoval.id)
+          // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
         }
+      }
     }
+  }
 
-    newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
-    newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
-    newPureProxies.size && await handleNewPureProxies(ctx, Array.from(newPureProxies.values()))
-    newProxies.size && await handleNewProxies(ctx, Array.from(newProxies.values()))
-    proxyRemovalIds.size && await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values()))
+  newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
+  newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
+  newPureProxies.size && await handleNewPureProxies(ctx, Array.from(newPureProxies.values()))
+  newProxies.size && await handleNewProxies(ctx, Array.from(newProxies.values()))
+  proxyRemovalIds.size && await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values()))
 })
 
 /**
@@ -247,116 +247,3 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     }
 }
  */
-
-// Proxy.PureCreated {
-//     "kind": "event",
-//     "name": "Proxy.PureCreated",
-//     "event": {
-//         "args": {
-//             "disambiguationIndex": 0,
-//             "proxyType": {
-//                 "__kind": "Any"
-//             },
-//             "pure": "0xea08f32cb2ccf56886b34e23f7b7213c850c3f311850af25d17d02d05d4557ef",
-//             "who": "0x9850efab0d23dcce9ad43220d0aa51e8aaeca9e186b105b34d83e782d8dd2f23"
-//         },
-//         "id": "0003251448-000038-6a873",
-//         "name": "Proxy.PureCreated",
-//         "pos": 42,
-//         "extrinsic": {
-//             "hash": "0x5321388ae86726199e5670a53c187e4fc5942630c602130131ebd2514be81775",
-//             "id": "0003251448-000002-6a873",
-//             "pos": 46,
-//             "fee": "42350839"
-//         }
-//     }
-// }
-
-// async function processRmrkEvents(ctx: Ctx, rmrkEvents: RmrkEvent[]) {
-//     let accountIds = new Set<string>()
-//     let nftIds = new Set<string>()
-//     for (let e of rmrkEvents) {
-//         switch (e.type) {
-//             case 'TRANSFER':
-//                 if (e.data.newOwner) accountIds.add(e.data.newOwner)
-//                 if (e.data.newParent) nftIds.add(e.data.newParent)
-//                 nftIds.add(e.data.id)
-//                 break
-//             case 'MINT':
-//                 accountIds.add(e.data.owner)
-//                 if (e.data.parent) accountIds.add(e.data.parent)
-//                 break
-//         }
-//     }
-
-//     let accounts = await ctx.store
-//         .findBy(Account, { id: In([...accountIds]) })
-//         .then((q) => new Map(q.map((i) => [i.id, i])))
-//     let nfts = await ctx.store.findBy(RmrkNFT, { id: In([...nftIds]) }).then((q) => new Map(q.map((i) => [i.id, i])))
-
-//     let burnedNfts: string[] = []
-
-//     for (let e of rmrkEvents) {
-//         switch (e.type) {
-//             case 'TRANSFER': {
-//                 let nft = getNft(nfts, e.data.id)
-//                 if (!nft) continue
-
-//                 if (e.data.newOwner) {
-//                     let owner = getAccount(accounts, e.data.newOwner)
-//                     nft.owner = owner
-//                 }
-
-//                 if (e.data.newParent) {
-//                     let parent = getNft(nfts, e.data.newParent)
-//                     nft.parent = parent
-//                 }
-//                 break
-//             }
-//             case 'MINT': {
-//                 let { owner: ownerId, parent: parentId, ...nftData } = e.data
-//                 let nft = new RmrkNFT({
-//                     ...nftData,
-//                 })
-//                 nfts.set(nft.id, nft)
-
-//                 let owner = getAccount(accounts, ownerId)
-//                 nft.owner = owner
-
-//                 if (parentId) {
-//                     let parent = getNft(nfts, parentId)
-//                     nft.owner = owner
-//                 }
-//                 break
-//             }
-//             case 'BURN': {
-//                 burnedNfts.push(e.data.id)
-//                 break
-//             }
-//         }
-//     }
-
-//     await ctx.store.save([...accounts.values()])
-//     await ctx.store.save([...nfts.values()])
-
-//     if (burnedNfts.length > 0) {
-//         const childNfts = await ctx.store.find(RmrkNFT, {
-//             where: { parent: { id: In(burnedNfts) } },
-//             relations: { parent: true },
-//         })
-//         childNfts.forEach((n) => (n.parent = null))
-//         await ctx.store.save(childNfts)
-//         await ctx.store.remove(RmrkNFT, burnedNfts)
-//     }
-// }
-
-// function getAccount(m: Map<string, Account>, id: string): Account {
-//     let acc = m.get(id)
-//     if (acc == null) {
-//         acc = new Account()
-//         acc.id = id
-//         m.set(id, acc)
-//     }
-//     return acc
-// }
-
