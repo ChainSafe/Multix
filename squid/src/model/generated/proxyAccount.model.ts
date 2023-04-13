@@ -24,4 +24,7 @@ export class ProxyAccount {
 
     @Column_("int4", {nullable: false})
     delay!: number
+
+    @Column_("timestamp with time zone", {nullable: false})
+    createdAt!: Date
 }

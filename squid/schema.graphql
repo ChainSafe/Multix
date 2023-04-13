@@ -9,7 +9,6 @@ type Account @entity {
   isMultisig: Boolean
   signatories: [AccountMultisig!] @derivedFrom(field: "multisig")
   threshold: Int
-  createdAt: DateTime
   multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
 }
 
@@ -35,6 +34,7 @@ type ProxyAccount @entity {
   delegatee: Account!
   type: ProxyType!
   delay: Int!
+  createdAt: DateTime!
 }
 
 enum ProxyType {
