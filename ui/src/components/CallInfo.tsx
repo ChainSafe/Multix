@@ -90,7 +90,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
 
   return <div className={className}>
     <h4 className="callName">{name}</h4>
-    {args && <Expander
+    {args && Object.keys(args).length > 0 && <Expander
       expanded={expanded}
       title="Params"
       content={createUlTree({ name, args, decimals, unit })}

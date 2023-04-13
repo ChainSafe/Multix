@@ -208,11 +208,8 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
 
 
     if (!callable || !palletRpc || !areAllParamsFilled) {
-      console.log('Nope <-- areAllParamsFilled', areAllParamsFilled)
       return
     }
-
-    console.log('--> gogo areAllParamsFilled', areAllParamsFilled)
 
     try {
       const extrinsic = transformedParams
