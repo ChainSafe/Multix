@@ -1,6 +1,6 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
-import { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { ICON_SIZE, ICON_THEME } from "../constants";
@@ -22,9 +22,9 @@ const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
 
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   const { selectAccount, selectedAccount, accountList } = useAccounts()
-  const signersList = useMemo(() =>
-    accountList?.filter((account) => possibleSigners.includes(account.address)) || []
-    , [accountList, possibleSigners])
+  const signersList = useMemo(() => {
+    return accountList?.filter((account) => possibleSigners.includes(account.address)) || []
+  }, [accountList, possibleSigners])
 
   useEffect(() => {
     if (!selectedAccount || signersList.length === 0) {

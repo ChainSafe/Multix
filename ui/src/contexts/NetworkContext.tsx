@@ -41,7 +41,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
       const networkParam = searchParams.get("network")
 
       // connect to the node set in the query string
-      if (!!networkParam) {
+      if (networkParam) {
         selectNetwork(networkParam)
         return
       }

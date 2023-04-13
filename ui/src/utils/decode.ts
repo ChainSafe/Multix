@@ -38,10 +38,10 @@ export interface IFrameMethod {
 }
 
 export function isFrameMethod(thing: unknown): thing is IFrameMethod {
-    return (
-        typeof (thing as IFrameMethod).pallet === 'string' &&
+  return (
+    typeof (thing as IFrameMethod).pallet === 'string' &&
         typeof (thing as IFrameMethod).method === 'string'
-    );
+  );
 }
 
 /**
@@ -51,16 +51,16 @@ export function isFrameMethod(thing: unknown): thing is IFrameMethod {
      * @param registry type registry of the block the call belongs to
      */
 export function parseArrayGenericCalls(
-    argsArray: Codec[],
-    registry: Registry
+  argsArray: Codec[],
+  registry: Registry
 ): (Codec | ISanitizedCall)[] {
-    return argsArray.map((argument) => {
-        if (argument instanceof GenericCall) {
-            return parseGenericCall(argument as GenericCall, registry);
-        }
+  return argsArray.map((argument) => {
+    if (argument instanceof GenericCall) {
+      return parseGenericCall(argument as GenericCall, registry);
+    }
 
-        return argument;
-    });
+    return argument;
+  });
 }
 
 /**
@@ -72,58 +72,58 @@ export function parseArrayGenericCalls(
  * @param registry type registry of the block the call belongs to
  */
 export function parseGenericCall(
-    genericCall: GenericCall,
-    registry: Registry
+  genericCall: GenericCall,
+  registry: Registry
 ): ISanitizedCall {
-    const newArgs: any = {};
+  const newArgs: any = {};
 
-    // Pull out the struct of arguments to this call
-    const callArgs = genericCall.get('args') as Struct;
+  // Pull out the struct of arguments to this call
+  const callArgs = genericCall.get('args') as Struct;
 
-    // Make sure callArgs exists and we can access its keys
-    if (callArgs && callArgs.defKeys) {
-        // paramName is a string
-        for (const paramName of callArgs.defKeys) {
-            const argument = callArgs.get(paramName);
+  // Make sure callArgs exists and we can access its keys
+  if (callArgs && callArgs.defKeys) {
+    // paramName is a string
+    for (const paramName of callArgs.defKeys) {
+      const argument = callArgs.get(paramName);
 
-            if (Array.isArray(argument)) {
-                newArgs[paramName] = parseArrayGenericCalls(argument, registry);
-            } else if (argument instanceof GenericCall) {
-                // console.log("callData", argument.toHex())
-                // console.log('argument.toHuman', argument.toHuman())
-                newArgs["callData"] = argument.toHex()
-                newArgs[paramName] = parseGenericCall(
+      if (Array.isArray(argument)) {
+        newArgs[paramName] = parseArrayGenericCalls(argument, registry);
+      } else if (argument instanceof GenericCall) {
+        // console.log("callData", argument.toHex())
+        // console.log('argument.toHuman', argument.toHuman())
+        newArgs["callData"] = argument.toHex()
+        newArgs[paramName] = parseGenericCall(
                     argument as GenericCall,
                     registry
-                );
-            } else if (
-                argument &&
+        );
+      } else if (
+        argument &&
                 paramName === 'call' &&
                 ['Bytes', 'WrapperKeepOpaque<Call>', 'WrapperOpaque<Call>'].includes(
-                    argument?.toRawType()
+                  argument?.toRawType()
                 )
-            ) {
-                // multiSig.asMulti.args.call is either an OpaqueCall (Vec<u8>),
-                // WrapperKeepOpaque<Call>, or WrapperOpaque<Call> that we
-                // serialize to a polkadot-js Call and parse so it is not a hex blob.
-                try {
-                    const call = registry.createType('Call', argument.toHex());
-                    newArgs[paramName] = parseGenericCall(call, registry);
-                } catch {
-                    newArgs[paramName] = argument;
-                }
-            } else {
-                newArgs[paramName] = argument;
-            }
+      ) {
+        // multiSig.asMulti.args.call is either an OpaqueCall (Vec<u8>),
+        // WrapperKeepOpaque<Call>, or WrapperOpaque<Call> that we
+        // serialize to a polkadot-js Call and parse so it is not a hex blob.
+        try {
+          const call = registry.createType('Call', argument.toHex());
+          newArgs[paramName] = parseGenericCall(call, registry);
+        } catch {
+          newArgs[paramName] = argument;
         }
+      } else {
+        newArgs[paramName] = argument;
+      }
     }
+  }
 
-    return {
-        method: {
-            pallet: genericCall.section,
-            method: genericCall.method,
-        },
-        args: newArgs,
-        hash: genericCall.hash.toHex(),
-    };
+  return {
+    method: {
+      pallet: genericCall.section,
+      method: genericCall.method,
+    },
+    args: newArgs,
+    hash: genericCall.hash.toHex(),
+  };
 }

@@ -2,7 +2,7 @@ import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from
 import styled from "styled-components";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useApi } from "../../contexts/ApiContext";
 import paramConversion from "../../utils/paramConversion";
 
@@ -190,7 +190,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
 
       return initFormState
     })
-  }, [])
+  }, [onSetErrorMessage])
 
   const onParamChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, { ind, paramField }: { ind: number, paramField: ParamField }) => {
     onSetErrorMessage("")
@@ -199,7 +199,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
       inputParams[ind] = { type: paramField.type, value: event.target.value }
       return { ...formState, inputParams }
     })
-  }, [])
+  }, [onSetErrorMessage])
 
   useEffect(() => {
     if (!isApiReady || !api) {
@@ -215,7 +215,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     console.log('--> gogo areAllParamsFilled', areAllParamsFilled)
 
     try {
-      const extrinsic = !!transformedParams
+      const extrinsic = transformedParams
         ? api.tx[palletRpc][callable](...transformedParams)
         : api.tx[palletRpc][callable]()
 

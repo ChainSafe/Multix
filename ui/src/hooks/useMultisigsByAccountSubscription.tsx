@@ -11,66 +11,66 @@ interface Args {
 }
 
 export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) => {
-    const { selectedNetworkInfo, selectedNetwork } = useNetwork()
-    const client = useMemo(() => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || "" }), [selectedNetworkInfo?.wsGraphqlUrl]);
+  const { selectedNetworkInfo, selectedNetwork } = useNetwork()
+  const client = useMemo(() => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || "" }), [selectedNetworkInfo?.wsGraphqlUrl]);
 
-    /**
+  /**
      * @see https://github.com/enisdenjo/graphql-ws#observable
      */
-    function fromWsClientSubscription<TData = Record<string, unknown>>(
-        client: Client,
-        payload: SubscribePayload
-    ) {
-        return new Observable<TData | null>((observer) =>
-            client.subscribe<TData>(payload, {
-                next: (data) => {
-                    return observer.next(data.data)
-                },
-                error: (err) => {
-                    return observer.error(err)
-                },
-                complete: () => {
-                    return observer.complete()
-                },
-            })
-        );
-    }
-
-    const { isError, error, data, isLoading } = useSubscription(
-        [`KeyMultisigsByAccount-${accounts}-${selectedNetwork}`],
-        () => {
-            return fromWsClientSubscription<{ accounts: MultisigsByAccountsSubscription['accounts'] }>(client, {
-                query: MultisigsByAccountsDocument,
-                variables: {
-                    accounts,
-                },
-            })
+  function fromWsClientSubscription<TData = Record<string, unknown>>(
+    client: Client,
+    payload: SubscribePayload
+  ) {
+    return new Observable<TData | null>((observer) =>
+      client.subscribe<TData>(payload, {
+        next: (data) => {
+          return observer.next(data.data)
         },
-        {
-            onData(data) {
-                onUpdate(data);
-            },
-            onError(error) {
-                console.error('KeyMultisigsByAccount subscription error', error)
-            },
-            // options
-        }
+        error: (err) => {
+          return observer.error(err)
+        },
+        complete: () => {
+          return observer.complete()
+        },
+      })
     );
+  }
 
-    if (isError) {
+  const { isError, error, data, isLoading } = useSubscription(
+    [`KeyMultisigsByAccount-${accounts}-${selectedNetwork}`],
+    () => {
+      return fromWsClientSubscription<{ accounts: MultisigsByAccountsSubscription['accounts'] }>(client, {
+        query: MultisigsByAccountsDocument,
+        variables: {
+          accounts,
+        },
+      })
+    },
+    {
+      onData(data) {
+        onUpdate(data);
+      },
+      onError(error) {
         console.error('KeyMultisigsByAccount subscription error', error)
+      },
+      // options
     }
+  );
 
-    // if (isSubsriptionLoading) {
-    //     console.log('subscription loading', multisigs);
-    // }
+  if (isError) {
+    console.error('KeyMultisigsByAccount subscription error', error)
+  }
 
-    // console.log('status', status)
-    // if (isSuccess) {
-    //     console.log('is success', data)
-    // }
-    // console.log('subscription data', data)
-    //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
+  // if (isSubsriptionLoading) {
+  //     console.log('subscription loading', multisigs);
+  // }
 
-    return { data, isLoading, error }
+  // console.log('status', status)
+  // if (isSuccess) {
+  //     console.log('is success', data)
+  // }
+  // console.log('subscription data', data)
+  //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
+
+  return { data, isLoading, error }
 }

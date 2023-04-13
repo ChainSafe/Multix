@@ -49,7 +49,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const needCallData = useMemo(() =>
     // if we don't have the calldata and it's the last approval
     !!threshold && proposalData.info?.approvals.length === threshold - 1 && !proposalData.callData
-    , [proposalData, threshold])
+  , [proposalData, threshold])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)

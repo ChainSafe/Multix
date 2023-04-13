@@ -87,7 +87,7 @@ const Home = ({ className }: Props) => {
     )
   }
 
-  if (!!multisigQueryError) {
+  if (multisigQueryError) {
     return (
       <Grid
         className={className}
