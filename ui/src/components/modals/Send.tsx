@@ -47,13 +47,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
-  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo()
-    , [getMultisigAsAccountBaseInfo])
-
-  const threshold = useMemo(() => selectedOrigin.meta?.isMulti
-    ? getMultisigByAddress(selectedOrigin.address)?.threshold
-    : selectedMultisig?.threshold
-  , [getMultisigByAddress, selectedMultisig, selectedOrigin])
+  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
+  const threshold = useMemo(() => {
+    return selectedOrigin.meta?.isMulti
+      ? getMultisigByAddress(selectedOrigin.address)?.threshold
+      : selectedMultisig?.threshold
+  }, [getMultisigByAddress, selectedMultisig, selectedOrigin])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -120,19 +119,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       : setSelectedMultisig(selectedMultiProxy?.multisigs[0])
   }, [getMultisigByAddress, selectedMultiProxy])
 
-  const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => ({
-    "Send tokens": <BalancesTransfer
-      from={selectedOrigin.address}
-      onSetExtrinsic={setExtrinsicToCall}
-      onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-    />,
-    "Manual extrinsic": <ManualExtrinsic
-      from={selectedOrigin.address}
-      onSetExtrinsic={setExtrinsicToCall}
-      onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-    />
-  })
-  , [selectedOrigin])
+  const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => {
+    return ({
+      "Send tokens": <BalancesTransfer
+        from={selectedOrigin.address}
+        onSetExtrinsic={setExtrinsicToCall}
+        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+      />,
+      "Manual extrinsic": <ManualExtrinsic
+        from={selectedOrigin.address}
+        onSetExtrinsic={setExtrinsicToCall}
+        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+      />
+    })
+  }, [selectedOrigin])
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])
   const signCallback = useSigningCallback({ onSuccess, onSubmitting, onFinalized })
