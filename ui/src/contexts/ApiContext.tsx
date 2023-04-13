@@ -43,12 +43,12 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   useEffect(() => {
     if (!provider) return
 
-    console.log('---> connecting to', provider.endpoint)
+    // console.log('---> connecting to', provider.endpoint)
     setApiPromise(new ApiPromise({ provider, types }))
 
     return () => {
       setIsReady(false)
-      console.log('<---disconnecting')
+      // console.log('<---disconnecting')
       !!apiPromise && apiPromise.disconnect()
     }
 
