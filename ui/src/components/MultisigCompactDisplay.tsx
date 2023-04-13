@@ -36,7 +36,7 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
       return
     }
 
-    if (!!data?.accounts[0]) {
+    if (data?.accounts[0]) {
       // this is a query by id, so it should return just 1 account
       setSignatories(data.accounts[0].signatories.map(({ signatory }) => signatory.id))
       setThreshold(data.accounts[0].threshold)

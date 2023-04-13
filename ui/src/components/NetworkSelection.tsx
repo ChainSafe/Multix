@@ -16,7 +16,7 @@ const NetworkSelection = ({ className }: Props) => {
     networkList.local.wsGraphqlUrl
       ? Object.entries(networkList)
       : Object.entries(networkList).filter(([name]) => name !== "local")
-    , [])
+  , [])
 
   const handleNetworkSelection = useCallback((event: SelectChangeEvent<string>) => {
     selectNetwork(event.target.value)

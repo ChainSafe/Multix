@@ -98,7 +98,7 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
       </Box>
       {isBalanceError && balanceMin &&
         <BalanceWarning text={`The selected signer requires at least ${formatBnBalance(balanceMin, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })
-          }`} />
+        }`} />
       }
     </Box>
   )

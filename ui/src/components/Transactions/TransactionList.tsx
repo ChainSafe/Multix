@@ -47,11 +47,11 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
       // this is not a multisig call
       // try to dig deeper
     } else {
-      if (!!c.args.calls) {
+      if (c.args.calls) {
         for (const call of c.args.calls) {
           getCallResult(call)
         }
-      } else if (!!c.args.call) {
+      } else if (c.args.call) {
         getCallResult(c.args.call)
       }
     }

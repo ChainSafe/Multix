@@ -53,7 +53,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const threshold = useMemo(() => selectedOrigin.meta?.isMulti
     ? getMultisigByAddress(selectedOrigin.address)?.threshold
     : selectedMultisig?.threshold
-    , [getMultisigByAddress, selectedMultisig, selectedOrigin])
+  , [getMultisigByAddress, selectedMultisig, selectedOrigin])
   const [extrinsicToCall, setExtrinsicToCall] = useState<SubmittableExtrinsic<"promise", ISubmittableResult> | undefined>()
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -132,7 +132,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       onSetErrorMessage={setEasyOptionErrorMessageorMessage}
     />
   })
-    , [selectedOrigin])
+  , [selectedOrigin])
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])
   const signCallback = useSigningCallback({ onSuccess, onSubmitting, onFinalized })

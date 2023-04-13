@@ -4,9 +4,11 @@
     "es2021": true
   },
   "extends": [
-    "react-app",
     "prettier",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "eslint:recommended",
+    "react-app",
+    "plugin:@typescript-eslint/eslint-recommended",
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -21,7 +23,12 @@
   "plugins": [
     "react"
   ],
-  "rules": {},
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ]
+  },
   "overrides": [
     {
       "files": [
@@ -46,6 +53,8 @@
     }
   ],
   "ignorePatterns": [
-    "src/interfaces/**/*"
+    "src/interfaces/**/*",
+    "types-and-hooks.tsx",
+    "src/gql/**/*"
   ]
 }

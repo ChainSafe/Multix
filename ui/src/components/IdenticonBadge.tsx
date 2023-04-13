@@ -13,29 +13,29 @@ interface Props {
 
 export const IdenticonBadge = ({ className, badge, address }: Props) => {
 
-    const AccountIcon = () => <Identicon
-        value={address}
-        size={ICON_SIZE}
-        theme={ICON_THEME}
-        className="identicon"
-    />
+  const AccountIcon = () => <Identicon
+    value={address}
+    size={ICON_SIZE}
+    theme={ICON_THEME}
+    className="identicon"
+  />
 
-    const appliedClass = useMemo(() => badge === AccountBadge.PURE
-        ? "blue"
-        : "red", [badge])
+  const appliedClass = useMemo(() => badge === AccountBadge.PURE
+    ? "blue"
+    : "red", [badge])
 
-    if (!badge) {
-        return <AccountIcon />
-    }
+  if (!badge) {
+    return <AccountIcon />
+  }
 
-    return <Badge
-        className={`${className} ${appliedClass}`}
-        color="primary"
-        badgeContent={badge}
-        anchorOrigin={{ horizontal: "left", vertical: "top" }}
-    >
-        <AccountIcon />
-    </Badge>
+  return <Badge
+    className={`${className} ${appliedClass}`}
+    color="primary"
+    badgeContent={badge}
+    anchorOrigin={{ horizontal: "left", vertical: "top" }}
+  >
+    <AccountIcon />
+  </Badge>
 
 }
 

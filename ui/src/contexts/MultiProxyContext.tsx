@@ -55,7 +55,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         // one multisig could be a delegatee for multiple
         const pureProxyAddresses = account.delegateeFor.map((delegatee) => {
           // finding all the accounts that are pure proxy
-          if (!!delegatee.delegator?.isPureProxy) {
+          if (delegatee.delegator?.isPureProxy) {
             return delegatee.delegator.id
           }
 

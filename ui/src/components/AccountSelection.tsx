@@ -1,6 +1,6 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import Identicon from "@polkadot/react-identicon";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState, SyntheticEvent } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../contexts/AccountsContext";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
@@ -58,7 +58,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
     }
   }, [accountNames, selected])
 
-  const onChangeAutocomplete = useCallback((_: React.SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
+  const onChangeAutocomplete = useCallback((_: SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
     setErrorMessage("")
     setName("")
     const value = getOptionLabel(val)
@@ -80,7 +80,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
       return
     }
 
-    if (!!addSignatory) {
+    if (addSignatory) {
       name && addName(name, selected)
       addSignatory(selected)
       setSelected("")
@@ -130,7 +130,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
             InputProps={{
               ...params.InputProps,
               startAdornment: (
-                !!selected
+                selected
                   ? <InputAdornment position="start">
                     <Identicon
                       value={selected}

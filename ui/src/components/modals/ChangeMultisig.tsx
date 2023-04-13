@@ -165,7 +165,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   // the new multisig will remove the old one from the proxy list
   const onMakeSecondCall = useCallback(() => {
     // do not fire the second call if the first had an error
-    if (!!callError) {
+    if (callError) {
       console.error('the first call had an error')
       return
     }
@@ -306,7 +306,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             spacing={2}
           >
             <Box className="loader">
-              {!!callError
+              {callError
                 ? <ErrorOutlineIcon className="errorIcon" />
                 : <CircularProgress />
               }
