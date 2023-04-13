@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { AggregatedData } from "./Transactions/TransactionList";
 import { AnyJson } from "@polkadot/types/types";
 import { ReactNode, useMemo } from "react";
-import AccountDisplay from "./AccountDisplay";
 import { useApi } from "../contexts/ApiContext";
 import { isProxyCall } from "../utils/isProxyCall";
 import { formatBnBalance } from "../utils/formatBnBalance";
@@ -43,10 +42,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
       ) {
         return <li key={key}>
           {key}: {(
-            <MultisigCompactDisplay
-              className="accountDisplay"
-              address={destAddress}
-            />
+            <MultisigCompactDisplay address={destAddress} />
           )}
         </li>
       }
@@ -106,11 +102,6 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
 export default styled(CallInfo)(({ theme }) => `
   flex: 1;
   overflow: hidden;
-
-  .accountDisplay {
-    margin-top: 0.5rem;
-    margin-left: 0.5rem;
-  }
 
   .params {
     word-wrap: break-word;

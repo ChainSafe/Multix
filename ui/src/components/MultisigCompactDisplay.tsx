@@ -45,7 +45,7 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
   }, [data, error, isFetching])
 
   return <Box className={className}>
-    <AccountDisplay address={address} badge={badge} />
+    <AccountDisplay className={`${signatories.length > 0 ? "multisigAccount" : ""}`} address={address} badge={badge} />
     {signatories.length > 0 && (
       <Expander
         expanded={expanded}
@@ -72,7 +72,12 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 
 
 export default styled(MultisigCompactDisplay)(({ theme }) => `
-    .signatoryList {
-        list-style-type: none;
-    }
+  .multisigAccount {
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+  }
+
+  .signatoryList {
+      list-style-type: none;
+  }
 `)
