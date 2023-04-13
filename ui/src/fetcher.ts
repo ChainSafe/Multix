@@ -1,10 +1,12 @@
+
 export const fetchData = <TData, TVariables>(
     query: string,
     variables?: TVariables,
     options?: RequestInit['headers'],
+    url?: string,
 ): (() => Promise<TData>) => {
     return async () => {
-        const res = await fetch(import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER, {
+        const res = await fetch(url || import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

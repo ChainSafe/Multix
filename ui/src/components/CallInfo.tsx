@@ -7,6 +7,7 @@ import AccountDisplay from "./AccountDisplay";
 import { useApi } from "../contexts/ApiContext";
 import { isProxyCall } from "../utils/isProxyCall";
 import { formatBnBalance } from "../utils/formatBnBalance";
+import MultisigCompactDisplay from "./MultisigCompactDisplay";
 
 interface Props {
   aggregatedData: AggregatedData
@@ -22,6 +23,7 @@ interface CreateTreeParams {
   unit: string
   name?: string
 }
+
 const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
@@ -40,7 +42,12 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
       ) && typeof destAddress === "string"
       ) {
         return <li key={key}>
-          {key}: {<AccountDisplay address={destAddress} />}
+          {key}: {(
+            <MultisigCompactDisplay
+              className="accountDisplay"
+              address={destAddress}
+            />
+          )}
         </li>
       }
 
@@ -99,6 +106,11 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
 export default styled(CallInfo)(({ theme }) => `
   flex: 1;
   overflow: hidden;
+
+  .accountDisplay {
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+  }
 
   .params {
     word-wrap: break-word;

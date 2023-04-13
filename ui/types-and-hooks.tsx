@@ -1,5 +1,5 @@
-import { } from '@tanstack/react-query';
-// import { fetchData } from './src/fetcher';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { fetchData } from './src/fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -641,6 +641,13 @@ export type WhereIdInput = {
   id: Scalars['String'];
 };
 
+export type MultisigByIdQueryVariables = Exact<{
+  account: Scalars['String'];
+}>;
+
+
+export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, createdAt?: any | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
+
 export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
   multisigs?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
@@ -656,6 +663,32 @@ export type MultisigsByAccountsSubscriptionVariables = Exact<{
 export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
+export const MultisigByIdDocument = `
+    query MultisigById($account: String!) {
+  accounts(where: {id_eq: $account, isMultisig_eq: true}) {
+    signatories {
+      signatory {
+        id
+      }
+    }
+    threshold
+    createdAt
+    id
+  }
+}
+    `;
+export const useMultisigByIdQuery = <
+  TData = MultisigByIdQuery,
+  TError = unknown
+>(
+  variables: MultisigByIdQueryVariables,
+  options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
+) =>
+  useQuery<MultisigByIdQuery, TError, TData>(
+    ['MultisigById', variables],
+    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
+    options
+  );
 export const MultisigCallsByMultisigIdDocument = `
     subscription MultisigCallsByMultisigId($multisigs: [String!]) {
   multisigCalls(
