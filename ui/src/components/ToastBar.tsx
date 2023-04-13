@@ -22,7 +22,7 @@ const ToastBar = ({ toast }: Props) => {
     removeToast(id);
   }, [removeToast, id]);
 
-  return <Snackbar
+  return Boolean(toast) && ( <Snackbar
     open={true}
     anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
     autoHideDuration={toast.type === "error" ? null : 6000}
@@ -49,6 +49,7 @@ const ToastBar = ({ toast }: Props) => {
     }
 
   />
+ );
 }
 
 export default styled(ToastBar)(({ theme }) => `
