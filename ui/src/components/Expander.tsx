@@ -14,11 +14,11 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
   const [open, setOpen] = useState(expanded);
 
   return (
-    <Box
-      className={className}
-      onClick={() => setOpen(!open)}
-    >
-      <div className="titleWrapper">
+    <Box className={className}>
+      <div
+        onClick={() => setOpen(!open)}
+        className="titleWrapper"
+      >
         <KeyboardArrowRightIcon className={`${open ? "rotated" : ""} expanderIcon`} />
         {title}
       </div>
@@ -30,12 +30,12 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
 }
 
 export default styled(Expander)(({ theme }) => `
-cursor: pointer;
 display: flex;
 flex-direction: column;
 min-width: 0;
 
 .titleWrapper {
+  cursor: pointer;
   display: flex;
 }
 

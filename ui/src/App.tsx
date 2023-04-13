@@ -22,8 +22,8 @@ const App = () => {
     <MuiThemeProvider theme={theme}>
       <ToastContextProvider>
         <BrowserRouter>
-          <QueryClientProvider client={queryClient}>
-            <NetworkContextProvider>
+          <NetworkContextProvider>
+            <QueryClientProvider client={queryClient}>
               <ApiContextProvider>
                 <AccountContextProvider>
                   <AccountNamesContextProvider>
@@ -49,8 +49,8 @@ const App = () => {
                   </AccountNamesContextProvider>
                 </AccountContextProvider>
               </ApiContextProvider>
-            </NetworkContextProvider>
-          </QueryClientProvider>
+            </QueryClientProvider>
+          </NetworkContextProvider>
         </BrowserRouter>
       </ToastContextProvider>
     </MuiThemeProvider>

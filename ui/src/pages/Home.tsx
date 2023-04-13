@@ -247,10 +247,6 @@ export default styled(Home)(({ theme }) => `
     margin: 1rem 0 0 2rem;
   }
 
-  .expanderIcon {
-    align-self: flex-end;
-  }
-
   .threshold {
     background-color: ${theme.custom.background.backgroundColorLightGray};
   }

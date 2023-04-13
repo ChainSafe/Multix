@@ -28,6 +28,7 @@ To connect to your local indexer, you can rename `.env.example` into `.env` and 
 VITE_NETWORK_NAME="kusama" # for explorer links
 VITE_WS_PROVIDER="wss://kusama-rpc.polkadot.io" # to check live on-chain data
 VITE_GRAPHQL_WS_PROVIDER="http://localhost:4350/graphql" # for the indexer subscriptions
+VITE_GRAPHQL_HTTP_PROVIDER="http://localhost:4350/graphql" # for the indexer queries
 ```
 
 ## Hacky watch account

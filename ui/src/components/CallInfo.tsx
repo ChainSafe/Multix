@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { AggregatedData } from "./Transactions/TransactionList";
 import { AnyJson } from "@polkadot/types/types";
 import { ReactNode, useMemo } from "react";
-import AccountDisplay from "./AccountDisplay";
 import { useApi } from "../contexts/ApiContext";
 import { isProxyCall } from "../utils/isProxyCall";
 import { formatBnBalance } from "../utils/formatBnBalance";
+import MultisigCompactDisplay from "./MultisigCompactDisplay";
 
 interface Props {
   aggregatedData: AggregatedData
@@ -22,6 +22,7 @@ interface CreateTreeParams {
   unit: string
   name?: string
 }
+
 const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
@@ -40,7 +41,9 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
       ) && typeof destAddress === "string"
       ) {
         return <li key={key}>
-          {key}: {<AccountDisplay address={destAddress} />}
+          {key}: {(
+            <MultisigCompactDisplay address={destAddress} />
+          )}
         </li>
       }
 
