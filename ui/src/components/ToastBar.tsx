@@ -27,6 +27,7 @@ const ToastBar = ({ toast }: Props) => {
     anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
     autoHideDuration={toast.type === "error" ? null : 6000}
     onClose={handleClose}
+    stacked={true}
     key={id}
     action={
       <IconButton
