@@ -1,4 +1,4 @@
-import { chainsKusamaSVG } from "./logos/kusamaSVG"
+import { chainsKusamaSVG } from "./logos/kusamaSVG "
 import { localSVG } from "./logos/localSVG"
 import { chainsRococoSVG } from "./logos/rococoSVG"
 
@@ -7,11 +7,11 @@ export const ICON_SIZE = 40
 export const ICON_THEME = "polkadot"
 
 export interface NetworkInfo {
-    explorerNetworkName: string
-    rpcUrl: string
-    wsGraphqlUrl: string
-    httpGraphqlUrl: string
-    logo: string
+  explorerNetworkName: string
+  rpcUrl: string
+  wsGraphqlUrl: string
+  httpGraphqlUrl: string
+  logo: string
 }
 
 export const networkList = {
