@@ -42,6 +42,13 @@ const Header = ({ className }: Props) => {
                 >
                   New Multisig
                 </Button>
+                <Button
+                  component={Link}
+                  to="/about"
+                  className="buttonHeader"
+                >
+                  About
+                </Button>
               </Box>
               <MultiProxySelection />
             </>
