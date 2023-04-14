@@ -35,7 +35,7 @@ export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProx
   const whoAccounts = await getOrCreateAccounts(ctx, Array.from(dedupWho.values()))
 
   const proxyAccounts: ProxyAccount[] = []
-  for (let { id, who, pure, delay, type, createdAt } of newPureProxies) {
+  for (const { who, pure, delay, type, createdAt } of newPureProxies) {
     proxyAccounts.push(new ProxyAccount({
       id: getProxyAccountId(who, pure, ProxyType.Any, delay),
       delegator: pureProxiestoSave.find(({ id }) => pure === id),

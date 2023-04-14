@@ -27,7 +27,7 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
   accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
   const proxyAccounts: ProxyAccount[] = []
 
-  for (let { id, delegatee, delegator, delay, type, createdAt } of newProxies) {
+  for (const { id, delegatee, delegator, delay, type, createdAt } of newProxies) {
     proxyAccounts.push(new ProxyAccount({
       id,
       delegator: accountMap.get(delegator),

@@ -11,19 +11,19 @@ import * as v9380 from './v9380'
 import * as v9390 from './v9390'
 
 export class BalancesTransferKeepAliveCall {
-    private readonly _chain: Chain
-    private readonly call: Call
+  private readonly _chain: Chain
+  private readonly call: Call
 
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Balances.transfer_keep_alive')
-        this._chain = ctx._chain
-        this.call = call
-    }
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'Balances.transfer_keep_alive')
+    this._chain = ctx._chain
+    this.call = call
+  }
 
-    /**
+  /**
      * Same as the [`transfer`] call, but with a check that the transfer will not kill the
      * origin account.
      * 
@@ -31,11 +31,11 @@ export class BalancesTransferKeepAliveCall {
      * 
      * [`transfer`]: struct.Pallet.html#method.transfer
      */
-    get isV9190(): boolean {
-        return this._chain.getCallHash('Balances.transfer_keep_alive') === 'fc85bea9d0d171982f66e8a55667d58dc9a1612bcafe84309942bf47e23e3094'
-    }
+  get isV9190(): boolean {
+    return this._chain.getCallHash('Balances.transfer_keep_alive') === 'fc85bea9d0d171982f66e8a55667d58dc9a1612bcafe84309942bf47e23e3094'
+  }
 
-    /**
+  /**
      * Same as the [`transfer`] call, but with a check that the transfer will not kill the
      * origin account.
      * 
@@ -43,26 +43,26 @@ export class BalancesTransferKeepAliveCall {
      * 
      * [`transfer`]: struct.Pallet.html#method.transfer
      */
-    get asV9190(): {dest: v9190.MultiAddress, value: bigint} {
-        assert(this.isV9190)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9190(): {dest: v9190.MultiAddress, value: bigint} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
 }
 
 export class MultisigAsMultiCall {
-    private readonly _chain: Chain
-    private readonly call: Call
+  private readonly _chain: Chain
+  private readonly call: Call
 
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Multisig.as_multi')
-        this._chain = ctx._chain
-        this.call = call
-    }
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'Multisig.as_multi')
+    this._chain = ctx._chain
+    this.call = call
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -109,11 +109,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9190(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === '548dea53ff79fe99438cf591950a533c93f9772d03a3995ec72a80376fcae222'
-    }
+  get isV9190(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === '548dea53ff79fe99438cf591950a533c93f9772d03a3995ec72a80376fcae222'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -160,12 +160,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9190(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9190.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: bigint} {
-        assert(this.isV9190)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9190(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9190.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: bigint} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -212,11 +212,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9300(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === 'f62d383b8db5d9025f2e3e98181c8439346292d755afd9729e7168a703e7be01'
-    }
+  get isV9300(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === 'f62d383b8db5d9025f2e3e98181c8439346292d755afd9729e7168a703e7be01'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -263,12 +263,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9300(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9300.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: v9300.Weight} {
-        assert(this.isV9300)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9300(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9300.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: v9300.Weight} {
+    assert(this.isV9300)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -315,11 +315,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9310(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === 'ded979dbe1e8697c6866bef798b4dd1d67b2c3437e96d4e24219494b5bec1d35'
-    }
+  get isV9310(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === 'ded979dbe1e8697c6866bef798b4dd1d67b2c3437e96d4e24219494b5bec1d35'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -366,12 +366,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9310(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9310.Timepoint | undefined), call: v9310.Call, maxWeight: v9310.Weight} {
-        assert(this.isV9310)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9310(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9310.Timepoint | undefined), call: v9310.Call, maxWeight: v9310.Weight} {
+    assert(this.isV9310)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -418,11 +418,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9321(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === 'cc3fa1bb68095aa4de2a51f786ba1681bb29751ac234ef6a9013e249e5955a6d'
-    }
+  get isV9321(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === 'cc3fa1bb68095aa4de2a51f786ba1681bb29751ac234ef6a9013e249e5955a6d'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -469,12 +469,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9321(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9321.Timepoint | undefined), call: v9321.Call, maxWeight: v9321.Weight} {
-        assert(this.isV9321)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9321(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9321.Timepoint | undefined), call: v9321.Call, maxWeight: v9321.Weight} {
+    assert(this.isV9321)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -521,11 +521,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9370(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === '51c975fd45c5186a4e54e9dc6e12c4a4b90919a2567d8fe2e67d23ec0c008c3a'
-    }
+  get isV9370(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === '51c975fd45c5186a4e54e9dc6e12c4a4b90919a2567d8fe2e67d23ec0c008c3a'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -572,12 +572,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9370(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9370.Timepoint | undefined), call: v9370.Call, maxWeight: v9370.Weight} {
-        assert(this.isV9370)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9370(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9370.Timepoint | undefined), call: v9370.Call, maxWeight: v9370.Weight} {
+    assert(this.isV9370)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -624,11 +624,11 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get isV9380(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === '7c009af9e48123a6eb91f43f0b5986abb958c742b44c3f21ac620f76a1a85129'
-    }
+  get isV9380(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === '7c009af9e48123a6eb91f43f0b5986abb958c742b44c3f21ac620f76a1a85129'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -675,12 +675,12 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-    get asV9380(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9380.Timepoint | undefined), call: v9380.Call, maxWeight: v9380.Weight} {
-        assert(this.isV9380)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9380(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9380.Timepoint | undefined), call: v9380.Call, maxWeight: v9380.Weight} {
+    assert(this.isV9380)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -721,11 +721,11 @@ export class MultisigAsMultiCall {
      * - Storage: inserts one item, value size bounded by `MaxSignatories`, with a deposit
      *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
      */
-    get isV9390(): boolean {
-        return this._chain.getCallHash('Multisig.as_multi') === 'cdb8586f0e93afd7013d1259e2fce21938836e6bb850ecbf313e96f6760bfbd0'
-    }
+  get isV9390(): boolean {
+    return this._chain.getCallHash('Multisig.as_multi') === 'cdb8586f0e93afd7013d1259e2fce21938836e6bb850ecbf313e96f6760bfbd0'
+  }
 
-    /**
+  /**
      * Register approval for a dispatch to be made from a deterministic composite account if
      * approved by a total of `threshold - 1` of `other_signatories`.
      * 
@@ -766,26 +766,26 @@ export class MultisigAsMultiCall {
      * - Storage: inserts one item, value size bounded by `MaxSignatories`, with a deposit
      *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
      */
-    get asV9390(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9390.Timepoint | undefined), call: v9390.Call, maxWeight: v9390.Weight} {
-        assert(this.isV9390)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9390(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9390.Timepoint | undefined), call: v9390.Call, maxWeight: v9390.Weight} {
+    assert(this.isV9390)
+    return this._chain.decodeCall(this.call)
+  }
 }
 
 export class ProxyProxyCall {
-    private readonly _chain: Chain
-    private readonly call: Call
+  private readonly _chain: Chain
+  private readonly call: Call
 
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Proxy.proxy')
-        this._chain = ctx._chain
-        this.call = call
-    }
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'Proxy.proxy')
+    this._chain = ctx._chain
+    this.call = call
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -802,11 +802,11 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get isV9190(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === 'ef80badccca7004d3c5a5fd83a62e330020834a003b4d46c64cc07a717f627ae'
-    }
+  get isV9190(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === 'ef80badccca7004d3c5a5fd83a62e330020834a003b4d46c64cc07a717f627ae'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -823,12 +823,12 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get asV9190(): {real: Uint8Array, forceProxyType: (v9190.ProxyType | undefined), call: v9190.Call} {
-        assert(this.isV9190)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9190(): {real: Uint8Array, forceProxyType: (v9190.ProxyType | undefined), call: v9190.Call} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -845,11 +845,11 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get isV9220(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === 'feaaba600a76f2439bd8af3eb086d123d28db85876f92fef03470b4331ab90e9'
-    }
+  get isV9220(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === 'feaaba600a76f2439bd8af3eb086d123d28db85876f92fef03470b4331ab90e9'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -866,12 +866,12 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get asV9220(): {real: Uint8Array, forceProxyType: (v9220.ProxyType | undefined), call: v9220.Call} {
-        assert(this.isV9220)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9220(): {real: Uint8Array, forceProxyType: (v9220.ProxyType | undefined), call: v9220.Call} {
+    assert(this.isV9220)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -888,11 +888,11 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get isV9250(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === 'ab54f7f05c8ea977d7f8b245dcac1bba390b415b2ca2a19444832bc51b8f2fd1'
-    }
+  get isV9250(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === 'ab54f7f05c8ea977d7f8b245dcac1bba390b415b2ca2a19444832bc51b8f2fd1'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -909,12 +909,12 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-    get asV9250(): {real: Uint8Array, forceProxyType: (v9250.ProxyType | undefined), call: v9250.Call} {
-        assert(this.isV9250)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9250(): {real: Uint8Array, forceProxyType: (v9250.ProxyType | undefined), call: v9250.Call} {
+    assert(this.isV9250)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -927,11 +927,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9300(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === '2d1ae7806488b39099e0e818d7ae61f8492aad1a4807aaf8b7110ec9e80640b9'
-    }
+  get isV9300(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === '2d1ae7806488b39099e0e818d7ae61f8492aad1a4807aaf8b7110ec9e80640b9'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -944,12 +944,12 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9300(): {real: v9300.MultiAddress, forceProxyType: (v9300.ProxyType | undefined), call: v9300.Call} {
-        assert(this.isV9300)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9300(): {real: v9300.MultiAddress, forceProxyType: (v9300.ProxyType | undefined), call: v9300.Call} {
+    assert(this.isV9300)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -962,11 +962,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9310(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === '55c2cbd11f1c9c87a3ea2c2195feae17438eed62d864db2bcecfcadd586bbc10'
-    }
+  get isV9310(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === '55c2cbd11f1c9c87a3ea2c2195feae17438eed62d864db2bcecfcadd586bbc10'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -979,12 +979,12 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9310(): {real: v9310.MultiAddress, forceProxyType: (v9310.ProxyType | undefined), call: v9310.Call} {
-        assert(this.isV9310)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9310(): {real: v9310.MultiAddress, forceProxyType: (v9310.ProxyType | undefined), call: v9310.Call} {
+    assert(this.isV9310)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -997,11 +997,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9321(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === '22131f28cd8eb50178f14468a8766c54eca4cebda68c3eebce7253dc5b6ba409'
-    }
+  get isV9321(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === '22131f28cd8eb50178f14468a8766c54eca4cebda68c3eebce7253dc5b6ba409'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1014,12 +1014,12 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9321(): {real: v9321.MultiAddress, forceProxyType: (v9321.ProxyType | undefined), call: v9321.Call} {
-        assert(this.isV9321)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9321(): {real: v9321.MultiAddress, forceProxyType: (v9321.ProxyType | undefined), call: v9321.Call} {
+    assert(this.isV9321)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1032,11 +1032,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9370(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === 'dac19ae161c315ce148f95cb858b3b1c6cad03d7014bf1b8642115982588c188'
-    }
+  get isV9370(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === 'dac19ae161c315ce148f95cb858b3b1c6cad03d7014bf1b8642115982588c188'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1049,12 +1049,12 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9370(): {real: v9370.MultiAddress, forceProxyType: (v9370.ProxyType | undefined), call: v9370.Call} {
-        assert(this.isV9370)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9370(): {real: v9370.MultiAddress, forceProxyType: (v9370.ProxyType | undefined), call: v9370.Call} {
+    assert(this.isV9370)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1065,11 +1065,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9380(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === '75b07a768227037bef1829fb87d4b8387dff7ffb04c5e23398509e424743b031'
-    }
+  get isV9380(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === '75b07a768227037bef1829fb87d4b8387dff7ffb04c5e23398509e424743b031'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1080,12 +1080,12 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9380(): {real: v9380.MultiAddress, forceProxyType: (v9380.ProxyType | undefined), call: v9380.Call} {
-        assert(this.isV9380)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9380(): {real: v9380.MultiAddress, forceProxyType: (v9380.ProxyType | undefined), call: v9380.Call} {
+    assert(this.isV9380)
+    return this._chain.decodeCall(this.call)
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1096,11 +1096,11 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get isV9390(): boolean {
-        return this._chain.getCallHash('Proxy.proxy') === '1ece155cc5aa577959d0c9041a71de75df60a25f423f437c9d5a4a3d20de86d9'
-    }
+  get isV9390(): boolean {
+    return this._chain.getCallHash('Proxy.proxy') === '1ece155cc5aa577959d0c9041a71de75df60a25f423f437c9d5a4a3d20de86d9'
+  }
 
-    /**
+  /**
      * Dispatch the given `call` from an account that the sender is authorised for through
      * `add_proxy`.
      * 
@@ -1111,45 +1111,45 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-    get asV9390(): {real: v9390.MultiAddress, forceProxyType: (v9390.ProxyType | undefined), call: v9390.Call} {
-        assert(this.isV9390)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9390(): {real: v9390.MultiAddress, forceProxyType: (v9390.ProxyType | undefined), call: v9390.Call} {
+    assert(this.isV9390)
+    return this._chain.decodeCall(this.call)
+  }
 }
 
 export class SystemRemarkCall {
-    private readonly _chain: Chain
-    private readonly call: Call
+  private readonly _chain: Chain
+  private readonly call: Call
 
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'System.remark')
-        this._chain = ctx._chain
-        this.call = call
-    }
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'System.remark')
+    this._chain = ctx._chain
+    this.call = call
+  }
 
-    /**
+  /**
      * Make some on-chain remark.
      * 
      * # <weight>
      * - `O(1)`
      * # </weight>
      */
-    get isV9190(): boolean {
-        return this._chain.getCallHash('System.remark') === 'f4e9b5b7572eeae92978087ece9b4f57cb5cab4f16baf5625bb9ec4a432bad63'
-    }
+  get isV9190(): boolean {
+    return this._chain.getCallHash('System.remark') === 'f4e9b5b7572eeae92978087ece9b4f57cb5cab4f16baf5625bb9ec4a432bad63'
+  }
 
-    /**
+  /**
      * Make some on-chain remark.
      * 
      * # <weight>
      * - `O(1)`
      * # </weight>
      */
-    get asV9190(): {remark: Uint8Array} {
-        assert(this.isV9190)
-        return this._chain.decodeCall(this.call)
-    }
+  get asV9190(): {remark: Uint8Array} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
 }

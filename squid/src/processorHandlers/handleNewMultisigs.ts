@@ -10,7 +10,7 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
   const newMultisigs: Map<string, Account> = new Map()
   const newAccountMultisigs: Map<string, AccountMultisig> = new Map()
 
-  for (let { newSignatories, threshold, id, isMultisig, isPureProxy } of multisigs) {
+  for (const { newSignatories, threshold, id, isMultisig, isPureProxy } of multisigs) {
     const accounts = await getOrCreateAccounts(ctx, newSignatories)
 
     const newMultisig = new Account({

@@ -8,29 +8,29 @@ interface EnvValues {
 }
 
 export class Env {
-    env: EnvValues
+  env: EnvValues
 
-    constructor() {
-        this.env = {
-            blockstart: process.env.BLOCK_START || "",
-            prefix: Number(process.env.PREFIX) || 0,
-            rpcWs: process.env.RPC_WS || "",
-            archiveName: process.env.ARCHIVE_NAME || ""
-        }
-
-        this.checkForUndefined()
+  constructor() {
+    this.env = {
+      blockstart: process.env.BLOCK_START || "",
+      prefix: Number(process.env.PREFIX) || 0,
+      rpcWs: process.env.RPC_WS || "",
+      archiveName: process.env.ARCHIVE_NAME || ""
     }
 
-    checkForUndefined = () => {
-        Object.entries(this.env).forEach(([key, value]) => {
-            if (!value) {
-                console.error(`🟥 Invalid env variable for ${key}`)
-            }
-        })
-    }
+    this.checkForUndefined()
+  }
 
-    getEnv = () => {
-        return this.env
-    }
+  checkForUndefined = () => {
+    Object.entries(this.env).forEach(([key, value]) => {
+      if (!value) {
+        console.error(`🟥 Invalid env variable for ${key}`)
+      }
+    })
+  }
+
+  getEnv = () => {
+    return this.env
+  }
 
 }
