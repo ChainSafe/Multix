@@ -6,7 +6,6 @@ query MultisigById($account: String!){
       }
     }
     threshold
-    createdAt
     id
   }
 }
