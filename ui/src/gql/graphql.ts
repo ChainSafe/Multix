@@ -18,7 +18,6 @@ export type Scalars = {
 
 export type Account = {
   __typename?: 'Account';
-  createdAt?: Maybe<Scalars['DateTime']>;
   delegateeFor: Array<ProxyAccount>;
   delegatorFor: Array<ProxyAccount>;
   id: Scalars['String'];
@@ -92,8 +91,6 @@ export type AccountMultisigEdge = {
 export enum AccountMultisigOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  MultisigCreatedAtAsc = 'multisig_createdAt_ASC',
-  MultisigCreatedAtDesc = 'multisig_createdAt_DESC',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdDesc = 'multisig_id_DESC',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
@@ -102,8 +99,6 @@ export enum AccountMultisigOrderByInput {
   MultisigIsPureProxyDesc = 'multisig_isPureProxy_DESC',
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
-  SignatoryCreatedAtAsc = 'signatory_createdAt_ASC',
-  SignatoryCreatedAtDesc = 'signatory_createdAt_DESC',
   SignatoryIdAsc = 'signatory_id_ASC',
   SignatoryIdDesc = 'signatory_id_DESC',
   SignatoryIsMultisigAsc = 'signatory_isMultisig_ASC',
@@ -148,8 +143,6 @@ export type AccountMultisigsConnection = {
 };
 
 export enum AccountOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   IsMultisigAsc = 'isMultisig_ASC',
@@ -163,15 +156,6 @@ export enum AccountOrderByInput {
 export type AccountWhereInput = {
   AND?: InputMaybe<Array<AccountWhereInput>>;
   OR?: InputMaybe<Array<AccountWhereInput>>;
-  createdAt_eq?: InputMaybe<Scalars['DateTime']>;
-  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
-  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
-  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
-  createdAt_isNull?: InputMaybe<Scalars['Boolean']>;
-  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
-  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
-  createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
-  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
   delegateeFor_every?: InputMaybe<ProxyAccountWhereInput>;
   delegateeFor_none?: InputMaybe<ProxyAccountWhereInput>;
   delegateeFor_some?: InputMaybe<ProxyAccountWhereInput>;
@@ -250,8 +234,6 @@ export enum MultisigCallOrderByInput {
   CallIndexDesc = 'callIndex_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  MultisigCreatedAtAsc = 'multisig_createdAt_ASC',
-  MultisigCreatedAtDesc = 'multisig_createdAt_DESC',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdDesc = 'multisig_id_DESC',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
@@ -340,6 +322,7 @@ export type PageInfo = {
 
 export type ProxyAccount = {
   __typename?: 'ProxyAccount';
+  createdAt: Scalars['DateTime'];
   delay: Scalars['Int'];
   delegatee: Account;
   delegator: Account;
@@ -354,10 +337,10 @@ export type ProxyAccountEdge = {
 };
 
 export enum ProxyAccountOrderByInput {
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
   DelayAsc = 'delay_ASC',
   DelayDesc = 'delay_DESC',
-  DelegateeCreatedAtAsc = 'delegatee_createdAt_ASC',
-  DelegateeCreatedAtDesc = 'delegatee_createdAt_DESC',
   DelegateeIdAsc = 'delegatee_id_ASC',
   DelegateeIdDesc = 'delegatee_id_DESC',
   DelegateeIsMultisigAsc = 'delegatee_isMultisig_ASC',
@@ -366,8 +349,6 @@ export enum ProxyAccountOrderByInput {
   DelegateeIsPureProxyDesc = 'delegatee_isPureProxy_DESC',
   DelegateeThresholdAsc = 'delegatee_threshold_ASC',
   DelegateeThresholdDesc = 'delegatee_threshold_DESC',
-  DelegatorCreatedAtAsc = 'delegator_createdAt_ASC',
-  DelegatorCreatedAtDesc = 'delegator_createdAt_DESC',
   DelegatorIdAsc = 'delegator_id_ASC',
   DelegatorIdDesc = 'delegator_id_DESC',
   DelegatorIsMultisigAsc = 'delegator_isMultisig_ASC',
@@ -385,6 +366,15 @@ export enum ProxyAccountOrderByInput {
 export type ProxyAccountWhereInput = {
   AND?: InputMaybe<Array<ProxyAccountWhereInput>>;
   OR?: InputMaybe<Array<ProxyAccountWhereInput>>;
+  createdAt_eq?: InputMaybe<Scalars['DateTime']>;
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  createdAt_isNull?: InputMaybe<Scalars['Boolean']>;
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
   delay_eq?: InputMaybe<Scalars['Int']>;
   delay_gt?: InputMaybe<Scalars['Int']>;
   delay_gte?: InputMaybe<Scalars['Int']>;
@@ -647,7 +637,7 @@ export type MultisigByIdQueryVariables = Exact<{
 }>;
 
 
-export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, createdAt?: any | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
+export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
 
 export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
   multisigs?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -661,9 +651,9 @@ export type MultisigsByAccountsSubscriptionVariables = Exact<{
 }>;
 
 
-export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
+export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
-export const MultisigByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MultisigById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"account"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"account"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"isMultisig_eq"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<MultisigByIdQuery, MultisigByIdQueryVariables>;
+export const MultisigByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MultisigById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"account"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"account"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"isMultisig_eq"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<MultisigByIdQuery, MultisigByIdQueryVariables>;
 export const MultisigCallsByMultisigIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MultisigCallsByMultisigId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"multisigs"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"multisigCalls"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"10"}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"timestamp_DESC"}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"multisig"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"multisigs"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockHash"}},{"kind":"Field","name":{"kind":"Name","value":"callIndex"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}}]} as unknown as DocumentNode<MultisigCallsByMultisigIdSubscription, MultisigCallsByMultisigIdSubscriptionVariables>;
-export const MultisigsByAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MultisigsByAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accounts"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"AND"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"isMultisig_eq"},"value":{"kind":"BooleanValue","value":true}},{"kind":"ObjectField","name":{"kind":"Name","value":"signatories_some"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"signatory"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accounts"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"isMultisig"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"signatories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegateeFor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"delegator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegatee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MultisigsByAccountsSubscription, MultisigsByAccountsSubscriptionVariables>;
+export const MultisigsByAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"MultisigsByAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accounts"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"AND"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"isMultisig_eq"},"value":{"kind":"BooleanValue","value":true}},{"kind":"ObjectField","name":{"kind":"Name","value":"signatories_some"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"signatory"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accounts"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isMultisig"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"signatories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signatory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegateeFor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"delegator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegatee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isPureProxy"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MultisigsByAccountsSubscription, MultisigsByAccountsSubscriptionVariables>;
