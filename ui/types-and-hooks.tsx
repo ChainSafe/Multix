@@ -17,7 +17,6 @@ export type Scalars = {
 
 export type Account = {
   __typename?: 'Account';
-  createdAt?: Maybe<Scalars['DateTime']>;
   delegateeFor: Array<ProxyAccount>;
   delegatorFor: Array<ProxyAccount>;
   id: Scalars['String'];
@@ -91,8 +90,6 @@ export type AccountMultisigEdge = {
 export enum AccountMultisigOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  MultisigCreatedAtAsc = 'multisig_createdAt_ASC',
-  MultisigCreatedAtDesc = 'multisig_createdAt_DESC',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdDesc = 'multisig_id_DESC',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
@@ -101,8 +98,6 @@ export enum AccountMultisigOrderByInput {
   MultisigIsPureProxyDesc = 'multisig_isPureProxy_DESC',
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
-  SignatoryCreatedAtAsc = 'signatory_createdAt_ASC',
-  SignatoryCreatedAtDesc = 'signatory_createdAt_DESC',
   SignatoryIdAsc = 'signatory_id_ASC',
   SignatoryIdDesc = 'signatory_id_DESC',
   SignatoryIsMultisigAsc = 'signatory_isMultisig_ASC',
@@ -147,8 +142,6 @@ export type AccountMultisigsConnection = {
 };
 
 export enum AccountOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   IsMultisigAsc = 'isMultisig_ASC',
@@ -162,15 +155,6 @@ export enum AccountOrderByInput {
 export type AccountWhereInput = {
   AND?: InputMaybe<Array<AccountWhereInput>>;
   OR?: InputMaybe<Array<AccountWhereInput>>;
-  createdAt_eq?: InputMaybe<Scalars['DateTime']>;
-  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
-  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
-  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
-  createdAt_isNull?: InputMaybe<Scalars['Boolean']>;
-  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
-  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
-  createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
-  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
   delegateeFor_every?: InputMaybe<ProxyAccountWhereInput>;
   delegateeFor_none?: InputMaybe<ProxyAccountWhereInput>;
   delegateeFor_some?: InputMaybe<ProxyAccountWhereInput>;
@@ -249,8 +233,6 @@ export enum MultisigCallOrderByInput {
   CallIndexDesc = 'callIndex_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
-  MultisigCreatedAtAsc = 'multisig_createdAt_ASC',
-  MultisigCreatedAtDesc = 'multisig_createdAt_DESC',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdDesc = 'multisig_id_DESC',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
@@ -339,6 +321,7 @@ export type PageInfo = {
 
 export type ProxyAccount = {
   __typename?: 'ProxyAccount';
+  createdAt: Scalars['DateTime'];
   delay: Scalars['Int'];
   delegatee: Account;
   delegator: Account;
@@ -353,10 +336,10 @@ export type ProxyAccountEdge = {
 };
 
 export enum ProxyAccountOrderByInput {
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
   DelayAsc = 'delay_ASC',
   DelayDesc = 'delay_DESC',
-  DelegateeCreatedAtAsc = 'delegatee_createdAt_ASC',
-  DelegateeCreatedAtDesc = 'delegatee_createdAt_DESC',
   DelegateeIdAsc = 'delegatee_id_ASC',
   DelegateeIdDesc = 'delegatee_id_DESC',
   DelegateeIsMultisigAsc = 'delegatee_isMultisig_ASC',
@@ -365,8 +348,6 @@ export enum ProxyAccountOrderByInput {
   DelegateeIsPureProxyDesc = 'delegatee_isPureProxy_DESC',
   DelegateeThresholdAsc = 'delegatee_threshold_ASC',
   DelegateeThresholdDesc = 'delegatee_threshold_DESC',
-  DelegatorCreatedAtAsc = 'delegator_createdAt_ASC',
-  DelegatorCreatedAtDesc = 'delegator_createdAt_DESC',
   DelegatorIdAsc = 'delegator_id_ASC',
   DelegatorIdDesc = 'delegator_id_DESC',
   DelegatorIsMultisigAsc = 'delegator_isMultisig_ASC',
@@ -384,6 +365,15 @@ export enum ProxyAccountOrderByInput {
 export type ProxyAccountWhereInput = {
   AND?: InputMaybe<Array<ProxyAccountWhereInput>>;
   OR?: InputMaybe<Array<ProxyAccountWhereInput>>;
+  createdAt_eq?: InputMaybe<Scalars['DateTime']>;
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  createdAt_isNull?: InputMaybe<Scalars['Boolean']>;
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  createdAt_not_eq?: InputMaybe<Scalars['DateTime']>;
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
   delay_eq?: InputMaybe<Scalars['Int']>;
   delay_gt?: InputMaybe<Scalars['Int']>;
   delay_gte?: InputMaybe<Scalars['Int']>;
@@ -646,7 +636,7 @@ export type MultisigByIdQueryVariables = Exact<{
 }>;
 
 
-export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, createdAt?: any | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
+export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
 
 export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
   multisigs?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -660,7 +650,7 @@ export type MultisigsByAccountsSubscriptionVariables = Exact<{
 }>;
 
 
-export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, createdAt?: any | null, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
+export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
 
 
 export const MultisigByIdDocument = `
@@ -672,23 +662,22 @@ export const MultisigByIdDocument = `
       }
     }
     threshold
-    createdAt
     id
   }
 }
     `;
 export const useMultisigByIdQuery = <
-  TData = MultisigByIdQuery,
-  TError = unknown
->(
-  variables: MultisigByIdQueryVariables,
-  options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
-) =>
-  useQuery<MultisigByIdQuery, TError, TData>(
-    ['MultisigById', variables],
-    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
-    options
-  );
+      TData = MultisigByIdQuery,
+      TError = unknown
+    >(
+      variables: MultisigByIdQueryVariables,
+      options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
+    ) =>
+    useQuery<MultisigByIdQuery, TError, TData>(
+      ['MultisigById', variables],
+      fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
+      options
+    );
 export const MultisigCallsByMultisigIdDocument = `
     subscription MultisigCallsByMultisigId($multisigs: [String!]) {
   multisigCalls(
@@ -709,7 +698,6 @@ export const MultisigsByAccountsDocument = `
     where: {AND: {isMultisig_eq: true, signatories_some: {signatory: {id_in: $accounts}}}}
   ) {
     id
-    createdAt
     isMultisig
     isPureProxy
     threshold

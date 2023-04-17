@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
+import { Chain, ChainContext, CallContext, Call, Result, Option } from './support'
 import * as v9190 from './v9190'
 import * as v9220 from './v9220'
 import * as v9250 from './v9250'
@@ -43,7 +43,7 @@ export class BalancesTransferKeepAliveCall {
      * 
      * [`transfer`]: struct.Pallet.html#method.transfer
      */
-  get asV9190(): {dest: v9190.MultiAddress, value: bigint} {
+  get asV9190(): { dest: v9190.MultiAddress, value: bigint } {
     assert(this.isV9190)
     return this._chain.decodeCall(this.call)
   }
@@ -160,7 +160,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9190(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9190.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: bigint} {
+  get asV9190(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9190.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: bigint } {
     assert(this.isV9190)
     return this._chain.decodeCall(this.call)
   }
@@ -263,7 +263,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9300(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9300.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: v9300.Weight} {
+  get asV9300(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9300.Timepoint | undefined), call: Uint8Array, storeCall: boolean, maxWeight: v9300.Weight } {
     assert(this.isV9300)
     return this._chain.decodeCall(this.call)
   }
@@ -366,7 +366,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9310(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9310.Timepoint | undefined), call: v9310.Call, maxWeight: v9310.Weight} {
+  get asV9310(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9310.Timepoint | undefined), call: v9310.Call, maxWeight: v9310.Weight } {
     assert(this.isV9310)
     return this._chain.decodeCall(this.call)
   }
@@ -469,7 +469,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9321(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9321.Timepoint | undefined), call: v9321.Call, maxWeight: v9321.Weight} {
+  get asV9321(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9321.Timepoint | undefined), call: v9321.Call, maxWeight: v9321.Weight } {
     assert(this.isV9321)
     return this._chain.decodeCall(this.call)
   }
@@ -572,7 +572,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9370(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9370.Timepoint | undefined), call: v9370.Call, maxWeight: v9370.Weight} {
+  get asV9370(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9370.Timepoint | undefined), call: v9370.Call, maxWeight: v9370.Weight } {
     assert(this.isV9370)
     return this._chain.decodeCall(this.call)
   }
@@ -675,7 +675,7 @@ export class MultisigAsMultiCall {
      * - Plus Call Weight
      * # </weight>
      */
-  get asV9380(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9380.Timepoint | undefined), call: v9380.Call, maxWeight: v9380.Weight} {
+  get asV9380(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9380.Timepoint | undefined), call: v9380.Call, maxWeight: v9380.Weight } {
     assert(this.isV9380)
     return this._chain.decodeCall(this.call)
   }
@@ -766,7 +766,7 @@ export class MultisigAsMultiCall {
      * - Storage: inserts one item, value size bounded by `MaxSignatories`, with a deposit
      *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
      */
-  get asV9390(): {threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9390.Timepoint | undefined), call: v9390.Call, maxWeight: v9390.Weight} {
+  get asV9390(): { threshold: number, otherSignatories: Uint8Array[], maybeTimepoint: (v9390.Timepoint | undefined), call: v9390.Call, maxWeight: v9390.Weight } {
     assert(this.isV9390)
     return this._chain.decodeCall(this.call)
   }
@@ -823,7 +823,7 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-  get asV9190(): {real: Uint8Array, forceProxyType: (v9190.ProxyType | undefined), call: v9190.Call} {
+  get asV9190(): { real: Uint8Array, forceProxyType: (v9190.ProxyType | undefined), call: v9190.Call } {
     assert(this.isV9190)
     return this._chain.decodeCall(this.call)
   }
@@ -866,7 +866,7 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-  get asV9220(): {real: Uint8Array, forceProxyType: (v9220.ProxyType | undefined), call: v9220.Call} {
+  get asV9220(): { real: Uint8Array, forceProxyType: (v9220.ProxyType | undefined), call: v9220.Call } {
     assert(this.isV9220)
     return this._chain.decodeCall(this.call)
   }
@@ -909,7 +909,7 @@ export class ProxyProxyCall {
      * Weight is a function of the number of proxies the user has (P).
      * # </weight>
      */
-  get asV9250(): {real: Uint8Array, forceProxyType: (v9250.ProxyType | undefined), call: v9250.Call} {
+  get asV9250(): { real: Uint8Array, forceProxyType: (v9250.ProxyType | undefined), call: v9250.Call } {
     assert(this.isV9250)
     return this._chain.decodeCall(this.call)
   }
@@ -944,7 +944,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9300(): {real: v9300.MultiAddress, forceProxyType: (v9300.ProxyType | undefined), call: v9300.Call} {
+  get asV9300(): { real: v9300.MultiAddress, forceProxyType: (v9300.ProxyType | undefined), call: v9300.Call } {
     assert(this.isV9300)
     return this._chain.decodeCall(this.call)
   }
@@ -979,7 +979,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9310(): {real: v9310.MultiAddress, forceProxyType: (v9310.ProxyType | undefined), call: v9310.Call} {
+  get asV9310(): { real: v9310.MultiAddress, forceProxyType: (v9310.ProxyType | undefined), call: v9310.Call } {
     assert(this.isV9310)
     return this._chain.decodeCall(this.call)
   }
@@ -1014,7 +1014,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9321(): {real: v9321.MultiAddress, forceProxyType: (v9321.ProxyType | undefined), call: v9321.Call} {
+  get asV9321(): { real: v9321.MultiAddress, forceProxyType: (v9321.ProxyType | undefined), call: v9321.Call } {
     assert(this.isV9321)
     return this._chain.decodeCall(this.call)
   }
@@ -1049,7 +1049,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9370(): {real: v9370.MultiAddress, forceProxyType: (v9370.ProxyType | undefined), call: v9370.Call} {
+  get asV9370(): { real: v9370.MultiAddress, forceProxyType: (v9370.ProxyType | undefined), call: v9370.Call } {
     assert(this.isV9370)
     return this._chain.decodeCall(this.call)
   }
@@ -1080,7 +1080,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9380(): {real: v9380.MultiAddress, forceProxyType: (v9380.ProxyType | undefined), call: v9380.Call} {
+  get asV9380(): { real: v9380.MultiAddress, forceProxyType: (v9380.ProxyType | undefined), call: v9380.Call } {
     assert(this.isV9380)
     return this._chain.decodeCall(this.call)
   }
@@ -1111,7 +1111,7 @@ export class ProxyProxyCall {
      * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
      * - `call`: The call to be made by the `real` account.
      */
-  get asV9390(): {real: v9390.MultiAddress, forceProxyType: (v9390.ProxyType | undefined), call: v9390.Call} {
+  get asV9390(): { real: v9390.MultiAddress, forceProxyType: (v9390.ProxyType | undefined), call: v9390.Call } {
     assert(this.isV9390)
     return this._chain.decodeCall(this.call)
   }
@@ -1148,7 +1148,7 @@ export class SystemRemarkCall {
      * - `O(1)`
      * # </weight>
      */
-  get asV9190(): {remark: Uint8Array} {
+  get asV9190(): { remark: Uint8Array } {
     assert(this.isV9190)
     return this._chain.decodeCall(this.call)
   }
