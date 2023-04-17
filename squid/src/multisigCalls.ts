@@ -1,12 +1,5 @@
 import { decodeHex } from '@subsquid/substrate-processor'
-// import { MultisigEvent, MultisigInteraction } from './model'
 import { encodeId } from './util/accountEncoding'
-
-// export interface MultisigCreationRes {
-//     multisigEvent: MultisigEvent;
-//     signatories: string[];
-//     threshold: number;
-// }
 
 // "args": {
 //     "call": {
@@ -35,38 +28,11 @@ import { encodeId } from './util/accountEncoding'
 //     "threshold": 2
 // },
 
-// export async function handleProxyCreation(
-//     ctx: Ctx,
-//     signer: string,
-//     multisigArgs: any
-//     // block: BatchBlock<Item>,
-//     // multisigCallIndex: number
-// ): Promise<MultisigCreationRes | null> {
-//     // const blockNumber = block.header.height
-
-//     // const multisigItem = block.items[multisigCallIndex]
-//     // const multisigArgs = multisigItem.kind == "call" && multisigItem.call.name === "Multisig.as_multi" && multisigItem.call.args
-
-//     const encodedOtherSignatories = multisigArgs["otherSignatories"].map((signatory: string) => encodeId(decodeHex(signatory)))
-//     return {
-//         multisigEvent: new MultisigEvent({
-//             id: `multisig-${MultisigInteraction.CREATE}-${blockNumber}`,
-//             blockNumber,
-//             caller: await getOrCreateAccount(ctx, signer),
-//             info: JsonLog(multisigArgs),
-//             interaction: MultisigInteraction.CREATE,
-//             timestamp: new Date(block.header.timestamp)
-//         }),
-//         signatories: [signer, ...encodedOtherSignatories],
-//         threshold: multisigArgs["threshold"]
-//     }
-// }
-
 export const handleMultisigCall = (multisigArgs: any) => {
-    const encodedOtherSignatories = multisigArgs["otherSignatories"].map((signatory: string) => encodeId(decodeHex(signatory)))
+  const encodedOtherSignatories = multisigArgs["otherSignatories"].map((signatory: string) => encodeId(decodeHex(signatory)))
 
-    return {
-        otherSignatories: encodedOtherSignatories,
-        threshold: multisigArgs["threshold"],
-    }
+  return {
+    otherSignatories: encodedOtherSignatories,
+    threshold: multisigArgs["threshold"],
+  }
 }

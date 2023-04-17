@@ -59,6 +59,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
   for (const block of ctx.blocks) {
     const { items } = block
+    const timestamp = new Date(block.header.timestamp)
 
     for (const item of items) {
       if (supportedMultisigCalls.includes(item.name)) {
@@ -71,13 +72,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
         const { otherSignatories, threshold } = handleMultisigCall(callArgs)
         const signatories = [signer, ...otherSignatories]
-        const timestamp = new Date(block.header.timestamp)
 
         const newMulti = {
           id: getMultisigAddress(signatories, threshold),
           threshold,
           newSignatories: signatories,
-          createdAt: timestamp,
           isMultisig: true,
           isPureProxy: false,
         } as NewMultisigsInfo
@@ -100,14 +99,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         // ctx.log.info(`pure ${newPureProxy.pure}`)
         // ctx.log.info(`who ${newPureProxy.who}`)
 
-        newPureProxies.set(newPureProxy.id, newPureProxy)
+        newPureProxies.set(newPureProxy.id, { ...newPureProxy, createdAt: timestamp })
       }
 
       if (item.name === ("Proxy.ProxyAdded")) {
         const newProxy = getProxyInfoFromArgs(item)
         // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
         // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-        newProxies.set(newProxy.id, newProxy)
+        newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
       }
 
       if (item.name === ("Proxy.ProxyRemoved")) {
