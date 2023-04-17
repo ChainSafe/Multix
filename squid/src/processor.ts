@@ -3,7 +3,7 @@ import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subs
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs, JsonLog } from './util'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
 import { Env } from './util/Env'
 

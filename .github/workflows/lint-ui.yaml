@@ -1,4 +1,4 @@
-name: Lint
+name: Lint UI
 on:
   pull_request:
     paths: ["ui/**/*"]
