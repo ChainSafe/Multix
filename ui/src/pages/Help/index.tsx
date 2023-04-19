@@ -72,7 +72,7 @@ const Help = ({ className }: Props) => {
         </>
       )}
       {!hasPureProxy && (
-        <Box>
+        <Box className="sectionWrapper">
           <h1>Standalone Multisig</h1>
           <MultisigCompactDisplay
             address={selectedMultiProxy?.multisigs[0].address || ""}
@@ -85,8 +85,10 @@ const Help = ({ className }: Props) => {
           </Alert>
         </Box>
       )}
-      <h1>Overview</h1>
-      <Overview />
+      <Box className="sectionWrapper">
+        <h1>Overview</h1>
+        <Overview />
+      </Box>
     </Box>
   )
 }
