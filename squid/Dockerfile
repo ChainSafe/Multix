@@ -33,9 +33,9 @@ ADD schema.graphql .
 ENV PROMETHEUS_PORT 3000
 EXPOSE 4350
 
-FROM squid AS processor
-CMD ["npm", "run", "processor:start"]
+FROM squid AS squid-indexer
+CMD ["npm", "run", "squid-indexer:start"]
 
 
-FROM squid AS query-node
-CMD ["npm", "run", "query-node:start"]
+FROM squid AS graphql-server
+CMD ["npm", "run", "graphql-server:start"]

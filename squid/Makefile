@@ -1,21 +1,41 @@
-process: migrate
-	@node -r dotenv/config lib/processor.js
+# docker related commands
+build-squid-indexer-image:
+	@docker build . --target squid-indexer -t squid-indexer
 
+build-graphql-server-image:
+	@docker build . --target graphql-server -t graphql-server
+
+build-images: build-squid-indexer-image build-graphql-server-image
+
+db:
+	@docker-compose up db -d
+
+down:
+	@docker-compose down
+
+ps:
+	@docker compose ps
+
+logs:
+	@docker compose logs -f
+
+# start the squid-indexer and the graphql-server using docker
+up:
+	@docker-compose up squid-indexer graphql-server -d
+
+# start the squid-indexer without docker
+squid-indexer: migrate
+	@npm run squid-indexer:start
+
+# start the graphql-server without docker
+graphql-server:
+	@npm run graphql-server:start
 
 build:
 	@npm run build
 
-build-processor-image:
-	@docker build . --target processor -t squid-processor
-
-build-query-node-image:
-	@docker build . --target query-node -t query-node
-
-build-images: build-processor-image build-query-node-image
-
-serve:
-	@npm run query-node:start
-
+#serve:
+#	@npm run graphql-server:start
 
 migrate:
 	@npx squid-typeorm-migration apply
@@ -26,20 +46,7 @@ generate-migration:
 codegen:
 	@npx squid-typeorm-codegen
 
-
 typegen:
 	@npx squid-substrate-typegen typegen.json
 
-
-database:
-	@docker-compose up db -d
-
-up:
-	@docker-compose up -d
-
-
-down:
-	@docker-compose down
-
-
-.PHONY: build serve process migrate codegen typegen up down
+.PHONY: build serve process migrate codegen typegen up down db

@@ -1,11 +1,11 @@
 version: "3"
 
 services:
-  node:
-    container_name: squid-node
+  graphql-server:
+    container_name: graphql-server
     build:
       context: .
-      target: query-node
+      target: graphql-server
     env_file: .env.example
     environment:
       DB_HOST: db
@@ -13,16 +13,14 @@ services:
       - "${GQL_PORT}:4350"
     mem_limit: 300m
     mem_reservation: 100m
-    command: "npm run query-node:start"
     depends_on:
       - db
-      - processor
 
-  processor:
-    container_name: squid-processor
+  squid-indexer:
+    container_name: squid-indexer
     build:
       context: .
-      target: processor
+      target: squid-indexer
     env_file: .env.example
     environment:
       PROCESSOR_PROMETHEUS_PORT: 3000
@@ -33,14 +31,14 @@ services:
 
   db:
     container_name: subsquid_db
-    image: postgres:15
+    image: postgres:14
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
     shm_size: 1gb
     ports:
       - "${DB_PORT}:5432"
-      # command: ["postgres", "-c", "log_statement=all"]
+#    command: ["postgres", "-c", "log_statement=all"]
 #    volumes:
 #      - ./data/db:/var/lib/postgresql/data
 
