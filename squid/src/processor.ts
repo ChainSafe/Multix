@@ -86,7 +86,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         const blockHash = block.header.hash
 
         newMultisigCalls.push({
-          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock),
+          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock, callItem.call.pos),
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
           multisigAddress: newMulti.id,
