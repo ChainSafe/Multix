@@ -14,7 +14,7 @@ build-query-node-image:
 build-images: build-processor-image build-query-node-image
 
 serve:
-	@npx squid-graphql-server --subscriptions
+	@npm run query-node:start
 
 
 migrate:
@@ -30,6 +30,9 @@ codegen:
 typegen:
 	@npx squid-substrate-typegen typegen.json
 
+
+database:
+	@docker-compose up db -d
 
 up:
 	@docker-compose up -d

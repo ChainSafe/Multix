@@ -1,12 +1,43 @@
 version: "3"
 
 services:
+  node:
+    container_name: squid-node
+    build:
+      context: .
+      target: query-node
+    env_file: .env.example
+    environment:
+      DB_HOST: db
+    ports:
+      - "${GQL_PORT}:4350"
+    mem_limit: 300m
+    mem_reservation: 100m
+    command: "npm run query-node:start"
+    depends_on:
+      - db
+      - processor
+
+  processor:
+    container_name: squid-processor
+    build:
+      context: .
+      target: processor
+    env_file: .env.example
+    environment:
+      PROCESSOR_PROMETHEUS_PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
   db:
     container_name: subsquid_db
-    image: postgres:14
+    image: postgres:15
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
+    shm_size: 1gb
     ports:
       - "${DB_PORT}:5432"
       # command: ["postgres", "-c", "log_statement=all"]

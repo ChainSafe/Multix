@@ -3,18 +3,18 @@ import {Account} from "./account.model"
 
 @Entity_()
 export class AccountMultisig {
-  constructor(props?: Partial<AccountMultisig>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<AccountMultisig>) {
+        Object.assign(this, props)
+    }
 
     @PrimaryColumn_()
-      id!: string
+    id!: string
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-      multisig!: Account
+    multisig!: Account
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})
-      signatory!: Account
+    signatory!: Account
 }
