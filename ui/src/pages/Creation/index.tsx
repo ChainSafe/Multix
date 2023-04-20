@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
+import { Alert, Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components";
 import { useApi } from "../../contexts/ApiContext";
@@ -195,6 +195,7 @@ const MultisigCreation = ({ className }: Props) => {
             xs={12}
             md={6}
           >
+            <Alert className='infoBox' severity="info">The members of a multisig are called "signatories". You should select at least 2.</Alert>
             <SignatorySelection
               setSignatories={setSignatories}
               signatories={signatories}
@@ -207,6 +208,7 @@ const MultisigCreation = ({ className }: Props) => {
             xs={12}
             md={6}
           >
+            <Alert className='infoBox' severity="info">The threshold determines the minimum amount of signatory approvals needed for a multisig proposal to be executed.</Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
@@ -271,6 +273,10 @@ const MultisigCreation = ({ className }: Props) => {
 
 export default styled(MultisigCreation)(({ theme }) => `
   padding-bottom: 2rem;
+
+  .infoBox {
+    margin-bottom: 1rem;
+  }
 
   .stepItem {
     cursor: pointer;

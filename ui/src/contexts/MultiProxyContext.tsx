@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { MultisigsByAccountsSubscription } from "../../types-and-hooks"
+import { MultisigsByAccountsSubscription, ProxyType } from "../../types-and-hooks"
 import { AccountBaseInfo } from "../components/GenericAccountSelection"
 import { useMultisigsByAccountSubscription } from "../hooks/useMultisigsByAccountSubscription"
 import { useAccounts } from "./AccountsContext"
@@ -14,6 +14,7 @@ export interface MultisigAggregated {
   address: string;
   signatories?: string[];
   threshold?: number;
+  type: ProxyType;
 }
 
 export interface MultiProxy {
@@ -56,27 +57,31 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         const pureProxyAddresses = account.delegateeFor.map((delegatee) => {
           // finding all the accounts that are pure proxy
           if (delegatee.delegator?.isPureProxy) {
-            return delegatee.delegator.id
+            return {
+              pureAddress: delegatee.delegator.id,
+              type: delegatee.type
+            }
           }
 
-          return undefined
+          return { pureAddress: undefined }
         })
-          .filter((address) => address !== undefined) as string[]
+          .filter(({ pureAddress }) => pureAddress !== undefined) as { pureAddress: string, type: ProxyType }[]
 
         // it should all be multisigs cf the query
         // if this account has at least a pureProxy
         if (account.isMultisig && pureProxyAddresses?.length > 0) {
-          pureProxyAddresses.forEach((pureProxyAddress) => {
+          pureProxyAddresses.forEach(({ pureAddress, type }) => {
             // add this pureProxy to the set with the multisig infos and calls
-            const previousMultisigsForProxy = pureProxyMap.get(pureProxyAddress)?.multisigs || []
+            const previousMultisigsForProxy = pureProxyMap.get(pureAddress)?.multisigs || []
 
             const newMultisigForProxy = {
               address: account.id,
               signatories: getSignatoriesFromAccount(account),
-              threshold: account?.threshold || undefined
+              threshold: account?.threshold || undefined,
+              type
             }
 
-            pureProxyMap.set(pureProxyAddress, {
+            pureProxyMap.set(pureAddress, {
               multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
             })
           })

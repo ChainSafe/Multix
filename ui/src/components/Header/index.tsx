@@ -49,6 +49,13 @@ const Header = ({ className }: Props) => {
                 >
                   About
                 </Button>
+                <Button
+                  component={Link}
+                  to="/help"
+                  className="buttonHeader"
+                >
+                  Help
+                </Button>
               </Box>
               <MultiProxySelection />
             </>
