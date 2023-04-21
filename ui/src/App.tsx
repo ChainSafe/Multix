@@ -1,6 +1,6 @@
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { About, Creation, Home } from "./pages"
+import { About, Creation, Home, Help } from "./pages"
 import Header from "./components/Header"
 import Container from "@mui/material/Container"
 import { UserSpace } from "./components/UserSpace"
@@ -45,6 +45,10 @@ const App = () => {
                             <Route
                               path="/about"
                               element={<About />}
+                            />
+                            <Route
+                              path="/help"
+                              element={<Help />}
                             />
                           </Routes>
                         </UserSpace>
