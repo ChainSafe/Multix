@@ -14,11 +14,56 @@ import Help from "../../pages/Help";
 
 const DRAWER_WIDTH = 240;
 
-const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})<{
-    open?: boolean;
-}>(({theme, open}) => ({
+function MainLayout() {
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <Container maxWidth="lg">
+      <BoxStyled>
+        <Header drawerWidth={DRAWER_WIDTH} open={open} handleDrawerOpen={() => setOpen(true)}/>
+        <Main open={open}>
+          <DrawerHeader>
+            <IconButton onClick={() => setOpen(false)}>
+              {theme.direction === 'rtl' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
+            </IconButton>
+          </DrawerHeader>
+          <ContainerStyled fixed>
+            <UserSpace>
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Home/>}
+                />
+                <Route
+                  path="/create"
+                  element={<Creation/>}
+                />
+                <Route
+                  path="/about"
+                  element={<About/>}
+                />
+                <Route
+                  path="/help"
+                  element={<Help/>}
+                />
+              </Routes>
+            </UserSpace>
+          </ContainerStyled>
+        </Main>
+        <DrawerComponent drawerWidth={DRAWER_WIDTH} open={open} handleDrawerClose={() => setOpen(false)}/>
+      </BoxStyled>
+    </Container>
+  );
+}
+
+interface MainProps {
+  open?: boolean;
+}
+
+const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})<MainProps>(({theme, open}) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
+  padding: '24px',
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -41,49 +86,12 @@ const DrawerHeader = styled('div')(({theme}) => ({
   justifyContent: 'flex-start',
 }));
 
-function MainLayout() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+const BoxStyled = styled(Box)({
+  display: 'flex',
+});
 
-  return (
-    <Container maxWidth="lg">
-      <Box sx={{display: 'flex'}}>
-        <Header drawerWidth={DRAWER_WIDTH} open={open} handleDrawerOpen={() => setOpen(true)}/>
-        <Main open={open}>
-          <DrawerHeader>
-            <IconButton onClick={() => setOpen(false)}>
-              {theme.direction === 'rtl' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
-            </IconButton>
-          </DrawerHeader>
-          <Container
-            fixed
-            sx={{paddingTop: "6rem"}}>
-            <UserSpace>
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Home/>}
-                />
-                <Route
-                  path="/create"
-                  element={<Creation/>}
-                />
-                <Route
-                  path="/about"
-                  element={<About/>}
-                />
-                <Route
-                  path="/help"
-                  element={<Help/>}
-                />
-              </Routes>
-            </UserSpace>
-          </Container>
-        </Main>
-        <DrawerComponent drawerWidth={DRAWER_WIDTH} open={open} handleDrawerClose={() => setOpen(false)}/>
-      </Box>
-    </Container>
-  );
-}
+const ContainerStyled = styled(Container)({
+  paddingTop: '6rem',
+})
 
 export default MainLayout;

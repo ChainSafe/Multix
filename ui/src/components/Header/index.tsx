@@ -1,4 +1,4 @@
-import {Toolbar, Typography} from "@mui/material"
+import {IconButtonProps, Toolbar, Typography} from "@mui/material"
 import styled from "styled-components"
 import {styled as styledMaterial} from '@mui/material/styles';
 import IconButton from "@mui/material/IconButton";
@@ -14,10 +14,35 @@ interface Props {
   handleDrawerOpen: () => void,
   open: boolean
 }
+const Header = ({ className, handleDrawerOpen, open, drawerWidth }: Props) => {
+  return (
+    <AppBar drawerWidth={drawerWidth} position="fixed"  open={open} className={className}>
+      <Toolbar>
+        <TypographyStyled
+          variant="h6"
+          noWrap
+        >
+            Multix
+        </TypographyStyled>
+        <MultiProxySelection />
+        {/*<NetworkSelection />*/}
+        <IconButtonStyled
+          color="inherit"
+          aria-label="open drawer"
+          edge="end"
+          onClick={handleDrawerOpen}
+          open={open}
+        >
+          <MenuIcon/>
+        </IconButtonStyled>
+      </Toolbar>
+    </AppBar>
+  )
+}
+
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
   drawerWidth: number
-
 }
 
 const AppBar = styledMaterial(MuiAppBar, {
@@ -37,33 +62,17 @@ const AppBar = styledMaterial(MuiAppBar, {
   }),
 }));
 
-const Header = ({ className, handleDrawerOpen, open, drawerWidth }: Props) => {
-  return (
-    <AppBar drawerWidth={drawerWidth} position="fixed"  open={open} className={className}>
-      <Toolbar>
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ flexGrow: 1 }}
-        >
-            Multix
-        </Typography>
-        <MultiProxySelection />
-        {/*<NetworkSelection />*/}
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="end"
-          onClick={handleDrawerOpen}
-          sx={{...(open && {display: 'none'})}}
-        >
-          <MenuIcon/>
-        </IconButton>
-      </Toolbar>
-    </AppBar>
-  )
+const TypographyStyled = styled(Typography)`
+  flex-grow: 1;
+`
+
+interface IconButtonStyledProps extends IconButtonProps {
+  open?: boolean;
 }
+
+const IconButtonStyled = styled(IconButton)<IconButtonStyledProps>`
+  display: ${({ open }) => open ? 'none' : 'block'};
+`
 
 export default styled(Header)(({ theme }) => `
   .buttonContainer {
