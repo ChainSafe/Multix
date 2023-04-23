@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import styled from "styled-components";
 import { ICON_SIZE, ICON_THEME } from "../constants";
 import { AccountBadge } from "../types";
+import MultixIdenticon from "./MultixIdenticon";
 
 interface Props {
     className?: string;
@@ -13,12 +14,7 @@ interface Props {
 
 export const IdenticonBadge = ({ className, badge, address }: Props) => {
 
-  const AccountIcon = () => <Identicon
-    value={address}
-    size={ICON_SIZE}
-    theme={ICON_THEME}
-    className="identicon"
-  />
+  const AccountIcon = () => <MultixIdenticon value={address} theme={ICON_THEME} size={ICON_SIZE} className="identicon" />
 
   const appliedClass = useMemo(() => badge === AccountBadge.PURE
     ? "blue"

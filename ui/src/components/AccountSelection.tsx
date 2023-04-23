@@ -10,6 +10,7 @@ import { ICON_THEME, ICON_SIZE } from "../constants";
 import { useAccountNames } from "../contexts/AccountNamesContext"
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
+import MultixIdenticon from "./MultixIdenticon";
 
 interface Props {
   className?: string;
@@ -111,12 +112,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
         options={dedupedSignatories}
         renderOption={(props, option) => (
           <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props} key={option.address}>
-            <Identicon
-              className="renderOptionIdenticon"
-              value={option.address}
-              theme={ICON_THEME}
-              size={ICON_SIZE}
-            />
+             <MultixIdenticon value={option.address} theme={ICON_THEME} size={ICON_SIZE} className="renderOptionIdenticon" />
             {option.address} - {option.meta.name}
           </Box>
         )}
@@ -132,11 +128,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
               startAdornment: (
                 selected
                   ? <InputAdornment position="start">
-                    <Identicon
-                      value={selected}
-                      theme={ICON_THEME}
-                      size={ICON_SIZE}
-                    />
+                    <MultixIdenticon value={selected} theme={ICON_THEME} size={ICON_SIZE} className="identicon" />
                   </InputAdornment>
                   : null
               ),
