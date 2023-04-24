@@ -1,18 +1,18 @@
 import * as React from 'react';
-import Drawer, {DrawerProps} from '@mui/material/Drawer';
+import Drawer from '@mui/material/Drawer';
 import DrawerMenu from "./DrawerMenu";
 import {styled} from "@mui/material/styles";
 
+const DRAWER_WIDTH = 240;
+
 interface DrawerComponentProps {
     open: boolean,
-    drawerWidth: number,
     handleDrawerClose: () => void
 }
 
-function DrawerComponent({open, handleDrawerClose, drawerWidth}: DrawerComponentProps) {
+function DrawerComponent({open, handleDrawerClose}: DrawerComponentProps) {
   return (
     <DrawerStyledMobile
-      drawerWidth={drawerWidth}
       variant="temporary"
       anchor="right"
       open={open}
@@ -26,18 +26,14 @@ function DrawerComponent({open, handleDrawerClose, drawerWidth}: DrawerComponent
   );
 }
 
-interface DrawerStyledProps extends DrawerProps {
-    drawerWidth: number
-}
 
-const DrawerStyledMobile = styled(Drawer)<DrawerStyledProps>(({drawerWidth}) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  '& .MuiDrawer-paper': {
-    width: drawerWidth,
-  }
-}));
-
+const DrawerStyledMobile = styled(Drawer)(() => `
+    width: ${DRAWER_WIDTH}px;
+    flex-shrink: 0;
+    & .MuiDrawer-paper {
+        width: ${DRAWER_WIDTH}px;
+    }
+`);
 
 export default DrawerComponent;
 
