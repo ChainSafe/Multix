@@ -1,15 +1,20 @@
 import React from "react"
 import Tooltip from "@material-ui/core/Tooltip";
 import Identicon from "@polkadot/react-identicon";
-import { AccountSelect } from "./AccountSelect";
 
-
-export default function MultixIdenticon({value,theme,size,className}) {
+interface Props {
+  value?: string,
+  theme?: any,
+  size: number,
+  className?: string;
+}
+const MultixIdenticon = ({value,theme,size,className} : Props) => {
+  
   return (
-    <>
+    <div>
       <Tooltip
-        title="dsfjepopoweg oeghpweghw seogjeopghew"
-        placement="bottom-end"
+        title="Copied"
+        placement="top"
         arrow
       >
       <Identicon
@@ -19,6 +24,8 @@ export default function MultixIdenticon({value,theme,size,className}) {
                className={className}
             ></Identicon>
       </Tooltip>
-    </>
+    </div>
   );
 }
+
+export default MultixIdenticon

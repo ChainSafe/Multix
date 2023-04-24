@@ -14,7 +14,11 @@ interface Props {
 
 export const IdenticonBadge = ({ className, badge, address }: Props) => {
 
-  const AccountIcon = () => <MultixIdenticon value={address} theme={ICON_THEME} size={ICON_SIZE} className="identicon" />
+  const AccountIcon = () => <MultixIdenticon
+    value={address}
+    theme={ICON_THEME} 
+    size={ICON_SIZE} 
+    className="identicon" />
 
   const appliedClass = useMemo(() => badge === AccountBadge.PURE
     ? "blue"

@@ -112,7 +112,11 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
         options={dedupedSignatories}
         renderOption={(props, option) => (
           <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props} key={option.address}>
-             <MultixIdenticon value={option.address} theme={ICON_THEME} size={ICON_SIZE} className="renderOptionIdenticon" />
+             <MultixIdenticon 
+              value={option.address}
+              theme={ICON_THEME}
+              size={ICON_SIZE}
+              className="renderOptionIdenticon" />
             {option.address} - {option.meta.name}
           </Box>
         )}

@@ -38,7 +38,12 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
             avatar={
               <IconButton sx={{ p: 0 }}>
                    
-                  <MultixIdenticon value={account.address} theme="substrate" size={40} className={""} />
+                  <MultixIdenticon 
+                  value={account.address} 
+                  theme="substrate" 
+                  size={40}
+                  className={""} 
+                   />
 
               </IconButton>
             }
