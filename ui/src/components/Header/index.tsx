@@ -1,10 +1,12 @@
-import {Toolbar, Typography} from "@mui/material"
+import {Box, Button, IconButton, Toolbar, Typography} from "@mui/material"
 import styled from "styled-components"
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import * as React from "react";
 import MuiAppBar from '@mui/material/AppBar';
 import MultiProxySelection from "../MultiProxySelection";
+import {useAccounts} from "../../contexts/AccountsContext";
+import {Link} from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
+import {ROUTES} from "../../constants";
 // import NetworkSelection from "../NetworkSelection"
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
 }
 
 const Header = ({className, handleDrawerOpen}: Props) => {
+  const {accountList} = useAccounts()
+
   return (
     <MuiAppBar position="fixed" className={className}>
       <Toolbar>
@@ -20,32 +24,58 @@ const Header = ({className, handleDrawerOpen}: Props) => {
           variant="h6"
           noWrap
         >
-                    Multix
+            Multix
         </TypographyStyled>
+        {!!accountList?.length && (
+          <BoxStyled>
+            {ROUTES.map(({url, name}) => (
+              <Button
+                component={Link}
+                to={url}
+                className="buttonHeader"
+              >
+                {name}
+              </Button>
+            ))}
+          </BoxStyled>
+        )}
         <MultiProxySelection/>
-        {/*<NetworkSelection />*/}
-        <IconButton
+        {/*/!*<NetworkSelection />*!/*/}
+        <IconButtonStyled
           color="inherit"
           aria-label="open drawer"
           edge="end"
           onClick={handleDrawerOpen}
         >
           <MenuIcon/>
-        </IconButton>
+        </IconButtonStyled>
       </Toolbar>
     </MuiAppBar>
   )
 }
 
+const BoxStyled = styled(Box)(({theme}) => `
+    display: none;
+    
+    @media (min-width: ${theme.breakpoints.values.sm}px) {
+        flex-grow: 1;
+        display: flex;
+    }
+`)
+
+
 const TypographyStyled = styled(Typography)`
   flex-grow: 1;
 `
-export default styled(Header)(({theme}) => `
-  .buttonContainer {
-    flex-grow: 1;
-    display: flex;
-  }
 
+const IconButtonStyled = styled(IconButton)(({theme}) => `
+    display: block;
+    @media (min-width: ${theme.breakpoints.values.sm}px) {
+        display: none;
+    }
+`)
+
+export default styled(Header)(({theme}) => `
   .buttonHeader {
     color: ${theme.palette.primary.white};
     text-align: center;

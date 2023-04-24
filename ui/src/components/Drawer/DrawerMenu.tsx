@@ -9,12 +9,9 @@ import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import {styled} from "@mui/material/styles";
 import {useAccounts} from "../../contexts/AccountsContext";
+import {ROUTES} from "../../constants";
 
-const routes = [
-  {url: '/', name: 'Home'},
-  {url: '/create', name: 'New Multisig'},
-  {url: '/about', name: 'About'},
-]
+
 
 interface DrawerMenuProps {
     handleDrawerClose: () => void
@@ -33,7 +30,7 @@ function DrawerMenu({handleDrawerClose}: DrawerMenuProps) {
       <Divider/>
       <List>
         {!!accountList?.length && (
-          routes.map(({url, name}) => (
+          ROUTES.map(({url, name}) => (
             <ListItem key={name} disablePadding>
               <ListItemButton onClick={handleDrawerClose} component={Link} to={url}>
                 <ListItemText primary={name}/>
