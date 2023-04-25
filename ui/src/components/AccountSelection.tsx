@@ -1,5 +1,4 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
-import Identicon from "@polkadot/react-identicon";
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState, SyntheticEvent } from "react";
 import styled from "styled-components";
 import { useAccounts } from "../contexts/AccountsContext";
@@ -112,7 +111,7 @@ const AccountSelection = ({ className, addSignatory, addressDisabled = false, na
         options={dedupedSignatories}
         renderOption={(props, option) => (
           <Box component="li" sx={{ '& > .renderOptionIdenticon': { mr: ".5rem", flexShrink: 0 } }} {...props} key={option.address}>
-             <MultixIdenticon 
+            <MultixIdenticon 
               value={option.address}
               theme={ICON_THEME}
               size={ICON_SIZE}

@@ -1,5 +1,4 @@
 import { Badge } from "@mui/material";
-import Identicon from "@polkadot/react-identicon";
 import { useMemo } from "react";
 import styled from "styled-components";
 import { ICON_SIZE, ICON_THEME } from "../constants";

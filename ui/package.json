@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.0",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
@@ -19,6 +18,7 @@
     "react-dom": "18.2.0",
     "react-query-subscription": "2.0.0-beta.1",
     "react-router-dom": "^6.10.0",
+    "react-tooltip": "^5.11.1",
     "rxjs": "^7.8.0",
     "styled-components": "^5.3.9",
     "typescript": "^5.0.4",
