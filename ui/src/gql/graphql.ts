@@ -425,8 +425,10 @@ export enum ProxyType {
   CancelProxy = 'CancelProxy',
   Governance = 'Governance',
   IdentityJudgement = 'IdentityJudgement',
+  NominationPools = 'NominationPools',
   NonTransfer = 'NonTransfer',
-  Society = 'Society'
+  Staking = 'Staking',
+  SudoBalances = 'SudoBalances'
 }
 
 export type Query = {
