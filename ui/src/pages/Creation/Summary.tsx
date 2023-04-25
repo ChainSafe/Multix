@@ -1,4 +1,4 @@
-import { Box, Chip, Paper } from "@mui/material";
+import { Alert, Box, Chip, Paper } from "@mui/material";
 import { useMemo } from "react";
 import styled from "styled-components";
 import AccountDisplay from "../../components/AccountDisplay";
@@ -73,32 +73,35 @@ const Summary = ({ className, threshold, signatories, name, proxyAddress, isSwap
         ))}
       </Paper>
       <Box className="explainer">
-        {
-          isSwapSummary
-            ? <>
-              In the next step you will sign 2 transactions to:
-              <ul>
-                <li>add the new Multisig to the current Pure proxy</li>
-                <li>remove the old Multisig</li>
-              </ul>
-              Other signatories will need to approve these transactions.
-            </>
-            : <>
-              In the next step you will send 1 batch transaction to:
-              <ul>
-                <li>send funds to the new Multisig (required to create a Pure proxy)</li>
-                <li>create the Pure proxy</li>
-              </ul>
-              Other signatories will need to approve this transaction.
-            </>
-        }
+        <Alert severity="info">
+          {
+            isSwapSummary
+              ? <>
+                In the next step you will sign 2 transactions to:
+                <ul>
+                  <li>add the new Multisig to the current Pure proxy</li>
+                  <li>remove the old Multisig</li>
+                </ul>
+                Other signatories will need to approve these transactions.
+              </>
+              : <>
+                In the next step you will send 1 batch transaction to:
+                <ul>
+                  <li>send funds to the new Multisig (required to create a Pure proxy)</li>
+                  <li>create the Pure proxy</li>
+                </ul>
+                Other signatories will need to approve this transaction.
+              </>
+          }
+        </Alert>
       </Box>
       <Box className="signerSelection">
         <SignerSelection possibleSigners={possibleSigners} />
       </Box>
       {isBalanceError && balanceMin &&
-        <BalanceWarning text={`The selected signer requires at least ${formatBnBalance(balanceMin, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })
-        }`} />
+        <BalanceWarning text={
+          `The selected signer requires at least ${formatBnBalance(balanceMin, chainInfo?.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol })}`
+        } />
       }
     </Box>
   )

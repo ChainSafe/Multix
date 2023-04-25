@@ -33,9 +33,6 @@ export class Account {
     @Column_("int4", {nullable: true})
     threshold!: number | undefined | null
 
-    @Column_("timestamp with time zone", {nullable: true})
-    createdAt!: Date | undefined | null
-
     @OneToMany_(() => MultisigCall, e => e.multisig)
     multisigsCalls!: MultisigCall[]
 }

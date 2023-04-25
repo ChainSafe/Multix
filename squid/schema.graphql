@@ -9,7 +9,6 @@ type Account @entity {
   isMultisig: Boolean
   signatories: [AccountMultisig!] @derivedFrom(field: "multisig")
   threshold: Int
-  createdAt: DateTime
   multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
 }
 
@@ -35,8 +34,10 @@ type ProxyAccount @entity {
   delegatee: Account!
   type: ProxyType!
   delay: Int!
+  createdAt: DateTime!
 }
 
+# from https://github.com/paritytech/polkadot/blob/476d3ddddf7a8f7361edac92228d0200abac0895/runtime/polkadot/src/lib.rs#L918
 enum ProxyType {
   Any
   Governance
@@ -44,5 +45,7 @@ enum ProxyType {
   IdentityJudgement
   CancelProxy
   Auction
-  Society
+  Staking
+  SudoBalances
+  NominationPools
 }

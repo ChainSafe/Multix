@@ -3,7 +3,7 @@ import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subs
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs, JsonLog } from './util'
+import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs } from './util'
 import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
 import { Env } from './util/Env'
 
@@ -59,6 +59,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
   for (const block of ctx.blocks) {
     const { items } = block
+    const timestamp = new Date(block.header.timestamp)
 
     for (const item of items) {
       if (supportedMultisigCalls.includes(item.name)) {
@@ -71,13 +72,11 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
         const { otherSignatories, threshold } = handleMultisigCall(callArgs)
         const signatories = [signer, ...otherSignatories]
-        const timestamp = new Date(block.header.timestamp)
 
         const newMulti = {
           id: getMultisigAddress(signatories, threshold),
           threshold,
           newSignatories: signatories,
-          createdAt: timestamp,
           isMultisig: true,
           isPureProxy: false,
         } as NewMultisigsInfo
@@ -87,7 +86,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         const blockHash = block.header.hash
 
         newMultisigCalls.push({
-          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock),
+          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock, callItem.call.pos),
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
           multisigAddress: newMulti.id,
@@ -100,14 +99,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         // ctx.log.info(`pure ${newPureProxy.pure}`)
         // ctx.log.info(`who ${newPureProxy.who}`)
 
-        newPureProxies.set(newPureProxy.id, newPureProxy)
+        newPureProxies.set(newPureProxy.id, { ...newPureProxy, createdAt: timestamp })
       }
 
       if (item.name === ("Proxy.ProxyAdded")) {
         const newProxy = getProxyInfoFromArgs(item)
         // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
         // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-        newProxies.set(newProxy.id, newProxy)
+        newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
       }
 
       if (item.name === ("Proxy.ProxyRemoved")) {

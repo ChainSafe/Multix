@@ -18,7 +18,7 @@
     "react-dom": "18.2.0",
     "react-query-subscription": "2.0.0-beta.1",
     "react-router-dom": "^6.10.0",
-    "react-tooltip": "^5.11.1",
+    "reactflow": "^11.7.0",
     "rxjs": "^7.8.0",
     "styled-components": "^5.3.9",
     "typescript": "^5.0.4",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "3.3.0",
-    "@graphql-codegen/client-preset": "3.0.0",
+    "@graphql-codegen/client-preset": "2.1.1",
     "@graphql-codegen/typescript-react-query": "^4.1.0",
     "@graphql-eslint/eslint-plugin": "^3.18.0",
     "@polkadot/typegen": "^10.3.2",
@@ -41,11 +41,7 @@
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-ternary": "^2.0.0",
     "ts-node": "^10.9.1"
   },
   "scripts": {

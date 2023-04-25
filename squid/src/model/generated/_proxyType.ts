@@ -5,5 +5,7 @@ export enum ProxyType {
     IdentityJudgement = "IdentityJudgement",
     CancelProxy = "CancelProxy",
     Auction = "Auction",
-    Society = "Society",
+    Staking = "Staking",
+    SudoBalances = "SudoBalances",
+    NominationPools = "NominationPools",
 }
