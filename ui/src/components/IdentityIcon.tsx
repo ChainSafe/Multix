@@ -1,7 +1,7 @@
 import { Tooltip } from '@mui/material';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import styled from 'styled-components';
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 import { useMemo } from 'react';
 
@@ -42,23 +42,27 @@ const IdentityIcon = ({ className, identity }: Props) => {
   </StyledPopup>;
 
   return (
-    <Tooltip className={className} title={tooltipContent}>
+    <Tooltip className={className} title={tooltipContent} >
       {isGood
-        ? <CheckCircleOutlineRoundedIcon className="green" sx={{ color: "green" }} />
-        : <RemoveCircleOutlineRoundedIcon className={isBad ? 'brown' : 'grey'} sx={{ color: isBad ? 'brown' : 'grey' }} />
+        ? <CheckCircleRoundedIcon className="green" />
+        : <RemoveCircleOutlineRoundedIcon className={isBad ? 'red' : 'grey'} />
       }
     </Tooltip>
   )
 };
 
-export default styled(IdentityIcon)`
-	display: inline;
-	
-  svg.green {
-		color: green !important;
-	}
+export default styled(IdentityIcon)(({ theme }) => `
+  display: inline;
 
-	svg.grey {
-		color: gray !important;
-	}
-`;
+  &.green {
+    color: ${theme.custom.identity.green};
+  }
+
+  &.grey {
+    color: ${theme.custom.identity.grey};
+  }
+
+  &.red {
+    color: ${theme.custom.identity.brown};
+  }
+`);

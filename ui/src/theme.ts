@@ -16,5 +16,10 @@ export const theme = createTheme({
     background: {
       backgroundColorLightGray: '#ebebeb'
     },
+    identity: {
+      green: "green",
+      grey: "grey",
+      red: "firebrick"
+    }
   }
 } as any)
