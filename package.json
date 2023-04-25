@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "workspaces": [
+    "squid",
+    "ui"
+  ],
+  "name": "@chainsafe/multix",
+  "description": "An interface to easily manage complex multisigs.",
+  "engines": {
+    "node": ">=16.10"
+  },
+  "packageManager": "yarn@3.5.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainSafe/Multix"
+  },
+  "scripts": {
+    "install": "yarn workspaces foreach run install",
+    "build": "yarn workspaces foreach run build",
+    "start": "yarn workspace ui start",
+    "start:ui": "yarn workspace ui start",
+    "start:squid": "yarn workspace squid start",
+    "postinstall": "husky install"
+  },
+  "keywords": [
+    "polkadot",
+    "multisig"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@yarnpkg/plugin-interactive-tools": "^4.0.0-rc.42",
+    "@yarnpkg/plugin-workspace-tools": "^4.0.0-rc.42"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3"
+  }
+}
