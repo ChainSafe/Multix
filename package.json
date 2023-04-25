@@ -19,6 +19,7 @@
     "install": "yarn workspaces foreach run install",
     "build": "yarn workspaces foreach run build",
     "start:ui": "yarn workspace ui start",
+    "lint": "yarn workspaces foreach run lint",
     "postinstall": "husky install"
   },
   "keywords": [
