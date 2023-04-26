@@ -15,7 +15,8 @@ interface Props {
 }
 
 const Header = ({className, handleDrawerOpen}: Props) => {
-  const {accountList} = useAccounts()
+  const {accountList} = useAccounts();
+  const isAccountConnected = !!accountList?.length;
 
   return (
     <MuiAppBar position="fixed" className={className}>
@@ -26,7 +27,7 @@ const Header = ({className, handleDrawerOpen}: Props) => {
         >
             Multix
         </TypographyStyled>
-        {!!accountList?.length && (
+        {isAccountConnected && (
           <BoxStyled>
             {ROUTES.map(({url, name}) => (
               <Button
@@ -41,14 +42,16 @@ const Header = ({className, handleDrawerOpen}: Props) => {
         )}
         <MultiProxySelection/>
         {/*/!*<NetworkSelection />*!/*/}
-        <IconButtonStyled
-          color="inherit"
-          aria-label="open drawer"
-          edge="end"
-          onClick={handleDrawerOpen}
-        >
-          <MenuIcon/>
-        </IconButtonStyled>
+        {isAccountConnected && (
+          <IconButtonStyled
+            color="inherit"
+            aria-label="open drawer"
+            edge="end"
+            onClick={handleDrawerOpen}
+          >
+            <MenuIcon/>
+          </IconButtonStyled>
+        )}
       </Toolbar>
     </MuiAppBar>
   )
