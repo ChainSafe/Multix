@@ -1,9 +1,8 @@
 {
   "name": "squid",
   "version": "0.1.0",
-  "private": true,
   "engines": {
-    "node": ">=16"
+    "node": ">=16.10"
   },
   "scripts": {
     "build": "rm -rf lib && tsc",
@@ -21,6 +20,7 @@
     "@subsquid/substrate-processor": "^2.4.1",
     "@subsquid/typeorm-migration": "^0.1.6",
     "@subsquid/typeorm-store": "^0.2.2",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "pg": "8.10.0",
     "typeorm": "0.3.14"

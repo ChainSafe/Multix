@@ -23,7 +23,8 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: install packages
-      run: yarn install --immutable
+    - run: corepack enable
+    - run: yarn install --immutable
 
     - name: lint
       run: yarn lint
