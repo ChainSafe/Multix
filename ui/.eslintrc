@@ -27,7 +27,12 @@
     "indent": [
       "error",
       2
-    ]
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "react/jsx-tag-spacing": "error"
   },
   "overrides": [
     {

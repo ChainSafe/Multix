@@ -18,6 +18,7 @@ interface Props {
   className?: string
   options: MenuOption[]
 }
+
 const OptionsMenu = ({ className, options }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
