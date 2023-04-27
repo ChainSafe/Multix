@@ -6,10 +6,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import { Link } from "react-router-dom";
 import ListItemText from "@mui/material/ListItemText";
-import { styled } from "@mui/material/styles";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
+import styled from "styled-components";
 
 
 

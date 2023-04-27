@@ -1,13 +1,13 @@
 import React from "react";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "../Header";
 import Container from "@mui/material/Container";
-import {UserSpace} from "../UserSpace";
-import {Route, Routes} from "react-router-dom";
-import {About, Creation, Home} from "../../pages";
-import {styled} from "@mui/material/styles";
+import { UserSpace } from "../UserSpace";
+import { Route, Routes } from "react-router-dom";
+import { About, Creation, Home } from "../../pages";
 import DrawerComponent from "../Drawer/Drawer";
 import Help from "../../pages/Help";
+import styled from "styled-components";
 
 function MainLayout() {
   const [open, setOpen] = React.useState(false);
@@ -15,32 +15,32 @@ function MainLayout() {
   return (
     <Container maxWidth="lg">
       <BoxStyled>
-        <Header handleDrawerOpen={() => setOpen(true)}/>
+        <Header handleDrawerOpen={() => setOpen(true)} />
         <>
           <ContainerStyled fixed>
             <UserSpace>
               <Routes>
                 <Route
                   path="/"
-                  element={<Home/>}
+                  element={<Home />}
                 />
                 <Route
                   path="/create"
-                  element={<Creation/>}
+                  element={<Creation />}
                 />
                 <Route
                   path="/about"
-                  element={<About/>}
+                  element={<About />}
                 />
                 <Route
                   path="/help"
-                  element={<Help/>}
+                  element={<Help />}
                 />
               </Routes>
             </UserSpace>
           </ContainerStyled>
         </>
-        <DrawerComponent open={open} handleDrawerClose={() => setOpen(false)}/>
+        <DrawerComponent open={open} handleDrawerClose={() => setOpen(false)} />
       </BoxStyled>
     </Container>
   );
