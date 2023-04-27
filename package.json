@@ -3,8 +3,7 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "squid",
-      "ui"
+      "packages/*"
     ]
   },
   "description": "An interface to easily manage complex multisigs.",

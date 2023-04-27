@@ -10883,9 +10883,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"squid@workspace:squid":
+"squid@workspace:packages/squid":
   version: 0.0.0-use.local
-  resolution: "squid@workspace:squid"
+  resolution: "squid@workspace:packages/squid"
   dependencies:
     "@polkadot/util-crypto": ^11.1.3
     "@subsquid/archive-registry": 2.1.10
@@ -11555,9 +11555,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ui@workspace:ui":
+"ui@workspace:packages/ui":
   version: 0.0.0-use.local
-  resolution: "ui@workspace:ui"
+  resolution: "ui@workspace:packages/ui"
   dependencies:
     "@graphql-codegen/cli": 3.3.0
     "@graphql-codegen/client-preset": 2.1.1
