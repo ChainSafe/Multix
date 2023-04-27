@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "Running lint:fix on all packages"
 yarn workspaces foreach run lint:fix
