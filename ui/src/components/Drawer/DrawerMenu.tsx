@@ -4,45 +4,50 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import ListItemText from "@mui/material/ListItemText";
-import * as React from "react";
-import {styled} from "@mui/material/styles";
-import {useAccounts} from "../../contexts/AccountsContext";
-import {ROUTES} from "../../constants";
+import { useAccounts } from "../../contexts/AccountsContext";
+import { ROUTES } from "../../constants";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
+import styled from "styled-components";
 
 
 
 interface DrawerMenuProps {
-    handleDrawerClose: () => void
+  handleDrawerClose: () => void
 }
 
-function DrawerMenu({handleDrawerClose}: DrawerMenuProps) {
-  const {accountList} = useAccounts()
+function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
+  const { accountList } = useAccounts()
+  const { multiProxyList } = useMultiProxy()
 
   return (
     <>
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
-          <ChevronRightIcon/>
+          <ChevronRightIcon />
         </IconButton>
       </DrawerHeader>
-      <Divider/>
+      <Divider />
       <List>
         {!!accountList?.length && (
-          ROUTES.map(({url, name}) => (
-            <ListItem key={name} disablePadding>
-              <ListItemButton onClick={handleDrawerClose} component={Link} to={url}>
-                <ListItemText primary={name}/>
-              </ListItemButton>
-            </ListItem>
+          ROUTES.map(({ url, name, isDisplayWhenNoMultiProxy }) => (
+            multiProxyList.length > 0 || isDisplayWhenNoMultiProxy
+              ? (
+                <ListItem key={name} disablePadding>
+                  <ListItemButton onClick={handleDrawerClose} component={Link} to={url}>
+                    <ListItemText primary={name} />
+                  </ListItemButton>
+                </ListItem>
+              )
+              : null
           )))}
       </List>
     </>
   )
 }
 
-const DrawerHeader = styled('div')(({theme}) => `
+const DrawerHeader = styled('div')(({ theme }) => `
     display: flex;
     align-items: center;
     padding: 0 8px;

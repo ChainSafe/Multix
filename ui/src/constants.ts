@@ -3,10 +3,10 @@ import { localSVG } from "./logos/localSVG"
 import { chainsRococoSVG } from "./logos/rococoSVG"
 
 export const ROUTES = [
-  {url: '/', name: 'Home'},
-  {url: '/create', name: 'New Multisig'},
-  {url: '/about', name: 'About'},
-  {url: '/help', name: 'Help'},
+  { url: '/', name: 'Home', isDisplayWhenNoMultiProxy: true },
+  { url: '/create', name: 'New Multisig', isDisplayWhenNoMultiProxy: true },
+  { url: '/about', name: 'About', isDisplayWhenNoMultiProxy: true },
+  { url: '/help', name: 'Help', isDisplayWhenNoMultiProxy: false },
 ]
 export const DAPP_NAME = "Multix"
 export const ICON_SIZE = 40

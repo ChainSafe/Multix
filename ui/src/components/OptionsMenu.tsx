@@ -1,27 +1,28 @@
-import * as React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import styled from 'styled-components';
 import { ListItemIcon, ListItemText } from '@mui/material';
+import { useState, MouseEvent, ReactNode } from 'react';
 
 export interface MenuOption {
-    text: string;
-    icon: React.ReactNode;
-    onClick: Function
+  text: string;
+  icon: ReactNode;
+  onClick: Function
 }
 
 const ITEM_HEIGHT = 48;
 
 interface Props {
-    className?: string
-    options: MenuOption[]
+  className?: string
+  options: MenuOption[]
 }
+
 const OptionsMenu = ({ className, options }: Props) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (onClick: Function) => {
