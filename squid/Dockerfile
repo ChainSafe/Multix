@@ -7,9 +7,13 @@ FROM node-with-gyp AS builder
 WORKDIR /squid
 ADD package.json .
 ADD package-lock.json .
-RUN npm ci
 ADD tsconfig.json .
 ADD src src
+ADD typegen.json .
+ADD schema.graphql .
+RUN npm ci
+RUN npm run codegen
+RUN npm run typegen
 RUN npm run build
 
 FROM node-with-gyp AS deps
@@ -24,14 +28,11 @@ COPY --from=deps /squid/package.json .
 COPY --from=deps /squid/package-lock.json .
 COPY --from=deps /squid/node_modules node_modules
 COPY --from=builder /squid/lib lib
-COPY .env.example .env
 RUN echo -e "loglevel=silent\nupdate-notifier=false" > /squid/.npmrc
 ADD db db
-#ADD assets assets
 ADD schema.graphql .
 # TODO: use shorter PROMETHEUS_PORT
 ENV PROMETHEUS_PORT 3000
-EXPOSE 4350
 
 FROM squid AS squid-indexer
 CMD ["npm", "run", "squid-indexer:start"]
