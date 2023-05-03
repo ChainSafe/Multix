@@ -23,6 +23,7 @@ jobs:
           cache: yarn
           node-version: "16"
           cache-dependency-path: "ui/yarn.lock"
+      - run: corepack enable
       - run: yarn install --immutable
       - run: yarn build
       - name: Publish to Cloudflare Pages
