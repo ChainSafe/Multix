@@ -18,7 +18,9 @@
     "multisig"
   ],
   "license": "MIT",
-  "dependencies": {
-    "@yarnpkg/plugin-interactive-tools": "^4.0.0-rc.43"
+  "scripts": {
+    "build": "yarn workspaces foreach run build",
+    "start:ui": "yarn workspace multix-ui start",
+    "lint": "yarn workspaces foreach run lint"
   }
 }
