@@ -22,7 +22,7 @@ jobs:
         with:
           cache: yarn
           node-version: "16"
-          cache-dependency-path: "packages/ui/yarn.lock"
+          cache-dependency-path: "yarn.lock"
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn build
