@@ -9,11 +9,9 @@ ADD package.json .
 ADD package-lock.json .
 ADD tsconfig.json .
 ADD src src
-ADD typegen.json .
 ADD schema.graphql .
 RUN npm ci
 RUN npm run codegen
-RUN npm run typegen
 RUN npm run build
 
 FROM node-with-gyp AS deps
