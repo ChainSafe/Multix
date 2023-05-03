@@ -12,11 +12,11 @@ const NetworkSelection = ({ className }: Props) => {
   const { selectedNetwork, selectNetwork } = useNetwork()
   // if no ws endpoint is set (in the env) for local nodes
   // we filter it out
-  const networksToShow = useMemo(() =>
-    networkList.local.wsGraphqlUrl
+  const networksToShow = useMemo(() => {
+    return networkList.local.wsGraphqlUrl
       ? Object.entries(networkList)
       : Object.entries(networkList).filter(([name]) => name !== "local")
-  , [])
+  }, [])
 
   const handleNetworkSelection = useCallback((event: SelectChangeEvent<string>) => {
     selectNetwork(event.target.value)
@@ -49,7 +49,6 @@ const NetworkSelection = ({ className }: Props) => {
 export default styled(NetworkSelection)(({ theme }) => `
     min-width: 10rem;
     background-color: ${theme.palette.primary.white};
-    margin-left: 0.5rem;
     
     .MuiSelect-select {
       display: flex;
