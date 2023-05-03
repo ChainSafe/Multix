@@ -23,7 +23,7 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: install packages
-      run: npm ci
+      run: yarn install --immutable
 
     - name: lint
-      run: npm run lint
+      run: yarn lint
