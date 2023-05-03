@@ -24,21 +24,18 @@ make typegen
 make build
 
 # 3. Start target Postgres database
-make up
+make db
 
 # 4. Apply database migrations from db/migrations
 make migrate
 
-# 5. Now start the processor
-make process
+# 5. Now start the squid processor and the graphql-server
+make up
 
-# 6. The above command will block the terminal
-#    being busy with fetching the chain data, 
-#    transforming and storing it in the target database.
-#
-#    To start the graphql server open the separate terminal
-#    and run
-make serve
+# 6. The above command will not block the terminal
+#    but things will be running in the backhground
+#    to see the logs
+make logs
 ```
 
 ### Involved ports
