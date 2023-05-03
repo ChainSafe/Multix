@@ -6,7 +6,7 @@ services:
     build:
       context: .
       target: graphql-server
-    env_file: .env.example
+    env_file: .env
     environment:
       DB_HOST: db
     ports:
@@ -21,7 +21,7 @@ services:
     build:
       context: .
       target: squid-indexer
-    env_file: .env.example
+    env_file: .env
     environment:
       PROCESSOR_PROMETHEUS_PORT: 3000
     ports:
