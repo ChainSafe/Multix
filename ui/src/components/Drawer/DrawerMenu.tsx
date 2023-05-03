@@ -10,6 +10,8 @@ import { useAccounts } from "../../contexts/AccountsContext";
 import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import styled from "styled-components";
+// import NetworkSelection from "../NetworkSelection";
+import MultiProxySelection from "../MultiProxySelection";
 
 
 
@@ -30,6 +32,12 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
       </DrawerHeader>
       <Divider />
       <List>
+        <ListItem>
+          <MultiProxySelection />
+        </ListItem>
+        {/* <ListItem>
+          <NetworkSelection />
+        </ListItem> */}
         {!!accountList?.length && (
           ROUTES.map(({ url, name, isDisplayWhenNoMultiProxy }) => (
             multiProxyList.length > 0 || isDisplayWhenNoMultiProxy
