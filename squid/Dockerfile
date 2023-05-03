@@ -30,7 +30,6 @@ COPY --from=deps /squid/node_modules node_modules
 COPY --from=builder /squid/lib lib
 RUN echo -e "loglevel=silent\nupdate-notifier=false" > /squid/.npmrc
 ADD db db
-ADD schema.graphql .
 # TODO: use shorter PROMETHEUS_PORT
 ENV PROMETHEUS_PORT 3000
 

@@ -1,78 +1,95 @@
-import AppBar from "@mui/material/AppBar"
-import { Box, Button, Container, Toolbar, Typography } from "@mui/material"
-import { Link } from "react-router-dom"
-import MultiProxySelection from "../MultiProxySelection"
-import { useAccounts } from "../../contexts/AccountsContext"
-import styled from "styled-components";
-// import NetworkSelection from "../NetworkSelection"
+import { Box, Button, IconButton, Toolbar, Typography } from "@mui/material"
+import styled from "styled-components"
+import { useMemo } from "react";
+import MuiAppBar from '@mui/material/AppBar';
+import MultiProxySelection from "../MultiProxySelection";
+import { useAccounts } from "../../contexts/AccountsContext";
+import { Link } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
+import { ROUTES } from "../../constants";
+import { useMultiProxy } from "../../contexts/MultiProxyContext";
+// import NetworkSelection from "../NetworkSelection";
 
 interface Props {
   className?: string
+  handleDrawerOpen: () => void,
 }
 
-const Header = ({ className }: Props) => {
-  const { accountList } = useAccounts()
+const Header = ({ className, handleDrawerOpen }: Props) => {
+  const { accountList } = useAccounts();
+  const isAccountConnected = useMemo(() => !!accountList?.length, [accountList])
+  const { multiProxyList } = useMultiProxy()
 
   return (
-    <AppBar className={className}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1 }}
+    <MuiAppBar position="fixed" className={className}>
+      <Toolbar>
+        <TypographyStyled
+          variant="h6"
+          noWrap
+        >
+          Multix
+        </TypographyStyled>
+        {isAccountConnected && (
+          <BoxStyled>
+            {ROUTES.map(({ url, name, isDisplayWhenNoMultiProxy }) => (
+              multiProxyList.length > 0 || isDisplayWhenNoMultiProxy
+                ? (
+                  <Button
+                    component={Link}
+                    to={url}
+                    className="buttonHeader"
+                  >
+                    {name}
+                  </Button>
+                )
+                : null
+            ))}
+            <MultiProxySelection />
+            {/* <NetworkSelection className="networkSelection" /> */}
+          </BoxStyled>
+        )}
+        {isAccountConnected && (
+          <IconButtonStyled
+            color="inherit"
+            aria-label="open drawer"
+            edge="end"
+            onClick={handleDrawerOpen}
           >
-            Multix
-          </Typography>
-          {!!accountList?.length && (
-            <>
-              <Box className="buttonContainer">
-                <Button
-                  component={Link}
-                  to="/"
-                  className="buttonHeader"
-                >
-                  Home
-                </Button>
-                <Button
-                  component={Link}
-                  to="/create"
-                  className="buttonHeader"
-                >
-                  New Multisig
-                </Button>
-                <Button
-                  component={Link}
-                  to="/about"
-                  className="buttonHeader"
-                >
-                  About
-                </Button>
-                <Button
-                  component={Link}
-                  to="/help"
-                  className="buttonHeader"
-                >
-                  Help
-                </Button>
-              </Box>
-              <MultiProxySelection />
-            </>
-          )}
-          {/* <NetworkSelection /> */}
-        </Toolbar>
-      </Container>
-    </AppBar>
+            <MenuIcon />
+          </IconButtonStyled>
+        )}
+      </Toolbar>
+    </MuiAppBar>
   )
 }
 
-export default styled(Header)(({ theme }) => `
-  .buttonContainer {
-    flex-grow: 1;
-    display: flex;
-  }
+const BoxStyled = styled(Box)(({ theme }) => `
+    display: none;
+    
+    @media (min-width: ${theme.breakpoints.values.sm}px) {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
 
+    .networkSelection {
+      margin-left: 0.5rem;
+    }
+`)
+
+
+const TypographyStyled = styled(Typography)`
+  flex-grow: 1;
+`
+
+const IconButtonStyled = styled(IconButton)(({ theme }) => `
+    display: block;
+    @media (min-width: ${theme.breakpoints.values.sm}px) {
+        display: none;
+    }
+`)
+
+export default styled(Header)(({ theme }) => `
   .buttonHeader {
     color: ${theme.palette.primary.white};
     text-align: center;

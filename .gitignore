@@ -99,3 +99,20 @@ tags
 
 ### WebStorm ###
 .idea
+*.log
+
+
+### JS/TS projects ###
+target
+node_modules
+lib
+build
+.vscode
+.env
+
+*/.pnp.*
+*/.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
