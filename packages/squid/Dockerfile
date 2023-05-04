@@ -10,15 +10,15 @@ ADD package-lock.json .
 ADD tsconfig.json .
 ADD src src
 ADD schema.graphql .
-RUN npm ci
-RUN npm run codegen
-RUN npm run build
+RUN yarn install --immutable
+RUN yarn codegen
+RUN yarn build
 
 FROM node-with-gyp AS deps
 WORKDIR /packages/squid
 ADD package.json .
 ADD package-lock.json .
-RUN npm ci --production
+RUN yarn install --immutable
 
 FROM node AS squid
 WORKDIR /packages/squid
@@ -32,7 +32,7 @@ ADD db db
 ENV PROMETHEUS_PORT 3000
 
 FROM squid AS squid-indexer
-CMD ["npm", "run", "squid-indexer:start"]
+CMD ["yarn", "squid-indexer:start"]
 
 FROM squid AS graphql-server
-CMD ["npm", "run", "graphql-server:start"]
+CMD ["yarn", "graphql-server:start"]

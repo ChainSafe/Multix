@@ -25,17 +25,14 @@ up:
 
 # start the squid-indexer without docker
 squid-indexer: migrate
-	@npm run squid-indexer:start
+	@yarn squid-indexer:start
 
 # start the graphql-server without docker
 graphql-server:
-	@npm run graphql-server:start
+	@yarn graphql-server:start
 
 build:
-	@npm run build
-
-#serve:
-#	@npm run graphql-server:start
+	@yarn build
 
 migrate:
 	@npx squid-typeorm-migration apply

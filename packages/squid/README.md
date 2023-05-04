@@ -13,7 +13,7 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 
 ```bash
 # 1. Install dependencies
-npm ci
+yarn install --immutable
 
 # 1.1
 
