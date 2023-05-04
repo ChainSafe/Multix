@@ -7,11 +7,11 @@ import ListItemButton from "@mui/material/ListItemButton";
 import { Link } from "react-router-dom";
 import ListItemText from "@mui/material/ListItemText";
 import { useAccounts } from "../../contexts/AccountsContext";
-import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { styled } from "@mui/material/styles";
 // import NetworkSelection from "../NetworkSelection";
 import MultiProxySelection from "../MultiProxySelection";
+import { ROUTES } from "../../pages/routes";
 
 
 
@@ -39,11 +39,11 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           <NetworkSelection />
         </ListItem> */}
         {!!accountList?.length && (
-          ROUTES.map(({ url, name, isDisplayWhenNoMultiProxy }) => (
-            multiProxyList.length > 0 || isDisplayWhenNoMultiProxy
+          ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => (
+            multiProxyList.length || isDisplayWhenNoMultiProxy
               ? (
                 <ListItem key={name} disablePadding>
-                  <ListItemButton onClick={handleDrawerClose} component={Link} to={url}>
+                  <ListItemButton onClick={handleDrawerClose} component={Link} to={path}>
                     <ListItemText primary={name} />
                   </ListItemButton>
                 </ListItem>

@@ -6,8 +6,8 @@ import MultiProxySelection from "../MultiProxySelection";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
-import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
+import { ROUTES } from "../../pages/routes";
 // import NetworkSelection from "../NetworkSelection";
 
 interface Props {
@@ -31,19 +31,20 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
         </TypographyStyled>
         {isAccountConnected && (
           <BoxStyled>
-            {ROUTES.map(({ url, name, isDisplayWhenNoMultiProxy }) => (
-              multiProxyList.length > 0 || isDisplayWhenNoMultiProxy
-                ? (
+            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => {
+              if(multiProxyList.length || isDisplayWhenNoMultiProxy) {
+                return (
                   <Button
                     component={Link}
-                    to={url}
+                    to={path}
                     className="buttonHeader"
                   >
                     {name}
                   </Button>
                 )
-                : null
-            ))}
+              }
+              return null;
+            })}
             <MultiProxySelection />
             {/* <NetworkSelection className="networkSelection" /> */}
           </BoxStyled>

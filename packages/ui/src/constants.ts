@@ -2,12 +2,7 @@ import { chainsKusamaSVG } from "./logos/kusamaSVG "
 import { localSVG } from "./logos/localSVG"
 import { chainsRococoSVG } from "./logos/rococoSVG"
 
-export const ROUTES = [
-  { url: '/', name: 'Home', isDisplayWhenNoMultiProxy: true },
-  { url: '/create', name: 'New Multisig', isDisplayWhenNoMultiProxy: true },
-  { url: '/about', name: 'About', isDisplayWhenNoMultiProxy: true },
-  { url: '/help', name: 'Help', isDisplayWhenNoMultiProxy: false },
-]
+
 export const DAPP_NAME = "Multix"
 export const ICON_SIZE = 40
 export const ICON_THEME = "polkadot"
