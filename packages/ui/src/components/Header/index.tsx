@@ -35,6 +35,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
               if(multiProxyList.length || isDisplayWhenNoMultiProxy) {
                 return (
                   <Button
+                    key={name}
                     component={Link}
                     to={path}
                     className="buttonHeader"
