@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": [
+      "vite/client",
+      "vite-plugin-svgr/client"
+    ],
+    "paths": {
+      "@polkadot/types/lookup": [
+        "./src/interfaces/types-lookup.ts"
+      ],
+      "@polkadot/api/augment": [
+        "./src/interfaces/augment-api.ts"
+      ],
+      "@polkadot/types/augment": [
+        "./src/interfaces/augment-types.ts"
+      ],
+    },
+  },
+  "include": [
+    "src/**/*",
+    "**/*.config.ts",
+    "**/types-and-hooks.tsx",
+    "**/codegen.ts",
+    "graphql.config.js"
+  ],
+  "exclude": [
+    "src/interfaces/**/*"
+  ]
+}

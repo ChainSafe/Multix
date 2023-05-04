@@ -1,0 +1,26 @@
+{
+  "name": "@chainsafe/multix",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "description": "An interface to easily manage complex multisigs.",
+  "engines": {
+    "node": ">=16.10"
+  },
+  "packageManager": "yarn@3.5.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainSafe/Multix"
+  },
+  "keywords": [
+    "polkadot",
+    "multisig"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn workspaces foreach run build",
+    "start:ui": "yarn workspace multix-ui start",
+    "lint": "yarn workspaces foreach run lint"
+  }
+}
