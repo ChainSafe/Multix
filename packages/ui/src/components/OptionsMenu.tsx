@@ -2,10 +2,8 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import styled from 'styled-components';
 import { ListItemIcon, ListItemText } from '@mui/material';
 import { useState, MouseEvent, ReactNode } from 'react';
-
 export interface MenuOption {
   text: string;
   icon: ReactNode;
@@ -74,6 +72,4 @@ const OptionsMenu = ({ className, options }: Props) => {
   );
 }
 
-export default styled(OptionsMenu)(({ theme }) => `
-  
-`)
+export default OptionsMenu;

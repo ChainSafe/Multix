@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
-import styled from "styled-components";
+import { styled } from "@mui/material/styles";
 // import NetworkSelection from "../NetworkSelection";
 import MultiProxySelection from "../MultiProxySelection";
 

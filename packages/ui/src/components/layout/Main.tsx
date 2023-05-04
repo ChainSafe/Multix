@@ -7,7 +7,7 @@ import { Route, Routes } from "react-router-dom";
 import { About, Creation, Home } from "../../pages";
 import DrawerComponent from "../Drawer/Drawer";
 import Help from "../../pages/Help";
-import styled from "styled-components";
+import { styled }  from "@mui/material/styles"
 
 function MainLayout() {
   const [open, setOpen] = React.useState(false);
