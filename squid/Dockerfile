@@ -34,6 +34,5 @@ ENV PROMETHEUS_PORT 3000
 FROM squid AS squid-indexer
 CMD ["npm", "run", "squid-indexer:start"]
 
-
 FROM squid AS graphql-server
 CMD ["npm", "run", "graphql-server:start"]
