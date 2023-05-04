@@ -103,16 +103,18 @@ tags
 
 
 ### JS/TS projects ###
+.idea
+.vscode
 target
 node_modules
 lib
 build
-.vscode
 .env
 
-*/.pnp.*
-*/.yarn/*
+.pnp.*
+.yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
+!.yarn/versions
