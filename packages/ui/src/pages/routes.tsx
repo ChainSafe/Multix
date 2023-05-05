@@ -11,7 +11,7 @@ type Route = {
 }
 
 export const ROUTES: Route[] = [
-  { path: 'home', element: <Home />, name: 'Home', isDisplayWhenNoMultiProxy: true },
+  { path: '/', element: <Home />, name: 'Home', isDisplayWhenNoMultiProxy: true },
   { path: 'create', element: <Creation />, name: 'New Multisig', isDisplayWhenNoMultiProxy: true },
   { path: 'about', element: <About />, name: 'About', isDisplayWhenNoMultiProxy: true },
   { path: 'help', element: <Help />, name: 'Help', isDisplayWhenNoMultiProxy: false },
