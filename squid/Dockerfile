@@ -1,6 +1,6 @@
-FROM node:16-alpine AS node
+FROM --platform=linux/amd64 node:16-alpine AS node
 
-FROM node AS node-with-gyp
+FROM --platform=linux/amd64 node AS node-with-gyp
 RUN apk add g++ make python3
 
 FROM node-with-gyp AS builder
@@ -26,10 +26,9 @@ COPY --from=deps /squid/package.json .
 COPY --from=deps /squid/package-lock.json .
 COPY --from=deps /squid/node_modules node_modules
 COPY --from=builder /squid/lib lib
-RUN echo -e "loglevel=silent\nupdate-notifier=false" > /squid/.npmrc
+COPY --from=builder /squid/schema.graphql .
 ADD db db
-# TODO: use shorter PROMETHEUS_PORT
-ENV PROMETHEUS_PORT 3000
+RUN echo -e "loglevel=silent\nupdate-notifier=false" > /squid/.npmrc
 
 FROM squid AS squid-indexer
 CMD ["npm", "run", "squid-indexer:start"]
