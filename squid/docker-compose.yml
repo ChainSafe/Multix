@@ -2,13 +2,15 @@ version: "3"
 
 services:
   graphql-server:
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     container_name: graphql-server
     build:
       context: .
       target: graphql-server
     env_file: .env
-    environment:
-      DB_HOST: db
+    # environment:
+    #   DB_HOST: "${DB_HOST}"
     ports:
       - "${GQL_PORT}:4350"
     mem_limit: 300m
@@ -17,6 +19,8 @@ services:
       - db
 
   squid-indexer:
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     container_name: squid-indexer
     build:
       context: .
