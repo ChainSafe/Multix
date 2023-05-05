@@ -1,18 +1,19 @@
-FROM node:16-alpine AS node
+FROM --platform=linux/amd64 node:16-alpine AS node
 
-FROM node AS node-with-gyp
+FROM --platform=linux/amd64 node AS node-with-gyp
 RUN apk add g++ make python3
 
 FROM node-with-gyp AS builder
-WORKDIR /packages/squid
-ADD package.json .
-ADD package-lock.json .
+WORKDIR /squid
+ADD ../.../package.json .
+ADD ../.../yarn.lock .
 ADD tsconfig.json .
 ADD src src
 ADD schema.graphql .
+ADD corepack
 RUN yarn install --immutable
 RUN yarn codegen
-RUN yarn build
+RUN yarn build --production
 
 FROM node-with-gyp AS deps
 WORKDIR /packages/squid
@@ -26,10 +27,9 @@ COPY --from=deps /packages/squid/package.json .
 COPY --from=deps /packages/squid/package-lock.json .
 COPY --from=deps /packages/squid/node_modules node_modules
 COPY --from=builder /packages/squid/lib lib
-RUN echo -e "loglevel=silent\nupdate-notifier=false" > /packages/squid/.npmrc
+COPY --from=builder /squid/schema.graphql .
 ADD db db
-# TODO: use shorter PROMETHEUS_PORT
-ENV PROMETHEUS_PORT 3000
+RUN echo -e "loglevel=silent\nupdate-notifier=false" > /squid/.npmrc
 
 FROM squid AS squid-indexer
 CMD ["yarn", "squid-indexer:start"]
