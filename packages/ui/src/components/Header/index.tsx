@@ -31,9 +31,9 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
         </TypographyStyled>
         {isAccountConnected && (
           <BoxStyled>
-            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => {
-              if(multiProxyList.length || isDisplayWhenNoMultiProxy) {
-                return (
+            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => (
+              multiProxyList.length || isDisplayWhenNoMultiProxy
+                ? (
                   <Button
                     key={name}
                     component={Link}
@@ -42,10 +42,9 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
                   >
                     {name}
                   </Button>
-                )
-              }
-              return null;
-            })}
+                ):
+                null
+            ))}
             <MultiProxySelection />
             {/* <NetworkSelection className="networkSelection" /> */}
           </BoxStyled>
