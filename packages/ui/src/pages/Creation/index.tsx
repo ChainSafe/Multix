@@ -16,6 +16,8 @@ import { useCheckBalance } from "../../hooks/useCheckBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
+import { useSnackStack } from "../../components/SnackBar/SnackStackProvider";
+import Snackbar from "../../components/SnackBar/Snackbar";
 
 interface Props {
   className?: string
@@ -36,7 +38,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useSigningCallback({ onSuccess: () => navigate("/?creationInProgress=true") })
-  const { addToast } = useToasts()
+  const { addToast } = useSnackStack()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
@@ -161,6 +163,7 @@ const MultisigCreation = ({ className }: Props) => {
         md={4}
       >
         <h1 className="title">{steps[currentStep] || ""}</h1>
+        <Snackbar />
       </Grid>
       <Grid
         item

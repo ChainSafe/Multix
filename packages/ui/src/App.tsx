@@ -10,6 +10,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from "./contexts/AccountNamesContext"
 import { NetworkContextProvider } from "./contexts/NetworkContext"
 import MainLayout from "./components/layout/Main";
+import SnackbarProvider from "./components/SnackBar/SnackStackProvider"
 
 
 const App = () => {
@@ -17,23 +18,25 @@ const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <ToastContextProvider>
-        <BrowserRouter>
-          <NetworkContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <ApiContextProvider>
-                <AccountContextProvider>
-                  <AccountNamesContextProvider>
-                    <MultiProxyContextProvider>
-                      <MainLayout />
-                    </MultiProxyContextProvider>
-                  </AccountNamesContextProvider>
-                </AccountContextProvider>
-              </ApiContextProvider>
-            </QueryClientProvider>
-          </NetworkContextProvider>
-        </BrowserRouter>
-      </ToastContextProvider>
+      <SnackbarProvider>
+        <ToastContextProvider>
+          <BrowserRouter>
+            <NetworkContextProvider>
+              <QueryClientProvider client={queryClient}>
+                <ApiContextProvider>
+                  <AccountContextProvider>
+                    <AccountNamesContextProvider>
+                      <MultiProxyContextProvider>
+                        <MainLayout />
+                      </MultiProxyContextProvider>
+                    </AccountNamesContextProvider>
+                  </AccountContextProvider>
+                </ApiContextProvider>
+              </QueryClientProvider>
+            </NetworkContextProvider>
+          </BrowserRouter>
+        </ToastContextProvider>
+      </SnackbarProvider>
     </MuiThemeProvider>
   )
 }
