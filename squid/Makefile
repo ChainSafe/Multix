@@ -21,7 +21,7 @@ logs:
 
 # start the squid-indexer and the graphql-server using docker
 up:
-	@docker compose up squid-indexer graphql-server
+	@docker compose up -d squid-indexer graphql-server
 
 # start the squid-indexer without docker
 squid-indexer: migrate
