@@ -48,7 +48,7 @@ The graphql server and playground is available at http://localhost:4350/graphql
 The database used for the indexer is a Postgres launched in a Docker.
 If you have no migration to do, and the project is built already, you can launch the docker with the db and the indexer using:
 ```bash
-docker-compose up -d
+docker compose up -d
 node -r dotenv/config lib/processor.js
 ```
 

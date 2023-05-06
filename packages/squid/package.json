@@ -6,12 +6,12 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf lib && yarn tsc",
     "db:migrate": "npx squid-typeorm-migration apply",
     "codegen": "npx squid-typeorm-codegen",
     "typegen": "npx squid-substrate-typegen typegen.json",
-    "squid-indexer:start": "node -r dotenv/config lib/processor.js",
-    "graphql-server:start": "npx squid-graphql-server --subscriptions --max-response-size 10000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
+    "start:squid-indexer": "node -r dotenv/config lib/processor.js",
+    "start:graphql-server": "npx squid-graphql-server --subscriptions --max-response-size 10000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,ts,tsx}' --fix"
   },
@@ -25,7 +25,8 @@
     "@subsquid/typeorm-store": "^0.2.2",
     "dotenv": "^16.0.3",
     "pg": "8.10.0",
-    "typeorm": "0.3.14"
+    "typeorm": "0.3.14",
+    "typescript": "5.0.4"
   },
   "devDependencies": {
     "@subsquid/substrate-metadata-explorer": "1.1.2",
@@ -34,7 +35,6 @@
     "@types/node": "18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "eslint": "^8.38.0",
-    "eslint-config-prettier": "^8.8.0",
-    "typescript": "5.0.3"
+    "eslint-config-prettier": "^8.8.0"
   }
 }

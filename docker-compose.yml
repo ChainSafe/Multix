@@ -23,6 +23,7 @@ services:
       target: squid-indexer
     env_file: .env
     environment:
+      DB_HOST: db
       PROCESSOR_PROMETHEUS_PORT: 3000
     ports:
       - "3000:3000"
@@ -41,4 +42,3 @@ services:
 #    command: ["postgres", "-c", "log_statement=all"]
 #    volumes:
 #      - ./data/db:/var/lib/postgresql/data
-

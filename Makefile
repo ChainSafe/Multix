@@ -8,10 +8,10 @@ build-graphql-server-image:
 build-images: build-squid-indexer-image build-graphql-server-image
 
 db:
-	@docker-compose up -d db
+	@docker compose up -d db
 
 down:
-	@docker-compose down
+	@docker compose down
 
 ps:
 	@docker compose ps
@@ -21,15 +21,15 @@ logs:
 
 # start the squid-indexer and the graphql-server using docker
 up:
-	@docker-compose up squid-indexer graphql-server
+	@docker compose up -d squid-indexer graphql-server
 
 # start the squid-indexer without docker
 squid-indexer: migrate
-	@yarn squid-indexer:start
+	@yarn start:squid-indexer
 
 # start the graphql-server without docker
 graphql-server:
-	@yarn graphql-server:start
+	@yarn start:graphql-server
 
 build:
 	@yarn build
