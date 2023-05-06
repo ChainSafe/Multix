@@ -36,7 +36,8 @@ COPY --from=builder multix/packages/squid/package.json .
 COPY --from=builder multix/node_modules node_modules
 COPY --from=builder multix/packages/squid/lib lib
 COPY --from=builder multix/packages/squid/schema.graphql .
-ADD db db
+ADD packages/squid/db db
+# RUN yarn db:migrate
 # RUN echo -e "loglevel=silent\nupdate-notifier=false" > /multix/.npmrc
 
 FROM squid AS squid-indexer
