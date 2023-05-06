@@ -110,6 +110,7 @@ node_modules
 lib
 build
 .env
+*DS_Store
 
 .pnp.*
 .yarn/*
