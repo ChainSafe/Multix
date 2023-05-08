@@ -35,13 +35,13 @@ build:
 	@yarn build
 
 migrate:
-	@npx squid-typeorm-migration apply
+	@yarn migrate:squid
 
 generate-migration:
 	@npx squid-typeorm-migration generate
 
 codegen:
-	@npx squid-typeorm-codegen
+	@yarn codegen:squid
 
 typegen:
 	@npx squid-substrate-typegen typegen.json
