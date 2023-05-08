@@ -1,7 +1,7 @@
 import BN from "bn.js"
 import { useEffect, useState } from "react"
 import { useApi } from "../contexts/ApiContext"
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
+import { useGetBalance } from "./useGetBalance";
 
 export interface Props {
     min?: BN
@@ -10,25 +10,13 @@ export interface Props {
 
 export const useCheckBalance = ({ min, address }: Props) => {
   const { isApiReady, api } = useApi()
+  const { balance }  = useGetBalance({ address })
   const [hasEnoughFreeBalance, setHasEnoughFreeBalance] = useState(false)
 
   useEffect(() => {
-    if (!isApiReady || !api || !address || !min) return
-
-
-    let unsubscribe: () => void;
-
-    api.derive.balances.account(address, (info: DeriveBalancesAccount) => {
-      setHasEnoughFreeBalance(info.freeBalance.gte(min))
-      // console.log('info.freeBalance', info.freeBalance.toString(), address)
-    })
-      .then(unsub => { unsubscribe = unsub; })
-      .catch(console.error)
-
-    return () => unsubscribe && unsubscribe();
-
-  }, [address, api, isApiReady, min])
+    if (!isApiReady || !api || !address || !min || !balance) return
+    setHasEnoughFreeBalance(balance.gte(min))
+  }, [balance, address, api, isApiReady, min])
 
   return { hasEnoughFreeBalance }
-
-} 
+}

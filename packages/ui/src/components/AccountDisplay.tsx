@@ -1,23 +1,26 @@
 import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { styled }  from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { useAccountNames } from "../contexts/AccountNamesContext";
 import { AccountBadge } from "../types";
-import { getDisplayAddress } from "../utils/getDisplayAddress";
+import { getDisplayAddress } from "../utils";
 import IdenticonBadge from "./IdenticonBadge";
 import { useApi } from "../contexts/ApiContext";
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import IdentityIcon from "./IdentityIcon";
+import { useGetBalance } from "../hooks/useGetBalance";
 
 interface Props {
-  address: string;
-  className?: string
-  badge?: AccountBadge
-  withName?: boolean
+    address: string;
+    className?: string
+    badge?: AccountBadge
+    withName?: boolean
+    withBalance?: boolean
 }
 
-const AccountDisplay = ({ className, address, badge, withName = true }: Props) => {
+const AccountDisplay = ({ className, address, badge, withName = true, withBalance = false }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
+  const { balanceFormatted } = useGetBalance({ address })
   const displayName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
   const { api, isApiReady } = useApi()
@@ -49,59 +52,75 @@ const AccountDisplay = ({ className, address, badge, withName = true }: Props) =
         setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
       }
     })
-      .then(unsub => { unsubscribe = unsub; })
+      .then(unsub => {
+        unsubscribe = unsub;
+      })
       .catch(e => console.error(e));
 
     return () => unsubscribe && unsubscribe();
   }, [address, api, isApiReady]);
 
-  return <Box className={className}>
-    <IdenticonBadge badge={badge} address={address} />
-    <Box className="nameAddressWrapper">
-      {withName && (
-        <div className="nameWrapper">
-          {!!identity && mainDisplay && <IdentityIcon className="identityBadge" identity={identity} />}
-          {!!sub && <span className='sub'>/{sub}</span>}
-          <span className="name">{displayName || mainDisplay}</span>
-        </div>
+  return (
+    <Box className={`multisig ${className}`}>
+      <MultisigInfo>
+        <IdenticonBadge badge={badge} address={address} />
+        <Box>
+          {withName && (
+            <NameWrapper>
+              {!!identity && mainDisplay && <IdentityIcon className="identityBadge" identity={identity} />}
+              {!!sub && <span>{sub}</span>}
+              <Name>{displayName || mainDisplay}</Name>
+            </NameWrapper>
+          )}
+          <Address>{getDisplayAddress(address)}</Address>
+        </Box>
+      </MultisigInfo>
+      {withBalance && (
+        <Box>
+          <Balance>Balance: {balanceFormatted}</Balance>
+        </Box>
       )}
-      <div className="address">{getDisplayAddress(address)}</div>
     </Box>
-  </Box>
+  )
 }
 
-
-export default styled(AccountDisplay)(({ theme }) => `
-  display: flex;
-  align-items: center;
-  min-width: 0;
-
-  .nameAddressWrapper {
-    min-width: 0
-  }
-
-  .identicon {
-    margin-right: .5rem;
-  }
-
-  .address {
-    color: ${theme.custom.text.addressColorLightGray};
-    font-size: small;
-  }
-
-  .nameWrapper {
+const MultisigInfo = styled('div')(({ theme }) => `
     display: flex;
     align-items: center;
-  }
+`);
 
-  .identityBadge {
-    margin-right: 0.3rem;
-  }
+const NameWrapper = styled('div')(({ theme }) => `
+    display: flex;
+    align-items: center;
+`);
 
-  .name {
+
+const Address = styled('div')(({ theme }) => `
+    color: ${theme.custom.text.addressColorLightGray};
+    font-size: small;
+`);
+
+
+const Name = styled('span')(({ theme }) => `
     font-size: large;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+`);
+
+const Balance = styled('div')(({ theme }) => `
+  margin-top: 4px;  
+  display: flex;
+  color: ${theme.custom.text.addressColorLightGray};
+  font-size: small;
+`);
+
+export default styled(AccountDisplay)(({ theme }) => `
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+
+  .identityBadge {
+    margin-right: 0.3rem;
   }
 `)
