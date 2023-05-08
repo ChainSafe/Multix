@@ -1,0 +1,65 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "prettier",
+    "plugin:react-hooks/recommended",
+    "eslint:recommended",
+    "react-app",
+    "plugin:@typescript-eslint/eslint-recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module",
+    "tsconfigRootDir": "./",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "react/jsx-tag-spacing": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*tsx",
+        "*.js",
+        "*.jsx"
+      ],
+      "processor": "@graphql-eslint/graphql"
+    },
+    {
+      "files": [
+        "*.graphql"
+      ],
+      "extends": "plugin:@graphql-eslint/schema-recommended",
+      "rules": {
+        "@graphql-eslint/known-type-names": "error"
+      },
+      "parserOptions": {
+        "schema": "http://localhost:4350/graphql"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "src/interfaces/**/*",
+    "types-and-hooks.tsx",
+    "src/gql/**/*"
+  ]
+}
