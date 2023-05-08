@@ -31,11 +31,5 @@ export const useGetBalance = ({ address }: useGetBalanceProps) => {
 
   }, [address, api, chainInfo?.tokenDecimals, chainInfo?.tokenSymbol, isApiReady])
 
-
-  function hasEnoughFreeBalance(min: Balance) {
-    return balance?.gte(min)
-  }
-
-
-  return { balance, balanceFormatted, hasEnoughFreeBalance }
+  return { balance, balanceFormatted }
 }
