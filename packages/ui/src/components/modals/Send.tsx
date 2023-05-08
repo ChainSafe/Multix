@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { styled }  from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { useApi } from "../../contexts/ApiContext";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
@@ -17,6 +17,7 @@ import Warning from "../Warning";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
+import BatchExtrinsic from "../EasySetup/BatchExtrinsic";
 
 interface Props {
   onClose: () => void
@@ -127,7 +128,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         onSetErrorMessage={setEasyOptionErrorMessageorMessage}
       />,
       "Manual extrinsic": <ManualExtrinsic
-        from={selectedOrigin.address}
+        onSetExtrinsic={setExtrinsicToCall}
+        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+      />,
+      "Batch extrinsic": <BatchExtrinsic
         onSetExtrinsic={setExtrinsicToCall}
         onSetErrorMessage={setEasyOptionErrorMessageorMessage}
       />

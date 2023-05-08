@@ -1,5 +1,5 @@
 import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { styled }  from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -8,9 +8,9 @@ import paramConversion from "../../utils/paramConversion";
 import { getTypeDef } from '@polkadot/types/create';
 
 interface Props {
+  extrinsicIndex?: string
   className?: string
-  from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<"promise", ISubmittableResult>) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<"promise", ISubmittableResult>, key?: string) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -93,8 +93,8 @@ const transformParams = (
 const isNumType = (type: string) =>
   paramConversion.num.includes(type)
 
-const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const { api, isApiReady, chainInfo } = useApi()
+const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, extrinsicIndex }: Props) => {
+  const { api, isApiReady } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
   const [paramFields, setParamFields] = useState<ParamField[] | null>(null)
@@ -219,7 +219,6 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
       return
     }
 
-
     if (!callable || !palletRpc || !areAllParamsFilled) {
       return
     }
@@ -229,15 +228,14 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
         ? api.tx[palletRpc][callable](...transformedParams)
         : api.tx[palletRpc][callable]()
 
-      !!extrinsic && onSetExtrinsic(extrinsic)
+      !!extrinsic && onSetExtrinsic(extrinsic, extrinsicIndex)
     } catch (e) {
       console.error('Error in ManualExtrinsic')
       console.error(e)
       onSetErrorMessage("An error occured")
       console.error(e)
     }
-
-  }, [api, areAllParamsFilled, callable, chainInfo, isApiReady, onSetErrorMessage, onSetExtrinsic, palletRpc, transformedParams])
+  }, [api, areAllParamsFilled, callable, isApiReady, extrinsicIndex, onSetErrorMessage, onSetExtrinsic, palletRpc, transformedParams])
 
 
   return (
@@ -302,15 +300,15 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
 
 
 export default styled(ManualExtrinsic)(({ theme }) => `
-    .palletSelection {
-        margin-right: .5rem;
-    }
+  .palletSelection {
+      margin-right: .5rem;
+  }
 
-    .paramInputs {
-      list-style: none;
-      
-      & > li {
-        margin-top: 0.5rem;
-      }
+  .paramInputs {
+    list-style: none;
+    
+    & > li {
+      margin-top: 0.5rem;
     }
+  }
 `)
