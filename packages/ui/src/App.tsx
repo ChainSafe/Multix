@@ -10,7 +10,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from "./contexts/AccountNamesContext"
 import { NetworkContextProvider } from "./contexts/NetworkContext"
 import MainLayout from "./components/layout/Main";
-import SnackbarProvider from "./components/SnackBar/SnackStackProvider"
+import SnackbarContextProvider from "./components/SnackBar/SnackStackProvider"
 
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <SnackbarProvider>
+      <SnackbarContextProvider>
         <ToastContextProvider>
           <BrowserRouter>
             <NetworkContextProvider>
@@ -36,7 +36,7 @@ const App = () => {
             </NetworkContextProvider>
           </BrowserRouter>
         </ToastContextProvider>
-      </SnackbarProvider>
+      </SnackbarContextProvider>
     </MuiThemeProvider>
   )
 }

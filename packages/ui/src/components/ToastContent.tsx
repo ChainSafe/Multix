@@ -8,7 +8,7 @@ import { useCallback } from "react";
 export type ToastType = "success" | "error" | "loading"
 
 export interface Toast {
-  id: number
+  id?: number
   type: ToastType
   title: string
   link?: string

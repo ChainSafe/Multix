@@ -1,48 +1,21 @@
 import { useState, useContext, createContext } from "react";
+import { ToastType } from "../ToastContent";
+import Snackbar from "./Snackbar";
 
 export type ToastProps = {
-  /**
-   * Key to render multiple toasts.
-   * This is being set automatically unless specified manually.
-   */
   key?: number;
-  /**
-   * Alert title
-   */
   title?: string;
-  /**
-   * Alert message
-   */
   message?: string;
-  /**
-   * Link
-   */
   link?: string;
-  /**
-   * Custom component or html-layout
-   */
-  children?: React.ReactElement;
-  /**
-   * Indicates when the alert will disappear in ms. Defaults too 5000.
-   * Pass 0 for infinite duration.
-   */
   duration?: number;
-  /**
-   * Alert color
-   */
-  type?: "success" | "info" | "warning" | "error";
-  /**
-   * Alert position on the screen
-   */
+  type: ToastType;
   position?: {
     vertical?: "top" | "bottom";
     horizontal?: "left" | "right" | "center";
   };
-  /**
-   * On Close callback
-   */
-  onClose?: () => void;
 };
+
+const MAX_VISIBLE_TOASTS = 3
 
 export type SnackStackContextProps = {
   toastsPack: ToastProps[];
@@ -51,7 +24,7 @@ export type SnackStackContextProps = {
   removeToast: (key: ToastProps["key"]) => void;
 };
 
-const SnackStackContext = createContext<SnackStackContextProps>({
+const SnackbarContextProvider  = createContext<SnackStackContextProps>({
   toastsPack: [],
   setToastsPack: (toasts) => {},
   addToast: (toast) => {},
@@ -70,23 +43,25 @@ const SnackStackProvider: React.FC<React.PropsWithChildren> = ({
     if (toastsPack.find((toast) => toast.key === key)) {
       return;
     }
-    const rest = toastsPack.length < 3 ? toastsPack : toastsPack.slice(0, -1);
+    const rest = toastsPack.length < MAX_VISIBLE_TOASTS ? toastsPack : toastsPack.slice(0, -1);
     setToastsPack([{ ...toast, key }, ...rest]);
   };
 
   const removeToast = (key: ToastProps["key"]) => {
+    console.log('key', key)
     setToastsPack((prev) => prev.filter((toast) => toast.key !== key));
   };
 
   return (
-    <SnackStackContext.Provider
+    <SnackbarContextProvider.Provider
       value={{ toastsPack, setToastsPack, addToast, removeToast }}
     >
+      <Snackbar />
       {children}
-    </SnackStackContext.Provider>
+    </SnackbarContextProvider.Provider>
   );
 };
 
-export const useSnackStack = () => useContext(SnackStackContext);
+export const useSnackStack = () => useContext(SnackbarContextProvider);
 
 export default SnackStackProvider;

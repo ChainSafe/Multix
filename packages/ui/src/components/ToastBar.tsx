@@ -1,10 +1,10 @@
 import { IconButton, Snackbar } from "@mui/material"
-import { useToasts } from "../contexts/ToastContext"
 import CloseIcon from '@mui/icons-material/Close';
 import ToastContent from "./ToastContent";
 import React, { useCallback } from "react";
 import { styled }  from "@mui/material/styles";
 import { Toast } from "./ToastContent"
+import { useSnackStack } from "./SnackBar/SnackStackProvider";
 
 interface Props {
   toast: Toast
@@ -12,7 +12,7 @@ interface Props {
 
 const ToastBar = ({ toast }: Props) => {
   const { id, title, type, link } = toast
-  const { removeToast } = useToasts()
+  const { removeToast } = useSnackStack()
 
   const handleClose = useCallback((event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {

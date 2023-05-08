@@ -9,12 +9,12 @@ import { AggregatedData } from "../Transactions/TransactionList";
 import SignerSelection from "../SignerSelection";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { GenericCall } from "@polkadot/types";
-import { useToasts } from "../../contexts/ToastContext";
 import { Weight } from "@polkadot/types/interfaces";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import { MultisigStorageInfo } from "../../types";
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
+import { useSnackStack } from "../SnackBar/SnackStackProvider";
 
 interface Props {
   onClose: () => void
@@ -39,7 +39,7 @@ const ProposalSigning = ({ onClose, className, possibleSigners, proposalData, on
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
-  const { addToast } = useToasts()
+  const { addToast } = useSnackStack()
   const multisig = useMemo(() => getMultisigByAddress(proposalData.from), [getMultisigByAddress, proposalData])
   const threshold = useMemo(() => multisig?.threshold, [multisig])
   const signatories = useMemo(() => multisig?.signatories || [], [multisig])

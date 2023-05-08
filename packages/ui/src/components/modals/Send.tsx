@@ -7,7 +7,6 @@ import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import SignerSelection from "../SignerSelection";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { ISubmittableResult } from "@polkadot/types/types";
-import { useToasts } from "../../contexts/ToastContext";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { sortAddresses } from '@polkadot/util-crypto';
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
@@ -17,6 +16,7 @@ import Warning from "../Warning";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
+import { useSnackStack } from "../SnackBar/SnackStackProvider";
 
 interface Props {
   onClose: () => void
@@ -33,7 +33,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { selectedAccount, selectedSigner } = useAccounts()
   const [easyOptionErrorMessage, setEasyOptionErrorMessageorMessage] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
-  const { addToast } = useToasts()
+  const { addToast } = useSnackStack()
   const possibleOrigin = useMemo(() => {
     const proxyBaseInfo = {
       address: selectedMultiProxy?.proxy,

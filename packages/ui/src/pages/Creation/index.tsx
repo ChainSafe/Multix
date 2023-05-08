@@ -10,14 +10,12 @@ import NameSelection from "./NameSelection"
 import Summary from "./Summary";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
 import { useNavigate } from "react-router-dom";
-import { useToasts } from "../../contexts/ToastContext";
 import { useAccountNames } from "../../contexts/AccountNamesContext";
 import { useCheckBalance } from "../../hooks/useCheckBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
 import { useSnackStack } from "../../components/SnackBar/SnackStackProvider";
-import Snackbar from "../../components/SnackBar/Snackbar";
 
 interface Props {
   className?: string
@@ -163,7 +161,6 @@ const MultisigCreation = ({ className }: Props) => {
         md={4}
       >
         <h1 className="title">{steps[currentStep] || ""}</h1>
-        <Snackbar />
       </Grid>
       <Grid
         item
@@ -260,7 +257,7 @@ const MultisigCreation = ({ className }: Props) => {
             Back
           </Button>
           <Button
-            disabled={!canGoNext}
+            disabled={canGoNext}
             onClick={goNext}
           >
             {isLastStep

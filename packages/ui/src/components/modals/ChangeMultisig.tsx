@@ -10,7 +10,6 @@ import { useApi } from "../../contexts/ApiContext";
 import { useAccounts } from "../../contexts/AccountsContext";
 import { createKeyMulti, encodeAddress, sortAddresses } from "@polkadot/util-crypto";
 import { useSigningCallback } from "../../hooks/useSigningCallback";
-import { useToasts } from "../../contexts/ToastContext";
 import { AccountBadge } from "../../types";
 import { getIntersection } from "../../utils";
 import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
@@ -21,6 +20,7 @@ import { formatBnBalance } from "../../utils/formatBnBalance";
 import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
+import { useSnackStack } from "../SnackBar/SnackStackProvider";
 
 interface Props {
   onClose: () => void
@@ -34,7 +34,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const { isApiReady, api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
-  const { addToast } = useToasts()
+  const { addToast } = useSnackStack()
   const signCallBack2 = useSigningCallback({ onSuccess: onClose, onError: onClose })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])

@@ -1,7 +1,7 @@
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useApi } from '../contexts/ApiContext'
-import { useToasts } from '../contexts/ToastContext'
 import { useGetSubscanLinks } from './useSubscanLink'
+import { useSnackStack } from '../components/SnackBar/SnackStackProvider'
 
 interface Args {
   onSubmitting?: () => void
@@ -11,7 +11,7 @@ interface Args {
 }
 
 export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
-  const { addToast } = useToasts()
+  const { addToast } = useSnackStack()
   const { api } = useApi()
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
 
