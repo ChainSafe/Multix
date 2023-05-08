@@ -84,12 +84,12 @@ const AccountDisplay = ({ className, address, badge, withName = true, withBalanc
   )
 }
 
-const MultisigInfo = styled('div')(({ theme }) => `
+const MultisigInfo = styled('div')(() => `
     display: flex;
     align-items: center;
 `);
 
-const NameWrapper = styled('div')(({ theme }) => `
+const NameWrapper = styled('div')(() => `
     display: flex;
     align-items: center;
 `);
@@ -101,7 +101,7 @@ const Address = styled('div')(({ theme }) => `
 `);
 
 
-const Name = styled('span')(({ theme }) => `
+const Name = styled('span')(() => `
     font-size: large;
     white-space: nowrap;
     overflow: hidden;
@@ -115,7 +115,7 @@ const Balance = styled('div')(({ theme }) => `
   font-size: small;
 `);
 
-export default styled(AccountDisplay)(({ theme }) => `
+export default styled(AccountDisplay)(() => `
    display: flex;
    flex-direction: column;
    align-items: flex-start;
