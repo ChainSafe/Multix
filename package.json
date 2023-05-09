@@ -19,11 +19,20 @@
   ],
   "license": "MIT",
   "scripts": {
+    "docker:start:all": "yarn docker:start:squid && yarn ui:start",
+    "docker:start:squid": "yarn docker:db && yarn build && yarn squid:codegen && yarn squid:migrate && yarn docker:up",
+    "docker:build-squid-indexer-image": "docker build . --target squid-indexer -t squid-indexer",
+    "doker:build-graphql-server-image": "docker build . --target graphql-server -t graphql-server",
+    "docker:db": "docker compose up -d db",
+    "docker:down": "docker compose down",
+    "docker:up": "docker compose up -d squid-indexer graphql-server",
+    "build:images": "yarn docker:build-squid-indexer-image && yarn doker:build-graphql-server-image",
     "build": "yarn workspaces foreach run build",
     "lint": "yarn workspaces foreach run lint",
-    "start:ui": "yarn workspace multix-ui start",
-    "codegen:squid": "yarn workspace multix-squid codegen",
-    "build:squid": "yarn workspace multix-squid build",
-    "install:squid": "yarn workspaces focus multix-squid"
+    "ui:start": "yarn workspace multix-ui start",
+    "squid:codegen": "yarn workspace multix-squid codegen",
+    "squid:build": "yarn workspace multix-squid build",
+    "squid:install": "yarn workspaces focus multix-squid",
+    "squid:migrate": "yarn workspace multix-squid db:migrate"
   }
 }
