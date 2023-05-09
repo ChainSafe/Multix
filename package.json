@@ -33,6 +33,8 @@
     "squid:codegen": "yarn workspace multix-squid codegen",
     "squid:build": "yarn workspace multix-squid build",
     "squid:install": "yarn workspaces focus multix-squid",
-    "squid:migrate": "yarn workspace multix-squid db:migrate"
+    "squid:migrate": "yarn workspace multix-squid db:migrate",
+    "squid:start:indexer": "yarn workspace multix-squid start:indexer",
+    "squid:start:graphql-server": "yarn workspace multix-squid start:graphql-server"
   }
 }

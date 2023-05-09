@@ -38,7 +38,7 @@ ADD packages/squid/db db
 
 # indexer image that will be published
 FROM squid AS squid-indexer
-CMD ["yarn", "start:squid-indexer"]
+CMD ["yarn", "start:indexer"]
 
 # graphql server that will be published
 FROM squid AS graphql-server
