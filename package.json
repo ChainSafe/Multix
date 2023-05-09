@@ -20,7 +20,10 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn workspaces foreach run build",
+    "lint": "yarn workspaces foreach run lint",
     "start:ui": "yarn workspace multix-ui start",
-    "lint": "yarn workspaces foreach run lint"
+    "codegen:squid": "yarn workspace multix-squid codegen",
+    "build:squid": "yarn workspace multix-squid build",
+    "install:squid": "yarn workspaces focus multix-squid"
   }
 }

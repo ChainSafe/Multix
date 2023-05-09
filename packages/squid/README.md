@@ -13,7 +13,7 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 
 ```bash
 # 1. Install dependencies
-npm ci
+yarn install --immutable
 
 # 1.1
 
@@ -24,21 +24,18 @@ make typegen
 make build
 
 # 3. Start target Postgres database
-make up
+make db
 
 # 4. Apply database migrations from db/migrations
 make migrate
 
-# 5. Now start the processor
-make process
+# 5. Now start the squid processor and the graphql-server
+make up
 
-# 6. The above command will block the terminal
-#    being busy with fetching the chain data, 
-#    transforming and storing it in the target database.
-#
-#    To start the graphql server open the separate terminal
-#    and run
-make serve
+# 6. The above command will not block the terminal
+#    but things will be running in the backhground
+#    to see the logs
+make logs
 ```
 
 ### Involved ports
@@ -51,7 +48,7 @@ The graphql server and playground is available at http://localhost:4350/graphql
 The database used for the indexer is a Postgres launched in a Docker.
 If you have no migration to do, and the project is built already, you can launch the docker with the db and the indexer using:
 ```bash
-docker-compose up -d
+docker compose up -d
 node -r dotenv/config lib/processor.js
 ```
 
