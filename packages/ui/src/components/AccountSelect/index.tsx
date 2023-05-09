@@ -1,26 +1,29 @@
-import React from "react"
-import { CardHeader, IconButton, Menu, MenuItem } from "@mui/material"
-import { Identicon } from "@polkadot/react-identicon"
-import { MenuProps } from "@mui/material/Menu/Menu"
-import { useAccounts } from "../../contexts/AccountsContext"
+import React from 'react';
+import { CardHeader, IconButton, Menu, MenuItem } from '@mui/material';
+import { Identicon } from '@polkadot/react-identicon';
+import { MenuProps } from '@mui/material/Menu/Menu';
+import { useAccounts } from '../../contexts/AccountsContext';
 
-interface Props extends Omit<MenuProps, "open" | "onClose" | "anchorEl"> {
-  anchorEl: null | HTMLElement
-  onClose: () => void
+interface Props extends Omit<MenuProps, 'open' | 'onClose' | 'anchorEl'> {
+  anchorEl: null | HTMLElement;
+  onClose: () => void;
 }
 
-export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) => {
-
-  const { accountList, selectAccount } = useAccounts()
+export const AccountSelect: React.FC<Props> = ({
+  anchorEl,
+  onClose,
+  ...props
+}) => {
+  const { accountList, selectAccount } = useAccounts();
 
   if (!accountList) {
-    return null
+    return null;
   }
 
-  const handleSelect = (account: typeof accountList[0]) => () => {
-    selectAccount(account)
-    onClose()
-  }
+  const handleSelect = (account: (typeof accountList)[0]) => () => {
+    selectAccount(account);
+    onClose();
+  };
 
   return (
     <Menu
@@ -29,10 +32,8 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
       onClose={onClose}
       {...props}
     >
-      {accountList.map((account) => (
-        <MenuItem
-          key={account.address}
-          onClick={handleSelect(account)}>
+      {accountList.map(account => (
+        <MenuItem key={account.address} onClick={handleSelect(account)}>
           <CardHeader
             avatar={
               <IconButton sx={{ p: 0 }}>
@@ -49,5 +50,5 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
         </MenuItem>
       ))}
     </Menu>
-  )
-}
+  );
+};

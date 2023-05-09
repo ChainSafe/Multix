@@ -1,25 +1,33 @@
-import React from "react"
-import { Center } from "../../components/layout/Center"
-import { Box, Button, CircularProgress } from "@mui/material"
-import { useAccounts } from "../../contexts/AccountsContext"
-import { useApi } from "../../contexts/ApiContext"
-import { useNetwork } from "../../contexts/NetworkContext"
+import React from 'react';
+import { Center } from '../../components/layout/Center';
+import { Box, Button, CircularProgress } from '@mui/material';
+import { useAccounts } from '../../contexts/AccountsContext';
+import { useApi } from '../../contexts/ApiContext';
+import { useNetwork } from '../../contexts/NetworkContext';
 
 interface Props {
-  className?: string
-  children: React.ReactNode
+  className?: string;
+  children: React.ReactNode;
 }
 export const UserSpace = ({ children, className }: Props) => {
-  const { isApiReady } = useApi()
-  const { isAllowedToConnectToExtension, isExtensionError, isAccountLoading, selectedAccount, allowConnectionToExtension } = useAccounts()
-  const { selectedNetworkInfo } = useNetwork()
+  const { isApiReady } = useApi();
+  const {
+    isAllowedToConnectToExtension,
+    isExtensionError,
+    isAccountLoading,
+    selectedAccount,
+    allowConnectionToExtension,
+  } = useAccounts();
+  const { selectedNetworkInfo } = useNetwork();
 
   if (!isAllowedToConnectToExtension) {
-    return <Center>
-      <h1>Multix is an interface to easily manage complex multisigs.</h1>
-      <p>Connect an extension to interact with the Multix.</p>
-      <Button onClick={allowConnectionToExtension}>Connect</Button>
-    </Center>
+    return (
+      <Center>
+        <h1>Multix is an interface to easily manage complex multisigs.</h1>
+        <p>Connect an extension to interact with the Multix.</p>
+        <Button onClick={allowConnectionToExtension}>Connect</Button>
+      </Center>
+    );
   }
 
   if (!isApiReady || isAccountLoading) {
@@ -27,38 +35,39 @@ export const UserSpace = ({ children, className }: Props) => {
       <Box
         className={className}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          "&:first-of-type": {
-            marginBottom: "1rem"
-          }
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          '&:first-of-type': {
+            marginBottom: '1rem',
+          },
         }}
       >
         <CircularProgress />
         {isAccountLoading
-          ? "Loading accounts"
-          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`
-        }
+          ? 'Loading accounts'
+          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
       </Box>
-    )
+    );
   }
 
-  if (selectedAccount) return <>{children}</>
+  if (selectedAccount) return <>{children}</>;
 
   if (isExtensionError)
     return (
       <Center>
-        <h1>No account found. Please create at least one in an extension such as <a
-          href="https://polkadot.js.org/extension/"
-          target={"_blank"}
-          rel="noreferrer"
-        >
-          Polkadot.js extension
-        </a>
+        <h1>
+          No account found. Please create at least one in an extension such as{' '}
+          <a
+            href="https://polkadot.js.org/extension/"
+            target={'_blank'}
+            rel="noreferrer"
+          >
+            Polkadot.js extension
+          </a>
         </h1>
       </Center>
-    )
+    );
 
   // if (state === PluginState.INITIALIZATION) return null;
 
@@ -91,17 +100,18 @@ export const UserSpace = ({ children, className }: Props) => {
   //   );
 
   return (
-    <Box sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      "&:first-of-type": {
-        marginBottom: "1rem"
-      }
-    }}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        '&:first-of-type': {
+          marginBottom: '1rem',
+        },
+      }}
     >
       <CircularProgress />
       Loading accounts...
     </Box>
-  )
-}
+  );
+};

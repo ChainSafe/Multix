@@ -1,16 +1,20 @@
 import BN from 'bn.js';
 
 interface Options {
-  numberAfterComma?: number
-  withThousandDelimitor?: boolean
-  tokenSymbol?: string
+  numberAfterComma?: number;
+  withThousandDelimitor?: boolean;
+  tokenSymbol?: string;
 }
 
 function removeTrailingZeros(value: string) {
   return value.replace(/0+$/, '');
 }
 
-export const formatBnBalance = (value: BN | string, tokenDecimals = 0, { numberAfterComma, withThousandDelimitor = true, tokenSymbol }: Options): string => {
+export const formatBnBalance = (
+  value: BN | string,
+  tokenDecimals = 0,
+  { numberAfterComma, withThousandDelimitor = true, tokenSymbol }: Options
+): string => {
   const valueString = value.toString();
 
   let suffix = '';
@@ -24,11 +28,11 @@ export const formatBnBalance = (value: BN | string, tokenDecimals = 0, { numberA
     suffix = valueString.padStart(tokenDecimals, '0');
   }
 
-  suffix = removeTrailingZeros(suffix)
+  suffix = removeTrailingZeros(suffix);
   let comma = '.';
   const numberAfterCommaLtZero = numberAfterComma && numberAfterComma < 0;
 
-  if (numberAfterCommaLtZero || numberAfterComma === 0 || suffix === "") {
+  if (numberAfterCommaLtZero || numberAfterComma === 0 || suffix === '') {
     comma = '';
     suffix = '';
   } else if (numberAfterComma && numberAfterComma > 0) {
@@ -42,4 +46,4 @@ export const formatBnBalance = (value: BN | string, tokenDecimals = 0, { numberA
   const unit = tokenSymbol ? ` ${tokenSymbol}` : '';
 
   return `${prefix}${comma}${suffix}${unit}`;
-}
+};

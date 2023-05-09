@@ -4,7 +4,7 @@ type Account @entity {
   isPureProxy: Boolean
   # it's the origin/delegator for another proxy accounts, a pure must have some
   delegatorFor: [ProxyAccount!] @derivedFrom(field: "delegator")
-  # it's the delegatee/doing stuff on behalf of another account 
+  # it's the delegatee/doing stuff on behalf of another account
   delegateeFor: [ProxyAccount!] @derivedFrom(field: "delegatee")
   isMultisig: Boolean
   signatories: [AccountMultisig!] @derivedFrom(field: "multisig")

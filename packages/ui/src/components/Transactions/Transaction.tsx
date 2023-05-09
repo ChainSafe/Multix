@@ -1,39 +1,45 @@
-import { Paper, Button } from "@mui/material"
-import { styled }  from "@mui/material/styles"
-import CallInfo from "../CallInfo"
+import { Paper, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import CallInfo from '../CallInfo';
 import GestureIcon from '@mui/icons-material/Gesture';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
-import { AggregatedData } from "./TransactionList";
-import { useCallback, useMemo, useState } from "react";
-import ProposalSigningModal from "../modals/ProposalSigning";
-import { Badge } from "@mui/material";
-import { isProxyCall } from "../../utils";
-import { AccountBadge } from "../../types";
-
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { AggregatedData } from './TransactionList';
+import { useCallback, useMemo, useState } from 'react';
+import ProposalSigningModal from '../modals/ProposalSigning';
+import { Badge } from '@mui/material';
+import { isProxyCall } from '../../utils';
+import { AccountBadge } from '../../types';
 
 interface Props {
-  className?: string
-  aggregatedData: AggregatedData
-  isProposer: boolean
-  possibleSigners: string[]
-  onSuccess: () => void
+  className?: string;
+  aggregatedData: AggregatedData;
+  isProposer: boolean;
+  possibleSigners: string[];
+  onSuccess: () => void;
 }
 
-const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, onSuccess }: Props) => {
-  const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
-  const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
+const Transaction = ({
+  className,
+  aggregatedData,
+  isProposer,
+  possibleSigners,
+  onSuccess,
+}: Props) => {
+  const [isSigningModalOpen, setIsSigningModalOpen] = useState(false);
+  const isProxy = useMemo(
+    () => isProxyCall(aggregatedData.name),
+    [aggregatedData]
+  );
   // FIXME this is duplicated
-  const appliedClass = useMemo(() => isProxy
-    ? "blue"
-    : "red", [isProxy])
+  const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy]);
 
   const onClose = useCallback(() => {
-    setIsSigningModalOpen(false)
-  }, [])
+    setIsSigningModalOpen(false);
+  }, []);
 
   const onOpenModal = useCallback(() => {
-    setIsSigningModalOpen(true)
-  }, [])
+    setIsSigningModalOpen(true);
+  }, []);
 
   return (
     <Paper className={className}>
@@ -41,12 +47,13 @@ const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, o
         className={`badge ${appliedClass}`}
         color="primary"
         badgeContent={isProxy ? AccountBadge.PURE : AccountBadge.MULTI}
-        anchorOrigin={{ horizontal: "left", vertical: "top" }}
+        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
       >
-        {!aggregatedData.callData
-          ? <QuestionMarkIcon className="callIcon unknownCall" />
-          : <GestureIcon className="callIcon" />
-        }
+        {!aggregatedData.callData ? (
+          <QuestionMarkIcon className="callIcon unknownCall" />
+        ) : (
+          <GestureIcon className="callIcon" />
+        )}
       </Badge>
 
       <CallInfo
@@ -68,10 +75,11 @@ const Transaction = ({ className, aggregatedData, isProposer, possibleSigners, o
         />
       )}
     </Paper>
-  )
-}
+  );
+};
 
-export default styled(Transaction)(({ theme }) => `
+export default styled(Transaction)(
+  ({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;
@@ -107,4 +115,5 @@ export default styled(Transaction)(({ theme }) => `
   .badge.red > .MuiBadge-badge {
     background-color: ${theme.custom.text.errorColor};
   }
-`)
+`
+);

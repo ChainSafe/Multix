@@ -1,29 +1,32 @@
-import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
-import { styled }  from "@mui/material/styles"
-import { useNetwork } from "../contexts/NetworkContext"
-import { useCallback, useMemo } from "react"
-import { networkList } from "../constants"
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { useNetwork } from '../contexts/NetworkContext';
+import { useCallback, useMemo } from 'react';
+import { networkList } from '../constants';
 
 interface Props {
-  className?: string
+  className?: string;
 }
 
 const NetworkSelection = ({ className }: Props) => {
-  const { selectedNetwork, selectNetwork } = useNetwork()
+  const { selectedNetwork, selectNetwork } = useNetwork();
   // if no ws endpoint is set (in the env) for local nodes
   // we filter it out
   const networksToShow = useMemo(() => {
     return networkList.local.wsGraphqlUrl
       ? Object.entries(networkList)
-      : Object.entries(networkList).filter(([name]) => name !== "local")
-  }, [])
+      : Object.entries(networkList).filter(([name]) => name !== 'local');
+  }, []);
 
-  const handleNetworkSelection = useCallback((event: SelectChangeEvent<string>) => {
-    selectNetwork(event.target.value)
-  }, [selectNetwork])
+  const handleNetworkSelection = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      selectNetwork(event.target.value);
+    },
+    [selectNetwork]
+  );
 
   if (!selectedNetwork) {
-    return null
+    return null;
   }
 
   return (
@@ -32,8 +35,12 @@ const NetworkSelection = ({ className }: Props) => {
       value={selectedNetwork}
       onChange={handleNetworkSelection}
     >
-      {networksToShow.map(([networkName, info]) =>
-        <MenuItem key={networkName} value={networkName} sx={{ "img": { maxHeight: "2rem", mr: ".5rem", borderRadius: "50%" } }}>
+      {networksToShow.map(([networkName, info]) => (
+        <MenuItem
+          key={networkName}
+          value={networkName}
+          sx={{ img: { maxHeight: '2rem', mr: '.5rem', borderRadius: '50%' } }}
+        >
           <img
             className="networkLogo"
             alt={`network-logo-${networkName}`}
@@ -41,12 +48,13 @@ const NetworkSelection = ({ className }: Props) => {
           />
           <div className="networkName">{networkName}</div>
         </MenuItem>
-      )}
+      ))}
     </Select>
-  )
-}
+  );
+};
 
-export default styled(NetworkSelection)(({ theme }) => `
+export default styled(NetworkSelection)(
+  ({ theme }) => `
     min-width: 10rem;
     background-color: ${theme.palette.primary.white};
     
@@ -65,4 +73,5 @@ export default styled(NetworkSelection)(({ theme }) => `
         margin-right: .5rem;
         border-radius: 50%;
     }
-`)
+`
+);

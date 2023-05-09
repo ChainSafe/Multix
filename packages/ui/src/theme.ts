@@ -1,43 +1,43 @@
-import {createTheme, ThemeOptions} from "@mui/material/styles";
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
   interface Theme {
     palette: {
       primary: {
-        main: '#3F8AE0',
-        white: "white",
-        black: "#000000de"
-      },
-    },
+        main: '#3F8AE0';
+        white: 'white';
+        black: '#000000de';
+      };
+    };
     custom: {
       text: {
-        addressColorLightGray: string,
-        errorColor: string
+        addressColorLightGray: string;
+        errorColor: string;
       };
       background: {
-        backgroundColorLightGray: string
-      },
+        backgroundColorLightGray: string;
+      };
       identity: {
-        green: string,
-        grey: string,
-        red: string
-      }
+        green: string;
+        grey: string;
+        red: string;
+      };
     };
   }
   interface ThemeOptions {
     custom: {
       text?: {
-        addressColorLightGray: string,
-        errorColor: string
+        addressColorLightGray: string;
+        errorColor: string;
       };
       background?: {
-        backgroundColorLightGray: string
-      },
+        backgroundColorLightGray: string;
+      };
       identity?: {
-        green: string,
-        grey: string,
-        red: string
-      }
+        green: string;
+        grey: string;
+        red: string;
+      };
     };
   }
 }
@@ -46,22 +46,22 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: '#3F8AE0',
-      white: "white",
-      black: "#000000de"
+      white: 'white',
+      black: '#000000de',
     },
   },
   custom: {
     text: {
       addressColorLightGray: '#777575',
-      errorColor: "firebrick"
+      errorColor: 'firebrick',
     },
     background: {
-      backgroundColorLightGray: '#ebebeb'
+      backgroundColorLightGray: '#ebebeb',
     },
     identity: {
-      green: "green",
-      grey: "grey",
-      red: "firebrick"
-    }
-  }
-} as ThemeOptions)
+      green: 'green',
+      grey: 'grey',
+      red: 'firebrick',
+    },
+  },
+} as ThemeOptions);

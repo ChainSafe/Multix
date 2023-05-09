@@ -1,30 +1,33 @@
-import { Box, TextField } from "@mui/material";
-import React, { useCallback, useState } from "react";
-import { styled }  from "@mui/material/styles";
+import { Box, TextField } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+import { styled } from '@mui/material/styles';
 
 interface Props {
   className?: string;
   name?: string;
-  setName: React.Dispatch<React.SetStateAction<string>>
+  setName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const NameSelection = ({ className, name, setName }: Props) => {
-  const [error, setError] = useState("")
+  const [error, setError] = useState('');
 
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setError("")
-    const value = event.target.value
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setError('');
+      const value = event.target.value;
 
-    setName(value)
+      setName(value);
 
-    if (!value) {
-      setError("Please give the Multisig a name")
-      return
-    }
-  }, [setName])
+      if (!value) {
+        setError('Please give the Multisig a name');
+        return;
+      }
+    },
+    [setName]
+  );
 
   return (
-    <Box className={className} >
+    <Box className={className}>
       <TextField
         fullWidth
         error={!!error}
@@ -34,9 +37,11 @@ const NameSelection = ({ className, name, setName }: Props) => {
         onChange={handleChange}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default styled(NameSelection)(({ theme }) => `
+export default styled(NameSelection)(
+  ({ theme }) => `
 //
-`)
+`
+);

@@ -1,34 +1,39 @@
-import { ISubmittableResult } from '@polkadot/types/types'
-import { useApi } from '../contexts/ApiContext'
-import { useToasts } from '../contexts/ToastContext'
-import { useGetSubscanLinks } from './useSubscanLink'
+import { ISubmittableResult } from '@polkadot/types/types';
+import { useApi } from '../contexts/ApiContext';
+import { useToasts } from '../contexts/ToastContext';
+import { useGetSubscanLinks } from './useSubscanLink';
 
 interface Args {
-  onSubmitting?: () => void
-  onSuccess?: () => void
-  onError?: (message?: string) => void
-  onFinalized?: () => void
+  onSubmitting?: () => void;
+  onSuccess?: () => void;
+  onError?: (message?: string) => void;
+  onFinalized?: () => void;
 }
 
-export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
-  const { addToast } = useToasts()
-  const { api } = useApi()
-  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
+export const useSigningCallback = ({
+  onSubmitting,
+  onSuccess,
+  onFinalized,
+  onError,
+}: Args) => {
+  const { addToast } = useToasts();
+  const { api } = useApi();
+  const { getSubscanExtrinsicLink } = useGetSubscanLinks();
 
   return ({ events = [], status, txHash }: ISubmittableResult) => {
-    onSubmitting && onSubmitting()
+    onSubmitting && onSubmitting();
     console.log('Transaction status:', status.type);
-    const link = getSubscanExtrinsicLink(txHash.toHex())
+    const link = getSubscanExtrinsicLink(txHash.toHex());
 
     if (status.isBroadcast) {
-      addToast({ title: `Tx broadcasted`, type: "loading", link })
+      addToast({ title: `Tx broadcasted`, type: 'loading', link });
     }
 
-    let errorInfo = "";
-    let toastErrorShown = false
+    let errorInfo = '';
+    let toastErrorShown = false;
 
     if (!api) {
-      return
+      return;
     }
 
     if (status.isInBlock) {
@@ -36,33 +41,49 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
       console.log('Events:');
 
       events.forEach(({ event, phase }) => {
-        const { data, method, section } = event
-        console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
+        const { data, method, section } = event;
+        console.log(
+          '\t',
+          phase.toString(),
+          `: ${section}.${method}`,
+          data.toString()
+        );
 
         // check if multisig or proxy has an error
-        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event)) {
+        if (
+          api.events.multisig.MultisigExecuted.is(event) ||
+          api.events.proxy.ProxyExecuted.is(event)
+        ) {
           // extract the data for this event
-          const dataJSON = data.toJSON() as { [index: string]: any; }[];
+          const dataJSON = data.toJSON() as { [index: string]: any }[];
 
-          Array.isArray(dataJSON) && dataJSON.some((dispatchError) => {
-            if (dispatchError?.err?.module) {
-              const mod = dispatchError.err.module
-              const error = api.registry.findMetaError(
-                new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
-              )
+          Array.isArray(dataJSON) &&
+            dataJSON.some(dispatchError => {
+              if (dispatchError?.err?.module) {
+                const mod = dispatchError.err.module;
+                const error = api.registry.findMetaError(
+                  new Uint8Array([
+                    Number(mod.index),
+                    Number(mod.error.slice(0, 4)),
+                  ])
+                );
 
-              errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
-              // stop looping we found an error
-              return true
-            }
+                errorInfo = Array.isArray(error.docs)
+                  ? error.docs.join('')
+                  : error.docs || '';
+                // stop looping we found an error
+                return true;
+              }
 
-            return false
-          })
+              return false;
+            });
         }
 
         if (api.events.system.ExtrinsicSuccess.is(event)) {
-          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "loading", link })
-          onSuccess && onSuccess()
+          !errorInfo &&
+            !toastErrorShown &&
+            addToast({ title: 'Tx in block', type: 'loading', link });
+          onSuccess && onSuccess();
         }
 
         // if the extrinsic fails alltogether
@@ -75,7 +96,9 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
             // for module errors, we have the section indexed, lookup
             // (For specific known errors, we can also do a check against the
             // api.errors.<module>.<ErrorName>.is(dispatchError.asModule) guard)
-            const decoded = api.registry.findMetaError((dispatchError as any).asModule);
+            const decoded = api.registry.findMetaError(
+              (dispatchError as any).asModule
+            );
 
             errorInfo = `${decoded.docs} - ${decoded.section}.${decoded.name}`;
           } else {
@@ -85,16 +108,16 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         }
 
         if (!!errorInfo && !toastErrorShown) {
-          addToast({ title: errorInfo, type: "error", link })
-          onError && onError(errorInfo)
+          addToast({ title: errorInfo, type: 'error', link });
+          onError && onError(errorInfo);
           // prevent showing several errors
-          toastErrorShown = true
+          toastErrorShown = true;
         }
       });
     } else if (status.isFinalized) {
-      onFinalized && onFinalized()
+      onFinalized && onFinalized();
       // !errorInfo && addToast({ title: "Tx finalized", type: "success", link })
       console.log('Finalized block hash', status.asFinalized.toHex());
     }
-  }
-}
+  };
+};

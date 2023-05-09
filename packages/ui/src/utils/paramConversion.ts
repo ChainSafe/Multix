@@ -13,6 +13,6 @@ const paramConversion = {
     'i64',
     'i128',
   ],
-}
+};
 
-export default paramConversion
+export default paramConversion;

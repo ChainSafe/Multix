@@ -25,5 +25,8 @@
     "codegen:squid": "yarn workspace multix-squid codegen",
     "build:squid": "yarn workspace multix-squid build",
     "install:squid": "yarn workspaces focus multix-squid"
+  },
+  "devDependencies": {
+    "prettier": "2.8.8"
   }
 }
