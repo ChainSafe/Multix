@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { ROUTES } from "../../pages/routes";
+import { isEmptyArray } from "../../utils";
 // import NetworkSelection from "../NetworkSelection";
 
 interface Props {
@@ -32,7 +33,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
         {isAccountConnected && (
           <BoxStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => (
-              multiProxyList.length || isDisplayWhenNoMultiProxy
+              !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy
                 ? (
                   <Button
                     key={name}
@@ -42,8 +43,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
                   >
                     {name}
                   </Button>
-                ):
-                null
+                ): null
             ))}
             <MultiProxySelection />
             {/* <NetworkSelection className="networkSelection" /> */}

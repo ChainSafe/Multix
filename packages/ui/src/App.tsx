@@ -9,8 +9,6 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from "./contexts/AccountNamesContext"
 import { NetworkContextProvider } from "./contexts/NetworkContext"
 import MainLayout from "./components/layout/Main";
-import React from "react";
-
 const App = () => {
   const queryClient = new QueryClient()
 

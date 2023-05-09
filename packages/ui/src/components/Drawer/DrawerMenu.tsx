@@ -12,8 +12,7 @@ import { styled } from "@mui/material/styles";
 // import NetworkSelection from "../NetworkSelection";
 import MultiProxySelection from "../MultiProxySelection";
 import { ROUTES } from "../../pages/routes";
-
-
+import { isEmptyArray } from "../../utils";
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -38,17 +37,16 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         {/* <ListItem>
           <NetworkSelection />
         </ListItem> */}
-        {!!accountList?.length && (
+        {accountList && !isEmptyArray(accountList) && (
           ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) => (
-            multiProxyList.length || isDisplayWhenNoMultiProxy
+            !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy
               ? (
                 <ListItem key={name} disablePadding>
                   <ListItemButton onClick={handleDrawerClose} component={Link} to={path}>
                     <ListItemText primary={name} />
                   </ListItemButton>
                 </ListItem>
-              )
-              : null
+              ) : null
           )))}
       </List>
     </>

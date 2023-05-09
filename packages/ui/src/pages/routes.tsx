@@ -3,7 +3,7 @@ import { About, Creation, Help, Home } from "./index";
 import React from "react";
 import App from "../App";
 
-type Route = {
+interface Route {
     path: string;
     element: React.ReactNode;
     name: string
