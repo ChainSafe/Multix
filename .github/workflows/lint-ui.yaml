@@ -1,7 +1,7 @@
 name: Lint UI
 on:
   pull_request:
-    paths: ["ui/**/*"]
+    paths: ["packages/ui/**/*"]
 jobs:
   extract:
     name: eslint

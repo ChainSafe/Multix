@@ -9818,7 +9818,7 @@ __metadata:
     eslint-config-prettier: ^8.8.0
     pg: 8.10.0
     typeorm: 0.3.14
-    typescript: 5.0.3
+    typescript: 5.0.4
   languageName: unknown
   linkType: soft
 
@@ -9861,7 +9861,7 @@ __metadata:
     reactflow: ^11.7.0
     rxjs: ^7.8.0
     ts-node: ^10.9.1
-    typescript: ^5.0.4
+    typescript: 5.0.4
     vite: ^4.3.4
     vite-plugin-svgr: ^2.4.0
   languageName: unknown
@@ -12088,17 +12088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.0.3":
-  version: 5.0.3
-  resolution: "typescript@npm:5.0.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 13221c7f7dd2aa9cf8ac2fb1b5ca3825ff3d97a43b4656fd22ca36c0ec30179643b5157d620c3e4af9d3fc9234a571bd3ea175624b3d37c494d7ed159b038df2
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^5.0.4":
+"typescript@npm:5.0.4":
   version: 5.0.4
   resolution: "typescript@npm:5.0.4"
   bin:
@@ -12108,17 +12098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.0.3#~builtin<compat/typescript>":
-  version: 5.0.3
-  resolution: "typescript@patch:typescript@npm%3A5.0.3#~builtin<compat/typescript>::version=5.0.3&hash=b5f058"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 381de1b58d2deb6443cc7d23365b4db36de8360dfc4f4d295ca2fdb0e01687711fb541478838fb9326da315baf6967d616c745d990f2c362036b337a12b18255
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.0.4#~builtin<compat/typescript>":
   version: 5.0.4
   resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"
   bin:
