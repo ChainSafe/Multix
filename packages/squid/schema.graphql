@@ -48,4 +48,5 @@ enum ProxyType {
   Staking
   SudoBalances
   NominationPools
+  Society
 }
