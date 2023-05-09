@@ -111,6 +111,7 @@ lib
 build
 .env
 *DS_Store
+*.tsbuildinfo
 
 .pnp.*
 .yarn/*
@@ -120,4 +121,3 @@ build
 !.yarn/sdks
 !.yarn/versions
 
-packages/ui/tsconfig.tsbuildinfo
