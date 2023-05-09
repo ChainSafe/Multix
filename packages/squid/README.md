@@ -9,7 +9,7 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 * docker
 * docker-compose
 
-## Quickly running the sample
+## Quickly running the project, with docker
 
 ```bash
 # 1. Install dependencies
