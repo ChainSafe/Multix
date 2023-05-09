@@ -158,11 +158,13 @@ const Home = ({ className }: Props) => {
                 selectedMultiProxy.multisigs.map((multisig) => {
                   return (
                     <Paper className="multisigWrapper" key={multisig.address}>
-                      <AccountDisplayStyled
-                        address={multisig.address || ""}
-                        badge={AccountBadge.MULTI}
-                        withBalance
-                      />
+                      <AccountDisplayWrapperStyled>
+                        <AccountDisplay
+                          address={multisig.address || ""}
+                          badge={AccountBadge.MULTI}
+                          withBalance
+                        />
+                      </AccountDisplayWrapperStyled>
                       <div className="signatoriesWrapper">
                         <h4>Signatories <Chip
                           className="threshold"
@@ -227,9 +229,9 @@ const Home = ({ className }: Props) => {
   )
 }
 
-const AccountDisplayStyled = styled(AccountDisplay)(() => `
+const AccountDisplayWrapperStyled = styled('div')`
   margin: 1rem 0 0 2rem;
-`)
+`
 
 export default styled(Home)(({ theme }) => `
   padding: 1rem;

@@ -61,61 +61,59 @@ const AccountDisplay = ({ className, address, badge, withName = true, withBalanc
   }, [address, api, isApiReady]);
 
   return (
-    <Box className={`multisig ${className}`}>
-      <MultisigInfo>
-        <IdenticonBadge badge={badge} address={address} />
-        <Box>
-          {withName && (
-            <NameWrapper>
-              {!!identity && mainDisplay && <IdentityIcon className="identityBadge" identity={identity} />}
-              {!!sub && <span>{sub}</span>}
-              <Name>{displayName || mainDisplay}</Name>
-            </NameWrapper>
-          )}
-          <Address>{getDisplayAddress(address)}</Address>
-        </Box>
-      </MultisigInfo>
-      {withBalance && (
-        <Box>
-          <Balance>Balance: {balanceFormatted}</Balance>
-        </Box>
-      )}
-    </Box>
+    <MultisigInfoStyled>
+      <IdenticonBadge badge={badge} address={address} />
+      <Box>
+        {withName && (
+          <NameWrapperStyled>
+            {!!identity && mainDisplay && <IdentityIcon className="identityBadge" identity={identity} />}
+            {!!sub && <span>{sub}</span>}
+            <NameStyled>{displayName || mainDisplay}</NameStyled>
+          </NameWrapperStyled>
+        )}
+        <AddressStyled>{getDisplayAddress(address)}</AddressStyled>
+        {withBalance && (
+          <Box>
+            <BalanceStyled>{balanceFormatted}</BalanceStyled>
+          </Box>
+        )}
+      </Box>
+    </MultisigInfoStyled>
   )
 }
 
-const MultisigInfo = styled('div')(() => `
+const MultisigInfoStyled = styled('div')`
     display: flex;
     align-items: center;
-`);
+`
 
-const NameWrapper = styled('div')(() => `
+const NameWrapperStyled = styled('div')`
     display: flex;
     align-items: center;
-`);
+`
 
 
-const Address = styled('div')(({ theme }) => `
+const AddressStyled = styled('div')(({ theme }) => `
     color: ${theme.custom.text.addressColorLightGray};
     font-size: small;
 `);
 
 
-const Name = styled('span')(() => `
-    font-size: large;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-`);
+const NameStyled = styled('span')`
+  font-size: large;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
 
-const Balance = styled('div')(({ theme }) => `
+const BalanceStyled = styled('div')(({ theme }) => `
   margin-top: 4px;  
   display: flex;
   color: ${theme.custom.text.addressColorLightGray};
   font-size: small;
 `);
 
-export default styled(AccountDisplay)(() => `
+export default styled(AccountDisplay)`
    display: flex;
    flex-direction: column;
    align-items: flex-start;
@@ -123,4 +121,4 @@ export default styled(AccountDisplay)(() => `
   .identityBadge {
     margin-right: 0.3rem;
   }
-`)
+`

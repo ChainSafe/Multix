@@ -7,8 +7,9 @@ import { Balance } from "@polkadot/types/interfaces/runtime";
 
 interface useGetBalanceProps {
     address?: string
+    numberAfterComma?: number
 }
-export const useGetBalance = ({ address }: useGetBalanceProps) => {
+export const useGetBalance = ({ address, numberAfterComma = 4  }: useGetBalanceProps) => {
   const { isApiReady, api, chainInfo } = useApi()
   const [balance, setBalance] = useState<Balance | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)
@@ -22,14 +23,14 @@ export const useGetBalance = ({ address }: useGetBalanceProps) => {
       setBalance(info.freeBalance)
       setFormattedBalance(
         formatBnBalance(info.freeBalance, chainInfo?.tokenDecimals,
-          { numberAfterComma: 4, tokenSymbol: chainInfo?.tokenSymbol }))
+          { numberAfterComma, tokenSymbol: chainInfo?.tokenSymbol }))
     })
       .then(unsub => { unsubscribe = unsub; })
       .catch(console.error)
 
     return () => unsubscribe && unsubscribe();
 
-  }, [address, api, chainInfo?.tokenDecimals, chainInfo?.tokenSymbol, isApiReady])
+  }, [address, api, chainInfo?.tokenDecimals, chainInfo?.tokenSymbol, isApiReady, numberAfterComma])
 
   return { balance, balanceFormatted }
 }
