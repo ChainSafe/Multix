@@ -18,6 +18,15 @@ const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props)
   const { api, isApiReady } = useApi()
   const [calls, setCalls] = useState<CallStack>({})
 
+  const addExtrinsic = useCallback(() => {
+    setCalls({ ...calls, [Date.now()]: null })
+  }, [calls])
+
+  // if there are no calls yet, add one right away
+  useEffect(() => {
+    Object.keys(calls).length === 0 && addExtrinsic()
+  }, [addExtrinsic, calls])
+
   useEffect(() => {
     const nonNullCalls = Object.values(calls).filter((call) => call !== null)
 
@@ -32,25 +41,40 @@ const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props)
     setCalls((prev) => ({ ...prev, [extrinsicIndex]: extrinsic }))
   }, [api, isApiReady])
 
-  const addExtrinsic = useCallback(() => {
-    setCalls({ ...calls, [Date.now()]: null })
+
+  const removeExtrinsic = useCallback((key: string) => {
+    delete calls[key]
+    setCalls({ ...calls })
   }, [calls])
 
   return (
     <Box className={className}>
       {Object.keys(calls).map((key) => {
-        return <ManualExtrinsic
-          key={key}
-          extrinsicIndex={key}
-          onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={onSetErrorMessage}
-        />
+        return (
+          <>
+            <ManualExtrinsic
+              key={key}
+              extrinsicIndex={key}
+              onSetExtrinsic={setExtrinsicToCall}
+              onSetErrorMessage={onSetErrorMessage}
+            />
+            <RemoveButtonStyled onClick={() => removeExtrinsic(key)}>
+              Remove
+            </RemoveButtonStyled>
+          </>
+        )
       })}
-      <Button onClick={addExtrinsic}>Add extrinsic</Button>
+      <div>
+        <Button onClick={addExtrinsic}>
+          Add extrinsic
+        </Button>
+      </div>
     </Box >
   )
 }
 
-export default styled(BatchExtrinsic)(({ theme }) => `
+const RemoveButtonStyled = styled(Button)`
+  margin-bottom: 0.5rem;
+`
 
-`)
+export default styled(BatchExtrinsic)()

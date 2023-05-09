@@ -39,14 +39,21 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         const { data, method, section } = event
         console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
 
-        // check if multisig or proxy has an error
-        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event)) {
+        // check if multisig or proxy or batch has an error
+        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event) || api.events.utility.BatchInterrupted.is(event)) {
           // extract the data for this event
           const dataJSON = data.toJSON() as { [index: string]: any; }[];
 
           Array.isArray(dataJSON) && dataJSON.some((dispatchError) => {
+            let mod: any
             if (dispatchError?.err?.module) {
-              const mod = dispatchError.err.module
+              mod = dispatchError.err.module as { [index: string]: any; }
+              // batch has utility.BatchInterrupted [0,{"module":{"index":4,"error":"0x02000000"}}]
+            } else if (dispatchError?.module) {
+              mod = dispatchError.module as { [index: string]: any; }
+            }
+
+            if (mod?.error && mod?.index) {
               const error = api.registry.findMetaError(
                 new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
               )
@@ -55,9 +62,15 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
               // stop looping we found an error
               return true
             }
-
             return false
           })
+
+          // we can also get error without module such as 
+          // utility.BatchInterrupted [0,{"badOrigin":null}]
+          const [, dispatchInfo] = event.data;
+          if (!errorInfo && !!dispatchInfo) {
+            errorInfo = dispatchInfo.toString()
+          }
         }
 
         if (api.events.system.ExtrinsicSuccess.is(event)) {
