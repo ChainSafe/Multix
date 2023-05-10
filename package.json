@@ -20,7 +20,7 @@
   "license": "MIT",
   "scripts": {
     "docker:start:all": "yarn docker:start:squid && yarn ui:start",
-    "docker:start:squid": "yarn docker:db && yarn build && yarn squid:codegen && yarn squid:migrate && yarn docker:up",
+    "docker:start:squid": "yarn docker:db && yarn build && yarn squid:codegen && yarn squid:migrate && yarn build:images && yarn docker:up",
     "docker:build-squid-indexer-image": "docker build . --target squid-indexer -t squid-indexer",
     "doker:build-graphql-server-image": "docker build . --target graphql-server -t graphql-server",
     "docker:db": "docker compose up -d db",

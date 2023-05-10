@@ -9,33 +9,34 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 * docker
 * docker-compose
 
-## Quickly running the project, with docker
+## Quickly running the project, without docker (see the project's root readme for docker)
 
 ```bash
 # 1. Install dependencies
-yarn install --immutable
+yarn install
 
 # 1.1
-
-make codegen
-make typegen
+yarn codegen
+yarn typegen
 
 # 2. Compile typescript files
-make build
+yarn build
 
-# 3. Start target Postgres database
-make db
+# 3. Start target Postgres database from the root of the project
+docker compose up -d db
 
 # 4. Apply database migrations from db/migrations
-make migrate
+yarn db:migrate
 
-# 5. Now start the squid processor and the graphql-server
-make up
+# 5. Now start the squid processor
+yarn start:indexer
 
-# 6. The above command will not block the terminal
-#    but things will be running in the backhground
-#    to see the logs
-make logs
+# 6. The above command will block the terminal
+# start the graphql server using the following command in a new terminal
+yarn start:graphql-server
+
+# 7. Optionally to see the logs from the db
+docker compose logs -f
 ```
 
 ### Involved ports
