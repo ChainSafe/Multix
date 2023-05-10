@@ -20,9 +20,9 @@ ADD packages/squid/tsconfig.json ./packages/squid/
 ADD packages/squid/src ./packages/squid/src
 ADD packages/squid/schema.graphql ./packages/squid
 
-RUN yarn install:squid
-RUN yarn codegen:squid
-RUN yarn build:squid
+RUN yarn squid:install
+RUN yarn squid:codegen
+RUN yarn squid:build
 
 # squid app
 FROM node AS squid
@@ -38,7 +38,7 @@ ADD packages/squid/db db
 
 # indexer image that will be published
 FROM squid AS squid-indexer
-CMD ["yarn", "start:squid-indexer"]
+CMD ["yarn", "start:indexer"]
 
 # graphql server that will be published
 FROM squid AS graphql-server
