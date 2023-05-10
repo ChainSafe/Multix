@@ -8,7 +8,7 @@ export const getProxyInfoFromArgs = (item: EventItem<"Proxy.ProxyAdded" | "Proxy
   const { delegator, delegatee, proxyType, delay } = item.event.args
   const _delegator = encodeAddress(delegator, env.prefix)
   const _delegatee = encodeAddress(delegatee, env.prefix)
-  const _type = getProxyTypeFromRaw(proxyType)
+  const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _delay = Number(delay) || 0
   const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay)
 

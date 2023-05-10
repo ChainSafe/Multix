@@ -1,14 +1,18 @@
 import { Box } from "@mui/material"
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { styled }  from "@mui/material/styles"
+import { styled } from "@mui/material/styles"
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
 import { AccountBadge } from "../../types";
-import  { NodeData } from "./CustomNode";
-import ReactFlow, { addEdge, FitViewOptions, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions, Background, Controls, OnConnect, OnEdgesChange, OnNodesChange, MarkerType } from 'reactflow';
+import CustomNode, { NodeData } from "./CustomNode";
+import ReactFlow, { addEdge, FitViewOptions, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions, Background, Controls, OnConnect, OnEdgesChange, OnNodesChange, MarkerType, NodeTypes } from 'reactflow';
 
 interface Props {
   className?: string
 }
+
+const nodeTypes: NodeTypes = {
+  custom: CustomNode,
+};
 
 const fitViewOptions: FitViewOptions = {
   padding: 0.1,
@@ -147,6 +151,7 @@ const Overview = ({ className }: Props) => {
         onConnect={onConnect}
         fitView
         fitViewOptions={fitViewOptions}
+        nodeTypes={nodeTypes}
       >
         <Controls />
         <Background style={{ backgroundColor: "#f7f7f7" }} />

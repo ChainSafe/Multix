@@ -2,7 +2,6 @@ import Drawer from '@mui/material/Drawer';
 import DrawerMenu from "./DrawerMenu";
 import { styled } from "@mui/material/styles";
 
-
 const DRAWER_WIDTH = 240;
 
 interface DrawerComponentProps {
