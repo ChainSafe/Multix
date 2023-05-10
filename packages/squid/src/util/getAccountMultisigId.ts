@@ -1,3 +1,6 @@
-export const getAccountMultisigId = (multiSigAddress: string, accountAddress: string) => {
-  return `${multiSigAddress}-${accountAddress}`
-}
+export const getAccountMultisigId = (
+  multiSigAddress: string,
+  accountAddress: string
+) => {
+  return `${multiSigAddress}-${accountAddress}`;
+};

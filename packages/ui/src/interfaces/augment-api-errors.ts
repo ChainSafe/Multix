@@ -7,7 +7,8 @@ import '@polkadot/api-base/types/errors';
 
 import type { ApiTypes, AugmentedError } from '@polkadot/api-base/types';
 
-export type __AugmentedError<ApiType extends ApiTypes> = AugmentedError<ApiType>;
+export type __AugmentedError<ApiType extends ApiTypes> =
+  AugmentedError<ApiType>;
 
 declare module '@polkadot/api-base/types/errors' {
   interface AugmentedErrors<ApiType extends ApiTypes> {
@@ -1610,7 +1611,7 @@ declare module '@polkadot/api-base/types/errors' {
       BadWitness: AugmentedError<ApiType>;
       /**
        * A key was longer than the configured maximum.
-       * 
+       *
        * This means that the migration halted at the current [`Progress`] and
        * can be resumed with a larger [`crate::Config::MaxKeyLen`] value.
        * Retrying with the same [`crate::Config::MaxKeyLen`] value will not work.
@@ -1652,7 +1653,7 @@ declare module '@polkadot/api-base/types/errors' {
       CallFiltered: AugmentedError<ApiType>;
       /**
        * Failed to extract the runtime version from the new runtime.
-       * 
+       *
        * Either calling `Core_version` or decoding `RuntimeVersion` failed.
        **/
       FailedToExtractRuntimeVersion: AugmentedError<ApiType>;

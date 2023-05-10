@@ -6,12 +6,28 @@
 import '@polkadot/api-base/types/consts';
 
 import type { ApiTypes, AugmentedConst } from '@polkadot/api-base/types';
-import type { Bytes, Option, U8aFixed, bool, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
+import type {
+  Bytes,
+  Option,
+  U8aFixed,
+  bool,
+  u128,
+  u16,
+  u32,
+  u64,
+  u8,
+} from '@polkadot/types-codec';
 import type { Codec } from '@polkadot/types-codec/types';
 import type { Percent, Permill } from '@polkadot/types/interfaces/runtime';
-import type { FrameSystemLimitsBlockLength, FrameSystemLimitsBlockWeights, SpVersionRuntimeVersion, SpWeightsRuntimeDbWeight } from '@polkadot/types/lookup';
+import type {
+  FrameSystemLimitsBlockLength,
+  FrameSystemLimitsBlockWeights,
+  SpVersionRuntimeVersion,
+  SpWeightsRuntimeDbWeight,
+} from '@polkadot/types/lookup';
 
-export type __AugmentedConst<ApiType extends ApiTypes> = AugmentedConst<ApiType>;
+export type __AugmentedConst<ApiType extends ApiTypes> =
+  AugmentedConst<ApiType>;
 
 declare module '@polkadot/api-base/types/consts' {
   interface AugmentedConsts<ApiType extends ApiTypes> {
@@ -49,7 +65,7 @@ declare module '@polkadot/api-base/types/consts' {
       leasePeriodsPerSlot: u32 & AugmentedConst<ApiType>;
       /**
        * The length of each sample to take during the ending period.
-       * 
+       *
        * `EndingPeriod` / `SampleLength` = Total # of Samples
        **/
       sampleLength: u32 & AugmentedConst<ApiType>;
@@ -141,7 +157,7 @@ declare module '@polkadot/api-base/types/consts' {
       curatorDepositMin: Option<u128> & AugmentedConst<ApiType>;
       /**
        * The curator deposit is calculated as a percentage of the curator fee.
-       * 
+       *
        * This deposit has optional upper and lower bounds with `CuratorDepositMax` and
        * `CuratorDepositMin`.
        **/
@@ -152,7 +168,7 @@ declare module '@polkadot/api-base/types/consts' {
       dataDepositPerByte: u128 & AugmentedConst<ApiType>;
       /**
        * Maximum acceptable reason length.
-       * 
+       *
        * Benchmarks depend on this value, be sure to update weights file when changing this value
        **/
       maximumReasonLength: u32 & AugmentedConst<ApiType>;
@@ -208,7 +224,7 @@ declare module '@polkadot/api-base/types/consts' {
       cooloffPeriod: u32 & AugmentedConst<ApiType>;
       /**
        * The period between a proposal being approved and enacted.
-       * 
+       *
        * It should generally be a little more than the unstake period to ensure that
        * voting stakers have an opportunity to remove themselves from the system in the case
        * where they are on the losing side of a vote.
@@ -242,7 +258,7 @@ declare module '@polkadot/api-base/types/consts' {
       maxProposals: u32 & AugmentedConst<ApiType>;
       /**
        * The maximum number of votes for an account.
-       * 
+       *
        * Also used to compute weight, an overly big value can
        * lead to extrinsic with very big weight: see `delegate` for instance.
        **/
@@ -253,7 +269,7 @@ declare module '@polkadot/api-base/types/consts' {
       minimumDeposit: u128 & AugmentedConst<ApiType>;
       /**
        * The minimum period of vote locking.
-       * 
+       *
        * It should be no shorter than enactment period to ensure that in the case of an approval,
        * those successful voters are locked into the consequences that their votes entail.
        **/
@@ -270,14 +286,14 @@ declare module '@polkadot/api-base/types/consts' {
     gilt: {
       /**
        * Portion of the queue which is free from ordering and just a FIFO.
-       * 
+       *
        * Must be no greater than `MaxQueueLen`.
        **/
       fifoQueueLen: u32 & AugmentedConst<ApiType>;
       /**
        * The number of blocks between consecutive attempts to issue more gilts in an effort to
        * get to the target amount to be frozen.
-       * 
+       *
        * A larger value results in fewer storage hits each block, but a slower period to get to
        * the target.
        **/
@@ -296,7 +312,7 @@ declare module '@polkadot/api-base/types/consts' {
        * The minimum amount of funds that may be offered to freeze for a gilt. Note that this
        * does not actually limit the amount which may be frozen in a gilt since gilts may be
        * split up in order to satisfy the desired amount of funds under gilts.
-       * 
+       *
        * It should be at least big enough to ensure that there is no possible storage spam attack
        * or queue-filling attack.
        **/
@@ -363,7 +379,7 @@ declare module '@polkadot/api-base/types/consts' {
     imOnline: {
       /**
        * A configuration for base priority of unsigned transactions.
-       * 
+       *
        * This is exposed so that it can be tuned for particular runtime, when
        * multiple pallets send unsigned transactions.
        **/
@@ -387,7 +403,7 @@ declare module '@polkadot/api-base/types/consts' {
       /**
        * The base amount of currency needed to reserve for creating a multisig execution or to
        * store a dispatch call for later.
-       * 
+       *
        * This is held for an additional storage item whose value size is
        * `4 + sizeof((BlockNumber, Balance, AccountId))` bytes and whose key size is
        * `32 + sizeof(AccountId)` bytes.
@@ -395,7 +411,7 @@ declare module '@polkadot/api-base/types/consts' {
       depositBase: u128 & AugmentedConst<ApiType>;
       /**
        * The amount of currency needed per unit threshold when creating a multisig execution.
-       * 
+       *
        * This is held for adding 32 bytes more into a pre-existing storage value.
        **/
       depositFactor: u128 & AugmentedConst<ApiType>;
@@ -430,7 +446,7 @@ declare module '@polkadot/api-base/types/consts' {
       desiredRunnersUp: u32 & AugmentedConst<ApiType>;
       /**
        * The maximum number of candidates in a phragmen election.
-       * 
+       *
        * Warning: The election happens onchain, and this value will determine
        * the size of the election. When this limit is reached no more
        * candidates are accepted in the election.
@@ -438,7 +454,7 @@ declare module '@polkadot/api-base/types/consts' {
       maxCandidates: u32 & AugmentedConst<ApiType>;
       /**
        * The maximum number of voters to allow in a phragmen election.
-       * 
+       *
        * Warning: This impacts the size of the election which is run onchain.
        * When the limit is reached the new voters are ignored.
        **/
@@ -455,7 +471,7 @@ declare module '@polkadot/api-base/types/consts' {
       termDuration: u32 & AugmentedConst<ApiType>;
       /**
        * Base deposit associated with voting.
-       * 
+       *
        * This should be sensibly high to economically ensure the pallet cannot be attacked by
        * creating a gigantic number of votes.
        **/
@@ -472,14 +488,14 @@ declare module '@polkadot/api-base/types/consts' {
     proxy: {
       /**
        * The base amount of currency needed to reserve for creating an announcement.
-       * 
+       *
        * This is held when a new storage item holding a `Balance` is created (typically 16
        * bytes).
        **/
       announcementDepositBase: u128 & AugmentedConst<ApiType>;
       /**
        * The amount of currency needed per announcement made.
-       * 
+       *
        * This is held for adding an `AccountId`, `Hash` and `BlockNumber` (typically 68 bytes)
        * into a pre-existing storage value.
        **/
@@ -494,14 +510,14 @@ declare module '@polkadot/api-base/types/consts' {
       maxProxies: u32 & AugmentedConst<ApiType>;
       /**
        * The base amount of currency needed to reserve for creating a proxy.
-       * 
+       *
        * This is held for an additional storage item whose value size is
        * `sizeof(Balance)` bytes and whose key size is `sizeof(AccountId)` bytes.
        **/
       proxyDepositBase: u128 & AugmentedConst<ApiType>;
       /**
        * The amount of currency needed per proxy added.
-       * 
+       *
        * This is held for adding 32 bytes plus an instance of `ProxyType` more into a
        * pre-existing storage value. Thus, when configuring `ProxyDepositFactor` one should take
        * into account `32 + proxy_type.encode().len()` bytes of data.
@@ -515,7 +531,7 @@ declare module '@polkadot/api-base/types/consts' {
     recovery: {
       /**
        * The base amount of currency needed to reserve for creating a recovery configuration.
-       * 
+       *
        * This is held for an additional storage item whose value size is
        * `2 + sizeof(BlockNumber, Balance)` bytes.
        **/
@@ -523,14 +539,14 @@ declare module '@polkadot/api-base/types/consts' {
       /**
        * The amount of currency needed per additional user when creating a recovery
        * configuration.
-       * 
+       *
        * This is held for adding `sizeof(AccountId)` bytes more into a pre-existing storage
        * value.
        **/
       friendDepositFactor: u128 & AugmentedConst<ApiType>;
       /**
        * The maximum amount of friends allowed in a recovery configuration.
-       * 
+       *
        * NOTE: The threshold programmed in this Pallet uses u16, so it does
        * not really make sense to have a limit here greater than u16::MAX.
        * But also, that is a lot more than you should probably set this value
@@ -539,7 +555,7 @@ declare module '@polkadot/api-base/types/consts' {
       maxFriends: u32 & AugmentedConst<ApiType>;
       /**
        * The base amount of currency needed to reserve for starting a recovery.
-       * 
+       *
        * This is primarily held for deterring malicious recovery attempts, and should
        * have a value large enough that a bad actor would choose not to place this
        * deposit. It also acts to fund additional storage item whose value size is
@@ -642,24 +658,24 @@ declare module '@polkadot/api-base/types/consts' {
     stateTrieMigration: {
       /**
        * Maximal number of bytes that a key can have.
-       * 
+       *
        * FRAME itself does not limit the key length.
        * The concrete value must therefore depend on your storage usage.
        * A [`frame_support::storage::StorageNMap`] for example can have an arbitrary number of
        * keys which are then hashed and concatenated, resulting in arbitrarily long keys.
-       * 
+       *
        * Use the *state migration RPC* to retrieve the length of the longest key in your
        * storage: <https://github.com/paritytech/substrate/issues/11642>
-       * 
+       *
        * The migration will halt with a `Halted` event if this value is too small.
        * Since there is no real penalty from over-estimating, it is advised to use a large
        * value. The default is 512 byte.
-       * 
+       *
        * Some key lengths for reference:
        * - [`frame_support::storage::StorageValue`]: 32 byte
        * - [`frame_support::storage::StorageMap`]: 64 byte
        * - [`frame_support::storage::StorageDoubleMap`]: 96 byte
-       * 
+       *
        * For more info see
        * <https://www.shawntabrizi.com/substrate/querying-substrate-storage-via-rpc/>
        **/
@@ -688,7 +704,7 @@ declare module '@polkadot/api-base/types/consts' {
       dbWeight: SpWeightsRuntimeDbWeight & AugmentedConst<ApiType>;
       /**
        * The designated SS58 prefix of this chain.
-       * 
+       *
        * This replaces the "ss58Format" property declared in the chain spec. Reason is
        * that the runtime should know about the prefix in order to make use of it as
        * an identifier of the chain.
@@ -723,7 +739,7 @@ declare module '@polkadot/api-base/types/consts' {
       dataDepositPerByte: u128 & AugmentedConst<ApiType>;
       /**
        * Maximum acceptable reason length.
-       * 
+       *
        * Benchmarks depend on this value, be sure to update weights file when changing this value
        **/
       maximumReasonLength: u32 & AugmentedConst<ApiType>;
@@ -748,21 +764,21 @@ declare module '@polkadot/api-base/types/consts' {
       /**
        * A fee mulitplier for `Operational` extrinsics to compute "virtual tip" to boost their
        * `priority`
-       * 
+       *
        * This value is multipled by the `final_fee` to obtain a "virtual tip" that is later
        * added to a tip component in regular `priority` calculations.
        * It means that a `Normal` transaction can front-run a similarly-sized `Operational`
        * extrinsic (with no tip), by including a tip value greater than the virtual tip.
-       * 
+       *
        * ```rust,ignore
        * // For `Normal`
        * let priority = priority_calc(tip);
-       * 
+       *
        * // For `Operational`
        * let virtual_tip = (inclusion_fee + tip) * OperationalFeeMultiplier;
        * let priority = priority_calc(tip + virtual_tip);
        * ```
-       * 
+       *
        * Note that since we use `final_fee` the multiplier applies also to the regular `tip`
        * sent with the transaction. So, not only does the transaction get a priority bump based
        * on the `inclusion_fee`, but we also amplify the impact of tips applied to `Operational`
@@ -781,7 +797,7 @@ declare module '@polkadot/api-base/types/consts' {
       burn: Permill & AugmentedConst<ApiType>;
       /**
        * The maximum number of approvals that can wait in the spending queue.
-       * 
+       *
        * NOTE: This parameter is also used within the Bounties Pallet extension if enabled.
        **/
       maxApprovals: u32 & AugmentedConst<ApiType>;

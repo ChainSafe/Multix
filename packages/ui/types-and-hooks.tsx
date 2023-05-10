@@ -2,9 +2,15 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { fetchData } from './src/fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -28,14 +34,12 @@ export type Account = {
   threshold?: Maybe<Scalars['Int']>;
 };
 
-
 export type AccountDelegateeForArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
   where?: InputMaybe<ProxyAccountWhereInput>;
 };
-
 
 export type AccountDelegatorForArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -44,7 +48,6 @@ export type AccountDelegatorForArgs = {
   where?: InputMaybe<ProxyAccountWhereInput>;
 };
 
-
 export type AccountMultisigsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -52,14 +55,12 @@ export type AccountMultisigsArgs = {
   where?: InputMaybe<AccountMultisigWhereInput>;
 };
 
-
 export type AccountMultisigsCallsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<MultisigCallOrderByInput>>;
   where?: InputMaybe<MultisigCallWhereInput>;
 };
-
 
 export type AccountSignatoriesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -105,7 +106,7 @@ export enum AccountMultisigOrderByInput {
   SignatoryIsPureProxyAsc = 'signatory_isPureProxy_ASC',
   SignatoryIsPureProxyDesc = 'signatory_isPureProxy_DESC',
   SignatoryThresholdAsc = 'signatory_threshold_ASC',
-  SignatoryThresholdDesc = 'signatory_threshold_DESC'
+  SignatoryThresholdDesc = 'signatory_threshold_DESC',
 }
 
 export type AccountMultisigWhereInput = {
@@ -149,7 +150,7 @@ export enum AccountOrderByInput {
   IsPureProxyAsc = 'isPureProxy_ASC',
   IsPureProxyDesc = 'isPureProxy_DESC',
   ThresholdAsc = 'threshold_ASC',
-  ThresholdDesc = 'threshold_DESC'
+  ThresholdDesc = 'threshold_DESC',
 }
 
 export type AccountWhereInput = {
@@ -242,7 +243,7 @@ export enum MultisigCallOrderByInput {
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
   TimestampAsc = 'timestamp_ASC',
-  TimestampDesc = 'timestamp_DESC'
+  TimestampDesc = 'timestamp_DESC',
 }
 
 export type MultisigCallWhereInput = {
@@ -359,7 +360,7 @@ export enum ProxyAccountOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   TypeAsc = 'type_ASC',
-  TypeDesc = 'type_DESC'
+  TypeDesc = 'type_DESC',
 }
 
 export type ProxyAccountWhereInput = {
@@ -427,7 +428,7 @@ export enum ProxyType {
   NominationPools = 'NominationPools',
   NonTransfer = 'NonTransfer',
   Staking = 'Staking',
-  SudoBalances = 'SudoBalances'
+  SudoBalances = 'SudoBalances',
 }
 
 export type Query = {
@@ -455,26 +456,21 @@ export type Query = {
   squidStatus?: Maybe<SquidStatus>;
 };
 
-
 export type QueryAccountByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type QueryAccountByUniqueInputArgs = {
   where: WhereIdInput;
 };
 
-
 export type QueryAccountMultisigByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type QueryAccountMultisigByUniqueInputArgs = {
   where: WhereIdInput;
 };
-
 
 export type QueryAccountMultisigsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -483,14 +479,12 @@ export type QueryAccountMultisigsArgs = {
   where?: InputMaybe<AccountMultisigWhereInput>;
 };
 
-
 export type QueryAccountMultisigsConnectionArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   orderBy: Array<AccountMultisigOrderByInput>;
   where?: InputMaybe<AccountMultisigWhereInput>;
 };
-
 
 export type QueryAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -499,7 +493,6 @@ export type QueryAccountsArgs = {
   where?: InputMaybe<AccountWhereInput>;
 };
 
-
 export type QueryAccountsConnectionArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -507,16 +500,13 @@ export type QueryAccountsConnectionArgs = {
   where?: InputMaybe<AccountWhereInput>;
 };
 
-
 export type QueryMultisigCallByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type QueryMultisigCallByUniqueInputArgs = {
   where: WhereIdInput;
 };
-
 
 export type QueryMultisigCallsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -525,7 +515,6 @@ export type QueryMultisigCallsArgs = {
   where?: InputMaybe<MultisigCallWhereInput>;
 };
 
-
 export type QueryMultisigCallsConnectionArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -533,16 +522,13 @@ export type QueryMultisigCallsConnectionArgs = {
   where?: InputMaybe<MultisigCallWhereInput>;
 };
 
-
 export type QueryProxyAccountByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type QueryProxyAccountByUniqueInputArgs = {
   where: WhereIdInput;
 };
-
 
 export type QueryProxyAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -550,7 +536,6 @@ export type QueryProxyAccountsArgs = {
   orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
   where?: InputMaybe<ProxyAccountWhereInput>;
 };
-
 
 export type QueryProxyAccountsConnectionArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -577,16 +562,13 @@ export type Subscription = {
   proxyAccounts: Array<ProxyAccount>;
 };
 
-
 export type SubscriptionAccountByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type SubscriptionAccountMultisigByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type SubscriptionAccountMultisigsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -595,7 +577,6 @@ export type SubscriptionAccountMultisigsArgs = {
   where?: InputMaybe<AccountMultisigWhereInput>;
 };
 
-
 export type SubscriptionAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -603,11 +584,9 @@ export type SubscriptionAccountsArgs = {
   where?: InputMaybe<AccountWhereInput>;
 };
 
-
 export type SubscriptionMultisigCallByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type SubscriptionMultisigCallsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -616,11 +595,9 @@ export type SubscriptionMultisigCallsArgs = {
   where?: InputMaybe<MultisigCallWhereInput>;
 };
 
-
 export type SubscriptionProxyAccountByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type SubscriptionProxyAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
@@ -637,23 +614,67 @@ export type MultisigByIdQueryVariables = Exact<{
   account: Scalars['String'];
 }>;
 
-
-export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }> }> };
+export type MultisigByIdQuery = {
+  __typename?: 'Query';
+  accounts: Array<{
+    __typename?: 'Account';
+    threshold?: number | null;
+    id: string;
+    signatories: Array<{
+      __typename?: 'AccountMultisig';
+      signatory: { __typename?: 'Account'; id: string };
+    }>;
+  }>;
+};
 
 export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
   multisigs?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
-
-export type MultisigCallsByMultisigIdSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
+export type MultisigCallsByMultisigIdSubscription = {
+  __typename?: 'Subscription';
+  multisigCalls: Array<{
+    __typename?: 'MultisigCall';
+    blockHash: string;
+    callIndex: number;
+    id: string;
+    timestamp: any;
+  }>;
+};
 
 export type MultisigsByAccountsSubscriptionVariables = Exact<{
   accounts?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
-
-export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', id: string, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, isPureProxy?: boolean | null } }> }> };
-
+export type MultisigsByAccountsSubscription = {
+  __typename?: 'Subscription';
+  accounts: Array<{
+    __typename?: 'Account';
+    id: string;
+    isMultisig?: boolean | null;
+    isPureProxy?: boolean | null;
+    threshold?: number | null;
+    signatories: Array<{
+      __typename?: 'AccountMultisig';
+      signatory: { __typename?: 'Account'; id: string };
+    }>;
+    delegateeFor: Array<{
+      __typename?: 'ProxyAccount';
+      id: string;
+      type: ProxyType;
+      delegator: {
+        __typename?: 'Account';
+        id: string;
+        isPureProxy?: boolean | null;
+      };
+      delegatee: {
+        __typename?: 'Account';
+        id: string;
+        isPureProxy?: boolean | null;
+      };
+    }>;
+  }>;
+};
 
 export const MultisigByIdDocument = `
     query MultisigById($account: String!) {
@@ -669,17 +690,20 @@ export const MultisigByIdDocument = `
 }
     `;
 export const useMultisigByIdQuery = <
-      TData = MultisigByIdQuery,
-      TError = unknown
-    >(
-      variables: MultisigByIdQueryVariables,
-      options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
-    ) =>
-    useQuery<MultisigByIdQuery, TError, TData>(
-      ['MultisigById', variables],
-      fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
-      options
-    );
+  TData = MultisigByIdQuery,
+  TError = unknown
+>(
+  variables: MultisigByIdQueryVariables,
+  options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
+) =>
+  useQuery<MultisigByIdQuery, TError, TData>(
+    ['MultisigById', variables],
+    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(
+      MultisigByIdDocument,
+      variables
+    ),
+    options
+  );
 export const MultisigCallsByMultisigIdDocument = `
     subscription MultisigCallsByMultisigId($multisigs: [String!]) {
   multisigCalls(

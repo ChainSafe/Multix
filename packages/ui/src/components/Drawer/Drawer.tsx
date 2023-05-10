@@ -1,12 +1,12 @@
 import Drawer from '@mui/material/Drawer';
-import DrawerMenu from "./DrawerMenu";
-import { styled } from "@mui/material/styles";
+import DrawerMenu from './DrawerMenu';
+import { styled } from '@mui/material/styles';
 
 const DRAWER_WIDTH = 240;
 
 interface DrawerComponentProps {
-  open: boolean,
-  handleDrawerClose: () => void
+  open: boolean;
+  handleDrawerClose: () => void;
 }
 
 function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
@@ -17,7 +17,7 @@ function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
       open={open}
       onClose={handleDrawerClose}
       ModalProps={{
-        keepMounted: true
+        keepMounted: true,
       }}
     >
       <DrawerMenu handleDrawerClose={handleDrawerClose} />
@@ -25,15 +25,14 @@ function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
   );
 }
 
-
-const DrawerStyledMobile = styled(Drawer)(() => `
+const DrawerStyledMobile = styled(Drawer)(
+  () => `
     width: ${DRAWER_WIDTH}px;
     flex-shrink: 0;
     & .MuiDrawer-paper {
         width: ${DRAWER_WIDTH}px;
     }
-`);
+`
+);
 
 export default DrawerComponent;
-
-

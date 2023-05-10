@@ -1,29 +1,29 @@
 name: Lint UI
 on:
   pull_request:
-    paths: ["packages/ui/**/*"]
+    paths: ['packages/ui/**/*']
 jobs:
   extract:
     name: eslint
     runs-on: ubuntu-latest
     defaults:
-       run:
-         working-directory: ./packages/ui/
+      run:
+        working-directory: ./packages/ui/
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: set user
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
-    # use node module caching
-    - uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-    - name: install packages
-    - run: corepack enable
-    - run: yarn install --immutable
+      - name: set user
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+      # use node module caching
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: install packages
+      - run: corepack enable
+      - run: yarn install --immutable
 
-    - name: lint
-      run: yarn lint
+      - name: lint
+        run: yarn lint

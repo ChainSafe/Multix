@@ -2,7 +2,6 @@
 
 This UI is meant to be run either alongside an indexer as presented in `../squid`, or pointing at a live instance (see bellow)
 
-
 ## Available scripts
 
 In the project directory, you can run:
@@ -13,7 +12,6 @@ Runs the app in the development mode.\
 Open [http://localhost:3333](http://localhost:3333) to view it in the browser.
 
 The page will reload if you make edits.
-
 
 ### `yarn build`
 

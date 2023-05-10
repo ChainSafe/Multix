@@ -1,6 +1,6 @@
-import { Account, ProxyAccount, ProxyType } from "../model"
-import { Ctx } from "../processor"
-import { getOrCreateAccounts } from "../util"
+import { Account, ProxyAccount, ProxyType } from '../model';
+import { Ctx } from '../processor';
+import { getOrCreateAccounts } from '../util';
 
 export interface NewProxy {
   id: string;
@@ -12,31 +12,42 @@ export interface NewProxy {
 }
 
 export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
-
   // Aggregate all accounts we deal with using a set to make sure we don't have dublicates
-  const allAccountsStringSet = new Set<string>()
+  const allAccountsStringSet = new Set<string>();
 
   newProxies.forEach(({ delegatee, delegator }) => {
-    allAccountsStringSet.add(delegatee)
-    allAccountsStringSet.add(delegator)
-  })
+    allAccountsStringSet.add(delegatee);
+    allAccountsStringSet.add(delegator);
+  });
 
-  const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()))
+  const accountsToUpdate = await getOrCreateAccounts(
+    ctx,
+    Array.from(allAccountsStringSet.values())
+  );
 
-  const accountMap = new Map<string, Account>()
-  accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
-  const proxyAccounts: ProxyAccount[] = []
+  const accountMap = new Map<string, Account>();
+  accountsToUpdate.forEach(account => accountMap.set(account.id, account));
+  const proxyAccounts: ProxyAccount[] = [];
 
-  for (const { id, delegatee, delegator, delay, type, createdAt } of newProxies) {
-    proxyAccounts.push(new ProxyAccount({
-      id,
-      delegator: accountMap.get(delegator),
-      delegatee: accountMap.get(delegatee),
-      type,
-      delay,
-      createdAt
-    }))
+  for (const {
+    id,
+    delegatee,
+    delegator,
+    delay,
+    type,
+    createdAt,
+  } of newProxies) {
+    proxyAccounts.push(
+      new ProxyAccount({
+        id,
+        delegator: accountMap.get(delegator),
+        delegatee: accountMap.get(delegatee),
+        type,
+        delay,
+        createdAt,
+      })
+    );
   }
 
-  await ctx.store.save(proxyAccounts)
-}
+  await ctx.store.save(proxyAccounts);
+};

@@ -1,36 +1,45 @@
-import { Box, Paper } from "@mui/material";
-import React, { useCallback } from "react";
-import { styled }  from "@mui/material/styles";
-import AccountSelection from "./AccountSelection";
+import { Box, Paper } from '@mui/material';
+import React, { useCallback } from 'react';
+import { styled } from '@mui/material/styles';
+import AccountSelection from './AccountSelection';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AccountDisplay from "./AccountDisplay";
+import AccountDisplay from './AccountDisplay';
 
 interface Props {
   className?: string;
-  signatories: string[]
-  setSignatories: React.Dispatch<React.SetStateAction<string[]>>
+  signatories: string[];
+  setSignatories: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const SignatorySelection = ({ className, signatories, setSignatories }: Props) => {
+const SignatorySelection = ({
+  className,
+  signatories,
+  setSignatories,
+}: Props) => {
+  const addSignatory = useCallback(
+    (newSignatory: string) => {
+      const newSignatories = [...signatories, newSignatory];
+      setSignatories(newSignatories);
+    },
+    [setSignatories, signatories]
+  );
 
-  const addSignatory = useCallback((newSignatory: string) => {
-    const newSignatories = [...signatories, newSignatory]
-    setSignatories(newSignatories)
-  }, [setSignatories, signatories])
-
-  const removeSignatory = useCallback((indexToDelete: number) => {
-    const newSignatories = signatories.filter((_, index) => indexToDelete !== index)
-    setSignatories(newSignatories)
-  }, [setSignatories, signatories])
+  const removeSignatory = useCallback(
+    (indexToDelete: number) => {
+      const newSignatories = signatories.filter(
+        (_, index) => indexToDelete !== index
+      );
+      setSignatories(newSignatories);
+    },
+    [setSignatories, signatories]
+  );
 
   return (
     <Box className={className}>
       {signatories.length > 0 && (
         <>
-          <div className="additionText">
-            Selected:
-          </div>
+          <div className="additionText">Selected:</div>
           <Paper className="selectedList">
             {signatories.map((address, index) => (
               <div key={address} className="selectedSignatory">
@@ -45,9 +54,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
               </div>
             ))}
           </Paper>
-          <div className="additionText">
-            New signatory...
-          </div>
+          <div className="additionText">New signatory...</div>
         </>
       )}
       <Box className="addSignatoryField">
@@ -62,10 +69,11 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
         />
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default styled(SignatorySelection)(({ theme }) => `
+export default styled(SignatorySelection)(
+  ({ theme }) => `
   .selectedList {
     padding: 1rem;
     margin-bottom: 2rem;
@@ -96,4 +104,5 @@ export default styled(SignatorySelection)(({ theme }) => `
       margin-top: .5rem;
       margin-bottom: .5rem;
   }
-`)
+`
+);

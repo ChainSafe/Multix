@@ -7,14 +7,14 @@ import { useState, MouseEvent, ReactNode } from 'react';
 export interface MenuOption {
   text: string;
   icon: ReactNode;
-  onClick: Function
+  onClick: Function;
 }
 
 const ITEM_HEIGHT = 48;
 
 interface Props {
-  className?: string
-  options: MenuOption[]
+  className?: string;
+  options: MenuOption[];
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
@@ -25,7 +25,7 @@ const OptionsMenu = ({ className, options }: Props) => {
   };
   const handleClose = (onClick: Function) => {
     setAnchorEl(null);
-    onClick()
+    onClick();
   };
 
   return (
@@ -55,21 +55,19 @@ const OptionsMenu = ({ className, options }: Props) => {
           },
         }}
       >
-        {options.map((option) => (
+        {options.map(option => (
           <MenuItem
             className="menuEntry"
             key={option.text}
             onClick={() => handleClose(option.onClick)}
           >
-            <ListItemIcon>
-              {option.icon}
-            </ListItemIcon>
+            <ListItemIcon>{option.icon}</ListItemIcon>
             <ListItemText>{option.text}</ListItemText>
           </MenuItem>
         ))}
       </Menu>
     </div>
   );
-}
+};
 
 export default OptionsMenu;

@@ -1,5 +1,5 @@
-import { Box, Grid } from "@mui/material";
-import { styled }  from "@mui/material/styles";
+import { Box, Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 interface Props {
@@ -7,41 +7,27 @@ interface Props {
 }
 
 const SuccessCreation = ({ className }: Props) => {
-
   return (
-    <Box className={className} >
+    <Box className={className}>
       <h1>Multisig creation in progress...</h1>
-      <Grid
-        container
-        alignItems="center"
-      >
-        <Grid
-          item
-          xs={12}
-          sm={4}
-          md={4}
-          lg={4}
-        >
+      <Grid container alignItems="center">
+        <Grid item xs={12} sm={4} md={4} lg={4}>
           <AccessTimeIcon className="icon" />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={8}
-          md={8}
-          lg={8}
-        >
+        <Grid item xs={12} sm={8} md={8} lg={8}>
           <h4 className="explainer">
-            It shouldn't take more than 30s.<br />
+            It shouldn't take more than 30s.
+            <br />
             This page will refresh automatically.
           </h4>
         </Grid>
       </Grid>
     </Box>
-  )
-}
+  );
+};
 
-export default styled(SuccessCreation)(({ theme }) => `
+export default styled(SuccessCreation)(
+  ({ theme }) => `
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -62,4 +48,5 @@ export default styled(SuccessCreation)(({ theme }) => `
   .explainer {
     margin-left: 1rem;
   }
-`)
+`
+);

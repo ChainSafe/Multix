@@ -5,9 +5,9 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 
 ## Prerequisites
 
-* node 16.x
-* docker
-* docker-compose
+- node 16.x
+- docker
+- docker-compose
 
 ## Quickly running the project, with docker
 
@@ -47,6 +47,7 @@ The graphql server and playground is available at http://localhost:4350/graphql
 
 The database used for the indexer is a Postgres launched in a Docker.
 If you have no migration to do, and the project is built already, you can launch the docker with the db and the indexer using:
+
 ```bash
 docker compose up -d
 node -r dotenv/config lib/processor.js
@@ -81,7 +82,7 @@ It is all [TypeORM](https://typeorm.io/#/migrations) under the hood.
 npx squid-typeorm-migration generate
 
 # Create template file for custom database changes
-npx squid-typeorm-migration apply 
+npx squid-typeorm-migration apply
 # or make migrate
 
 # Apply database migrations from `db/migrations`
@@ -94,14 +95,14 @@ npx sqd db revert
 npx sqd db drop
 
 # CREATE DATABASE
-npx sqd db create            
+npx sqd db create
 ```
 
 ### 4. Generate TypeScript definitions for substrate events and calls
 
-This is an optional part, but it is very advisable. 
+This is an optional part, but it is very advisable.
 
-Event and call data comes to mapping handlers as a raw untyped json. 
+Event and call data comes to mapping handlers as a raw untyped json.
 Not only it is unclear what the exact structure of a particular event or call is, but
 it can also rather frequently change over time.
 
@@ -115,33 +116,33 @@ The end result looks like this:
  * Normalized `balances.Transfer` event data
  */
 interface TransferEvent {
-    from: Uint8Array
-    to: Uint8Array
-    amount: bigint
+  from: Uint8Array;
+  to: Uint8Array;
+  amount: bigint;
 }
 
 function getTransferEvent(ctx: EventHandlerContext): TransferEvent {
-    // instanciate type-safe facade around event data
-    let event = new BalancesTransferEvent(ctx)
-    if (event.isV1020) {
-        let [from, to, amount, fee] = event.asV1020
-        return {from, to, amount}
-    } else if (event.isV1050) {
-        let [from, to, amount] = event.asV1050
-        return {from, to, amount}
-    } else {
-        // This cast will assert, 
-        // that the type of a given event matches
-        // the type of generated facade.
-        return event.asLatest
-    }
+  // instanciate type-safe facade around event data
+  let event = new BalancesTransferEvent(ctx);
+  if (event.isV1020) {
+    let [from, to, amount, fee] = event.asV1020;
+    return { from, to, amount };
+  } else if (event.isV1050) {
+    let [from, to, amount] = event.asV1050;
+    return { from, to, amount };
+  } else {
+    // This cast will assert,
+    // that the type of a given event matches
+    // the type of generated facade.
+    return event.asLatest;
+  }
 }
 ```
 
 Generation of type-safe wrappers for events and calls is currently a two-step process.
 
 First, you need to explore the chain to find blocks which introduce new spec version and
-fetch corresponding metadata. 
+fetch corresponding metadata.
 
 ```bash
 npx squid-substrate-metadata-explorer \
@@ -156,7 +157,7 @@ significantly. From scratch exploration of rococo network without archive takes 
 You can pass the result of previous exploration to `--out` parameter. In that case exploration will
 start from the last known block and thus will take much less time.
 
-After chain exploration is complete you can use `squid-substrate-typegen(1)` to generate 
+After chain exploration is complete you can use `squid-substrate-typegen(1)` to generate
 required wrappers.
 
 ```bash
@@ -167,15 +168,17 @@ Where `typegen.json` config file has the following structure:
 
 ```json5
 {
-  "outDir": "src/types",
-  "chainVersions": "rococoVersions.json", // the result of chain exploration
-  "typesBundle": "rococo", // see types bundle section below
-  "events": [ // list of events to generate
-    "balances.Transfer"
+  outDir: 'src/types',
+  chainVersions: 'rococoVersions.json', // the result of chain exploration
+  typesBundle: 'rococo', // see types bundle section below
+  events: [
+    // list of events to generate
+    'balances.Transfer',
   ],
-  "calls": [ // list of calls to generate
-    "timestamp.set"
-  ]
+  calls: [
+    // list of calls to generate
+    'timestamp.set',
+  ],
 }
 ```
 
@@ -183,17 +186,17 @@ Where `typegen.json` config file has the following structure:
 
 Squid tools assume a certain project layout.
 
-* All compiled js files must reside in `lib` and all TypeScript sources in `src`. 
-The layout of `lib` must reflect `src`.
-* All TypeORM classes must be exported by `src/model/index.ts` (`lib/model` module).
-* Database schema must be defined in `schema.graphql`.
-* Database migrations must reside in `db/migrations` and must be plain js files.
-* `sqd(1)` and `squid-*(1)` executables consult `.env` file for a number of environment variables.
+- All compiled js files must reside in `lib` and all TypeScript sources in `src`.
+  The layout of `lib` must reflect `src`.
+- All TypeORM classes must be exported by `src/model/index.ts` (`lib/model` module).
+- Database schema must be defined in `schema.graphql`.
+- Database migrations must reside in `db/migrations` and must be plain js files.
+- `sqd(1)` and `squid-*(1)` executables consult `.env` file for a number of environment variables.
 
 ## Types bundle
 
-Substrate chains which have blocks with metadata versions below 14 don't provide enough 
-information to decode their data. For those chains external 
+Substrate chains which have blocks with metadata versions below 14 don't provide enough
+information to decode their data. For those chains external
 [type definitions](https://polkadot.js.org/docs/api/start/types.extend) are required.
 
 Type definitions (`typesBundle`) can be given to squid tools in two forms:
@@ -203,33 +206,33 @@ Type definitions (`typesBundle`) can be given to squid tools in two forms:
 
 ```json5
 {
-  "types": {
-    "AccountId": "[u8; 32]"
+  types: {
+    AccountId: '[u8; 32]',
   },
-  "typesAlias": {
-    "assets": {
-      "Balance": "u64"
-    }
+  typesAlias: {
+    assets: {
+      Balance: 'u64',
+    },
   },
-  "versions": [
+  versions: [
     {
-      "minmax": [0, 1000], // block range with inclusive boundaries
-      "types": {
-        "AccountId": "[u8; 16]"
+      minmax: [0, 1000], // block range with inclusive boundaries
+      types: {
+        AccountId: '[u8; 16]',
       },
-      "typesAlias": {
-        "assets": {
-          "Balance": "u32"
-        }
-      }
-    }
-  ]
+      typesAlias: {
+        assets: {
+          Balance: 'u32',
+        },
+      },
+    },
+  ],
 }
 ```
 
-* `.types` - scale type definitions similar to [polkadot.js types](https://polkadot.js.org/docs/api/start/types.extend#extension)
-* `.typesAlias` - similar to [polkadot.js type aliases](https://polkadot.js.org/docs/api/start/types.extend#type-clashes)
-* `.versions` - per-block range overrides/patches for above fields.
+- `.types` - scale type definitions similar to [polkadot.js types](https://polkadot.js.org/docs/api/start/types.extend#extension)
+- `.typesAlias` - similar to [polkadot.js type aliases](https://polkadot.js.org/docs/api/start/types.extend#type-clashes)
+- `.versions` - per-block range overrides/patches for above fields.
 
 All fields in types bundle are optional and applied on top of a fixed set of well known
 frame types.
@@ -237,6 +240,7 @@ frame types.
 ## Environment variables
 
 The following environment variables are expected. You can copy `.env.example` into `.env`
+
 ```bash
 DB_PORT=5432
 GQL_PORT=4350
@@ -251,17 +255,17 @@ ARCHIVE_NAME="rococo" # the archive name from subsquid archives
 
 ## Differences from polkadot.js
 
-Polkadot.js provides lots of [specialized classes](https://polkadot.js.org/docs/api/start/types.basics) for various types of data. 
+Polkadot.js provides lots of [specialized classes](https://polkadot.js.org/docs/api/start/types.basics) for various types of data.
 Even primitives like `u32` are exposed through special classes.
 In contrast, squid framework works only with plain js primitives and objects.
 This allows to decrease coupling and also simply dictated by the fact, that
-there is not enough information in substrate metadata to distinguish between 
+there is not enough information in substrate metadata to distinguish between
 interesting cases.
 
 Account addresses is one example where such difference shows up.
 From substrate metadata (and squid framework) point of view account address is simply a fixed length
-sequence of bytes. On other hand, polkadot.js creates special wrapper for account addresses which 
-aware not only of address value, but also of its 
+sequence of bytes. On other hand, polkadot.js creates special wrapper for account addresses which
+aware not only of address value, but also of its
 [ss58](https://docs.substrate.io/v3/advanced/ss58/) formatting rules.
 Mapping developers should handle such cases themselves.
 

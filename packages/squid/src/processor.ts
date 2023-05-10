@@ -1,19 +1,42 @@
-import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
-import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
-import { handleMultisigCall } from './multisigCalls'
-import { getMultisigAddress, getMultisigCallId, getOriginAccountId, getPureProxyInfoFromArgs, getProxyInfoFromArgs } from './util'
-import { handleNewMultisigCalls, handleNewMultisigs, handleNewProxies, handleNewPureProxies, handleProxyRemovals, MultisigCallInfo, NewMultisigsInfo, NewProxy, NewPureProxy } from './processorHandlers'
-import { Env } from './util/Env'
+import {
+  KnownArchivesSubstrate,
+  lookupArchive,
+} from '@subsquid/archive-registry';
+import {
+  BatchContext,
+  BatchProcessorItem,
+  SubstrateBatchProcessor,
+} from '@subsquid/substrate-processor';
+import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection';
+import { Store, TypeormDatabase } from '@subsquid/typeorm-store';
+import { handleMultisigCall } from './multisigCalls';
+import {
+  getMultisigAddress,
+  getMultisigCallId,
+  getOriginAccountId,
+  getPureProxyInfoFromArgs,
+  getProxyInfoFromArgs,
+} from './util';
+import {
+  handleNewMultisigCalls,
+  handleNewMultisigs,
+  handleNewProxies,
+  handleNewPureProxies,
+  handleProxyRemovals,
+  MultisigCallInfo,
+  NewMultisigsInfo,
+  NewProxy,
+  NewPureProxy,
+} from './processorHandlers';
+import { Env } from './util/Env';
 
 export const dataEvent = {
   data: {
     event: {
       args: true,
-    }
-  }
-} as const
+    },
+  },
+} as const;
 
 export const dataCall = {
   data: {
@@ -22,14 +45,20 @@ export const dataCall = {
       origin: true,
     },
   },
-} as const
+} as const;
 
-
-const supportedMultisigCalls = ['Multisig.as_multi', 'Multisig.approve_as_multi', 'Multisig.cancel_as_multi', 'Multisig.as_multi_threshold_1']
-export const env = new Env().getEnv()
+const supportedMultisigCalls = [
+  'Multisig.as_multi',
+  'Multisig.approve_as_multi',
+  'Multisig.cancel_as_multi',
+  'Multisig.as_multi_threshold_1',
+];
+export const env = new Env().getEnv();
 const processor = new SubstrateBatchProcessor()
   .setDataSource({
-    archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, { release: 'FireSquid' }),
+    archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, {
+      release: 'FireSquid',
+    }),
     chain: env.rpcWs,
   })
   .setBlockRange({
@@ -45,33 +74,33 @@ const processor = new SubstrateBatchProcessor()
   .addCall('Multisig.as_multi_threshold_1', dataCall)
   .addEvent('Proxy.PureCreated', dataEvent)
   .addEvent('Proxy.ProxyAdded', dataEvent)
-  .addEvent('Proxy.ProxyRemoved', dataEvent)
+  .addEvent('Proxy.ProxyRemoved', dataEvent);
 
-export type Item = BatchProcessorItem<typeof processor>
-export type Ctx = BatchContext<Store, Item>
+export type Item = BatchProcessorItem<typeof processor>;
+export type Ctx = BatchContext<Store, Item>;
 
-processor.run(new TypeormDatabase(), async (ctx) => {
-  const newMultisigsInfo: NewMultisigsInfo[] = []
-  const newPureProxies: Map<string, NewPureProxy> = new Map()
-  const newMultisigCalls: MultisigCallInfo[] = []
-  const newProxies: Map<string, NewProxy> = new Map()
-  const proxyRemovalIds: Set<string> = new Set()
+processor.run(new TypeormDatabase(), async ctx => {
+  const newMultisigsInfo: NewMultisigsInfo[] = [];
+  const newPureProxies: Map<string, NewPureProxy> = new Map();
+  const newMultisigCalls: MultisigCallInfo[] = [];
+  const newProxies: Map<string, NewProxy> = new Map();
+  const proxyRemovalIds: Set<string> = new Set();
 
   for (const block of ctx.blocks) {
-    const { items } = block
-    const timestamp = new Date(block.header.timestamp)
+    const { items } = block;
+    const timestamp = new Date(block.header.timestamp);
 
     for (const item of items) {
       if (supportedMultisigCalls.includes(item.name)) {
-        const callItem = item as CallItem<"*", true>
+        const callItem = item as CallItem<'*', true>;
 
-        if (!callItem.call.success || !callItem.call.origin) continue
+        if (!callItem.call.success || !callItem.call.origin) continue;
 
-        const signer = getOriginAccountId(callItem.call.origin)
+        const signer = getOriginAccountId(callItem.call.origin);
         const callArgs = callItem.call.args;
 
-        const { otherSignatories, threshold } = handleMultisigCall(callArgs)
-        const signatories = [signer, ...otherSignatories]
+        const { otherSignatories, threshold } = handleMultisigCall(callArgs);
+        const signatories = [signer, ...otherSignatories];
 
         const newMulti = {
           id: getMultisigAddress(signatories, threshold),
@@ -79,57 +108,69 @@ processor.run(new TypeormDatabase(), async (ctx) => {
           newSignatories: signatories,
           isMultisig: true,
           isPureProxy: false,
-        } as NewMultisigsInfo
+        } as NewMultisigsInfo;
 
-        newMultisigsInfo.push(newMulti)
-        const blockNumber = block.header.height
-        const blockHash = block.header.hash
+        newMultisigsInfo.push(newMulti);
+        const blockNumber = block.header.height;
+        const blockHash = block.header.hash;
 
         newMultisigCalls.push({
-          id: getMultisigCallId(newMulti.id, blockNumber, callItem.extrinsic.indexInBlock, callItem.call.pos),
+          id: getMultisigCallId(
+            newMulti.id,
+            blockNumber,
+            callItem.extrinsic.indexInBlock,
+            callItem.call.pos
+          ),
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
           multisigAddress: newMulti.id,
-          timestamp
-        })
+          timestamp,
+        });
       }
 
-      if (item.name === ("Proxy.PureCreated")) {
-        const newPureProxy = getPureProxyInfoFromArgs(item)
+      if (item.name === 'Proxy.PureCreated') {
+        const newPureProxy = getPureProxyInfoFromArgs(item);
         // ctx.log.info(`pure ${newPureProxy.pure}`)
         // ctx.log.info(`who ${newPureProxy.who}`)
 
-        newPureProxies.set(newPureProxy.id, { ...newPureProxy, createdAt: timestamp })
+        newPureProxies.set(newPureProxy.id, {
+          ...newPureProxy,
+          createdAt: timestamp,
+        });
       }
 
-      if (item.name === ("Proxy.ProxyAdded")) {
-        const newProxy = getProxyInfoFromArgs(item)
+      if (item.name === 'Proxy.ProxyAdded') {
+        const newProxy = getProxyInfoFromArgs(item);
         // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
         // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-        newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
+        newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp });
       }
 
-      if (item.name === ("Proxy.ProxyRemoved")) {
-        const proxyRemoval = getProxyInfoFromArgs(item)
+      if (item.name === 'Proxy.ProxyRemoved') {
+        const proxyRemoval = getProxyInfoFromArgs(item);
         // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
         // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
         if (newProxies.has(proxyRemoval.id)) {
-          newProxies.delete(proxyRemoval.id)
+          newProxies.delete(proxyRemoval.id);
           // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
         } else {
-          proxyRemovalIds.add(proxyRemoval.id)
+          proxyRemovalIds.add(proxyRemoval.id);
           // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
         }
       }
     }
   }
 
-  newMultisigsInfo.length && await handleNewMultisigs(ctx, newMultisigsInfo)
-  newMultisigCalls.length && await handleNewMultisigCalls(ctx, newMultisigCalls)
-  newPureProxies.size && await handleNewPureProxies(ctx, Array.from(newPureProxies.values()))
-  newProxies.size && await handleNewProxies(ctx, Array.from(newProxies.values()))
-  proxyRemovalIds.size && await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values()))
-})
+  newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo));
+  newMultisigCalls.length &&
+    (await handleNewMultisigCalls(ctx, newMultisigCalls));
+  newPureProxies.size &&
+    (await handleNewPureProxies(ctx, Array.from(newPureProxies.values())));
+  newProxies.size &&
+    (await handleNewProxies(ctx, Array.from(newProxies.values())));
+  proxyRemovalIds.size &&
+    (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())));
+});
 
 /**
  * {

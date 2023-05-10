@@ -1,4 +1,3 @@
-
 // Copyright 2017-2022 Parity Technologies (UK) Ltd.
 // This file is part of Substrate API Sidecar.
 //
@@ -19,42 +18,42 @@ import { Codec, Registry } from '@polkadot/types/types';
 import { GenericCall, Struct } from '@polkadot/types';
 
 export interface ISanitizedCall {
-    [key: string]: unknown;
-    method: string | IFrameMethod;
-    callIndex?: Uint8Array | string;
-    args: ISanitizedArgs;
-    hash: `0x${string}`;
+  [key: string]: unknown;
+  method: string | IFrameMethod;
+  callIndex?: Uint8Array | string;
+  args: ISanitizedArgs;
+  hash: `0x${string}`;
 }
 
 export interface ISanitizedArgs {
-    call?: ISanitizedCall;
-    calls?: ISanitizedCall[];
-    [key: string]: unknown;
+  call?: ISanitizedCall;
+  calls?: ISanitizedCall[];
+  [key: string]: unknown;
 }
 
 export interface IFrameMethod {
-    pallet: string;
-    method: string;
+  pallet: string;
+  method: string;
 }
 
 export function isFrameMethod(thing: unknown): thing is IFrameMethod {
   return (
     typeof (thing as IFrameMethod).pallet === 'string' &&
-        typeof (thing as IFrameMethod).method === 'string'
+    typeof (thing as IFrameMethod).method === 'string'
   );
 }
 
 /**
-     * Helper function for `parseGenericCall`.
-     *
-     * @param argsArray array of `Codec` values
-     * @param registry type registry of the block the call belongs to
-     */
+ * Helper function for `parseGenericCall`.
+ *
+ * @param argsArray array of `Codec` values
+ * @param registry type registry of the block the call belongs to
+ */
 export function parseArrayGenericCalls(
   argsArray: Codec[],
   registry: Registry
 ): (Codec | ISanitizedCall)[] {
-  return argsArray.map((argument) => {
+  return argsArray.map(argument => {
     if (argument instanceof GenericCall) {
       return parseGenericCall(argument as GenericCall, registry);
     }
@@ -91,17 +90,17 @@ export function parseGenericCall(
       } else if (argument instanceof GenericCall) {
         // console.log("callData", argument.toHex())
         // console.log('argument.toHuman', argument.toHuman())
-        newArgs["callData"] = argument.toHex()
+        newArgs['callData'] = argument.toHex();
         newArgs[paramName] = parseGenericCall(
-                    argument as GenericCall,
-                    registry
+          argument as GenericCall,
+          registry
         );
       } else if (
         argument &&
-                paramName === 'call' &&
-                ['Bytes', 'WrapperKeepOpaque<Call>', 'WrapperOpaque<Call>'].includes(
-                  argument?.toRawType()
-                )
+        paramName === 'call' &&
+        ['Bytes', 'WrapperKeepOpaque<Call>', 'WrapperOpaque<Call>'].includes(
+          argument?.toRawType()
+        )
       ) {
         // multiSig.asMulti.args.call is either an OpaqueCall (Vec<u8>),
         // WrapperKeepOpaque<Call>, or WrapperOpaque<Call> that we

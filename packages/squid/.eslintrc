@@ -15,14 +15,7 @@
     "project": "tsconfig.json"
   },
   "rules": {
-    "indent": [
-      "error",
-      2
-    ]
+    "indent": ["error", 2]
   },
-  "ignorePatterns": [
-    "db/**/*",
-    "src/types/**/*",
-    "src/model/generated/**/*"
-  ]
+  "ignorePatterns": ["db/**/*", "src/types/**/*", "src/model/generated/**/*"]
 }
