@@ -1,4 +1,4 @@
-import { styled }  from "@mui/material/styles"
+import { styled } from "@mui/material/styles"
 import { Handle, Position } from 'reactflow';
 import { Box } from "@mui/material";
 import AccountDisplay from "../../components/AccountDisplay";
@@ -12,10 +12,10 @@ export type NodeData = {
 
 interface Props {
   data: NodeData
-  className: string
+  className?: string
 }
 
-const CustomNode = ({ data, className }: Props) => {
+const CustomNode = ({ data, className = "" }: Props) => {
 
   const { address, badge, handle } = data
 
