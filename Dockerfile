@@ -9,7 +9,6 @@ RUN apk add g++ make python3
 FROM node-with-gyp AS builder
 WORKDIR /multix
 
-ADD .yarn/releases .yarn/releases
 ADD .yarn/plugins .yarn/plugins
 ADD package.json .
 ADD yarn.lock .
@@ -20,6 +19,7 @@ ADD packages/squid/tsconfig.json ./packages/squid/
 ADD packages/squid/src ./packages/squid/src
 ADD packages/squid/schema.graphql ./packages/squid
 
+RUN corepack enable
 RUN yarn squid:install
 RUN yarn squid:codegen
 RUN yarn squid:build

@@ -3,7 +3,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 import { useMemo } from 'react';
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 
 interface Props {
   className?: string
