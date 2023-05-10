@@ -51,7 +51,7 @@ jobs:
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
           context: .
-          push: false
+          push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
