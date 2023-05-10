@@ -2,8 +2,8 @@ name: Lint squid
 on:
   pull_request:
     paths: [
-      "packages/squid/**/*",
-      ".github/workflows/lint-squid.yaml"
+      'packages/squid/**/*',
+      '.github/workflows/lint-squid.yaml'
     ]
 jobs:
   extract:
@@ -26,7 +26,7 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: install packages
-      run: corepack enable && yarn workspaces focus multix-squid --production
+      run: corepack enable && yarn workspaces focus multix-squid && yarn squid:lint
 
     - name: lint
       run: yarn lint

@@ -14,7 +14,7 @@ jobs:
          working-directory: ./packages/ui/
     steps:
     - uses: actions/checkout@v3
-  
+
     - name: set user
       run: |
         git config --global user.name 'GitHub Actions'
@@ -26,7 +26,7 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
     
     - name: install packages
-      run: corepack enable && yarn workspaces focus multix-ui --production
+      run: corepack enable && yarn workspaces focus multix-ui && yarn ui:lint
 
     - name: lint
       run: yarn lint

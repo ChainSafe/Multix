@@ -5,14 +5,15 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
-    "declaration": false,
     "sourceMap": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
     "node_modules"
   ]
