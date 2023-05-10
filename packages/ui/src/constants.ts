@@ -24,15 +24,15 @@ export const networkList = {
   "kusama": {
     explorerNetworkName: 'kusama',
     rpcUrl: "wss://kusama-rpc.polkadot.io",
-    wsGraphqlUrl: "wss://api.multix.chainsafe.io/graphql",
-    httpGraphqlUrl: "https://api.multix.chainsafe.io/graphql",
+    wsGraphqlUrl: "wss://kusama.multix.chainsafe.io/graphql",
+    httpGraphqlUrl: "https://kusama.multix.chainsafe.io/graphql",
     logo: chainsKusamaSVG
   } as NetworkInfo,
   "rococo": {
     explorerNetworkName: 'rococo',
     rpcUrl: "wss://rococo-rpc.polkadot.io",
-    wsGraphqlUrl: "wss://api.multix.chainsafe.io/graphql",
-    httpGraphqlUrl: "https://api.multix.chainsafe.io/graphql",
+    wsGraphqlUrl: "wss://rococo.multix.chainsafe.io/graphql",
+    httpGraphqlUrl: "https://rococo.multix.chainsafe.io/graphql",
     logo: chainsRococoSVG
   } as NetworkInfo,
   "local": {

@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ROUTES } from "../../constants";
 import { useMultiProxy } from "../../contexts/MultiProxyContext";
-// import NetworkSelection from "../NetworkSelection";
+import NetworkSelection from "../NetworkSelection";
 
 interface Props {
   className?: string
@@ -45,7 +45,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
                 : null
             ))}
             <MultiProxySelection />
-            {/* <NetworkSelection className="networkSelection" /> */}
+            <NetworkSelection className="networkSelection" />
           </BoxStyled>
         )}
         {isAccountConnected && (
