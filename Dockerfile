@@ -9,7 +9,6 @@ RUN apk add g++ make python3
 FROM node-with-gyp AS builder
 WORKDIR /multix
 
-ADD .yarn/releases .yarn/releases
 ADD .yarn/plugins .yarn/plugins
 ADD package.json .
 ADD yarn.lock .
