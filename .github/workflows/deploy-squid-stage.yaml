@@ -53,15 +53,10 @@ jobs:
           context: .
           target: ${{ matrix.target }}
           platforms: linux/amd64
-          push: false
+          push: true
           tags: |
             ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }}
             ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
-
-      - name: docker push to ghcr
-        run: |
-          docker push ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }}
-          docker push ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
 
   deploy:
     needs: push
