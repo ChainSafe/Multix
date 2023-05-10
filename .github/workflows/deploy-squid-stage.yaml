@@ -47,9 +47,13 @@ jobs:
 
       - name: docker build image
         uses: docker/build-push-action@v4
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
           context: .
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           target: ${{ matrix.target }}
           platforms: |
             linux/amd64
