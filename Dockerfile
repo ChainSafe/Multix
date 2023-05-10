@@ -20,6 +20,7 @@ ADD packages/squid/tsconfig.json ./packages/squid/
 ADD packages/squid/src ./packages/squid/src
 ADD packages/squid/schema.graphql ./packages/squid
 
+RUN corepack enable
 RUN yarn squid:install
 RUN yarn squid:codegen
 RUN yarn squid:build
