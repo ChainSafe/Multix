@@ -20,11 +20,11 @@
     "tsconfigRootDir": "./",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react"],
+  "plugins": ["react", "prettier"],
   "rules": {
-    "indent": ["error", 2],
     "object-curly-spacing": ["error", "always"],
-    "react/jsx-tag-spacing": "error"
+    "react/jsx-tag-spacing": "error",
+    "prettier/prettier": "error"
   },
   "overrides": [
     {
