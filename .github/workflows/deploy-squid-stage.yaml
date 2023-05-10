@@ -2,13 +2,19 @@ name: multix/stage/deploy
 
 on:
   push:
+    paths:
+      - 'packages/squid/**'
+      - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
       - ci/* # run this workflow if the branch starts with ci/*
 
 env:
   AWS_REGION: '${{ secrets.AWS_REGION }}'
-  ENV: 'stage'
+  AWS_ACCOUNT_ID: '${{ secrets.AWS_ACCOUNT_ID }}'
+  AWS_ROLE_NAME: '${{ secrets.AWS_ROLE_NAME }}'
+  GHCR_TOKEN: '${{ secrets.GHCR_TOKEN }}'
+  APP_STAGE: 'stage'
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
 
@@ -18,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target_id: ['squid-indexer', 'graphql-server']
+        target: [ 'squid-indexer', 'graphql-server' ]
 
     permissions:
       contents: read
@@ -37,13 +43,41 @@ jobs:
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ env.GHCR_TOKEN }}
 
       - name: build / tag / push docker image into ghcr
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
           context: .
-          target: ${{ matrix.target_id }}
-          push: false
-          tags: ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target_id }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target_id }}:${{ github.sha }}
+          target: ${{ matrix.target }}
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
+
+  deploy:
+    needs: push
+    name: deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [ 'rococo', 'kusama' ]
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: checkout the source code
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_ROLE_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: ${{ env.AWS_ROLE_NAME }}
+
+      - name: update cluster service
+        env:
+          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }}
