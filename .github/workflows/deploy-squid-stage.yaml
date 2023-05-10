@@ -46,4 +46,4 @@ jobs:
           context: .
           target: ${{ matrix.target_id }}
           push: false
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:${{ github.sha }}
+          tags: ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target_id }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target_id }}:${{ github.sha }}
