@@ -26,7 +26,7 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: install packages
-      run: corepack enable && yarn install --immutable
+      run: corepack enable && yarn workspaces focus multix-squid --production
 
     - name: lint
       run: yarn lint

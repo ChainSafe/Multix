@@ -2,8 +2,8 @@ name: Lint UI
 on:
   pull_request:
     paths: [
-      "packages/ui/**/*",
-      ".github/workflows/lint-ui.yaml"
+      'packages/ui/**/*',
+      '.github/workflows/lint-ui.yaml'
     ]
 jobs:
   extract:
@@ -14,7 +14,7 @@ jobs:
          working-directory: ./packages/ui/
     steps:
     - uses: actions/checkout@v3
-
+  
     - name: set user
       run: |
         git config --global user.name 'GitHub Actions'
@@ -24,8 +24,9 @@ jobs:
       with:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+    
     - name: install packages
-    - run: corepack enable && yarn install --immutable
+      run: corepack enable && yarn workspaces focus multix-ui --production
 
     - name: lint
       run: yarn lint
