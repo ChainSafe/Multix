@@ -83,7 +83,7 @@ const AccountDisplay = ({
   return (
     <MultisigInfoStyled>
       <IdenticonBadge badge={badge} address={address} />
-      <Box>
+      <BoxStyled>
         {withName && (
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
@@ -99,7 +99,7 @@ const AccountDisplay = ({
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
           </Box>
         )}
-      </Box>
+      </BoxStyled>
     </MultisigInfoStyled>
   );
 };
@@ -107,6 +107,7 @@ const AccountDisplay = ({
 const MultisigInfoStyled = styled('div')`
   display: flex;
   align-items: center;
+  min-width: 0;
 `;
 
 const NameWrapperStyled = styled('div')`
@@ -120,6 +121,10 @@ const AddressStyled = styled('div')(
     font-size: small;
 `
 );
+
+const BoxStyled = styled(Box)`
+  min-width: 0;
+`;
 
 const NameStyled = styled('span')`
   font-size: large;
@@ -141,6 +146,7 @@ export default styled(AccountDisplay)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
 
   .identityBadge {
     margin-right: 0.3rem;
