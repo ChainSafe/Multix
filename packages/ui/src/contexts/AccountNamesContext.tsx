@@ -1,9 +1,15 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
-import { useAccounts } from "./AccountsContext"
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import { useAccounts } from './AccountsContext'
 
 export type AccountNames = { [address: string]: string }
 
-const LOCALSTORAGE_ACCOUNT_KEY = "multix.accountNames"
+const LOCALSTORAGE_ACCOUNT_KEY = 'multix.accountNames'
 
 type AccountNamesContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -18,26 +24,33 @@ export interface IAccountNamesContext {
   addNames: (newAdditions: AccountNames) => void
 }
 
-const AccountNamesContext = createContext<IAccountNamesContext | undefined>(undefined)
+const AccountNamesContext = createContext<IAccountNamesContext | undefined>(
+  undefined
+)
 
-const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => {
+const AccountNamesContextProvider = ({
+  children,
+}: AccountNamesContextProps) => {
   const [accountNames, setAccountNames] = useState<AccountNames>({})
   const { getAccountByAddress } = useAccounts()
 
-  const getNamesWithExtension = useCallback((address: string) => {
-    const extensionAccount = getAccountByAddress(address)
-    if (extensionAccount) {
-      return extensionAccount.meta.name
-    }
+  const getNamesWithExtension = useCallback(
+    (address: string) => {
+      const extensionAccount = getAccountByAddress(address)
+      if (extensionAccount) {
+        return extensionAccount.meta.name
+      }
 
-    return accountNames[address] || ""
-  }, [accountNames, getAccountByAddress])
+      return accountNames[address] || ''
+    },
+    [accountNames, getAccountByAddress]
+  )
 
   const loadNames = useCallback(() => {
     const names = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
 
     if (!names) {
-      console.error("No local name to load")
+      console.error('No local name to load')
       return
     }
 
@@ -50,20 +63,30 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     localStorage.setItem(LOCALSTORAGE_ACCOUNT_KEY, JSON.stringify(accountNames))
   }, [accountNames])
 
-  const addName = useCallback((name: string, address: string) => {
-    setAccountNames({ ...accountNames, ...{ [address]: name.slice(0, MAX_NAME_LENGTH) } });
-  }, [accountNames, setAccountNames])
+  const addName = useCallback(
+    (name: string, address: string) => {
+      setAccountNames({
+        ...accountNames,
+        ...{ [address]: name.slice(0, MAX_NAME_LENGTH) },
+      })
+    },
+    [accountNames, setAccountNames]
+  )
 
-  const addNames = useCallback((newAdditions: AccountNames) => {
-    const truncated = Object
-      .entries(newAdditions)
-      .reduce((acc, [address, name]) => ({
-        ...acc,
-        [address]: name.slice(0, MAX_NAME_LENGTH)
-      }), {})
-    const newNames = { ...accountNames, ...truncated }
-    setAccountNames(newNames);
-  }, [accountNames])
+  const addNames = useCallback(
+    (newAdditions: AccountNames) => {
+      const truncated = Object.entries(newAdditions).reduce(
+        (acc, [address, name]) => ({
+          ...acc,
+          [address]: name.slice(0, MAX_NAME_LENGTH),
+        }),
+        {}
+      )
+      const newNames = { ...accountNames, ...truncated }
+      setAccountNames(newNames)
+    },
+    [accountNames]
+  )
 
   useEffect(() => {
     loadNames()
@@ -84,7 +107,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
         accountNames,
         addName,
         addNames,
-        getNamesWithExtension
+        getNamesWithExtension,
       }}
     >
       {children}
@@ -95,7 +118,9 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
 const useAccountNames = () => {
   const context = useContext(AccountNamesContext)
   if (context === undefined) {
-    throw new Error("useAccountNames must be used within a AccountNamesContextProvider")
+    throw new Error(
+      'useAccountNames must be used within a AccountNamesContextProvider'
+    )
   }
   return context
 }

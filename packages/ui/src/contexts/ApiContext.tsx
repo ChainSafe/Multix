@@ -1,13 +1,13 @@
-import React, { useMemo } from "react"
-import { ApiPromise, WsProvider } from "@polkadot/api"
-import { ApiOptions } from "@polkadot/api/types"
-import { TypeRegistry } from "@polkadot/types"
-import { useState, useEffect, createContext, useContext } from "react"
-import { useNetwork } from "./NetworkContext"
+import React, { useMemo } from 'react'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ApiOptions } from '@polkadot/api/types'
+import { TypeRegistry } from '@polkadot/types'
+import { useState, useEffect, createContext, useContext } from 'react'
+import { useNetwork } from './NetworkContext'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
-  types?: ApiOptions["types"]
+  types?: ApiOptions['types']
 }
 
 const registry = new TypeRegistry()
@@ -32,10 +32,14 @@ interface RawChainInfoHuman {
 
 const ApiContext = createContext<IApiContext | undefined>(undefined)
 
-
 const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const provider = useMemo(() => !!selectedNetworkInfo?.rpcUrl && new WsProvider(selectedNetworkInfo?.rpcUrl), [selectedNetworkInfo])
+  const provider = useMemo(
+    () =>
+      !!selectedNetworkInfo?.rpcUrl &&
+      new WsProvider(selectedNetworkInfo?.rpcUrl),
+    [selectedNetworkInfo]
+  )
   const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
   const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
   const [isReady, setIsReady] = useState(false)
@@ -57,11 +61,10 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   }, [provider, types])
 
   useEffect(() => {
-
     if (!apiPromise || !provider || isReady) return
 
     apiPromise.isReady
-      .then((api) => {
+      .then(api => {
         if (types) {
           registry.register(types)
         }
@@ -73,7 +76,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         setChainInfo({
           ss58Format: Number(raw?.ss58Format) || 0,
           tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
-          tokenSymbol: raw?.tokenSymbol[0] || ""
+          tokenSymbol: raw?.tokenSymbol[0] || '',
         })
       })
       .catch(e => console.error(e))
@@ -84,7 +87,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
       value={{
         api: apiPromise,
         isApiReady: isReady,
-        chainInfo
+        chainInfo,
       }}
     >
       {children}
@@ -95,7 +98,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 const useApi = () => {
   const context = useContext(ApiContext)
   if (context === undefined) {
-    throw new Error("useApi must be used within a ApiContextProvider")
+    throw new Error('useApi must be used within a ApiContextProvider')
   }
   return context
 }

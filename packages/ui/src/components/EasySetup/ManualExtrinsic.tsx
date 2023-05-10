@@ -1,15 +1,30 @@
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { styled }  from "@mui/material/styles";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
-import { ISubmittableResult } from "@polkadot/types/types";
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { useApi } from "../../contexts/ApiContext";
-import paramConversion from "../../utils/paramConversion";
+import {
+  Box,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { useApi } from '../../contexts/ApiContext'
+import paramConversion from '../../utils/paramConversion'
 
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<"promise", ISubmittableResult>) => void
+  onSetExtrinsic: (
+    ext: SubmittableExtrinsic<'promise', ISubmittableResult>
+  ) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -89,10 +104,14 @@ const transformParams = (
   }, [] as any[])
 }
 
-const isNumType = (type: string) =>
-  paramConversion.num.includes(type)
+const isNumType = (type: string) => paramConversion.num.includes(type)
 
-const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
+const ManualExtrinsic = ({
+  className,
+  onSetExtrinsic,
+  onSetErrorMessage,
+  from,
+}: Props) => {
   const { api, isApiReady, chainInfo } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
@@ -125,7 +144,9 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
   }, [inputParams, paramFields])
 
   useEffect(() => {
-    !!paramFields?.length && !!inputParams.length && setTransformedParams(transformParams(paramFields, inputParams))
+    !!paramFields?.length &&
+      !!inputParams.length &&
+      setTransformedParams(transformParams(paramFields, inputParams))
   }, [inputParams, paramFields])
 
   const updatePalletRPCs = useCallback(() => {
@@ -175,37 +196,50 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
   useEffect(updateCallables, [updateCallables])
   useEffect(updateParamFields, [updateParamFields])
 
-  const onPalletCallableParamChange = useCallback((event: SelectChangeEvent<string>, state: string) => {
-    // reset the params
-    setParamFields(null)
-    onSetErrorMessage("")
+  const onPalletCallableParamChange = useCallback(
+    (event: SelectChangeEvent<string>, state: string) => {
+      // reset the params
+      setParamFields(null)
+      onSetErrorMessage('')
 
-    setFormState(formState => {
-      const value = event.target.value
-      if (state === 'palletRpc') {
-        return { ...formState, [state]: value, callable: '', inputParams: [] }
-      } else if (state === 'callable') {
-        return { ...formState, [state]: value, inputParams: [] }
-      }
+      setFormState(formState => {
+        const value = event.target.value
+        if (state === 'palletRpc') {
+          return {
+            ...formState,
+            [state]: value,
+            callable: '',
+            inputParams: [],
+          }
+        } else if (state === 'callable') {
+          return { ...formState, [state]: value, inputParams: [] }
+        }
 
-      return initFormState
-    })
-  }, [onSetErrorMessage])
+        return initFormState
+      })
+    },
+    [onSetErrorMessage]
+  )
 
-  const onParamChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, { ind, paramField }: { ind: number, paramField: ParamField }) => {
-    onSetErrorMessage("")
-    setFormState(formState => {
-      const inputParams = [...formState.inputParams]
-      inputParams[ind] = { type: paramField.type, value: event.target.value }
-      return { ...formState, inputParams }
-    })
-  }, [onSetErrorMessage])
+  const onParamChange = useCallback(
+    (
+      event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      { ind, paramField }: { ind: number; paramField: ParamField }
+    ) => {
+      onSetErrorMessage('')
+      setFormState(formState => {
+        const inputParams = [...formState.inputParams]
+        inputParams[ind] = { type: paramField.type, value: event.target.value }
+        return { ...formState, inputParams }
+      })
+    },
+    [onSetErrorMessage]
+  )
 
   useEffect(() => {
     if (!isApiReady || !api) {
       return
     }
-
 
     if (!callable || !palletRpc || !areAllParamsFilled) {
       return
@@ -220,12 +254,20 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     } catch (e) {
       console.error('Error in ManualExtrinsic')
       console.error(e)
-      onSetErrorMessage("An error occured")
+      onSetErrorMessage('An error occured')
       console.error(e)
     }
-
-  }, [api, areAllParamsFilled, callable, chainInfo, isApiReady, onSetErrorMessage, onSetExtrinsic, palletRpc, transformedParams])
-
+  }, [
+    api,
+    areAllParamsFilled,
+    callable,
+    chainInfo,
+    isApiReady,
+    onSetErrorMessage,
+    onSetExtrinsic,
+    palletRpc,
+    transformedParams,
+  ])
 
   return (
     <Box className={className}>
@@ -233,41 +275,41 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
         <Select
           className="palletSelection"
           displayEmpty
-          onChange={(event) => onPalletCallableParamChange(event, "palletRpc")}
+          onChange={event => onPalletCallableParamChange(event, 'palletRpc')}
           value={palletRpc}
-          renderValue={(value) => {
+          renderValue={value => {
             if (!value) {
-              return "Pallet";
+              return 'Pallet'
             }
 
             return value
           }}
         >
-          {palletRPCs.map(({ text }) =>
+          {palletRPCs.map(({ text }) => (
             <MenuItem key={text} value={text} sx={{}}>
               <div className="pallet">{text}</div>
             </MenuItem>
-          )}
+          ))}
         </Select>
       </FormControl>
       <FormControl>
         <Select
           displayEmpty
-          onChange={(event) => onPalletCallableParamChange(event, "callable")}
+          onChange={event => onPalletCallableParamChange(event, 'callable')}
           value={callable}
-          renderValue={(value) => {
+          renderValue={value => {
             if (!value) {
-              return "Method";
+              return 'Method'
             }
 
             return value
           }}
         >
-          {callables.map(({ text }) =>
+          {callables.map(({ text }) => (
             <MenuItem key={text} value={text} sx={{}}>
               <div className="networkName">{text}</div>
             </MenuItem>
-          )}
+          ))}
         </Select>
       </FormControl>
       <ul className="paramInputs">
@@ -276,19 +318,21 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
             <TextField
               placeholder={paramField.type}
               type="text"
-              label={`${paramField.name}${paramField.optional ? " (optional)" : ""}`}
+              label={`${paramField.name}${
+                paramField.optional ? ' (optional)' : ''
+              }`}
               value={inputParams[ind] ? inputParams[ind].value : ''}
-              onChange={(event) => onParamChange(event, { ind, paramField })}
+              onChange={event => onParamChange(event, { ind, paramField })}
             />
           </li>
         ))}
       </ul>
-    </Box >
+    </Box>
   )
 }
 
-
-export default styled(ManualExtrinsic)(({ theme }) => `
+export default styled(ManualExtrinsic)(
+  ({ theme }) => `
     .palletSelection {
         margin-right: .5rem;
     }
@@ -300,4 +344,5 @@ export default styled(ManualExtrinsic)(({ theme }) => `
         margin-top: 0.5rem;
       }
     }
-`)
+`
+)

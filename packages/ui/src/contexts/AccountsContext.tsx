@@ -1,13 +1,27 @@
-import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react"
-import { web3Enable, web3FromSource, web3AccountsSubscribe } from "@polkadot/extension-dapp"
-import { InjectedAccountWithMeta, InjectedExtension } from "@polkadot/extension-inject/types"
-import { DAPP_NAME } from "../constants"
-import { Signer } from "@polkadot/api/types"
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+} from 'react'
+import {
+  web3Enable,
+  web3FromSource,
+  web3AccountsSubscribe,
+} from '@polkadot/extension-dapp'
+import {
+  InjectedAccountWithMeta,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types'
+import { DAPP_NAME } from '../constants'
+import { Signer } from '@polkadot/api/types'
 
-const LOCALSTORAGE_WATCH_ACCOUNTS_KEY = "multix.watchedAccount"
-const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = "multix.selectedAccount"
-const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = "multix.canConnectToExtension"
-export const META_SOURCE_WATCH = "watch"
+const LOCALSTORAGE_WATCH_ACCOUNTS_KEY = 'multix.watchedAccount'
+const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
+const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
+export const META_SOURCE_WATCH = 'watch'
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -30,38 +44,55 @@ const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [accountList, setAccountList] = useState<InjectedAccountWithMeta[]>([])
-  const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(accountList[0])
+  const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(
+    accountList[0]
+  )
   const [isAccountLoading, setIsAccountLoading] = useState(false)
   const [isExtensionError, setIsExtensionError] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
-  const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
-  const addressList = useMemo(() => accountList.map(a => a.address), [accountList])
-  const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
+  const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] =
+    useState(false)
+  const addressList = useMemo(
+    () => accountList.map(a => a.address),
+    [accountList]
+  )
+  const [extensions, setExtensions] = useState<
+    InjectedExtension[] | undefined
+  >()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
-  const [watchAccounts, setWatchAccounts] = useState<InjectedAccountWithMeta[]>([])
+  const [watchAccounts, setWatchAccounts] = useState<InjectedAccountWithMeta[]>(
+    []
+  )
 
   useEffect(() => {
-    const localStorageWatchAccount = localStorage.getItem(LOCALSTORAGE_WATCH_ACCOUNTS_KEY)
-    const watchArray: string[] = localStorageWatchAccount ? JSON.parse(localStorageWatchAccount) : []
+    const localStorageWatchAccount = localStorage.getItem(
+      LOCALSTORAGE_WATCH_ACCOUNTS_KEY
+    )
+    const watchArray: string[] = localStorageWatchAccount
+      ? JSON.parse(localStorageWatchAccount)
+      : []
 
-    const toStore = watchArray.map((address) => {
+    const toStore = watchArray.map(address => {
       return {
         address,
         meta: {
-          source: META_SOURCE_WATCH
-        }
+          source: META_SOURCE_WATCH,
+        },
       } as InjectedAccountWithMeta
     })
 
     setWatchAccounts(toStore)
   }, [])
 
-  const getAccountByAddress = useCallback((address: string) => {
-    return accountList.find(account => account.address === address)
-  }, [accountList])
+  const getAccountByAddress = useCallback(
+    (address: string) => {
+      return accountList.find(account => account.address === address)
+    },
+    [accountList]
+  )
 
   const allowConnectionToExtension = useCallback(() => {
-    localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, "true");
+    localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, 'true')
     setIsAllowedToConnectToExtension(true)
   }, [])
 
@@ -75,7 +106,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
-    web3AccountsSubscribe((accountList) => {
+    web3AccountsSubscribe(accountList => {
       if (accountList.length === 0) {
         setIsExtensionError(true)
         return
@@ -84,15 +115,17 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       setAccountList([...accountList, ...watchAccounts])
 
       if (accountList.length > 0) {
-        const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
-        const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
+        const previousAccountAddress = localStorage.getItem(
+          LOCALSTORAGE_SELECTED_ACCOUNT_KEY
+        )
+        const account =
+          previousAccountAddress && getAccountByAddress(previousAccountAddress)
 
         selectAccount(account || accountList[0])
       }
     })
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
-
   }, [getAccountByAddress, selectAccount, watchAccounts])
 
   useEffect(() => {
@@ -112,7 +145,14 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         setIsExtensionError(true)
       }
     }
-  }, [accountList, extensions, getaccountList, isAccountLoading, isAllowedToConnectToExtension, timeoutElapsed])
+  }, [
+    accountList,
+    extensions,
+    getaccountList,
+    isAccountLoading,
+    isAllowedToConnectToExtension,
+    timeoutElapsed,
+  ])
 
   useEffect(() => {
     // don't request if we have accounts
@@ -122,13 +162,14 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-
   }, [accountList, getaccountList, isAllowedToConnectToExtension])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
-      const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
-      if (previouslyAllowed === "true") {
+      const previouslyAllowed = localStorage.getItem(
+        LOCALSTORAGE_ALLOWED_CONNECTION_KEY
+      )
+      if (previouslyAllowed === 'true') {
         setIsAllowedToConnectToExtension(true)
       }
     }
@@ -140,11 +181,11 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     // to be able to retrieve the signer interface from this account
     // we can use web3FromSource which will return an InjectedExtension type
 
-    web3FromSource(selectedAccount.meta.source).then(
-      (injector) => {
+    web3FromSource(selectedAccount.meta.source)
+      .then(injector => {
         setSelectedSigner(injector.signer)
-      }).catch(console.error);
-
+      })
+      .catch(console.error)
   })
 
   return (
@@ -170,7 +211,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 const useAccounts = () => {
   const context = useContext(AccountContext)
   if (context === undefined) {
-    throw new Error("useAccounts must be used within a AccountContextProvider")
+    throw new Error('useAccounts must be used within a AccountContextProvider')
   }
   return context
 }

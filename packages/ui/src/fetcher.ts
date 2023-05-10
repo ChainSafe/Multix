@@ -1,9 +1,8 @@
-
 export const fetchData = <TData, TVariables>(
   query: string,
   variables?: TVariables,
   options?: RequestInit['headers'],
-  url?: string,
+  url?: string
 ): (() => Promise<TData>) => {
   return async () => {
     const res = await fetch(url || import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER, {
@@ -16,15 +15,15 @@ export const fetchData = <TData, TVariables>(
         query,
         variables,
       }),
-    });
+    })
 
-    const json = await res.json();
+    const json = await res.json()
 
     if (json.errors) {
-      const { message } = json.errors[0] || 'Error..';
-      throw new Error(message);
+      const { message } = json.errors[0] || 'Error..'
+      throw new Error(message)
     }
 
-    return json.data;
-  };
-};
+    return json.data
+  }
+}

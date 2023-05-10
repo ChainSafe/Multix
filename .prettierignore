@@ -1,0 +1,4 @@
+.yarn
+/packages/squid/db/
+/packages/squid/src/types/**/*
+/packages/squid/src/model/generated/**/*

@@ -1,16 +1,16 @@
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ListItemIcon, ListItemText } from '@mui/material';
-import { useState, MouseEvent, ReactNode } from 'react';
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { ListItemIcon, ListItemText } from '@mui/material'
+import { useState, MouseEvent, ReactNode } from 'react'
 export interface MenuOption {
-  text: string;
-  icon: ReactNode;
+  text: string
+  icon: ReactNode
   onClick: Function
 }
 
-const ITEM_HEIGHT = 48;
+const ITEM_HEIGHT = 48
 
 interface Props {
   className?: string
@@ -18,15 +18,15 @@ interface Props {
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
   const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
   const handleClose = (onClick: Function) => {
-    setAnchorEl(null);
+    setAnchorEl(null)
     onClick()
-  };
+  }
 
   return (
     <div className={className}>
@@ -55,21 +55,19 @@ const OptionsMenu = ({ className, options }: Props) => {
           },
         }}
       >
-        {options.map((option) => (
+        {options.map(option => (
           <MenuItem
             className="menuEntry"
             key={option.text}
             onClick={() => handleClose(option.onClick)}
           >
-            <ListItemIcon>
-              {option.icon}
-            </ListItemIcon>
+            <ListItemIcon>{option.icon}</ListItemIcon>
             <ListItemText>{option.text}</ListItemText>
           </MenuItem>
         ))}
       </Menu>
     </div>
-  );
+  )
 }
 
-export default OptionsMenu;
+export default OptionsMenu

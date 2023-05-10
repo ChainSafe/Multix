@@ -1,34 +1,42 @@
-import { Box, InputAdornment, TextField } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
-import { styled }  from "@mui/material/styles";
+import { Box, InputAdornment, TextField } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
+import { styled } from '@mui/material/styles'
 
 interface Props {
-  className?: string;
-  threshold?: number;
+  className?: string
+  threshold?: number
   setThreshold: (threshold?: number) => void
   signatoriesNumber: number
 }
 
-const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNumber }: Props) => {
-  const [error, setError] = useState("")
+const ThresholdSelection = ({
+  className,
+  threshold,
+  setThreshold,
+  signatoriesNumber,
+}: Props) => {
+  const [error, setError] = useState('')
 
-  const validateThreshold = useCallback((value: number) => {
-    if (signatoriesNumber <= 1) {
-      setError(`You need at least 2 signatories`)
-      setThreshold(undefined)
+  const validateThreshold = useCallback(
+    (value: number) => {
+      if (signatoriesNumber <= 1) {
+        setError(`You need at least 2 signatories`)
+        setThreshold(undefined)
 
-      return false
-    }
+        return false
+      }
 
-    if (Number.isNaN(value) || value > signatoriesNumber || value < 2) {
-      setError(`Threshold must be between 2 and ${signatoriesNumber}`)
-      setThreshold(undefined)
+      if (Number.isNaN(value) || value > signatoriesNumber || value < 2) {
+        setError(`Threshold must be between 2 and ${signatoriesNumber}`)
+        setThreshold(undefined)
 
-      return false
-    }
+        return false
+      }
 
-    return true
-  }, [setThreshold, signatoriesNumber])
+      return true
+    },
+    [setThreshold, signatoriesNumber]
+  )
 
   useEffect(() => {
     if (threshold && signatoriesNumber) {
@@ -36,19 +44,20 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
     }
   }, [signatoriesNumber, threshold, validateThreshold])
 
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setError('')
+      const value = Number(event.target.value)
 
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setError("")
-    const value = Number(event.target.value)
+      const isValid = validateThreshold(value)
 
-    const isValid = validateThreshold(value)
-
-
-    isValid && setThreshold(value)
-  }, [setThreshold, validateThreshold])
+      isValid && setThreshold(value)
+    },
+    [setThreshold, validateThreshold]
+  )
 
   return (
-    <Box className={className} >
+    <Box className={className}>
       <TextField
         fullWidth
         error={!!error}
@@ -59,13 +68,15 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
             <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
           ),
         }}
-        value={threshold || ""}
+        value={threshold || ''}
         onChange={handleChange}
       />
     </Box>
   )
 }
 
-export default styled(ThresholdSelection)(({ theme }) => `
+export default styled(ThresholdSelection)(
+  ({ theme }) => `
   margin-bottom: 1rem;
-`)
+`
+)

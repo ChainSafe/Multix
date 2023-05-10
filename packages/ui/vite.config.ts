@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from "@vitejs/plugin-react";
+import react from '@vitejs/plugin-react'
 import svgrPlugin from 'vite-plugin-svgr'
 
 // https://vitejs.dev/config/
@@ -19,6 +19,6 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    preserveSymlinks: true // this is the fix!
-  }
+    preserveSymlinks: true, // this is the fix!
+  },
 })
