@@ -80,20 +80,20 @@ It is all [TypeORM](https://typeorm.io/#/migrations) under the hood.
 # The target schema is derived from entity classes generated earlier.
 npx squid-typeorm-migration generate
 
-# Create template file for custom database changes
+# Create template file for custom database changes.
 npx squid-typeorm-migration apply 
 # or make migrate
 
-# Apply database migrations from `db/migrations`
+# Apply database migrations from `db/migrations`.
 npx sqd db migrate
 
-# Revert the last performed migration
+# Revert the last performed migration.
 npx sqd db revert
 
-# DROP DATABASE
+# DROP DATABASE.
 npx sqd db drop
 
-# CREATE DATABASE
+# CREATE DATABASE.
 npx sqd db create            
 ```
 
