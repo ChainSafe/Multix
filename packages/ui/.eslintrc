@@ -31,6 +31,7 @@
         }
       }
     ],
+    "trailingComma": "off",
     "ternary/nesting": "off",
     "ternary/no-dupe": "error",
     "ternary/no-unreachable": "off",
