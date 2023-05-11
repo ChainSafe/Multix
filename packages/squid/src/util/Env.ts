@@ -23,7 +23,8 @@ export class Env {
 
   checkForUndefined = () => {
     Object.entries(this.env).forEach(([key, value]) => {
-      if (!value) {
+      // a prefix can be 0 and it is a valid value
+      if (!value && value !== 0) {
         console.error(`🟥 Invalid env variable for ${key}`)
       }
     })
