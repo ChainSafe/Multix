@@ -1,40 +1,43 @@
-import { Grid, TextField } from "@mui/material"
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react"
-import { styled }  from "@mui/material/styles"
-import { useAccounts } from "../contexts/AccountsContext"
-import { useAccountNames } from "../contexts/AccountNamesContext"
-import AccountDisplay from "./AccountDisplay"
+import { Grid, TextField } from '@mui/material'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { styled } from '@mui/material/styles'
+import { useAccounts } from '../contexts/AccountsContext'
+import { useAccountNames } from '../contexts/AccountNamesContext'
+import AccountDisplay from './AccountDisplay'
 
 export interface OnChangeArgs {
-    addresses: (string | undefined)[]
-    name: string
+  addresses: (string | undefined)[]
+  name: string
 }
 
 interface Props {
-    className?: string
-    address: string
-    onNameChange: (args: OnChangeArgs) => void
+  className?: string
+  address: string
+  onNameChange: (args: OnChangeArgs) => void
 }
 
 const AccountEditName = ({ address, onNameChange, className }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { addressList } = useAccounts()
-  const [name, setName] = useState("")
+  const [name, setName] = useState('')
   const isExtensionAccount = useMemo(() => addressList.includes(address), [address, addressList])
 
   useEffect(() => {
     if (!name) {
-      const defaultName = getNamesWithExtension(address) || ""
+      const defaultName = getNamesWithExtension(address) || ''
       setName(defaultName)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getNamesWithExtension])
 
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = event.target.value
-    setName(value)
-    onNameChange({ addresses: [address], name: value })
-  }, [address, onNameChange])
+  const onChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target.value
+      setName(value)
+      onNameChange({ addresses: [address], name: value })
+    },
+    [address, onNameChange]
+  )
 
   return (
     <Grid
@@ -62,16 +65,19 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
       >
         <TextField
           className="nameField"
-          label={`Name${isExtensionAccount ? " (from extension)" : ""}`}
+          label={`Name${isExtensionAccount ? ' (from extension)' : ''}`}
           onChange={onChange}
           disabled={isExtensionAccount}
           value={name}
           // onKeyDown={handleSpecialKeys}
         />
       </Grid>
-    </Grid>)
+    </Grid>
+  )
 }
 
-export default styled(AccountEditName)(({ theme }) => `
+export default styled(AccountEditName)(
+  ({ theme }) => `
   
-`)
+`
+)

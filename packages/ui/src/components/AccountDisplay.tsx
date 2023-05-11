@@ -1,72 +1,92 @@
-import { Box } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { styled } from "@mui/material/styles";
-import { useAccountNames } from "../contexts/AccountNamesContext";
-import { AccountBadge } from "../types";
-import { getDisplayAddress } from "../utils";
-import IdenticonBadge from "./IdenticonBadge";
-import { useApi } from "../contexts/ApiContext";
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import IdentityIcon from "./IdentityIcon";
-import { useGetBalance } from "../hooks/useGetBalance";
+import { Box } from '@mui/material'
+import { useEffect, useMemo, useState } from 'react'
+import { styled } from '@mui/material/styles'
+import { useAccountNames } from '../contexts/AccountNamesContext'
+import { AccountBadge } from '../types'
+import { getDisplayAddress } from '../utils'
+import IdenticonBadge from './IdenticonBadge'
+import { useApi } from '../contexts/ApiContext'
+import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
+import IdentityIcon from './IdentityIcon'
+import { useGetBalance } from '../hooks/useGetBalance'
 
 interface Props {
-    address: string;
-    className?: string
-    badge?: AccountBadge
-    withName?: boolean
-    withBalance?: boolean
+  address: string
+  className?: string
+  badge?: AccountBadge
+  withName?: boolean
+  withBalance?: boolean
 }
 
-const AccountDisplay = ({ className, address, badge, withName = true, withBalance = false }: Props) => {
+const AccountDisplay = ({
+  className,
+  address,
+  badge,
+  withName = true,
+  withBalance = false
+}: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { balanceFormatted } = useGetBalance({ address })
-  const displayName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+  const displayName = useMemo(
+    () => getNamesWithExtension(address),
+    [address, getNamesWithExtension]
+  )
+  const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
   const { api, isApiReady } = useApi()
-  const [mainDisplay, setMainDisplay] = useState<string>('');
-  const [sub, setSub] = useState<string | null>(null);
+  const [mainDisplay, setMainDisplay] = useState<string>('')
+  const [sub, setSub] = useState<string | null>(null)
 
   useEffect(() => {
     if (!api) {
-      return;
+      return
     }
 
     if (!isApiReady) {
-      return;
+      return
     }
 
-    let unsubscribe: () => void;
+    let unsubscribe: () => void
 
-    api.derive.accounts.info(address, (info: DeriveAccountInfo) => {
-      setIdentity(info.identity);
+    api.derive.accounts
+      .info(address, (info: DeriveAccountInfo) => {
+        setIdentity(info.identity)
 
-      if (info.identity.displayParent && info.identity.display) {
-        // when an identity is a sub identity `displayParent` is set
-        // and `display` get the sub identity
-        setMainDisplay(info.identity.displayParent);
-        setSub(info.identity.display);
-      } else {
-        // There should not be a `displayParent` without a `display`
-        // but we can't be too sure.
-        setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
-      }
-    })
-      .then(unsub => {
-        unsubscribe = unsub;
+        if (info.identity.displayParent && info.identity.display) {
+          // when an identity is a sub identity `displayParent` is set
+          // and `display` get the sub identity
+          setMainDisplay(info.identity.displayParent)
+          setSub(info.identity.display)
+        } else {
+          // There should not be a `displayParent` without a `display`
+          // but we can't be too sure.
+          setMainDisplay(
+            info.identity.displayParent || info.identity.display || info.nickname || ''
+          )
+        }
       })
-      .catch(e => console.error(e));
+      .then((unsub) => {
+        unsubscribe = unsub
+      })
+      .catch((e) => console.error(e))
 
-    return () => unsubscribe && unsubscribe();
-  }, [address, api, isApiReady]);
+    return () => unsubscribe && unsubscribe()
+  }, [address, api, isApiReady])
 
   return (
     <MultisigInfoStyled>
-      <IdenticonBadge badge={badge} address={address} />
-      <Box>
+      <IdenticonBadge
+        badge={badge}
+        address={address}
+      />
+      <BoxStyled>
         {withName && (
           <NameWrapperStyled>
-            {!!identity && mainDisplay && <IdentityIcon className="identityBadge" identity={identity} />}
+            {!!identity && mainDisplay && (
+              <IdentityIcon
+                className="identityBadge"
+                identity={identity}
+              />
+            )}
             {!!sub && <span>{sub}</span>}
             <NameStyled>{displayName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
@@ -77,27 +97,31 @@ const AccountDisplay = ({ className, address, badge, withName = true, withBalanc
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
           </Box>
         )}
-      </Box>
+      </BoxStyled>
     </MultisigInfoStyled>
   )
 }
 
 const MultisigInfoStyled = styled('div')`
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 `
 
 const NameWrapperStyled = styled('div')`
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 `
 
-
-const AddressStyled = styled('div')(({ theme }) => `
+const AddressStyled = styled('div')(
+  ({ theme }) => `
     color: ${theme.custom.text.addressColorLightGray};
     font-size: small;
-`);
+`
+)
 
+const BoxStyled = styled(Box)`
+  min-width: 0;
+`
 
 const NameStyled = styled('span')`
   font-size: large;
@@ -106,17 +130,19 @@ const NameStyled = styled('span')`
   text-overflow: ellipsis;
 `
 
-const BalanceStyled = styled('div')(({ theme }) => `
+const BalanceStyled = styled('div')(
+  ({ theme }) => `
   margin-top: 4px;  
   display: flex;
   color: ${theme.custom.text.addressColorLightGray};
   font-size: small;
-`);
+`
+)
 
 export default styled(AccountDisplay)`
-   display: flex;
-   flex-direction: column;
-   align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
   .identityBadge {
     margin-right: 0.3rem;

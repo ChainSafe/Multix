@@ -20,7 +20,7 @@
   "license": "MIT",
   "scripts": {
     "docker:start:all": "yarn docker:start:squid && yarn ui:start",
-    "docker:start:squid": "yarn docker:db && yarn build && yarn squid:codegen && yarn squid:migrate && yarn docker:up",
+    "docker:start:squid": "yarn docker:db && yarn build && yarn squid:codegen && yarn squid:migrate && yarn build:images && yarn docker:up",
     "docker:build-squid-indexer-image": "docker build . --target squid-indexer -t squid-indexer",
     "doker:build-graphql-server-image": "docker build . --target graphql-server -t graphql-server",
     "docker:db": "docker compose up -d db",
@@ -29,8 +29,12 @@
     "build:images": "yarn docker:build-squid-indexer-image && yarn doker:build-graphql-server-image",
     "build": "yarn workspaces foreach run build",
     "lint": "yarn workspaces foreach run lint",
+    "lint:fix": "yarn workspaces foreach run lint:fix",
+    "formatAll": "prettier --write .",
     "ui:start": "yarn workspace multix-ui start",
+    "ui:lint": "yarn workspace multix-ui lint",
     "squid:start": "yarn squid:build && yarn squid:codegen && yarn squid:migrate && yarn squid:start:indexer",
+    "squid:lint": "yarn workspace multix-squid lint",
     "squid:codegen": "yarn workspace multix-squid codegen",
     "squid:typegen": "yarn workspace multix-squid typegen",
     "squid:build": "yarn workspace multix-squid build",
@@ -38,5 +42,10 @@
     "squid:migrate": "yarn workspace multix-squid db:migrate",
     "squid:start:indexer": "yarn workspace multix-squid start:indexer",
     "squid:start:graphql-server": "yarn workspace multix-squid start:graphql-server"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8"
   }
 }

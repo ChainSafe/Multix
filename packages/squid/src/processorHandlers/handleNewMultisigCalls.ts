@@ -1,13 +1,13 @@
-import { In } from "typeorm";
-import { Account, MultisigCall } from "../model";
-import { Ctx } from "../processor";
+import { In } from 'typeorm'
+import { Account, MultisigCall } from '../model'
+import { Ctx } from '../processor'
 
-export interface MultisigCallInfo extends Omit<MultisigCall, "multisig"> {
-    multisigAddress: string
+export interface MultisigCallInfo extends Omit<MultisigCall, 'multisig'> {
+  multisigAddress: string
 }
 
 export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: MultisigCallInfo[]) => {
-  const multisigAddresses = newMultisigCalls.map(multi => multi.multisigAddress)
+  const multisigAddresses = newMultisigCalls.map((multi) => multi.multisigAddress)
   const multisigCalls: MultisigCall[] = []
 
   const multisigs = await ctx.store
@@ -15,13 +15,15 @@ export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: Multisi
     .then((q) => new Map(q.map((i) => [i.id, i])))
 
   for (const { blockHash, id, callIndex, multisigAddress, timestamp } of newMultisigCalls) {
-    multisigCalls.push(new MultisigCall({
-      id,
-      blockHash,
-      callIndex,
-      multisig: multisigs.get(multisigAddress),
-      timestamp
-    }))
+    multisigCalls.push(
+      new MultisigCall({
+        id,
+        blockHash,
+        callIndex,
+        multisig: multisigs.get(multisigAddress),
+        timestamp
+      })
+    )
   }
 
   await ctx.store.save(multisigCalls)
