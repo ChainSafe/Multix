@@ -1,4 +1,4 @@
-name: CloudFlare Deploy - Multix
+name: UI deployment
 on:
   push:
     branches: ['main']
