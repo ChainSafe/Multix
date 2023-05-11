@@ -1,8 +1,8 @@
-import { EventItem } from "@subsquid/substrate-processor/lib/interfaces/dataSelection"
-import { encodeAddress } from '@polkadot/util-crypto';
-import { getProxyAccountId } from "./getProxyAccountId";
-import { dataEvent, env } from "../processor"
-import { getProxyTypeFromRaw } from "./getProxyTypeFromRaw";
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { encodeAddress } from '@polkadot/util-crypto'
+import { getProxyAccountId } from './getProxyAccountId'
+import { dataEvent, env } from '../processor'
+import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 
 export const getPureProxyInfoFromArgs = (
   item: EventItem<'Proxy.PureCreated', (typeof dataEvent)['data']>
@@ -20,6 +20,6 @@ export const getPureProxyInfoFromArgs = (
     who: _who,
     pure: _pure,
     delay,
-    type: _type
-  })
+    type: _type,
+  }
 }
