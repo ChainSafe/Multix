@@ -103,6 +103,9 @@ jobs:
           generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
           source "${{ env.ENV_FILE }}"
 
+      - name: check safe env variable
+        run: echo $PGPORT
+
 #      - name: dump database
 #        env:
 #          DATABASE_NAME: 'multix-${{ env.APP_STAGE }}-${{ matrix.network }}'
