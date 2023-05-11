@@ -1,23 +1,32 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { styled } from "@mui/material/styles";
-import { useAccounts } from "../../contexts/AccountsContext";
-import { useApi } from "../../contexts/ApiContext";
-import { useMultiProxy } from "../../contexts/MultiProxyContext";
-import SignerSelection from "../SignerSelection";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
-import { ISubmittableResult } from "@polkadot/types/types";
-import { useToasts } from "../../contexts/ToastContext";
-import { useSigningCallback } from "../../hooks/useSigningCallback";
-import { sortAddresses } from '@polkadot/util-crypto';
-import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
-import ManualExtrinsic from "../EasySetup/ManualExtrinsic";
-import BalancesTransfer from "../EasySetup/BalancesTransfer";
-import Warning from "../Warning";
-import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
-import { useCheckBalance } from "../../hooks/useCheckBalance";
-import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
-import BatchExtrinsic from "../EasySetup/BatchExtrinsic";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent
+} from '@mui/material'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { styled } from '@mui/material/styles'
+import { useAccounts } from '../../contexts/AccountsContext'
+import { useApi } from '../../contexts/ApiContext'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import SignerSelection from '../SignerSelection'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
+import { useToasts } from '../../contexts/ToastContext'
+import { useSigningCallback } from '../../hooks/useSigningCallback'
+import { sortAddresses } from '@polkadot/util-crypto'
+import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
+import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
+import BalancesTransfer from '../EasySetup/BalancesTransfer'
+import Warning from '../Warning'
+import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import BatchExtrinsic from '../EasySetup/BatchExtrinsic'
 
 interface Props {
   onClose: () => void
@@ -140,27 +149,33 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       account.meta?.isMulti
         ? setSelectedMultisig(getMultisigByAddress(account.address))
         : // if the proxy is selected as origin, select the first multisig as a "from"
-        setSelectedMultisig(selectedMultiProxy?.multisigs[0])
+          setSelectedMultisig(selectedMultiProxy?.multisigs[0])
     },
     [getMultisigByAddress, selectedMultiProxy]
   )
 
   const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => {
-    return ({
-      "Send tokens": <BalancesTransfer
-        from={selectedOrigin.address}
-        onSetExtrinsic={setExtrinsicToCall}
-        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-      />,
-      "Manual extrinsic": <ManualExtrinsic
-        onSetExtrinsic={setExtrinsicToCall}
-        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-      />,
-      "Batch extrinsic": <BatchExtrinsic
-        onSetExtrinsic={setExtrinsicToCall}
-        onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-      />
-    })
+    return {
+      'Send tokens': (
+        <BalancesTransfer
+          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+        />
+      ),
+      'Manual extrinsic': (
+        <ManualExtrinsic
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+        />
+      ),
+      'Batch extrinsic': (
+        <BatchExtrinsic
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+        />
+      )
+    }
   }, [selectedOrigin])
 
   const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])

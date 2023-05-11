@@ -1,18 +1,18 @@
-import { Box, Button } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
-import { ISubmittableResult } from "@polkadot/types/types";
-import React, { useCallback, useEffect, useState } from "react";
-import { useApi } from "../../contexts/ApiContext";
-import ManualExtrinsic from "./ManualExtrinsic";
+import { Box, Button } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useApi } from '../../contexts/ApiContext'
+import ManualExtrinsic from './ManualExtrinsic'
 
 interface Props {
   className?: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<"promise", ISubmittableResult>) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
-type CallStack = { [key: string]: SubmittableExtrinsic<"promise", ISubmittableResult> | null }
+type CallStack = { [key: string]: SubmittableExtrinsic<'promise', ISubmittableResult> | null }
 
 const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) => {
   const { api, isApiReady } = useApi()
@@ -35,17 +35,22 @@ const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props)
     }
   }, [api, calls, isApiReady, onSetExtrinsic])
 
-  const setExtrinsicToCall = useCallback((extrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, extrinsicIndex?: string) => {
-    if (!api || !isApiReady || !extrinsicIndex) return
+  const setExtrinsicToCall = useCallback(
+    (extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>, extrinsicIndex?: string) => {
+      if (!api || !isApiReady || !extrinsicIndex) return
 
-    setCalls((prev) => ({ ...prev, [extrinsicIndex]: extrinsic }))
-  }, [api, isApiReady])
+      setCalls((prev) => ({ ...prev, [extrinsicIndex]: extrinsic }))
+    },
+    [api, isApiReady]
+  )
 
-
-  const removeExtrinsic = useCallback((key: string) => {
-    delete calls[key]
-    setCalls({ ...calls })
-  }, [calls])
+  const removeExtrinsic = useCallback(
+    (key: string) => {
+      delete calls[key]
+      setCalls({ ...calls })
+    },
+    [calls]
+  )
 
   return (
     <Box className={className}>
@@ -58,18 +63,14 @@ const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props)
               onSetExtrinsic={setExtrinsicToCall}
               onSetErrorMessage={onSetErrorMessage}
             />
-            <RemoveButtonStyled onClick={() => removeExtrinsic(key)}>
-              Remove
-            </RemoveButtonStyled>
+            <RemoveButtonStyled onClick={() => removeExtrinsic(key)}>Remove</RemoveButtonStyled>
           </>
         )
       })}
       <div>
-        <Button onClick={addExtrinsic}>
-          Add extrinsic
-        </Button>
+        <Button onClick={addExtrinsic}>Add extrinsic</Button>
       </div>
-    </Box >
+    </Box>
   )
 }
 
