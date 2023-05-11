@@ -18,54 +18,55 @@ env:
   APP_STAGE: 'stage'
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
+  ENV_FILE: '${{ secrets.ENV_FILE }}'
 
 jobs:
-  push:
-    name: push
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [ 'squid-indexer', 'graphql-server' ]
-
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-      - name: checkout the source code
-        uses: actions/checkout@v3
-
-      - name: setup docker buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: login to ghcr
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ env.GHCR_TOKEN }}
-
-      - name: docker build image
-        uses: docker/build-push-action@v4
-        env:
-          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
-        with:
-          context: .
-          push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: false
-          target: ${{ matrix.target }}
-          platforms: |
-            linux/amd64
-          tags: |
-            ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }}
-            ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
+#  push:
+#    name: push
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        target: [ 'squid-indexer', 'graphql-server' ]
+#
+#    permissions:
+#      contents: read
+#      id-token: write
+#
+#    steps:
+#      - name: checkout the source code
+#        uses: actions/checkout@v3
+#
+#      - name: setup docker buildx
+#        uses: docker/setup-buildx-action@v2
+#
+#      - name: login to ghcr
+#        uses: docker/login-action@v2
+#        with:
+#          registry: ${{ env.DOCKER_REGISTRY }}
+#          username: ${{ github.repository_owner }}
+#          password: ${{ env.GHCR_TOKEN }}
+#
+#      - name: docker build image
+#        uses: docker/build-push-action@v4
+#        env:
+#          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+#        with:
+#          context: .
+#          push: true
+#          cache-from: type=gha
+#          cache-to: type=gha,mode=max
+#          provenance: false
+#          target: ${{ matrix.target }}
+#          platforms: |
+#            linux/amd64
+#          tags: |
+#            ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }}
+#            ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
 
   deploy:
-    needs: push
+#    needs: push
     name: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-multix
     strategy:
       matrix:
         network: [ 'rococo', 'kusama' ]
@@ -85,7 +86,29 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: ${{ env.AWS_ROLE_NAME }}
 
-      - name: update cluster service
+      - name: generate database credentials
         env:
-          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
+          SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
+        run: | 
+          generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
+          source "${{ env.ENV_FILE }}"
+
+#      - name: dump database
+#        env:
+#          DATABASE_NAME: 'multix-${{ env.APP_STAGE }}-${{ matrix.network }}'
+#        run: psql
+
+      - name: run migrations and start again
+        run: npm run squid:migrate
+
+#      - name: update cluster service
+#        env:
+#          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+#        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
+
+      - name: cleanup credentials
+        run: |
+          cleanup-credentials
+          source "${{ env.ENV_FILE }}"
+          rm -f "${{ env.ENV_FILE }}"
+        
