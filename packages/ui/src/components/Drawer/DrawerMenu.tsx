@@ -13,8 +13,6 @@ import { styled } from "@mui/material/styles";
 // import NetworkSelection from "../NetworkSelection";
 import MultiProxySelection from "../MultiProxySelection";
 
-
-
 interface DrawerMenuProps {
   handleDrawerClose: () => void
 }

@@ -40,7 +40,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
 
         // check if multisig or proxy or batch has an error
-        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event) || api.events.utility.BatchInterrupted.is(event)) {
+        if (api.events.multisig.MultisigExecuted.is(event) || api.events.proxy.ProxyExecuted.is(event)) {
           // extract the data for this event
           const dataJSON = data.toJSON() as { [index: string]: any; }[];
 
@@ -48,9 +48,6 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
             let mod: any
             if (dispatchError?.err?.module) {
               mod = dispatchError.err.module as { [index: string]: any; }
-              // batch has utility.BatchInterrupted [0,{"module":{"index":4,"error":"0x02000000"}}]
-            } else if (dispatchError?.module) {
-              mod = dispatchError.module as { [index: string]: any; }
             }
 
             if (mod?.error && mod?.index) {
@@ -64,24 +61,16 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
             }
             return false
           })
-
-          // we can also get error without module such as 
-          // utility.BatchInterrupted [0,{"badOrigin":null}]
-          const [, dispatchInfo] = event.data;
-          if (!errorInfo && !!dispatchInfo) {
-            errorInfo = dispatchInfo.toString()
-          }
-        }
-
-        if (api.events.system.ExtrinsicSuccess.is(event)) {
-          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "loading", link })
-          onSuccess && onSuccess()
         }
 
         // if the extrinsic fails alltogether
-        if (!errorInfo && api.events.system.ExtrinsicFailed.is(event)) {
+        if (!errorInfo && (api.events.system.ExtrinsicFailed.is(event) || api.events.utility.BatchInterrupted.is(event))) {
           // extract the data for this event
-          const [dispatchError] = data;
+          const dispatchError = api.events.system.ExtrinsicFailed.is(event)
+            // it's a normal extrinsic
+            ? data[0]
+            // it's a batch utility.BatchInterrupted data: [0,{"module":{"index":4,"error":"0x02000000"}}]
+            : data[1];
 
           // decode the error
           if ((dispatchError as any).isModule) {
@@ -97,13 +86,18 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
           }
         }
 
+        if (api.events.system.ExtrinsicSuccess.is(event)) {
+          !errorInfo && !toastErrorShown && addToast({ title: "Tx in block", type: "success", link })
+          onSuccess && onSuccess()
+        }
+
         if (!!errorInfo && !toastErrorShown) {
           addToast({ title: errorInfo, type: "error", link })
           onError && onError(errorInfo)
           // prevent showing several errors
           toastErrorShown = true
         }
-      });
+      })
     } else if (status.isFinalized) {
       onFinalized && onFinalized()
       // !errorInfo && addToast({ title: "Tx finalized", type: "success", link })
