@@ -83,10 +83,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: '.node-version'
-          cache: 'yarn'
 
       - name: install yarn
         run: npm install -g yarn
+
+      - name: setup nodejs with yarn cache
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: 'yarn'
 
       - name: install dependencies in root and squid package
         run: |
