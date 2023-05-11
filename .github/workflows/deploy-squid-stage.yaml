@@ -106,18 +106,15 @@ jobs:
           SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
         run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
-      - name: check safe env variable
-        run: |
-          source "${{ env.ENV_FILE }}"
-          echo $PGPORT
-
 #      - name: dump database
 #        env:
 #          DATABASE_NAME: 'multix-${{ env.APP_STAGE }}-${{ matrix.network }}'
 #        run: psql
 
-#      - name: run migrations and start again
-#        run: npm run squid:migrate
+      - name: run migrations and start again
+        run: |
+          source "${{ env.ENV_FILE }}"
+          npm run squid:migrate
 
 #      - name: update cluster service
 #        env:
