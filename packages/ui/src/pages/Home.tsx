@@ -17,6 +17,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import SuccessCreation from '../components/SuccessCreation'
 import NewMulisigAlert from '../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'
+import { renderMultisigHeading } from './multisigHelpers'
 interface Props {
   className?: string
 }
@@ -164,7 +165,7 @@ const Home = ({ className }: Props) => {
                   />
                 </div>
               )}
-              <h3>{selectedMultiProxy.multisigs.length > 1 ? 'Multisigs' : 'Multisig'}</h3>
+              <h3>{renderMultisigHeading(!!selectedMultiProxy.multisigs.length)}</h3>
               {selectedMultiProxy.multisigs.map((multisig) => {
                 return (
                   <Paper

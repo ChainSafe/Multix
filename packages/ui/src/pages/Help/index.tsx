@@ -7,7 +7,7 @@ import { AccountBadge } from '../../types'
 import MultisigCompactDisplay from '../../components/MultisigCompactDisplay'
 import 'reactflow/dist/style.css'
 import Overview from './Overview'
-
+import { renderMultisigHeading } from '../multisigHelpers'
 interface Props {
   className?: string
 }
@@ -76,7 +76,7 @@ const Help = ({ className }: Props) => {
             </div>
           </Box>
           <Box className="sectionWrapper">
-            <h1>{hasSeveralMultisigs ? 'Multisigs' : 'Multisig'}</h1>
+            <h1>{renderMultisigHeading(hasSeveralMultisigs)}</h1>
             {selectedMultiProxy?.multisigs.map((multisig) => (
               <Box
                 className="multisigWithProxy"
