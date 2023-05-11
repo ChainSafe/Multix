@@ -124,10 +124,10 @@ jobs:
 #          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
 #        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
 
-      - name: cleanup credentials
-        if: always()
-        run: cleanup-credentials
-
-      - name: uninstall yarn
-        if: always()
-        run: npm uninstall -g yarn
+#      - name: cleanup credentials
+#        if: always()
+#        run: cleanup-credentials
+#
+#      - name: uninstall yarn
+#        if: always()
+#        run: npm uninstall -g yarn
