@@ -85,6 +85,9 @@ jobs:
           node-version-file: '.node-version'
           cache: 'yarn'
 
+      - name: install yarn
+        run: npm install -g yarn
+
       - name: install dependencies in root and squid package
         run: |
           yarn install --frozen-lockfile
@@ -116,3 +119,7 @@ jobs:
       - name: cleanup credentials
         if: always()
         run: cleanup-credentials
+
+      - name: uninstall yarn
+        if: always()
+        run: npm uninstall -g yarn
