@@ -8,7 +8,10 @@ interface Props {
 
 const Warning = ({ className, text }: Props) => {
   return (
-    <Alert className={className} severity="warning">
+    <Alert
+      className={className}
+      severity="warning"
+    >
       {text}
     </Alert>
   )

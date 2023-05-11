@@ -19,12 +19,8 @@ const isSupportedNetwork = (network: string): network is SupportedNetworks =>
   !!networkList[network as SupportedNetworks]
 
 const NetworkContextProvider = ({ children }: NetworkContextProps) => {
-  const [selectedNetworkInfo, setSelectedNetworkInfo] = useState<
-    NetworkInfo | undefined
-  >()
-  const [selectedNetwork, setSelectedNetwork] = useState<
-    SupportedNetworks | undefined
-  >()
+  const [selectedNetworkInfo, setSelectedNetworkInfo] = useState<NetworkInfo | undefined>()
+  const [selectedNetwork, setSelectedNetwork] = useState<SupportedNetworks | undefined>()
   const [searchParams, setSearchParams] = useSearchParams({ network: '' })
 
   const selectNetwork = useCallback(
@@ -55,9 +51,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
       }
 
       // connect the the previously selected network
-      const previouslysSelectedNetwork = localStorage.getItem(
-        LOCALSTORAGE_SELECTED_NETWORK
-      )
+      const previouslysSelectedNetwork = localStorage.getItem(LOCALSTORAGE_SELECTED_NETWORK)
       if (
         !!previouslysSelectedNetwork &&
         previouslysSelectedNetwork.includes(networkParam as SupportedNetworks)

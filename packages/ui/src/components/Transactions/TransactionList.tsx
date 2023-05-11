@@ -31,10 +31,7 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
 
   const getCallResult = (c: ISanitizedCall) => {
     if (typeof c.method !== 'string' && c.method.pallet === 'multisig') {
-      if (
-        c.method.method === 'asMulti' &&
-        typeof c.args.call?.method !== 'string'
-      ) {
+      if (c.method.method === 'asMulti' && typeof c.args.call?.method !== 'string') {
         result.push({
           name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
           hash: c.args.call?.hash,
@@ -65,10 +62,8 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
 }
 
 const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
-  pendingTxData.map(async pendingTx => {
-    const blockHash = await api.rpc.chain.getBlockHash(
-      pendingTx.info.when.height
-    )
+  pendingTxData.map(async (pendingTx) => {
+    const blockHash = await api.rpc.chain.getBlockHash(pendingTx.info.when.height)
     const signedBlock = await api.rpc.chain.getBlock(blockHash)
 
     const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
@@ -89,11 +84,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     })
 
     if (!info) {
-      console.log(
-        'oops we didnot find the right extrinsic',
-        multisigInfos,
-        pendingTx.hash
-      )
+      console.log('oops we didnot find the right extrinsic', multisigInfos, pendingTx.hash)
       return
     }
 
@@ -141,10 +132,8 @@ const TransactionList = ({ className }: Props) => {
     const agregatedDataPromise = getAgregatedDataPromise(pendingTxData, api)
 
     Promise.all(agregatedDataPromise)
-      .then(res => {
-        const filtered = res.filter(
-          agg => agg !== undefined
-        ) as AggregatedData[]
+      .then((res) => {
+        const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
         setAggregatedData(filtered)
       })
       .catch(console.error)
@@ -179,8 +168,7 @@ const TransactionList = ({ className }: Props) => {
               ? multisigSignatories
               : getDifference(multisigSignatories, info?.approvals)
           const possibleSigners = getIntersection(neededSigners, addressList)
-          const isProposer =
-            !!info?.depositor && addressList.includes(info.depositor)
+          const isProposer = !!info?.depositor && addressList.includes(info.depositor)
 
           // if we have the proposer in the extension it can always reject the proposal
           if (isProposer) {

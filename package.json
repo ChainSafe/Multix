@@ -29,6 +29,7 @@
     "build:images": "yarn docker:build-squid-indexer-image && yarn doker:build-graphql-server-image",
     "build": "yarn workspaces foreach run build",
     "lint": "yarn workspaces foreach run lint",
+    "lint:fix": "yarn workspaces foreach run lint:fix",
     "formatAll": "prettier --write .",
     "ui:start": "yarn workspace multix-ui start",
     "ui:lint": "yarn workspace multix-ui lint",

@@ -1,30 +1,15 @@
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material'
+import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (
-    ext: SubmittableExtrinsic<'promise', ISubmittableResult>
-  ) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -55,7 +40,7 @@ const transformParams = (
 ) => {
   // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
   // otherwise, it will not be added
-  const paramVal = inputParams.map(inputParam => {
+  const paramVal = inputParams.map((inputParam) => {
     // to cater the js quirk that `null` is a type of `object`.
     if (
       typeof inputParam === 'object' &&
@@ -96,9 +81,7 @@ const transformParams = (
     // Deal with a single value
     if (isNumType(type)) {
       converted =
-        converted.indexOf('.') >= 0
-          ? Number.parseFloat(converted)
-          : Number.parseInt(converted)
+        converted.indexOf('.') >= 0 ? Number.parseFloat(converted) : Number.parseInt(converted)
     }
     return [...previousValue, converted]
   }, [] as any[])
@@ -106,12 +89,7 @@ const transformParams = (
 
 const isNumType = (type: string) => paramConversion.num.includes(type)
 
-const ManualExtrinsic = ({
-  className,
-  onSetExtrinsic,
-  onSetErrorMessage,
-  from,
-}: Props) => {
+const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   const { api, isApiReady, chainInfo } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
@@ -156,8 +134,8 @@ const ManualExtrinsic = ({
     const apiType = api.tx
     const palletRPCs = Object.keys(apiType)
       .sort()
-      .filter(pr => Object.keys(apiType[pr]).length > 0)
-      .map(pr => ({ key: pr, value: pr, text: pr }))
+      .filter((pr) => Object.keys(apiType[pr]).length > 0)
+      .map((pr) => ({ key: pr, value: pr, text: pr }))
     setPalletRPCs(palletRPCs)
   }, [api])
 
@@ -168,7 +146,7 @@ const ManualExtrinsic = ({
 
     const callables = Object.keys(api.tx[palletRpc])
       .sort()
-      .map(c => ({ key: c, value: c, text: c }))
+      .map((c) => ({ key: c, value: c, text: c }))
     setCallables(callables)
   }, [api, palletRpc])
 
@@ -182,7 +160,7 @@ const ManualExtrinsic = ({
     const metaArgs = api.tx[palletRpc][callable].meta.args
 
     if (metaArgs && metaArgs.length > 0) {
-      paramFields = metaArgs.map(arg => ({
+      paramFields = metaArgs.map((arg) => ({
         name: arg.name.toString(),
         type: arg.type.toString(),
         optional: argIsOptional(arg),
@@ -202,7 +180,7 @@ const ManualExtrinsic = ({
       setParamFields(null)
       onSetErrorMessage('')
 
-      setFormState(formState => {
+      setFormState((formState) => {
         const value = event.target.value
         if (state === 'palletRpc') {
           return {
@@ -227,7 +205,7 @@ const ManualExtrinsic = ({
       { ind, paramField }: { ind: number; paramField: ParamField }
     ) => {
       onSetErrorMessage('')
-      setFormState(formState => {
+      setFormState((formState) => {
         const inputParams = [...formState.inputParams]
         inputParams[ind] = { type: paramField.type, value: event.target.value }
         return { ...formState, inputParams }
@@ -275,9 +253,9 @@ const ManualExtrinsic = ({
         <Select
           className="palletSelection"
           displayEmpty
-          onChange={event => onPalletCallableParamChange(event, 'palletRpc')}
+          onChange={(event) => onPalletCallableParamChange(event, 'palletRpc')}
           value={palletRpc}
-          renderValue={value => {
+          renderValue={(value) => {
             if (!value) {
               return 'Pallet'
             }
@@ -286,7 +264,11 @@ const ManualExtrinsic = ({
           }}
         >
           {palletRPCs.map(({ text }) => (
-            <MenuItem key={text} value={text} sx={{}}>
+            <MenuItem
+              key={text}
+              value={text}
+              sx={{}}
+            >
               <div className="pallet">{text}</div>
             </MenuItem>
           ))}
@@ -295,9 +277,9 @@ const ManualExtrinsic = ({
       <FormControl>
         <Select
           displayEmpty
-          onChange={event => onPalletCallableParamChange(event, 'callable')}
+          onChange={(event) => onPalletCallableParamChange(event, 'callable')}
           value={callable}
-          renderValue={value => {
+          renderValue={(value) => {
             if (!value) {
               return 'Method'
             }
@@ -306,7 +288,11 @@ const ManualExtrinsic = ({
           }}
         >
           {callables.map(({ text }) => (
-            <MenuItem key={text} value={text} sx={{}}>
+            <MenuItem
+              key={text}
+              value={text}
+              sx={{}}
+            >
               <div className="networkName">{text}</div>
             </MenuItem>
           ))}
@@ -318,11 +304,9 @@ const ManualExtrinsic = ({
             <TextField
               placeholder={paramField.type}
               type="text"
-              label={`${paramField.name}${
-                paramField.optional ? ' (optional)' : ''
-              }`}
+              label={`${paramField.name}${paramField.optional ? ' (optional)' : ''}`}
               value={inputParams[ind] ? inputParams[ind].value : ''}
-              onChange={event => onParamChange(event, { ind, paramField })}
+              onChange={(event) => onParamChange(event, { ind, paramField })}
             />
           </li>
         ))}

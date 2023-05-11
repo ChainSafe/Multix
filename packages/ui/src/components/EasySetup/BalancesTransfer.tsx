@@ -2,9 +2,7 @@ import { Box, InputAdornment, TextField } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import GenericAccountSelection, {
-  AccountBaseInfo,
-} from '../GenericAccountSelection'
+import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { useApi } from '../../contexts/ApiContext'
@@ -15,22 +13,13 @@ import { getGlobalMaxValue, inputToBn } from '../../utils'
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (
-    ext: SubmittableExtrinsic<'promise', ISubmittableResult>
-  ) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
-const BalancesTransfer = ({
-  className,
-  onSetExtrinsic,
-  onSetErrorMessage,
-  from,
-}: Props) => {
+const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   const acountBase = useAccountBaseFromAccountList()
-  const [selected, setSelected] = useState<AccountBaseInfo | undefined>(
-    acountBase[0]
-  )
+  const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
   const [toAddress, setToAddress] = useState(acountBase[0].address)
   const { api, isApiReady, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
@@ -66,24 +55,21 @@ const BalancesTransfer = ({
     onSetExtrinsic(api.tx.balances.transfer(toAddress, amount.toString()))
   }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
 
-  const onAddressDestChange = useCallback(
-    (account?: AccountBaseInfo | string) => {
-      if (!account) {
-        return
-      }
+  const onAddressDestChange = useCallback((account?: AccountBaseInfo | string) => {
+    if (!account) {
+      return
+    }
 
-      if (typeof account === 'string') {
-        setToAddress(account)
-        setSelected({
-          address: account,
-        })
-      } else {
-        setToAddress(account.address)
-        setSelected(account)
-      }
-    },
-    []
-  )
+    if (typeof account === 'string') {
+      setToAddress(account)
+      setSelected({
+        address: account,
+      })
+    } else {
+      setToAddress(account.address)
+      setSelected(account)
+    }
+  }, [])
 
   const onAmountChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,9 +128,7 @@ const BalancesTransfer = ({
         error={!!amountError}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">
-              {chainInfo?.tokenSymbol || ''}
-            </InputAdornment>
+            <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
           ),
         }}
       />

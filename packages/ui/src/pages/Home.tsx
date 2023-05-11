@@ -1,13 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Grid,
-  IconButton,
-  Paper,
-} from '@mui/material'
+import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import ProposalList from '../components/Transactions/TransactionList'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -46,10 +38,7 @@ const Home = ({ className }: Props) => {
   const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
-  const onCloseChangeMultiModal = useCallback(
-    () => setIsChangeMultiModalOpen(false),
-    []
-  )
+  const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
   const creationInProgress = useMemo(
     () => searchParams.get('creationInProgress') === 'true',
     [searchParams]
@@ -92,7 +81,11 @@ const Home = ({ className }: Props) => {
 
   if (isLoading) {
     return (
-      <Grid className={className} container spacing={2}>
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
         <Box className="loader">
           <CircularProgress />
           <div>Loading your multisigs...</div>
@@ -103,7 +96,11 @@ const Home = ({ className }: Props) => {
 
   if (multisigQueryError) {
     return (
-      <Grid className={className} container spacing={2}>
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
         <Box className="loader">
           <div className="multisigErrorMessage">
             <ErrorOutlineIcon className="errorIcon" />
@@ -116,14 +113,21 @@ const Home = ({ className }: Props) => {
 
   if (multiProxyList.length === 0) {
     return (
-      <Grid className={className} container spacing={2}>
+      <Grid
+        className={className}
+        container
+        spacing={2}
+      >
         <Box className="loader">
           {creationInProgress ? (
             <SuccessCreation />
           ) : (
             <div>
               No multisig found for your accounts.{' '}
-              <Button component={Link} to="/create">
+              <Button
+                component={Link}
+                to="/create"
+              >
                 Create one!
               </Button>
             </div>
@@ -134,13 +138,19 @@ const Home = ({ className }: Props) => {
   }
 
   return (
-    <Grid className={className} container spacing={2}>
-      {creationInProgress &&
-        multiProxyList.length > 0 &&
-        isNewMultisigAlertOpen && (
-          <NewMulisigAlert onClose={onClosenewMultisigAlert} />
-        )}
-      <Grid item xs={12} md={6}>
+    <Grid
+      className={className}
+      container
+      spacing={2}
+    >
+      {creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
+        <NewMulisigAlert onClose={onClosenewMultisigAlert} />
+      )}
+      <Grid
+        item
+        xs={12}
+        md={6}
+      >
         {selectedMultiProxy && (
           <div className="multiProxyWrapper">
             <div className="multiProxyColumn">
@@ -154,14 +164,13 @@ const Home = ({ className }: Props) => {
                   />
                 </div>
               )}
-              <h3>
-                {selectedMultiProxy.multisigs.length > 1
-                  ? 'Multisigs'
-                  : 'Multisig'}
-              </h3>
-              {selectedMultiProxy.multisigs.map(multisig => {
+              <h3>{selectedMultiProxy.multisigs.length > 1 ? 'Multisigs' : 'Multisig'}</h3>
+              {selectedMultiProxy.multisigs.map((multisig) => {
                 return (
-                  <Paper className="multisigWrapper" key={multisig.address}>
+                  <Paper
+                    className="multisigWrapper"
+                    key={multisig.address}
+                  >
                     <AccountDisplayWrapperStyled>
                       <AccountDisplay
                         address={multisig.address || ''}
@@ -178,7 +187,7 @@ const Home = ({ className }: Props) => {
                         />
                       </h4>
                       <ul className="addressList">
-                        {multisig?.signatories?.map(signatory => (
+                        {multisig?.signatories?.map((signatory) => (
                           <li key={signatory}>
                             <AccountDisplay address={signatory} />
                           </li>
@@ -203,7 +212,11 @@ const Home = ({ className }: Props) => {
         )}
       </Grid>
       {multiProxyList.length > 0 && (
-        <Grid item xs={12} md={6}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+        >
           <div className="actionWrapper">
             <h3>Transactions</h3>
             <ProposalList />
@@ -218,9 +231,7 @@ const Home = ({ className }: Props) => {
         />
       )}
       {isEditModalOpen && <EditNames onClose={onCloseEditModal} />}
-      {isChangeMultiModalOpen && (
-        <ChangeMultisig onClose={onCloseChangeMultiModal} />
-      )}
+      {isChangeMultiModalOpen && <ChangeMultisig onClose={onCloseChangeMultiModal} />}
     </Grid>
   )
 }

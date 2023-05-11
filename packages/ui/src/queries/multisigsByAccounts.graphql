@@ -1,11 +1,6 @@
 subscription MultisigsByAccounts($accounts: [String!]) {
   accounts(
-    where: {
-      AND: {
-        isMultisig_eq: true
-        signatories_some: { signatory: { id_in: $accounts } }
-      }
-    }
+    where: { AND: { isMultisig_eq: true, signatories_some: { signatory: { id_in: $accounts } } } }
   ) {
     id
     isMultisig

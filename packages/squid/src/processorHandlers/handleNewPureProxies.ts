@@ -12,10 +12,7 @@ export interface NewPureProxy {
   createdAt: Date
 }
 
-export const handleNewPureProxies = async (
-  ctx: Ctx,
-  newPureProxies: NewPureProxy[]
-) => {
+export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[]) => {
   const dedupPure = new Set<string>()
   const dedupWho = new Set<string>()
 
@@ -25,7 +22,7 @@ export const handleNewPureProxies = async (
   })
 
   const pureProxiestoSave = Array.from(dedupPure.values()).map(
-    pure =>
+    (pure) =>
       new Account({
         id: pure,
         isMultisig: false,
@@ -37,10 +34,7 @@ export const handleNewPureProxies = async (
   await ctx.store.save(pureProxiestoSave)
 
   // get or create who accounts
-  const whoAccounts = await getOrCreateAccounts(
-    ctx,
-    Array.from(dedupWho.values())
-  )
+  const whoAccounts = await getOrCreateAccounts(ctx, Array.from(dedupWho.values()))
 
   const proxyAccounts: ProxyAccount[] = []
   for (const { who, pure, delay, createdAt, type } of newPureProxies) {

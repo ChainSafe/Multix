@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useAccounts } from './AccountsContext'
 
 export type AccountNames = { [address: string]: string }
@@ -24,13 +18,9 @@ export interface IAccountNamesContext {
   addNames: (newAdditions: AccountNames) => void
 }
 
-const AccountNamesContext = createContext<IAccountNamesContext | undefined>(
-  undefined
-)
+const AccountNamesContext = createContext<IAccountNamesContext | undefined>(undefined)
 
-const AccountNamesContextProvider = ({
-  children,
-}: AccountNamesContextProps) => {
+const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => {
   const [accountNames, setAccountNames] = useState<AccountNames>({})
   const { getAccountByAddress } = useAccounts()
 
@@ -118,9 +108,7 @@ const AccountNamesContextProvider = ({
 const useAccountNames = () => {
   const context = useContext(AccountNamesContext)
   if (context === undefined) {
-    throw new Error(
-      'useAccountNames must be used within a AccountNamesContextProvider'
-    )
+    throw new Error('useAccountNames must be used within a AccountNamesContextProvider')
   }
   return context
 }

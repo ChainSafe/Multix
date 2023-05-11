@@ -2,10 +2,7 @@ import { Button, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import {
-  AccountNames,
-  useAccountNames,
-} from '../../contexts/AccountNamesContext'
+import { AccountNames, useAccountNames } from '../../contexts/AccountNamesContext'
 import AccountEditName, { OnChangeArgs } from '../AccountEditName'
 
 interface Props {
@@ -22,7 +19,7 @@ const EditNames = ({ onClose, className }: Props) => {
 
     const sig = new Set<string>()
     selectedMultiProxy?.multisigs.forEach(({ signatories }) => {
-      signatories?.forEach(signatory => {
+      signatories?.forEach((signatory) => {
         sig.add(signatory)
       })
     })
@@ -37,7 +34,7 @@ const EditNames = ({ onClose, className }: Props) => {
 
   const onNameChange = useCallback(
     ({ name, addresses }: OnChangeArgs) => {
-      const uniqueAddresses = addresses.filter(address => !!address) as string[]
+      const uniqueAddresses = addresses.filter((address) => !!address) as string[]
 
       const namesToBeAdded = uniqueAddresses.reduce(
         (previousValue: AccountNames, currentValue: string) => {
@@ -62,7 +59,10 @@ const EditNames = ({ onClose, className }: Props) => {
       <DialogTitle>Edit names</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+          >
             {!!selectedMultiProxy?.proxy && (
               <>
                 <h4>Proxy</h4>
@@ -74,7 +74,10 @@ const EditNames = ({ onClose, className }: Props) => {
               </>
             )}
           </Grid>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+          >
             <h4>
               {!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1
                 ? 'Multisigs'
@@ -89,9 +92,12 @@ const EditNames = ({ onClose, className }: Props) => {
               />
             ))}
           </Grid>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+          >
             <h4>Signatories</h4>
-            {signatories.map(signatory => (
+            {signatories.map((signatory) => (
               <AccountEditName
                 key={signatory}
                 className="accountEdition"
@@ -100,7 +106,11 @@ const EditNames = ({ onClose, className }: Props) => {
               />
             ))}
           </Grid>
-          <Grid item xs={12} className="buttonContainer">
+          <Grid
+            item
+            xs={12}
+            className="buttonContainer"
+          >
             <Button onClick={onSave}>Save</Button>
           </Grid>
         </Grid>

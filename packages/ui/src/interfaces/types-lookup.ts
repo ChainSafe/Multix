@@ -78,12 +78,7 @@ declare module '@polkadot/types/lookup' {
     readonly isPreRuntime: boolean
     readonly asPreRuntime: ITuple<[U8aFixed, Bytes]>
     readonly isRuntimeEnvironmentUpdated: boolean
-    readonly type:
-      | 'Other'
-      | 'Consensus'
-      | 'Seal'
-      | 'PreRuntime'
-      | 'RuntimeEnvironmentUpdated'
+    readonly type: 'Other' | 'Consensus' | 'Seal' | 'PreRuntime' | 'RuntimeEnvironmentUpdated'
   }
 
   /** @name FrameSystemEventRecord (17) */
@@ -640,8 +635,7 @@ declare module '@polkadot/types/lookup' {
   }
 
   /** @name SpConsensusAuraSr25519AppSr25519Public (82) */
-  interface SpConsensusAuraSr25519AppSr25519Public
-    extends SpCoreSr25519Public {}
+  interface SpConsensusAuraSr25519AppSr25519Public extends SpCoreSr25519Public {}
 
   /** @name SpCoreSr25519Public (83) */
   interface SpCoreSr25519Public extends U8aFixed {}
@@ -688,10 +682,7 @@ declare module '@polkadot/types/lookup' {
       readonly delay: u32
       readonly bestFinalizedBlockNumber: u32
     } & Struct
-    readonly type:
-      | 'ReportEquivocation'
-      | 'ReportEquivocationUnsigned'
-      | 'NoteStalled'
+    readonly type: 'ReportEquivocation' | 'ReportEquivocationUnsigned' | 'NoteStalled'
   }
 
   /** @name SpFinalityGrandpaEquivocationProof (91) */
@@ -713,12 +704,8 @@ declare module '@polkadot/types/lookup' {
   interface FinalityGrandpaEquivocationPrevote extends Struct {
     readonly roundNumber: u64
     readonly identity: SpFinalityGrandpaAppPublic
-    readonly first: ITuple<
-      [FinalityGrandpaPrevote, SpFinalityGrandpaAppSignature]
-    >
-    readonly second: ITuple<
-      [FinalityGrandpaPrevote, SpFinalityGrandpaAppSignature]
-    >
+    readonly first: ITuple<[FinalityGrandpaPrevote, SpFinalityGrandpaAppSignature]>
+    readonly second: ITuple<[FinalityGrandpaPrevote, SpFinalityGrandpaAppSignature]>
   }
 
   /** @name FinalityGrandpaPrevote (94) */
@@ -737,12 +724,8 @@ declare module '@polkadot/types/lookup' {
   interface FinalityGrandpaEquivocationPrecommit extends Struct {
     readonly roundNumber: u64
     readonly identity: SpFinalityGrandpaAppPublic
-    readonly first: ITuple<
-      [FinalityGrandpaPrecommit, SpFinalityGrandpaAppSignature]
-    >
-    readonly second: ITuple<
-      [FinalityGrandpaPrecommit, SpFinalityGrandpaAppSignature]
-    >
+    readonly first: ITuple<[FinalityGrandpaPrecommit, SpFinalityGrandpaAppSignature]>
+    readonly second: ITuple<[FinalityGrandpaPrecommit, SpFinalityGrandpaAppSignature]>
   }
 
   /** @name FinalityGrandpaPrecommit (100) */
@@ -1004,12 +987,7 @@ declare module '@polkadot/types/lookup' {
     readonly asForceBatch: {
       readonly calls: Vec<Call>
     } & Struct
-    readonly type:
-      | 'Batch'
-      | 'AsDerivative'
-      | 'BatchAll'
-      | 'DispatchAs'
-      | 'ForceBatch'
+    readonly type: 'Batch' | 'AsDerivative' | 'BatchAll' | 'DispatchAs' | 'ForceBatch'
   }
 
   /** @name NodeTemplateRuntimeOriginCaller (125) */
@@ -1175,8 +1153,7 @@ declare module '@polkadot/types/lookup' {
   type FrameSystemExtensionsCheckWeight = Null
 
   /** @name PalletTransactionPaymentChargeTransactionPayment (159) */
-  interface PalletTransactionPaymentChargeTransactionPayment
-    extends Compact<u128> {}
+  interface PalletTransactionPaymentChargeTransactionPayment extends Compact<u128> {}
 
   /** @name NodeTemplateRuntimeRuntime (160) */
   type NodeTemplateRuntimeRuntime = Null

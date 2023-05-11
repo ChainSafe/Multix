@@ -133,14 +133,7 @@ const ProposalSigning = ({
           section: call.section,
         })
       })
-  }, [
-    addedCallData,
-    api,
-    isApiReady,
-    isProposerSelected,
-    proposalData,
-    selectedAccount,
-  ])
+  }, [addedCallData, api, isApiReady, isProposerSelected, proposalData, selectedAccount])
 
   useEffect(() => {
     setIsGettingCallInfo(true)
@@ -153,7 +146,7 @@ const ProposalSigning = ({
   const onSign = useCallback(
     async (isApproving: boolean) => {
       const otherSigners = sortAddresses(
-        signatories.filter(signer => signer !== selectedAccount?.address)
+        signatories.filter((signer) => signer !== selectedAccount?.address)
       )
 
       if (!threshold) {
@@ -201,12 +194,10 @@ const ProposalSigning = ({
       // In case the proposal has been approved between the last couple block
       // and the proposal in the indexer hasn't been updated we should query the latest state
       // right before sending the tx.
-      const callStorage = await api.query.multisig.multisigs.entries(
-        multisig.address
-      )
+      const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
 
       let amountOfSigner = 0
-      callStorage.some(storage => {
+      callStorage.some((storage) => {
         const hash = (storage[0].toHuman() as Array<string>)[1]
         if (proposalData.hash === hash) {
           const info = storage[1].toJSON() as unknown as MultisigStorageInfo
@@ -256,18 +247,16 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner },
-        signCallback
-      ).catch((error: Error) => {
-        setIsSubmitting(false)
-        addToast({
-          title: error.message,
-          type: 'error',
-          link: getSubscanExtrinsicLink(tx.hash.toHex()),
-        })
-      })
+      tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback).catch(
+        (error: Error) => {
+          setIsSubmitting(false)
+          addToast({
+            title: error.message,
+            type: 'error',
+            link: getSubscanExtrinsicLink(tx.hash.toHex()),
+          })
+        }
+      )
     },
     [
       signatories,
@@ -305,18 +294,38 @@ const ProposalSigning = ({
       <DialogTitle>Signing proposal</DialogTitle>
       <DialogContent>
         <Grid container>
-          <Grid item xs={0} md={1} />
-          <Grid item xs={12} md={6}>
+          <Grid
+            item
+            xs={0}
+            md={1}
+          />
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
             <SignerSelection
               possibleSigners={possibleSigners}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid item xs={0} md={5} />
+          <Grid
+            item
+            xs={0}
+            md={5}
+          />
           {!isProposerSelected && needCallData && (
             <>
-              <Grid item xs={0} md={1} />
-              <Grid item xs={12} md={6}>
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <Grid
+                item
+                xs={12}
+                md={6}
+              >
                 <TextField
                   className="addedCallData"
                   label="Call data"
@@ -325,35 +334,76 @@ const ProposalSigning = ({
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={0} md={5} />
+              <Grid
+                item
+                xs={0}
+                md={5}
+              />
             </>
           )}
 
           {!needCallData && (
             <>
-              <Grid item xs={0} md={1} />
-              <Grid item xs={12} md={11} className="callInfo">
-                <CallInfo aggregatedData={proposalData} expanded />
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <Grid
+                item
+                xs={12}
+                md={11}
+                className="callInfo"
+              >
+                <CallInfo
+                  aggregatedData={proposalData}
+                  expanded
+                />
               </Grid>
             </>
           )}
           {!!needCallData && !!callInfo.method && (
             <>
-              <Grid item xs={0} md={1} />
-              <Grid item xs={12} md={11} className="callInfo">
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <Grid
+                item
+                xs={12}
+                md={11}
+                className="callInfo"
+              >
                 <h4>
                   {callInfo.method}.{callInfo.section}
                 </h4>
               </Grid>
             </>
           )}
-          <Grid item xs={0} md={1} />
-          <Grid item xs={12} md={11} className="errorMessage">
+          <Grid
+            item
+            xs={0}
+            md={1}
+          />
+          <Grid
+            item
+            xs={12}
+            md={11}
+            className="errorMessage"
+          >
             {!!errorMessage && errorMessage}
           </Grid>
-          <Grid item xs={12} className="buttonContainer">
+          <Grid
+            item
+            xs={12}
+            className="buttonContainer"
+          >
             {!isGettingCallInfo && isProposerSelected && (
-              <Button onClick={() => onSign(false)} disabled={isSubmitting}>
+              <Button
+                onClick={() => onSign(false)}
+                disabled={isSubmitting}
+              >
                 Reject
               </Button>
             )}

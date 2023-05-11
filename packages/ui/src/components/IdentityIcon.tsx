@@ -29,34 +29,21 @@ const StyledPopup = styled('div')(
 
 const IdentityIcon = ({ className, identity }: Props) => {
   const judgements = useMemo(
-    () =>
-      identity.judgements.filter(
-        ([, judgement]): boolean => !judgement.isFeePaid
-      ),
+    () => identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid),
     [identity]
   )
   const isGood = useMemo(
     () =>
-      judgements.some(
-        ([, judgement]): boolean =>
-          judgement.isKnownGood || judgement.isReasonable
-      ),
+      judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable),
     [judgements]
   )
   const isBad = useMemo(
     () =>
-      judgements.some(
-        ([, judgement]): boolean =>
-          judgement.isErroneous || judgement.isLowQuality
-      ),
+      judgements.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality),
     [judgements]
   )
   const displayJudgements = useMemo(
-    () =>
-      JSON.stringify(judgements.map(([, jud]) => jud.toString())).replace(
-        /"|\[|\]/g,
-        ''
-      ),
+    () => JSON.stringify(judgements.map(([, jud]) => jud.toString())).replace(/"|\[|\]/g, ''),
     [judgements]
   )
 
@@ -108,7 +95,10 @@ const IdentityIcon = ({ className, identity }: Props) => {
   )
 
   return (
-    <Tooltip className={className} title={tooltipContent}>
+    <Tooltip
+      className={className}
+      title={tooltipContent}
+    >
       {isGood ? (
         <CheckCircleRoundedIcon className="green" />
       ) : (

@@ -18,9 +18,7 @@ export const usePureProxyCreationNeededFunds = () => {
 
     // the signer should survive and have at lease the existential deposit
     // play safe and add the existential deposit twice which should suffice
-    const survive = (
-      api.consts.balances.existentialDeposit as unknown as BN
-    ).muln(2)
+    const survive = (api.consts.balances.existentialDeposit as unknown as BN).muln(2)
 
     setMin(reserved.add(survive))
     // console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))

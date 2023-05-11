@@ -9,12 +9,7 @@ interface Props {
   signatoriesNumber: number
 }
 
-const ThresholdSelection = ({
-  className,
-  threshold,
-  setThreshold,
-  signatoriesNumber,
-}: Props) => {
+const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNumber }: Props) => {
   const [error, setError] = useState('')
 
   const validateThreshold = useCallback(
@@ -64,9 +59,7 @@ const ThresholdSelection = ({
         helperText={error}
         label="Threshold"
         InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
-          ),
+          endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>,
         }}
         value={threshold || ''}
         onChange={handleChange}

@@ -1,21 +1,9 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Grid,
-  Step,
-  StepLabel,
-  Stepper,
-} from '@mui/material'
+import { Alert, Box, Button, Grid, Step, StepLabel, Stepper } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/SignatorySelection'
-import {
-  encodeAddress,
-  createKeyMulti,
-  sortAddresses,
-} from '@polkadot/util-crypto'
+import { encodeAddress, createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
@@ -38,10 +26,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
-  const isLastStep = useMemo(
-    () => currentStep === steps.length - 1,
-    [currentStep]
-  )
+  const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
@@ -53,7 +38,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [name, setName] = useState('')
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(
-    () => signatories.some(sig => addressList.includes(sig)),
+    () => signatories.some((sig) => addressList.includes(sig)),
     [addressList, signatories]
   )
   const [errorMessage, setErrorMessage] = useState('')
@@ -67,10 +52,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    return encodeAddress(
-      createKeyMulti(signatories, threshold),
-      chainInfo.ss58Format
-    )
+    return encodeAddress(createKeyMulti(signatories, threshold), chainInfo.ss58Format)
   }, [chainInfo, signatories, threshold])
   const batchCall = useMemo(() => {
     if (!isApiReady || !api) {
@@ -98,16 +80,10 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     const otherSignatories = sortAddresses(
-      signatories.filter(sig => sig !== selectedAccount.address)
+      signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
-    const multiSigProxyCall = api.tx.multisig.asMulti(
-      threshold,
-      otherSignatories,
-      null,
-      proxyTx,
-      0
-    )
+    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     // Some funds are needed on the multisig for the pure proxy creation
     const transferTx = api.tx.balances.transfer(
       multiAddress,
@@ -160,22 +136,12 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     return true
-  }, [
-    currentStep,
-    hasSignerEnoughFunds,
-    ownAccountPartOfSignatories,
-    signatories,
-    threshold,
-  ])
+  }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
     setErrorMessage('')
 
-    if (
-      currentStep === 0 &&
-      !ownAccountPartOfSignatories &&
-      signatories.length >= 2
-    ) {
+    if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
       setErrorMessage('At least one of your account must be a signatory')
     }
   }, [currentStep, ownAccountPartOfSignatories, signatories])
@@ -189,11 +155,7 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
 
     batchCall
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner },
-        signCallBack
-      )
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
         addToast({
           title: error.message,
@@ -224,8 +186,16 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep])
 
   return (
-    <Grid className={className} container spacing={2}>
-      <Grid item xs={12} md={4}>
+    <Grid
+      className={className}
+      container
+      spacing={2}
+    >
+      <Grid
+        item
+        xs={12}
+        md={4}
+      >
         <h1 className="title">{steps[currentStep] || ''}</h1>
       </Grid>
       <Grid
@@ -238,7 +208,10 @@ const MultisigCreation = ({ className }: Props) => {
         md={8}
       >
         <Box className="stepsContainer">
-          <Stepper activeStep={currentStep} alternativeLabel>
+          <Stepper
+            activeStep={currentStep}
+            alternativeLabel
+          >
             {steps.map((step, index) => (
               <Step
                 className="stepItem"
@@ -253,12 +226,22 @@ const MultisigCreation = ({ className }: Props) => {
           </Stepper>
         </Box>
       </Grid>
-      <Grid container item xs={12}>
+      <Grid
+        container
+        item
+        xs={12}
+      >
         {currentStep === 0 && (
-          <Grid item xs={12} md={6}>
-            <Alert className="infoBox" severity="info">
-              The members of a multisig are called "signatories". You should
-              select at least 2.
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <Alert
+              className="infoBox"
+              severity="info"
+            >
+              The members of a multisig are called "signatories". You should select at least 2.
             </Alert>
             <SignatorySelection
               setSignatories={setSignatories}
@@ -267,21 +250,35 @@ const MultisigCreation = ({ className }: Props) => {
           </Grid>
         )}
         {currentStep === 1 && (
-          <Grid item xs={12} md={6}>
-            <Alert className="infoBox" severity="info">
-              The threshold determines the minimum amount of signatory approvals
-              needed for a multisig proposal to be executed.
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <Alert
+              className="infoBox"
+              severity="info"
+            >
+              The threshold determines the minimum amount of signatory approvals needed for a
+              multisig proposal to be executed.
             </Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
               signatoriesNumber={signatories.length}
             />
-            <NameSelection setName={setName} name={name} />
+            <NameSelection
+              setName={setName}
+              name={name}
+            />
           </Grid>
         )}
         {currentStep === 2 && (
-          <Grid item xs={12} md={6}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
             <Summary
               signatories={signatories}
               threshold={threshold}
@@ -302,10 +299,16 @@ const MultisigCreation = ({ className }: Props) => {
       >
         {!!errorMessage && <div className="errorMessage">{errorMessage}</div>}
         <div className="buttonWrapper">
-          <Button disabled={currentStep === 0} onClick={goBack}>
+          <Button
+            disabled={currentStep === 0}
+            onClick={goBack}
+          >
             Back
           </Button>
-          <Button disabled={!canGoNext} onClick={goNext}>
+          <Button
+            disabled={!canGoNext}
+            onClick={goNext}
+          >
             {isLastStep ? 'Create' : 'Next'}
           </Button>
         </div>

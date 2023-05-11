@@ -23,11 +23,7 @@ const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   const { selectAccount, selectedAccount, accountList } = useAccounts()
   const signersList = useMemo(() => {
-    return (
-      accountList?.filter(account =>
-        possibleSigners.includes(account.address)
-      ) || []
-    )
+    return accountList?.filter((account) => possibleSigners.includes(account.address)) || []
   }, [accountList, possibleSigners])
 
   useEffect(() => {
@@ -42,8 +38,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
 
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedAccount) =>
-      `${option?.address}${option?.meta.name}` || '',
+    stringify: (option: typeof selectedAccount) => `${option?.address}${option?.meta.name}` || '',
   })
 
   const onChangeSigner = useCallback(
@@ -79,7 +74,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
           <AccountDisplay address={option?.address || ''} />
         </Box>
       )}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label="Signing with"

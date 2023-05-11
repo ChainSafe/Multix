@@ -5,10 +5,7 @@ import { getProxyAccountId } from './getProxyAccountId'
 import { dataEvent, env } from '../processor'
 
 export const getProxyInfoFromArgs = (
-  item: EventItem<
-    'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved',
-    (typeof dataEvent)['data']
-  >
+  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
 ) => {
   const { delegator, delegatee, proxyType, delay } = item.event.args
   const _delegator = encodeAddress(delegator, env.prefix)

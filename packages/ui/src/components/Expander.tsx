@@ -10,20 +10,16 @@ interface Props {
   expanded?: boolean
 }
 
-const Expander = ({
-  className = '',
-  title,
-  content,
-  expanded = false,
-}: Props) => {
+const Expander = ({ className = '', title, content, expanded = false }: Props) => {
   const [open, setOpen] = useState(expanded)
 
   return (
     <Box className={className}>
-      <div onClick={() => setOpen(!open)} className="titleWrapper">
-        <KeyboardArrowRightIcon
-          className={`${open ? 'rotated' : ''} expanderIcon`}
-        />
+      <div
+        onClick={() => setOpen(!open)}
+        className="titleWrapper"
+      >
+        <KeyboardArrowRightIcon className={`${open ? 'rotated' : ''} expanderIcon`} />
         {title}
       </div>
       <Collapse in={open}>{content}</Collapse>

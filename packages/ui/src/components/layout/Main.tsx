@@ -21,7 +21,10 @@ function MainLayout() {
             </UserSpace>
           </ContainerStyled>
         </>
-        <DrawerComponent open={open} handleDrawerClose={() => setOpen(false)} />
+        <DrawerComponent
+          open={open}
+          handleDrawerClose={() => setOpen(false)}
+        />
       </BoxStyled>
     </Container>
   )

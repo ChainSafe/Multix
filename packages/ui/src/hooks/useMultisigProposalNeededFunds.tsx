@@ -10,11 +10,7 @@ interface Props {
   call?: SubmittableExtrinsic<'promise', ISubmittableResult>
 }
 
-export const useMultisigProposalNeededFunds = ({
-  threshold,
-  signatories,
-  call,
-}: Props) => {
+export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
 
@@ -34,7 +30,7 @@ export const useMultisigProposalNeededFunds = ({
       api
         .tx(genericCall)
         .paymentInfo('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
-        .then(info => {
+        .then((info) => {
           // add the funds reserved for a multisig call
           const reserved = (api.consts.multisig.depositFactor as unknown as BN)
             .muln(threshold)

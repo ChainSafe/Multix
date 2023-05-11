@@ -9,11 +9,7 @@ interface Props extends Omit<MenuProps, 'open' | 'onClose' | 'anchorEl'> {
   onClose: () => void
 }
 
-export const AccountSelect: React.FC<Props> = ({
-  anchorEl,
-  onClose,
-  ...props
-}) => {
+export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) => {
   const { accountList, selectAccount } = useAccounts()
 
   if (!accountList) {
@@ -32,8 +28,11 @@ export const AccountSelect: React.FC<Props> = ({
       onClose={onClose}
       {...props}
     >
-      {accountList.map(account => (
-        <MenuItem key={account.address} onClick={handleSelect(account)}>
+      {accountList.map((account) => (
+        <MenuItem
+          key={account.address}
+          onClick={handleSelect(account)}
+        >
           <CardHeader
             avatar={
               <IconButton sx={{ p: 0 }}>

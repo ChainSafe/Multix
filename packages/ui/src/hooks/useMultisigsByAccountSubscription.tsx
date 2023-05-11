@@ -1,10 +1,7 @@
 import { useSubscription } from 'react-query-subscription'
 import { Client, createClient, SubscribePayload } from 'graphql-ws'
 import { Observable } from 'rxjs'
-import {
-  MultisigsByAccountsDocument,
-  MultisigsByAccountsSubscription,
-} from '../../types-and-hooks'
+import { MultisigsByAccountsDocument, MultisigsByAccountsSubscription } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
@@ -13,10 +10,7 @@ interface Args {
   accounts: string[]
 }
 
-export const useMultisigsByAccountSubscription = ({
-  onUpdate,
-  accounts,
-}: Args) => {
+export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
     () => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || '' }),
@@ -30,12 +24,12 @@ export const useMultisigsByAccountSubscription = ({
     client: Client,
     payload: SubscribePayload
   ) {
-    return new Observable<TData | null>(observer =>
+    return new Observable<TData | null>((observer) =>
       client.subscribe<TData>(payload, {
-        next: data => {
+        next: (data) => {
           return observer.next(data.data)
         },
-        error: err => {
+        error: (err) => {
           return observer.error(err)
         },
         complete: () => {

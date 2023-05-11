@@ -20,10 +20,7 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { addressList } = useAccounts()
   const [name, setName] = useState('')
-  const isExtensionAccount = useMemo(
-    () => addressList.includes(address),
-    [address, addressList]
-  )
+  const isExtensionAccount = useMemo(() => addressList.includes(address), [address, addressList])
 
   useEffect(() => {
     if (!name) {
@@ -43,11 +40,29 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
   )
 
   return (
-    <Grid className={className} container spacing={2}>
-      <Grid item xs={12} sm={6} md={4} alignItems="center">
-        <AccountDisplay address={address} withName={false} />
+    <Grid
+      className={className}
+      container
+      spacing={2}
+    >
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={4}
+        alignItems="center"
+      >
+        <AccountDisplay
+          address={address}
+          withName={false}
+        />
       </Grid>
-      <Grid item xs={12} sm={6} md={8}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={8}
+      >
         <TextField
           className="nameField"
           label={`Name${isExtensionAccount ? ' (from extension)' : ''}`}

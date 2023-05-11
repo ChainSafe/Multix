@@ -27,14 +27,10 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
-  const isBalancesTransferAlike = !![
-    'balances.transfer',
-    'balances.transferKeepAlive',
-  ].includes(name)
-  const isProxyCreationDeletion = !![
-    'proxy.addProxy',
-    'proxy.removeProxy',
-  ].includes(name)
+  const isBalancesTransferAlike = !!['balances.transfer', 'balances.transferKeepAlive'].includes(
+    name
+  )
+  const isProxyCreationDeletion = !!['proxy.addProxy', 'proxy.removeProxy'].includes(name)
 
   return (
     <ul className="params">
@@ -100,13 +96,7 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
   }
 }
 
-const CallInfo = ({
-  aggregatedData,
-  expanded = false,
-  children,
-  className,
-  badge,
-}: Props) => {
+const CallInfo = ({ aggregatedData, expanded = false, children, className, badge }: Props) => {
   const { args, name } = filterProxyProxy(aggregatedData)
   const { chainInfo } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])

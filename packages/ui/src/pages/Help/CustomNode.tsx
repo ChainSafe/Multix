@@ -21,12 +21,23 @@ const CustomNode = ({ data, className = '' }: Props) => {
   return (
     <Box className={className}>
       {(handle === 'both' || handle === 'right') && (
-        <Handle id="right" type="source" position={Position.Right} />
+        <Handle
+          id="right"
+          type="source"
+          position={Position.Right}
+        />
       )}
       {(handle === 'both' || handle === 'left') && (
-        <Handle id="left" type="target" position={Position.Left} />
+        <Handle
+          id="left"
+          type="target"
+          position={Position.Left}
+        />
       )}
-      <AccountDisplay address={address} badge={badge} />
+      <AccountDisplay
+        address={address}
+        badge={badge}
+      />
     </Box>
   )
 }

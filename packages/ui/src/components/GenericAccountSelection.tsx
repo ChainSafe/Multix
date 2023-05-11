@@ -1,10 +1,4 @@
-import {
-  Autocomplete,
-  Box,
-  FilterOptionsState,
-  InputAdornment,
-  TextField,
-} from '@mui/material'
+import { Autocomplete, Box, FilterOptionsState, InputAdornment, TextField } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -40,10 +34,7 @@ const getBadge = (account: AccountBaseInfo | string) => {
     : undefined
 }
 
-const isOptionEqualToValue = (
-  option: AccountBaseInfo,
-  value: AccountBaseInfo
-) => {
+const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) => {
   return option.address === value.address
 }
 
@@ -57,10 +48,7 @@ const GenericAccountSelection = ({
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
-  const valueAddress = useMemo(
-    () => (typeof value === 'string' ? value : value.address),
-    [value]
-  )
+  const valueAddress = useMemo(() => (typeof value === 'string' ? value : value.address), [value])
   const valueBadge = useMemo(() => getBadge(value), [value])
 
   const getOptionLabel = useCallback(
@@ -86,10 +74,7 @@ const GenericAccountSelection = ({
   )
 
   const filterOptions = useCallback(
-    (
-      options: AccountBaseInfo[],
-      state: FilterOptionsState<AccountBaseInfo>
-    ): AccountBaseInfo[] => {
+    (options: AccountBaseInfo[], state: FilterOptionsState<AccountBaseInfo>): AccountBaseInfo[] => {
       const filtered = filter(options, state)
 
       const { inputValue } = state
@@ -113,10 +98,7 @@ const GenericAccountSelection = ({
   }, [])
 
   const onChangeAutocomplete = useCallback(
-    (
-      _: React.SyntheticEvent<Element, Event>,
-      val: AccountBaseInfo | string
-    ) => {
+    (_: React.SyntheticEvent<Element, Event>, val: AccountBaseInfo | string) => {
       if (typeof val === 'string') {
         onChange({
           address: val,
@@ -161,11 +143,14 @@ const GenericAccountSelection = ({
             {...props}
             key={option.address}
           >
-            <AccountDisplay address={option.address} badge={getBadge(option)} />
+            <AccountDisplay
+              address={option.address}
+              badge={getBadge(option)}
+            />
           </Box>
         )
       }}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           inputRef={inputRef}
@@ -174,7 +159,10 @@ const GenericAccountSelection = ({
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <IdenticonBadge address={valueAddress} badge={valueBadge} />
+                <IdenticonBadge
+                  address={valueAddress}
+                  badge={valueBadge}
+                />
               </InputAdornment>
             ),
           }}

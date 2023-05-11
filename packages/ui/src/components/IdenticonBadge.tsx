@@ -21,10 +21,7 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
     />
   )
 
-  const appliedClass = useMemo(
-    () => (badge === AccountBadge.PURE ? 'blue' : 'red'),
-    [badge]
-  )
+  const appliedClass = useMemo(() => (badge === AccountBadge.PURE ? 'blue' : 'red'), [badge])
 
   if (!badge) {
     return <AccountIcon />

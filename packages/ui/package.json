@@ -48,7 +48,7 @@
     "start": "vite --port 3333",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "lint": "eslint 'src/**/*.{js,ts,tsx}'",
+    "lint": "eslint --color 'src/**/*.{js,ts,tsx}'",
     "lint:types": "tsc --pretty",
     "lint:fix": "yarn run lint --fix",
     "codegen": "graphql-codegen --config graphql.config.json",

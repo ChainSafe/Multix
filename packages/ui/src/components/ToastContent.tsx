@@ -34,11 +34,17 @@ const ToastContent = ({ type, title, className, link }: ToastContentProps) => {
           <ErrorOutlineIcon className="toastIcon errorIcon" />
         )}
       </div>
-      <Box component="p" className="titleContainer">
+      <Box
+        component="p"
+        className="titleContainer"
+      >
         {title}
       </Box>
       {!!link && (
-        <Box className="linkIcon" onClick={onOpenLink}>
+        <Box
+          className="linkIcon"
+          onClick={onOpenLink}
+        >
           <LaunchIcon fontSize="small" />
         </Box>
       )}

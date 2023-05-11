@@ -2,11 +2,7 @@
   "env": {
     "es2021": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/eslint-recommended", "prettier"],
   "plugins": ["prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -15,7 +11,6 @@
     "tsconfigRootDir": "./",
     "project": "tsconfig.json"
   },
-  "rules": {
-  },
+  "rules": {},
   "ignorePatterns": ["db/**/*", "src/types/**/*", "src/model/generated/**/*"]
 }

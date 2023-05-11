@@ -5,20 +5,8 @@
 // this is required to allow for ambient/previous definitions
 import '@polkadot/api-base/types/calls'
 
-import type {
-  ApiTypes,
-  AugmentedCall,
-  DecoratedCallBase,
-} from '@polkadot/api-base/types'
-import type {
-  Bytes,
-  Null,
-  Option,
-  Result,
-  Vec,
-  bool,
-  u32,
-} from '@polkadot/types-codec'
+import type { ApiTypes, AugmentedCall, DecoratedCallBase } from '@polkadot/api-base/types'
+import type { Bytes, Null, Option, Result, Vec, bool, u32 } from '@polkadot/types-codec'
 import type { AnyNumber, ITuple } from '@polkadot/types-codec/types'
 import type {
   BabeEquivocationProof,
@@ -31,10 +19,7 @@ import type {
   BeefyNextAuthoritySet,
   ValidatorSet,
 } from '@polkadot/types/interfaces/beefy'
-import type {
-  CheckInherentsResult,
-  InherentData,
-} from '@polkadot/types/interfaces/blockbuilder'
+import type { CheckInherentsResult, InherentData } from '@polkadot/types/interfaces/blockbuilder'
 import type { BlockHash } from '@polkadot/types/interfaces/chain'
 import type { AuthorityId } from '@polkadot/types/interfaces/consensus'
 import type { Extrinsic } from '@polkadot/types/interfaces/extrinsics'
@@ -72,10 +57,7 @@ import type {
   ValidationCodeHash,
   ValidatorSignature,
 } from '@polkadot/types/interfaces/parachains'
-import type {
-  FeeDetails,
-  RuntimeDispatchInfo,
-} from '@polkadot/types/interfaces/payment'
+import type { FeeDetails, RuntimeDispatchInfo } from '@polkadot/types/interfaces/payment'
 import type {
   AccountId,
   Block,
@@ -89,15 +71,11 @@ import type {
 import type { SessionIndex } from '@polkadot/types/interfaces/session'
 import type { RuntimeVersion } from '@polkadot/types/interfaces/state'
 import type { ApplyExtrinsicResult } from '@polkadot/types/interfaces/system'
-import type {
-  TransactionSource,
-  TransactionValidity,
-} from '@polkadot/types/interfaces/txqueue'
+import type { TransactionSource, TransactionValidity } from '@polkadot/types/interfaces/txqueue'
 import type { IExtrinsic, Observable } from '@polkadot/types/types'
 
 export type __AugmentedCall<ApiType extends ApiTypes> = AugmentedCall<ApiType>
-export type __DecoratedCallBase<ApiType extends ApiTypes> =
-  DecoratedCallBase<ApiType>
+export type __DecoratedCallBase<ApiType extends ApiTypes> = DecoratedCallBase<ApiType>
 
 declare module '@polkadot/api-base/types/calls' {
   interface AugmentedCalls<ApiType extends ApiTypes> {
@@ -131,10 +109,7 @@ declare module '@polkadot/api-base/types/calls' {
       /**
        * Return the genesis configuration for BABE. The configuration is only read on genesis.
        **/
-      configuration: AugmentedCall<
-        ApiType,
-        () => Observable<BabeGenesisConfiguration>
-      >
+      configuration: AugmentedCall<ApiType, () => Observable<BabeGenesisConfiguration>>
       /**
        * Returns information regarding the current epoch.
        **/
@@ -186,10 +161,7 @@ declare module '@polkadot/api-base/types/calls' {
       /**
        * Return the current active BEEFY validator set
        **/
-      validatorSet: AugmentedCall<
-        ApiType,
-        () => Observable<Option<ValidatorSet>>
-      >
+      validatorSet: AugmentedCall<ApiType, () => Observable<Option<ValidatorSet>>>
       /**
        * Generic call
        **/
@@ -200,17 +172,11 @@ declare module '@polkadot/api-base/types/calls' {
       /**
        * Return the currently active BEEFY authority set proof.
        **/
-      authoritySetProof: AugmentedCall<
-        ApiType,
-        () => Observable<BeefyAuthoritySet>
-      >
+      authoritySetProof: AugmentedCall<ApiType, () => Observable<BeefyAuthoritySet>>
       /**
        * Return the next/queued BEEFY authority set proof.
        **/
-      nextAuthoritySetProof: AugmentedCall<
-        ApiType,
-        () => Observable<BeefyNextAuthoritySet>
-      >
+      nextAuthoritySetProof: AugmentedCall<ApiType, () => Observable<BeefyNextAuthoritySet>>
       /**
        * Generic call
        **/
@@ -233,11 +199,7 @@ declare module '@polkadot/api-base/types/calls' {
       checkInherents: AugmentedCall<
         ApiType,
         (
-          block:
-            | Block
-            | { header?: any; extrinsics?: any }
-            | string
-            | Uint8Array,
+          block: Block | { header?: any; extrinsics?: any } | string | Uint8Array,
           data: InherentData | { data?: any } | string | Uint8Array
         ) => Observable<CheckInherentsResult>
       >
@@ -267,11 +229,7 @@ declare module '@polkadot/api-base/types/calls' {
       executeBlock: AugmentedCall<
         ApiType,
         (
-          block:
-            | Block
-            | { header?: any; extrinsics?: any }
-            | string
-            | Uint8Array
+          block: Block | { header?: any; extrinsics?: any } | string | Uint8Array
         ) => Observable<Null>
       >
       /**
@@ -321,10 +279,7 @@ declare module '@polkadot/api-base/types/calls' {
       /**
        * Get the current GRANDPA authorities and weights. This should not change except for when changes are scheduled and the corresponding delay has passed.
        **/
-      grandpaAuthorities: AugmentedCall<
-        ApiType,
-        () => Observable<AuthorityList>
-      >
+      grandpaAuthorities: AugmentedCall<ApiType, () => Observable<AuthorityList>>
       /**
        * Submits an unsigned extrinsic to report an equivocation.
        **/
@@ -363,12 +318,8 @@ declare module '@polkadot/api-base/types/calls' {
       generateBatchProof: AugmentedCall<
         ApiType,
         (
-          leafIndices:
-            | Vec<MmrLeafIndex>
-            | (MmrLeafIndex | AnyNumber | Uint8Array)[]
-        ) => Observable<
-          Result<ITuple<[Vec<MmrEncodableOpaqueLeaf>, MmrBatchProof]>, MmrError>
-        >
+          leafIndices: Vec<MmrLeafIndex> | (MmrLeafIndex | AnyNumber | Uint8Array)[]
+        ) => Observable<Result<ITuple<[Vec<MmrEncodableOpaqueLeaf>, MmrBatchProof]>, MmrError>>
       >
       /**
        * Generate MMR proof for a leaf under given index.
@@ -377,9 +328,7 @@ declare module '@polkadot/api-base/types/calls' {
         ApiType,
         (
           leafIndex: MmrLeafIndex | AnyNumber | Uint8Array
-        ) => Observable<
-          Result<ITuple<[MmrEncodableOpaqueLeaf, MmrProof]>, MmrError>
-        >
+        ) => Observable<Result<ITuple<[MmrEncodableOpaqueLeaf, MmrProof]>, MmrError>>
       >
       /**
        * Return the on-chain MMR root hash.
@@ -391,9 +340,7 @@ declare module '@polkadot/api-base/types/calls' {
       verifyBatchProof: AugmentedCall<
         ApiType,
         (
-          leaves:
-            | Vec<MmrEncodableOpaqueLeaf>
-            | (MmrEncodableOpaqueLeaf | string | Uint8Array)[],
+          leaves: Vec<MmrEncodableOpaqueLeaf> | (MmrEncodableOpaqueLeaf | string | Uint8Array)[],
           proof:
             | MmrBatchProof
             | { leafIndices?: any; leafCount?: any; items?: any }
@@ -408,9 +355,7 @@ declare module '@polkadot/api-base/types/calls' {
         ApiType,
         (
           root: Hash | string | Uint8Array,
-          leaves:
-            | Vec<MmrEncodableOpaqueLeaf>
-            | (MmrEncodableOpaqueLeaf | string | Uint8Array)[],
+          leaves: Vec<MmrEncodableOpaqueLeaf> | (MmrEncodableOpaqueLeaf | string | Uint8Array)[],
           proof:
             | MmrBatchProof
             | { leafIndices?: any; leafCount?: any; items?: any }
@@ -425,11 +370,7 @@ declare module '@polkadot/api-base/types/calls' {
         ApiType,
         (
           leaf: MmrEncodableOpaqueLeaf | string | Uint8Array,
-          proof:
-            | MmrProof
-            | { leafIndex?: any; leafCount?: any; items?: any }
-            | string
-            | Uint8Array
+          proof: MmrProof | { leafIndex?: any; leafCount?: any; items?: any } | string | Uint8Array
         ) => Observable<Result<ITuple<[]>, MmrError>>
       >
       /**
@@ -440,11 +381,7 @@ declare module '@polkadot/api-base/types/calls' {
         (
           root: Hash | string | Uint8Array,
           leaf: MmrEncodableOpaqueLeaf | string | Uint8Array,
-          proof:
-            | MmrProof
-            | { leafIndex?: any; leafCount?: any; items?: any }
-            | string
-            | Uint8Array
+          proof: MmrProof | { leafIndex?: any; leafCount?: any; items?: any } | string | Uint8Array
         ) => Observable<Result<ITuple<[]>, MmrError>>
       >
       /**
@@ -488,32 +425,22 @@ declare module '@polkadot/api-base/types/calls' {
         (
           paraId: ParaId | AnyNumber | Uint8Array,
           hash: Hash | string | Uint8Array
-        ) => Observable<
-          Option<ITuple<[PersistedValidationData, ValidationCodeHash]>>
-        >
+        ) => Observable<Option<ITuple<[PersistedValidationData, ValidationCodeHash]>>>
       >
       /**
        * Yields information on all availability cores as relevant to the child block.
        **/
-      availabilityCores: AugmentedCall<
-        ApiType,
-        () => Observable<Vec<CoreState>>
-      >
+      availabilityCores: AugmentedCall<ApiType, () => Observable<Vec<CoreState>>>
       /**
        * Get a vector of events concerning candidates that occurred within a block.
        **/
-      candidateEvents: AugmentedCall<
-        ApiType,
-        () => Observable<Vec<CandidateEvent>>
-      >
+      candidateEvents: AugmentedCall<ApiType, () => Observable<Vec<CandidateEvent>>>
       /**
        * Get the receipt of a candidate pending availability.
        **/
       candidatePendingAvailability: AugmentedCall<
         ApiType,
-        (
-          paraId: ParaId | AnyNumber | Uint8Array
-        ) => Observable<Option<CommittedCandidateReceipt>>
+        (paraId: ParaId | AnyNumber | Uint8Array) => Observable<Option<CommittedCandidateReceipt>>
       >
       /**
        * Checks if the given validation outputs pass the acceptance criteria.
@@ -541,35 +468,26 @@ declare module '@polkadot/api-base/types/calls' {
        **/
       disputes: AugmentedCall<
         ApiType,
-        () => Observable<
-          Vec<ITuple<[SessionIndex, CandidateHash, DisputeState]>>
-        >
+        () => Observable<Vec<ITuple<[SessionIndex, CandidateHash, DisputeState]>>>
       >
       /**
        * Get all the pending inbound messages in the downward message queue for a para.
        **/
       dmqContents: AugmentedCall<
         ApiType,
-        (
-          paraId: ParaId | AnyNumber | Uint8Array
-        ) => Observable<Vec<InboundDownwardMessage>>
+        (paraId: ParaId | AnyNumber | Uint8Array) => Observable<Vec<InboundDownwardMessage>>
       >
       /**
        * Get the contents of all channels addressed to the given recipient.
        **/
       inboundHrmpChannelsContents: AugmentedCall<
         ApiType,
-        (
-          paraId: ParaId | AnyNumber | Uint8Array
-        ) => Observable<Vec<InboundHrmpMessage>>
+        (paraId: ParaId | AnyNumber | Uint8Array) => Observable<Vec<InboundHrmpMessage>>
       >
       /**
        * Scrape dispute relevant from on-chain, backing votes and resolved disputes.
        **/
-      onChainVotes: AugmentedCall<
-        ApiType,
-        () => Observable<Option<ScrapedOnChainVotes>>
-      >
+      onChainVotes: AugmentedCall<ApiType, () => Observable<Option<ScrapedOnChainVotes>>>
       /**
        * Yields the persisted validation data for the given `ParaId` along with an assumption that should be used if the para currently occupies a core.
        **/
@@ -589,25 +507,17 @@ declare module '@polkadot/api-base/types/calls' {
       /**
        * Returns code hashes of PVFs that require pre-checking by validators in the active set.
        **/
-      pvfsRequirePrecheck: AugmentedCall<
-        ApiType,
-        () => Observable<Vec<ValidationCodeHash>>
-      >
+      pvfsRequirePrecheck: AugmentedCall<ApiType, () => Observable<Vec<ValidationCodeHash>>>
       /**
        * Returns the session index expected at a child of the block.
        **/
-      sessionIndexForChild: AugmentedCall<
-        ApiType,
-        () => Observable<SessionIndex>
-      >
+      sessionIndexForChild: AugmentedCall<ApiType, () => Observable<SessionIndex>>
       /**
        * Get the session info for the given session, if stored.
        **/
       sessionInfo: AugmentedCall<
         ApiType,
-        (
-          index: SessionIndex | AnyNumber | Uint8Array
-        ) => Observable<Option<SessionInfo>>
+        (index: SessionIndex | AnyNumber | Uint8Array) => Observable<Option<SessionInfo>>
       >
       /**
        * Submits a PVF pre-checking statement into the transaction pool.
@@ -649,9 +559,7 @@ declare module '@polkadot/api-base/types/calls' {
        **/
       validationCodeByHash: AugmentedCall<
         ApiType,
-        (
-          hash: ValidationCodeHash | string | Uint8Array
-        ) => Observable<Option<ValidationCode>>
+        (hash: ValidationCodeHash | string | Uint8Array) => Observable<Option<ValidationCode>>
       >
       /**
        * Fetch the hash of the validation code used by a para, making the given `OccupiedCoreAssumption`.
@@ -674,9 +582,7 @@ declare module '@polkadot/api-base/types/calls' {
        **/
       validatorGroups: AugmentedCall<
         ApiType,
-        () => Observable<
-          ITuple<[Vec<Vec<ParaValidatorIndex>>, GroupRotationInfo]>
-        >
+        () => Observable<ITuple<[Vec<Vec<ParaValidatorIndex>>, GroupRotationInfo]>>
       >
       /**
        * Get the current validators.
@@ -703,9 +609,7 @@ declare module '@polkadot/api-base/types/calls' {
        **/
       generateSessionKeys: AugmentedCall<
         ApiType,
-        (
-          seed: Option<Bytes> | null | Uint8Array | Bytes | string
-        ) => Observable<Bytes>
+        (seed: Option<Bytes> | null | Uint8Array | Bytes | string) => Observable<Bytes>
       >
       /**
        * Generic call
@@ -720,13 +624,7 @@ declare module '@polkadot/api-base/types/calls' {
       validateTransaction: AugmentedCall<
         ApiType,
         (
-          source:
-            | TransactionSource
-            | 'InBlock'
-            | 'Local'
-            | 'External'
-            | number
-            | Uint8Array,
+          source: TransactionSource | 'InBlock' | 'Local' | 'External' | number | Uint8Array,
           tx: Extrinsic | IExtrinsic | string | Uint8Array,
           blockHash: BlockHash | string | Uint8Array
         ) => Observable<TransactionValidity>

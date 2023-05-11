@@ -26,10 +26,7 @@ const Transaction = ({
   onSuccess,
 }: Props) => {
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
-  const isProxy = useMemo(
-    () => isProxyCall(aggregatedData.name),
-    [aggregatedData]
-  )
+  const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
   // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
 

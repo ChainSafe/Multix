@@ -1,7 +1,4 @@
-import {
-  KnownArchivesSubstrate,
-  lookupArchive,
-} from '@subsquid/archive-registry'
+import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
 import {
   BatchContext,
   BatchProcessorItem,
@@ -79,7 +76,7 @@ const processor = new SubstrateBatchProcessor()
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
-processor.run(new TypeormDatabase(), async ctx => {
+processor.run(new TypeormDatabase(), async (ctx) => {
   const newMultisigsInfo: NewMultisigsInfo[] = []
   const newPureProxies: Map<string, NewPureProxy> = new Map()
   const newMultisigCalls: MultisigCallInfo[] = []
@@ -162,14 +159,10 @@ processor.run(new TypeormDatabase(), async ctx => {
   }
 
   newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo))
-  newMultisigCalls.length &&
-    (await handleNewMultisigCalls(ctx, newMultisigCalls))
-  newPureProxies.size &&
-    (await handleNewPureProxies(ctx, Array.from(newPureProxies.values())))
-  newProxies.size &&
-    (await handleNewProxies(ctx, Array.from(newProxies.values())))
-  proxyRemovalIds.size &&
-    (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
+  newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls))
+  newPureProxies.size && (await handleNewPureProxies(ctx, Array.from(newPureProxies.values())))
+  newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values())))
+  proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
 })
 
 /**

@@ -6,10 +6,7 @@ import { AccountBadge } from '../types'
 import { getDisplayAddress } from '../utils'
 import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
-import {
-  DeriveAccountInfo,
-  DeriveAccountRegistration,
-} from '@polkadot/api-derive/types'
+import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
 import { useGetBalance } from '../hooks/useGetBalance'
 
@@ -34,9 +31,7 @@ const AccountDisplay = ({
     () => getNamesWithExtension(address),
     [address, getNamesWithExtension]
   )
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(
-    null
-  )
+  const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
   const { api, isApiReady } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
@@ -65,29 +60,32 @@ const AccountDisplay = ({
           // There should not be a `displayParent` without a `display`
           // but we can't be too sure.
           setMainDisplay(
-            info.identity.displayParent ||
-              info.identity.display ||
-              info.nickname ||
-              ''
+            info.identity.displayParent || info.identity.display || info.nickname || ''
           )
         }
       })
-      .then(unsub => {
+      .then((unsub) => {
         unsubscribe = unsub
       })
-      .catch(e => console.error(e))
+      .catch((e) => console.error(e))
 
     return () => unsubscribe && unsubscribe()
   }, [address, api, isApiReady])
 
   return (
     <MultisigInfoStyled>
-      <IdenticonBadge badge={badge} address={address} />
+      <IdenticonBadge
+        badge={badge}
+        address={address}
+      />
       <Box>
         {withName && (
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
-              <IdentityIcon className="identityBadge" identity={identity} />
+              <IdentityIcon
+                className="identityBadge"
+                identity={identity}
+              />
             )}
             {!!sub && <span>{sub}</span>}
             <NameStyled>{displayName || mainDisplay}</NameStyled>

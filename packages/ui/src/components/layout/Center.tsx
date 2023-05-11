@@ -15,7 +15,10 @@ export const Center = ({ children, className }: Props) => (
     justifyContent="center"
     style={{ height: '100%' }}
   >
-    <Grid item xs={3}>
+    <Grid
+      item
+      xs={3}
+    >
       {children}
     </Grid>
   </Grid>

@@ -5,9 +5,9 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:react-hooks/recommended",
     "react-app",
-    "plugin:@typescript-eslint/eslint-recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
@@ -22,6 +22,15 @@
   },
   "plugins": ["react", "prettier"],
   "rules": {
+    "react/jsx-max-props-per-line": [
+      "error",
+      {
+        "maximum": {
+          "single": 1,
+          "multi": 1
+        }
+      }
+    ],
     "object-curly-spacing": ["error", "always"],
     "react/jsx-tag-spacing": "error",
     "prettier/prettier": "error"
@@ -42,9 +51,5 @@
       }
     }
   ],
-  "ignorePatterns": [
-    "src/interfaces/**/*",
-    "types-and-hooks.tsx",
-    "src/gql/**/*"
-  ]
+  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "src/gql/**/*"]
 }

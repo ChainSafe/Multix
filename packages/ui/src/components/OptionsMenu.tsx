@@ -55,7 +55,7 @@ const OptionsMenu = ({ className, options }: Props) => {
           },
         }}
       >
-        {options.map(option => (
+        {options.map((option) => (
           <MenuItem
             className="menuEntry"
             key={option.text}

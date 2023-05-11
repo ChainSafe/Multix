@@ -64,10 +64,7 @@ import type {
   MoreAttestations,
 } from '@polkadot/types/interfaces/attestations'
 import type { RawAuraPreDigest } from '@polkadot/types/interfaces/aura'
-import type {
-  ExtrinsicOrHash,
-  ExtrinsicStatus,
-} from '@polkadot/types/interfaces/author'
+import type { ExtrinsicOrHash, ExtrinsicStatus } from '@polkadot/types/interfaces/author'
 import type { UncleEntryItem } from '@polkadot/types/interfaces/authorship'
 import type {
   AllowedSlots,
@@ -172,10 +169,7 @@ import type {
   Votes,
   VotesTo230,
 } from '@polkadot/types/interfaces/collective'
-import type {
-  AuthorityId,
-  RawVRFOutput,
-} from '@polkadot/types/interfaces/consensus'
+import type { AuthorityId, RawVRFOutput } from '@polkadot/types/interfaces/consensus'
 import type {
   AliveContractInfo,
   CodeHash,
@@ -327,10 +321,7 @@ import type {
   VoteThreshold,
   VoterInfo,
 } from '@polkadot/types/interfaces/elections'
-import type {
-  CreatedBlock,
-  ImportedAux,
-} from '@polkadot/types/interfaces/engine'
+import type { CreatedBlock, ImportedAux } from '@polkadot/types/interfaces/engine'
 import type {
   BlockV0,
   BlockV1,
@@ -481,10 +472,7 @@ import type {
   OpaqueNetworkState,
   OpaquePeerId,
 } from '@polkadot/types/interfaces/imOnline'
-import type {
-  CallIndex,
-  LotteryConfig,
-} from '@polkadot/types/interfaces/lottery'
+import type { CallIndex, LotteryConfig } from '@polkadot/types/interfaces/lottery'
 import type {
   ErrorMetadataLatest,
   ErrorMetadataV10,
@@ -747,14 +735,8 @@ import type {
   ProxyDefinition,
   ProxyType,
 } from '@polkadot/types/interfaces/proxy'
-import type {
-  AccountStatus,
-  AccountValidity,
-} from '@polkadot/types/interfaces/purchase'
-import type {
-  ActiveRecovery,
-  RecoveryConfig,
-} from '@polkadot/types/interfaces/recovery'
+import type { AccountStatus, AccountValidity } from '@polkadot/types/interfaces/purchase'
+import type { ActiveRecovery, RecoveryConfig } from '@polkadot/types/interfaces/recovery'
 import type { RpcMethods } from '@polkadot/types/interfaces/rpc'
 import type {
   AccountId,

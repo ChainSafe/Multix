@@ -33,8 +33,7 @@ interface Props {
 
 const filterOptions = createFilterOptions({
   ignoreCase: true,
-  stringify: (option: InjectedAccountWithMeta) =>
-    option.address + option.meta.name,
+  stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name,
 })
 
 const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
@@ -60,9 +59,7 @@ const AccountSelection = ({
   const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState('')
   const dedupedSignatories = useMemo(() => {
-    return accountList.filter(
-      account => !currentSignatories.includes(account.address)
-    )
+    return accountList.filter((account) => !currentSignatories.includes(account.address))
   }, [accountList, currentSignatories])
   const extensionName = useMemo(() => {
     if (!selected) return ''
@@ -77,10 +74,7 @@ const AccountSelection = ({
   }, [accountNames, selected])
 
   const onChangeAutocomplete = useCallback(
-    (
-      _: SyntheticEvent<Element, Event>,
-      val: string | InjectedAccountWithMeta | null
-    ) => {
+    (_: SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
       setErrorMessage('')
       setName('')
       const value = getOptionLabel(val)
@@ -121,13 +115,10 @@ const AccountSelection = ({
     [onAddSignatory]
   )
 
-  const onNameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = event.target.value
-      setName(value)
-    },
-    []
-  )
+  const onNameChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = event.target.value
+    setName(value)
+  }, [])
 
   return (
     <Box className={className}>
@@ -156,7 +147,7 @@ const AccountSelection = ({
             {option.address} - {option.meta.name}
           </Box>
         )}
-        renderInput={params => (
+        renderInput={(params) => (
           <TextField
             {...params}
             inputRef={ref}

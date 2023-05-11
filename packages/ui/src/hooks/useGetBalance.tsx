@@ -8,10 +8,7 @@ interface useGetBalanceProps {
   address?: string
   numberAfterComma?: number
 }
-export const useGetBalance = ({
-  address,
-  numberAfterComma = 4,
-}: useGetBalanceProps) => {
+export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalanceProps) => {
   const { isApiReady, api, chainInfo } = useApi()
   const [balance, setBalance] = useState<Balance | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)
@@ -31,20 +28,13 @@ export const useGetBalance = ({
           })
         )
       })
-      .then(unsub => {
+      .then((unsub) => {
         unsubscribe = unsub
       })
       .catch(console.error)
 
     return () => unsubscribe && unsubscribe()
-  }, [
-    address,
-    api,
-    chainInfo?.tokenDecimals,
-    chainInfo?.tokenSymbol,
-    isApiReady,
-    numberAfterComma,
-  ])
+  }, [address, api, chainInfo?.tokenDecimals, chainInfo?.tokenSymbol, isApiReady, numberAfterComma])
 
   return { balance, balanceFormatted }
 }

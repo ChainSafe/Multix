@@ -66,8 +66,8 @@ const Overview = ({ className }: Props) => {
   const [edges, setEdges] = useState<Edge[]>([])
   const uniqueSignatoriesSet = useMemo(() => {
     const res = new Set<string>()
-    selectedMultiProxy?.multisigs.forEach(multisig => {
-      multisig.signatories?.forEach(address => {
+    selectedMultiProxy?.multisigs.forEach((multisig) => {
+      multisig.signatories?.forEach((address) => {
         res.add(address)
       })
     })
@@ -76,8 +76,7 @@ const Overview = ({ className }: Props) => {
   }, [selectedMultiProxy?.multisigs])
 
   useEffect(() => {
-    if (uniqueSignatoriesSet.size === 0 || !selectedMultiProxy?.multisigs)
-      return
+    if (uniqueSignatoriesSet.size === 0 || !selectedMultiProxy?.multisigs) return
 
     const resNodes: Node[] = []
     const resEdges: Edge[] = []
@@ -127,49 +126,47 @@ const Overview = ({ className }: Props) => {
     }
 
     //create edges
-    selectedMultiProxy.multisigs.forEach(
-      ({ address: multiAddress, signatories, type }) => {
-        signatories?.forEach(sigAddress => {
-          resEdges.push({
-            id: `${sigAddress}-${multiAddress}`,
-            source: sigAddress,
-            target: multiAddress,
-            sourceHandle: 'right',
-            targetHandle: 'left',
-            ...defaultEdgeOptions,
-          })
+    selectedMultiProxy.multisigs.forEach(({ address: multiAddress, signatories, type }) => {
+      signatories?.forEach((sigAddress) => {
+        resEdges.push({
+          id: `${sigAddress}-${multiAddress}`,
+          source: sigAddress,
+          target: multiAddress,
+          sourceHandle: 'right',
+          targetHandle: 'left',
+          ...defaultEdgeOptions,
         })
+      })
 
-        if (selectedMultiProxy.proxy) {
-          resEdges.push({
-            id: `${multiAddress}-${selectedMultiProxy.proxy}`,
-            source: multiAddress,
-            target: selectedMultiProxy.proxy,
-            sourceHandle: 'right',
-            targetHandle: 'left',
-            label: `controls-${type}`,
-            ...defaultEdgeOptions,
-          })
-        }
+      if (selectedMultiProxy.proxy) {
+        resEdges.push({
+          id: `${multiAddress}-${selectedMultiProxy.proxy}`,
+          source: multiAddress,
+          target: selectedMultiProxy.proxy,
+          sourceHandle: 'right',
+          targetHandle: 'left',
+          label: `controls-${type}`,
+          ...defaultEdgeOptions,
+        })
       }
-    )
+    })
 
     setNodes(resNodes)
     setEdges(resEdges)
   }, [selectedMultiProxy, uniqueSignatoriesSet])
 
   const onNodesChange: OnNodesChange = useCallback(
-    changes => setNodes(nds => applyNodeChanges(changes, nds)),
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes]
   )
 
   const onEdgesChange: OnEdgesChange = useCallback(
-    changes => setEdges(eds => applyEdgeChanges(changes, eds)),
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges]
   )
 
   const onConnect: OnConnect = useCallback(
-    connection => setEdges(eds => addEdge(connection, eds)),
+    (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   )
 

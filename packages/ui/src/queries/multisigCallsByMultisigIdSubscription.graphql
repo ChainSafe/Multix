@@ -1,9 +1,5 @@
 subscription MultisigCallsByMultisigId($multisigs: [String!]) {
-  multisigCalls(
-    limit: 10
-    orderBy: timestamp_DESC
-    where: { multisig: { id_in: $multisigs } }
-  ) {
+  multisigCalls(limit: 10, orderBy: timestamp_DESC, where: { multisig: { id_in: $multisigs } }) {
     blockHash
     callIndex
     id

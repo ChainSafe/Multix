@@ -689,19 +689,13 @@ export const MultisigByIdDocument = `
   }
 }
     `
-export const useMultisigByIdQuery = <
-  TData = MultisigByIdQuery,
-  TError = unknown
->(
+export const useMultisigByIdQuery = <TData = MultisigByIdQuery, TError = unknown>(
   variables: MultisigByIdQueryVariables,
   options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
 ) =>
   useQuery<MultisigByIdQuery, TError, TData>(
     ['MultisigById', variables],
-    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(
-      MultisigByIdDocument,
-      variables
-    ),
+    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
     options
   )
 export const MultisigCallsByMultisigIdDocument = `

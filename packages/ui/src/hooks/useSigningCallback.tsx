@@ -10,12 +10,7 @@ interface Args {
   onFinalized?: () => void
 }
 
-export const useSigningCallback = ({
-  onSubmitting,
-  onSuccess,
-  onFinalized,
-  onError,
-}: Args) => {
+export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
@@ -42,12 +37,7 @@ export const useSigningCallback = ({
 
       events.forEach(({ event, phase }) => {
         const { data, method, section } = event
-        console.log(
-          '\t',
-          phase.toString(),
-          `: ${section}.${method}`,
-          data.toString()
-        )
+        console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
 
         // check if multisig or proxy has an error
         if (
@@ -58,19 +48,14 @@ export const useSigningCallback = ({
           const dataJSON = data.toJSON() as { [index: string]: any }[]
 
           Array.isArray(dataJSON) &&
-            dataJSON.some(dispatchError => {
+            dataJSON.some((dispatchError) => {
               if (dispatchError?.err?.module) {
                 const mod = dispatchError.err.module
                 const error = api.registry.findMetaError(
-                  new Uint8Array([
-                    Number(mod.index),
-                    Number(mod.error.slice(0, 4)),
-                  ])
+                  new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
                 )
 
-                errorInfo = Array.isArray(error.docs)
-                  ? error.docs.join('')
-                  : error.docs || ''
+                errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
                 // stop looping we found an error
                 return true
               }
@@ -96,9 +81,7 @@ export const useSigningCallback = ({
             // for module errors, we have the section indexed, lookup
             // (For specific known errors, we can also do a check against the
             // api.errors.<module>.<ErrorName>.is(dispatchError.asModule) guard)
-            const decoded = api.registry.findMetaError(
-              (dispatchError as any).asModule
-            )
+            const decoded = api.registry.findMetaError((dispatchError as any).asModule)
 
             errorInfo = `${decoded.docs} - ${decoded.section}.${decoded.name}`
           } else {

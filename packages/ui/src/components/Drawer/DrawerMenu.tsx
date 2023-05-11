@@ -41,7 +41,10 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           !isEmptyArray(accountList) &&
           ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
             !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
-              <ListItem key={name} disablePadding>
+              <ListItem
+                key={name}
+                disablePadding
+              >
                 <ListItemButton
                   onClick={handleDrawerClose}
                   component={Link}

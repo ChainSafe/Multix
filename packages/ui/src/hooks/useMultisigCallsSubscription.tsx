@@ -27,10 +27,10 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
     client: Client,
     payload: SubscribePayload
   ) {
-    return new Observable<TData | null>(observer =>
+    return new Observable<TData | null>((observer) =>
       client.subscribe<TData>(payload, {
-        next: data => observer.next(data.data),
-        error: err => observer.error(err),
+        next: (data) => observer.next(data.data),
+        error: (err) => observer.error(err),
         complete: () => {
           observer.complete()
         },

@@ -22,9 +22,15 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
   const { multiProxyList } = useMultiProxy()
 
   return (
-    <MuiAppBar position="fixed" className={className}>
+    <MuiAppBar
+      position="fixed"
+      className={className}
+    >
       <Toolbar>
-        <TypographyStyled variant="h6" noWrap>
+        <TypographyStyled
+          variant="h6"
+          noWrap
+        >
           Multix
         </TypographyStyled>
         {isAccountConnected && (

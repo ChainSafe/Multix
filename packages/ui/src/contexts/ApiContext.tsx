@@ -35,9 +35,7 @@ const ApiContext = createContext<IApiContext | undefined>(undefined)
 const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const provider = useMemo(
-    () =>
-      !!selectedNetworkInfo?.rpcUrl &&
-      new WsProvider(selectedNetworkInfo?.rpcUrl),
+    () => !!selectedNetworkInfo?.rpcUrl && new WsProvider(selectedNetworkInfo?.rpcUrl),
     [selectedNetworkInfo]
   )
   const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
@@ -64,7 +62,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
     if (!apiPromise || !provider || isReady) return
 
     apiPromise.isReady
-      .then(api => {
+      .then((api) => {
         if (types) {
           registry.register(types)
         }
@@ -79,7 +77,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
           tokenSymbol: raw?.tokenSymbol[0] || '',
         })
       })
-      .catch(e => console.error(e))
+      .catch((e) => console.error(e))
   }, [apiPromise, isReady, provider, types])
 
   return (

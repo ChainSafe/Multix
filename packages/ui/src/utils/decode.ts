@@ -53,7 +53,7 @@ export function parseArrayGenericCalls(
   argsArray: Codec[],
   registry: Registry
 ): (Codec | ISanitizedCall)[] {
-  return argsArray.map(argument => {
+  return argsArray.map((argument) => {
     if (argument instanceof GenericCall) {
       return parseGenericCall(argument as GenericCall, registry)
     }
@@ -70,10 +70,7 @@ export function parseArrayGenericCalls(
  * @param genericCall `GenericCall`
  * @param registry type registry of the block the call belongs to
  */
-export function parseGenericCall(
-  genericCall: GenericCall,
-  registry: Registry
-): ISanitizedCall {
+export function parseGenericCall(genericCall: GenericCall, registry: Registry): ISanitizedCall {
   const newArgs: any = {}
 
   // Pull out the struct of arguments to this call
@@ -95,9 +92,7 @@ export function parseGenericCall(
       } else if (
         argument &&
         paramName === 'call' &&
-        ['Bytes', 'WrapperKeepOpaque<Call>', 'WrapperOpaque<Call>'].includes(
-          argument?.toRawType()
-        )
+        ['Bytes', 'WrapperKeepOpaque<Call>', 'WrapperOpaque<Call>'].includes(argument?.toRawType())
       ) {
         // multiSig.asMulti.args.call is either an OpaqueCall (Vec<u8>),
         // WrapperKeepOpaque<Call>, or WrapperOpaque<Call> that we

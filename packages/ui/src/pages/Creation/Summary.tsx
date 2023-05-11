@@ -41,10 +41,7 @@ const Summary = ({
   const possibleSigners = useMemo(() => {
     return isSwapSummary
       ? // for a swap we can only select the account that are part of both the old and the new multisig
-        getIntersection(
-          addressList,
-          getIntersection(selectedMultisig?.signatories, signatories)
-        )
+        getIntersection(addressList, getIntersection(selectedMultisig?.signatories, signatories))
       : getIntersection(addressList, signatories)
   }, [addressList, isSwapSummary, selectedMultisig, signatories])
 
@@ -67,7 +64,10 @@ const Summary = ({
       ) : (
         <h3>You are about to create a Multisig:</h3>
       )}
-      <Paper elevation={2} className="paper">
+      <Paper
+        elevation={2}
+        className="paper"
+      >
         {!!name && (
           <h4 className="nameSummary">
             Name: <span className="name">{name}</span>
@@ -77,7 +77,7 @@ const Summary = ({
           Threshold: <Chip label={`${threshold}/${signatories.length}`} />
         </h4>
         <h4>Signatories:</h4>
-        {signatories.map(signatory => (
+        {signatories.map((signatory) => (
           <AccountDisplay
             key={signatory}
             address={signatory}
@@ -100,10 +100,7 @@ const Summary = ({
             <>
               In the next step you will send 1 batch transaction to:
               <ul>
-                <li>
-                  send funds to the new Multisig (required to create a Pure
-                  proxy)
-                </li>
+                <li>send funds to the new Multisig (required to create a Pure proxy)</li>
                 <li>create the Pure proxy</li>
               </ul>
               Other signatories will need to approve this transaction.

@@ -43,7 +43,13 @@ const ToastBar = ({ toast }: Props) => {
         </IconButton>
       }
       message={
-        <ToastContent type={type} title={title} key={id} id={id} link={link} />
+        <ToastContent
+          type={type}
+          title={title}
+          key={id}
+          id={id}
+          link={link}
+        />
       }
     />
   )

@@ -13,13 +13,9 @@ interface Props {
 }
 
 const MultiProxySelection = ({ className }: Props) => {
-  const { multiProxyList, selectedMultiProxy, selectMultiProxy } =
-    useMultiProxy()
+  const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
   const ref = useRef<HTMLInputElement>(null)
-  const isSelectedProxy = useMemo(
-    () => !!selectedMultiProxy?.proxy,
-    [selectedMultiProxy]
-  )
+  const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
     () => selectedMultiProxy?.proxy || selectedMultiProxy?.multisigs[0].address,
@@ -44,10 +40,7 @@ const MultiProxySelection = ({ className }: Props) => {
   )
 
   const onChange = useCallback(
-    (
-      _: React.SyntheticEvent<Element, Event>,
-      val: typeof selectedMultiProxy
-    ) => {
+    (_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultiProxy) => {
       if (!val) return
 
       selectMultiProxy(val)
@@ -73,9 +66,7 @@ const MultiProxySelection = ({ className }: Props) => {
       options={multiProxyList}
       renderOption={(props, option) => {
         const isProxy = !!option?.proxy
-        const displayAddress = isProxy
-          ? option?.proxy
-          : option?.multisigs[0].address
+        const displayAddress = isProxy ? option?.proxy : option?.multisigs[0].address
 
         return (
           <Box
@@ -96,7 +87,7 @@ const MultiProxySelection = ({ className }: Props) => {
           </Box>
         )
       }}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           inputRef={ref}
@@ -107,9 +98,7 @@ const MultiProxySelection = ({ className }: Props) => {
               <InputAdornment position="start">
                 <IdenticonBadge
                   address={addressToShow}
-                  badge={
-                    isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI
-                  }
+                  badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
                 />
               </InputAdornment>
             ),

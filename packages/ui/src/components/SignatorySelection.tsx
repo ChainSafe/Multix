@@ -12,11 +12,7 @@ interface Props {
   setSignatories: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const SignatorySelection = ({
-  className,
-  signatories,
-  setSignatories,
-}: Props) => {
+const SignatorySelection = ({ className, signatories, setSignatories }: Props) => {
   const addSignatory = useCallback(
     (newSignatory: string) => {
       const newSignatories = [...signatories, newSignatory]
@@ -27,9 +23,7 @@ const SignatorySelection = ({
 
   const removeSignatory = useCallback(
     (indexToDelete: number) => {
-      const newSignatories = signatories.filter(
-        (_, index) => indexToDelete !== index
-      )
+      const newSignatories = signatories.filter((_, index) => indexToDelete !== index)
       setSignatories(newSignatories)
     },
     [setSignatories, signatories]
@@ -42,7 +36,10 @@ const SignatorySelection = ({
           <div className="additionText">Selected:</div>
           <Paper className="selectedList">
             {signatories.map((address, index) => (
-              <div key={address} className="selectedSignatory">
+              <div
+                key={address}
+                className="selectedSignatory"
+              >
                 <AccountDisplay address={address} />
                 <IconButton
                   className="deleteButton"

@@ -22,7 +22,7 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
 
   const removeToast = useCallback(
     (toastId: number) => {
-      toasts.current = toasts.current.filter(toast => toast.id !== toastId)
+      toasts.current = toasts.current.filter((toast) => toast.id !== toastId)
       setToastQueue(toasts.current)
     },
     [toasts]
@@ -56,8 +56,11 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
         toasts: toastQueue,
       }}
     >
-      {toastQueue.map(toast => (
-        <ToastBar toast={toast} key={toast.id} />
+      {toastQueue.map((toast) => (
+        <ToastBar
+          toast={toast}
+          key={toast.id}
+        />
       ))}
       {children}
     </ToastContext.Provider>

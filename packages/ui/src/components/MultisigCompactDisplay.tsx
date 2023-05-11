@@ -19,20 +19,12 @@ interface Props {
   expanded?: boolean
 }
 
-const MultisigCompactDisplay = ({
-  className,
-  address,
-  expanded = false,
-}: Props) => {
+const MultisigCompactDisplay = ({ className, address, expanded = false }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const { selectedNetworkInfo } = useNetwork()
   // we can't use the useMultisigById that got generated in types-and-hooks because we need a dynamic url
   // to fetch for the right network
-  const { data, error, isFetching } = useQuery<
-    MultisigByIdQuery,
-    unknown,
-    MultisigByIdQuery
-  >(
+  const { data, error, isFetching } = useQuery<MultisigByIdQuery, unknown, MultisigByIdQuery>(
     ['MultisigById', { account: address }],
     fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(
       MultisigByIdDocument,
@@ -55,9 +47,7 @@ const MultisigCompactDisplay = ({
 
     if (data?.accounts[0]) {
       // this is a query by id, so it should return just 1 account
-      setSignatories(
-        data.accounts[0].signatories.map(({ signatory }) => signatory.id)
-      )
+      setSignatories(data.accounts[0].signatories.map(({ signatory }) => signatory.id))
       setThreshold(data.accounts[0].threshold)
       setBadge(AccountBadge.MULTI)
     }
@@ -84,9 +74,12 @@ const MultisigCompactDisplay = ({
           }
           content={
             <ul className="signatoryList">
-              {signatories.map(sig => (
+              {signatories.map((sig) => (
                 <li key={sig}>
-                  <AccountDisplay address={sig} withName={true} />
+                  <AccountDisplay
+                    address={sig}
+                    withName={true}
+                  />
                 </li>
               ))}
             </ul>

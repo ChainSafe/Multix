@@ -16,18 +16,12 @@ import SignatorySelection from '../SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
 import { useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import {
-  createKeyMulti,
-  encodeAddress,
-  sortAddresses,
-} from '@polkadot/util-crypto'
+import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { useToasts } from '../../contexts/ToastContext'
 import { AccountBadge } from '../../types'
 import { getIntersection } from '../../utils'
-import GenericAccountSelection, {
-  AccountBaseInfo,
-} from '../GenericAccountSelection'
+import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import Warning from '../Warning'
@@ -47,27 +41,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const modalRef = useRef<HTMLDivElement | null>(null)
   const { isApiReady, api, chainInfo } = useApi()
-  const {
-    selectedMultiProxy,
-    getMultisigAsAccountBaseInfo,
-    getMultisigByAddress,
-  } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
     onError: onClose,
   })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
-  const [selectedMultisig, setSelectedMultisig] = useState(
-    selectedMultiProxy?.multisigs[0]
-  )
-  const oldThreshold = useMemo(
-    () => selectedMultisig?.threshold,
-    [selectedMultisig]
-  )
-  const [newThreshold, setNewThreshold] = useState<number | undefined>(
-    oldThreshold
-  )
+  const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
+  const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
+  const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
   const [newSignatories, setNewSignatories] = useState<string[]>(
     selectedMultisig?.signatories || []
   )
@@ -75,10 +58,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [errorMessage, setErrorMessage] = useState('')
   const ownAccountPartOfAllSignatories = useMemo(
     () =>
-      getIntersection(
-        addressList,
-        getIntersection(selectedMultisig?.signatories, newSignatories)
-      ).length > 0,
+      getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories))
+        .length > 0,
     [addressList, newSignatories, selectedMultisig?.signatories]
   )
   const isCallStep = useMemo(
@@ -90,10 +71,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     min: proxyAdditionNeededFunds,
     address: selectedMultiProxy?.proxy,
   })
-  const multisigList = useMemo(
-    () => getMultisigAsAccountBaseInfo(),
-    [getMultisigAsAccountBaseInfo]
-  )
+  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [callError, setCallError] = useState('')
 
   const firstCall = useMemo(() => {
@@ -123,28 +101,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     }
 
     const otherOldSignatories = sortAddresses(
-      selectedMultisig.signatories.filter(
-        sig => sig !== selectedAccount.address
-      )
+      selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const newMultiAddress = encodeAddress(
       createKeyMulti(newSignatories, newThreshold),
       chainInfo?.ss58Format
     )
     const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, 'Any', 0)
-    const proxyTx = api.tx.proxy.proxy(
-      selectedMultiProxy?.proxy,
-      null,
-      addProxyTx
-    )
+    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
-    return api.tx.multisig.asMulti(
-      oldThreshold,
-      otherOldSignatories,
-      null,
-      proxyTx,
-      0
-    )
+    return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, 0)
   }, [
     api,
     chainInfo,
@@ -184,25 +150,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     }
 
     const otherNewSignatories = sortAddresses(
-      newSignatories.filter(sig => sig !== selectedAccount.address)
+      newSignatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const removeProxyTx = api.tx.proxy.removeProxy(
-      selectedMultisig?.address,
-      'Any',
-      0
-    )
-    const proxyTx = api.tx.proxy.proxy(
-      selectedMultiProxy?.proxy,
-      null,
-      removeProxyTx
-    )
-    return api.tx.multisig.asMulti(
-      newThreshold,
-      otherNewSignatories,
-      null,
-      proxyTx,
-      0
-    )
+    const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, 'Any', 0)
+    const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, removeProxyTx)
+    return api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, 0)
   }, [
     api,
     chainInfo,
@@ -214,18 +166,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     selectedMultisig,
   ])
 
-  const { multisigProposalNeededFunds: firstCallNeededFunds } =
-    useMultisigProposalNeededFunds({
-      call: firstCall,
-      signatories: selectedMultisig?.signatories,
-      threshold: oldThreshold,
-    })
-  const { multisigProposalNeededFunds: secondCallNeededFunds } =
-    useMultisigProposalNeededFunds({
-      call: secondCall,
-      signatories: newSignatories,
-      threshold: newThreshold,
-    })
+  const { multisigProposalNeededFunds: firstCallNeededFunds } = useMultisigProposalNeededFunds({
+    call: firstCall,
+    signatories: selectedMultisig?.signatories,
+    threshold: oldThreshold,
+  })
+  const { multisigProposalNeededFunds: secondCallNeededFunds } = useMultisigProposalNeededFunds({
+    call: secondCall,
+    signatories: newSignatories,
+    threshold: newThreshold,
+  })
   const neededBalance = useMemo(
     () => firstCallNeededFunds.add(secondCallNeededFunds),
     [firstCallNeededFunds, secondCallNeededFunds]
@@ -304,11 +254,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep('call2')
 
     secondCall
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner },
-        signCallBack2
-      )
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
       .catch((error: Error) => {
         addToast({
           title: error.message,
@@ -354,11 +300,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep('call1')
 
     firstCall
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner },
-        signCallBack1
-      )
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
       .catch((error: Error) => {
         addToast({
           title: error.message,
@@ -397,11 +339,17 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       className={className}
     >
       <DialogTitle>Change multisig</DialogTitle>
-      <DialogContent className="generalContainer" ref={modalRef}>
+      <DialogContent
+        className="generalContainer"
+        ref={modalRef}
+      >
         <Grid container>
           {currentStep === 'selection' && (
             <>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+              >
                 {!hasProxyEnoughFunds && (
                   <Warning
                     text={`The pure account doesn't have enough funds. It needs at least ${formatBnBalance(
@@ -426,16 +374,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                       accountList={multisigList}
                       onChange={handleMultisigSelection}
                       value={
-                        multisigList.find(
-                          ({ address }) => address === selectedMultisig?.address
-                        ) || multisigList[0]
+                        multisigList.find(({ address }) => address === selectedMultisig?.address) ||
+                        multisigList[0]
                       }
                       label=""
                     />
                   </>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+              >
                 <h4>Signatories</h4>
                 <Box className="subSection">
                   <SignatorySelection
@@ -444,7 +394,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   />
                 </Box>
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+              >
                 <h4>Threshold</h4>
                 <Box className="subSection">
                   <ThresholdSelection
@@ -468,13 +421,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             />
           )}
           {(currentStep === 'call1' || currentStep === 'call2') && (
-            <Grid container spacing={2}>
+            <Grid
+              container
+              spacing={2}
+            >
               <Box className="loader">
-                {callError ? (
-                  <ErrorOutlineIcon className="errorIcon" />
-                ) : (
-                  <CircularProgress />
-                )}
+                {callError ? <ErrorOutlineIcon className="errorIcon" /> : <CircularProgress />}
                 {!!callError && (
                   <div className="callErrorMessage">
                     {callError.includes('multisig.NoTimepoint')
@@ -483,25 +435,26 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   </div>
                 )}
                 {!callError && currentStep === 'call1' && (
-                  <div>
-                    Please sign the 1st transaction to create the new multisig.
-                  </div>
+                  <div>Please sign the 1st transaction to create the new multisig.</div>
                 )}
                 {!callError && currentStep === 'call2' && (
-                  <div>
-                    Please sign the 2nd transaction to remove the old multisig.
-                  </div>
+                  <div>Please sign the 2nd transaction to remove the old multisig.</div>
                 )}
               </Box>
             </Grid>
           )}
-          <Grid item xs={12} className="buttonContainer">
+          <Grid
+            item
+            xs={12}
+            className="buttonContainer"
+          >
             {!!errorMessage && (
-              <Warning className="errorMessage" text={errorMessage} />
+              <Warning
+                className="errorMessage"
+                text={errorMessage}
+              />
             )}
-            {currentStep === 'summary' && (
-              <Button onClick={onGoBack}>Back</Button>
-            )}
+            {currentStep === 'summary' && <Button onClick={onGoBack}>Back</Button>}
             {!isCallStep && (
               <Button
                 disabled={
@@ -514,9 +467,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {currentStep === 'selection' ? 'Next' : 'Save'}
               </Button>
             )}
-            {isCallStep && !!callError && (
-              <Button onClick={onClose}>Close</Button>
-            )}
+            {isCallStep && !!callError && <Button onClick={onClose}>Close</Button>}
           </Grid>
         </Grid>
       </DialogContent>

@@ -19,9 +19,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { sortAddresses } from '@polkadot/util-crypto'
-import GenericAccountSelection, {
-  AccountBaseInfo,
-} from '../GenericAccountSelection'
+import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
 import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
 import Warning from '../Warning'
@@ -40,14 +38,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, isApiReady } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const {
-    selectedMultiProxy,
-    getMultisigAsAccountBaseInfo,
-    getMultisigByAddress,
-  } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
-  const [easyOptionErrorMessage, setEasyOptionErrorMessageorMessage] =
-    useState('')
+  const [easyOptionErrorMessage, setEasyOptionErrorMessageorMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const possibleOrigin = useMemo(() => {
@@ -60,19 +53,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     } as AccountBaseInfo
 
     return [proxyBaseInfo, ...getMultisigAsAccountBaseInfo()].filter(
-      a => !!a.address
+      (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
-  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(
-    possibleOrigin[0]
-  )
-  const [selectedMultisig, setSelectedMultisig] = useState(
-    selectedMultiProxy?.multisigs[0]
-  )
-  const multisigList = useMemo(
-    () => getMultisigAsAccountBaseInfo(),
-    [getMultisigAsAccountBaseInfo]
-  )
+  const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
+  const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
+  const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const threshold = useMemo(() => {
     return selectedOrigin.meta?.isMulti
       ? getMultisigByAddress(selectedOrigin.address)?.threshold
@@ -88,9 +74,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     }
 
     const otherSigners = sortAddresses(
-      selectedMultisig.signatories.filter(
-        signer => signer !== selectedAccount?.address
-      )
+      selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address)
     )
 
     if (!threshold) {
@@ -188,9 +172,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     }
   }, [selectedOrigin])
 
-  const [selectedEasyOption, setSelectedEasyOption] = useState(
-    Object.keys(easySetupOptions)[0]
-  )
+  const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])
   const signCallback = useSigningCallback({
     onSuccess,
     onSubmitting,
@@ -241,11 +223,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     setIsSubmitting(true)
 
     multisigTx
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner },
-        signCallback
-      )
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
       .catch((error: Error) => {
         setIsSubmitting(false)
         addToast({
@@ -268,12 +246,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     getSubscanExtrinsicLink,
   ])
 
-  const onChangeEasySetupOption = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      setSelectedEasyOption(event.target.value)
-    },
-    []
-  )
+  const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
+    setSelectedEasyOption(event.target.value)
+  }, [])
 
   if (!possibleOrigin) {
     return null
@@ -290,10 +265,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
-          <Grid item xs={12} md={2}>
+          <Grid
+            item
+            xs={12}
+            md={2}
+          >
             <h4>From</h4>
           </Grid>
-          <Grid item xs={12} md={10}>
+          <Grid
+            item
+            xs={12}
+            md={10}
+          >
             <GenericAccountSelection
               accountList={possibleOrigin}
               onChange={handleSelectOrigin}
@@ -302,70 +285,115 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           </Grid>
           {selectedOrigin.meta?.isProxy && multisigList.length > 1 && (
             <>
-              <Grid item xs={12} md={2}>
+              <Grid
+                item
+                xs={12}
+                md={2}
+              >
                 <h4>Using</h4>
               </Grid>
-              <Grid item xs={12} md={10}>
+              <Grid
+                item
+                xs={12}
+                md={10}
+              >
                 <GenericAccountSelection
                   className="multiSelection"
                   accountList={multisigList}
                   onChange={handleMultisigSelection}
                   value={
-                    multisigList.find(
-                      ({ address }) => address === selectedMultisig?.address
-                    ) || multisigList[0]
+                    multisigList.find(({ address }) => address === selectedMultisig?.address) ||
+                    multisigList[0]
                   }
                   label=""
                 />
               </Grid>
             </>
           )}
-          <Grid item xs={12} md={2}>
+          <Grid
+            item
+            xs={12}
+            md={2}
+          >
             <h4>Signing with</h4>
           </Grid>
-          <Grid item xs={12} md={10}>
+          <Grid
+            item
+            xs={12}
+            md={10}
+          >
             <SignerSelection
               possibleSigners={selectedMultisig?.signatories || []}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid item xs={12} md={2}>
+          <Grid
+            item
+            xs={12}
+            md={2}
+          >
             <h4>Transaction</h4>
           </Grid>
-          <Grid item xs={12} md={10}>
+          <Grid
+            item
+            xs={12}
+            md={10}
+          >
             <Select
               className="easySetupOption"
               value={selectedEasyOption}
               onChange={onChangeEasySetupOption}
               fullWidth
             >
-              {Object.keys(easySetupOptions).map(key => (
-                <MenuItem key={key} value={key}>
+              {Object.keys(easySetupOptions).map((key) => (
+                <MenuItem
+                  key={key}
+                  value={key}
+                >
                   {key}
                 </MenuItem>
               ))}
             </Select>
           </Grid>
-          <Grid item xs={0} md={2} />
-          <Grid item xs={12} md={10} className="errorMessage">
+          <Grid
+            item
+            xs={0}
+            md={2}
+          />
+          <Grid
+            item
+            xs={12}
+            md={10}
+            className="errorMessage"
+          >
             {easySetupOptions[selectedEasyOption]}
           </Grid>
           {(!!easyOptionErrorMessage || !!errorMessage) && (
             <>
-              <Grid item xs={0} md={2} />
-              <Grid item xs={12} md={10} className="errorMessage">
+              <Grid
+                item
+                xs={0}
+                md={2}
+              />
+              <Grid
+                item
+                xs={12}
+                md={10}
+                className="errorMessage"
+              >
                 <Warning text={easyOptionErrorMessage || errorMessage} />
               </Grid>
             </>
           )}
-          <Grid item xs={12} className="buttonContainer">
+          <Grid
+            item
+            xs={12}
+            className="buttonContainer"
+          >
             <Button
               onClick={onSign}
               disabled={
-                !!easyOptionErrorMessage ||
-                !!errorMessage ||
-                isSubmitting ||
-                !extrinsicToCall
+                !!easyOptionErrorMessage || !!errorMessage || isSubmitting || !extrinsicToCall
               }
             >
               Send

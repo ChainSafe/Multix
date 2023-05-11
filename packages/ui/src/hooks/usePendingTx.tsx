@@ -29,13 +29,13 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
 
     const newData: typeof data = []
 
-    const callsPromises = multiProxy.multisigs.map(multisig =>
+    const callsPromises = multiProxy.multisigs.map((multisig) =>
       api.query.multisig.multisigs.entries(multisig.address)
     )
     Promise.all(callsPromises)
-      .then(res1 => {
+      .then((res1) => {
         res1.forEach((res, index) => {
-          res.forEach(storage => {
+          res.forEach((storage) => {
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
 

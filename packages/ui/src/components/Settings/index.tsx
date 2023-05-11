@@ -4,9 +4,15 @@ import SettingsIcon from '@mui/icons-material/Settings'
 
 export const Settings: React.FC = () => {
   return (
-    <Box role="presentation" sx={{ position: 'fixed', bottom: 26, right: 26 }}>
+    <Box
+      role="presentation"
+      sx={{ position: 'fixed', bottom: 26, right: 26 }}
+    >
       <Tooltip title="Settings">
-        <Fab color="primary" aria-label="settings">
+        <Fab
+          color="primary"
+          aria-label="settings"
+        >
           <SettingsIcon />
         </Fab>
       </Tooltip>

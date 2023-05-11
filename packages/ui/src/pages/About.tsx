@@ -17,8 +17,7 @@ const About = ({ className }: Props) => {
         <li>
           <h2>Open</h2>
           <p>
-            Multix is open-source from the get-go. The back-end and front-end
-            code can be{' '}
+            Multix is open-source from the get-go. The back-end and front-end code can be{' '}
             <a
               href="https://github.com/ChainSafe/Multix"
               target="_blank"
@@ -32,20 +31,20 @@ const About = ({ className }: Props) => {
         <li>
           <h2>Permissionless</h2>
           <p>
-            The is no permissioned database behind Multix. Any information shown
-            comes from the chain.
+            The is no permissioned database behind Multix. Any information shown comes from the
+            chain.
           </p>
         </li>
         <li>
           <h2>Interoperable</h2>
-          Multix doesn't create a walled garden. You can create a multisig
-          on-chain anywhere, Multix will show it right away.
+          Multix doesn't create a walled garden. You can create a multisig on-chain anywhere, Multix
+          will show it right away.
         </li>
         <li>
           <h2>Privacy-preserving</h2>
           <p>
-            We do not gather private information. Additional information such as
-            names is stored on your browser, and only visible to you.
+            We do not gather private information. Additional information such as names is stored on
+            your browser, and only visible to you.
           </p>
         </li>
       </ul>
@@ -76,7 +75,11 @@ const About = ({ className }: Props) => {
             rel="noreferrer"
             href="https://web3.foundation"
           >
-            <img className="logo-w3f" src={w3fSvg} alt="web 3 foudation logo" />
+            <img
+              className="logo-w3f"
+              src={w3fSvg}
+              alt="web 3 foudation logo"
+            />
           </a>
           <a
             className="link"
