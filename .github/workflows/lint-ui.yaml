@@ -1,7 +1,10 @@
 name: Lint UI
 on:
   pull_request:
-    paths: ["ui/**/*"]
+    paths: [
+      'packages/ui/**/*',
+      '.github/workflows/lint-ui.yaml'
+    ]
 jobs:
   extract:
     name: eslint
@@ -21,9 +24,9 @@ jobs:
       with:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+    
     - name: install packages
-    - run: corepack enable
-    - run: yarn install --immutable
+      run: corepack enable && yarn workspaces focus multix-ui && yarn ui:lint
 
     - name: lint
       run: yarn lint

@@ -132,7 +132,7 @@ const Home = ({ className }: Props) => {
       container
       spacing={2}
     >
-      {!!creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
+      {creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
       <Grid
@@ -149,6 +149,7 @@ const Home = ({ className }: Props) => {
                     className="proxy"
                     address={selectedMultiProxy?.proxy || ""}
                     badge={AccountBadge.PURE}
+                    withBalance
                   />
                 </div>
               )}
@@ -157,11 +158,13 @@ const Home = ({ className }: Props) => {
                 selectedMultiProxy.multisigs.map((multisig) => {
                   return (
                     <Paper className="multisigWrapper" key={multisig.address}>
-                      <AccountDisplay
-                        className="multisig"
-                        address={multisig.address || ""}
-                        badge={AccountBadge.MULTI}
-                      />
+                      <AccountDisplayWrapperStyled>
+                        <AccountDisplay
+                          address={multisig.address || ""}
+                          badge={AccountBadge.MULTI}
+                          withBalance
+                        />
+                      </AccountDisplayWrapperStyled>
                       <div className="signatoriesWrapper">
                         <h4>Signatories <Chip
                           className="threshold"
@@ -226,6 +229,10 @@ const Home = ({ className }: Props) => {
   )
 }
 
+const AccountDisplayWrapperStyled = styled('div')`
+  margin: 1rem 0 0 2rem;
+`
+
 export default styled(Home)(({ theme }) => `
   padding: 1rem;
 
@@ -240,10 +247,6 @@ export default styled(Home)(({ theme }) => `
 
   .proxy, .multisig {
     margin-bottom: 0;
-  }
-
-  .multisig {
-    margin: 1rem 0 0 2rem;
   }
 
   .threshold {

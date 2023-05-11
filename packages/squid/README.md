@@ -9,36 +9,34 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 * docker
 * docker-compose
 
-## Quickly running the sample
+## Quickly running the project, without docker (see the project's root readme for docker)
 
 ```bash
 # 1. Install dependencies
-npm ci
+yarn install
 
 # 1.1
-
-make codegen
-make typegen
+yarn codegen
+yarn typegen
 
 # 2. Compile typescript files
-make build
+yarn build
 
-# 3. Start target Postgres database
-make up
+# 3. Start target Postgres database from the root of the project
+docker compose up -d db
 
 # 4. Apply database migrations from db/migrations
-make migrate
+yarn db:migrate
 
-# 5. Now start the processor
-make process
+# 5. Now start the squid processor
+yarn start:indexer
 
 # 6. The above command will block the terminal
-#    being busy with fetching the chain data, 
-#    transforming and storing it in the target database.
-#
-#    To start the graphql server open the separate terminal
-#    and run
-make serve
+# start the graphql server using the following command in a new terminal
+yarn start:graphql-server
+
+# 7. Optionally to see the logs from the db
+docker compose logs -f
 ```
 
 ### Involved ports
@@ -51,7 +49,7 @@ The graphql server and playground is available at http://localhost:4350/graphql
 The database used for the indexer is a Postgres launched in a Docker.
 If you have no migration to do, and the project is built already, you can launch the docker with the db and the indexer using:
 ```bash
-docker-compose up -d
+docker compose up -d
 node -r dotenv/config lib/processor.js
 ```
 
@@ -83,20 +81,20 @@ It is all [TypeORM](https://typeorm.io/#/migrations) under the hood.
 # The target schema is derived from entity classes generated earlier.
 npx squid-typeorm-migration generate
 
-# Create template file for custom database changes
+# Create template file for custom database changes.
 npx squid-typeorm-migration apply 
 # or make migrate
 
-# Apply database migrations from `db/migrations`
+# Apply database migrations from `db/migrations`.
 npx sqd db migrate
 
-# Revert the last performed migration
+# Revert the last performed migration.
 npx sqd db revert
 
-# DROP DATABASE
+# DROP DATABASE.
 npx sqd db drop
 
-# CREATE DATABASE
+# CREATE DATABASE.
 npx sqd db create            
 ```
 
