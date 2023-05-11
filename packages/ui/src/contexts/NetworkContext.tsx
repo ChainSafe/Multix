@@ -69,7 +69,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
       value={{
         selectNetwork,
         selectedNetwork,
-        selectedNetworkInfo,
+        selectedNetworkInfo
       }}
     >
       {children}

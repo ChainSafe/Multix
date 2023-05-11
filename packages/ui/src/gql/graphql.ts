@@ -107,7 +107,7 @@ export enum AccountMultisigOrderByInput {
   SignatoryIsPureProxyAsc = 'signatory_isPureProxy_ASC',
   SignatoryIsPureProxyDesc = 'signatory_isPureProxy_DESC',
   SignatoryThresholdAsc = 'signatory_threshold_ASC',
-  SignatoryThresholdDesc = 'signatory_threshold_DESC',
+  SignatoryThresholdDesc = 'signatory_threshold_DESC'
 }
 
 export type AccountMultisigWhereInput = {
@@ -151,7 +151,7 @@ export enum AccountOrderByInput {
   IsPureProxyAsc = 'isPureProxy_ASC',
   IsPureProxyDesc = 'isPureProxy_DESC',
   ThresholdAsc = 'threshold_ASC',
-  ThresholdDesc = 'threshold_DESC',
+  ThresholdDesc = 'threshold_DESC'
 }
 
 export type AccountWhereInput = {
@@ -244,7 +244,7 @@ export enum MultisigCallOrderByInput {
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
   TimestampAsc = 'timestamp_ASC',
-  TimestampDesc = 'timestamp_DESC',
+  TimestampDesc = 'timestamp_DESC'
 }
 
 export type MultisigCallWhereInput = {
@@ -361,7 +361,7 @@ export enum ProxyAccountOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   TypeAsc = 'type_ASC',
-  TypeDesc = 'type_DESC',
+  TypeDesc = 'type_DESC'
 }
 
 export type ProxyAccountWhereInput = {
@@ -429,7 +429,7 @@ export enum ProxyType {
   NominationPools = 'NominationPools',
   NonTransfer = 'NonTransfer',
   Staking = 'Staking',
-  SudoBalances = 'SudoBalances',
+  SudoBalances = 'SudoBalances'
 }
 
 export type Query = {
@@ -689,16 +689,16 @@ export const MultisigByIdDocument = {
           kind: 'VariableDefinition',
           variable: {
             kind: 'Variable',
-            name: { kind: 'Name', value: 'account' },
+            name: { kind: 'Name', value: 'account' }
           },
           type: {
             kind: 'NonNullType',
             type: {
               kind: 'NamedType',
-              name: { kind: 'Name', value: 'String' },
-            },
-          },
-        },
+              name: { kind: 'Name', value: 'String' }
+            }
+          }
+        }
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -718,17 +718,17 @@ export const MultisigByIdDocument = {
                       name: { kind: 'Name', value: 'id_eq' },
                       value: {
                         kind: 'Variable',
-                        name: { kind: 'Name', value: 'account' },
-                      },
+                        name: { kind: 'Name', value: 'account' }
+                      }
                     },
                     {
                       kind: 'ObjectField',
                       name: { kind: 'Name', value: 'isMultisig_eq' },
-                      value: { kind: 'BooleanValue', value: true },
-                    },
-                  ],
-                },
-              },
+                      value: { kind: 'BooleanValue', value: true }
+                    }
+                  ]
+                }
+              }
             ],
             selectionSet: {
               kind: 'SelectionSet',
@@ -747,23 +747,23 @@ export const MultisigByIdDocument = {
                           selections: [
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
+                              name: { kind: 'Name', value: 'id' }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'threshold' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
 } as unknown as DocumentNode<MultisigByIdQuery, MultisigByIdQueryVariables>
 export const MultisigCallsByMultisigIdDocument = {
   kind: 'Document',
@@ -777,7 +777,7 @@ export const MultisigCallsByMultisigIdDocument = {
           kind: 'VariableDefinition',
           variable: {
             kind: 'Variable',
-            name: { kind: 'Name', value: 'multisigs' },
+            name: { kind: 'Name', value: 'multisigs' }
           },
           type: {
             kind: 'ListType',
@@ -785,11 +785,11 @@ export const MultisigCallsByMultisigIdDocument = {
               kind: 'NonNullType',
               type: {
                 kind: 'NamedType',
-                name: { kind: 'Name', value: 'String' },
-              },
-            },
-          },
-        },
+                name: { kind: 'Name', value: 'String' }
+              }
+            }
+          }
+        }
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -801,12 +801,12 @@ export const MultisigCallsByMultisigIdDocument = {
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'limit' },
-                value: { kind: 'IntValue', value: '10' },
+                value: { kind: 'IntValue', value: '10' }
               },
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'orderBy' },
-                value: { kind: 'EnumValue', value: 'timestamp_DESC' },
+                value: { kind: 'EnumValue', value: 'timestamp_DESC' }
               },
               {
                 kind: 'Argument',
@@ -825,15 +825,15 @@ export const MultisigCallsByMultisigIdDocument = {
                             name: { kind: 'Name', value: 'id_in' },
                             value: {
                               kind: 'Variable',
-                              name: { kind: 'Name', value: 'multisigs' },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              },
+                              name: { kind: 'Name', value: 'multisigs' }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
             ],
             selectionSet: {
               kind: 'SelectionSet',
@@ -841,14 +841,14 @@ export const MultisigCallsByMultisigIdDocument = {
                 { kind: 'Field', name: { kind: 'Name', value: 'blockHash' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'callIndex' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
+                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
 } as unknown as DocumentNode<
   MultisigCallsByMultisigIdSubscription,
   MultisigCallsByMultisigIdSubscriptionVariables
@@ -865,7 +865,7 @@ export const MultisigsByAccountsDocument = {
           kind: 'VariableDefinition',
           variable: {
             kind: 'Variable',
-            name: { kind: 'Name', value: 'accounts' },
+            name: { kind: 'Name', value: 'accounts' }
           },
           type: {
             kind: 'ListType',
@@ -873,11 +873,11 @@ export const MultisigsByAccountsDocument = {
               kind: 'NonNullType',
               type: {
                 kind: 'NamedType',
-                name: { kind: 'Name', value: 'String' },
-              },
-            },
-          },
-        },
+                name: { kind: 'Name', value: 'String' }
+              }
+            }
+          }
+        }
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -901,7 +901,7 @@ export const MultisigsByAccountsDocument = {
                           {
                             kind: 'ObjectField',
                             name: { kind: 'Name', value: 'isMultisig_eq' },
-                            value: { kind: 'BooleanValue', value: true },
+                            value: { kind: 'BooleanValue', value: true }
                           },
                           {
                             kind: 'ObjectField',
@@ -922,22 +922,22 @@ export const MultisigsByAccountsDocument = {
                                           kind: 'Variable',
                                           name: {
                                             kind: 'Name',
-                                            value: 'accounts',
-                                          },
-                                        },
-                                      },
-                                    ],
-                                  },
-                                },
-                              ],
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              },
+                                            value: 'accounts'
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
             ],
             selectionSet: {
               kind: 'SelectionSet',
@@ -960,13 +960,13 @@ export const MultisigsByAccountsDocument = {
                           selections: [
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
+                              name: { kind: 'Name', value: 'id' }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 },
                 {
                   kind: 'Field',
@@ -984,14 +984,14 @@ export const MultisigsByAccountsDocument = {
                           selections: [
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
+                              name: { kind: 'Name', value: 'id' }
                             },
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'isPureProxy' },
-                            },
-                          ],
-                        },
+                              name: { kind: 'Name', value: 'isPureProxy' }
+                            }
+                          ]
+                        }
                       },
                       {
                         kind: 'Field',
@@ -1001,25 +1001,25 @@ export const MultisigsByAccountsDocument = {
                           selections: [
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
+                              name: { kind: 'Name', value: 'id' }
                             },
                             {
                               kind: 'Field',
-                              name: { kind: 'Name', value: 'isPureProxy' },
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
+                              name: { kind: 'Name', value: 'isPureProxy' }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
 } as unknown as DocumentNode<
   MultisigsByAccountsSubscription,
   MultisigsByAccountsSubscriptionVariables

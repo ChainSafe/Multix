@@ -4,7 +4,7 @@ import { Ctx } from '../processor'
 
 export const handleProxyRemovals = async (ctx: Ctx, proxyRemovals: string[]) => {
   const toRemove = await ctx.store.findBy(ProxyAccount, {
-    id: In(proxyRemovals),
+    id: In(proxyRemovals)
   })
   // ctx.log.info(`--> Remove ${toRemove.map((proxyAccount) => JSON.stringify(proxyAccount))}`)
 

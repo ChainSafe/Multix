@@ -24,7 +24,7 @@ export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalancePr
         setFormattedBalance(
           formatBnBalance(info.freeBalance, chainInfo?.tokenDecimals, {
             numberAfterComma,
-            tokenSymbol: chainInfo?.tokenSymbol,
+            tokenSymbol: chainInfo?.tokenSymbol
           })
         )
       })

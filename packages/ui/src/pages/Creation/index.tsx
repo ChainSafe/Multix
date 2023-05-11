@@ -32,7 +32,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useSigningCallback({
-    onSuccess: () => navigate('/?creationInProgress=true'),
+    onSuccess: () => navigate('/?creationInProgress=true')
   })
   const { addToast } = useToasts()
   const [name, setName] = useState('')
@@ -98,13 +98,13 @@ const MultisigCreation = ({ className }: Props) => {
     pureProxyCreationNeededFunds,
     selectedAccount,
     signatories,
-    threshold,
+    threshold
   ])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
     threshold,
     signatories,
-    call: batchCall,
+    call: batchCall
   })
   const neededBalance = useMemo(
     () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
@@ -112,7 +112,7 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
-    address: selectedAccount?.address,
+    address: selectedAccount?.address
   })
   const canGoNext = useMemo(() => {
     // need a threshold set
@@ -160,7 +160,7 @@ const MultisigCreation = ({ className }: Props) => {
         addToast({
           title: error.message,
           type: 'error',
-          link: getSubscanExtrinsicLink(batchCall.hash.toHex()),
+          link: getSubscanExtrinsicLink(batchCall.hash.toHex())
         })
       })
   }, [
@@ -172,7 +172,7 @@ const MultisigCreation = ({ className }: Props) => {
     name,
     selectedAccount,
     selectedSigner,
-    signCallBack,
+    signCallBack
   ])
 
   const goNext = useCallback(() => {

@@ -16,7 +16,7 @@ export const UserSpace = ({ children, className }: Props) => {
     isExtensionError,
     isAccountLoading,
     selectedAccount,
-    allowConnectionToExtension,
+    allowConnectionToExtension
   } = useAccounts()
   const { selectedNetworkInfo } = useNetwork()
 
@@ -39,8 +39,8 @@ export const UserSpace = ({ children, className }: Props) => {
           flexDirection: 'column',
           alignItems: 'center',
           '&:first-of-type': {
-            marginBottom: '1rem',
-          },
+            marginBottom: '1rem'
+          }
         }}
       >
         <CircularProgress />
@@ -106,8 +106,8 @@ export const UserSpace = ({ children, className }: Props) => {
         flexDirection: 'column',
         alignItems: 'center',
         '&:first-of-type': {
-          marginBottom: '1rem',
-        },
+          marginBottom: '1rem'
+        }
       }}
     >
       <CircularProgress />

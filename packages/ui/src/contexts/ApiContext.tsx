@@ -74,7 +74,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         setChainInfo({
           ss58Format: Number(raw?.ss58Format) || 0,
           tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
-          tokenSymbol: raw?.tokenSymbol[0] || '',
+          tokenSymbol: raw?.tokenSymbol[0] || ''
         })
       })
       .catch((e) => console.error(e))
@@ -85,7 +85,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
       value={{
         api: apiPromise,
         isApiReady: isReady,
-        chainInfo,
+        chainInfo
       }}
     >
       {children}

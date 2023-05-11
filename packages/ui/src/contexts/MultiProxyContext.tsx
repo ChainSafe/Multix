@@ -61,7 +61,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             if (delegatee.delegator?.isPureProxy) {
               return {
                 pureAddress: delegatee.delegator.id,
-                type: delegatee.type,
+                type: delegatee.type
               }
             }
 
@@ -83,11 +83,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
               address: account.id,
               signatories: getSignatoriesFromAccount(account),
               threshold: account?.threshold || undefined,
-              type,
+              type
             }
 
             pureProxyMap.set(pureAddress, {
-              multisigs: [...previousMultisigsForProxy, newMultisigForProxy],
+              multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
             })
           })
         } else if (account.isMultisig && pureProxyAddresses.length === 0) {
@@ -98,9 +98,9 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
               {
                 address: account.id,
                 signatories: getSignatoriesFromAccount(account),
-                threshold: account.threshold,
-              },
-            ],
+                threshold: account.threshold
+              }
+            ]
           } as MultiProxy)
         } else {
           console.error('Unexpected account, it should be a multisig', account)
@@ -112,7 +112,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         ([proxy, agg]) =>
           ({
             proxy,
-            multisigs: agg.multisigs,
+            multisigs: agg.multisigs
           } as MultiProxy)
       )
 
@@ -124,7 +124,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const { isLoading, error } = useMultisigsByAccountSubscription({
     accounts: addressList,
-    onUpdate: refreshAccounList,
+    onUpdate: refreshAccounList
   })
 
   // useEffect(() => {
@@ -172,8 +172,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         ({
           address,
           meta: {
-            isMulti: true,
-          },
+            isMulti: true
+          }
         } as AccountBaseInfo)
     ) || []
 
@@ -217,7 +217,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedHasProxy,
         error,
         getMultisigByAddress,
-        getMultisigAsAccountBaseInfo,
+        getMultisigAsAccountBaseInfo
       }}
     >
       {children}

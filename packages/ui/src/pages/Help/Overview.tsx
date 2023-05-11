@@ -18,7 +18,7 @@ import ReactFlow, {
   OnEdgesChange,
   OnNodesChange,
   MarkerType,
-  NodeTypes,
+  NodeTypes
 } from 'reactflow'
 
 interface Props {
@@ -26,11 +26,11 @@ interface Props {
 }
 
 const nodeTypes: NodeTypes = {
-  custom: CustomNode,
+  custom: CustomNode
 }
 
 const fitViewOptions: FitViewOptions = {
-  padding: 0.1,
+  padding: 0.1
 }
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
@@ -38,8 +38,8 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   markerEnd: {
     type: MarkerType.Arrow,
     width: 20,
-    height: 20,
-  },
+    height: 20
+  }
 }
 
 interface NodeParams {
@@ -53,7 +53,7 @@ const nodeFactory = ({ id, position, data }: NodeParams) => {
     id,
     type: 'custom',
     data,
-    position: { x: position.x, y: position.y },
+    position: { x: position.x, y: position.y }
   }
 }
 
@@ -88,7 +88,7 @@ const Overview = ({ className }: Props) => {
         nodeFactory({
           id: sig,
           data: { address: sig, handle: 'right' },
-          position: { x: 0, y: ySigPosition },
+          position: { x: 0, y: ySigPosition }
         })
       )
       ySigPosition += HORIZONTAL_GAP_BETWEEN_NODES
@@ -103,9 +103,9 @@ const Overview = ({ className }: Props) => {
           data: {
             address: multisig.address,
             handle: 'both',
-            badge: AccountBadge.MULTI,
+            badge: AccountBadge.MULTI
           },
-          position: { x: VERTICAL_GAP_BETWEEN_NODES, y: yMultiPosition },
+          position: { x: VERTICAL_GAP_BETWEEN_NODES, y: yMultiPosition }
         })
       )
       yMultiPosition += HORIZONTAL_GAP_BETWEEN_NODES
@@ -118,9 +118,9 @@ const Overview = ({ className }: Props) => {
           data: {
             address: selectedMultiProxy.proxy,
             handle: 'left',
-            badge: AccountBadge.PURE,
+            badge: AccountBadge.PURE
           },
-          position: { x: VERTICAL_GAP_BETWEEN_NODES * 2, y: 0 },
+          position: { x: VERTICAL_GAP_BETWEEN_NODES * 2, y: 0 }
         })
       )
     }
@@ -134,7 +134,7 @@ const Overview = ({ className }: Props) => {
           target: multiAddress,
           sourceHandle: 'right',
           targetHandle: 'left',
-          ...defaultEdgeOptions,
+          ...defaultEdgeOptions
         })
       })
 
@@ -146,7 +146,7 @@ const Overview = ({ className }: Props) => {
           sourceHandle: 'right',
           targetHandle: 'left',
           label: `controls-${type}`,
-          ...defaultEdgeOptions,
+          ...defaultEdgeOptions
         })
       }
     })

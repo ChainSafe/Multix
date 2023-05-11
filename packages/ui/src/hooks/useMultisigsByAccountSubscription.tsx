@@ -34,7 +34,7 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
         },
         complete: () => {
           return observer.complete()
-        },
+        }
       })
     )
   }
@@ -47,8 +47,8 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
       }>(client, {
         query: MultisigsByAccountsDocument,
         variables: {
-          accounts,
-        },
+          accounts
+        }
       })
     },
     {
@@ -57,7 +57,7 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
       },
       onError(error) {
         console.error('KeyMultisigsByAccount subscription error', error)
-      },
+      }
       // options
     }
   )

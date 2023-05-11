@@ -5,7 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid,
+  Grid
 } from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -45,7 +45,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { addToast } = useToasts()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
-    onError: onClose,
+    onError: onClose
   })
   const { selectedAccount, selectedSigner, addressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -69,7 +69,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
   const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({
     min: proxyAdditionNeededFunds,
-    address: selectedMultiProxy?.proxy,
+    address: selectedMultiProxy?.proxy
   })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [callError, setCallError] = useState('')
@@ -120,7 +120,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     oldThreshold,
     selectedAccount,
     selectedMultiProxy?.proxy,
-    selectedMultisig,
+    selectedMultisig
   ])
 
   const secondCall = useMemo(() => {
@@ -163,18 +163,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     newThreshold,
     selectedAccount,
     selectedMultiProxy,
-    selectedMultisig,
+    selectedMultisig
   ])
 
   const { multisigProposalNeededFunds: firstCallNeededFunds } = useMultisigProposalNeededFunds({
     call: firstCall,
     signatories: selectedMultisig?.signatories,
-    threshold: oldThreshold,
+    threshold: oldThreshold
   })
   const { multisigProposalNeededFunds: secondCallNeededFunds } = useMultisigProposalNeededFunds({
     call: secondCall,
     signatories: newSignatories,
-    threshold: newThreshold,
+    threshold: newThreshold
   })
   const neededBalance = useMemo(
     () => firstCallNeededFunds.add(secondCallNeededFunds),
@@ -182,7 +182,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
-    address: selectedAccount?.address,
+    address: selectedAccount?.address
   })
 
   useEffect(() => {
@@ -259,7 +259,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         addToast({
           title: error.message,
           type: 'error',
-          link: getSubscanExtrinsicLink(secondCall.hash.toHex()),
+          link: getSubscanExtrinsicLink(secondCall.hash.toHex())
         })
         onErrorCallback(error.message)
       })
@@ -273,12 +273,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     signCallBack2,
     addToast,
     getSubscanExtrinsicLink,
-    onErrorCallback,
+    onErrorCallback
   ])
 
   const signCallBack1 = useSigningCallback({
     onSuccess: onMakeSecondCall,
-    onError: onErrorCallback,
+    onError: onErrorCallback
   })
 
   // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
@@ -305,7 +305,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         addToast({
           title: error.message,
           type: 'error',
-          link: getSubscanExtrinsicLink(firstCall.hash.toHex()),
+          link: getSubscanExtrinsicLink(firstCall.hash.toHex())
         })
         onErrorCallback(error.message)
       })
@@ -318,7 +318,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     signCallBack1,
     addToast,
     getSubscanExtrinsicLink,
-    onErrorCallback,
+    onErrorCallback
   ])
 
   const onClickNext = useCallback(() => {

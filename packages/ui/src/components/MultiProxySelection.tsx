@@ -25,7 +25,7 @@ const MultiProxySelection = ({ className }: Props) => {
   const filterOptions = createFilterOptions({
     ignoreCase: true,
     stringify: (option: typeof selectedMultiProxy) =>
-      `${option?.proxy}${option?.multisigs[0].address}` || '',
+      `${option?.proxy}${option?.multisigs[0].address}` || ''
   })
 
   const getOptionLabel = useCallback(
@@ -75,7 +75,7 @@ const MultiProxySelection = ({ className }: Props) => {
               mr: '.5rem',
               pt: '.8rem !important',
               pl: '2rem !important',
-              flexShrink: 0,
+              flexShrink: 0
             }}
             {...props}
             key={displayAddress}
@@ -101,7 +101,7 @@ const MultiProxySelection = ({ className }: Props) => {
                   badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
                 />
               </InputAdornment>
-            ),
+            )
           }}
           onKeyDown={handleSpecialKeys}
         />

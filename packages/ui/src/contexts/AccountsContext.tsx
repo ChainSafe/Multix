@@ -50,8 +50,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       return {
         address,
         meta: {
-          source: META_SOURCE_WATCH,
-        },
+          source: META_SOURCE_WATCH
+        }
       } as InjectedAccountWithMeta
     })
 
@@ -122,7 +122,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     getaccountList,
     isAccountLoading,
     isAllowedToConnectToExtension,
-    timeoutElapsed,
+    timeoutElapsed
   ])
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
-        isAllowedToConnectToExtension,
+        isAllowedToConnectToExtension
       }}
     >
       {children}

@@ -9,12 +9,12 @@ export const fetchData = <TData, TVariables>(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(options ?? {}),
+        ...(options ?? {})
       },
       body: JSON.stringify({
         query,
-        variables,
-      }),
+        variables
+      })
     })
 
     const json = await res.json()

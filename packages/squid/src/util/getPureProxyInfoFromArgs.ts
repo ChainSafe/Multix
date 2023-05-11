@@ -20,6 +20,6 @@ export const getPureProxyInfoFromArgs = (
     who: _who,
     pure: _pure,
     delay,
-    type: _type,
+    type: _type
   }
 }

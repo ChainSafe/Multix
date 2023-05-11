@@ -12,12 +12,12 @@ import type {
   BabeEquivocationProof,
   BabeGenesisConfiguration,
   Epoch,
-  OpaqueKeyOwnershipProof,
+  OpaqueKeyOwnershipProof
 } from '@polkadot/types/interfaces/babe'
 import type {
   BeefyAuthoritySet,
   BeefyNextAuthoritySet,
-  ValidatorSet,
+  ValidatorSet
 } from '@polkadot/types/interfaces/beefy'
 import type { CheckInherentsResult, InherentData } from '@polkadot/types/interfaces/blockbuilder'
 import type { BlockHash } from '@polkadot/types/interfaces/chain'
@@ -26,7 +26,7 @@ import type { Extrinsic } from '@polkadot/types/interfaces/extrinsics'
 import type {
   AuthorityList,
   GrandpaEquivocationProof,
-  SetId,
+  SetId
 } from '@polkadot/types/interfaces/grandpa'
 import type { OpaqueMetadata } from '@polkadot/types/interfaces/metadata'
 import type {
@@ -34,7 +34,7 @@ import type {
   MmrEncodableOpaqueLeaf,
   MmrError,
   MmrLeafIndex,
-  MmrProof,
+  MmrProof
 } from '@polkadot/types/interfaces/mmr'
 import type {
   CandidateCommitments,
@@ -55,7 +55,7 @@ import type {
   SessionInfo,
   ValidationCode,
   ValidationCodeHash,
-  ValidatorSignature,
+  ValidatorSignature
 } from '@polkadot/types/interfaces/parachains'
 import type { FeeDetails, RuntimeDispatchInfo } from '@polkadot/types/interfaces/payment'
 import type {
@@ -66,7 +66,7 @@ import type {
   Index,
   KeyTypeId,
   Slot,
-  ValidatorId,
+  ValidatorId
 } from '@polkadot/types/interfaces/runtime'
 import type { SessionIndex } from '@polkadot/types/interfaces/session'
 import type { RuntimeVersion } from '@polkadot/types/interfaces/state'

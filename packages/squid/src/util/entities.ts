@@ -16,7 +16,7 @@ export async function getOrCreateAccounts(ctx: Ctx, ids: string[]): Promise<Acco
     const account = new Account({
       id,
       isMultisig: false,
-      isPureProxy: false,
+      isPureProxy: false
     })
     newAccounts.add(account)
   }

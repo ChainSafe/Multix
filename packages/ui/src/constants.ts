@@ -20,22 +20,22 @@ export const networkList = {
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
-    logo: chainsKusamaSVG,
+    logo: chainsKusamaSVG
   } as NetworkInfo,
   rococo: {
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
-    logo: chainsRococoSVG,
+    logo: chainsRococoSVG
   } as NetworkInfo,
   local: {
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
     rpcUrl: import.meta.env.VITE_WS_PROVIDER,
     wsGraphqlUrl: import.meta.env.VITE_GRAPHQL_WS_PROVIDER,
     httpGraphqlUrl: import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER,
-    logo: localSVG,
-  },
+    logo: localSVG
+  }
 }
 
 export type SupportedNetworks = keyof typeof networkList

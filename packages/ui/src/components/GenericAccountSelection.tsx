@@ -44,7 +44,7 @@ const GenericAccountSelection = ({
   value,
   onChange,
   label = '',
-  allowAnyAddressInput = false,
+  allowAnyAddressInput = false
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -67,8 +67,7 @@ const GenericAccountSelection = ({
     () =>
       createFilterOptions({
         ignoreCase: true,
-        stringify: (option: (typeof accountList)[0]) =>
-          `${option.address}${getOptionLabel(option)}`,
+        stringify: (option: (typeof accountList)[0]) => `${option.address}${getOptionLabel(option)}`
       }),
     [getOptionLabel]
   )
@@ -83,7 +82,7 @@ const GenericAccountSelection = ({
       const isExisting = filtered.length !== 0
       if (inputValue !== '' && !isExisting) {
         filtered.push({
-          address: inputValue,
+          address: inputValue
         })
       }
 
@@ -101,7 +100,7 @@ const GenericAccountSelection = ({
     (_: React.SyntheticEvent<Element, Event>, val: AccountBaseInfo | string) => {
       if (typeof val === 'string') {
         onChange({
-          address: val,
+          address: val
         })
       } else {
         onChange(val)
@@ -164,7 +163,7 @@ const GenericAccountSelection = ({
                   badge={valueBadge}
                 />
               </InputAdornment>
-            ),
+            )
           }}
           onBlur={onInputBlur}
           onKeyDown={handleSpecialKeys}

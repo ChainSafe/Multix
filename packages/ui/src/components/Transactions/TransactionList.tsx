@@ -35,13 +35,13 @@ const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
         result.push({
           name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
           hash: c.args.call?.hash,
-          callData: c.args.callData as AggregatedData['callData'],
+          callData: c.args.callData as AggregatedData['callData']
         })
       } else {
         result.push({
           name: 'Unknown call',
           hash: (c.args?.call_hash as Uint8Array).toString() || undefined,
-          callData: undefined,
+          callData: undefined
         })
       }
       // this is not a multisig call
@@ -104,7 +104,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
       name,
       args: call && call.toHuman().args,
       info: pendingTx.info,
-      from: pendingTx.from,
+      from: pendingTx.from
     } as AggregatedData
   })
 
@@ -114,7 +114,7 @@ const TransactionList = ({ className }: Props) => {
   const {
     data: pendingTxData,
     isLoading: isLoadingPendingTxs,
-    refresh,
+    refresh
   } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
   const { addressList } = useAccounts()

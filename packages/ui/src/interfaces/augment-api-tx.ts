@@ -9,7 +9,7 @@ import type {
   ApiTypes,
   AugmentedSubmittable,
   SubmittableExtrinsic,
-  SubmittableExtrinsicFunction,
+  SubmittableExtrinsicFunction
 } from '@polkadot/api-base/types'
 import type { Data } from '@polkadot/types'
 import type {
@@ -23,7 +23,7 @@ import type {
   u16,
   u32,
   u64,
-  u8,
+  u8
 } from '@polkadot/types-codec'
 import type { AnyNumber, IMethod, ITuple } from '@polkadot/types-codec/types'
 import type { EthereumAddress } from '@polkadot/types/interfaces/eth'
@@ -33,11 +33,11 @@ import type {
   H256,
   MultiAddress,
   Perbill,
-  Perquintill,
+  Perquintill
 } from '@polkadot/types/interfaces/runtime'
 import type {
   SpFinalityGrandpaEquivocationProof,
-  SpRuntimeMultiSignature,
+  SpRuntimeMultiSignature
 } from '@polkadot/types/lookup'
 
 export type __AugmentedSubmittable = AugmentedSubmittable<() => unknown>

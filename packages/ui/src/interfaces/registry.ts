@@ -94,7 +94,7 @@ import type {
   UniswapV3LibrariesTick,
   UniswapV3U160,
   UniswapV3U192,
-  UniswapV3U256,
+  UniswapV3U256
 } from '@polkadot/types/lookup'
 
 declare module '@polkadot/types/types/registry' {

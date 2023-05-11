@@ -33,7 +33,7 @@ const Summary = ({
   isSwapSummary = false,
   balanceMin,
   isBalanceError,
-  selectedMultisig,
+  selectedMultisig
 }: Props) => {
   const { addressList } = useAccounts()
   const { chainInfo } = useApi()

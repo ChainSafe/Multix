@@ -38,7 +38,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
 
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedAccount) => `${option?.address}${option?.meta.name}` || '',
+    stringify: (option: typeof selectedAccount) => `${option?.address}${option?.meta.name}` || ''
   })
 
   const onChangeSigner = useCallback(
@@ -66,7 +66,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
             mr: '.5rem',
             pt: '.8rem !important',
             pl: '1.5rem !important',
-            flexShrink: 0,
+            flexShrink: 0
           }}
           {...props}
           key={option?.address}
@@ -88,7 +88,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
                   size={ICON_SIZE}
                 />
               </InputAdornment>
-            ),
+            )
           }}
         />
       )}

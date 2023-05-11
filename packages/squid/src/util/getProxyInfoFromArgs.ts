@@ -19,6 +19,6 @@ export const getProxyInfoFromArgs = (
     delegator: _delegator,
     delegatee: _delegatee,
     type: _type,
-    delay: _delay,
+    delay: _delay
   }
 }

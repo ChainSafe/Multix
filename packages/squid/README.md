@@ -174,12 +174,12 @@ Where `typegen.json` config file has the following structure:
   typesBundle: 'rococo', // see types bundle section below
   events: [
     // list of events to generate
-    'balances.Transfer',
+    'balances.Transfer'
   ],
   calls: [
     // list of calls to generate
-    'timestamp.set',
-  ],
+    'timestamp.set'
+  ]
 }
 ```
 
@@ -208,26 +208,26 @@ Type definitions (`typesBundle`) can be given to squid tools in two forms:
 ```json5
 {
   types: {
-    AccountId: '[u8; 32]',
+    AccountId: '[u8; 32]'
   },
   typesAlias: {
     assets: {
-      Balance: 'u64',
-    },
+      Balance: 'u64'
+    }
   },
   versions: [
     {
       minmax: [0, 1000], // block range with inclusive boundaries
       types: {
-        AccountId: '[u8; 16]',
+        AccountId: '[u8; 16]'
       },
       typesAlias: {
         assets: {
-          Balance: 'u32',
-        },
-      },
-    },
-  ],
+          Balance: 'u32'
+        }
+      }
+    }
+  ]
 }
 ```
 

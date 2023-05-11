@@ -3,7 +3,7 @@ import { Client, createClient, SubscribePayload } from 'graphql-ws'
 import { Observable } from 'rxjs'
 import {
   MultisigCallsByMultisigIdDocument,
-  MultisigCallsByMultisigIdSubscription,
+  MultisigCallsByMultisigIdSubscription
 } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
@@ -33,7 +33,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
         error: (err) => observer.error(err),
         complete: () => {
           observer.complete()
-        },
+        }
       })
     )
   }
@@ -46,13 +46,13 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
       }>(client, {
         query: MultisigCallsByMultisigIdDocument,
         variables: {
-          multisigs,
-        },
+          multisigs
+        }
       }),
     {
       onData: () => {
         onUpdate()
-      },
+      }
       // options
     }
   )

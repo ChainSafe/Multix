@@ -2,7 +2,7 @@ import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registr
 import {
   BatchContext,
   BatchProcessorItem,
-  SubstrateBatchProcessor,
+  SubstrateBatchProcessor
 } from '@subsquid/substrate-processor'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
@@ -12,7 +12,7 @@ import {
   getMultisigCallId,
   getOriginAccountId,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs,
+  getProxyInfoFromArgs
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -23,43 +23,43 @@ import {
   MultisigCallInfo,
   NewMultisigsInfo,
   NewProxy,
-  NewPureProxy,
+  NewPureProxy
 } from './processorHandlers'
 import { Env } from './util/Env'
 
 export const dataEvent = {
   data: {
     event: {
-      args: true,
-    },
-  },
+      args: true
+    }
+  }
 } as const
 
 export const dataCall = {
   data: {
     call: {
       args: true,
-      origin: true,
-    },
-  },
+      origin: true
+    }
+  }
 } as const
 
 const supportedMultisigCalls = [
   'Multisig.as_multi',
   'Multisig.approve_as_multi',
   'Multisig.cancel_as_multi',
-  'Multisig.as_multi_threshold_1',
+  'Multisig.as_multi_threshold_1'
 ]
 export const env = new Env().getEnv()
 const processor = new SubstrateBatchProcessor()
   .setDataSource({
     archive: lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-      release: 'FireSquid',
+      release: 'FireSquid'
     }),
-    chain: env.rpcWs,
+    chain: env.rpcWs
   })
   .setBlockRange({
-    from: Number(env.blockstart),
+    from: Number(env.blockstart)
   })
   // .addCall('Proxy.add_proxy', dataCall)
   // .addCall('Proxy.remove_proxy', dataCall)
@@ -104,7 +104,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
           threshold,
           newSignatories: signatories,
           isMultisig: true,
-          isPureProxy: false,
+          isPureProxy: false
         } as NewMultisigsInfo
 
         newMultisigsInfo.push(newMulti)
@@ -121,7 +121,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
           multisigAddress: newMulti.id,
-          timestamp,
+          timestamp
         })
       }
 
@@ -132,7 +132,7 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
         newPureProxies.set(newPureProxy.id, {
           ...newPureProxy,
-          createdAt: timestamp,
+          createdAt: timestamp
         })
       }
 

@@ -23,7 +23,7 @@ const Transaction = ({
   aggregatedData,
   isProposer,
   possibleSigners,
-  onSuccess,
+  onSuccess
 }: Props) => {
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])

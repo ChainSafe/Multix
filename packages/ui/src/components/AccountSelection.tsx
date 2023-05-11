@@ -7,7 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
-  SyntheticEvent,
+  SyntheticEvent
 } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../contexts/AccountsContext'
@@ -33,7 +33,7 @@ interface Props {
 
 const filterOptions = createFilterOptions({
   ignoreCase: true,
-  stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name,
+  stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name
 })
 
 const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
@@ -50,7 +50,7 @@ const AccountSelection = ({
   inputLabel = 'Account',
   currentSignatories = [],
   withName = false,
-  withAddButton = false,
+  withAddButton = false
 }: Props) => {
   const { accountList = [], getAccountByAddress } = useAccounts()
   const [selected, setSelected] = useState(value)
@@ -133,7 +133,7 @@ const AccountSelection = ({
           <Box
             component="li"
             sx={{
-              '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 },
+              '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 }
             }}
             {...props}
             key={option.address}
@@ -164,7 +164,7 @@ const AccountSelection = ({
                     size={ICON_SIZE}
                   />
                 </InputAdornment>
-              ) : null,
+              ) : null
             }}
             onKeyDown={handleSpecialKeys}
           />

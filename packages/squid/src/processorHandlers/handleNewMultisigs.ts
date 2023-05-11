@@ -17,7 +17,7 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
       id,
       threshold,
       isMultisig,
-      isPureProxy,
+      isPureProxy
     })
 
     newMultisigs.set(id, newMultisig)
@@ -28,7 +28,7 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
       const newAccountMultisig = new AccountMultisig({
         id: newAccountMultisigId,
         multisig: newMultisig,
-        signatory: account,
+        signatory: account
       })
       newAccountMultisigs.set(newAccountMultisigId, newAccountMultisig)
     })

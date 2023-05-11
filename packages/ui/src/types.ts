@@ -7,5 +7,5 @@ export interface MultisigStorageInfo {
 
 export enum AccountBadge {
   PURE = 'pure',
-  MULTI = 'multi',
+  MULTI = 'multi'
 }

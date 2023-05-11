@@ -17,7 +17,7 @@ function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
       open={open}
       onClose={handleDrawerClose}
       ModalProps={{
-        keepMounted: true,
+        keepMounted: true
       }}
     >
       <DrawerMenu handleDrawerClose={handleDrawerClose} />

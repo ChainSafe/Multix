@@ -23,7 +23,7 @@ const AccountDisplay = ({
   address,
   badge,
   withName = true,
-  withBalance = false,
+  withBalance = false
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { balanceFormatted } = useGetBalance({ address })

@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  TextField,
+  TextField
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -44,7 +44,7 @@ const ProposalSigning = ({
   className,
   possibleSigners,
   proposalData,
-  onSuccess,
+  onSuccess
 }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, isApiReady } = useApi()
@@ -130,7 +130,7 @@ const ProposalSigning = ({
           call,
           weight,
           method: call.method,
-          section: call.section,
+          section: call.section
         })
       })
   }, [addedCallData, api, isApiReady, isProposerSelected, proposalData, selectedAccount])
@@ -253,7 +253,7 @@ const ProposalSigning = ({
           addToast({
             title: error.message,
             type: 'error',
-            link: getSubscanExtrinsicLink(tx.hash.toHex()),
+            link: getSubscanExtrinsicLink(tx.hash.toHex())
           })
         }
       )
@@ -271,7 +271,7 @@ const ProposalSigning = ({
       signCallback,
       addedCallData,
       addToast,
-      getSubscanExtrinsicLink,
+      getSubscanExtrinsicLink
     ]
   )
 

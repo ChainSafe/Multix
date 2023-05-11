@@ -26,7 +26,7 @@ export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProx
       new Account({
         id: pure,
         isMultisig: false,
-        isPureProxy: true,
+        isPureProxy: true
       })
   )
 
@@ -45,7 +45,7 @@ export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProx
         delegatee: whoAccounts.find(({ id }) => who === id),
         type,
         delay,
-        createdAt,
+        createdAt
       })
     )
   }

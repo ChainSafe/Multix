@@ -106,7 +106,7 @@ export enum AccountMultisigOrderByInput {
   SignatoryIsPureProxyAsc = 'signatory_isPureProxy_ASC',
   SignatoryIsPureProxyDesc = 'signatory_isPureProxy_DESC',
   SignatoryThresholdAsc = 'signatory_threshold_ASC',
-  SignatoryThresholdDesc = 'signatory_threshold_DESC',
+  SignatoryThresholdDesc = 'signatory_threshold_DESC'
 }
 
 export type AccountMultisigWhereInput = {
@@ -150,7 +150,7 @@ export enum AccountOrderByInput {
   IsPureProxyAsc = 'isPureProxy_ASC',
   IsPureProxyDesc = 'isPureProxy_DESC',
   ThresholdAsc = 'threshold_ASC',
-  ThresholdDesc = 'threshold_DESC',
+  ThresholdDesc = 'threshold_DESC'
 }
 
 export type AccountWhereInput = {
@@ -243,7 +243,7 @@ export enum MultisigCallOrderByInput {
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
   TimestampAsc = 'timestamp_ASC',
-  TimestampDesc = 'timestamp_DESC',
+  TimestampDesc = 'timestamp_DESC'
 }
 
 export type MultisigCallWhereInput = {
@@ -360,7 +360,7 @@ export enum ProxyAccountOrderByInput {
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   TypeAsc = 'type_ASC',
-  TypeDesc = 'type_DESC',
+  TypeDesc = 'type_DESC'
 }
 
 export type ProxyAccountWhereInput = {
@@ -428,7 +428,7 @@ export enum ProxyType {
   NominationPools = 'NominationPools',
   NonTransfer = 'NonTransfer',
   Staking = 'Staking',
-  SudoBalances = 'SudoBalances',
+  SudoBalances = 'SudoBalances'
 }
 
 export type Query = {

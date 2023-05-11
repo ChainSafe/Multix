@@ -43,7 +43,7 @@ const OptionsMenu = ({ className, options }: Props) => {
       <Menu
         id="long-menu"
         MenuListProps={{
-          'aria-labelledby': 'long-button',
+          'aria-labelledby': 'long-button'
         }}
         anchorEl={anchorEl}
         open={open}
@@ -51,8 +51,8 @@ const OptionsMenu = ({ className, options }: Props) => {
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
-          },
+            width: '20ch'
+          }
         }}
       >
         {options.map((option) => (

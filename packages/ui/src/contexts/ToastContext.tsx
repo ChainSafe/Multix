@@ -39,8 +39,8 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
       ...toasts.current,
       {
         id,
-        ...toastParams,
-      },
+        ...toastParams
+      }
     ]
     setToastQueue(toasts.current)
 
@@ -53,7 +53,7 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
         addToast,
         removeToast,
         removeAllToasts,
-        toasts: toastQueue,
+        toasts: toastQueue
       }}
     >
       {toastQueue.map((toast) => (

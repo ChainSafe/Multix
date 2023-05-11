@@ -21,7 +21,7 @@ export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: Multisi
         blockHash,
         callIndex,
         multisig: multisigs.get(multisigAddress),
-        timestamp,
+        timestamp
       })
     )
   }

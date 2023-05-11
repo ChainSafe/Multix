@@ -27,7 +27,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   const [amountError, setAmountError] = useState('')
   const { hasEnoughFreeBalance } = useCheckBalance({
     min: amount,
-    address: from,
+    address: from
   })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
 
@@ -63,7 +63,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     if (typeof account === 'string') {
       setToAddress(account)
       setSelected({
-        address: account,
+        address: account
       })
     } else {
       setToAddress(account.address)
@@ -129,7 +129,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
-          ),
+          )
         }}
       />
     </Box>

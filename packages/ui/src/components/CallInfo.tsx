@@ -55,7 +55,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
           const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
             withThousandDelimitor: true,
             tokenSymbol: unit,
-            numberAfterComma: 4,
+            numberAfterComma: 4
           })
           return (
             <li key={key}>
@@ -92,7 +92,7 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
   return {
     ...agg,
     name: newName,
-    args: newArgs,
+    args: newArgs
   }
 }
 

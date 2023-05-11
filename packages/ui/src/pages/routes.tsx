@@ -15,32 +15,32 @@ export const ROUTES: Route[] = [
     path: '/',
     element: <Home />,
     name: 'Home',
-    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoMultiProxy: true
   },
   {
     path: 'create',
     element: <Creation />,
     name: 'New Multisig',
-    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoMultiProxy: true
   },
   {
     path: 'about',
     element: <About />,
     name: 'About',
-    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoMultiProxy: true
   },
   {
     path: 'help',
     element: <Help />,
     name: 'Help',
-    isDisplayWhenNoMultiProxy: false,
-  },
+    isDisplayWhenNoMultiProxy: false
+  }
 ]
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    children: ROUTES,
-  },
+    children: ROUTES
+  }
 ])

@@ -57,7 +57,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     (name: string, address: string) => {
       setAccountNames({
         ...accountNames,
-        ...{ [address]: name.slice(0, MAX_NAME_LENGTH) },
+        ...{ [address]: name.slice(0, MAX_NAME_LENGTH) }
       })
     },
     [accountNames, setAccountNames]
@@ -68,7 +68,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
       const truncated = Object.entries(newAdditions).reduce(
         (acc, [address, name]) => ({
           ...acc,
-          [address]: name.slice(0, MAX_NAME_LENGTH),
+          [address]: name.slice(0, MAX_NAME_LENGTH)
         }),
         {}
       )
@@ -97,7 +97,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
         accountNames,
         addName,
         addNames,
-        getNamesWithExtension,
+        getNamesWithExtension
       }}
     >
       {children}

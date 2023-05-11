@@ -6,6 +6,6 @@ export const useGetSubscanLinks = () => {
 
   return {
     getSubscanExtrinsicLink: (txHash: string) =>
-      getSubscanExtrinsicLink(selectedNetworkInfo?.explorerNetworkName, txHash),
+      getSubscanExtrinsicLink(selectedNetworkInfo?.explorerNetworkName, txHash)
   }
 }

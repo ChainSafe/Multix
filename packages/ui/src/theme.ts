@@ -47,21 +47,21 @@ export const theme = createTheme({
     primary: {
       main: '#3F8AE0',
       white: 'white',
-      black: '#000000de',
-    },
+      black: '#000000de'
+    }
   },
   custom: {
     text: {
       addressColorLightGray: '#777575',
-      errorColor: 'firebrick',
+      errorColor: 'firebrick'
     },
     background: {
-      backgroundColorLightGray: '#ebebeb',
+      backgroundColorLightGray: '#ebebeb'
     },
     identity: {
       green: 'green',
       grey: 'grey',
-      red: 'firebrick',
-    },
-  },
+      red: 'firebrick'
+    }
+  }
 } as ThemeOptions)

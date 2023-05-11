@@ -24,7 +24,7 @@ import type {
   u16,
   u32,
   u64,
-  u8,
+  u8
 } from '@polkadot/types-codec'
 import type { ITuple } from '@polkadot/types-codec/types'
 import type {
@@ -33,7 +33,7 @@ import type {
   H256,
   MultiAddress,
   Perbill,
-  Weight,
+  Weight
 } from '@polkadot/types/interfaces/runtime'
 import type { Event } from '@polkadot/types/interfaces/system'
 

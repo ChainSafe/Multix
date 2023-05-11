@@ -28,7 +28,7 @@ interface FormState {
 const initFormState = {
   palletRpc: '',
   callable: '',
-  inputParams: [] as any[],
+  inputParams: [] as any[]
 } as FormState
 
 const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
@@ -56,7 +56,7 @@ const transformParams = (
 
   const params = paramFields.map((field, ind) => ({
     ...field,
-    value: paramVal[ind] || null,
+    value: paramVal[ind] || null
   }))
 
   return params.reduce((previousValue, { type = 'string', value }) => {
@@ -163,7 +163,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
       paramFields = metaArgs.map((arg) => ({
         name: arg.name.toString(),
         type: arg.type.toString(),
-        optional: argIsOptional(arg),
+        optional: argIsOptional(arg)
       }))
     }
 
@@ -187,7 +187,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
             ...formState,
             [state]: value,
             callable: '',
-            inputParams: [],
+            inputParams: []
           }
         } else if (state === 'callable') {
           return { ...formState, [state]: value, inputParams: [] }
@@ -244,7 +244,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     onSetErrorMessage,
     onSetExtrinsic,
     palletRpc,
-    transformedParams,
+    transformedParams
   ])
 
   return (

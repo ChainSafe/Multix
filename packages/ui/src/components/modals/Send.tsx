@@ -6,7 +6,7 @@ import {
   Grid,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  SelectChangeEvent
 } from '@mui/material'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -48,8 +48,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       address: selectedMultiProxy?.proxy,
       meta: {
         isProxy: true,
-        isMulti: false,
-      },
+        isMulti: false
+      }
     } as AccountBaseInfo
 
     return [proxyBaseInfo, ...getMultisigAsAccountBaseInfo()].filter(
@@ -116,17 +116,17 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     selectedAccount,
     selectedMultisig,
     selectedOrigin,
-    threshold,
+    threshold
   ])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
     threshold,
     signatories: selectedMultisig?.signatories,
-    call: multisigTx,
+    call: multisigTx
   })
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: multisigProposalNeededFunds,
-    address: selectedAccount?.address,
+    address: selectedAccount?.address
   })
 
   useEffect(() => {
@@ -168,7 +168,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
         />
-      ),
+      )
     }
   }, [selectedOrigin])
 
@@ -176,7 +176,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const signCallback = useSigningCallback({
     onSuccess,
     onSubmitting,
-    onFinalized,
+    onFinalized
   })
 
   const handleMultisigSelection = useCallback(
@@ -229,7 +229,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         addToast({
           title: error.message,
           type: 'error',
-          link: getSubscanExtrinsicLink(multisigTx.hash.toHex()),
+          link: getSubscanExtrinsicLink(multisigTx.hash.toHex())
         })
       })
   }, [
@@ -243,7 +243,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     selectedSigner,
     signCallback,
     addToast,
-    getSubscanExtrinsicLink,
+    getSubscanExtrinsicLink
   ])
 
   const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {

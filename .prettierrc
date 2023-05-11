@@ -4,5 +4,6 @@
   "singleQuote": true,
   "arrowParens": "always",
   "singleAttributePerLine": true,
-  "printWidth": 100
+  "printWidth": 100,
+  "trailingComma": "none"
 }

@@ -7,18 +7,18 @@ export default defineConfig({
   // This changes the out put dir from dist to build
   // comment this out if that isn't relevant for your project
   build: {
-    outDir: 'build',
+    outDir: 'build'
   },
   plugins: [
     react(),
     svgrPlugin({
       svgrOptions: {
-        icon: true,
+        icon: true
         // ...svgr options (https://react-svgr.com/docs/options/)
-      },
-    }),
+      }
+    })
   ],
   resolve: {
-    preserveSymlinks: true, // this is the fix!
-  },
+    preserveSymlinks: true // this is the fix!
+  }
 })

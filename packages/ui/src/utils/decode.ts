@@ -112,9 +112,9 @@ export function parseGenericCall(genericCall: GenericCall, registry: Registry): 
   return {
     method: {
       pallet: genericCall.section,
-      method: genericCall.method,
+      method: genericCall.method
     },
     args: newArgs,
-    hash: genericCall.hash.toHex(),
+    hash: genericCall.hash.toHex()
   }
 }

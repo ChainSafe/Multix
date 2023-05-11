@@ -42,7 +42,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
             newData.push({
               hash,
               info,
-              from: multiProxy.multisigs[index].address,
+              from: multiProxy.multisigs[index].address
             })
           })
         })

@@ -17,7 +17,7 @@ import type {
   bool,
   u128,
   u32,
-  u64,
+  u64
 } from '@polkadot/types-codec'
 import type { AnyNumber, ITuple } from '@polkadot/types-codec/types'
 import type { EthereumAddress } from '@polkadot/types/interfaces/eth'
@@ -35,7 +35,7 @@ import type {
   PalletGrandpaStoredPendingChange,
   PalletGrandpaStoredState,
   PalletTransactionPaymentReleases,
-  SpRuntimeDigest,
+  SpRuntimeDigest
 } from '@polkadot/types/lookup'
 import type { Observable } from '@polkadot/types/types'
 

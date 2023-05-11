@@ -18,7 +18,7 @@ import type {
   u16,
   u32,
   u64,
-  u8,
+  u8
 } from '@polkadot/types-codec'
 import type { ITuple } from '@polkadot/types-codec/types'
 import type { EthereumAddress } from '@polkadot/types/interfaces/eth'
@@ -27,7 +27,7 @@ import type {
   FrameSupportDispatchDispatchInfo,
   FrameSupportTokensMiscBalanceStatus,
   SpFinalityGrandpaAppPublic,
-  SpRuntimeDispatchError,
+  SpRuntimeDispatchError
 } from '@polkadot/types/lookup'
 
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>

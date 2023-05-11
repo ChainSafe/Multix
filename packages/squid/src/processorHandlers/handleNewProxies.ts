@@ -35,7 +35,7 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
         delegatee: accountMap.get(delegatee),
         type,
         delay,
-        createdAt,
+        createdAt
       })
     )
   }

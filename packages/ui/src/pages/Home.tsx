@@ -24,7 +24,7 @@ interface Props {
 
 const Home = ({ className }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams({
-    creationInProgress: 'false',
+    creationInProgress: 'false'
   })
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const {
@@ -32,7 +32,7 @@ const Home = ({ className }: Props) => {
     multiProxyList,
     selectedMultiProxy,
     selectedHasProxy,
-    error: multisigQueryError,
+    error: multisigQueryError
   } = useMultiProxy()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -65,8 +65,8 @@ const Home = ({ className }: Props) => {
       {
         text: 'Edit names',
         icon: <EditIcon />,
-        onClick: () => setIsEditModalOpen(true),
-      },
+        onClick: () => setIsEditModalOpen(true)
+      }
     ]
 
     // allow rotation only for the multisigs with a proxy
@@ -74,7 +74,7 @@ const Home = ({ className }: Props) => {
       opts.push({
         text: 'Change multisig',
         icon: <LockResetIcon />,
-        onClick: () => setIsChangeMultiModalOpen(true),
+        onClick: () => setIsChangeMultiModalOpen(true)
       })
 
     return opts

@@ -59,7 +59,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
         helperText={error}
         label="Threshold"
         InputProps={{
-          endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>,
+          endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
         }}
         value={threshold || ''}
         onChange={handleChange}
