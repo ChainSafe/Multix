@@ -4,11 +4,11 @@
     "es2021": true
   },
   "extends": [
-    "prettier",
-    "plugin:react-hooks/recommended",
     "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:react-hooks/recommended",
     "react-app",
-    "plugin:@typescript-eslint/eslint-recommended"
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -20,34 +20,32 @@
     "tsconfigRootDir": "./",
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react", "ternary", "prettier"],
   "rules": {
-    "indent": [
+    "react/jsx-max-props-per-line": [
       "error",
-      2
+      {
+        "maximum": {
+          "single": 1,
+          "multi": 1
+        }
+      }
     ],
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-    "react/jsx-tag-spacing": "error"
+    "trailingComma": "off",
+    "ternary/nesting": "off",
+    "ternary/no-dupe": "error",
+    "ternary/no-unreachable": "off",
+    "object-curly-spacing": ["error", "always"],
+    "react/jsx-tag-spacing": "error",
+    "prettier/prettier": "error"
   },
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*tsx", "*.js", "*.jsx"],
       "processor": "@graphql-eslint/graphql"
     },
     {
-      "files": [
-        "*.graphql"
-      ],
+      "files": ["*.graphql"],
       "extends": "plugin:@graphql-eslint/schema-recommended",
       "rules": {
         "@graphql-eslint/known-type-names": "error"
@@ -57,9 +55,5 @@
       }
     }
   ],
-  "ignorePatterns": [
-    "src/interfaces/**/*",
-    "types-and-hooks.tsx",
-    "src/gql/**/*"
-  ]
+  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "src/gql/**/*"]
 }

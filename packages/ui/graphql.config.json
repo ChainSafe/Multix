@@ -8,11 +8,7 @@
       "plugins": []
     },
     "types-and-hooks.tsx": {
-      "plugins": [
-        "typescript",
-        "typescript-operations",
-        "typescript-react-query"
-      ],
+      "plugins": ["typescript", "typescript-operations", "typescript-react-query"],
       "config": {
         "fetcher": "./src/fetcher#fetchData"
       }

@@ -1,5 +1,5 @@
-import { decodeHex } from "@subsquid/substrate-processor"
-import { encodeId } from "./accountEncoding"
+import { decodeHex } from '@subsquid/substrate-processor'
+import { encodeId } from './accountEncoding'
 
 export function getOriginAccountId(origin: any): string {
   if (origin && origin.__kind === 'system' && origin.value.__kind === 'Signed') {

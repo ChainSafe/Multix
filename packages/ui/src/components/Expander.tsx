@@ -1,17 +1,17 @@
-import { Box, Collapse } from "@mui/material";
-import { ReactNode, useState } from "react";
-import { styled }  from "@mui/material/styles";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { Box, Collapse } from '@mui/material'
+import { ReactNode, useState } from 'react'
+import { styled } from '@mui/material/styles'
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 
 interface Props {
-  className?: string;
+  className?: string
   title: ReactNode
   content: ReactNode
   expanded?: boolean
 }
 
 const Expander = ({ className = '', title, content, expanded = false }: Props) => {
-  const [open, setOpen] = useState(expanded);
+  const [open, setOpen] = useState(expanded)
 
   return (
     <Box className={className}>
@@ -19,17 +19,16 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
         onClick={() => setOpen(!open)}
         className="titleWrapper"
       >
-        <KeyboardArrowRightIcon className={`${open ? "rotated" : ""} expanderIcon`} />
+        <KeyboardArrowRightIcon className={`${open ? 'rotated' : ''} expanderIcon`} />
         {title}
       </div>
-      <Collapse in={open}>
-        {content}
-      </Collapse>
-    </Box >
-  );
+      <Collapse in={open}>{content}</Collapse>
+    </Box>
+  )
 }
 
-export default styled(Expander)(({ theme }) => `
+export default styled(Expander)(
+  ({ theme }) => `
 display: flex;
 flex-direction: column;
 min-width: 0;
@@ -45,4 +44,5 @@ min-width: 0;
       transform: rotate(90deg)
     }
   }
-`)
+`
+)

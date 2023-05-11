@@ -1,32 +1,29 @@
 name: Lint squid
 on:
   pull_request:
-    paths: [
-      'packages/squid/**/*',
-      '.github/workflows/lint-squid.yaml'
-    ]
+    paths: ['packages/squid/**/*', '.github/workflows/lint-squid.yaml']
 jobs:
   extract:
     name: eslint
     runs-on: ubuntu-latest
     defaults:
-       run:
-         working-directory: ./packages/squid/
+      run:
+        working-directory: ./packages/squid/
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: set user
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
-    # use node module caching
-    - uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: set user
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+      # use node module caching
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: install packages
-      run: corepack enable && yarn workspaces focus multix-squid && yarn squid:lint
+      - name: install packages
+      - run: corepack enable && yarn install --immutable
 
-    - name: lint
-      run: yarn lint
+      - name: lint
+        run: yarn workspaces focus multix-squid && yarn squid:lint

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useApi } from "../contexts/ApiContext"
-import BN from "bn.js"
+import { useEffect, useState } from 'react'
+import { useApi } from '../contexts/ApiContext'
+import BN from 'bn.js'
 
 export const usePureProxyCreationNeededFunds = () => {
   const { isApiReady, api, chainInfo } = useApi()
@@ -12,10 +12,9 @@ export const usePureProxyCreationNeededFunds = () => {
     if (!chainInfo?.tokenDecimals) return
 
     const reserved = (api.consts.proxy.proxyDepositFactor as unknown as BN)
-    // we only create one proxy here
+      // we only create one proxy here
       .muln(1)
       .iadd(api.consts.proxy.proxyDepositBase as unknown as BN)
-
 
     // the signer should survive and have at lease the existential deposit
     // play safe and add the existential deposit twice which should suffice

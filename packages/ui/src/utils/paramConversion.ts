@@ -11,8 +11,8 @@ const paramConversion = {
     'i16',
     'i32',
     'i64',
-    'i128',
-  ],
+    'i128'
+  ]
 }
 
 export default paramConversion

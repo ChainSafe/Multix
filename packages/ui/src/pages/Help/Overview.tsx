@@ -1,45 +1,60 @@
-import { Box } from "@mui/material"
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { styled } from "@mui/material/styles"
-import { useMultiProxy } from "../../contexts/MultiProxyContext";
-import { AccountBadge } from "../../types";
-import CustomNode, { NodeData } from "./CustomNode";
-import ReactFlow, { addEdge, FitViewOptions, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions, Background, Controls, OnConnect, OnEdgesChange, OnNodesChange, MarkerType, NodeTypes } from 'reactflow';
+import { Box } from '@mui/material'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { styled } from '@mui/material/styles'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { AccountBadge } from '../../types'
+import CustomNode, { NodeData } from './CustomNode'
+import ReactFlow, {
+  addEdge,
+  FitViewOptions,
+  applyNodeChanges,
+  applyEdgeChanges,
+  Node,
+  Edge,
+  DefaultEdgeOptions,
+  Background,
+  Controls,
+  OnConnect,
+  OnEdgesChange,
+  OnNodesChange,
+  MarkerType,
+  NodeTypes
+} from 'reactflow'
 
 interface Props {
   className?: string
 }
 
 const nodeTypes: NodeTypes = {
-  custom: CustomNode,
-};
+  custom: CustomNode
+}
 
 const fitViewOptions: FitViewOptions = {
-  padding: 0.1,
-};
+  padding: 0.1
+}
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   animated: true,
   markerEnd: {
     type: MarkerType.Arrow,
     width: 20,
-    height: 20,
-  },
-};
+    height: 20
+  }
+}
 
 interface NodeParams {
-  id: string;
-  data: NodeData;
-  position: { x: number, y: number }
+  id: string
+  data: NodeData
+  position: { x: number; y: number }
 }
 
 const nodeFactory = ({ id, position, data }: NodeParams) => {
-  return ({
+  return {
     id,
-    type: "custom",
+    type: 'custom',
     data,
     position: { x: position.x, y: position.y }
-  })
+  }
 }
 
 const HORIZONTAL_GAP_BETWEEN_NODES = 70
@@ -47,8 +62,8 @@ const VERTICAL_GAP_BETWEEN_NODES = 300
 
 const Overview = ({ className }: Props) => {
   const { selectedMultiProxy } = useMultiProxy()
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes] = useState<Node[]>([])
+  const [edges, setEdges] = useState<Edge[]>([])
   const uniqueSignatoriesSet = useMemo(() => {
     const res = new Set<string>()
     selectedMultiProxy?.multisigs.forEach((multisig) => {
@@ -66,34 +81,48 @@ const Overview = ({ className }: Props) => {
     const resNodes: Node[] = []
     const resEdges: Edge[] = []
 
-    let ySigPosition = 0;
+    let ySigPosition = 0
     // create nodes
     for (const sig of uniqueSignatoriesSet.values()) {
-      resNodes.push(nodeFactory({
-        id: sig,
-        data: { address: sig, handle: "right" },
-        position: { x: 0, y: ySigPosition }
-      }))
+      resNodes.push(
+        nodeFactory({
+          id: sig,
+          data: { address: sig, handle: 'right' },
+          position: { x: 0, y: ySigPosition }
+        })
+      )
       ySigPosition += HORIZONTAL_GAP_BETWEEN_NODES
     }
 
-    let yMultiPosition = 0;
+    let yMultiPosition = 0
 
     for (const multisig of selectedMultiProxy.multisigs) {
-      resNodes.push(nodeFactory({
-        id: multisig.address,
-        data: { address: multisig.address, handle: "both", badge: AccountBadge.MULTI },
-        position: { x: VERTICAL_GAP_BETWEEN_NODES, y: yMultiPosition }
-      }))
+      resNodes.push(
+        nodeFactory({
+          id: multisig.address,
+          data: {
+            address: multisig.address,
+            handle: 'both',
+            badge: AccountBadge.MULTI
+          },
+          position: { x: VERTICAL_GAP_BETWEEN_NODES, y: yMultiPosition }
+        })
+      )
       yMultiPosition += HORIZONTAL_GAP_BETWEEN_NODES
     }
 
     if (selectedMultiProxy.proxy) {
-      resNodes.push(nodeFactory({
-        id: selectedMultiProxy.proxy,
-        data: { address: selectedMultiProxy.proxy, handle: "left", badge: AccountBadge.PURE },
-        position: { x: VERTICAL_GAP_BETWEEN_NODES * 2, y: 0 }
-      }))
+      resNodes.push(
+        nodeFactory({
+          id: selectedMultiProxy.proxy,
+          data: {
+            address: selectedMultiProxy.proxy,
+            handle: 'left',
+            badge: AccountBadge.PURE
+          },
+          position: { x: VERTICAL_GAP_BETWEEN_NODES * 2, y: 0 }
+        })
+      )
     }
 
     //create edges
@@ -103,8 +132,8 @@ const Overview = ({ className }: Props) => {
           id: `${sigAddress}-${multiAddress}`,
           source: sigAddress,
           target: multiAddress,
-          sourceHandle: "right",
-          targetHandle: "left",
+          sourceHandle: 'right',
+          targetHandle: 'left',
           ...defaultEdgeOptions
         })
       })
@@ -114,13 +143,13 @@ const Overview = ({ className }: Props) => {
           id: `${multiAddress}-${selectedMultiProxy.proxy}`,
           source: multiAddress,
           target: selectedMultiProxy.proxy,
-          sourceHandle: "right",
-          targetHandle: "left",
+          sourceHandle: 'right',
+          targetHandle: 'left',
           label: `controls-${type}`,
           ...defaultEdgeOptions
         })
       }
-    });
+    })
 
     setNodes(resNodes)
     setEdges(resEdges)
@@ -154,13 +183,15 @@ const Overview = ({ className }: Props) => {
         nodeTypes={nodeTypes}
       >
         <Controls />
-        <Background style={{ backgroundColor: "#f7f7f7" }} />
+        <Background style={{ backgroundColor: '#f7f7f7' }} />
       </ReactFlow>
     </Box>
   )
 }
 
-export default styled(Overview)(({ theme }) => `
+export default styled(Overview)(
+  ({ theme }) => `
   width: 100%;
   height: 500px;
-`)
+`
+)

@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
-import { NetworkInfo, SupportedNetworks, networkList } from "../constants"
+import React, { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { NetworkInfo, SupportedNetworks, networkList } from '../constants'
 
-const LOCALSTORAGE_SELECTED_NETWORK = "multix.selectedNetwork"
+const LOCALSTORAGE_SELECTED_NETWORK = 'multix.selectedNetwork'
 
 type NetworkContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -15,30 +15,34 @@ export interface IToastContext {
 }
 
 const NetworkContext = React.createContext<IToastContext | undefined>(undefined)
-const isSupportedNetwork = (network: string): network is SupportedNetworks => !!networkList[network as SupportedNetworks]
+const isSupportedNetwork = (network: string): network is SupportedNetworks =>
+  !!networkList[network as SupportedNetworks]
 
 const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const [selectedNetworkInfo, setSelectedNetworkInfo] = useState<NetworkInfo | undefined>()
   const [selectedNetwork, setSelectedNetwork] = useState<SupportedNetworks | undefined>()
-  const [searchParams, setSearchParams] = useSearchParams({ network: "" });
+  const [searchParams, setSearchParams] = useSearchParams({ network: '' })
 
-  const selectNetwork = useCallback((network: string) => {
-    const newSelectedNetwork = isSupportedNetwork(network)
+  const selectNetwork = useCallback(
+    (network: string) => {
+      const newSelectedNetwork = isSupportedNetwork(network)
 
-    if (!newSelectedNetwork) {
-      console.error('This network is not supported', network)
-      return
-    }
+      if (!newSelectedNetwork) {
+        console.error('This network is not supported', network)
+        return
+      }
 
-    setSelectedNetworkInfo(networkList[network])
-    setSelectedNetwork(network)
-    setSearchParams({ network })
-    localStorage.setItem(LOCALSTORAGE_SELECTED_NETWORK, network)
-  }, [setSearchParams])
+      setSelectedNetworkInfo(networkList[network])
+      setSelectedNetwork(network)
+      setSearchParams({ network })
+      localStorage.setItem(LOCALSTORAGE_SELECTED_NETWORK, network)
+    },
+    [setSearchParams]
+  )
 
   useEffect(() => {
     if (!selectedNetwork) {
-      const networkParam = searchParams.get("network")
+      const networkParam = searchParams.get('network')
 
       // connect to the node set in the query string
       if (networkParam) {
@@ -48,15 +52,17 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
 
       // connect the the previously selected network
       const previouslysSelectedNetwork = localStorage.getItem(LOCALSTORAGE_SELECTED_NETWORK)
-      if (!!previouslysSelectedNetwork && previouslysSelectedNetwork.includes(networkParam as SupportedNetworks)) {
+      if (
+        !!previouslysSelectedNetwork &&
+        previouslysSelectedNetwork.includes(networkParam as SupportedNetworks)
+      ) {
         selectNetwork(previouslysSelectedNetwork as SupportedNetworks)
         return
       }
 
-      selectNetwork("rococo")
+      selectNetwork('rococo')
     }
   }, [searchParams, selectNetwork, selectedNetwork])
-
 
   return (
     <NetworkContext.Provider
@@ -74,7 +80,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
 const useNetwork = () => {
   const context = React.useContext(NetworkContext)
   if (context === undefined) {
-    throw new Error("useNetwork must be used within a NetworkProvider")
+    throw new Error('useNetwork must be used within a NetworkProvider')
   }
   return context
 }
