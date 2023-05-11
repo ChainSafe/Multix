@@ -1,18 +1,18 @@
 name: CloudFlare Deploy - Multix
 on:
   push:
-    branches: ["main"]
-    paths: ["packages/ui/**/*"]
+    branches: ['main']
+    paths: ['packages/ui/**/*']
   pull_request:
-    branches: ["main"]
-    paths: ["packages/ui/**/*"]
+    branches: ['main']
+    paths: ['packages/ui/**/*']
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     defaults:
-       run:
-         working-directory: ./packages/ui/
+      run:
+        working-directory: ./packages/ui/
     permissions:
       contents: read
       deployments: write
@@ -21,8 +21,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: "16"
-          cache-dependency-path: "yarn.lock"
+          node-version: '16'
+          cache-dependency-path: 'yarn.lock'
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn build

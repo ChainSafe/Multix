@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [ 'squid-indexer', 'graphql-server' ]
+        target: ['squid-indexer', 'graphql-server']
 
     permissions:
       contents: read
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        network: [ 'rococo', 'kusama' ]
+        network: ['rococo', 'kusama']
 
     permissions:
       contents: read

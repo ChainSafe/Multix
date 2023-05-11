@@ -1,1 +1,1 @@
-export const MULTI_PREFIX = "MULTI"
+export const MULTI_PREFIX = 'MULTI'

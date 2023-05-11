@@ -1,16 +1,20 @@
-import { Box, Chip } from "@mui/material";
-import { styled }  from "@mui/material/styles";
-import { AccountBadge } from "../types";
-import AccountDisplay from "./AccountDisplay";
-import Expander from "./Expander";
-import { MultisigByIdDocument, MultisigByIdQuery, MultisigByIdQueryVariables } from "../../types-and-hooks";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchData } from "../fetcher";
-import { useNetwork } from "../contexts/NetworkContext";
+import { Box, Chip } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { AccountBadge } from '../types'
+import AccountDisplay from './AccountDisplay'
+import Expander from './Expander'
+import {
+  MultisigByIdDocument,
+  MultisigByIdQuery,
+  MultisigByIdQueryVariables
+} from '../../types-and-hooks'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchData } from '../fetcher'
+import { useNetwork } from '../contexts/NetworkContext'
 
 interface Props {
-  address: string;
+  address: string
   className?: string
   expanded?: boolean
 }
@@ -22,8 +26,13 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
   // to fetch for the right network
   const { data, error, isFetching } = useQuery<MultisigByIdQuery, unknown, MultisigByIdQuery>(
     ['MultisigById', { account: address }],
-    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, { account: address }, undefined, selectedNetworkInfo?.httpGraphqlUrl)
-  );
+    fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(
+      MultisigByIdDocument,
+      { account: address },
+      undefined,
+      selectedNetworkInfo?.httpGraphqlUrl
+    )
+  )
   const [badge, setBadge] = useState<AccountBadge | undefined>()
   const [threshold, setThreshold] = useState<number | null | undefined>(null)
 
@@ -44,34 +53,45 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
     }
   }, [data, error, isFetching])
 
-  return <Box className={className}>
-    <AccountDisplay className={`${signatories.length > 0 ? "multisigAccount" : ""}`} address={address} badge={badge} />
-    {signatories.length > 0 && (
-      <Expander
-        expanded={expanded}
-        title={(
-          <div>Signatories <Chip
-            className="threshold"
-            label={`${threshold}/${signatories.length}`}
-          /></div>
-        )}
-        content={<ul className="signatoryList">
-          {signatories.map((sig) =>
-            <li key={sig} >
-              <AccountDisplay
-                address={sig}
-                withName={true}
-              />
-            </li>
-          )}
-        </ul>}
+  return (
+    <Box className={className}>
+      <AccountDisplay
+        className={`${signatories.length > 0 ? 'multisigAccount' : ''}`}
+        address={address}
+        badge={badge}
       />
-    )}
-  </Box>
+      {signatories.length > 0 && (
+        <Expander
+          expanded={expanded}
+          title={
+            <div>
+              Signatories{' '}
+              <Chip
+                className="threshold"
+                label={`${threshold}/${signatories.length}`}
+              />
+            </div>
+          }
+          content={
+            <ul className="signatoryList">
+              {signatories.map((sig) => (
+                <li key={sig}>
+                  <AccountDisplay
+                    address={sig}
+                    withName={true}
+                  />
+                </li>
+              ))}
+            </ul>
+          }
+        />
+      )}
+    </Box>
+  )
 }
 
-
-export default styled(MultisigCompactDisplay)(({ theme }) => `
+export default styled(MultisigCompactDisplay)(
+  ({ theme }) => `
   .multisigAccount {
     margin-top: 0.5rem;
     margin-left: 0.5rem;
@@ -80,4 +100,5 @@ export default styled(MultisigCompactDisplay)(({ theme }) => `
   .signatoryList {
       list-style-type: none;
   }
-`)
+`
+)

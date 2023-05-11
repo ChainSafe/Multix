@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   graphql-server:
@@ -10,7 +10,7 @@ services:
     environment:
       DB_HOST: db
     ports:
-      - "4350:4350"
+      - '4350:4350'
     mem_limit: 300m
     mem_reservation: 100m
     depends_on:
@@ -26,7 +26,7 @@ services:
       DB_HOST: db
       PROCESSOR_PROMETHEUS_PORT: 3000
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - db
 
@@ -38,7 +38,7 @@ services:
       POSTGRES_PASSWORD: postgres
     shm_size: 1gb
     ports:
-      - "5432:5432"
+      - '5432:5432'
 #    command: ["postgres", "-c", "log_statement=all"]
 #    volumes:
 #      - ./data/db:/var/lib/postgresql/data

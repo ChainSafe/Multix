@@ -1,19 +1,19 @@
-import { Box, InputAdornment, TextField } from "@mui/material";
-import { styled }  from "@mui/material/styles";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
-import { ISubmittableResult } from "@polkadot/types/types";
-import GenericAccountSelection, { AccountBaseInfo } from "../GenericAccountSelection";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccountBaseFromAccountList } from "../../hooks/useAccountBaseFromAccountList";
-import { useApi } from "../../contexts/ApiContext";
-import { useCheckBalance } from "../../hooks/useCheckBalance";
-import BN from "bn.js"
-import { getGlobalMaxValue, inputToBn } from "../../utils";
+import { Box, InputAdornment, TextField } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
+import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
+import { useApi } from '../../contexts/ApiContext'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import BN from 'bn.js'
+import { getGlobalMaxValue, inputToBn } from '../../utils'
 
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<"promise", ISubmittableResult>) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -22,17 +22,20 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
   const [toAddress, setToAddress] = useState(acountBase[0].address)
   const { api, isApiReady, chainInfo } = useApi()
-  const [amountString, setAmountString] = useState("")
+  const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<BN | undefined>()
-  const [amountError, setAmountError] = useState("")
-  const { hasEnoughFreeBalance } = useCheckBalance({ min: amount, address: from })
+  const [amountError, setAmountError] = useState('')
+  const { hasEnoughFreeBalance } = useCheckBalance({
+    min: amount,
+    address: from
+  })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
 
   useEffect(() => {
     if (!!amount && !hasEnoughFreeBalance) {
       onSetErrorMessage('"From" address balance too low')
     } else {
-      onSetErrorMessage("")
+      onSetErrorMessage('')
     }
   }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
@@ -57,7 +60,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    if (typeof account === "string") {
+    if (typeof account === 'string') {
       setToAddress(account)
       setSelected({
         address: account
@@ -66,42 +69,43 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       setToAddress(account.address)
       setSelected(account)
     }
-
   }, [])
 
-  const onAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setAmountError("")
-    onSetErrorMessage("")
+  const onAmountChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setAmountError('')
+      onSetErrorMessage('')
 
-    const decimals = chainInfo?.tokenDecimals
+      const decimals = chainInfo?.tokenDecimals
 
-    if (!decimals) {
-      onSetErrorMessage("Invalid network decimals")
-      setAmount(new BN(0))
-      return
-    }
+      if (!decimals) {
+        onSetErrorMessage('Invalid network decimals')
+        setAmount(new BN(0))
+        return
+      }
 
+      const stringInput = event.target.value.trim()
+      setAmountString(stringInput)
 
-    const stringInput = event.target.value.trim()
-    setAmountString(stringInput)
+      if (!stringInput.match('^[0-9]+([.][0-9]+)?$')) {
+        setAmountError('Only numbers and "." are accepted.')
+        onSetErrorMessage('Invalid amount')
+        setAmount(new BN(0))
+        return
+      }
 
-    if (!stringInput.match("^[0-9]+([.][0-9]+)?$")) {
-      setAmountError('Only numbers and "." are accepted.')
-      onSetErrorMessage("Invalid amount")
-      setAmount(new BN(0))
-      return
-    }
+      const bnResult = inputToBn(decimals, stringInput)
 
-    const bnResult = inputToBn(decimals, stringInput)
+      if (bnResult.gte(maxValue)) {
+        setAmountError('Amount too large')
+        onSetErrorMessage('Amount too large')
+        return
+      }
 
-    if (bnResult.gte(maxValue)) {
-      setAmountError("Amount too large")
-      onSetErrorMessage("Amount too large")
-      return
-    }
-
-    setAmount(bnResult)
-  }, [chainInfo, maxValue, onSetErrorMessage])
+      setAmount(bnResult)
+    },
+    [chainInfo, maxValue, onSetErrorMessage]
+  )
 
   if (!selected) return null
 
@@ -124,17 +128,18 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         error={!!amountError}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">{chainInfo?.tokenSymbol || ""}</InputAdornment>
-          ),
+            <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
+          )
         }}
       />
     </Box>
   )
 }
 
-
-export default styled(BalancesTransfer)(({ theme }) => `
+export default styled(BalancesTransfer)(
+  ({ theme }) => `
   .to {
     margin-bottom: 1rem;
   }
-`)
+`
+)

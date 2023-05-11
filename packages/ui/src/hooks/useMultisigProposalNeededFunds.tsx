@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { useApi } from "../contexts/ApiContext"
-import BN from "bn.js"
-import { SubmittableExtrinsic } from "@polkadot/api/types";
-import { ISubmittableResult } from "@polkadot/types/types";
+import { useEffect, useState } from 'react'
+import { useApi } from '../contexts/ApiContext'
+import BN from 'bn.js'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 
 interface Props {
-    threshold?: number
-    signatories?: string[]
-    call?: SubmittableExtrinsic<"promise", ISubmittableResult>
+  threshold?: number
+  signatories?: string[]
+  call?: SubmittableExtrinsic<'promise', ISubmittableResult>
 }
 
 export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
@@ -27,7 +27,9 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
       const genericCall = api.createType('Call', call)
 
       // get the fees for this call
-      api.tx(genericCall).paymentInfo("5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs")
+      api
+        .tx(genericCall)
+        .paymentInfo('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
         .then((info) => {
           // add the funds reserved for a multisig call
           const reserved = (api.consts.multisig.depositFactor as unknown as BN)
@@ -39,10 +41,9 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
         })
         .catch(console.error)
     } catch (e) {
-      console.error("Error in useMultisigProposalNeededFunds")
+      console.error('Error in useMultisigProposalNeededFunds')
       console.error(e)
     }
-
   }, [api, call, chainInfo, isApiReady, signatories, threshold])
 
   return { multisigProposalNeededFunds: min }
