@@ -1,10 +1,10 @@
-name: Squid deployment
+name: multix/stage/deploy
 
 on:
   push:
     paths:
       - 'packages/squid/**'
-      - '.github/workflows/deploy-squid.yaml'
+      - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
       - ci/* # run this workflow if the branch starts with ci/*
