@@ -1,0 +1,7 @@
+.yarn
+/packages/squid/db/**/*
+/packages/squid/src/types/**/*
+/packages/squid/src/model/**/*
+/packages/ui/src/gql/**/*
+/packages/ui/src/interfaces/**/*
+/packages/ui/types-and-hooks.tsx

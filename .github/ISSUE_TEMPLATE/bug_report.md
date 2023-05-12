@@ -2,9 +2,8 @@
 name: Bug report
 about: Create a report to help us improve Multix
 title: ''
-labels: "Issue: Bug 🐛"
+labels: 'Issue: Bug 🐛'
 assignees: ''
-
 ---
 
 **Description**
@@ -27,16 +26,17 @@ Add clear steps on how to reproduce the bug
 A clear and concise description of what you expected to happen.
 
 **Console Error**
-If possible, please copy/paste or provide a screenshot of the browser console. To do so, press `Ctrl` + `Shift` + `J` (or `Cmd` + `Shift` + `J` on a Mac)  
+If possible, please copy/paste or provide a screenshot of the browser console. To do so, press `Ctrl` + `Shift` + `J` (or `Cmd` + `Shift` + `J` on a Mac)
 
 **Screenshots / Video**
 If applicable, please add screenshots or video to help explain or demonstrate the problem you are experiencing.
 
 **Test Host Specifics: **
- - OS: [e.g. Linux Mint 21.1, macOS 13, Windows 11]
- - Browser [e.g. Chrome, Safari]
- - Version [e.g. 111]
- - Wallet [e.g. Polkadot.js, Talisman]
+
+- OS: [e.g. Linux Mint 21.1, macOS 13, Windows 11]
+- Browser [e.g. Chrome, Safari]
+- Version [e.g. 111]
+- Wallet [e.g. Polkadot.js, Talisman]
 
 **Additional context**
 Add any other context about the problem here.

@@ -1,10 +1,10 @@
 import 'dotenv/config'
 
 interface EnvValues {
-    blockstart: string
-    prefix: number
-    rpcWs: string
-    archiveName: string
+  blockstart: string
+  prefix: number
+  rpcWs: string
+  archiveName: string
 }
 
 export class Env {
@@ -12,10 +12,10 @@ export class Env {
 
   constructor() {
     this.env = {
-      blockstart: process.env.BLOCK_START || "",
+      blockstart: process.env.BLOCK_START || '',
       prefix: Number(process.env.PREFIX) || 0,
-      rpcWs: process.env.RPC_WS || "",
-      archiveName: process.env.ARCHIVE_NAME || ""
+      rpcWs: process.env.RPC_WS || '',
+      archiveName: process.env.ARCHIVE_NAME || ''
     }
 
     this.checkForUndefined()
@@ -23,7 +23,8 @@ export class Env {
 
   checkForUndefined = () => {
     Object.entries(this.env).forEach(([key, value]) => {
-      if (!value) {
+      // a prefix can be 0 and it is a valid value
+      if (!value && value !== 0) {
         console.error(`🟥 Invalid env variable for ${key}`)
       }
     })
@@ -32,5 +33,4 @@ export class Env {
   getEnv = () => {
     return this.env
   }
-
 }

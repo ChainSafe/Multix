@@ -1,15 +1,19 @@
-import { Alert, IconButton } from "@mui/material";
-import { styled }  from "@mui/material/styles";
-import CloseIcon from '@mui/icons-material/Close';
+import { Alert, IconButton } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface Props {
-  className?: string;
+  className?: string
   onClose: () => void
 }
 
 const NewMulisigAlert = ({ className = '', onClose }: Props) => {
   return (
-    <Alert className={className} variant="outlined" severity="info">
+    <Alert
+      className={className}
+      variant="outlined"
+      severity="info"
+    >
       <div className="infoText">
         Your new multisig is being created. It will be available in ~30s from the dropdown.
       </div>
@@ -26,7 +30,8 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
   )
 }
 
-export default styled(NewMulisigAlert)(({ theme }) => `
+export default styled(NewMulisigAlert)(
+  ({ theme }) => `
   width: 100%;
 
   .infoText {
@@ -38,4 +43,5 @@ export default styled(NewMulisigAlert)(({ theme }) => `
     align-items: center;
     width: 100%;
   }
-`)
+`
+)

@@ -1,10 +1,10 @@
-name: multix/stage/deploy
+name: Squid deployment
 
 on:
   push:
     paths:
       - 'packages/squid/**'
-      - '.github/workflows/deploy-squid-stage.yaml'
+      - '.github/workflows/deploy-squid.yaml'
     branches:
       - main
       - ci/* # run this workflow if the branch starts with ci/*
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [ 'squid-indexer', 'graphql-server' ]
+        target: ['squid-indexer', 'graphql-server']
 
     permissions:
       contents: read
@@ -69,7 +69,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        network: [ 'rococo', 'kusama' ]
+        network: ['rococo', 'kusama']
 
     permissions:
       contents: read
