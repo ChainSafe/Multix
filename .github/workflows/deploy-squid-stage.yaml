@@ -101,15 +101,13 @@ jobs:
       - name: build the squid package
         run: yarn run squid:build
 
-#      - name: generate database credentials
-#        env:
-#          SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
-#        run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
+      - name: generate database credentials
+        env:
+          SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
+        run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
-#      - name: dump database
-#        env:
-#          DATABASE_NAME: 'multix-${{ env.APP_STAGE }}-${{ matrix.network }}'
-#        run: psql
+      - name: dump database
+        run: drop-tables
 
       - name: run migrations and start again
         run: |
