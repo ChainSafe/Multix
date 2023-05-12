@@ -122,7 +122,3 @@ jobs:
 #      - name: cleanup credentials
 #        if: always()
 #        run: cleanup-credentials
-#
-#      - name: uninstall yarn
-#        if: always()
-#        run: npm uninstall -g yarn
