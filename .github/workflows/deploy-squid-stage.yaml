@@ -90,10 +90,13 @@ jobs:
       - name: install dependencies in root and squid package
         run: |
           corepack enable
-          yarn run squid:install --production
+          yarn workspaces focus multix-squid --production
+
+      - name: generate squid code
+        run: yarn workspace multix-squid codegen
 
       - name: build the squid package
-        run: yarn run squid:build
+        run: yarn workspace multix-squid build
 
       - name: generate database credentials
         env:
@@ -106,7 +109,7 @@ jobs:
       - name: run migrations and start again
         run: |
           source "${{ env.ENV_FILE }}"
-          yarn squid:migrate
+          yarn workspace multix-squid db:migrate
 
       - name: update cluster service
         env:
