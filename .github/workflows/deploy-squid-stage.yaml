@@ -89,11 +89,14 @@ jobs:
 
       - name: install dependencies in root and squid package
         run: |
-          yarn install --frozen-lockfile
-          yarn run squid:install
+          corepack enable
+          yarn workspaces focus multix-squid
+
+      - name: generate squid code
+        run: yarn workspace multix-squid codegen
 
       - name: build the squid package
-        run: yarn run squid:build
+        run: yarn workspace multix-squid build
 
       - name: generate database credentials
         env:
@@ -106,7 +109,7 @@ jobs:
       - name: run migrations and start again
         run: |
           source "${{ env.ENV_FILE }}"
-          npm run squid:migrate
+          yarn workspace multix-squid db:migrate
 
       - name: update cluster service
         env:
@@ -116,4 +119,3 @@ jobs:
       - name: cleanup credentials
         if: always()
         run: cleanup-credentials
-
