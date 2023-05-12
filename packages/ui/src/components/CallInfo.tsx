@@ -129,6 +129,7 @@ export default styled(CallInfo)(
   .callName {
     margin-top: 0.5rem;
     margin-left: .5rem;
+    margin-bottom: 1rem;
   }
 `
 )

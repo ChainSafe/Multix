@@ -1,4 +1,4 @@
-import { Paper, Button } from '@mui/material'
+import { Paper, Button, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import GestureIcon from '@mui/icons-material/Gesture'
@@ -9,6 +9,8 @@ import ProposalSigningModal from '../modals/ProposalSigning'
 import { Badge } from '@mui/material'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
+import { useNetwork } from '../../contexts/NetworkContext'
+import LaunchIcon from '@mui/icons-material/Launch'
 
 interface Props {
   className?: string
@@ -29,6 +31,13 @@ const Transaction = ({
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
   // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
+  const { selectedNetworkInfo } = useNetwork()
+
+  const onOpenLink = useCallback(() => {
+    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl || '')
+    const link = `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
+    window.open(link, '_blank')
+  }, [aggregatedData, selectedNetworkInfo])
 
   const onClose = useCallback(() => {
     setIsSigningModalOpen(false)
@@ -57,9 +66,21 @@ const Transaction = ({
         aggregatedData={aggregatedData}
         children={
           (isProposer || possibleSigners.length > 0) && (
-            <div className="buttonWrapper">
+            <TransactionFooterStyled>
+              {!!aggregatedData.callData && (
+                <Linkstyled
+                  className="linkIcon"
+                  onClick={onOpenLink}
+                >
+                  See callData in pjs/apps
+                  <LaunchIcon
+                    className="icon"
+                    fontSize="small"
+                  />
+                </Linkstyled>
+              )}
               <Button onClick={onOpenModal}>Review</Button>
-            </div>
+            </TransactionFooterStyled>
           )
         }
       />
@@ -75,20 +96,35 @@ const Transaction = ({
   )
 }
 
+const Linkstyled = styled(Box)(
+  ({ theme }) => `
+  display: flex;
+  color: ${theme.custom.text.addressColorLightGray};
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+  margin-left: .5rem;
+
+  .icon {
+    margin-left: .5rem;
+  }
+`
+)
+
+const TransactionFooterStyled = styled('div')`
+  flex: 1;
+  align-self: flex-end;
+  text-align: end;
+  margin-right: 0.5rem;
+  margin-top: 1rem;
+`
+
 export default styled(Transaction)(
   ({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;
     margin-bottom: 1rem;
-
-  .buttonWrapper {
-    flex: 1;
-    align-self: flex-end;
-    text-align: end;
-    margin-right: .5rem;
-    margin-bottom: .5rem;
-  }
 
   .callIcon {
     font-size: 7rem;
