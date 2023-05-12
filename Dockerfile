@@ -19,7 +19,7 @@ ADD packages/squid/tsconfig.json ./packages/squid/
 ADD packages/squid/src ./packages/squid/src
 ADD packages/squid/schema.graphql ./packages/squid
 
-RUN yarn set version berry
+RUN corepack enable
 RUN yarn workspaces focus multix-squid
 RUN yarn workspace multix-squid codegen
 RUN yarn workspace multix-squid build
