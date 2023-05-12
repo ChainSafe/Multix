@@ -39,7 +39,7 @@ ADD packages/squid/db db
 RUN corepack enable
 
 # indexer image that will be published
-FROM squid AS squid-indexer
+FROM squid AS squid-indexer 
 CMD ["yarn", "start:indexer"]
 
 # graphql server that will be published
