@@ -82,6 +82,7 @@ jobs:
 
       - name: setup nodejs with yarn cache
         uses: actions/setup-node@v3
+        continue-on-error: true
         with:
           node-version-file: '.node-version'
           cache: 'yarn'
