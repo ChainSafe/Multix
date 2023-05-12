@@ -9,7 +9,7 @@ RUN apk add g++ make python3
 FROM node-with-gyp AS builder
 WORKDIR /multix
 
-ADD .yarn/ .yarn/
+ADD .yarn/plugins .yarn/plugins
 ADD package.json .
 ADD yarn.lock .
 ADD .yarnrc.yml .
@@ -40,7 +40,6 @@ RUN corepack enable
 
 # indexer image that will be published
 FROM squid AS squid-indexer
-RUN yarn --version
 CMD ["yarn", "start:indexer"]
 
 # graphql server that will be published
