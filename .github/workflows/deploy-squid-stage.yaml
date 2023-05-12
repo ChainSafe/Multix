@@ -1,10 +1,11 @@
-name: Squid deployment
+# naming convention: <project>/<environment>/<task>
+name: multix/stage/deploy
 
 on:
   push:
     paths:
       - 'packages/squid/**'
-      - '.github/workflows/deploy-squid.yaml'
+      - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
       - ci/* # run this workflow if the branch starts with ci/*
@@ -18,6 +19,7 @@ env:
   APP_STAGE: 'stage'
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
+  ENV_FILE: '${{ secrets.ENV_FILE }}'
 
 jobs:
   push:
@@ -65,7 +67,7 @@ jobs:
   deploy:
     needs: push
     name: deploy
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         network: ['rococo', 'kusama']
@@ -78,14 +80,42 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - name: setup nodejs with yarn cache
+        uses: actions/setup-node@v3
+        continue-on-error: true
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_ROLE_NAME }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: ${{ env.AWS_ROLE_NAME }}
+          node-version-file: '.node-version'
+          cache: 'yarn'
+
+      - name: install dependencies in root and squid package
+        run: |
+          corepack enable
+          yarn workspaces focus multix-squid
+
+      - name: generate squid code
+        run: yarn workspace multix-squid codegen
+
+      - name: build the squid package
+        run: yarn workspace multix-squid build
+
+      - name: generate database credentials
+        env:
+          SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
+        run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
+
+      - name: dump database
+        run: drop-tables
+
+      - name: run migrations and start again
+        run: |
+          source "${{ env.ENV_FILE }}"
+          yarn workspace multix-squid db:migrate
 
       - name: update cluster service
         env:
           AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
         run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
+
+      - name: cleanup credentials
+        if: always()
+        run: cleanup-credentials
