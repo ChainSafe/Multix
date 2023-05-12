@@ -72,7 +72,7 @@ const Transaction = ({
                   className="linkIcon"
                   onClick={onOpenLink}
                 >
-                  See callData in pjs/apps
+                  See callData
                   <LaunchIcon
                     className="icon"
                     fontSize="small"
@@ -117,6 +117,7 @@ const TransactionFooterStyled = styled('div')`
   text-align: end;
   margin-right: 0.5rem;
   margin-top: 1rem;
+  display: flex;
 `
 
 export default styled(Transaction)(
