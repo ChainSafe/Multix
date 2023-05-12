@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: install packages
-      - run: corepack enable && yarn install --immutable
+        run: corepack enable && yarn install --immutable
 
       - name: lint
-        run: yarn workspaces focus multix-ui && yarn ui:lint
+        run: yarn ui:lint
