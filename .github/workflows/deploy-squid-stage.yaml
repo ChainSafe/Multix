@@ -90,10 +90,10 @@ jobs:
       - name: install dependencies in root and squid package
         run: |
           corepack enable
-          yarn workspaces focus multix-squid --production
+          yarn workspaces focus multix-squid
 
       - name: generate squid code
-        run: npx squid-typeorm-codegen
+        run: yarn workspace multix-squid codegen
 
       - name: build the squid package
         run: yarn workspace multix-squid build
