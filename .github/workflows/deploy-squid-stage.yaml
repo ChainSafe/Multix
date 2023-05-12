@@ -1,3 +1,4 @@
+# naming convention: <project>/<environment>/<task>
 name: multix/stage/deploy
 
 on:
