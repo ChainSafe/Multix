@@ -1,5 +1,5 @@
 # node alpine image
-FROM node:16-alpine AS node
+FROM node:19-alpine AS node
 
 # node with gyp for complex executions
 FROM node AS node-with-gyp
@@ -33,15 +33,13 @@ COPY --from=builder multix/packages/squid/package.json .
 COPY --from=builder multix/node_modules node_modules
 COPY --from=builder multix/packages/squid/lib lib
 COPY --from=builder multix/packages/squid/schema.graphql .
-COPY --from=builder multix/.yarn multix/.yarn
 
 ADD packages/squid/db db
-RUN corepack enable
 
 # indexer image that will be published
-FROM squid AS squid-indexer 
-CMD ["yarn", "start:indexer"]
+FROM squid AS squid-indexer
+CMD yarn start:indexer
 
 # graphql server that will be published
 FROM squid AS graphql-server
-CMD ["yarn", "start:graphql-server"]
+CMD yarn start:graphql-server
