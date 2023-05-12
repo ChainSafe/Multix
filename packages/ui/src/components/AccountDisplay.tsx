@@ -78,7 +78,7 @@ const AccountDisplay = ({
         badge={badge}
         address={address}
       />
-      <Box>
+      <BoxStyled>
         {withName && (
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
@@ -97,7 +97,7 @@ const AccountDisplay = ({
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
           </Box>
         )}
-      </Box>
+      </BoxStyled>
     </MultisigInfoStyled>
   )
 }
@@ -118,6 +118,10 @@ const AddressStyled = styled('div')(
     font-size: small;
 `
 )
+
+const BoxStyled = styled(Box)`
+  min-width: 0;
+`
 
 const NameStyled = styled('span')`
   font-size: large;
