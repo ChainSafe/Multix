@@ -9,7 +9,7 @@ RUN apk add g++ make python3
 FROM node-with-gyp AS builder
 WORKDIR /multix
 
-ADD .yarn/plugins .yarn/plugins
+ADD .yarn/ .yarn/
 ADD package.json .
 ADD yarn.lock .
 ADD .yarnrc.yml .
@@ -19,10 +19,10 @@ ADD packages/squid/tsconfig.json ./packages/squid/
 ADD packages/squid/src ./packages/squid/src
 ADD packages/squid/schema.graphql ./packages/squid
 
-RUN corepack enable
-RUN yarn squid:install
-RUN yarn squid:codegen
-RUN yarn squid:build
+RUN yarn set version berry
+RUN yarn workspaces focus multix-squid
+RUN yarn workspace multix-squid codegen
+RUN yarn workspace multix-squid build
 
 # squid app
 FROM node AS squid
@@ -33,8 +33,11 @@ COPY --from=builder multix/packages/squid/package.json .
 COPY --from=builder multix/node_modules node_modules
 COPY --from=builder multix/packages/squid/lib lib
 COPY --from=builder multix/packages/squid/schema.graphql .
+COPY --from=builder multix/.yarn multix/.yarn
 
 ADD packages/squid/db db
+RUN corepack enable
+RUN yarn set version berry
 
 # indexer image that will be published
 FROM squid AS squid-indexer
