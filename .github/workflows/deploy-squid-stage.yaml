@@ -93,7 +93,7 @@ jobs:
           yarn workspaces focus multix-squid --production
 
       - name: generate squid code
-        run: yarn workspace multix-squid codegen
+        run: npx squid-typeorm-codegen
 
       - name: build the squid package
         run: yarn workspace multix-squid build
