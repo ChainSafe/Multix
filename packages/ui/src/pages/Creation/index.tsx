@@ -304,7 +304,7 @@ const MultisigCreation = ({ className }: Props) => {
             Back
           </Button>
           <Button
-            disabled={canGoNext}
+            disabled={!canGoNext}
             onClick={goNext}
           >
             {isLastStep ? 'Create' : 'Next'}

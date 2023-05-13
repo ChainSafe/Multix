@@ -6618,7 +6618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0, clsx@npm:^1.2.1":
+"clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 34dead8bee24f5e96f6e7937d711978380647e936a22e76380290e35486afd8634966ce300fc4b74a32f3762c7d4c0303f442c3e259f4ce02374eb0c82834f27
@@ -8405,15 +8405,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"goober@npm:^2.0.33":
-  version: 2.1.13
-  resolution: "goober@npm:2.1.13"
-  peerDependencies:
-    csstype: ^3.0.10
-  checksum: a322ea3b688e1140e9e69014169563a1a73ea715d4a6edeaf61b59d40eb2c3b70f8269b09bb178d474764ee1772a0b1719c1d45db689e5c557698e468ce94702
-  languageName: node
-  linkType: hard
-
 "gopd@npm:^1.0.1":
   version: 1.0.1
   resolution: "gopd@npm:1.0.1"
@@ -9922,7 +9913,6 @@ __metadata:
     graphql: ^15.8.0
     graphql-request: ^6.0.0
     graphql-ws: ^5.12.1
-    notistack: ^3.0.1
     react: 18.2.0
     react-dom: 18.2.0
     react-query-subscription: 2.0.0-beta.1
@@ -10158,19 +10148,6 @@ __metadata:
   dependencies:
     remove-trailing-separator: ^1.0.1
   checksum: db814326ff88057437233361b4c7e9cac7b54815b051b57f2d341ce89b1d8ec8cbd43e7fa95d7652b3b69ea8fcc294b89b8530d556a84d1bdace94229e1e9a8b
-  languageName: node
-  linkType: hard
-
-"notistack@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "notistack@npm:3.0.1"
-  dependencies:
-    clsx: ^1.1.0
-    goober: ^2.0.33
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: dd5bd492dbaf8d07a1f45a53ae195c5d481bc7136d73a756eb076534d315216a3cd2f4628263be55ad21d8bfed6ec546e5063584ffcc2798fb2aac56e5ccf0cf
   languageName: node
   linkType: hard
 

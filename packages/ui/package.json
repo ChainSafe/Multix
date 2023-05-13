@@ -17,7 +17,6 @@
     "graphql": "^15.8.0",
     "graphql-request": "^6.0.0",
     "graphql-ws": "^5.12.1",
-    "notistack": "^3.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-query-subscription": "2.0.0-beta.1",

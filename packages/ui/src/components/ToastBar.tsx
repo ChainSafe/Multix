@@ -12,7 +12,7 @@ interface Props {
 
 const ToastBar = ({ toast }: Props) => {
   const { id, title, type, link } = toast
-  const { removeToast } = useSnackStack()
+  const { removeToast } = useToasts()
 
   const handleClose = useCallback(
     (event: React.SyntheticEvent | Event, reason?: string) => {
