@@ -1699,6 +1699,10 @@ __metadata:
 "@chainsafe/multix@workspace:.":
   version: 0.0.0-use.local
   resolution: "@chainsafe/multix@workspace:."
+  dependencies:
+    eslint-config-prettier: ^8.8.0
+    eslint-plugin-prettier: ^4.2.1
+    prettier: ^2.8.8
   languageName: unknown
   linkType: soft
 
@@ -4045,10 +4049,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.6.0":
-  version: 1.6.0
-  resolution: "@remix-run/router@npm:1.6.0"
-  checksum: 109f72bc7550bde225f2a5070b210f66b23ac83154ba155b8cc3ecb05c2770548cedb4746f8d4f70dfdce18ec3a0967bac862dbe2cf19cffea18e9b0a1574219
+"@remix-run/router@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@remix-run/router@npm:1.6.1"
+  checksum: 6d6dad1b6a06171d5d8549eca7cd7ef332a40987b732829e48993d55b3c7a7ca661c7d891be938055a42a4b18f07b5f2b66295c89cb221464eda2678ac41621e
   languageName: node
   linkType: hard
 
@@ -5107,6 +5111,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/history@npm:^4.7.11":
+  version: 4.7.11
+  resolution: "@types/history@npm:4.7.11"
+  checksum: 3facf37c2493d1f92b2e93a22cac7ea70b06351c2ab9aaceaa3c56aa6099fb63516f6c4ec1616deb5c56b4093c026a043ea2d3373e6c0644d55710364d02c934
+  languageName: node
+  linkType: hard
+
 "@types/js-yaml@npm:^4.0.0":
   version: 4.0.5
   resolution: "@types/js-yaml@npm:4.0.5"
@@ -5220,6 +5231,27 @@ __metadata:
   dependencies:
     "@types/react": ^17
   checksum: f758b6d94d432419fbbfc87fb2018e366e5b76a0e33b3313b2438544666007b44bcf47a42fb45c77b78a0f40ea7b5e8e03c536c0a3a1dccc8897539d874bd786
+  languageName: node
+  linkType: hard
+
+"@types/react-router-dom@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "@types/react-router-dom@npm:5.3.3"
+  dependencies:
+    "@types/history": ^4.7.11
+    "@types/react": "*"
+    "@types/react-router": "*"
+  checksum: a9231a16afb9ed5142678147eafec9d48582809295754fb60946e29fcd3757a4c7a3180fa94b45763e4c7f6e3f02379e2fcb8dd986db479dcab40eff5fc62a91
+  languageName: node
+  linkType: hard
+
+"@types/react-router@npm:*":
+  version: 5.1.20
+  resolution: "@types/react-router@npm:5.1.20"
+  dependencies:
+    "@types/history": ^4.7.11
+    "@types/react": "*"
+  checksum: 1f7eee61981d2f807fa01a34a0ef98ebc0774023832b6611a69c7f28fdff01de5a38cabf399f32e376bf8099dcb7afaf724775bea9d38870224492bea4cb5737
   languageName: node
   linkType: hard
 
@@ -7637,6 +7669,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-prettier@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "eslint-plugin-prettier@npm:4.2.1"
+  dependencies:
+    prettier-linter-helpers: ^1.0.0
+  peerDependencies:
+    eslint: ">=7.28.0"
+    prettier: ">=2.0.0"
+  peerDependenciesMeta:
+    eslint-config-prettier:
+      optional: true
+  checksum: c5e7316baeab9d96ac39c279f16686e837277e5c67a8006c6588bcff317edffdc1532fb580441eb598bc6770f6444006756b68a6575dff1cd85ebe227252d0b7
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.6.0":
   version: 4.6.0
   resolution: "eslint-plugin-react-hooks@npm:4.6.0"
@@ -7668,6 +7715,15 @@ __metadata:
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
   checksum: 9ddd5cfc508555a5cb3edbdcc9138dd472d269d3a45da0be3e267ea2b3fa1b5990823675208c0e11376c9c55e46aaad5b7a5f46c965eb4dcf6f1eebcebf174c3
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-ternary@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "eslint-plugin-ternary@npm:2.0.0"
+  peerDependencies:
+    eslint: ">=0.8.0"
+  checksum: 4bc2743138e46c47560fe76f34a50c525144a944e4762c8e530bda8dfa4ba509b1bc96506e36b351bba69f2d326b12d246c0c2e5d518e16e03198fc5a809d1dc
   languageName: node
   linkType: hard
 
@@ -7930,6 +7986,13 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
+  languageName: node
+  linkType: hard
+
+"fast-diff@npm:^1.1.2":
+  version: 1.2.0
+  resolution: "fast-diff@npm:1.2.0"
+  checksum: 2fbcb23957fb0bc920832a94ba627b860400f9cce45e1594e931dabf62e858369a58c6c2603e2ecc4f7679580f710b5b5b6e698a355a9a9bfcfd93c06c7c4350
   languageName: node
   linkType: hard
 
@@ -8458,13 +8521,6 @@ __metadata:
   version: 15.8.0
   resolution: "graphql@npm:15.8.0"
   checksum: 30cc09b77170a9d1ed68e4c017ec8c5265f69501c96e4f34f8f6613f39a886c96dd9853eac925f212566ed651736334c8fe24ceae6c44e8d7625c95c3009a801
-  languageName: node
-  linkType: hard
-
-"graphql@npm:^16.6.0":
-  version: 16.6.0
-  resolution: "graphql@npm:16.6.0"
-  checksum: 3a2c15ff58b69d017618d2b224fa6f3c4a7937e1f711c3a5e0948db536b4931e6e649560b53de7cc26735e027ceea6e2d0a6bb7c29fc4639b290313e3aa71618
   languageName: node
   linkType: hard
 
@@ -9822,12 +9878,13 @@ __metadata:
     "@subsquid/typeorm-store": ^0.2.2
     "@types/node": 18.15.11
     "@typescript-eslint/eslint-plugin": ^5.58.0
+    "@typescript-eslint/parser": ^5.59.0
     dotenv: ^16.0.3
     eslint: ^8.38.0
     eslint-config-prettier: ^8.8.0
     pg: 8.10.0
     typeorm: 0.3.14
-    typescript: 5.0.3
+    typescript: 5.0.4
   languageName: unknown
   linkType: soft
 
@@ -9853,6 +9910,7 @@ __metadata:
     "@types/node": ^18.16.0
     "@types/react": ^18.0.38
     "@types/react-dom": ^18.0.11
+    "@types/react-router-dom": ^5.3.3
     "@typescript-eslint/eslint-plugin": ^5.59.0
     "@typescript-eslint/parser": ^5.59.0
     "@vitejs/plugin-react": ^4.0.0
@@ -9860,18 +9918,19 @@ __metadata:
     eslint-config-prettier: ^8.8.0
     eslint-config-react-app: ^7.0.1
     eslint-plugin-react-hooks: ^4.6.0
-    graphql: ^16.6.0
+    eslint-plugin-ternary: ^2.0.0
+    graphql: ^15.8.0
     graphql-request: ^6.0.0
     graphql-ws: ^5.12.1
     notistack: ^3.0.1
     react: 18.2.0
     react-dom: 18.2.0
     react-query-subscription: 2.0.0-beta.1
-    react-router-dom: ^6.10.0
+    react-router-dom: ^6.11.1
     reactflow: ^11.7.0
     rxjs: ^7.8.0
     ts-node: ^10.9.1
-    typescript: ^5.0.4
+    typescript: 5.0.4
     vite: ^4.3.4
     vite-plugin-svgr: ^2.4.0
   languageName: unknown
@@ -10649,6 +10708,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-linter-helpers@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "prettier-linter-helpers@npm:1.0.0"
+  dependencies:
+    fast-diff: ^1.1.2
+  checksum: 81e0027d731b7b3697ccd2129470ed9913ecb111e4ec175a12f0fcfab0096516373bf0af2fef132af50cafb0a905b74ff57996d615f59512bb9ac7378fcc64ab
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.8.8":
+  version: 2.8.8
+  resolution: "prettier@npm:2.8.8"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 463ea8f9a0946cd5b828d8cf27bd8b567345cf02f56562d5ecde198b91f47a76b7ac9eae0facd247ace70e927143af6135e8cf411986b8cb8478784a4d6d724a
+  languageName: node
+  linkType: hard
+
 "prom-client@npm:^14.1.1":
   version: 14.2.0
   resolution: "prom-client@npm:14.2.0"
@@ -10847,27 +10924,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.10.0":
-  version: 6.11.0
-  resolution: "react-router-dom@npm:6.11.0"
+"react-router-dom@npm:^6.11.1":
+  version: 6.11.1
+  resolution: "react-router-dom@npm:6.11.1"
   dependencies:
-    "@remix-run/router": 1.6.0
-    react-router: 6.11.0
+    "@remix-run/router": 1.6.1
+    react-router: 6.11.1
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: b5894d7d16ed57ac8ccea3ee3154972dc2c3a34708c7c2b337239e402645eca21ac9bb046f1a3b7f09db36cf4b8c2d3b02d846ac5b7753222578a41798fd6510
+  checksum: 17f1f9c3d71604fb9e270b672a97accbee0bedf5b8cb03518fd20068aa4d653fcbb46c2dfd5cd04a41864bed21cc23c275d7af39e4be2224435529779bf7e7e4
   languageName: node
   linkType: hard
 
-"react-router@npm:6.11.0":
-  version: 6.11.0
-  resolution: "react-router@npm:6.11.0"
+"react-router@npm:6.11.1":
+  version: 6.11.1
+  resolution: "react-router@npm:6.11.1"
   dependencies:
-    "@remix-run/router": 1.6.0
+    "@remix-run/router": 1.6.1
   peerDependencies:
     react: ">=16.8"
-  checksum: c1bca326d78a8aa9a0de56d9298ca4f639d03c1047239b02c35744b41e37ae5dae6c38b4337ebd8546485c300c18b8605778c26d2239294ba0b60f9d488c7888
+  checksum: 3b49692947ef2ddae134a15462e4fa47022d82c358cc90085b471989e4bc3c4e1637aa3a81389166b69db557ac420c289f64d64309f4d0bd87a6099e49aee6e1
   languageName: node
   linkType: hard
 
@@ -12111,17 +12188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.0.3":
-  version: 5.0.3
-  resolution: "typescript@npm:5.0.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 13221c7f7dd2aa9cf8ac2fb1b5ca3825ff3d97a43b4656fd22ca36c0ec30179643b5157d620c3e4af9d3fc9234a571bd3ea175624b3d37c494d7ed159b038df2
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^5.0.4":
+"typescript@npm:5.0.4":
   version: 5.0.4
   resolution: "typescript@npm:5.0.4"
   bin:
@@ -12131,17 +12198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.0.3#~builtin<compat/typescript>":
-  version: 5.0.3
-  resolution: "typescript@patch:typescript@npm%3A5.0.3#~builtin<compat/typescript>::version=5.0.3&hash=b5f058"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 381de1b58d2deb6443cc7d23365b4db36de8360dfc4f4d295ca2fdb0e01687711fb541478838fb9326da315baf6967d616c745d990f2c362036b337a12b18255
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.0.4#~builtin<compat/typescript>":
   version: 5.0.4
   resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"
   bin:

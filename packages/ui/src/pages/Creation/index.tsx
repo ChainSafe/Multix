@@ -1,31 +1,27 @@
-import { Alert, Box, Button, Grid, Step, StepLabel, Stepper } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { styled }  from "@mui/material/styles";
-import { useApi } from "../../contexts/ApiContext";
-import SignatorySelection from "../../components/SignatorySelection";
-import { encodeAddress, createKeyMulti, sortAddresses } from "@polkadot/util-crypto";
-import { useAccounts } from "../../contexts/AccountsContext";
-import ThresholdSelection from "./ThresholdSelection";
-import NameSelection from "./NameSelection"
-import Summary from "./Summary";
-import { useSigningCallback } from "../../hooks/useSigningCallback";
-import { useNavigate } from "react-router-dom";
-import { useAccountNames } from "../../contexts/AccountNamesContext";
-import { useCheckBalance } from "../../hooks/useCheckBalance";
-import { useMultisigProposalNeededFunds } from "../../hooks/useMultisigProposalNeededFunds";
-import { usePureProxyCreationNeededFunds } from "../../hooks/usePureProxyCreationNeededFunds";
-import { useGetSubscanLinks } from "../../hooks/useSubscanLink";
-import { useSnackStack } from "../../components/SnackBar/SnackStackProvider";
+import { Alert, Box, Button, Grid, Step, StepLabel, Stepper } from '@mui/material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { styled } from '@mui/material/styles'
+import { useApi } from '../../contexts/ApiContext'
+import SignatorySelection from '../../components/SignatorySelection'
+import { encodeAddress, createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
+import { useAccounts } from '../../contexts/AccountsContext'
+import ThresholdSelection from './ThresholdSelection'
+import NameSelection from './NameSelection'
+import Summary from './Summary'
+import { useSigningCallback } from '../../hooks/useSigningCallback'
+import { useNavigate } from 'react-router-dom'
+import { useToasts } from '../../contexts/ToastContext'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
+import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
+import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 
 interface Props {
   className?: string
 }
 
-const steps = [
-  "Signatories",
-  "Threshold & Name",
-  "Review"
-]
+const steps = ['Signatories', 'Threshold & Name', 'Review']
 const MultisigCreation = ({ className }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const [signatories, setSignatories] = useState<string[]>([])
@@ -36,11 +32,14 @@ const MultisigCreation = ({ className }: Props) => {
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useSigningCallback({ onSuccess: () => navigate("/?creationInProgress=true") })
-  const { addToast } = useSnackStack()
+  const { addToast } = useToasts()
   const [name, setName] = useState("")
   const { addName } = useAccountNames()
-  const ownAccountPartOfSignatories = useMemo(() => signatories.some(sig => addressList.includes(sig)), [addressList, signatories])
-  const [errorMessage, setErrorMessage] = useState("")
+  const ownAccountPartOfSignatories = useMemo(
+    () => signatories.some((sig) => addressList.includes(sig)),
+    [addressList, signatories]
+  )
+  const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
   const multiAddress = useMemo(() => {
     if (!threshold) {
@@ -78,20 +77,42 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(signatories.filter((sig) => sig !== selectedAccount.address))
-    const proxyTx = api.tx.proxy.createPure("Any", 0, 0)
+    const otherSignatories = sortAddresses(
+      signatories.filter((sig) => sig !== selectedAccount.address)
+    )
+    const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx = api.tx.balances.transfer(multiAddress, pureProxyCreationNeededFunds.toString())
+    const transferTx = api.tx.balances.transfer(
+      multiAddress,
+      pureProxyCreationNeededFunds.toString()
+    )
 
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-  }, [api, isApiReady, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
+  }, [
+    api,
+    isApiReady,
+    multiAddress,
+    pureProxyCreationNeededFunds,
+    selectedAccount,
+    signatories,
+    threshold
+  ])
 
-  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({ threshold, signatories, call: batchCall })
-  const neededBalance = useMemo(() => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds), [multisigProposalNeededFunds, pureProxyCreationNeededFunds])
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({ min: neededBalance, address: selectedAccount?.address })
+  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
+    threshold,
+    signatories,
+    call: batchCall
+  })
+  const neededBalance = useMemo(
+    () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
+    [multisigProposalNeededFunds, pureProxyCreationNeededFunds]
+  )
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
+    min: neededBalance,
+    address: selectedAccount?.address
+  })
   const canGoNext = useMemo(() => {
-
     // need a threshold set
     if (currentStep === 1 && (threshold === undefined || threshold < 2)) {
       return false
@@ -116,15 +137,14 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
-    setErrorMessage("")
+    setErrorMessage('')
 
     if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
-      setErrorMessage("At least one of your account must be a signatory")
+      setErrorMessage('At least one of your account must be a signatory')
     }
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreate = useCallback(async () => {
-
     if (!selectedAccount || !batchCall) {
       console.error('no selected address')
       return
@@ -132,12 +152,26 @@ const MultisigCreation = ({ className }: Props) => {
 
     multiAddress && addName(name, multiAddress)
 
-    batchCall.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+    batchCall
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
-        addToast({ title: error.message, type: "error", link: getSubscanExtrinsicLink(batchCall.hash.toHex()) })
+        addToast({
+          title: error.message,
+          type: 'error',
+          link: getSubscanExtrinsicLink(batchCall.hash.toHex())
+        })
       })
-
-  }, [addName, addToast, batchCall, getSubscanExtrinsicLink, multiAddress, name, selectedAccount, selectedSigner, signCallBack])
+  }, [
+    addName,
+    addToast,
+    batchCall,
+    getSubscanExtrinsicLink,
+    multiAddress,
+    name,
+    selectedAccount,
+    selectedSigner,
+    signCallBack
+  ])
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
@@ -160,7 +194,7 @@ const MultisigCreation = ({ className }: Props) => {
         xs={12}
         md={4}
       >
-        <h1 className="title">{steps[currentStep] || ""}</h1>
+        <h1 className="title">{steps[currentStep] || ''}</h1>
       </Grid>
       <Grid
         item
@@ -180,22 +214,33 @@ const MultisigCreation = ({ className }: Props) => {
               <Step
                 className="stepItem"
                 key={step}
-                onClick={() => { currentStep > index && setCurrentStep(index) }}
+                onClick={() => {
+                  currentStep > index && setCurrentStep(index)
+                }}
               >
-                <StepLabel>{currentStep === index ? "" : step}</StepLabel>
+                <StepLabel>{currentStep === index ? '' : step}</StepLabel>
               </Step>
             ))}
           </Stepper>
         </Box>
       </Grid>
-      <Grid container item xs={12}>
+      <Grid
+        container
+        item
+        xs={12}
+      >
         {currentStep === 0 && (
           <Grid
             item
             xs={12}
             md={6}
           >
-            <Alert className='infoBox' severity="info">The members of a multisig are called "signatories". You should select at least 2.</Alert>
+            <Alert
+              className="infoBox"
+              severity="info"
+            >
+              The members of a multisig are called "signatories". You should select at least 2.
+            </Alert>
             <SignatorySelection
               setSignatories={setSignatories}
               signatories={signatories}
@@ -208,7 +253,13 @@ const MultisigCreation = ({ className }: Props) => {
             xs={12}
             md={6}
           >
-            <Alert className='infoBox' severity="info">The threshold determines the minimum amount of signatory approvals needed for a multisig proposal to be executed.</Alert>
+            <Alert
+              className="infoBox"
+              severity="info"
+            >
+              The threshold determines the minimum amount of signatory approvals needed for a
+              multisig proposal to be executed.
+            </Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
@@ -244,11 +295,7 @@ const MultisigCreation = ({ className }: Props) => {
         className="buttonContainer"
         flexDirection="column"
       >
-        {!!errorMessage && (
-          <div className="errorMessage">
-            {errorMessage}
-          </div>
-        )}
+        {!!errorMessage && <div className="errorMessage">{errorMessage}</div>}
         <div className="buttonWrapper">
           <Button
             disabled={currentStep === 0}
@@ -260,10 +307,7 @@ const MultisigCreation = ({ className }: Props) => {
             disabled={canGoNext}
             onClick={goNext}
           >
-            {isLastStep
-              ? "Create"
-              : "Next"
-            }
+            {isLastStep ? 'Create' : 'Next'}
           </Button>
         </div>
       </Grid>
@@ -271,7 +315,8 @@ const MultisigCreation = ({ className }: Props) => {
   )
 }
 
-export default styled(MultisigCreation)(({ theme }) => `
+export default styled(MultisigCreation)(
+  ({ theme }) => `
   padding-bottom: 2rem;
 
   .infoBox {
@@ -298,4 +343,5 @@ export default styled(MultisigCreation)(({ theme }) => `
   .buttonWrapper {
     align-self: center;
   }
-`)
+`
+)

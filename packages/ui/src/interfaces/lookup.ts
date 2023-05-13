@@ -67,22 +67,22 @@ export default {
   FrameSystemEvent: {
     _enum: {
       ExtrinsicSuccess: {
-        dispatchInfo: 'FrameSupportDispatchDispatchInfo',
+        dispatchInfo: 'FrameSupportDispatchDispatchInfo'
       },
       ExtrinsicFailed: {
         dispatchError: 'SpRuntimeDispatchError',
-        dispatchInfo: 'FrameSupportDispatchDispatchInfo',
+        dispatchInfo: 'FrameSupportDispatchDispatchInfo'
       },
       CodeUpdated: 'Null',
       NewAccount: {
-        account: 'AccountId32',
+        account: 'AccountId32'
       },
       KilledAccount: {
-        account: 'AccountId32',
+        account: 'AccountId32'
       },
       Remarked: {
         _alias: {
-          hash_: 'hash',
+          hash_: 'hash'
         },
         sender: 'AccountId32',
         hash_: 'H256'
@@ -137,7 +137,15 @@ export default {
    * Lookup25: sp_runtime::TokenError
    **/
   SpRuntimeTokenError: {
-    _enum: ['NoFunds', 'WouldDie', 'BelowMinimum', 'CannotCreate', 'UnknownAsset', 'Frozen', 'Unsupported']
+    _enum: [
+      'NoFunds',
+      'WouldDie',
+      'BelowMinimum',
+      'CannotCreate',
+      'UnknownAsset',
+      'Frozen',
+      'Unsupported'
+    ]
   },
   /**
    * Lookup26: sp_runtime::ArithmeticError
@@ -157,7 +165,7 @@ export default {
   PalletGrandpaEvent: {
     _enum: {
       NewAuthorities: {
-        authoritySet: 'Vec<(SpFinalityGrandpaAppPublic,u64)>',
+        authoritySet: 'Vec<(SpFinalityGrandpaAppPublic,u64)>'
       },
       Paused: 'Null',
       Resumed: 'Null'
@@ -178,43 +186,43 @@ export default {
     _enum: {
       Endowed: {
         account: 'AccountId32',
-        freeBalance: 'u128',
+        freeBalance: 'u128'
       },
       DustLost: {
         account: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       Transfer: {
         from: 'AccountId32',
         to: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       BalanceSet: {
         who: 'AccountId32',
         free: 'u128',
-        reserved: 'u128',
+        reserved: 'u128'
       },
       Reserved: {
         who: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       Unreserved: {
         who: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       ReserveRepatriated: {
         from: 'AccountId32',
         to: 'AccountId32',
         amount: 'u128',
-        destinationStatus: 'FrameSupportTokensMiscBalanceStatus',
+        destinationStatus: 'FrameSupportTokensMiscBalanceStatus'
       },
       Deposit: {
         who: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       Withdraw: {
         who: 'AccountId32',
-        amount: 'u128',
+        amount: 'u128'
       },
       Slashed: {
         who: 'AccountId32',
@@ -246,10 +254,10 @@ export default {
   PalletSudoEvent: {
     _enum: {
       Sudid: {
-        sudoResult: 'Result<Null, SpRuntimeDispatchError>',
+        sudoResult: 'Result<Null, SpRuntimeDispatchError>'
       },
       KeyChanged: {
-        oldSudoer: 'Option<AccountId32>',
+        oldSudoer: 'Option<AccountId32>'
       },
       SudoAsDone: {
         sudoResult: 'Result<Null, SpRuntimeDispatchError>'
@@ -272,7 +280,7 @@ export default {
     _enum: {
       Initialize: {
         sqrtPriceX96: 'UniswapV3U160',
-        tick: 'i32',
+        tick: 'i32'
       },
       Mint: {
         sender: 'AccountId32',
@@ -281,7 +289,7 @@ export default {
         tickUpper: 'i32',
         amount: 'u128',
         amount0: 'UniswapV3U256',
-        amount1: 'UniswapV3U256',
+        amount1: 'UniswapV3U256'
       },
       Collect: {
         owner: 'AccountId32',
@@ -289,7 +297,7 @@ export default {
         tickLower: 'i32',
         tickUpper: 'i32',
         amount0: 'u128',
-        amount1: 'u128',
+        amount1: 'u128'
       },
       Burn: {
         owner: 'AccountId32',
@@ -297,7 +305,7 @@ export default {
         tickUpper: 'i32',
         amount: 'u128',
         amount0: 'UniswapV3U256',
-        amount1: 'UniswapV3U256',
+        amount1: 'UniswapV3U256'
       },
       Swap: {
         sender: 'AccountId32',
@@ -306,7 +314,7 @@ export default {
         amount1: 'UniswapV3I256',
         sqrtPriceX96: 'UniswapV3U160',
         liquidity: 'u128',
-        tick: 'i32',
+        tick: 'i32'
       },
       Flash: {
         sender: 'AccountId32',
@@ -314,17 +322,17 @@ export default {
         amount0: 'UniswapV3U256',
         amount1: 'UniswapV3U256',
         paid0: 'UniswapV3U256',
-        paid1: 'UniswapV3U256',
+        paid1: 'UniswapV3U256'
       },
       IncreaseObservationCardinalityNext: {
         observationCardinalityNextOld: 'u16',
-        observationCardinalityNextNew: 'u16',
+        observationCardinalityNextNew: 'u16'
       },
       SetFeeProtocol: {
         feeProtocol0Old: 'u8',
         feeProtocol1Old: 'u8',
         feeProtocol0New: 'u8',
-        feeProtocol1New: 'u8',
+        feeProtocol1New: 'u8'
       },
       CollectProtocol: {
         sender: 'AccountId32',
@@ -357,14 +365,14 @@ export default {
     _enum: {
       OwnerChanged: {
         oldOwner: 'AccountId32',
-        newOwner: 'AccountId32',
+        newOwner: 'AccountId32'
       },
       PoolCreated: {
         token0: 'u32',
         token1: 'u32',
         fee: 'u32',
         tickSpacing: 'i32',
-        pool: '[u8;32]',
+        pool: '[u8;32]'
       },
       FeeAmountEnabled: {
         fee: 'u32',
@@ -379,13 +387,13 @@ export default {
     _enum: {
       BatchInterrupted: {
         index: 'u32',
-        error: 'SpRuntimeDispatchError',
+        error: 'SpRuntimeDispatchError'
       },
       BatchCompleted: 'Null',
       BatchCompletedWithErrors: 'Null',
       ItemCompleted: 'Null',
       ItemFailed: {
-        error: 'SpRuntimeDispatchError',
+        error: 'SpRuntimeDispatchError'
       },
       DispatchedAs: {
         result: 'Result<Null, SpRuntimeDispatchError>'
@@ -415,32 +423,32 @@ export default {
   FrameSystemCall: {
     _enum: {
       fill_block: {
-        ratio: 'Perbill',
+        ratio: 'Perbill'
       },
       remark: {
-        remark: 'Bytes',
+        remark: 'Bytes'
       },
       set_heap_pages: {
-        pages: 'u64',
+        pages: 'u64'
       },
       set_code: {
-        code: 'Bytes',
+        code: 'Bytes'
       },
       set_code_without_checks: {
-        code: 'Bytes',
+        code: 'Bytes'
       },
       set_storage: {
-        items: 'Vec<(Bytes,Bytes)>',
+        items: 'Vec<(Bytes,Bytes)>'
       },
       kill_storage: {
         _alias: {
-          keys_: 'keys',
+          keys_: 'keys'
         },
-        keys_: 'Vec<Bytes>',
+        keys_: 'Vec<Bytes>'
       },
       kill_prefix: {
         prefix: 'Bytes',
-        subkeys: 'u32',
+        subkeys: 'u32'
       },
       remark_with_event: {
         remark: 'Bytes'
@@ -510,7 +518,14 @@ export default {
    * Lookup77: frame_system::pallet::Error<T>
    **/
   FrameSystemError: {
-    _enum: ['InvalidSpecName', 'SpecVersionNeedsToIncrease', 'FailedToExtractRuntimeVersion', 'NonDefaultComposite', 'NonZeroRefCount', 'CallFiltered']
+    _enum: [
+      'InvalidSpecName',
+      'SpecVersionNeedsToIncrease',
+      'FailedToExtractRuntimeVersion',
+      'NonDefaultComposite',
+      'NonZeroRefCount',
+      'CallFiltered'
+    ]
   },
   /**
    * Lookup79: pallet_timestamp::pallet::Call<T>
@@ -538,7 +553,7 @@ export default {
       Live: 'Null',
       PendingPause: {
         scheduledAt: 'u32',
-        delay: 'u32',
+        delay: 'u32'
       },
       Paused: 'Null',
       PendingResume: {
@@ -563,11 +578,11 @@ export default {
     _enum: {
       report_equivocation: {
         equivocationProof: 'SpFinalityGrandpaEquivocationProof',
-        keyOwnerProof: 'SpCoreVoid',
+        keyOwnerProof: 'SpCoreVoid'
       },
       report_equivocation_unsigned: {
         equivocationProof: 'SpFinalityGrandpaEquivocationProof',
-        keyOwnerProof: 'SpCoreVoid',
+        keyOwnerProof: 'SpCoreVoid'
       },
       note_stalled: {
         delay: 'u32',
@@ -639,7 +654,15 @@ export default {
    * Lookup103: pallet_grandpa::pallet::Error<T>
    **/
   PalletGrandpaError: {
-    _enum: ['PauseFailed', 'ResumeFailed', 'ChangePending', 'TooSoon', 'InvalidKeyOwnershipProof', 'InvalidEquivocationProof', 'DuplicateOffenceReport']
+    _enum: [
+      'PauseFailed',
+      'ResumeFailed',
+      'ChangePending',
+      'TooSoon',
+      'InvalidKeyOwnershipProof',
+      'InvalidEquivocationProof',
+      'DuplicateOffenceReport'
+    ]
   },
   /**
    * Lookup105: pallet_balances::BalanceLock<Balance>
@@ -675,25 +698,25 @@ export default {
     _enum: {
       transfer: {
         dest: 'MultiAddress',
-        value: 'Compact<u128>',
+        value: 'Compact<u128>'
       },
       set_balance: {
         who: 'MultiAddress',
         newFree: 'Compact<u128>',
-        newReserved: 'Compact<u128>',
+        newReserved: 'Compact<u128>'
       },
       force_transfer: {
         source: 'MultiAddress',
         dest: 'MultiAddress',
-        value: 'Compact<u128>',
+        value: 'Compact<u128>'
       },
       transfer_keep_alive: {
         dest: 'MultiAddress',
-        value: 'Compact<u128>',
+        value: 'Compact<u128>'
       },
       transfer_all: {
         dest: 'MultiAddress',
-        keepAlive: 'bool',
+        keepAlive: 'bool'
       },
       force_unreserve: {
         who: 'MultiAddress',
@@ -705,7 +728,16 @@ export default {
    * Lookup117: pallet_balances::pallet::Error<T, I>
    **/
   PalletBalancesError: {
-    _enum: ['VestingBalance', 'LiquidityRestrictions', 'InsufficientBalance', 'ExistentialDeposit', 'KeepAlive', 'ExistingVestingSchedule', 'DeadAccount', 'TooManyReserves']
+    _enum: [
+      'VestingBalance',
+      'LiquidityRestrictions',
+      'InsufficientBalance',
+      'ExistentialDeposit',
+      'KeepAlive',
+      'ExistingVestingSchedule',
+      'DeadAccount',
+      'TooManyReserves'
+    ]
   },
   /**
    * Lookup119: pallet_transaction_payment::Releases
@@ -719,17 +751,17 @@ export default {
   PalletSudoCall: {
     _enum: {
       sudo: {
-        call: 'Call',
+        call: 'Call'
       },
       sudo_unchecked_weight: {
         call: 'Call',
-        weight: 'Weight',
+        weight: 'Weight'
       },
       set_key: {
         _alias: {
-          new_: 'new',
+          new_: 'new'
         },
-        new_: 'MultiAddress',
+        new_: 'MultiAddress'
       },
       sudo_as: {
         who: 'MultiAddress',
@@ -745,33 +777,33 @@ export default {
       create_pool: {
         token0: 'u32',
         token1: 'u32',
-        fee: 'u32',
+        fee: 'u32'
       },
       enable_fee_amount: {
         fee: 'u32',
-        tickSpacing: 'i32',
+        tickSpacing: 'i32'
       },
       set_fee_protocol: {
         id: '[u8;32]',
         feeProtocol0: 'u8',
-        feeProtocol1: 'u8',
+        feeProtocol1: 'u8'
       },
       collect_protocol: {
         id: '[u8;32]',
         recipient: 'AccountId32',
         amount0Requested: 'u128',
-        amount1Requested: 'u128',
+        amount1Requested: 'u128'
       },
       initialize: {
         id: '[u8;32]',
-        sqrtPriceX96: 'UniswapV3U160',
+        sqrtPriceX96: 'UniswapV3U160'
       },
       mint: {
         id: '[u8;32]',
         recipient: 'AccountId32',
         tickLower: 'i32',
         tickUpper: 'i32',
-        amount: 'u128',
+        amount: 'u128'
       },
       collect: {
         id: '[u8;32]',
@@ -779,20 +811,20 @@ export default {
         tickLower: 'i32',
         tickUpper: 'i32',
         amount0Requested: 'u128',
-        amount1Requested: 'u128',
+        amount1Requested: 'u128'
       },
       burn: {
         id: '[u8;32]',
         tickLower: 'i32',
         tickUpper: 'i32',
-        amount: 'u128',
+        amount: 'u128'
       },
       swap: {
         id: '[u8;32]',
         recipient: 'AccountId32',
         zeroForOne: 'bool',
         amountSpecfied: 'UniswapV3I256',
-        sqrtPriceLimitX96: 'UniswapV3U160',
+        sqrtPriceLimitX96: 'UniswapV3U160'
       },
       flash: {
         id: '[u8;32]',
@@ -810,18 +842,18 @@ export default {
   PalletUtilityCall: {
     _enum: {
       batch: {
-        calls: 'Vec<Call>',
+        calls: 'Vec<Call>'
       },
       as_derivative: {
         index: 'u16',
-        call: 'Call',
+        call: 'Call'
       },
       batch_all: {
-        calls: 'Vec<Call>',
+        calls: 'Vec<Call>'
       },
       dispatch_as: {
         asOrigin: 'NodeTemplateRuntimeOriginCaller',
-        call: 'Call',
+        call: 'Call'
       },
       force_batch: {
         calls: 'Vec<Call>'
@@ -920,7 +952,26 @@ export default {
    * Lookup143: pallet_uniswap::pallet::Error<T>
    **/
   PalletUniswapError: {
-    _enum: ['DuplicatedTokens', 'EmptyTickSpacing', 'TickNotSpaced', 'InvalidFeeConfig', 'PoolNoExists', 'NotOwner', 'InternalPoolError', 'AI', 'IF', 'L', 'LO', 'LOK', 'LS', 'NP', 'R', 'TLU', 'TLM', 'TUM']
+    _enum: [
+      'DuplicatedTokens',
+      'EmptyTickSpacing',
+      'TickNotSpaced',
+      'InvalidFeeConfig',
+      'PoolNoExists',
+      'NotOwner',
+      'InternalPoolError',
+      'AI',
+      'IF',
+      'L',
+      'LO',
+      'LOK',
+      'LS',
+      'NP',
+      'R',
+      'TLU',
+      'TLM',
+      'TUM'
+    ]
   },
   /**
    * Lookup144: pallet_utility::pallet::Error<T>
@@ -978,4 +1029,4 @@ export default {
    * Lookup160: node_template_runtime::Runtime
    **/
   NodeTemplateRuntimeRuntime: 'Null'
-};
+}

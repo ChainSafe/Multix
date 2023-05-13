@@ -1,11 +1,11 @@
-import { Box, CircularProgress } from "@mui/material"
-import LaunchIcon from '@mui/icons-material/Launch';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { styled }  from "@mui/material/styles";
-import { useCallback } from "react";
+import { Box, CircularProgress } from '@mui/material'
+import LaunchIcon from '@mui/icons-material/Launch'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import { styled } from '@mui/material/styles'
+import { useCallback } from 'react'
 
-export type ToastType = "success" | "error" | "loading"
+export type ToastType = 'success' | 'error' | 'loading'
 
 export interface Toast {
   id?: number
@@ -20,21 +20,19 @@ export interface ToastContentProps extends Toast {
 
 const ToastContent = ({ type, title, className, link }: ToastContentProps) => {
   const onOpenLink = useCallback(() => {
-    window.open(link, "_blank")
+    window.open(link, '_blank')
   }, [link])
 
   return (
-    <div
-      className={className}
-    >
-
-      <div className='iconContainer'>
-        {type === "success"
-          ? <CheckCircleOutlineIcon className="toastIcon" />
-          : type === "loading"
-            ? <CircularProgress className="toastIcon" />
-            : <ErrorOutlineIcon className="toastIcon errorIcon" />
-        }
+    <div className={className}>
+      <div className="iconContainer">
+        {type === 'success' ? (
+          <CheckCircleOutlineIcon className="toastIcon" />
+        ) : type === 'loading' ? (
+          <CircularProgress className="toastIcon" />
+        ) : (
+          <ErrorOutlineIcon className="toastIcon errorIcon" />
+        )}
       </div>
       <Box
         component="p"
@@ -50,11 +48,12 @@ const ToastContent = ({ type, title, className, link }: ToastContentProps) => {
           <LaunchIcon fontSize="small" />
         </Box>
       )}
-    </div >
+    </div>
   )
 }
 
-export default styled(ToastContent)(({ theme }) => `
+export default styled(ToastContent)(
+  ({ theme }) => `
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -77,4 +76,5 @@ export default styled(ToastContent)(({ theme }) => `
         color: ${theme.custom.text.errorColor}
     }
 
-`)
+`
+)

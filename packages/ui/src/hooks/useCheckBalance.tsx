@@ -1,34 +1,19 @@
-import BN from "bn.js"
-import { useEffect, useState } from "react"
-import { useApi } from "../contexts/ApiContext"
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
+import BN from 'bn.js'
+import { useMemo } from 'react'
+import { useGetBalance } from './useGetBalance'
 
 export interface Props {
-    min?: BN
-    address?: string
+  min?: BN
+  address?: string
 }
 
 export const useCheckBalance = ({ min, address }: Props) => {
-  const { isApiReady, api } = useApi()
-  const [hasEnoughFreeBalance, setHasEnoughFreeBalance] = useState(false)
+  const { balance } = useGetBalance({ address })
 
-  useEffect(() => {
-    if (!isApiReady || !api || !address || !min) return
-
-
-    let unsubscribe: () => void;
-
-    api.derive.balances.account(address, (info: DeriveBalancesAccount) => {
-      setHasEnoughFreeBalance(info.freeBalance.gte(min))
-      // console.log('info.freeBalance', info.freeBalance.toString(), address)
-    })
-      .then(unsub => { unsubscribe = unsub; })
-      .catch(console.error)
-
-    return () => unsubscribe && unsubscribe();
-
-  }, [address, api, isApiReady, min])
+  const hasEnoughFreeBalance = useMemo(() => {
+    if (!address || !min || !balance) return false
+    return balance.gte(min)
+  }, [address, min, balance])
 
   return { hasEnoughFreeBalance }
-
-} 
+}
