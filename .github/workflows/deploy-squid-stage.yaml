@@ -103,6 +103,11 @@ jobs:
           SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
         run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
+      - name: stop current service
+        env:
+          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+        run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ multix.network }}" "${{ env.AWS_REGION }}"
+
       - name: dump database
         run: drop-tables
 
@@ -114,7 +119,7 @@ jobs:
       - name: update cluster service
         env:
           AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
+        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} 2>&1 /dev/null
 
       - name: cleanup credentials
         if: always()
