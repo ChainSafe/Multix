@@ -119,7 +119,7 @@ jobs:
       - name: update cluster service
         env:
           AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} 2>&1 /dev/null
+        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} 2>&1 >/dev/null
 
       - name: cleanup credentials
         if: always()
