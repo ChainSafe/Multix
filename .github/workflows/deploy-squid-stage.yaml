@@ -111,10 +111,10 @@ jobs:
       - name: dump database
         run: drop-tables
 
-#      - name: run migrations and start again
-#        run: |
-#          source "${{ env.ENV_FILE }}"
-#          yarn workspace multix-squid db:migrate
+      - name: run migrations and start again
+        run: |
+          source "${{ env.ENV_FILE }}"
+          yarn workspace multix-squid db:migrate
 
 #      - name: update cluster service
 #        env:
