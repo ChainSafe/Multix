@@ -26,6 +26,7 @@ import Warning from '../Warning'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import BatchExtrinsic from '../EasySetup/BatchExtrinsic'
 
 interface Props {
   onClose: () => void
@@ -164,7 +165,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       ),
       'Manual extrinsic': (
         <ManualExtrinsic
-          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+        />
+      ),
+      'Batch extrinsic': (
+        <BatchExtrinsic
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
         />
