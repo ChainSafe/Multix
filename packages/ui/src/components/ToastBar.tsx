@@ -1,21 +1,24 @@
 import { IconButton, Snackbar } from '@mui/material'
-import { useToasts } from '../contexts/ToastContext'
+import { Toast, useToasts } from '../contexts/ToastContext'
 import CloseIcon from '@mui/icons-material/Close'
 import ToastContent from './ToastContent'
 import React, { useCallback } from 'react'
 import { styled } from '@mui/material/styles'
-import { Toast } from './ToastContent'
+
+const HORIZONTAL_POSITION = 'left'
+const VERTICAL_POSITION = 'bottom'
+const DEFAULT_AUTO_HIDE_DURATION = 6000
 
 interface Props {
   toast: Toast
 }
 
 const ToastBar = ({ toast }: Props) => {
-  const { id, title, type, link } = toast
+  const { id, duration } = toast
   const { removeToast } = useToasts()
 
   const handleClose = useCallback(
-    (event: React.SyntheticEvent | Event, reason?: string) => {
+    (_: React.SyntheticEvent | Event, reason?: string) => {
       if (reason === 'clickaway') {
         return
       }
@@ -28,8 +31,8 @@ const ToastBar = ({ toast }: Props) => {
   return (
     <Snackbar
       open={true}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      autoHideDuration={toast.type === 'error' ? null : 6000}
+      anchorOrigin={{ vertical: VERTICAL_POSITION, horizontal: HORIZONTAL_POSITION }}
+      autoHideDuration={duration || DEFAULT_AUTO_HIDE_DURATION}
       onClose={handleClose}
       key={id}
       action={
@@ -42,15 +45,7 @@ const ToastBar = ({ toast }: Props) => {
           <CloseIcon fontSize="small" />
         </IconButton>
       }
-      message={
-        <ToastContent
-          type={type}
-          title={title}
-          key={id}
-          id={id}
-          link={link}
-        />
-      }
+      message={<ToastContent toast={toast} />}
     />
   )
 }

@@ -1,66 +1,55 @@
-import { useState, useContext, createContext } from 'react';
-import { ToastType } from '../components/ToastContent';
-import Snackbar from '../components/Snackbar';
+import { useState, useContext, createContext } from 'react'
+import { ToastType } from '../components/ToastContent'
+import Snackbar from '../components/Snackbar'
 
-export type ToastProps = {
-  key?: number;
-  title?: string;
-  message?: string;
-  link?: string;
-  duration?: number;
-  type: ToastType;
-  position?: {
-    vertical?: 'top' | 'bottom';
-    horizontal?: 'left' | 'right' | 'center';
-  };
-};
+export type Toast = {
+  id: number
+  title?: string
+  link?: string
+  duration?: number
+  type: ToastType
+}
 
-const MAX_VISIBLE_TOASTS = 3
+const MAX_VISIBLE_TOASTS = 6
 
-export type ToastStackContextProps = {
-  toastsPack: ToastProps[];
-  setToastsPack: (toasts: ToastProps[]) => void;
-  addToast: (toast: ToastProps) => void;
-  removeToast: (key: ToastProps['key']) => void;
-};
+export type ToastContextProps = {
+  toasts: Toast[]
+  setToasts: (toasts: Toast[]) => void
+  addToast: (toast: Omit<Toast, 'id'>) => void
+  removeToast: (id: Toast['id']) => void
+}
 
-const ToastContextProvider  = createContext<ToastStackContextProps>({
-  toastsPack: [],
-  setToastsPack: (toasts) => {},
-  addToast: (toast) => {},
-  removeToast: (key) => {}
-});
+const ToastContext = createContext<ToastContextProps | undefined>(undefined)
 
-const ToastStackProvider: React.FC<React.PropsWithChildren> = ({
-  children
-}) => {
-  const [toastsPack, setToastsPack] = useState<ToastProps[]>([]);
+const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = (toast: ToastProps) => {
-    const key = toast.key || Date.now();
+  const addToast = (toast: Omit<Toast, 'id'>) => {
+    const id = Date.now()
 
-    // Prevent duplicated toasts
-    if (toastsPack.find((toast) => toast.key === key)) {
-      return;
-    }
-    const rest = toastsPack.length < MAX_VISIBLE_TOASTS ? toastsPack : toastsPack.slice(0, -1);
-    setToastsPack([{ ...toast, key }, ...rest]);
-  };
+    const rest = toasts.length < MAX_VISIBLE_TOASTS ? toasts : toasts.slice(0, -1)
 
-  const removeToast = (key: ToastProps['key']) => {
-    setToastsPack((prev) => prev.filter((toast) => toast.key !== key));
-  };
+    setToasts([{ ...toast, id }, ...rest])
+  }
+
+  const removeToast = (key: Toast['id']) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== key))
+  }
 
   return (
-    <ToastContextProvider.Provider
-      value={{ toastsPack, setToastsPack, addToast, removeToast }}
-    >
+    <ToastContext.Provider value={{ toasts, setToasts, addToast, removeToast }}>
       <Snackbar />
       {children}
-    </ToastContextProvider.Provider>
-  );
-};
+    </ToastContext.Provider>
+  )
+}
 
-export const useToasts = () => useContext(ToastContextProvider);
+export const useToasts = () => {
+  const context = useContext(ToastContext)
+  if (context === undefined) {
+    throw new Error('useToasst must be used within a ToastContextProvider')
+  }
+  return context
+}
 
-export default ToastStackProvider;
+export default ToastProvider
