@@ -5,11 +5,12 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
+import { getTypeDef } from '@polkadot/types/create'
 
 interface Props {
+  extrinsicIndex?: string
   className?: string
-  from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
+  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>, key?: string) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -89,8 +90,13 @@ const transformParams = (
 
 const isNumType = (type: string) => paramConversion.num.includes(type)
 
-const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const { api, isApiReady, chainInfo } = useApi()
+const ManualExtrinsic = ({
+  className,
+  onSetExtrinsic,
+  onSetErrorMessage,
+  extrinsicIndex
+}: Props) => {
+  const { api, isApiReady } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
   const [paramFields, setParamFields] = useState<ParamField[] | null>(null)
@@ -159,12 +165,24 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     let paramFields: ParamField[] = []
     const metaArgs = api.tx[palletRpc][callable].meta.args
 
+    console.log('metaArgs', metaArgs)
     if (metaArgs && metaArgs.length > 0) {
-      paramFields = metaArgs.map((arg) => ({
-        name: arg.name.toString(),
-        type: arg.type.toString(),
-        optional: argIsOptional(arg)
-      }))
+      paramFields = metaArgs.map((arg) => {
+        console.log('getTypeDef', getTypeDef(arg.type.toString()))
+        const instance = api.registry.createType(arg.type as unknown as 'u32')
+        console.log('instance', instance)
+        const raw = getTypeDef(instance.toRawType())
+        console.log('raw', raw)
+
+        arg.typeName.isSome &&
+          console.log('typeName.unwrap().toString()', arg.typeName.unwrap().toString())
+
+        return {
+          name: arg.name.toString(),
+          type: arg.type.toString(),
+          optional: argIsOptional(arg)
+        }
+      })
     }
 
     setParamFields(paramFields)
@@ -228,7 +246,7 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
         ? api.tx[palletRpc][callable](...transformedParams)
         : api.tx[palletRpc][callable]()
 
-      !!extrinsic && onSetExtrinsic(extrinsic)
+      !!extrinsic && onSetExtrinsic(extrinsic, extrinsicIndex)
     } catch (e) {
       console.error('Error in ManualExtrinsic')
       console.error(e)
@@ -239,8 +257,8 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
     api,
     areAllParamsFilled,
     callable,
-    chainInfo,
     isApiReady,
+    extrinsicIndex,
     onSetErrorMessage,
     onSetExtrinsic,
     palletRpc,
@@ -317,16 +335,16 @@ const ManualExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage, from }:
 
 export default styled(ManualExtrinsic)(
   ({ theme }) => `
-    .palletSelection {
-        margin-right: .5rem;
-    }
+  .palletSelection {
+      margin-right: .5rem;
+  }
 
-    .paramInputs {
-      list-style: none;
-      
-      & > li {
-        margin-top: 0.5rem;
-      }
+  .paramInputs {
+    list-style: none;
+    
+    & > li {
+      margin-top: 0.5rem;
     }
+  }
 `
 )
