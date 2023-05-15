@@ -31,9 +31,11 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, addressList } = useAccounts()
   const navigate = useNavigate()
-  const signCallBack = useSigningCallback({ onSuccess: () => navigate("/?creationInProgress=true") })
+  const signCallBack = useSigningCallback({
+    onSuccess: () => navigate('/?creationInProgress=true')
+  })
   const { addToast } = useToasts()
-  const [name, setName] = useState("")
+  const [name, setName] = useState('')
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(
     () => signatories.some((sig) => addressList.includes(sig)),
