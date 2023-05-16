@@ -17,7 +17,10 @@ const WatchedSignatories = ({ className }: Props) => {
           const removeItem = () => removeWatchedAccount(address)
           return (
             <li key={address}>
-              <AccountDisplay address={address} />
+              <AccountDisplay
+                address={address}
+                withName
+              />
               <IconButton
                 size="small"
                 aria-label="close"
@@ -34,6 +37,13 @@ const WatchedSignatories = ({ className }: Props) => {
   )
 }
 
-const ListStyled = styled('ul')``
+const ListStyled = styled('ul')`
+  list-style: none;
+
+  li {
+    margin-top: 1rem;
+    display: flex;
+  }
+`
 
 export default styled(WatchedSignatories)``

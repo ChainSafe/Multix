@@ -15,4 +15,8 @@ const Settings = ({ className }: Props) => {
   )
 }
 
-export default styled(Settings)``
+export default styled(Settings)`
+  .identicon {
+    margin-right: 0.5rem;
+  }
+`

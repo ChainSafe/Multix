@@ -13,8 +13,13 @@ const formatWatchedAccount = (address: string) =>
     }
   } as InjectedAccountWithMeta)
 
+const unformatWatched = (watchedList: InjectedAccountWithMeta[]) => {
+  return watchedList.map(({ address }) => address)
+}
+
 export const useWatchedAccounts = () => {
   const [watchedAccounts, setWatchedAccounts] = useState<InjectedAccountWithMeta[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const addWatchedAccount = useCallback(
     (address: string) => {
@@ -25,7 +30,7 @@ export const useWatchedAccounts = () => {
 
   const removeWatchedAccount = useCallback(
     (addressToRemove: string) => {
-      const filtered = watchedAccounts.filter(({ address }) => address === addressToRemove)
+      const filtered = watchedAccounts.filter(({ address }) => address !== addressToRemove)
       setWatchedAccounts([...filtered])
     },
     [watchedAccounts]
@@ -42,6 +47,7 @@ export const useWatchedAccounts = () => {
     })
 
     setWatchedAccounts(toStore)
+    setIsInitialized(true)
   }, [])
 
   useEffect(() => {
@@ -50,10 +56,13 @@ export const useWatchedAccounts = () => {
 
   // persist the accounts watched every time there's a change
   useEffect(() => {
-    if (isEmptyArray(watchedAccounts)) return
+    if (!isInitialized) return
 
-    localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(watchedAccounts))
-  }, [watchedAccounts])
+    localStorage.setItem(
+      LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
+      JSON.stringify(unformatWatched(watchedAccounts))
+    )
+  }, [isInitialized, watchedAccounts])
 
   return {
     watchedAccounts,
