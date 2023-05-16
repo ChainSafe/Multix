@@ -7,7 +7,7 @@ on:
       - 'packages/squid/**'
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
-      - drop/* # run this workflow if the branch starts with drop/* and drop the db
+      - drop-tables/* # run this workflow if the branch starts with drop/* and drop the db
       - ci/* # run this workflow if the branch starts with ci/*
 
 env:
@@ -45,8 +45,8 @@ jobs:
       - name: dump database
         env:
           BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        if: ${{ env.BRANCH_NAME }} == 'drop/**'
-        run: echo "---> on drop/** branch"
+        if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
+        run: echo "---> on drop-tables/** branch"
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
