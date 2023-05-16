@@ -1,78 +1,55 @@
-import React, { useCallback, useRef, useState } from 'react'
-import ToastBar from '../components/ToastBar'
-import { Toast } from '../components/ToastContent'
+import { useState, useContext, createContext } from 'react'
+import { ToastType } from '../components/Toasts/ToastContent'
+import Snackbar from '../components/Toasts/Snackbar'
 
-type ToastContextProps = {
-  children: React.ReactNode | React.ReactNode[]
+export type Toast = {
+  id: number
+  title?: string
+  link?: string
+  duration?: number
+  type: ToastType
 }
 
-export interface IToastContext {
-  addToast: (toastParams: Omit<Toast, 'id'>) => number
-  removeToast: (toastId: number) => void
-  removeAllToasts: () => void
+const MAX_VISIBLE_TOASTS = 6
+
+export type ToastContextProps = {
   toasts: Toast[]
+  setToasts: (toasts: Toast[]) => void
+  addToast: (toast: Omit<Toast, 'id'>) => void
+  removeToast: (id: Toast['id']) => void
 }
 
-const ToastContext = React.createContext<IToastContext | undefined>(undefined)
+const ToastContext = createContext<ToastContextProps | undefined>(undefined)
 
-const ToastContextProvider = ({ children }: ToastContextProps) => {
-  const [toastQueue, setToastQueue] = useState<Toast[]>([])
-  // using useRef instead of useState to keep a tracker over the exact toast array
-  const toasts = useRef<Toast[]>([])
+const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [toasts, setToasts] = useState<Toast[]>([])
 
-  const removeToast = useCallback(
-    (toastId: number) => {
-      toasts.current = toasts.current.filter((toast) => toast.id !== toastId)
-      setToastQueue(toasts.current)
-    },
-    [toasts]
-  )
-
-  const removeAllToasts = useCallback(() => {
-    toasts.current = []
-    setToastQueue(toasts.current)
-  }, [toasts])
-
-  const addToast = useCallback((toastParams: Omit<Toast, 'id'>) => {
+  const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = Date.now()
-    toasts.current = [
-      ...toasts.current,
-      {
-        id,
-        ...toastParams
-      }
-    ]
-    setToastQueue(toasts.current)
 
-    return id
-  }, [])
+    const rest = toasts.length < MAX_VISIBLE_TOASTS ? toasts : toasts.slice(0, -1)
+
+    setToasts([{ ...toast, id }, ...rest])
+  }
+
+  const removeToast = (key: Toast['id']) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== key))
+  }
 
   return (
-    <ToastContext.Provider
-      value={{
-        addToast,
-        removeToast,
-        removeAllToasts,
-        toasts: toastQueue
-      }}
-    >
-      {toastQueue.map((toast) => (
-        <ToastBar
-          toast={toast}
-          key={toast.id}
-        />
-      ))}
+    <ToastContext.Provider value={{ toasts, setToasts, addToast, removeToast }}>
+      <Snackbar />
       {children}
     </ToastContext.Provider>
   )
 }
 
-const useToasts = () => {
-  const context = React.useContext(ToastContext)
+export const useToasts = () => {
+  const context = useContext(ToastContext)
   if (context === undefined) {
-    throw new Error('useToasts must be used within a ToastProvider')
+    throw new Error('useToasst must be used within a ToastContextProvider')
   }
   return context
 }
 
-export { ToastContextProvider, useToasts }
+export default ToastProvider
