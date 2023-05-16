@@ -1,4 +1,4 @@
-import { Paper, Button, Box } from '@mui/material'
+import { Paper, Button, Box, Link } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import GestureIcon from '@mui/icons-material/Gesture'
@@ -32,11 +32,9 @@ const Transaction = ({
   // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
   const { selectedNetworkInfo } = useNetwork()
-
-  const onOpenLink = useCallback(() => {
+  const link = useMemo(() => {
     const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl || '')
-    const link = `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
-    window.open(link, '_blank')
+    return `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
   }, [aggregatedData, selectedNetworkInfo])
 
   const onClose = useCallback(() => {
@@ -69,8 +67,8 @@ const Transaction = ({
             <TransactionFooterStyled>
               {!!aggregatedData.callData && (
                 <Linkstyled
-                  className="linkIcon"
-                  onClick={onOpenLink}
+                  href={link}
+                  target="_blank"
                 >
                   See callData
                   <LaunchIcon
@@ -79,7 +77,7 @@ const Transaction = ({
                   />
                 </Linkstyled>
               )}
-              <Button onClick={onOpenModal}>Review</Button>
+              <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
             </TransactionFooterStyled>
           )
         }
@@ -96,13 +94,15 @@ const Transaction = ({
   )
 }
 
-const Linkstyled = styled(Box)(
+const ButtonStyled = styled(Button)`
+  margin-left: auto;
+`
+const Linkstyled = styled(Link)(
   ({ theme }) => `
+  text-decoration: none;
   display: flex;
   color: ${theme.custom.text.addressColorLightGray};
   align-items: center;
-  flex: 1;
-  cursor: pointer;
   margin-left: .5rem;
 
   .icon {
