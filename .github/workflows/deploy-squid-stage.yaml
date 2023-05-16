@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: show branch name
-        run: echo ${{ env.BRANCH_NAME }}; echo ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
+        run: echo ${{ env.BRANCH_NAME }}; echo ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
@@ -114,11 +114,11 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
+        if: ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
         run: drop-tables
 
       - name: run migration
-        if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
+        if: ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
