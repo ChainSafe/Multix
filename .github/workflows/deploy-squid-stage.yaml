@@ -115,7 +115,7 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        if: ${{ GIT_BRANCH }} == 'drop/*'
+        if: ${{ env.GIT_BRANCH }} == 'drop/*'
         run: drop-tables
 
       - name: run migrations and start again
