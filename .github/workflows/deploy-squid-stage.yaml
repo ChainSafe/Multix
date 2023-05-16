@@ -21,6 +21,7 @@ env:
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
   ENV_FILE: '${{ secrets.ENV_FILE }}'
+  BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 
 jobs:
   push:
@@ -110,12 +111,11 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        env:
-          BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
         if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
         run: drop-tables
 
-      - name: run migrations and start again
+      - name: run migrations
+        if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
