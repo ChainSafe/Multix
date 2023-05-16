@@ -1,6 +1,6 @@
 import { useState, useContext, createContext } from 'react'
-import { ToastType } from '../components/ToastContent'
-import Snackbar from '../components/Snackbar'
+import { ToastType } from '../components/Toasts/ToastContent'
+import Snackbar from '../components/Toasts/Snackbar'
 
 export type Toast = {
   id: number

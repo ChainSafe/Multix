@@ -1,5 +1,5 @@
 import { IconButton, Snackbar } from '@mui/material'
-import { Toast, useToasts } from '../contexts/ToastContext'
+import { Toast, useToasts } from '../../contexts/ToastContext'
 import CloseIcon from '@mui/icons-material/Close'
 import ToastContent from './ToastContent'
 import React, { useCallback } from 'react'
@@ -11,9 +11,10 @@ const DEFAULT_AUTO_HIDE_DURATION = 6000
 
 interface Props {
   toast: Toast
+  className?: string
 }
 
-const ToastBar = ({ toast }: Props) => {
+const ToastBar = ({ toast, className }: Props) => {
   const { id, duration } = toast
   const { removeToast } = useToasts()
 
@@ -30,6 +31,7 @@ const ToastBar = ({ toast }: Props) => {
 
   return (
     <Snackbar
+      className={className}
       open={true}
       anchorOrigin={{ vertical: VERTICAL_POSITION, horizontal: HORIZONTAL_POSITION }}
       autoHideDuration={duration || DEFAULT_AUTO_HIDE_DURATION}
@@ -50,8 +52,8 @@ const ToastBar = ({ toast }: Props) => {
   )
 }
 
-export default styled(ToastBar)(
-  ({ theme }) => `
-
+export default styled(ToastBar)`
+  position: relative;
+  bottom: 0;
+  left: 0;
 `
-)

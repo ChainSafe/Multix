@@ -4,7 +4,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { styled } from '@mui/material/styles'
 import { useCallback } from 'react'
-import { Toast } from '../contexts/ToastContext'
+import { Toast } from '../../contexts/ToastContext'
 
 export type ToastType = 'success' | 'error' | 'loading'
 
