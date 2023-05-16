@@ -1,7 +1,7 @@
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useApi } from '../contexts/ApiContext'
-import { useToasts } from '../contexts/ToastContext'
 import { useGetSubscanLinks } from './useSubscanLink'
+import { useToasts } from '../contexts/ToastContext'
 
 interface Args {
   onSubmitting?: () => void
