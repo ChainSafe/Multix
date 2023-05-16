@@ -39,6 +39,9 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
+      - name: show branch name
+        run: echo ${{ env.BRANCH_NAME }}; echo ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
+
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
 
