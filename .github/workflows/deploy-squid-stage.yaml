@@ -7,7 +7,7 @@ on:
       - 'packages/squid/**'
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
-      - main
+      - drop/* # run this workflow if the branch starts with drop/* and drop the db
       - ci/* # run this workflow if the branch starts with ci/*
 
 env:
@@ -80,6 +80,12 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
+      - name: Set environment variables
+        run: |
+          # Short name for current branch. For PRs, use current branch (head ref)
+          GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+
       - name: setup nodejs with yarn cache
         uses: actions/setup-node@v3
         continue-on-error: true
@@ -109,6 +115,7 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
+        if: ${{ GIT_BRANCH }} == 'drop/*'
         run: drop-tables
 
       - name: run migrations and start again
