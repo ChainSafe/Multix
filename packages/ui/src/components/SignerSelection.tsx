@@ -1,12 +1,11 @@
 import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
-import Identicon from '@polkadot/react-identicon'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { ICON_SIZE, ICON_THEME } from '../constants'
 import { useAccounts } from '../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import AccountDisplay from './AccountDisplay'
+import MultixIdenticon from './MultixIdenticon'
 
 interface Props {
   className?: string
@@ -82,11 +81,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <Identicon
-                  value={selectedAccount?.address}
-                  theme={ICON_THEME}
-                  size={ICON_SIZE}
-                />
+                <MultixIdenticon value={selectedAccount?.address} />
               </InputAdornment>
             )
           }}

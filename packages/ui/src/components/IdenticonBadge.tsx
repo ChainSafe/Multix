@@ -1,9 +1,8 @@
 import { Badge } from '@mui/material'
-import Identicon from '@polkadot/react-identicon'
 import { useMemo } from 'react'
 import { styled } from '@mui/material/styles'
-import { ICON_SIZE, ICON_THEME } from '../constants'
 import { AccountBadge } from '../types'
+import MultixIdenticon from './MultixIdenticon'
 
 interface Props {
   className?: string
@@ -13,10 +12,8 @@ interface Props {
 
 export const IdenticonBadge = ({ className, badge, address }: Props) => {
   const AccountIcon = () => (
-    <Identicon
+    <MultixIdenticon
       value={address}
-      size={ICON_SIZE}
-      theme={ICON_THEME}
       className="identicon"
     />
   )

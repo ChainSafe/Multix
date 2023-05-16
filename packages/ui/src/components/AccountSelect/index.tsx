@@ -1,8 +1,8 @@
 import React from 'react'
 import { CardHeader, IconButton, Menu, MenuItem } from '@mui/material'
-import { Identicon } from '@polkadot/react-identicon'
 import { MenuProps } from '@mui/material/Menu/Menu'
 import { useAccounts } from '../../contexts/AccountsContext'
+import MultixIdenticon from '../MultixIdenticon'
 
 interface Props extends Omit<MenuProps, 'open' | 'onClose' | 'anchorEl'> {
   anchorEl: null | HTMLElement
@@ -36,10 +36,9 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
           <CardHeader
             avatar={
               <IconButton sx={{ p: 0 }}>
-                <Identicon
+                <MultixIdenticon
                   value={account.address}
                   theme="substrate"
-                  size={40}
                 />
               </IconButton>
             }
