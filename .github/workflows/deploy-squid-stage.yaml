@@ -37,6 +37,17 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
+      - name: show branch name
+        env:
+          BRANCH_NAME_TEST: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        run: echo ${{env.BRANCH_NAME_TEST}}
+
+      - name: dump database
+        env:
+          BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        if: ${{ env.BRANCH_NAME }} == 'drop/**'
+        run: echo "---> on drop/** branch"
+
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
 
@@ -64,78 +75,66 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ env.DOCKER_TAG }}
             ${{ env.DOCKER_REGISTRY }}/chainsafe/multix-${{ matrix.target }}:${{ github.sha }}
 
-  deploy:
-    needs: push
-    name: deploy
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        network: ['rococo', 'kusama']
+  # deploy:
+  #   needs: push
+  #   name: deploy
+  #   runs-on: self-hosted
+  #   strategy:
+  #     matrix:
+  #       network: ['rococo', 'kusama']
 
-    permissions:
-      contents: read
-      id-token: write
+  #   permissions:
+  #     contents: read
+  #     id-token: write
 
-    steps:
-      - name: checkout the source code
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: checkout the source code
+  #       uses: actions/checkout@v3
 
-      # extract branch name
-      - name: Extract branch name
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+  #     - name: setup nodejs with yarn cache
+  #       uses: actions/setup-node@v3
+  #       continue-on-error: true
+  #       with:
+  #         node-version-file: '.node-version'
+  #         cache: 'yarn'
 
-      # extract branch name on pull request
-      - name: Print branch name
-        if: github.event_name == 'pull_request'
-        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
+  #     - name: install dependencies in root and squid package
+  #       run: |
+  #         corepack enable
+  #         yarn workspaces focus multix-squid
 
-      - name: setup nodejs with yarn cache
-        uses: actions/setup-node@v3
-        continue-on-error: true
-        with:
-          node-version-file: '.node-version'
-          cache: 'yarn'
+  #     - name: generate squid code
+  #       run: yarn workspace multix-squid codegen
 
-      - name: install dependencies in root and squid package
-        run: |
-          corepack enable
-          yarn workspaces focus multix-squid
+  #     - name: build the squid package
+  #       run: yarn workspace multix-squid build
 
-      - name: generate squid code
-        run: yarn workspace multix-squid codegen
+  #     - name: generate database credentials
+  #       env:
+  #         SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
+  #       run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
-      - name: build the squid package
-        run: yarn workspace multix-squid build
+  #     - name: stop current service
+  #       env:
+  #         AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+  #       run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
-      - name: generate database credentials
-        env:
-          SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
-        run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
+  #     - name: show branch name
+  #       env:
+  #         BRANCH_NAME_TEST: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+  #       run: echo ${{env.BRANCH_NAME_TEST}}
 
-      - name: stop current service
-        env:
-          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
+  #     - name: dump database
+  #       env:
+  #         BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+  #       if: ${{ env.BRANCH_NAME }} == 'drop/**'
+  #       run: drop-tables
 
-      - name: show branch name
-        env:
-          BRANCH_NAME_TEST: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        run: echo ${{env.BRANCH_NAME_TEST}}
+  #     - name: run migrations and start again
+  #       run: |
+  #         source "${{ env.ENV_FILE }}"
+  #         yarn workspace multix-squid db:migrate
 
-      - name: dump database
-        env:
-          BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        if: ${{ env.BRANCH_NAME }} == 'drop/**'
-        run: drop-tables
-
-      - name: run migrations and start again
-        run: |
-          source "${{ env.ENV_FILE }}"
-          yarn workspace multix-squid db:migrate
-
-      - name: cleanup credentials
-        if: always()
-        run: cleanup-credentials
+  #     - name: cleanup credentials
+  #       if: always()
+  #       run: cleanup-credentials
