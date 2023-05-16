@@ -116,11 +116,6 @@ jobs:
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
 
-#      - name: update cluster service
-#        env:
-#          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-#        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} 2>&1 >/dev/null
-
       - name: cleanup credentials
         if: always()
         run: cleanup-credentials
