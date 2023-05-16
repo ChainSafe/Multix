@@ -7,6 +7,7 @@ on:
       - 'packages/squid/**'
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
+      - main
       - drop-tables/* # run this workflow if the branch starts with drop/* and drop the db
       - ci/* # run this workflow if the branch starts with ci/*
 
