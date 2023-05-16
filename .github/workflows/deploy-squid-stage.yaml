@@ -21,7 +21,6 @@ env:
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
   ENV_FILE: '${{ secrets.ENV_FILE }}'
-  BRANCH_NAME: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 
 jobs:
   push:
@@ -39,8 +38,8 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
-      - name: show branch name
-        run: echo ${{ env.BRANCH_NAME }}; echo ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
+      - name: show if should drop
+        run: echo ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
@@ -114,11 +113,11 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        if: ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
+        if: ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
         run: drop-tables
 
       - name: run migration
-        if: ${{ startsWith(env.BRANCH_NAME, 'drop-tables')}}
+        if: ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
