@@ -80,11 +80,17 @@ jobs:
       - name: checkout the source code
         uses: actions/checkout@v3
 
-      - name: Set environment variables
-        run: |
-          # Short name for current branch. For PRs, use current branch (head ref)
-          GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+      # extract branch name
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      # extract branch name on pull request
+      - name: Print branch name
+        if: github.event_name == 'pull_request'
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
 
       - name: setup nodejs with yarn cache
         uses: actions/setup-node@v3
@@ -115,7 +121,7 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        if: ${{ env.GIT_BRANCH }} == 'drop/*'
+        if: $BRANCH_NAME == 'drop/**'
         run: drop-tables
 
       - name: run migrations and start again
