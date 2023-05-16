@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: show if should drop
-        run: echo ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
+        run: echo ${{ contains(github.event.pull_request.labels.*.name, 'drop-tables')}}
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
@@ -113,11 +113,11 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        if: ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'drop-tables')}}
         run: drop-tables
 
       - name: run migration
-        if: ${{ contains(github.event.issue.labels.*.name, 'drop-tables')}}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'drop-tables')}}
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
