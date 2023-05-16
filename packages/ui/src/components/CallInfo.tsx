@@ -4,7 +4,7 @@ import { AggregatedData } from './Transactions/TransactionList'
 import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { isProxyCall } from '../utils/isProxyCall'
+import { isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 
@@ -53,7 +53,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
         // show nice value
         if (isBalancesTransferAlike && key === 'value') {
           const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-            withThousandDelimitor: true,
+            withThousandDelimiter: true,
             tokenSymbol: unit,
             numberAfterComma: 4
           })
