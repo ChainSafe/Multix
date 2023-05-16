@@ -114,7 +114,7 @@ jobs:
         if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
         run: drop-tables
 
-      - name: run migrations
+      - name: run migration
         if: ${{ contains(env.BRANCH_NAME, 'drop-tables/')}}
         run: |
           source "${{ env.ENV_FILE }}"
