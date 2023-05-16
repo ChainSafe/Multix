@@ -123,7 +123,7 @@ jobs:
       - name: show branch name
         env:
           BRANCH_NAME_TEST: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        run: echo ${{BRANCH_NAME_TEST}}
+        run: echo ${{env.BRANCH_NAME_TEST}}
 
       - name: dump database
         env:
