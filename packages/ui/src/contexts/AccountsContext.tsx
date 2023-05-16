@@ -3,11 +3,10 @@ import { web3Enable, web3FromSource, web3AccountsSubscribe } from '@polkadot/ext
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
 import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
+import { useWatchedAccounts } from '../hooks/useWatchedAccounts'
 
-const LOCALSTORAGE_WATCH_ACCOUNTS_KEY = 'multix.watchedAccount'
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
-export const META_SOURCE_WATCH = 'watch'
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -38,25 +37,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const addressList = useMemo(() => accountList.map((a) => a.address), [accountList])
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
-  const [watchAccounts, setWatchAccounts] = useState<InjectedAccountWithMeta[]>([])
-
-  useEffect(() => {
-    const localStorageWatchAccount = localStorage.getItem(LOCALSTORAGE_WATCH_ACCOUNTS_KEY)
-    const watchArray: string[] = localStorageWatchAccount
-      ? JSON.parse(localStorageWatchAccount)
-      : []
-
-    const toStore = watchArray.map((address) => {
-      return {
-        address,
-        meta: {
-          source: META_SOURCE_WATCH
-        }
-      } as InjectedAccountWithMeta
-    })
-
-    setWatchAccounts(toStore)
-  }, [])
+  const { watchedAccounts: watchAccounts } = useWatchedAccounts()
 
   const getAccountByAddress = useCallback(
     (address: string) => {

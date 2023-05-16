@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { About, Creation, Help, Home } from './index'
+import { About, Creation, Help, Home, Settings } from './index'
 import React from 'react'
 import App from '../App'
 
@@ -27,6 +27,12 @@ export const ROUTES: Route[] = [
     path: 'about',
     element: <About />,
     name: 'About',
+    isDisplayWhenNoMultiProxy: true
+  },
+  {
+    path: 'settings',
+    element: <Settings />,
+    name: 'Settings',
     isDisplayWhenNoMultiProxy: true
   },
   {
