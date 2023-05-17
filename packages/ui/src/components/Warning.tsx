@@ -17,8 +17,4 @@ const Warning = ({ className, text }: Props) => {
   )
 }
 
-export default styled(Warning)(
-  ({ theme }) => `
-
-  `
-)
+export default Warning

@@ -40,8 +40,4 @@ const NameSelection = ({ className, name, setName }: Props) => {
   )
 }
 
-export default styled(NameSelection)(
-  ({ theme }) => `
-//
-`
-)
+export default NameSelection

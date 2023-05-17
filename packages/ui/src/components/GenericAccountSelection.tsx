@@ -176,12 +176,10 @@ const GenericAccountSelection = ({
   )
 }
 
-export default styled(GenericAccountSelection)(
-  ({ theme }) => `
+export default styled(GenericAccountSelection)`
   flex: 1;
 
   .MuiInputBase-root {
     background-color: white;
   }
 `
-)

@@ -76,8 +76,4 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
   )
 }
 
-export default styled(AccountEditName)(
-  ({ theme }) => `
-  
-`
-)
+export default AccountEditName
