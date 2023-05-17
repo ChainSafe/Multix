@@ -112,7 +112,6 @@ jobs:
         run: drop-tables
 
       - name: run migration
-        # if: ${{ contains(github.event.pull_request.labels.*.name, 'drop-tables')}}
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
