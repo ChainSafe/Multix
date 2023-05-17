@@ -109,7 +109,6 @@ jobs:
         run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
 
       - name: dump database
-        # if: ${{ contains(github.event.pull_request.labels.*.name, 'drop-tables')}}
         run: drop-tables
 
       - name: run migration
