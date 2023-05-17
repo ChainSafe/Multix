@@ -9,9 +9,8 @@ interface TransactionProgressProps {
   threshold: number
 }
 
-function TransactionProgress(props: LinearProgressProps & TransactionProgressProps) {
-  const { value, threshold } = props
-  const progressBarFillPercent = (props.value / props.threshold) * 100
+function TransactionProgress({ value, threshold }: LinearProgressProps & TransactionProgressProps) {
+  const progressBarFillPercent = (value / threshold) * 100
 
   return (
     <BoxWrapperStyled>
