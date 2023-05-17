@@ -99,8 +99,7 @@ const About = ({ className }: Props) => {
   )
 }
 
-export default styled(About)(
-  ({ theme }) => `
+export default styled(About)`
   .title {
     margin-top: 2rem;
   }
@@ -131,7 +130,7 @@ export default styled(About)(
     }
   }
 
-  .logo-chainsafe{
+  .logo-chainsafe {
     max-width: 5rem;
     margin-right: 1rem;
   }
@@ -145,4 +144,3 @@ export default styled(About)(
     margin-left: 1rem;
   }
 `
-)

@@ -442,6 +442,5 @@ export default styled(ProposalSigning)(
     margin-top: 0.5rem;
     color: ${theme.custom.text.errorColor};
   }
-
 `
 )

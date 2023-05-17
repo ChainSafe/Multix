@@ -124,10 +124,9 @@ const Summary = ({
   )
 }
 
-export default styled(Summary)(
-  ({ theme }) => `
+export default styled(Summary)`
   width: 100%;
-  
+
   .account:last-child {
     margin-bottom: 1rem;
   }
@@ -138,17 +137,17 @@ export default styled(Summary)(
 
   .paper {
     padding: 2rem;
-    margin-bottom: 1rem
+    margin-bottom: 1rem;
   }
 
-  .threshold, .nameSummary {
+  .threshold,
+  .nameSummary {
     margin-bottom: 1.5rem;
     margin-top: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
   }
-
 
   .signerSelection {
     margin-top: 1rem;
@@ -164,4 +163,3 @@ export default styled(Summary)(
     font-weight: normal;
   }
 `
-)

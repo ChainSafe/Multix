@@ -30,8 +30,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
   )
 }
 
-export default styled(NewMulisigAlert)(
-  ({ theme }) => `
+export default styled(NewMulisigAlert)`
   width: 100%;
 
   .infoText {
@@ -44,4 +43,3 @@ export default styled(NewMulisigAlert)(
     width: 100%;
   }
 `
-)

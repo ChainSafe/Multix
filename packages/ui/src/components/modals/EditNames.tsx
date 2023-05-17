@@ -119,8 +119,7 @@ const EditNames = ({ onClose, className }: Props) => {
   )
 }
 
-export default styled(EditNames)(
-  ({ theme }) => `
+export default styled(EditNames)`
   .buttonContainer {
     text-align: right;
   }
@@ -130,4 +129,3 @@ export default styled(EditNames)(
     align-items: center;
   }
 `
-)

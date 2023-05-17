@@ -120,8 +120,7 @@ const Help = ({ className }: Props) => {
   )
 }
 
-export default styled(Help)(
-  ({ theme }) => `
+export default styled(Help)`
   .accountList {
     list-style-type: none;
 
@@ -143,4 +142,3 @@ export default styled(Help)(
     margin-bottom: 4rem;
   }
 `
-)

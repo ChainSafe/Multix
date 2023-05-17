@@ -333,18 +333,16 @@ const ManualExtrinsic = ({
   )
 }
 
-export default styled(ManualExtrinsic)(
-  ({ theme }) => `
+export default styled(ManualExtrinsic)`
   .palletSelection {
-      margin-right: .5rem;
+    margin-right: 0.5rem;
   }
 
   .paramInputs {
     list-style: none;
-    
+
     & > li {
       margin-top: 0.5rem;
     }
   }
 `
-)

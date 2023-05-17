@@ -72,6 +72,5 @@ export default styled(ToastContent)(
     .errorIcon {
         color: ${theme.custom.text.errorColor}
     }
-
 `
 )
