@@ -38,7 +38,6 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
               <IconButton sx={{ p: 0 }}>
                 <MultixIdenticon
                   value={account.address}
-                  theme="substrate"
                 />
               </IconButton>
             }
