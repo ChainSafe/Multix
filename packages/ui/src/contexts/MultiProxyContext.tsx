@@ -47,6 +47,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
 
   const refreshAccounList = useCallback((data: MultisigsByAccountsSubscription | null) => {
+    // we do have an answer, but there is no multiproxy
+    if (!!data?.accounts && data.accounts.length === 0) {
+      setMultisigList([])
+    }
+
     if (!!data?.accounts && data.accounts.length > 0) {
       // map of the pure proxy addresses and the multisigs associated
       const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
@@ -119,10 +124,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       res.push(...proxyArray)
 
       setMultisigList(res)
-
-      // we do have an answer, but there is no multiproxy
-    } else if (!!data?.accounts && data.accounts.length === 0) {
-      setMultisigList([])
     }
   }, [])
 
