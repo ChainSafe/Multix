@@ -1,4 +1,4 @@
-import { Paper, Button } from '@mui/material'
+import { Paper, Button, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import GestureIcon from '@mui/icons-material/Gesture'
@@ -9,6 +9,7 @@ import ProposalSigningModal from '../modals/ProposalSigning'
 import { Badge } from '@mui/material'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
+import TransactionProgress from './TransactionProgress'
 
 interface Props {
   className?: string
@@ -16,6 +17,7 @@ interface Props {
   isProposer: boolean
   possibleSigners: string[]
   onSuccess: () => void
+  threshold: number
 }
 
 const Transaction = ({
@@ -23,7 +25,8 @@ const Transaction = ({
   aggregatedData,
   isProposer,
   possibleSigners,
-  onSuccess
+  onSuccess,
+  threshold
 }: Props) => {
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
@@ -52,17 +55,22 @@ const Transaction = ({
           <GestureIcon className="callIcon" />
         )}
       </Badge>
-      <CallInfo
-        withLink
-        aggregatedData={aggregatedData}
-        children={
-          (isProposer || possibleSigners.length > 0) && (
-            <TransactionFooterStyled>
-              <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
-            </TransactionFooterStyled>
-          )
-        }
-      />
+      <TransactionCallInfoBoxStyled>
+        <CallInfowithLink
+          aggregatedData={aggregatedData}
+          children={
+            (isProposer || possibleSigners.length > 0) && (
+              <TransactionFooterStyled>
+                <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
+              </TransactionFooterStyled>
+            )
+          }
+        />
+        <TransactionProgress
+          value={aggregatedData.info?.approvals.length || 0}
+          threshold={threshold}
+        />
+      </TransactionCallInfoBoxStyled>
       {isSigningModalOpen && (
         <ProposalSigningModal
           possibleSigners={possibleSigners}
@@ -87,12 +95,24 @@ const TransactionFooterStyled = styled('div')`
   display: flex;
 `
 
+const TransactionCallInfoBoxStyled = styled(Box)`
+  width: 100%;
+`
+
 export default styled(Transaction)(
   ({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;
     margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+
+  .buttonWrapper {
+    flex: 1;
+    align-self: flex-end;
+    text-align: end;
+    margin-right: .5rem;
+  }
 
   .callIcon {
     font-size: 7rem;
