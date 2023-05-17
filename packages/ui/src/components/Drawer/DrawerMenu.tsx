@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { styled } from '@mui/material/styles'
-// import NetworkSelection from "../NetworkSelection";
+import NetworkSelection from '../NetworkSelection'
 import MultiProxySelection from '../MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
@@ -34,9 +34,9 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItem>
           <MultiProxySelection />
         </ListItem>
-        {/* <ListItem>
+        <ListItem>
           <NetworkSelection />
-        </ListItem> */}
+        </ListItem>
         {accountList &&
           !isEmptyArray(accountList) &&
           ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
