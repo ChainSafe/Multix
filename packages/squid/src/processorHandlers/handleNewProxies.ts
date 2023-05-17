@@ -27,7 +27,7 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
   const proxyAccounts: ProxyAccount[] = []
 
   for (const { id, delegatee, delegator, delay, type, createdAt } of newProxies) {
-    ctx.log.info(`---> type ${type}`)
+    // ctx.log.info(`---> type ${type}`)
     proxyAccounts.push(
       new ProxyAccount({
         id,
