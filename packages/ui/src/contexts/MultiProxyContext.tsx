@@ -119,6 +119,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       res.push(...proxyArray)
 
       setMultisigList(res)
+
+      // we do have an answer, but there is no multiproxy
     } else if (!!data?.accounts && data.accounts.length === 0) {
       setMultisigList([])
     }
