@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      - ci/* # run this workflow if the branch starts with ci/*
+      # - ci/* # run this workflow if the branch starts with ci/*
 
 env:
   # secrets are listed here to simplify the readability
@@ -103,18 +103,18 @@ jobs:
           SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
         run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
+      - name: stop current service
+        env:
+          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+        run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
+
       - name: dump database
         run: drop-tables
 
-      - name: run migrations and start again
+      - name: run migration
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
-
-      - name: update cluster service
-        env:
-          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
 
       - name: cleanup credentials
         if: always()
