@@ -3,6 +3,7 @@ import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgres
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
+
 interface TransactionProgressProps {
   value: number
   threshold: number
@@ -10,15 +11,14 @@ interface TransactionProgressProps {
 
 function TransactionProgress(props: LinearProgressProps & TransactionProgressProps) {
   const { value, threshold } = props
-  const percent = (props.value / props.threshold) * 100
+  const progressBarFillPercent = (props.value / props.threshold) * 100
 
   return (
     <BoxWrapperStyled>
       <LinearProgressBoxStyled>
         <LinearProgress
           variant="determinate"
-          {...props}
-          value={percent}
+          value={progressBarFillPercent}
         />
       </LinearProgressBoxStyled>
       <TypographyBoxStyled>
