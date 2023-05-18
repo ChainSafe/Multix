@@ -113,8 +113,7 @@ const MultiProxySelection = ({ className }: Props) => {
   )
 }
 
-export default styled(MultiProxySelection)(
-  ({ theme }) => `
+export default styled(MultiProxySelection)`
   min-width: 180px;
   flex: 1;
   text-align: right;
@@ -127,4 +126,3 @@ export default styled(MultiProxySelection)(
     background-color: white;
   }
 `
-)

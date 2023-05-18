@@ -94,13 +94,6 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   )
 }
 
-export default styled(SignerSelection)(
-  ({ theme }) => `
-margin-top: .3rem;
-  /* flex: 1;
-
-  .MuiInputBase-root {
-    background-color: white;
-  } */
+export default styled(SignerSelection)`
+  margin-top: 0.3rem;
 `
-)

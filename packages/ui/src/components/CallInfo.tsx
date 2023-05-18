@@ -117,8 +117,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
   )
 }
 
-export default styled(CallInfo)(
-  ({ theme }) => `
+export default styled(CallInfo)`
   flex: 1;
   overflow: hidden;
 
@@ -128,7 +127,6 @@ export default styled(CallInfo)(
 
   .callName {
     margin-top: 0.5rem;
-    margin-left: .5rem;
+    margin-left: 0.5rem;
   }
 `
-)

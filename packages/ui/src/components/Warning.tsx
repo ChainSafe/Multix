@@ -1,5 +1,4 @@
 import { Alert } from '@mui/material'
-import { styled } from '@mui/material/styles'
 
 interface Props {
   className?: string
@@ -17,8 +16,4 @@ const Warning = ({ className, text }: Props) => {
   )
 }
 
-export default styled(Warning)(
-  ({ theme }) => `
-
-  `
-)
+export default Warning

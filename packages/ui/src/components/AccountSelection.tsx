@@ -190,8 +190,7 @@ const AccountSelection = ({
   )
 }
 
-export default styled(AccountSelection)(
-  ({ theme }) => `
+export default styled(AccountSelection)`
   display: flex;
 
   .addressField {
@@ -200,7 +199,6 @@ export default styled(AccountSelection)(
   }
 
   .nameField {
-    flex: 1
+    flex: 1;
   }
 `
-)
