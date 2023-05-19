@@ -1,4 +1,4 @@
-import { Paper, Button, Box, Link } from '@mui/material'
+import { Paper, Button } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import GestureIcon from '@mui/icons-material/Gesture'
@@ -9,8 +9,6 @@ import ProposalSigningModal from '../modals/ProposalSigning'
 import { Badge } from '@mui/material'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
-import { useNetwork } from '../../contexts/NetworkContext'
-import LaunchIcon from '@mui/icons-material/Launch'
 
 interface Props {
   className?: string
@@ -31,11 +29,6 @@ const Transaction = ({
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
   // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
-  const { selectedNetworkInfo } = useNetwork()
-  const link = useMemo(() => {
-    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl || '')
-    return `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
-  }, [aggregatedData, selectedNetworkInfo])
 
   const onClose = useCallback(() => {
     setIsSigningModalOpen(false)
@@ -65,18 +58,6 @@ const Transaction = ({
         children={
           (isProposer || possibleSigners.length > 0) && (
             <TransactionFooterStyled>
-              {!!aggregatedData.callData && (
-                <Linkstyled
-                  href={link}
-                  target="_blank"
-                >
-                  See callData
-                  <LaunchIcon
-                    className="icon"
-                    fontSize="small"
-                  />
-                </Linkstyled>
-              )}
               <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
             </TransactionFooterStyled>
           )
@@ -97,19 +78,6 @@ const Transaction = ({
 const ButtonStyled = styled(Button)`
   margin-left: auto;
 `
-const Linkstyled = styled(Link)(
-  ({ theme }) => `
-  text-decoration: none;
-  display: flex;
-  color: ${theme.custom.text.addressColorLightGray};
-  align-items: center;
-  margin-left: .5rem;
-
-  .icon {
-    margin-left: .5rem;
-  }
-`
-)
 
 const TransactionFooterStyled = styled('div')`
   flex: 1;
