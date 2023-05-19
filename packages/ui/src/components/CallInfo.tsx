@@ -4,7 +4,7 @@ import { AggregatedData } from './Transactions/TransactionList'
 import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { isProxyCall } from '../utils/isProxyCall'
+import { isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 
@@ -53,7 +53,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
         // show nice value
         if (isBalancesTransferAlike && key === 'value') {
           const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-            withThousandDelimitor: true,
+            withThousandDelimiter: true,
             tokenSymbol: unit,
             numberAfterComma: 4
           })
@@ -117,8 +117,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
   )
 }
 
-export default styled(CallInfo)(
-  ({ theme }) => `
+export default styled(CallInfo)`
   flex: 1;
   overflow: hidden;
 
@@ -128,8 +127,7 @@ export default styled(CallInfo)(
 
   .callName {
     margin-top: 0.5rem;
-    margin-left: .5rem;
+    margin-left: 0.5rem;
     margin-bottom: 1rem;
   }
 `
-)

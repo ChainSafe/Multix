@@ -4,7 +4,8 @@ interface EnvValues {
   blockstart: string
   prefix: number
   rpcWs: string
-  archiveName: string
+  archiveName?: string
+  archiveUrl?: string
 }
 
 export class Env {
@@ -15,7 +16,8 @@ export class Env {
       blockstart: process.env.BLOCK_START || '',
       prefix: Number(process.env.PREFIX) || 0,
       rpcWs: process.env.RPC_WS || '',
-      archiveName: process.env.ARCHIVE_NAME || ''
+      archiveName: process.env.ARCHIVE_NAME || '',
+      archiveUrl : process.env.ARCHIVE_URL || ''
     }
 
     this.checkForUndefined()
@@ -25,7 +27,7 @@ export class Env {
     Object.entries(this.env).forEach(([key, value]) => {
       // a prefix can be 0 and it is a valid value
       if (!value && value !== 0) {
-        console.error(`🟥 Invalid env variable for ${key}`)
+        console.error(`ℹ️ No env variable set for ${key} - (may be optional)`)
       }
     })
   }

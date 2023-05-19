@@ -136,10 +136,8 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   )
 }
 
-export default styled(BalancesTransfer)(
-  ({ theme }) => `
+export default styled(BalancesTransfer)`
   .to {
     margin-bottom: 1rem;
   }
 `
-)

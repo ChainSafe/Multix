@@ -4,21 +4,18 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { styled } from '@mui/material/styles'
 import { useCallback } from 'react'
+import { Toast } from '../../contexts/ToastContext'
 
 export type ToastType = 'success' | 'error' | 'loading'
 
-export interface Toast {
-  id: number
-  type: ToastType
-  title: string
-  link?: string
-}
-
-export interface ToastContentProps extends Toast {
+export interface ToastContentProps {
   className?: string
+  toast: Toast
 }
 
-const ToastContent = ({ type, title, className, link }: ToastContentProps) => {
+const ToastContent = ({ className, toast }: ToastContentProps) => {
+  const { type, title, link } = toast
+
   const onOpenLink = useCallback(() => {
     window.open(link, '_blank')
   }, [link])
@@ -75,6 +72,5 @@ export default styled(ToastContent)(
     .errorIcon {
         color: ${theme.custom.text.errorColor}
     }
-
 `
 )

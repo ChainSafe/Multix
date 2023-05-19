@@ -8,14 +8,13 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      - ci/* # run this workflow if the branch starts with ci/*
+      # - ci/* # run this workflow if the branch starts with ci/*
 
 env:
   # secrets are listed here to simplify the readability
   AWS_REGION: '${{ secrets.AWS_REGION }}'
   AWS_ACCOUNT_ID: '${{ secrets.AWS_ACCOUNT_ID }}'
   AWS_ROLE_NAME: '${{ secrets.AWS_ROLE_NAME }}'
-  GHCR_TOKEN: '${{ secrets.GHCR_TOKEN }}'
   APP_STAGE: 'stage'
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
@@ -32,6 +31,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
 
     steps:
       - name: checkout the source code
@@ -44,8 +44,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ env.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: docker build image
         uses: docker/build-push-action@v4
@@ -103,18 +103,18 @@ jobs:
           SECRET_NAME: '${{ env.APP_STAGE }}/multix/${{ matrix.network }}'
         run: generate-credentials "${{ env.SECRET_NAME }}" "${{ env.AWS_REGION }}"
 
+      - name: stop current service
+        env:
+          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
+        run: stop-service "${{ env.AWS_CLUSTER_NAME }}" "${{ matrix.network }}" "${{ env.AWS_REGION }}"
+
       - name: dump database
         run: drop-tables
 
-      - name: run migrations and start again
+      - name: run migration
         run: |
           source "${{ env.ENV_FILE }}"
           yarn workspace multix-squid db:migrate
-
-      - name: update cluster service
-        env:
-          AWS_CLUSTER_NAME: 'multix-${{ env.APP_STAGE }}'
-        run: aws ecs update-service --force-new-deployment --cluster ${{ env.AWS_CLUSTER_NAME }} --service ${{ matrix.network }} --region ${{ env.AWS_REGION }} > output.txt
 
       - name: cleanup credentials
         if: always()

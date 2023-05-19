@@ -68,8 +68,6 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
   )
 }
 
-export default styled(ThresholdSelection)(
-  ({ theme }) => `
+export default styled(ThresholdSelection)`
   margin-bottom: 1rem;
 `
-)

@@ -1,3 +1,4 @@
+import { nodesKhalaSVG } from './logos/khalaSVG'
 import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
 import { chainsRococoSVG } from './logos/rococoSVG'
@@ -7,7 +8,7 @@ export const ICON_SIZE = 40
 export const ICON_THEME = 'polkadot'
 
 export interface NetworkInfo {
-  explorerNetworkName: string
+  explorerNetworkName?: string
   rpcUrl: string
   wsGraphqlUrl: string
   httpGraphqlUrl: string
@@ -18,16 +19,23 @@ export const networkList = {
   kusama: {
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
-    httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
+    wsGraphqlUrl: 'wss://kusama.multix.chainsafe.io/graphql',
+    httpGraphqlUrl: 'https://kusama.multix.chainsafe.io/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
   rococo: {
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
+    wsGraphqlUrl: 'wss://rococo.multix.chainsafe.io/graphql',
+    httpGraphqlUrl: 'https://rococo.multix.chainsafe.io/graphql',
+    logo: chainsRococoSVG
+  } as NetworkInfo,
+  'rhala testnet': {
+    explorerNetworkName: '',
+    rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
     wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
-    logo: chainsRococoSVG
+    logo: nodesKhalaSVG
   } as NetworkInfo,
   local: {
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',

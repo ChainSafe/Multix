@@ -189,9 +189,7 @@ const Overview = ({ className }: Props) => {
   )
 }
 
-export default styled(Overview)(
-  ({ theme }) => `
+export default styled(Overview)`
   width: 100%;
   height: 500px;
 `
-)
