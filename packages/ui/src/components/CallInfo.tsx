@@ -7,6 +7,9 @@ import { useApi } from '../contexts/ApiContext'
 import { isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
+import LaunchIcon from '@mui/icons-material/Launch'
+import { useNetwork } from '../contexts/NetworkContext'
+import { Link } from '@mui/material'
 
 interface Props {
   aggregatedData: AggregatedData
@@ -101,10 +104,28 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
   const { chainInfo } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
+  const { selectedNetworkInfo } = useNetwork()
+  const link = useMemo(() => {
+    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl || '')
+    return `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
+  }, [aggregatedData, selectedNetworkInfo])
 
   return (
     <div className={className}>
-      <h4 className="callName">{name}</h4>
+      <CallNameStyled className="callName">
+        {name}
+        {!!aggregatedData.callData && (
+          <Linkstyled
+            href={link}
+            target="_blank"
+          >
+            <LaunchIcon
+              className="icon"
+              fontSize="small"
+            />
+          </Linkstyled>
+        )}
+      </CallNameStyled>
       {args && Object.keys(args).length > 0 && (
         <Expander
           expanded={expanded}
@@ -117,16 +138,31 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
   )
 }
 
+const CallNameStyled = styled('h4')`
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+`
+
+const Linkstyled = styled(Link)(
+  ({ theme }) => `
+  text-decoration: none;
+  display: flex;
+  color: ${theme.custom.text.addressColorLightGray};
+  align-items: center;
+
+  .icon {
+    margin-left: .5rem;
+  }
+`
+)
+
 export default styled(CallInfo)`
   flex: 1;
   overflow: hidden;
 
   .params {
     word-wrap: break-word;
-  }
-
-  .callName {
-    margin-top: 0.5rem;
-    margin-left: 0.5rem;
   }
 `
