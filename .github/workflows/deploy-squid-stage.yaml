@@ -15,7 +15,6 @@ env:
   AWS_REGION: '${{ secrets.AWS_REGION }}'
   AWS_ACCOUNT_ID: '${{ secrets.AWS_ACCOUNT_ID }}'
   AWS_ROLE_NAME: '${{ secrets.AWS_ROLE_NAME }}'
-  GHCR_TOKEN: '${{ secrets.GHCR_TOKEN }}'
   APP_STAGE: 'stage'
   DOCKER_REGISTRY: 'ghcr.io'
   DOCKER_TAG: 'latest'
@@ -32,6 +31,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
 
     steps:
       - name: checkout the source code
@@ -44,8 +44,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ env.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: docker build image
         uses: docker/build-push-action@v4
