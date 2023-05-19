@@ -32,7 +32,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-      packages: write
 
     steps:
       - name: checkout the source code
@@ -45,7 +44,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ env.GHCR_TOKEN }}
 
       - name: docker build image
