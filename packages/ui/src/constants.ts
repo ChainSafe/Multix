@@ -8,7 +8,7 @@ export const ICON_SIZE = 40
 export const ICON_THEME = 'polkadot'
 
 export interface NetworkInfo {
-  explorerNetworkName: string
+  explorerNetworkName?: string
   rpcUrl: string
   wsGraphqlUrl: string
   httpGraphqlUrl: string
@@ -30,8 +30,8 @@ export const networkList = {
     httpGraphqlUrl: 'https://rococo.multix.chainsafe.io/graphql',
     logo: chainsRococoSVG
   } as NetworkInfo,
-  rhala: {
-    explorerNetworkName: 'rhala (testnet)',
+  'rhala testnet': {
+    explorerNetworkName: '',
     rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
     wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
