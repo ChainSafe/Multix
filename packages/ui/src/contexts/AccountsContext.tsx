@@ -3,6 +3,8 @@ import { web3Enable, web3FromSource, web3AccountsSubscribe } from '@polkadot/ext
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
 import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
+import { useApi } from './ApiContext'
+import { encodeAddress } from '@polkadot/util-crypto'
 
 const LOCALSTORAGE_WATCH_ACCOUNTS_KEY = 'multix.watchedAccount'
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
@@ -39,6 +41,23 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
   const [watchAccounts, setWatchAccounts] = useState<InjectedAccountWithMeta[]>([])
+  const { chainInfo } = useApi()
+
+  // update the current account list with the right network prefix
+  // this will run for every network change
+  useEffect(() => {
+    if (chainInfo?.ss58Format) {
+      setAccountList((prev) => {
+        return prev.map(
+          (account) =>
+            ({
+              ...account,
+              address: encodeAddress(account.address, chainInfo.ss58Format)
+            } as InjectedAccountWithMeta)
+        )
+      })
+    }
+  }, [chainInfo])
 
   useEffect(() => {
     const localStorageWatchAccount = localStorage.getItem(LOCALSTORAGE_WATCH_ACCOUNTS_KEY)
@@ -80,24 +99,27 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
-    web3AccountsSubscribe((accountList) => {
-      if (accountList.length === 0) {
-        setIsExtensionError(true)
-        return
-      }
+    web3AccountsSubscribe(
+      (accountList) => {
+        if (accountList.length === 0) {
+          setIsExtensionError(true)
+          return
+        }
 
-      setAccountList([...accountList, ...watchAccounts])
+        setAccountList([...accountList, ...watchAccounts])
 
-      if (accountList.length > 0) {
-        const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
-        const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
+        if (accountList.length > 0) {
+          const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
+          const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
 
-        selectAccount(account || accountList[0])
-      }
-    })
+          selectAccount(account || accountList[0])
+        }
+      },
+      { ss58Format: chainInfo?.ss58Format }
+    )
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
-  }, [getAccountByAddress, selectAccount, watchAccounts])
+  }, [chainInfo, getAccountByAddress, selectAccount, watchAccounts])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) return
