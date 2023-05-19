@@ -31,12 +31,9 @@ jobs:
 
     permissions:
       contents: read
-      id-token: write
+      packages: write
 
     steps:
-      - name: echo repo owner
-        run: echo ${{ github.repository_owner }}
-
       - name: checkout the source code
         uses: actions/checkout@v3
 
@@ -47,7 +44,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: Tbaut
+          username: ${{ github.repository_owner }}
           password: ${{ env.GHCR_TOKEN }}
 
       - name: docker build image
