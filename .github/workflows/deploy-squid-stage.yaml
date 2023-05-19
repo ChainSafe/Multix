@@ -32,6 +32,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
 
     steps:
       - name: checkout the source code
@@ -39,9 +40,6 @@ jobs:
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
-        with:
-            driver: docker
-            install: true
 
       - name: login to ghcr
         uses: docker/login-action@v2
