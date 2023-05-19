@@ -52,7 +52,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    onSetExtrinsic(api.tx.balances.transfer(toAddress, amount.toString()))
+    onSetExtrinsic(api.tx.balances.transferKeepAlive(toAddress, amount.toString()))
   }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
 
   const onAddressDestChange = useCallback((account?: AccountBaseInfo | string) => {
