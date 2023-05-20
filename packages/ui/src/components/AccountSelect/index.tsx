@@ -36,9 +36,7 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
           <CardHeader
             avatar={
               <IconButton sx={{ p: 0 }}>
-                <MultixIdenticon
-                  value={account.address}
-                />
+                <MultixIdenticon value={account.address} />
               </IconButton>
             }
             title={account.meta.name}
