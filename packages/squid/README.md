@@ -251,7 +251,8 @@ SQD_DEBUG=sqd:processor:mapping
 BLOCK_START=3510000 # this is the starging block of the indexer
 PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
-ARCHIVE_NAME="rococo" # the archive name from subsquid archives
+ARCHIVE_NAME="rococo" # optional - must be empty or set to the archive name if part of the @subsquid/archive-registry'
+ARCHIVE_URL="http://localhost:4444/graphql" # optional - must be set if ARCHIVE_NAME is empty - the subsquid archive url. Consider submitting a PR to subsquid/archive-registry github repo to extend the registry.
 ```
 
 ## Differences from polkadot.js
