@@ -4,19 +4,20 @@ import { AggregatedData } from './Transactions/TransactionList'
 import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { isProxyCall } from '../utils'
+import { getExtrinsicName, isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useNetwork } from '../contexts/NetworkContext'
 import { Link } from '@mui/material'
+import NoCallInfo from './NoCallInfo'
 
 interface Props {
   aggregatedData: AggregatedData
   expanded?: boolean
   children?: ReactNode
   className?: string
-  badge?: string
+  withLink?: boolean
 }
 
 interface CreateTreeParams {
@@ -90,7 +91,7 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
 
   const call = (args as any).call
 
-  const newName = `${call?.section}.${call?.method}`
+  const newName = getExtrinsicName(call?.section, call?.method)
   const newArgs = call?.args
   return {
     ...agg,
@@ -99,7 +100,13 @@ const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
   }
 }
 
-const CallInfo = ({ aggregatedData, expanded = false, children, className, badge }: Props) => {
+const CallInfo = ({
+  aggregatedData,
+  expanded = false,
+  children,
+  className,
+  withLink = false
+}: Props) => {
   const { args, name } = filterProxyProxy(aggregatedData)
   const { chainInfo } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
@@ -114,7 +121,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
     <div className={className}>
       <CallNameStyled className="callName">
         {name}
-        {!!aggregatedData.callData && (
+        {!!aggregatedData.callData && withLink && (
           <Linkstyled
             href={link}
             target="_blank"
@@ -126,6 +133,7 @@ const CallInfo = ({ aggregatedData, expanded = false, children, className, badge
           </Linkstyled>
         )}
       </CallNameStyled>
+      {!aggregatedData.callData && <NoCallInfo />}
       {args && Object.keys(args).length > 0 && (
         <Expander
           expanded={expanded}
