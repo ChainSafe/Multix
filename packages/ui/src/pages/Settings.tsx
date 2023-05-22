@@ -9,7 +9,7 @@ interface Props {
 const Settings = ({ className }: Props) => {
   return (
     <Box className={className}>
-      <h4>Watch Signatories</h4>
+      <h3>Watch Signatories</h3>
       <WatchedSignatories />
     </Box>
   )

@@ -54,15 +54,15 @@ const AccountSelection = ({
   withAddButton = false,
   withPreselection = true
 }: Props) => {
-  const { accountList = [], getAccountByAddress } = useAccounts()
+  const { ownAccountList = [], getAccountByAddress } = useAccounts()
   const [selected, setSelected] = useState(value)
   const [errorMessage, setErrorMessage] = useState('')
   const ref = useRef<HTMLInputElement>(null)
   const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState('')
   const dedupedSignatories = useMemo(() => {
-    return accountList.filter((account) => !currentSelection.includes(account.address))
-  }, [accountList, currentSelection])
+    return ownAccountList.filter((account) => !currentSelection.includes(account.address))
+  }, [ownAccountList, currentSelection])
   const extensionName = useMemo(() => {
     if (!selected) return ''
     return getAccountByAddress(selected)?.meta.name

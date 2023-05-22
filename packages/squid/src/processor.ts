@@ -51,9 +51,11 @@ const supportedMultisigCalls = [
   'Multisig.as_multi_threshold_1'
 ]
 export const env = new Env().getEnv()
-const archiveUrl = env.archiveUrl || lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-  release: 'FireSquid'
-})
+const archiveUrl =
+  env.archiveUrl ||
+  lookupArchive(env.archiveName as KnownArchivesSubstrate, {
+    release: 'FireSquid'
+  })
 
 const processor = new SubstrateBatchProcessor()
   .setDataSource({

@@ -1,6 +1,7 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import { useCallback, useEffect, useState } from 'react'
-import { isEmptyArray } from '../utils'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useApi } from '../contexts/ApiContext'
+import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
 
 export const META_SOURCE_WATCHED = 'watched'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
@@ -20,6 +21,21 @@ const unformatWatched = (watchedList: InjectedAccountWithMeta[]) => {
 export const useWatchedAccounts = () => {
   const [watchedAccounts, setWatchedAccounts] = useState<InjectedAccountWithMeta[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
+  const { chainInfo } = useApi()
+  const watchedAccountsAddresses = useMemo(
+    () => watchedAccounts.map((account) => account.address),
+    [watchedAccounts]
+  )
+
+  // update the current account list with the right network prefix
+  // this will run for every network change
+  useEffect(() => {
+    if (chainInfo?.ss58Format) {
+      setWatchedAccounts((prev) => {
+        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format)
+      })
+    }
+  }, [chainInfo])
 
   const addWatchedAccount = useCallback(
     (address: string) => {
@@ -68,6 +84,7 @@ export const useWatchedAccounts = () => {
     watchedAccounts,
     loadWatchedAccounts,
     addWatchedAccount,
-    removeWatchedAccount
+    removeWatchedAccount,
+    watchedAccountsAddresses
   }
 }

@@ -3,6 +3,7 @@ import { MultisigsByAccountsSubscription, ProxyType } from '../../types-and-hook
 import { AccountBaseInfo } from '../components/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
+import { useWatchedAccounts } from '../hooks/useWatchedAccounts'
 
 const LOCALSTORAGE_KEY = 'multix.selectedMultiProxy'
 
@@ -31,6 +32,7 @@ export interface IMultisigContext {
   error: Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
+  selectedIsWatched: boolean
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -43,8 +45,18 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
-  const { addressList } = useAccounts()
+  const { ownAddressList } = useAccounts()
+  const { watchedAccountsAddresses } = useWatchedAccounts()
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  // This is true if the currently selected Multiproxy contains no signatory owned by the user
+  // this happens with a watch account
+  const selectedIsWatched = useMemo(
+    () =>
+      !selectedMultiProxy?.multisigs.some((multisig) =>
+        multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
+      ),
+    [selectedMultiProxy, ownAddressList]
+  )
 
   const refreshAccounList = useCallback((data: MultisigsByAccountsSubscription | null) => {
     // we do have an answer, but there is no multiproxy
@@ -128,7 +140,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [])
 
   const { isLoading, error } = useMultisigsByAccountSubscription({
-    accounts: addressList,
+    accounts: [...watchedAccountsAddresses, ...ownAddressList],
     onUpdate: refreshAccounList
   })
 
@@ -222,7 +234,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedHasProxy,
         error,
         getMultisigByAddress,
-        getMultisigAsAccountBaseInfo
+        getMultisigAsAccountBaseInfo,
+        selectedIsWatched
       }}
     >
       {children}

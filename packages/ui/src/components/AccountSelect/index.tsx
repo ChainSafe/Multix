@@ -10,13 +10,13 @@ interface Props extends Omit<MenuProps, 'open' | 'onClose' | 'anchorEl'> {
 }
 
 export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) => {
-  const { accountList, selectAccount } = useAccounts()
+  const { ownAccountList, selectAccount } = useAccounts()
 
-  if (!accountList) {
+  if (!ownAccountList) {
     return null
   }
 
-  const handleSelect = (account: (typeof accountList)[0]) => () => {
+  const handleSelect = (account: (typeof ownAccountList)[0]) => () => {
     selectAccount(account)
     onClose()
   }
@@ -28,7 +28,7 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
       onClose={onClose}
       {...props}
     >
-      {accountList.map((account) => (
+      {ownAccountList.map((account) => (
         <MenuItem
           key={account.address}
           onClick={handleSelect(account)}

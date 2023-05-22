@@ -3,11 +3,12 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { ListItemIcon, ListItemText } from '@mui/material'
-import { useState, MouseEvent, ReactNode } from 'react'
+import { useState, MouseEvent, ReactNode, useCallback } from 'react'
+
 export interface MenuOption {
   text: string
   icon: ReactNode
-  onClick: Function
+  onClick: () => void
 }
 
 const ITEM_HEIGHT = 48
@@ -20,13 +21,21 @@ interface Props {
 const OptionsMenu = ({ className, options }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
-  const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
+  const handleMenuClick = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
-  }
-  const handleClose = (onClick: Function) => {
+  }, [])
+
+  const handleClose = useCallback(() => {
     setAnchorEl(null)
-    onClick()
-  }
+  }, [])
+
+  const handleClick = useCallback(
+    (clickFunction: MenuOption['onClick']) => {
+      handleClose()
+      clickFunction()
+    },
+    [handleClose]
+  )
 
   return (
     <div className={className}>
@@ -59,7 +68,7 @@ const OptionsMenu = ({ className, options }: Props) => {
           <MenuItem
             className="menuEntry"
             key={option.text}
-            onClick={() => handleClose(option.onClick)}
+            onClick={() => handleClick(option.onClick)}
           >
             <ListItemIcon>{option.icon}</ListItemIcon>
             <ListItemText>{option.text}</ListItemText>

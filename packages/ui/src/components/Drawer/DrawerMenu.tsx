@@ -19,7 +19,7 @@ interface DrawerMenuProps {
 }
 
 function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
-  const { accountList } = useAccounts()
+  const { ownAccountList } = useAccounts()
   const { multiProxyList } = useMultiProxy()
 
   return (
@@ -37,8 +37,8 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItem>
           <NetworkSelection />
         </ListItem>
-        {accountList &&
-          !isEmptyArray(accountList) &&
+        {ownAccountList &&
+          !isEmptyArray(ownAccountList) &&
           ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
             !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
               <ListItem

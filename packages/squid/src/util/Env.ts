@@ -17,7 +17,7 @@ export class Env {
       prefix: Number(process.env.PREFIX) || 0,
       rpcWs: process.env.RPC_WS || '',
       archiveName: process.env.ARCHIVE_NAME || '',
-      archiveUrl : process.env.ARCHIVE_URL || ''
+      archiveUrl: process.env.ARCHIVE_URL || ''
     }
 
     this.checkForUndefined()

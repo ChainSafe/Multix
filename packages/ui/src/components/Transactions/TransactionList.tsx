@@ -117,7 +117,7 @@ const TransactionList = ({ className }: Props) => {
     refresh
   } = usePendingTx(selectedMultiProxy)
   const { api, isApiReady } = useApi()
-  const { addressList } = useAccounts()
+  const { ownAddressList } = useAccounts()
 
   useEffect(() => {
     if (!isApiReady || !api) {
@@ -167,8 +167,8 @@ const TransactionList = ({ className }: Props) => {
             info?.approvals.length >= multisig.threshold
               ? multisigSignatories
               : getDifference(multisigSignatories, info?.approvals)
-          const possibleSigners = getIntersection(neededSigners, addressList)
-          const isProposer = !!info?.depositor && addressList.includes(info.depositor)
+          const possibleSigners = getIntersection(neededSigners, ownAddressList)
+          const isProposer = !!info?.depositor && ownAddressList.includes(info.depositor)
 
           // if we have the proposer in the extension it can always reject the proposal
           if (isProposer) {

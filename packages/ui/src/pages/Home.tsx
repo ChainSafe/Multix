@@ -18,6 +18,7 @@ import SuccessCreation from '../components/SuccessCreation'
 import NewMulisigAlert from '../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'
 import { renderMultisigHeading } from './multisigHelpers'
+
 interface Props {
   className?: string
 }
@@ -32,7 +33,8 @@ const Home = ({ className }: Props) => {
     multiProxyList,
     selectedMultiProxy,
     selectedHasProxy,
-    error: multisigQueryError
+    error: multisigQueryError,
+    selectedIsWatched
   } = useMultiProxy()
   const { refresh } = usePendingTx()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -71,6 +73,7 @@ const Home = ({ className }: Props) => {
 
     // allow rotation only for the multisigs with a proxy
     selectedHasProxy &&
+      !selectedIsWatched &&
       opts.push({
         text: 'Change multisig',
         icon: <LockResetIcon />,
@@ -78,7 +81,7 @@ const Home = ({ className }: Props) => {
       })
 
     return opts
-  }, [selectedHasProxy])
+  }, [selectedHasProxy, selectedIsWatched])
 
   if (isLoading) {
     return (
@@ -200,13 +203,15 @@ const Home = ({ className }: Props) => {
               })}
             </div>
             <div className="buttonColumn">
-              <IconButton
-                className="sendButton"
-                aria-label="send"
-                onClick={() => setIsSendModalOpen(true)}
-              >
-                <SendIcon />
-              </IconButton>
+              {!selectedIsWatched && (
+                <IconButton
+                  className="sendButton"
+                  aria-label="send"
+                  onClick={() => setIsSendModalOpen(true)}
+                >
+                  <SendIcon />
+                </IconButton>
+              )}
               <OptionsMenu options={options} />
             </div>
           </div>

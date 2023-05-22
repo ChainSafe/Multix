@@ -3,11 +3,13 @@ import { AccountBaseInfo } from '../components/GenericAccountSelection'
 import { useAccounts } from '../contexts/AccountsContext'
 
 export const useAccountBaseFromAccountList = () => {
-  const { accountList } = useAccounts()
+  const { ownAccountList } = useAccounts()
 
   const accountBase = useMemo((): AccountBaseInfo[] => {
-    return (accountList && accountList?.map((account) => ({ address: account.address }))) || []
-  }, [accountList])
+    return (
+      (ownAccountList && ownAccountList?.map((account) => ({ address: account.address }))) || []
+    )
+  }, [ownAccountList])
 
   return accountBase
 }

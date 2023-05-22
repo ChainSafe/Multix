@@ -17,8 +17,8 @@ interface Props {
 }
 
 const Header = ({ className, handleDrawerOpen }: Props) => {
-  const { accountList } = useAccounts()
-  const isAccountConnected = useMemo(() => !!accountList?.length, [accountList])
+  const { ownAccountList } = useAccounts()
+  const isAccountConnected = useMemo(() => !!ownAccountList?.length, [ownAccountList])
   const { multiProxyList } = useMultiProxy()
   const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
 
