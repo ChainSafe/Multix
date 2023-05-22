@@ -52,8 +52,8 @@ const Transaction = ({
           <GestureIcon className="callIcon" />
         )}
       </Badge>
-
       <CallInfo
+        withLink
         aggregatedData={aggregatedData}
         children={
           (isProposer || possibleSigners.length > 0) && (
@@ -100,10 +100,6 @@ export default styled(Transaction)(
     margin: .5rem;
     padding: 1rem;
     height: auto;
-
-    &.unknownCall {
-      height: 5rem;
-    }
   }
 
     // FIXME this is duplicated

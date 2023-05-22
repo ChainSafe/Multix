@@ -85,7 +85,7 @@ const MultisigCreation = ({ className }: Props) => {
     const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
     const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, 0)
     // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx = api.tx.balances.transfer(
+    const transferTx = api.tx.balances.transferKeepAlive(
       multiAddress,
       pureProxyCreationNeededFunds.toString()
     )

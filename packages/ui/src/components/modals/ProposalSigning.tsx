@@ -21,8 +21,9 @@ import { useToasts } from '../../contexts/ToastContext'
 import { Weight } from '@polkadot/types/interfaces'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { sortAddresses } from '@polkadot/util-crypto'
-import { MultisigStorageInfo } from '../../types'
+import { HexString, MultisigStorageInfo } from '../../types'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { getDisplayArgs, getExtrinsicName } from '../../utils'
 
 interface Props {
   onClose: () => void
@@ -51,7 +52,7 @@ const ProposalSigning = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
-  const [addedCallData, setAddedCallData] = useState('')
+  const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const multisig = useMemo(
@@ -84,7 +85,7 @@ const ProposalSigning = ({
 
   useEffect(() => {
     if (isProposerSelected) {
-      setAddedCallData('')
+      setAddedCallData(undefined)
       setErrorMessage('')
     }
   }, [isProposerSelected])
@@ -278,7 +279,7 @@ const ProposalSigning = ({
   const onAddedCallDataChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setErrorMessage('')
-      setAddedCallData(event.target.value)
+      setAddedCallData(event.target.value as HexString)
     },
     []
   )
@@ -342,7 +343,7 @@ const ProposalSigning = ({
             </>
           )}
 
-          {!needCallData && (
+          {(!needCallData || !!callInfo.call) && (
             <>
               <Grid
                 item
@@ -356,28 +357,20 @@ const ProposalSigning = ({
                 className="callInfo"
               >
                 <CallInfo
-                  aggregatedData={proposalData}
+                  aggregatedData={
+                    !needCallData
+                      ? proposalData
+                      : {
+                          from: proposalData.from,
+                          args: getDisplayArgs(callInfo.call),
+                          callData: addedCallData,
+                          hash: proposalData.hash,
+                          info: proposalData.info,
+                          name: getExtrinsicName(callInfo.section, callInfo.method)
+                        }
+                  }
                   expanded
                 />
-              </Grid>
-            </>
-          )}
-          {!!needCallData && !!callInfo.method && (
-            <>
-              <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={11}
-                className="callInfo"
-              >
-                <h4>
-                  {callInfo.method}.{callInfo.section}
-                </h4>
               </Grid>
             </>
           )}
