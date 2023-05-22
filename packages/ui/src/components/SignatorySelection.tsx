@@ -56,9 +56,8 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
       )}
       <Box className="addSignatoryField">
         <AccountSelection
-          className="accountDropdown"
-          currentSignatories={signatories}
-          addSignatory={addSignatory}
+          currentSelection={signatories}
+          addAccount={addSignatory}
           withName
           withAddButton
           //make sure the first state is empty
@@ -83,14 +82,10 @@ export default styled(SignatorySelection)`
     }
   }
 
-  .deleteButton,
-  .addButton {
+  .deleteButton {
     margin-left: 1rem;
     height: 2.5rem;
     align-self: center;
-  }
-  .accountDropdown {
-    flex: 1;
   }
 
   .selectedSignatory,

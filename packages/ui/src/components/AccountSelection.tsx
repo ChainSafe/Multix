@@ -23,12 +23,13 @@ interface Props {
   className?: string
   addressDisabled?: boolean
   nameDisabled?: boolean
-  addSignatory?: (address: string) => void
+  addAccount?: (address: string) => void
   value?: string
   inputLabel?: string
-  currentSignatories?: string[]
+  currentSelection?: string[]
   withName?: boolean
   withAddButton?: boolean
+  withPreselection?: boolean
 }
 
 const filterOptions = createFilterOptions({
@@ -43,14 +44,15 @@ const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
 }
 const AccountSelection = ({
   className,
-  addSignatory,
+  addAccount,
   addressDisabled = false,
   nameDisabled = false,
   value,
   inputLabel = 'Account',
-  currentSignatories = [],
+  currentSelection = [],
   withName = false,
-  withAddButton = false
+  withAddButton = false,
+  withPreselection = true
 }: Props) => {
   const { accountList = [], getAccountByAddress } = useAccounts()
   const [selected, setSelected] = useState(value)
@@ -59,8 +61,8 @@ const AccountSelection = ({
   const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState('')
   const dedupedSignatories = useMemo(() => {
-    return accountList.filter((account) => !currentSignatories.includes(account.address))
-  }, [accountList, currentSignatories])
+    return accountList.filter((account) => !currentSelection.includes(account.address))
+  }, [accountList, currentSelection])
   const extensionName = useMemo(() => {
     if (!selected) return ''
     return getAccountByAddress(selected)?.meta.name
@@ -93,18 +95,18 @@ const AccountSelection = ({
       return
     }
 
-    if (currentSignatories.includes(selected)) {
+    if (currentSelection.includes(selected)) {
       setErrorMessage('Signatory already added')
       return
     }
 
-    if (addSignatory) {
+    if (addAccount) {
       name && addName(name, selected)
-      addSignatory(selected)
+      addAccount(selected)
       setSelected('')
       setName('')
     }
-  }, [addName, addSignatory, currentSignatories, name, selected])
+  }, [addName, addAccount, currentSelection, name, selected])
 
   const handleSpecialKeys = useCallback(
     (e: any) => {
@@ -126,9 +128,8 @@ const AccountSelection = ({
         className="addressField"
         disabled={addressDisabled}
         freeSolo
-        // selectOnFocus
         filterOptions={filterOptions}
-        options={dedupedSignatories}
+        options={withPreselection ? dedupedSignatories : []}
         renderOption={(props, option) => (
           <Box
             component="li"
@@ -199,6 +200,7 @@ const AccountSelection = ({
 
 export default styled(AccountSelection)`
   display: flex;
+  flex: 1;
 
   .addressField {
     flex: 1;
@@ -207,5 +209,11 @@ export default styled(AccountSelection)`
 
   .nameField {
     flex: 1;
+  }
+
+  .addButton {
+    margin-left: 1rem;
+    height: 2.5rem;
+    align-self: center;
   }
 `

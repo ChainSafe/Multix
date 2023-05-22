@@ -20,6 +20,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
   const { accountList } = useAccounts()
   const isAccountConnected = useMemo(() => !!accountList?.length, [accountList])
   const { multiProxyList } = useMultiProxy()
+  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
 
   return (
     <MuiAppBar
@@ -36,7 +37,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
         {isAccountConnected && (
           <BoxStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
-              !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
+              isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy ? (
                 <Button
                   key={name}
                   component={Link}
@@ -48,7 +49,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
               ) : null
             )}
             <MultiProxySelection />
-            <NetworkSelectionStyled />
+            <NetworkSelectionStyled isAtLeastOneMultiProxy={isAtLeastOneMultiProxy} />
           </BoxStyled>
         )}
         {isAccountConnected && (
@@ -78,9 +79,13 @@ const BoxStyled = styled(Box)(
 `
 )
 
-const NetworkSelectionStyled = styled(NetworkSelection)`
-  margin-left: 0.5rem;
+const NetworkSelectionStyled = styled(NetworkSelection)<{
+  isAtLeastOneMultiProxy: boolean
+}>(
+  ({ isAtLeastOneMultiProxy }) => `
+  margin-left: ${isAtLeastOneMultiProxy ? '0.5rem' : 'auto'};
 `
+)
 
 const TypographyStyled = styled(Typography)`
   flex-grow: 1;
