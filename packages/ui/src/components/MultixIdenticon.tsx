@@ -29,8 +29,9 @@ const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, classNam
       placement={DEFAULT_PLACEMENT}
       leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
     >
-      <IconButton onClick={handleTooltipOpen}>
+      <IconButton>
         <Identicon
+          onCopy={handleTooltipOpen}
           value={value}
           theme={theme}
           size={size}
