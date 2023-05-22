@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
-import WatchedSignatories from '../components/WatchedSignatories'
+import WatchedAccounts from '../components/WatchedAccounts'
 
 interface Props {
   className?: string
@@ -9,8 +9,8 @@ interface Props {
 const Settings = ({ className }: Props) => {
   return (
     <Box className={className}>
-      <h3>Watch Signatories</h3>
-      <WatchedSignatories />
+      <h3>Watch Accounts</h3>
+      <WatchedAccounts />
     </Box>
   )
 }

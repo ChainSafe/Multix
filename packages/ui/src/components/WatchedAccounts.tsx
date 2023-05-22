@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box, IconButton } from '@mui/material'
-import { useWatchedAccounts } from '../hooks/useWatchedAccounts'
+import { useWatchedAccounts } from '../hooks/useWatchedAddress'
 import AccountDisplay from './AccountDisplay'
 import CloseIcon from '@mui/icons-material/Close'
 import AccountSelection from './AccountSelection'
@@ -10,16 +10,13 @@ interface Props {
   className?: string
 }
 
-const WatchedSignatories = ({ className }: Props) => {
-  const { watchedAccounts, removeWatchedAccount, addWatchedAccount } = useWatchedAccounts()
-  const watchedAccountsString = useMemo(
-    () => watchedAccounts.map((a) => a.address),
-    [watchedAccounts]
-  )
+const WatchedAccounts = ({ className }: Props) => {
+  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAccounts()
+
   return (
     <Box className={className}>
       <ListStyled>
-        {watchedAccounts.map(({ address }) => {
+        {watchedAddresses.map((address) => {
           const removeItem = () => removeWatchedAccount(address)
           return (
             <li key={address}>
@@ -43,7 +40,7 @@ const WatchedSignatories = ({ className }: Props) => {
       <AccountSelectionWrapperStyled>
         <AccountSelection
           className="accountDropdown"
-          currentSelection={watchedAccountsString}
+          currentSelection={watchedAddresses}
           addAccount={addWatchedAccount}
           withName
           withAddButton
@@ -84,4 +81,4 @@ const IconButtontyled = styled(IconButton)`
   margin-left: 1rem;
 `
 
-export default WatchedSignatories
+export default WatchedAccounts

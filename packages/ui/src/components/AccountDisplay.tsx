@@ -88,7 +88,7 @@ const AccountDisplay = ({
               />
             )}
             {!!sub && <span>{sub}</span>}
-            <NameStyled>{displayName || mainDisplay}</NameStyled>
+            <NameStyled>{mainDisplay || displayName}</NameStyled>
           </NameWrapperStyled>
         )}
         <AddressStyled>{getDisplayAddress(address)}</AddressStyled>

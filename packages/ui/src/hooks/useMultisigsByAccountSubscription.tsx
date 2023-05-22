@@ -8,9 +8,14 @@ import { useNetwork } from '../contexts/NetworkContext'
 interface Args {
   onUpdate: (data: MultisigsByAccountsSubscription | null) => void
   accounts: string[]
+  watchedAccounts: string[]
 }
 
-export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) => {
+export const useMultisigsByAccountSubscription = ({
+  onUpdate,
+  accounts,
+  watchedAccounts
+}: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
     () => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || '' }),
@@ -40,14 +45,15 @@ export const useMultisigsByAccountSubscription = ({ onUpdate, accounts }: Args) 
   }
 
   const { isError, error, data, isLoading } = useSubscription(
-    [`KeyMultisigsByAccount-${accounts}-${selectedNetwork}`],
+    [`KeyMultisigsByAccount-${accounts}-${watchedAccounts}-${selectedNetwork}`],
     () => {
       return fromWsClientSubscription<{
         accounts: MultisigsByAccountsSubscription['accounts']
       }>(client, {
         query: MultisigsByAccountsDocument,
         variables: {
-          accounts
+          accounts: [...watchedAccounts, ...accounts],
+          watchedAccounts
         }
       })
     },

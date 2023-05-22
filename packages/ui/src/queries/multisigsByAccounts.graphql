@@ -1,7 +1,13 @@
-subscription MultisigsByAccounts($accounts: [String!]) {
+subscription MultisigsByAccounts($accounts: [String!], $watchedAccounts: [String!]) {
   accounts(
-    where: { AND: { isMultisig_eq: true, signatories_some: { signatory: { id_in: $accounts } } } }
+    where: {
+      id_in: $watchedAccounts
+      AND: { isMultisig_eq: true, OR: { isPureProxy_eq: true } }
+      OR: { signatories_some: { signatory: { id_in: $accounts } } }
+    }
   ) {
+    # either it's a multisig or proxy, with direct address match
+    # or one of accounts is a signatory
     id
     isMultisig
     isPureProxy
@@ -21,6 +27,20 @@ subscription MultisigsByAccounts($accounts: [String!]) {
       delegatee {
         id
         isPureProxy
+      }
+    }
+    delegatorFor {
+      id
+      type
+      delegatee {
+        id
+        isMultisig
+        threshold
+        signatories {
+          signatory {
+            id
+          }
+        }
       }
     }
   }
