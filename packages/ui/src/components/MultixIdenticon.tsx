@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
 import { ICON_SIZE, ICON_THEME } from '../constants'
 import Identicon from '@polkadot/react-identicon'
-import { IconButton } from '@mui/material'
 import { IconTheme } from '@polkadot/react-identicon/types'
+import { styled } from '@mui/material/styles'
 
 const DEFAULT_PLACEMENT = 'top'
 const DEFAULT_TITLE = 'Address copied!'
@@ -15,21 +15,25 @@ interface Props {
   size?: number
   className?: string
 }
-const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, className }: Props) => {
+const MultixIdenticon = ({
+  value,
+  theme = ICON_THEME,
+  size = ICON_SIZE,
+  className
+}: Props) => {
   const [open, setOpen] = useState(false)
   const handleTooltipClose = useCallback(() => setOpen(false), [])
   const handleTooltipOpen = useCallback(() => setOpen(true), [])
 
   return (
     <Tooltip
-      PopperProps={{ disablePortal: true }}
       onClose={handleTooltipClose}
       open={open}
       title={DEFAULT_TITLE}
       placement={DEFAULT_PLACEMENT}
       leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
     >
-      <IconButton>
+      <TooltipIconStyled>
         <Identicon
           onCopy={handleTooltipOpen}
           value={value}
@@ -37,9 +41,14 @@ const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, classNam
           size={size}
           className={className}
         />
-      </IconButton>
+      </TooltipIconStyled>
     </Tooltip>
   )
 }
+
+const TooltipIconStyled = styled('div')`
+  display: inherit;
+  line-height: 0;
+`
 
 export default MultixIdenticon
