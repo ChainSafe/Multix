@@ -1,4 +1,3 @@
-import * as React from 'react'
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -9,7 +8,10 @@ interface TransactionProgressProps {
   threshold: number
 }
 
-function TransactionProgress({ value, threshold }: LinearProgressProps & TransactionProgressProps) {
+const TransactionProgress = ({
+  value,
+  threshold
+}: LinearProgressProps & TransactionProgressProps) => {
   const progressBarFillPercent = (value / threshold) * 100
 
   return (
