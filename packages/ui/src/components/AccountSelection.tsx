@@ -1,5 +1,4 @@
 import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
-import Identicon from '@polkadot/react-identicon'
 import {
   ChangeEvent,
   useCallback,
@@ -14,10 +13,10 @@ import { useAccounts } from '../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isValidAddress } from '../utils'
-import { ICON_THEME, ICON_SIZE } from '../constants'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
+import MultixIdenticon from './MultixIdenticon'
 
 interface Props {
   className?: string
@@ -139,11 +138,9 @@ const AccountSelection = ({
             {...props}
             key={option.address}
           >
-            <Identicon
+            <MultixIdenticon
               className="renderOptionIdenticon"
               value={option.address}
-              theme={ICON_THEME}
-              size={ICON_SIZE}
             />
             {option.address} - {option.meta.name}
           </Box>
@@ -159,11 +156,7 @@ const AccountSelection = ({
               ...params.InputProps,
               startAdornment: selected ? (
                 <InputAdornment position="start">
-                  <Identicon
-                    value={selected}
-                    theme={ICON_THEME}
-                    size={ICON_SIZE}
-                  />
+                  <MultixIdenticon value={selected} />
                 </InputAdornment>
               ) : null
             }}
