@@ -42,10 +42,8 @@ const CustomNode = ({ data, className = '' }: Props) => {
   )
 }
 
-export default styled(CustomNode)(
-  ({ theme }) => `
+export default styled(CustomNode)`
   padding-right: 1rem;
   padding-left: 1rem;
   max-width: 15rem;
 `
-)

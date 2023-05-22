@@ -57,9 +57,9 @@ const Transaction = ({
         aggregatedData={aggregatedData}
         children={
           (isProposer || possibleSigners.length > 0) && (
-            <div className="buttonWrapper">
-              <Button onClick={onOpenModal}>Review</Button>
-            </div>
+            <TransactionFooterStyled>
+              <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
+            </TransactionFooterStyled>
           )
         }
       />
@@ -75,20 +75,24 @@ const Transaction = ({
   )
 }
 
+const ButtonStyled = styled(Button)`
+  margin-left: auto;
+`
+
+const TransactionFooterStyled = styled('div')`
+  align-self: flex-end;
+  text-align: end;
+  margin-right: 0.5rem;
+  margin-top: 1rem;
+  display: flex;
+`
+
 export default styled(Transaction)(
   ({ theme }) => `
     display: flex;
     flex-direction: row;
     margin-left: .5rem;
     margin-bottom: 1rem;
-
-  .buttonWrapper {
-    flex: 1;
-    align-self: flex-end;
-    text-align: end;
-    margin-right: .5rem;
-    margin-bottom: .5rem;
-  }
 
   .callIcon {
     font-size: 7rem;

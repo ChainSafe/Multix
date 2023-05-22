@@ -27,22 +27,20 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
   )
 }
 
-export default styled(Expander)(
-  ({ theme }) => `
-display: flex;
-flex-direction: column;
-min-width: 0;
-
-.titleWrapper {
-  cursor: pointer;
+export default styled(Expander)`
   display: flex;
-}
+  flex-direction: column;
+  min-width: 0;
 
-.expanderIcon {
-  transition: transform 0.2s ease-in-out;
+  .titleWrapper {
+    cursor: pointer;
+    display: flex;
+  }
+
+  .expanderIcon {
+    transition: transform 0.2s ease-in-out;
     &.rotated {
-      transform: rotate(90deg)
+      transform: rotate(90deg);
     }
   }
 `
-)

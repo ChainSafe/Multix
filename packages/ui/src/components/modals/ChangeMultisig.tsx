@@ -475,8 +475,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   )
 }
 
-export default styled(ChangeMultisig)(
-  ({ theme }) => `
+export default styled(ChangeMultisig)`
   .buttonContainer {
     margin-top: 1rem;
     text-align: right;
@@ -513,4 +512,3 @@ export default styled(ChangeMultisig)(
     margin-top: 1rem;
   }
 `
-)

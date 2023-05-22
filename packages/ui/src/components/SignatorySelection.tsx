@@ -69,8 +69,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
   )
 }
 
-export default styled(SignatorySelection)(
-  ({ theme }) => `
+export default styled(SignatorySelection)`
   .selectedList {
     padding: 1rem;
     margin-bottom: 2rem;
@@ -84,22 +83,23 @@ export default styled(SignatorySelection)(
     }
   }
 
-  .deleteButton, .addButton {
+  .deleteButton,
+  .addButton {
     margin-left: 1rem;
     height: 2.5rem;
     align-self: center;
   }
   .accountDropdown {
-          flex: 1;
-      }
+    flex: 1;
+  }
 
-  .selectedSignatory, .addSignatoryField {
+  .selectedSignatory,
+  .addSignatoryField {
     display: flex;
   }
 
   .additionText {
-      margin-top: .5rem;
-      margin-bottom: .5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 `
-)

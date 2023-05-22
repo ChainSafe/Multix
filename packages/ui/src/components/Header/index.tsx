@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
-// import NetworkSelection from "../NetworkSelection";
+import NetworkSelection from '../NetworkSelection'
 
 interface Props {
   className?: string
@@ -48,7 +48,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
               ) : null
             )}
             <MultiProxySelection />
-            {/* <NetworkSelection className="networkSelection" /> */}
+            <NetworkSelectionStyled />
           </BoxStyled>
         )}
         {isAccountConnected && (
@@ -75,12 +75,12 @@ const BoxStyled = styled(Box)(
         display: flex;
         align-items: center;
     }
-
-    .networkSelection {
-      margin-left: 0.5rem;
-    }
 `
 )
+
+const NetworkSelectionStyled = styled(NetworkSelection)`
+  margin-left: 0.5rem;
+`
 
 const TypographyStyled = styled(Typography)`
   flex-grow: 1;

@@ -78,4 +78,4 @@ const RemoveButtonStyled = styled(Button)`
   margin-bottom: 0.5rem;
 `
 
-export default styled(BatchExtrinsic)()
+export default BatchExtrinsic

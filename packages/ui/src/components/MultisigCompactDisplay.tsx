@@ -90,15 +90,13 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
   )
 }
 
-export default styled(MultisigCompactDisplay)(
-  ({ theme }) => `
+export default styled(MultisigCompactDisplay)`
   .multisigAccount {
     margin-top: 0.5rem;
     margin-left: 0.5rem;
   }
 
   .signatoryList {
-      list-style-type: none;
+    list-style-type: none;
   }
 `
-)
