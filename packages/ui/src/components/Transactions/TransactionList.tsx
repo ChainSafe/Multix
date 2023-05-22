@@ -5,7 +5,7 @@ import { PendingTx, usePendingTx } from '../../hooks/usePendingTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ApiPromise } from '@polkadot/api'
 import { useApi } from '../../contexts/ApiContext'
-import { getDifference, getIntersection } from '../../utils'
+import { getDifference, getDisplayArgs, getIntersection } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { ISanitizedCall, parseGenericCall } from '../../utils/decode'
 import { GenericCall } from '@polkadot/types'
@@ -26,7 +26,7 @@ interface Props {
   className?: string
 }
 
-const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
+export const getMultisigInfo = (c: ISanitizedCall): Partial<AggregatedData>[] => {
   const result: Partial<AggregatedData>[] = []
 
   const getCallResult = (c: ISanitizedCall) => {
@@ -102,7 +102,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
       callData,
       hash: hash || pendingTx.hash,
       name,
-      args: call && call.toHuman().args,
+      args: getDisplayArgs(call),
       info: pendingTx.info,
       from: pendingTx.from
     } as AggregatedData

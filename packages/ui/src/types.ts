@@ -9,3 +9,5 @@ export enum AccountBadge {
   PURE = 'pure',
   MULTI = 'multi'
 }
+
+export type HexString = `0x${string}`
