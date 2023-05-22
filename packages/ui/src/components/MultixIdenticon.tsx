@@ -15,12 +15,7 @@ interface Props {
   size?: number
   className?: string
 }
-const MultixIdenticon = ({
-  value,
-  theme = ICON_THEME,
-  size = ICON_SIZE,
-  className
-}: Props) => {
+const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, className }: Props) => {
   const [open, setOpen] = useState(false)
   const handleTooltipClose = useCallback(() => setOpen(false), [])
   const handleTooltipOpen = useCallback(() => setOpen(true), [])
