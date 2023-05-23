@@ -3,6 +3,7 @@ import { useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
 import { MultisigStorageInfo } from '../types'
 import { useMultisigCallSubscription } from './useMultisigCallsSubscription'
+import { isEmptyArray } from '../utils'
 
 export interface PendingTx {
   from: string
@@ -21,7 +22,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   const refresh = useCallback(() => {
     if (!isApiReady || !api) return
 
-    if (!multiProxy) return
+    if (isEmptyArray(multisigs)) return
 
     if (!api?.query?.multisig?.multisigs) return
 
@@ -29,9 +30,8 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
 
     const newData: typeof data = []
 
-    const callsPromises = multiProxy.multisigs.map((multisig) =>
-      api.query.multisig.multisigs.entries(multisig.address)
-    )
+    const callsPromises = multisigs.map((address) => api.query.multisig.multisigs.entries(address))
+
     Promise.all(callsPromises)
       .then((res1) => {
         res1.forEach((res, index) => {
@@ -59,7 +59,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, isApiReady, multiProxy, multisigs])
+  }, [api, isApiReady, multisigs])
 
   useEffect(() => {
     refresh()
