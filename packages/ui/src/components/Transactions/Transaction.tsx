@@ -55,7 +55,8 @@ const Transaction = ({
         )}
       </Badge>
       <TransactionCallInfoBoxStyled>
-        <CallInfowithLink
+        <CallInfo
+          withLink
           aggregatedData={aggregatedData}
           children={
             (isProposer || possibleSigners.length > 0) && (
