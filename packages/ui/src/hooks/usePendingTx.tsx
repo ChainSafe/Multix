@@ -36,13 +36,20 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
       .then((res1) => {
         res1.forEach((res, index) => {
           res.forEach((storage) => {
+            const multisigProp = (storage[0].toHuman() as Array<string>)[0]
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+
+            // temp fix for ghost proposals
+            // https://github.com/polkadot-js/apps/issues/9103
+            if (multisigProp !== multisigs[index]) {
+              return
+            }
 
             newData.push({
               hash,
               info,
-              from: multiProxy.multisigs[index].address
+              from: multisigs[index]
             })
           })
         })
@@ -52,7 +59,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, isApiReady, multiProxy])
+  }, [api, isApiReady, multiProxy, multisigs])
 
   useEffect(() => {
     refresh()
