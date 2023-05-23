@@ -45,7 +45,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   useEffect(() => {
     if (chainInfo?.ss58Format) {
       setOwnAccountList((prev) => {
-        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format)
+        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as InjectedAccountWithMeta[]
       })
     }
   }, [chainInfo])
