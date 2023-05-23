@@ -36,13 +36,14 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
       .then((res1) => {
         res1.forEach((res, index) => {
           res.forEach((storage) => {
-            const multisigProp = (storage[0].toHuman() as Array<string>)[0]
+            // this is supposed to be the multisig address that we asked the storage for
+            const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
 
-            // temp fix for ghost proposals
-            // https://github.com/polkadot-js/apps/issues/9103
-            if (multisigProp !== multisigs[index]) {
+            // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
+            // These 2 should be the same
+            if (multisigFromChain !== multisigs[index]) {
               return
             }
 
