@@ -3,7 +3,7 @@ import { MultisigsByAccountsSubscription, ProxyType } from '../../types-and-hook
 import { AccountBaseInfo } from '../components/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
-import { useWatchedAccounts } from '../hooks/useWatchedAddress'
+import { useWatchedAddresses } from './WatchedAddressesContext'
 
 const LOCALSTORAGE_KEY = 'multix.selectedMultiProxy'
 
@@ -48,7 +48,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
   const { ownAddressList } = useAccounts()
-  const { watchedAddresses: watchedAccountsAddresses } = useWatchedAccounts()
+  const { watchedAddresses } = useWatchedAddresses()
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // This is true if the currently selected Multiproxy contains no signatory owned by the user
   // this happens with a watch account
@@ -171,10 +171,9 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [])
 
-  console.log('watchedAccountsAddresses', watchedAccountsAddresses)
   const { isLoading, error } = useMultisigsByAccountSubscription({
     accounts: ownAddressList,
-    watchedAccounts: watchedAccountsAddresses,
+    watchedAccounts: watchedAddresses,
     onUpdate: refreshAccounList
   })
 

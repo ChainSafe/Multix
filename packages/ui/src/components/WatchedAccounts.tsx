@@ -1,17 +1,16 @@
 import { styled } from '@mui/material/styles'
 import { Box, IconButton } from '@mui/material'
-import { useWatchedAccounts } from '../hooks/useWatchedAddress'
+import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import AccountDisplay from './AccountDisplay'
 import CloseIcon from '@mui/icons-material/Close'
 import AccountSelection from './AccountSelection'
-import { useMemo } from 'react'
 
 interface Props {
   className?: string
 }
 
 const WatchedAccounts = ({ className }: Props) => {
-  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAccounts()
+  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
 
   return (
     <Box className={className}>

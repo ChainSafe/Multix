@@ -132,7 +132,14 @@ const Home = ({ className }: Props) => {
                 component={Link}
                 to="/create"
               >
-                Create one!
+                Create one
+              </Button>
+              or
+              <Button
+                component={Link}
+                to="/settings"
+              >
+                Watch one
               </Button>
             </div>
           )}
