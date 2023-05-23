@@ -67,6 +67,8 @@ const Transaction = ({
           }
         />
         <TransactionProgress
+          possibleSigners={possibleSigners}
+          approvals={aggregatedData.info?.approvals || []}
           value={aggregatedData.info?.approvals.length || 0}
           threshold={threshold}
         />
