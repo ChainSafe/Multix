@@ -3,6 +3,7 @@ import { useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
 import { MultisigStorageInfo } from '../types'
 import { useMultisigCallSubscription } from './useMultisigCallsSubscription'
+import { isEmptyArray } from '../utils'
 
 export interface PendingTx {
   from: string
@@ -21,7 +22,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   const refresh = useCallback(() => {
     if (!isApiReady || !api) return
 
-    if (!multiProxy) return
+    if (isEmptyArray(multisigs)) return
 
     if (!api?.query?.multisig?.multisigs) return
 
@@ -29,20 +30,27 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
 
     const newData: typeof data = []
 
-    const callsPromises = multiProxy.multisigs.map((multisig) =>
-      api.query.multisig.multisigs.entries(multisig.address)
-    )
+    const callsPromises = multisigs.map((address) => api.query.multisig.multisigs.entries(address))
+
     Promise.all(callsPromises)
       .then((res1) => {
         res1.forEach((res, index) => {
           res.forEach((storage) => {
+            // this is supposed to be the multisig address that we asked the storage for
+            const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+
+            // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
+            // These 2 should be the same
+            if (multisigFromChain !== multisigs[index]) {
+              return
+            }
 
             newData.push({
               hash,
               info,
-              from: multiProxy.multisigs[index].address
+              from: multisigs[index]
             })
           })
         })
@@ -52,7 +60,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, isApiReady, multiProxy])
+  }, [api, isApiReady, multisigs])
 
   useEffect(() => {
     refresh()
