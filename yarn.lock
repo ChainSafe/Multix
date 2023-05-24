@@ -1770,7 +1770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.10.8":
+"@emotion/react@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/react@npm:11.11.0"
   dependencies:
@@ -1811,7 +1811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/styled@npm:^11.10.8":
+"@emotion/styled@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/styled@npm:11.11.0"
   dependencies:
@@ -2361,8 +2361,8 @@ __metadata:
   linkType: hard
 
 "@graphql-eslint/eslint-plugin@npm:^3.18.0":
-  version: 3.19.0
-  resolution: "@graphql-eslint/eslint-plugin@npm:3.19.0"
+  version: 3.19.1
+  resolution: "@graphql-eslint/eslint-plugin@npm:3.19.1"
   dependencies:
     "@babel/code-frame": ^7.18.6
     "@graphql-tools/code-file-loader": ^7.3.6
@@ -2377,7 +2377,7 @@ __metadata:
     tslib: ^2.4.1
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 0f379d3a0f654b84b3a7e4d9b85a7a501ddebbafddcd60066c93c97381f619d739ec3158019e7e541c5eb44b7d9b65e7683ecdb954bc512f39f2a101fe997237
+  checksum: b4b48568ddd7bac7fa14d44ac3398cc9e5b3a2f055b8b49b464c7dba569f9cd9ae3032fc5731c44afff924f3ab2e89255314815a14e85c68ec738588212e8865
   languageName: node
   linkType: hard
 
@@ -7221,9 +7221,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.284":
-  version: 1.4.404
-  resolution: "electron-to-chromium@npm:1.4.404"
-  checksum: 1eaff1993a130539782651ac36d5c0f87ee1db2372f169cd549c7361397fadcbee0ea63d4cc4b7ee72d1434c47b68fe984fe874741e251c6047ffdfafafe5291
+  version: 1.4.405
+  resolution: "electron-to-chromium@npm:1.4.405"
+  checksum: 80c63360c6580ebc5b2947be193c931bd1dc23bdeaac207435b9ffb2ce482f09f04ed7aca4e965bc5ece6f8285575007b3eb4fa3a2270b5e5bf0903f406cac81
   languageName: node
   linkType: hard
 
@@ -8469,14 +8469,14 @@ __metadata:
   linkType: hard
 
 "graphql-request@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "graphql-request@npm:6.0.0"
+  version: 6.1.0
+  resolution: "graphql-request@npm:6.1.0"
   dependencies:
     "@graphql-typed-document-node/core": ^3.2.0
     cross-fetch: ^3.1.5
   peerDependencies:
     graphql: 14 - 16
-  checksum: 21b317f5710db79f8d425147fb34c8dc1ab8e91ca4b0f8f5b473b6b0315dafddf42ddbaf62f5f4b178e7e2439a88287773e17910b6ba625ab046771e619124cc
+  checksum: f8167925a110e8e1de93d56c14245e7e64391dc8dce5002dd01bf24a3059f345d4ca1bb6ce2040e2ec78264211b0704e75da3e63984f0f74d2042f697a4e8cc6
   languageName: node
   linkType: hard
 
@@ -8681,12 +8681,12 @@ __metadata:
   linkType: hard
 
 "https-proxy-agent@npm:^6.0.0":
-  version: 6.2.0
-  resolution: "https-proxy-agent@npm:6.2.0"
+  version: 6.2.1
+  resolution: "https-proxy-agent@npm:6.2.1"
   dependencies:
     agent-base: ^7.0.2
     debug: 4
-  checksum: 4d9be43f569875d6f9d2563a9cb952abc0b6de70ee648cfbc4ceb5b695e4fef96aca2d296631423f82ef4f83e76760ef9e1abcd0cadcbe7d7a1ae99f221e4cce
+  checksum: 18fb405545c54c0c5131f3c6bedecf36c73095dac368c234e5775e655a0fa176e091d9fd651c9b9e9daadf6dac415116de04f76d791642216b32cc32a8592ebc
   languageName: node
   linkType: hard
 
@@ -9897,8 +9897,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "multix-ui@workspace:packages/ui"
   dependencies:
-    "@emotion/react": ^11.10.8
-    "@emotion/styled": ^11.10.8
+    "@emotion/react": ^11.11.0
+    "@emotion/styled": ^11.11.0
     "@graphql-codegen/cli": 3.3.1
     "@graphql-codegen/client-preset": 3.0.1
     "@graphql-codegen/typescript-react-query": ^4.1.0
@@ -10125,9 +10125,9 @@ __metadata:
   linkType: hard
 
 "node-releases@npm:^2.0.8":
-  version: 2.0.11
-  resolution: "node-releases@npm:2.0.11"
-  checksum: 6bbbd6346ad8eaf8af7b6fff86b2b5613b1204fa8ecdf976e306397e6ff8a61edc1a50fe94575a3c53f61454ea16790519925019286eb330272050ebf5e1824d
+  version: 2.0.12
+  resolution: "node-releases@npm:2.0.12"
+  checksum: 01f9a7c135be5c8bc989b6c10b9840a7aee09040d46ba4e64b5ea0174fb8891f1277514aef75033ce42031f6cb72a04d4a7e99c70ca25488ad63ad6fc5a5b6a0
   languageName: node
   linkType: hard
 

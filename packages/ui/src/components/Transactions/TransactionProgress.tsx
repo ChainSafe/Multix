@@ -22,6 +22,7 @@ interface TransactionProgressProps {
   possibleSigners: string[]
   approvals: string[]
 }
+
 const ListItemToSign = ({ approvals, signer }: { approvals: string[]; signer: string }) => {
   return (
     <ListItem disablePadding>

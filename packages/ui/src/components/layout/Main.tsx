@@ -10,29 +10,25 @@ function MainLayout() {
   const [open, setOpen] = React.useState(false)
 
   return (
-    <Container maxWidth="lg">
-      <BoxStyled>
-        <Header handleDrawerOpen={() => setOpen(true)} />
-        <>
-          <ContainerStyled fixed>
-            <Outlet />
-          </ContainerStyled>
-        </>
-        <DrawerComponent
-          open={open}
-          handleDrawerClose={() => setOpen(false)}
-        />
-      </BoxStyled>
-    </Container>
+    <BoxStyled>
+      <Header handleDrawerOpen={() => setOpen(true)} />
+      <Container
+        fixed
+        maxWidth="lg"
+      >
+        <Outlet />
+      </Container>
+      <DrawerComponent
+        open={open}
+        handleDrawerClose={() => setOpen(false)}
+      />
+    </BoxStyled>
   )
 }
 
 const BoxStyled = styled(Box)`
   display: flex;
-`
-
-const ContainerStyled = styled(Container)`
-  padding-top: 6rem;
+  flex-direction: column;
 `
 
 export default MainLayout

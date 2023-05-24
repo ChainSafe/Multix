@@ -103,34 +103,38 @@ const TransactionCallInfoBoxStyled = styled(Box)`
 
 export default styled(Transaction)(
   ({ theme }) => `
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+
+  @media (min-width: ${theme.breakpoints.values.sm}px) {
     flex-direction: row;
-    margin-left: .5rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-left: 0.5rem;
+  }
 
   .buttonWrapper {
     flex: 1;
     align-self: flex-end;
     text-align: end;
-    margin-right: .5rem;
+    margin-right: 0.5rem;
   }
 
   .callIcon {
     font-size: 7rem;
     background-color: ${theme.custom.background.backgroundColorLightGray};
-    margin: .5rem;
+    margin: 0.5rem;
     padding: 1rem;
     height: auto;
   }
 
-    // FIXME this is duplicated
+  // FIXME this is duplicated
   .badge > .MuiBadge-badge {
     left: 29px;
     top: 19px;
     border-radius: 0 50px 50px 50px;
   }
-  
+
   .badge.red > .MuiBadge-badge {
     background-color: ${theme.custom.text.errorColor};
   }

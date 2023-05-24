@@ -328,7 +328,6 @@ const AccountDisplayWrapperStyled = styled('div')`
 
 export default styled(Home)(
   ({ theme }) => `
-  padding: 1rem;
 
   .loader {
     display: flex;
@@ -359,6 +358,7 @@ export default styled(Home)(
   .multiProxyWrapper {
     display: flex;
     align-items: center;
+    margin: 1rem 0;
   }
 
   .identicon {
