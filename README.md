@@ -1,6 +1,8 @@
 # Multix
 
-## an interface to easily manage complex multisigs.
+### an interface to easily manage complex multisigs.
+
+### Play with Multix on https://multix.chainsafe.io/
 
 This repo contains the code to run an indexer see `./packages/squid` and a front-end, see `./packages/ui`.
 
