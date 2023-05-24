@@ -18,6 +18,7 @@ import SuccessCreation from '../components/SuccessCreation'
 import NewMulisigAlert from '../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'
 import { renderMultisigHeading } from './multisigHelpers'
+import { useScript } from '../hooks/script'
 interface Props {
   className?: string
 }
@@ -45,6 +46,7 @@ const Home = ({ className }: Props) => {
     [searchParams]
   )
   const [isNewMultisigAlertOpen, setIsNewMultisigAlertOpen] = useState(true)
+  useScript()
 
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
