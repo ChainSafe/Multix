@@ -8,6 +8,7 @@ interface Route {
   element: React.ReactNode
   name: string
   isDisplayWhenNoMultiProxy: boolean
+  isDisplayWhenNoWallet: boolean
 }
 
 export const ROUTES: Route[] = [
@@ -15,31 +16,36 @@ export const ROUTES: Route[] = [
     path: '/',
     element: <Home />,
     name: 'Home',
-    isDisplayWhenNoMultiProxy: true
+    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoWallet: true
   },
   {
     path: 'create',
     element: <Creation />,
     name: 'New Multisig',
-    isDisplayWhenNoMultiProxy: true
+    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoWallet: false
   },
   {
     path: 'about',
     element: <About />,
     name: 'About',
-    isDisplayWhenNoMultiProxy: true
+    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoWallet: true
   },
   {
     path: 'settings',
     element: <Settings />,
     name: 'Settings',
-    isDisplayWhenNoMultiProxy: true
+    isDisplayWhenNoMultiProxy: true,
+    isDisplayWhenNoWallet: true
   },
   {
     path: 'help',
     element: <Help />,
     name: 'Help',
-    isDisplayWhenNoMultiProxy: false
+    isDisplayWhenNoMultiProxy: false,
+    isDisplayWhenNoWallet: true
   }
 ]
 

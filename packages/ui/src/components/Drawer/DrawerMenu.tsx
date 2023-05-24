@@ -13,6 +13,7 @@ import NetworkSelection from '../NetworkSelection'
 import MultiProxySelection from '../MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
+import { useMemo } from 'react'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -21,6 +22,8 @@ interface DrawerMenuProps {
 function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   const { ownAccountList } = useAccounts()
   const { multiProxyList } = useMultiProxy()
+  const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
+  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
 
   return (
     <>
@@ -37,24 +40,23 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItem>
           <NetworkSelection />
         </ListItem>
-        {ownAccountList &&
-          !isEmptyArray(ownAccountList) &&
-          ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
-            !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
-              <ListItem
-                key={name}
-                disablePadding
+        {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
+          (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
+          (isAccountConnected || isDisplayWhenNoWallet) ? (
+            <ListItem
+              key={name}
+              disablePadding
+            >
+              <ListItemButton
+                onClick={handleDrawerClose}
+                component={Link}
+                to={path}
               >
-                <ListItemButton
-                  onClick={handleDrawerClose}
-                  component={Link}
-                  to={path}
-                >
-                  <ListItemText primary={name} />
-                </ListItemButton>
-              </ListItem>
-            ) : null
-          )}
+                <ListItemText primary={name} />
+              </ListItemButton>
+            </ListItem>
+          ) : null
+        )}
       </List>
     </>
   )

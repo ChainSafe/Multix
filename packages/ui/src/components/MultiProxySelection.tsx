@@ -113,7 +113,8 @@ const MultiProxySelection = ({ className }: Props) => {
   )
 }
 
-export default styled(MultiProxySelection)`
+export default styled(MultiProxySelection)(
+  ({ theme }) => `
   min-width: 180px;
   flex: 1;
   text-align: right;
@@ -123,6 +124,7 @@ export default styled(MultiProxySelection)`
   }
 
   .MuiInputBase-root {
-    background-color: white;
+    background-color: ${theme.palette.primary.white};;
   }
 `
+)

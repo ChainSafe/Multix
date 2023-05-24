@@ -51,7 +51,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const { watchedAddresses } = useWatchedAddresses()
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // This is true if the currently selected Multiproxy contains no signatory owned by the user
-  // this happens with a watch account
+  // this happens with a watched account
   const selectedIsWatched = useMemo(
     () =>
       !selectedMultiProxy?.multisigs.some((multisig) =>

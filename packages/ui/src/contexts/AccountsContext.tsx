@@ -15,7 +15,7 @@ type AccountContextProps = {
 
 export interface IAccountContext {
   selectedAccount?: InjectedAccountWithMeta
-  ownAccountList?: InjectedAccountWithMeta[]
+  ownAccountList: InjectedAccountWithMeta[]
   ownAddressList: string[]
   selectAccount: (account: InjectedAccountWithMeta) => void
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
