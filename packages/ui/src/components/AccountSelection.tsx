@@ -47,7 +47,7 @@ const AccountSelection = ({
   addressDisabled = false,
   nameDisabled = false,
   value,
-  inputLabel = 'Account',
+  inputLabel = 'Address',
   currentSelection = [],
   withName = false,
   withAddButton = false,

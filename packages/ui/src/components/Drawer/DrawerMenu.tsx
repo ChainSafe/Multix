@@ -24,6 +24,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   const { multiProxyList } = useMultiProxy()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
+  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
     <>
@@ -34,6 +35,11 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
       </DrawerHeader>
       <Divider />
       <List>
+        {!isAllowedToConnectToExtension && (
+          <ListItem disablePadding>
+            <ListItemButton onClick={allowConnectionToExtension}>Connect</ListItemButton>
+          </ListItem>
+        )}
         <ListItem>
           <MultiProxySelection />
         </ListItem>
@@ -62,13 +68,11 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   )
 }
 
-const DrawerHeader = styled('div')(
-  ({ theme }) => `
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    justify-content: flex-start;
+const DrawerHeader = styled('div')`
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  justify-content: flex-start;
 `
-)
 
 export default DrawerMenu
