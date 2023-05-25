@@ -97,11 +97,16 @@ const TransactionFooterStyled = styled('div')`
   display: flex;
 `
 
-const TransactionCallInfoBoxStyled = styled(Box)`
+const TransactionCallInfoBoxStyled = styled(Box)(
+  ({ theme }) => `
   flex: 1 1 0;
-  overflow: hidden;
   width: 100%;
+
+  @media (min-width: ${theme.breakpoints.values.sm}px) {
+    overflow: hidden;
+  }
 `
+)
 
 export default styled(Transaction)(
   ({ theme }) => `
