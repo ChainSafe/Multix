@@ -1,6 +1,7 @@
 import { nodesKhalaSVG } from './logos/khalaSVG'
 import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
+import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
 import { chainsRococoSVG } from './logos/rococoSVG'
 
 export const DAPP_NAME = 'Multix'
@@ -22,6 +23,13 @@ export const networkList = {
     wsGraphqlUrl: 'wss://kusama.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://kusama.multix.chainsafe.io/graphql',
     logo: chainsKusamaSVG
+  } as NetworkInfo,
+  polkadot: {
+    explorerNetworkName: 'polkadot',
+    rpcUrl: 'wss://rpc.polkadot.io',
+    wsGraphqlUrl: 'wss://multix-stage-polkadot-396264503.us-east-2.elb.amazonaws.com/graphql',
+    httpGraphqlUrl: 'https://multix-stage-polkadot-396264503.us-east-2.elb.amazonaws.com/graphql',
+    logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   rococo: {
     explorerNetworkName: 'rococo',
