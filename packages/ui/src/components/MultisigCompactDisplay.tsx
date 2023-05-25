@@ -91,6 +91,8 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 }
 
 export default styled(MultisigCompactDisplay)`
+  margin-top: 0.5rem;
+
   .multisigAccount {
     margin-top: 0.5rem;
     margin-left: 0.5rem;

@@ -3,6 +3,7 @@ import { MultisigsByAccountsSubscription, ProxyType } from '../../types-and-hook
 import { AccountBaseInfo } from '../components/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
+import { useWatchedAddresses } from './WatchedAddressesContext'
 
 const LOCALSTORAGE_KEY = 'multix.selectedMultiProxy'
 
@@ -31,20 +32,33 @@ export interface IMultisigContext {
   error: Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
+  selectedIsWatched: boolean
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
-const getSignatoriesFromAccount = (account: MultisigsByAccountsSubscription['accounts'][0]) => {
-  return account.signatories.map(({ signatory }) => signatory.id)
+const getSignatoriesFromAccount = (
+  signatories: MultisigsByAccountsSubscription['accounts'][0]['signatories']
+) => {
+  return signatories.map(({ signatory }) => signatory.id)
 }
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
-  const { addressList } = useAccounts()
+  const { ownAddressList } = useAccounts()
+  const { watchedAddresses } = useWatchedAddresses()
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  // This is true if the currently selected Multiproxy contains no signatory owned by the user
+  // this happens with a watched account
+  const selectedIsWatched = useMemo(
+    () =>
+      !selectedMultiProxy?.multisigs.some((multisig) =>
+        multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
+      ),
+    [selectedMultiProxy, ownAddressList]
+  )
 
   const refreshAccounList = useCallback((data: MultisigsByAccountsSubscription | null) => {
     // we do have an answer, but there is no multiproxy
@@ -57,40 +71,70 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
       const res: MultiProxy[] = []
 
+      // FIXME could be pp at this point
       // iterate through the multisigs
       data.accounts.forEach((account) => {
-        // one multisig could be a delegatee for multiple
-        const pureProxyAddresses = account.delegateeFor
-          .map((delegatee) => {
-            // finding all the accounts that are pure proxy
-            if (delegatee.delegator?.isPureProxy) {
-              return {
-                pureAddress: delegatee.delegator.id,
-                type: delegatee.type
-              }
-            }
+        // if the account is a pure proxy
+        if (account.isPureProxy) {
+          // find the delegatee that are multisigs and put all the infos right away
+          account.delegatorFor.forEach(({ delegatee, type }) => {
+            if (delegatee.isMultisig) {
+              const previousMultisigsForProxy = pureProxyMap.get(account.id)?.multisigs || []
 
-            return { pureAddress: undefined }
+              const newMultisigForProxy = {
+                address: delegatee.id,
+                signatories: getSignatoriesFromAccount(delegatee.signatories),
+                threshold: delegatee?.threshold || undefined,
+                type
+              }
+
+              pureProxyMap.set(account.id, {
+                multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
+              })
+            }
           })
-          .filter(({ pureAddress }) => pureAddress !== undefined) as {
+
+          return
+        }
+
+        // from this point, we should only be dealing with multisigs
+        // looking for multisigs being delegatee for pure proxies
+        const pureProxyAddresses: {
           pureAddress: string
           type: ProxyType
-        }[]
+        }[] = []
 
-        // it should all be multisigs cf the query
-        // if this account has at least a pureProxy
+        // one multisig could be a delegator for multiple
+        account.isMultisig &&
+          account.delegateeFor.forEach(({ delegator, type }) => {
+            // if a pure was already added, e.g because it is watched
+            // we shouldn't associate this multisig to it twice
+            const currentMultisigsForProxy = pureProxyMap
+              .get(delegator.id)
+              ?.multisigs.map(({ address }) => address)
+
+            // finding all the accounts that are pure proxy and that don't include this multisig already
+            if (delegator?.isPureProxy && !currentMultisigsForProxy?.includes(account.id)) {
+              pureProxyAddresses.push({
+                pureAddress: delegator.id,
+                type: type
+              })
+            }
+          })
+
+        // if this account is a multisig and is the delegatee for at least a pureProxy
         if (account.isMultisig && pureProxyAddresses?.length > 0) {
           pureProxyAddresses.forEach(({ pureAddress, type }) => {
-            // add this pureProxy to the set with the multisig infos and calls
             const previousMultisigsForProxy = pureProxyMap.get(pureAddress)?.multisigs || []
 
             const newMultisigForProxy = {
               address: account.id,
-              signatories: getSignatoriesFromAccount(account),
+              signatories: getSignatoriesFromAccount(account.signatories),
               threshold: account?.threshold || undefined,
               type
             }
 
+            // add this pureProxy to the Map
             pureProxyMap.set(pureAddress, {
               multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
             })
@@ -102,7 +146,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             multisigs: [
               {
                 address: account.id,
-                signatories: getSignatoriesFromAccount(account),
+                signatories: getSignatoriesFromAccount(account.signatories),
                 threshold: account.threshold
               }
             ]
@@ -128,7 +172,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [])
 
   const { isLoading, error } = useMultisigsByAccountSubscription({
-    accounts: addressList,
+    accounts: ownAddressList,
+    watchedAccounts: watchedAddresses,
     onUpdate: refreshAccounList
   })
 
@@ -222,7 +267,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedHasProxy,
         error,
         getMultisigByAddress,
-        getMultisigAsAccountBaseInfo
+        getMultisigAsAccountBaseInfo,
+        selectedIsWatched
       }}
     >
       {children}

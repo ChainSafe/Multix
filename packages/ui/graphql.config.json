@@ -1,6 +1,6 @@
 {
   "overwrite": true,
-  "schema": "http://localhost:4350/graphql",
+  "schema": "https://kusama.multix.chainsafe.io/graphql",
   "documents": "src/**/*.graphql",
   "generates": {
     "src/gql/": {

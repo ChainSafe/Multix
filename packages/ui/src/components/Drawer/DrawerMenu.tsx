@@ -13,14 +13,18 @@ import NetworkSelection from '../NetworkSelection'
 import MultiProxySelection from '../MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
+import { useMemo } from 'react'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
 }
 
 function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
-  const { accountList } = useAccounts()
+  const { ownAccountList } = useAccounts()
   const { multiProxyList } = useMultiProxy()
+  const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
+  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
+  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
     <>
@@ -31,42 +35,44 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
       </DrawerHeader>
       <Divider />
       <List>
+        {!isAllowedToConnectToExtension && (
+          <ListItem disablePadding>
+            <ListItemButton onClick={allowConnectionToExtension}>Connect</ListItemButton>
+          </ListItem>
+        )}
         <ListItem>
           <MultiProxySelection />
         </ListItem>
         <ListItem>
           <NetworkSelection />
         </ListItem>
-        {accountList &&
-          !isEmptyArray(accountList) &&
-          ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
-            !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
-              <ListItem
-                key={name}
-                disablePadding
+        {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
+          (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
+          (isAccountConnected || isDisplayWhenNoWallet) ? (
+            <ListItem
+              key={name}
+              disablePadding
+            >
+              <ListItemButton
+                onClick={handleDrawerClose}
+                component={Link}
+                to={path}
               >
-                <ListItemButton
-                  onClick={handleDrawerClose}
-                  component={Link}
-                  to={path}
-                >
-                  <ListItemText primary={name} />
-                </ListItemButton>
-              </ListItem>
-            ) : null
-          )}
+                <ListItemText primary={name} />
+              </ListItemButton>
+            </ListItem>
+          ) : null
+        )}
       </List>
     </>
   )
 }
 
-const DrawerHeader = styled('div')(
-  ({ theme }) => `
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    justify-content: flex-start;
+const DrawerHeader = styled('div')`
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  justify-content: flex-start;
 `
-)
 
 export default DrawerMenu

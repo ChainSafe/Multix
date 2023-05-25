@@ -20,10 +20,10 @@ const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
 }
 
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
-  const { selectAccount, selectedAccount, accountList } = useAccounts()
+  const { selectAccount, selectedAccount, ownAccountList } = useAccounts()
   const signersList = useMemo(() => {
-    return accountList?.filter((account) => possibleSigners.includes(account.address)) || []
-  }, [accountList, possibleSigners])
+    return ownAccountList?.filter((account) => possibleSigners.includes(account.address)) || []
+  }, [ownAccountList, possibleSigners])
 
   useEffect(() => {
     if (!selectedAccount || signersList.length === 0) {

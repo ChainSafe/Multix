@@ -29,7 +29,7 @@ const MultisigCreation = ({ className }: Props) => {
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, isApiReady, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount, addressList } = useAccounts()
+  const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useSigningCallback({
     onSuccess: () => navigate('/?creationInProgress=true')
@@ -38,8 +38,8 @@ const MultisigCreation = ({ className }: Props) => {
   const [name, setName] = useState('')
   const { addName } = useAccountNames()
   const ownAccountPartOfSignatories = useMemo(
-    () => signatories.some((sig) => addressList.includes(sig)),
-    [addressList, signatories]
+    () => signatories.some((sig) => ownAddressList.includes(sig)),
+    [ownAddressList, signatories]
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()

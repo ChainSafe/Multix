@@ -35,15 +35,15 @@ const Summary = ({
   isBalanceError,
   selectedMultisig
 }: Props) => {
-  const { addressList } = useAccounts()
+  const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
 
   const possibleSigners = useMemo(() => {
     return isSwapSummary
       ? // for a swap we can only select the account that are part of both the old and the new multisig
-        getIntersection(addressList, getIntersection(selectedMultisig?.signatories, signatories))
-      : getIntersection(addressList, signatories)
-  }, [addressList, isSwapSummary, selectedMultisig, signatories])
+        getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
+      : getIntersection(ownAddressList, signatories)
+  }, [ownAddressList, isSwapSummary, selectedMultisig, signatories])
 
   if (isSwapSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')

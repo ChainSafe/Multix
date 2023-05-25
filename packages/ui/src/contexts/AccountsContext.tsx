@@ -4,12 +4,10 @@ import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-
 import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
 import { useApi } from './ApiContext'
-import { encodeAddress } from '@polkadot/util-crypto'
+import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
 
-const LOCALSTORAGE_WATCH_ACCOUNTS_KEY = 'multix.watchedAccount'
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
-export const META_SOURCE_WATCH = 'watch'
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -17,8 +15,8 @@ type AccountContextProps = {
 
 export interface IAccountContext {
   selectedAccount?: InjectedAccountWithMeta
-  accountList?: InjectedAccountWithMeta[]
-  addressList: string[]
+  ownAccountList: InjectedAccountWithMeta[]
+  ownAddressList: string[]
   selectAccount: (account: InjectedAccountWithMeta) => void
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
   isAccountLoading: boolean
@@ -31,57 +29,32 @@ export interface IAccountContext {
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
-  const [accountList, setAccountList] = useState<InjectedAccountWithMeta[]>([])
-  const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(accountList[0])
+  const [ownAccountList, setOwnAccountList] = useState<InjectedAccountWithMeta[]>([])
+  const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(ownAccountList[0])
   const [isAccountLoading, setIsAccountLoading] = useState(false)
   const [isExtensionError, setIsExtensionError] = useState(false)
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
-  const addressList = useMemo(() => accountList.map((a) => a.address), [accountList])
+  const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
-  const [watchAccounts, setWatchAccounts] = useState<InjectedAccountWithMeta[]>([])
   const { chainInfo } = useApi()
 
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
     if (chainInfo?.ss58Format) {
-      setAccountList((prev) => {
-        return prev.map(
-          (account) =>
-            ({
-              ...account,
-              address: encodeAddress(account.address, chainInfo.ss58Format)
-            } as InjectedAccountWithMeta)
-        )
+      setOwnAccountList((prev) => {
+        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as InjectedAccountWithMeta[]
       })
     }
   }, [chainInfo])
 
-  useEffect(() => {
-    const localStorageWatchAccount = localStorage.getItem(LOCALSTORAGE_WATCH_ACCOUNTS_KEY)
-    const watchArray: string[] = localStorageWatchAccount
-      ? JSON.parse(localStorageWatchAccount)
-      : []
-
-    const toStore = watchArray.map((address) => {
-      return {
-        address,
-        meta: {
-          source: META_SOURCE_WATCH
-        }
-      } as InjectedAccountWithMeta
-    })
-
-    setWatchAccounts(toStore)
-  }, [])
-
   const getAccountByAddress = useCallback(
     (address: string) => {
-      return accountList.find((account) => account.address === address)
+      return ownAccountList.find((account) => account.address === address)
     },
-    [accountList]
+    [ownAccountList]
   )
 
   const allowConnectionToExtension = useCallback(() => {
@@ -106,7 +79,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
           return
         }
 
-        setAccountList([...accountList, ...watchAccounts])
+        setOwnAccountList([...accountList])
 
         if (accountList.length > 0) {
           const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
@@ -119,14 +92,14 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     )
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
-  }, [chainInfo, getAccountByAddress, selectAccount, watchAccounts])
+  }, [chainInfo, getAccountByAddress, selectAccount])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) return
 
     if (isAccountLoading) return
 
-    if (extensions?.length === 0 && !accountList.length) {
+    if (extensions?.length === 0 && !ownAccountList.length) {
       if (!timeoutElapsed && isAllowedToConnectToExtension) {
         // give it another chance #ugly hack
         // race condition see https://github.com/polkadot-js/extension/issues/938
@@ -139,7 +112,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       }
     }
   }, [
-    accountList,
+    ownAccountList,
     extensions,
     getaccountList,
     isAccountLoading,
@@ -149,13 +122,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (accountList.length > 0) return
+    if (ownAccountList.length > 0) return
 
     // don't request before explicitely asking
     if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-  }, [accountList, getaccountList, isAllowedToConnectToExtension])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
@@ -183,8 +156,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     <AccountContext.Provider
       value={{
         selectedAccount,
-        accountList,
-        addressList,
+        ownAccountList,
+        ownAddressList,
         selectAccount,
         isAccountLoading,
         isExtensionError,

@@ -17,9 +17,12 @@ interface Props {
 
 const AccountEditName = ({ address, onNameChange, className }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
-  const { addressList } = useAccounts()
+  const { ownAddressList } = useAccounts()
   const [name, setName] = useState('')
-  const isExtensionAccount = useMemo(() => addressList.includes(address), [address, addressList])
+  const isExtensionAccount = useMemo(
+    () => ownAddressList.includes(address),
+    [address, ownAddressList]
+  )
 
   useEffect(() => {
     if (!name) {

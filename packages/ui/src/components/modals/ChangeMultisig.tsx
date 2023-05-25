@@ -47,7 +47,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     onSuccess: onClose,
     onError: onClose
   })
-  const { selectedAccount, selectedSigner, addressList } = useAccounts()
+  const { selectedAccount, selectedSigner, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
@@ -58,9 +58,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [errorMessage, setErrorMessage] = useState('')
   const ownAccountPartOfAllSignatories = useMemo(
     () =>
-      getIntersection(addressList, getIntersection(selectedMultisig?.signatories, newSignatories))
-        .length > 0,
-    [addressList, newSignatories, selectedMultisig?.signatories]
+      getIntersection(
+        ownAddressList,
+        getIntersection(selectedMultisig?.signatories, newSignatories)
+      ).length > 0,
+    [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
   const isCallStep = useMemo(
     () => currentStep === 'call1' || currentStep === 'call2',

@@ -73,7 +73,7 @@ const AccountDisplay = ({
   }, [address, api, isApiReady])
 
   return (
-    <MultisigInfoStyled>
+    <AccountDisplayStyled>
       <IdenticonBadge
         badge={badge}
         address={address}
@@ -88,7 +88,7 @@ const AccountDisplay = ({
               />
             )}
             {!!sub && <span>{sub}</span>}
-            <NameStyled>{displayName || mainDisplay}</NameStyled>
+            <NameStyled>{mainDisplay || displayName}</NameStyled>
           </NameWrapperStyled>
         )}
         <AddressStyled>{getDisplayAddress(address)}</AddressStyled>
@@ -98,11 +98,11 @@ const AccountDisplay = ({
           </Box>
         )}
       </BoxStyled>
-    </MultisigInfoStyled>
+    </AccountDisplayStyled>
   )
 }
 
-const MultisigInfoStyled = styled('div')`
+const AccountDisplayStyled = styled('div')`
   display: flex;
   align-items: center;
 `

@@ -17,9 +17,11 @@ interface Props {
 }
 
 const Header = ({ className, handleDrawerOpen }: Props) => {
-  const { accountList } = useAccounts()
-  const isAccountConnected = useMemo(() => !!accountList?.length, [accountList])
+  const { ownAccountList } = useAccounts()
   const { multiProxyList } = useMultiProxy()
+  const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
+  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
+  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
     <MuiAppBar
@@ -33,38 +35,59 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
         >
           Multix
         </TypographyStyled>
-        {isAccountConnected && (
-          <BoxStyled>
-            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy }) =>
-              !isEmptyArray(multiProxyList) || isDisplayWhenNoMultiProxy ? (
-                <Button
-                  key={name}
-                  component={Link}
-                  to={path}
-                  className="buttonHeader"
-                >
-                  {name}
-                </Button>
-              ) : null
+        <BoxStyled>
+          {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
+            (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
+            (isAccountConnected || isDisplayWhenNoWallet) ? (
+              <ButtonStyled
+                key={name}
+                component={Link}
+                to={path}
+                className="buttonHeader"
+              >
+                {name}
+              </ButtonStyled>
+            ) : null
+          )}
+          <RightButtonsWrapper>
+            {!isAllowedToConnectToExtension && (
+              <ButtonStyled onClick={allowConnectionToExtension}>Connect</ButtonStyled>
             )}
             <MultiProxySelection />
             <NetworkSelectionStyled />
-          </BoxStyled>
-        )}
-        {isAccountConnected && (
-          <IconButtonStyled
-            color="inherit"
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerOpen}
-          >
-            <MenuIcon />
-          </IconButtonStyled>
-        )}
+          </RightButtonsWrapper>
+        </BoxStyled>
+        <IconButtonStyled
+          color="inherit"
+          aria-label="open drawer"
+          edge="end"
+          onClick={handleDrawerOpen}
+        >
+          <MenuIcon />
+        </IconButtonStyled>
       </Toolbar>
     </MuiAppBar>
   )
 }
+
+const RightButtonsWrapper = styled(Box)`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`
+
+const ButtonStyled = styled(Button)(
+  ({ theme }) => `
+  color: ${theme.palette.primary.white};
+  text-align: center;
+  display: block;
+  &:hover { 
+    background-color: ${theme.palette.primary.white};
+    color: ${theme.palette.primary.black}; 
+  }
+`
+) as typeof Button
 
 const BoxStyled = styled(Box)(
   ({ theme }) => `
@@ -95,16 +118,4 @@ const IconButtonStyled = styled(IconButton)(
 `
 )
 
-export default styled(Header)(
-  ({ theme }) => `
-  .buttonHeader {
-    color: ${theme.palette.primary.white};
-    text-align: center;
-    display: block;
-    &:hover { 
-      background-color: ${theme.palette.primary.white};
-      color: ${theme.palette.primary.black}; 
-    }
-  }
-`
-)
+export default Header

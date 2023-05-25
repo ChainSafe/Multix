@@ -9,6 +9,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from './contexts/AccountNamesContext'
 import { NetworkContextProvider } from './contexts/NetworkContext'
 import MainLayout from './components/layout/Main'
+import { WatchedAddressesContextProvider } from './contexts/WatchedAddressesContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -19,13 +20,15 @@ const App = () => {
         <NetworkContextProvider>
           <QueryClientProvider client={queryClient}>
             <ApiContextProvider>
-              <AccountContextProvider>
-                <AccountNamesContextProvider>
-                  <MultiProxyContextProvider>
-                    <MainLayout />
-                  </MultiProxyContextProvider>
-                </AccountNamesContextProvider>
-              </AccountContextProvider>
+              <WatchedAddressesContextProvider>
+                <AccountContextProvider>
+                  <AccountNamesContextProvider>
+                    <MultiProxyContextProvider>
+                      <MainLayout />
+                    </MultiProxyContextProvider>
+                  </AccountNamesContextProvider>
+                </AccountContextProvider>
+              </WatchedAddressesContextProvider>
             </ApiContextProvider>
           </QueryClientProvider>
         </NetworkContextProvider>
