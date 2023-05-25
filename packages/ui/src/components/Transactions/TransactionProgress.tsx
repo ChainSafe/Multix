@@ -67,6 +67,7 @@ const TransactionProgress = ({
           {possibleSigners.map((signer: string) => {
             return (
               <ListItemToSign
+                key={signer}
                 approvals={approvals}
                 signer={signer}
               />

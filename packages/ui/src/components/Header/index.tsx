@@ -145,4 +145,6 @@ const LinkStyled = styled(Link)(
 `
 )
 
-export default Header
+export default styled(Header)`
+  margin-bottom: 1rem;
+`
