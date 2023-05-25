@@ -98,7 +98,6 @@ export default styled(MultisigCompactDisplay)`
 
 const AccountDisplayStyled = styled(AccountDisplay)<{ isMultisig: boolean }>(
   ({ isMultisig }) => `
-      ${isMultisig && 'margin-top: 0.5rem'};
-      ${isMultisig && 'margin-left: 0.5rem'};
+      ${isMultisig && 'margin: 0.5rem 0 0 0.5rem'};
 `
 )
