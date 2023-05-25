@@ -55,8 +55,8 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 
   return (
     <Box className={className}>
-      <AccountDisplay
-        className={`${signatories.length > 0 ? 'multisigAccount' : ''}`}
+      <AccountDisplayStyled
+        isMultisig={signatories.length > 0}
         address={address}
         badge={badge}
       />
@@ -91,14 +91,14 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 }
 
 export default styled(MultisigCompactDisplay)`
-  margin-top: 0.5rem;
-
-  .multisigAccount {
-    margin-top: 0.5rem;
-    margin-left: 0.5rem;
-  }
-
   .signatoryList {
     list-style-type: none;
   }
 `
+
+const AccountDisplayStyled = styled(AccountDisplay)<{ isMultisig: boolean }>(
+  ({ isMultisig }) => `
+      ${isMultisig && 'margin-top: 0.5rem'};
+      ${isMultisig && 'margin-left: 0.5rem'};
+`
+)

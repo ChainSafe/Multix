@@ -1,5 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useAccounts } from './AccountsContext'
+import { useApi } from './ApiContext'
+import { decodeNames, encodeNames } from '../utils/namesUtil'
 
 export type AccountNames = { [address: string]: string }
 
@@ -23,6 +25,7 @@ const AccountNamesContext = createContext<IAccountNamesContext | undefined>(unde
 const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => {
   const [accountNames, setAccountNames] = useState<AccountNames>({})
   const { getAccountByAddress } = useAccounts()
+  const { chainInfo } = useApi()
 
   const getNamesWithExtension = useCallback(
     (address: string) => {
@@ -37,20 +40,27 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
   )
 
   const loadNames = useCallback(() => {
-    const names = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
+    const namesHexString = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
 
-    if (!names) {
-      console.error('No local name to load')
+    if (!chainInfo?.ss58Format) {
       return
     }
 
-    setAccountNames(JSON.parse(names))
-  }, [setAccountNames])
+    if (!namesHexString) {
+      console.error('No local name to load')
+      return
+    }
+    const namePubkeyParsed = JSON.parse(namesHexString) as AccountNames
+
+    const namesString = encodeNames(namePubkeyParsed, chainInfo.ss58Format)
+    setAccountNames(namesString)
+  }, [chainInfo])
 
   const saveNames = useCallback(() => {
     if (!Object.entries(accountNames).length) return
 
-    localStorage.setItem(LOCALSTORAGE_ACCOUNT_KEY, JSON.stringify(accountNames))
+    const decodedNames = decodeNames(accountNames)
+    localStorage.setItem(LOCALSTORAGE_ACCOUNT_KEY, JSON.stringify(decodedNames))
   }, [accountNames])
 
   const addName = useCallback(
