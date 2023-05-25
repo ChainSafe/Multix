@@ -28,10 +28,8 @@ const MultiProxySelection = ({ className }: Props) => {
   const filterOptions = createFilterOptions({
     ignoreCase: true,
     stringify: (option: typeof selectedMultiProxy) => {
-      const displayAddress = getDisplayAddress(option)
-      return (
-        `${option?.proxy}${option?.multisigs[0].address}${accountNames[displayAddress || '']}` || ''
-      )
+      const displayAddress = getDisplayAddress(option) || ''
+      return `${option?.proxy}${option?.multisigs[0].address}${accountNames[displayAddress]}` || ''
     }
   })
 
@@ -87,7 +85,7 @@ const MultiProxySelection = ({ className }: Props) => {
           >
             <AccountDisplay
               address={displayAddress || ''}
-              badge={isProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+              badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
             />
           </Box>
         )
