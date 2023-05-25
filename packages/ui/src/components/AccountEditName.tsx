@@ -5,7 +5,7 @@ import { useAccountNames } from '../contexts/AccountNamesContext'
 import AccountDisplay from './AccountDisplay'
 
 export interface OnChangeArgs {
-  addresses: (string | undefined)[]
+  address: string
   name: string
 }
 
@@ -36,7 +36,7 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = event.target.value
       setName(value)
-      onNameChange({ addresses: [address], name: value })
+      onNameChange({ address, name: value })
     },
     [address, onNameChange]
   )

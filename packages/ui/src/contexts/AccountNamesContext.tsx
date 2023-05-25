@@ -94,10 +94,6 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
 
   // save names each time it changes
   useEffect(() => {
-    if (!Object.entries(accountNames).length) {
-      return
-    }
-
     saveNames()
   }, [accountNames, saveNames])
 
