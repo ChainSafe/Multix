@@ -31,10 +31,8 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
-  const isBalancesTransferAlike = !!['balances.transfer', 'balances.transferKeepAlive'].includes(
-    name
-  )
-  const isProxyCreationDeletion = !!['proxy.addProxy', 'proxy.removeProxy'].includes(name)
+  const isBalancesTransferAlike = ['balances.transfer', 'balances.transferKeepAlive'].includes(name)
+  const isProxyCreationDeletion = ['proxy.addProxy', 'proxy.removeProxy'].includes(name)
 
   return (
     <ul className="params">

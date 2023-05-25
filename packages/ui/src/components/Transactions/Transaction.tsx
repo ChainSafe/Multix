@@ -98,6 +98,8 @@ const TransactionFooterStyled = styled('div')`
 `
 
 const TransactionCallInfoBoxStyled = styled(Box)`
+  flex: 1 1 0;
+  overflow: hidden;
   width: 100%;
 `
 
