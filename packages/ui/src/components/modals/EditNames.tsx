@@ -34,7 +34,6 @@ const EditNames = ({ onClose, className }: Props) => {
 
   const onNameChange = useCallback(
     ({ name, address }: OnChangeArgs) => {
-      console.log('boom', name)
       const toBePersisted = {
         ...newNames,
         [address]: name
