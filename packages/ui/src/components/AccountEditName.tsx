@@ -3,6 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import AccountDisplay from './AccountDisplay'
+import { debounce } from '../utils/debounce'
 
 export interface OnChangeArgs {
   address: string
@@ -29,16 +30,19 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
       const defaultName = getNamesWithExtension(address) || ''
       setName(defaultName)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getNamesWithExtension])
+  }, [address, getNamesWithExtension, name])
+
+  // debounce isn't working without useCallback
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedNameChange = useCallback(debounce(onNameChange, 300), [onNameChange])
 
   const onChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = event.target.value
       setName(value)
-      onNameChange({ address, name: value })
+      debouncedNameChange({ address, name: value })
     },
-    [address, onNameChange]
+    [address, debouncedNameChange]
   )
 
   return (
