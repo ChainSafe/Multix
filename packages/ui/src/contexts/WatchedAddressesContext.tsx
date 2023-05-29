@@ -33,9 +33,13 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
     }
   }, [chainInfo])
 
-  const addWatchedAccount = useCallback((address: string) => {
-    setWatchedAddresses((prev) => [...prev, address])
-  }, [])
+  const addWatchedAccount = useCallback(
+    (address: string) => {
+      const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
+      setWatchedAddresses((prev) => [...prev, encodedAddress])
+    },
+    [chainInfo]
+  )
 
   const removeWatchedAccount = useCallback(
     (addressToRemove: string) => {
