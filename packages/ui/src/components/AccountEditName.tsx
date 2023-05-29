@@ -32,9 +32,7 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
     }
   }, [address, getNamesWithExtension, name])
 
-  // debounce isn't working without useCallback
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedNameChange = useCallback(debounce(onNameChange, 300), [onNameChange])
+  const debouncedNameChange = useMemo(() => debounce(onNameChange, 300), [onNameChange])
 
   const onChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
