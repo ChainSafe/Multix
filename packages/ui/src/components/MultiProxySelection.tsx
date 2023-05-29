@@ -2,7 +2,7 @@ import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { useMultiProxy } from '../contexts/MultiProxyContext'
+import { MultiProxy, useMultiProxy } from '../contexts/MultiProxyContext'
 import AccountDisplay from './AccountDisplay'
 import IdenticonBadge from './IdenticonBadge'
 import { useAccountNames } from '../contexts/AccountNamesContext'
@@ -10,6 +10,15 @@ import { AccountBadge } from '../types'
 
 interface Props {
   className?: string
+}
+
+const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy | undefined) => {
+  if (!option || !value) return false
+
+  if (!!option.proxy || !!value.proxy) {
+    return option.proxy === value.proxy
+  }
+  return option.multisigs[0].address === value.multisigs[0].address
 }
 
 const MultiProxySelection = ({ className }: Props) => {
@@ -61,6 +70,7 @@ const MultiProxySelection = ({ className }: Props) => {
   return (
     <Autocomplete
       className={className}
+      isOptionEqualToValue={isOptionEqualToValue}
       disableClearable
       filterOptions={filterOptions}
       options={multiProxyList}

@@ -333,7 +333,7 @@ export default styled(MultisigCreation)(
     width: 100%;
   }
 
-  .buttonContainer button:first-child {
+  .buttonContainer button:first-of-type {
     margin-right: 2rem;
   }
 
