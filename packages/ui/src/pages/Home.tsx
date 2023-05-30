@@ -361,10 +361,6 @@ export default styled(Home)(
     align-items: center;
   }
 
-  .identicon {
-    margin-right: .5rem;
-  }
-
   .signatoriesWrapper {
     & > h2 {
       margin-bottom: 0;

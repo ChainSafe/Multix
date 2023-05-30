@@ -49,6 +49,12 @@ const IdentityIcon = ({ className, identity }: Props) => {
 
   const tooltipContent = (
     <StyledPopup>
+      {identity?.display && (
+        <li>
+          <span className="desc">display:</span>
+          {identity.display}
+        </li>
+      )}
       {identity?.legal && (
         <li>
           <span className="desc">legal:</span>

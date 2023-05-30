@@ -33,17 +33,12 @@ const EditNames = ({ onClose, className }: Props) => {
   }, [addNames, newNames, onClose])
 
   const onNameChange = useCallback(
-    ({ name, addresses }: OnChangeArgs) => {
-      const uniqueAddresses = addresses.filter((address) => !!address) as string[]
-
-      const namesToBeAdded = uniqueAddresses.reduce(
-        (previousValue: AccountNames, currentValue: string) => {
-          return { ...previousValue, [currentValue]: name }
-        },
-        {} as AccountNames
-      )
-
-      setNewNames({ ...newNames, ...namesToBeAdded })
+    ({ name, address }: OnChangeArgs) => {
+      const toBePersisted = {
+        ...newNames,
+        [address]: name
+      }
+      setNewNames(toBePersisted)
     },
     [newNames]
   )
