@@ -42,7 +42,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
   const loadNames = useCallback(() => {
     const namesHexString = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
 
-    if (!chainInfo?.ss58Format) {
+    if (!chainInfo) {
       return
     }
 

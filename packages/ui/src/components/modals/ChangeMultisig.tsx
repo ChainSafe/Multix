@@ -87,7 +87,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!chainInfo?.ss58Format) {
+    if (!chainInfo) {
       // console.error('no ss58Format from chainInfo')
       return
     }
@@ -107,7 +107,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     )
     const newMultiAddress = encodeAddress(
       createKeyMulti(newSignatories, newThreshold),
-      chainInfo?.ss58Format
+      chainInfo.ss58Format
     )
     const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
@@ -136,7 +136,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!chainInfo?.ss58Format) {
+    if (!chainInfo) {
       // console.error('no ss58Format from chainInfo')
       return
     }
