@@ -181,7 +181,7 @@ const TransactionList = ({ className }: Props) => {
               aggregatedData={agg}
               isProposer={isProposer}
               onSuccess={refresh}
-              possibleSigners={possibleSigners}
+              possibleSigners={multisigSignatories}
               threshold={multisig.threshold}
             />
           )
