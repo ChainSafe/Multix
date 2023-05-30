@@ -2,7 +2,7 @@ import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { useMultiProxy } from '../contexts/MultiProxyContext'
+import { MultiProxy, useMultiProxy } from '../contexts/MultiProxyContext'
 import AccountDisplay from './AccountDisplay'
 import IdenticonBadge from './IdenticonBadge'
 import { useAccountNames } from '../contexts/AccountNamesContext'
@@ -10,6 +10,18 @@ import { AccountBadge } from '../types'
 
 interface Props {
   className?: string
+}
+
+const getDisplayAddress = (option?: MultiProxy) =>
+  option?.proxy ? option?.proxy : option?.multisigs[0].address
+
+const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy | undefined) => {
+  if (!option || !value) return false
+
+  if (!!option.proxy || !!value.proxy) {
+    return option.proxy === value.proxy
+  }
+  return option.multisigs[0].address === value.multisigs[0].address
 }
 
 const MultiProxySelection = ({ className }: Props) => {
@@ -24,15 +36,16 @@ const MultiProxySelection = ({ className }: Props) => {
   const { accountNames } = useAccountNames()
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedMultiProxy) =>
-      `${option?.proxy}${option?.multisigs[0].address}` || ''
+    stringify: (option: typeof selectedMultiProxy) => {
+      const displayAddress = getDisplayAddress(option) || ''
+      return `${option?.proxy}${option?.multisigs[0].address}${accountNames[displayAddress]}` || ''
+    }
   })
 
   const getOptionLabel = useCallback(
     (option: typeof selectedMultiProxy) => {
       // We only support one multisigs if they have no proxy
       const addressToSearch = option?.proxy || option?.multisigs[0].address
-
       const name = !!addressToSearch && accountNames[addressToSearch]
       return name || (addressToSearch as string)
     },
@@ -61,12 +74,12 @@ const MultiProxySelection = ({ className }: Props) => {
   return (
     <Autocomplete
       className={className}
+      isOptionEqualToValue={isOptionEqualToValue}
       disableClearable
       filterOptions={filterOptions}
       options={multiProxyList}
       renderOption={(props, option) => {
-        const isProxy = !!option?.proxy
-        const displayAddress = isProxy ? option?.proxy : option?.multisigs[0].address
+        const displayAddress = getDisplayAddress(option)
 
         return (
           <Box
@@ -82,7 +95,7 @@ const MultiProxySelection = ({ className }: Props) => {
           >
             <AccountDisplay
               address={displayAddress || ''}
-              badge={isProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+              badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
             />
           </Box>
         )

@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 import WatchedAccounts from '../components/WatchedAccounts'
 
@@ -15,8 +14,4 @@ const Settings = ({ className }: Props) => {
   )
 }
 
-export default styled(Settings)`
-  .identicon {
-    margin-right: 0.5rem;
-  }
-`
+export default Settings

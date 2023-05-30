@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
 import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
+import { u8aToHex } from '@polkadot/util'
 
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
@@ -24,16 +26,20 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
-    if (chainInfo?.ss58Format) {
+    if (chainInfo) {
       setWatchedAddresses((prev) => {
         return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as string[]
       })
     }
   }, [chainInfo])
 
-  const addWatchedAccount = useCallback((address: string) => {
-    setWatchedAddresses((prev) => [...prev, address])
-  }, [])
+  const addWatchedAccount = useCallback(
+    (address: string) => {
+      const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
+      setWatchedAddresses((prev) => [...prev, encodedAddress])
+    },
+    [chainInfo]
+  )
 
   const removeWatchedAccount = useCallback(
     (addressToRemove: string) => {
@@ -44,14 +50,21 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   )
 
   const loadWatchedAccounts = useCallback(() => {
+    if (!chainInfo) {
+      return
+    }
+
     const localStorageWatchedAccount = localStorage.getItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY)
     const watchedArray: string[] = localStorageWatchedAccount
       ? JSON.parse(localStorageWatchedAccount)
       : []
 
-    setWatchedAddresses(watchedArray)
+    const encodedAddresses = watchedArray.map((pubKey) =>
+      encodeAddress(pubKey, chainInfo.ss58Format)
+    )
+    setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
-  }, [])
+  }, [chainInfo])
 
   useEffect(() => {
     !isInitialized && loadWatchedAccounts()
@@ -61,7 +74,8 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (!isInitialized) return
 
-    localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(watchedAddresses))
+    const pubKeyArray = watchedAddresses.map((address) => u8aToHex(decodeAddress(address)))
+    localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(pubKeyArray))
   }, [isInitialized, watchedAddresses])
 
   return (

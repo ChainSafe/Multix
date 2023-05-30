@@ -9,6 +9,7 @@ import { useApi } from '../contexts/ApiContext'
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
 import { useGetBalance } from '../hooks/useGetBalance'
+import { encodeAddress } from '@polkadot/util-crypto'
 
 interface Props {
   address: string
@@ -27,14 +28,20 @@ const AccountDisplay = ({
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { balanceFormatted } = useGetBalance({ address })
-  const displayName = useMemo(
-    () => getNamesWithExtension(address),
-    [address, getNamesWithExtension]
-  )
+  const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
-  const { api, isApiReady } = useApi()
+  const { api, isApiReady, chainInfo } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
+  const [encodedAddress, setEncodedAddress] = useState('')
+
+  useEffect(() => {
+    if (!chainInfo?.ss58Format) {
+      return
+    }
+
+    setEncodedAddress(encodeAddress(address, chainInfo.ss58Format))
+  }, [address, chainInfo, encodedAddress])
 
   useEffect(() => {
     if (!api) {
@@ -73,10 +80,10 @@ const AccountDisplay = ({
   }, [address, api, isApiReady])
 
   return (
-    <AccountDisplayStyled>
+    <div className={className}>
       <IdenticonBadge
         badge={badge}
-        address={address}
+        address={encodedAddress}
       />
       <BoxStyled>
         {withName && (
@@ -88,24 +95,19 @@ const AccountDisplay = ({
               />
             )}
             {!!sub && <span>{sub}</span>}
-            <NameStyled>{mainDisplay || displayName}</NameStyled>
+            <NameStyled>{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled>{getDisplayAddress(address)}</AddressStyled>
+        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
           </Box>
         )}
       </BoxStyled>
-    </AccountDisplayStyled>
+    </div>
   )
 }
-
-const AccountDisplayStyled = styled('div')`
-  display: flex;
-  align-items: center;
-`
 
 const NameWrapperStyled = styled('div')`
   display: flex;
@@ -121,6 +123,7 @@ const AddressStyled = styled('div')(
 
 const BoxStyled = styled(Box)`
   min-width: 0;
+  margin-left: 0.5rem;
 `
 
 const NameStyled = styled('span')`
@@ -141,8 +144,7 @@ const BalanceStyled = styled('div')(
 
 export default styled(AccountDisplay)`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 
   .identityBadge {
     margin-right: 0.3rem;
