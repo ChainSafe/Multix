@@ -27,8 +27,8 @@ export const networkList = {
   polkadot: {
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://multix-stage-polkadot-396264503.us-east-2.elb.amazonaws.com/graphql',
-    httpGraphqlUrl: 'https://multix-stage-polkadot-396264503.us-east-2.elb.amazonaws.com/graphql',
+    wsGraphqlUrl: 'wss://polkadot.multix.chainsafe.io/graphql',
+    httpGraphqlUrl: 'https://polkadot.multix.chainsafe.io/graphql',
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   rococo: {
