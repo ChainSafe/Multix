@@ -55,10 +55,9 @@ const Summary = ({
       {isSwapSummary && proxyAddress ? (
         <>
           <h3>You are about to change the Multisig controlling:</h3>
-          <AccountDisplay
+          <AccoutDisplayProxyStyled
             address={proxyAddress}
             badge={AccountBadge.PURE}
-            className="proxyName"
           />
         </>
       ) : (
@@ -124,6 +123,10 @@ const Summary = ({
   )
 }
 
+const AccoutDisplayProxyStyled = styled(AccountDisplay)`
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+`
 export default styled(Summary)`
   width: 100%;
 
@@ -152,11 +155,6 @@ export default styled(Summary)`
   .signerSelection {
     margin-top: 1rem;
     margin-bottom: 3rem;
-  }
-
-  .proxyName {
-    padding-left: 1.5rem;
-    margin-bottom: 1.5rem;
   }
 
   .name {
