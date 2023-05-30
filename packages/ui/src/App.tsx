@@ -1,4 +1,3 @@
-import './styles/index.css'
 import './styles/App.css'
 import { AccountContextProvider } from './contexts/AccountsContext'
 import { ApiContextProvider } from './contexts/ApiContext'
