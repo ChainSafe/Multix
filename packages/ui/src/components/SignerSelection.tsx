@@ -1,5 +1,5 @@
 import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { useAccounts } from '../contexts/AccountsContext'
@@ -17,6 +17,15 @@ const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
   if (!option) return ''
 
   return option.meta.name || ''
+}
+
+const isOptionEqualToValue = (
+  option: InjectedAccountWithMeta | undefined,
+  value: InjectedAccountWithMeta | undefined
+) => {
+  if (!option || !value) return false
+
+  return option.address === value.address
 }
 
 const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
@@ -54,6 +63,7 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
 
   return (
     <Autocomplete
+      isOptionEqualToValue={isOptionEqualToValue}
       disableClearable
       className={className}
       options={signersList}
