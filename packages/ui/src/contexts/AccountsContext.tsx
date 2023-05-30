@@ -43,7 +43,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
-    if (chainInfo?.ss58Format) {
+    if (chainInfo) {
       setOwnAccountList((prev) => {
         return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as InjectedAccountWithMeta[]
       })
