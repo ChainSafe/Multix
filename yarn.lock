@@ -1700,6 +1700,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@chainsafe/multix@workspace:."
   dependencies:
+    "@fontsource/jost": ^5.0.1
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^4.2.1
     prettier: ^2.8.8
@@ -2075,6 +2076,13 @@ __metadata:
   version: 1.0.0
   resolution: "@exodus/schemasafe@npm:1.0.0"
   checksum: 3857905e80a0479fb403ca901bd9ced89ba8bdf1c214445b786aaf06a78490819f4763c85eff9649db9820d96b2fc6dc5c6f85cb85bc651669f18f5c079c1382
+  languageName: node
+  linkType: hard
+
+"@fontsource/jost@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@fontsource/jost@npm:5.0.1"
+  checksum: 7603837868278b5842b6c5f1c3e0531a7ce8810643def5e7676869922a75634f444d7bf2e2114c0d99438d403f2ad9c95c2d6b78f8e4a7874192b5a4be29d0ed
   languageName: node
   linkType: hard
 
