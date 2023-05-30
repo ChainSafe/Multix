@@ -23,7 +23,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
-    <MuiAppBar position="sticky">
+    <MuiAppBarStyled position="sticky">
       <Toolbar>
         <TypographyStyled
           variant="h6"
@@ -60,9 +60,13 @@ const Header = ({ handleDrawerOpen }: Props) => {
           <MenuIcon />
         </IconButtonStyled>
       </Toolbar>
-    </MuiAppBar>
+    </MuiAppBarStyled>
   )
 }
+
+const MuiAppBarStyled = styled(MuiAppBar)`
+  margin-bottom: 1rem;
+`
 
 const RightButtonsWrapper = styled(Box)`
   flex: 1;
@@ -114,7 +118,7 @@ const IconButtonStyled = styled(IconButton)(
 
 const LinkStyled = styled(Link)(
   ({ theme }) => `
-  color: white;
+  color: ${theme.palette.primary.white};
   text-align: center;
   text-decoration: none;
   background-color: transparent;
@@ -145,6 +149,4 @@ const LinkStyled = styled(Link)(
 `
 )
 
-export default styled(Header)`
-  margin-bottom: 1rem;
-`
+export default Header
