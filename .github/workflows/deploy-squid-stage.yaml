@@ -70,7 +70,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        network: ['rococo', 'kusama']
+        network: ['kusama', 'polkadot', 'rococo']
 
     permissions:
       contents: read
