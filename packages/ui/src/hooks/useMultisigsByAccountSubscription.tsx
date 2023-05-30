@@ -18,8 +18,8 @@ export const useMultisigsByAccountSubscription = ({
 }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
-    () => createClient({ url: selectedNetworkInfo?.wsGraphqlUrl || '' }),
-    [selectedNetworkInfo?.wsGraphqlUrl]
+    () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+    [selectedNetworkInfo]
   )
 
   /**
@@ -47,6 +47,8 @@ export const useMultisigsByAccountSubscription = ({
   const { isError, error, data, isLoading } = useSubscription(
     [`KeyMultisigsByAccount-${accounts}-${watchedAccounts}-${selectedNetwork}`],
     () => {
+      if (!client) return new Observable<null>()
+
       return fromWsClientSubscription<{
         accounts: MultisigsByAccountsSubscription['accounts']
       }>(client, {
@@ -59,12 +61,11 @@ export const useMultisigsByAccountSubscription = ({
     },
     {
       onData(data) {
-        onUpdate(data)
+        !!data && onUpdate(data)
       },
       onError(error) {
         console.error('KeyMultisigsByAccount subscription error', error)
       }
-      // options
     }
   )
 
