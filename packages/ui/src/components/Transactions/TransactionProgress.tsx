@@ -26,15 +26,23 @@ interface TransactionProgressProps {
 const ListItemToSign = ({ approvals, signer }: { approvals: string[]; signer: string }) => {
   return (
     <ListItem disablePadding>
-      <ListItemButton>
+      <ListItemButtonStyled>
         <ListItemIcon>
           {approvals.includes(signer) ? <CheckIconStyled /> : <HourglassBottomIcon />}
         </ListItemIcon>
         <AccountDisplay address={signer} />
-      </ListItemButton>
+      </ListItemButtonStyled>
     </ListItem>
   )
 }
+
+const ListItemButtonStyled = styled(ListItemButton)`
+  &:hover,
+  &:focus {
+    cursor: auto;
+    background: none;
+  }
+`
 
 const TransactionProgress = ({
   value,
@@ -98,12 +106,16 @@ const AccordionStyled = styled(Accordion)`
   box-shadow: none;
   padding-right: 8px;
 
+  .MuiAccordionSummary-root {
+    min-height: 64px;
+  }
+
   &:before {
     display: none;
   }
 
-  .Mui-expanded {
-    min-height: 24px;
+  &.Mui-expanded {
+    margin: 0 !important;
   }
 `
 
