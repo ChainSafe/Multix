@@ -15,6 +15,15 @@ interface Props {
 const getDisplayAddress = (option?: MultiProxy) =>
   option?.proxy ? option?.proxy : option?.multisigs[0].address
 
+const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy | undefined) => {
+  if (!option || !value) return false
+
+  if (!!option.proxy || !!value.proxy) {
+    return option.proxy === value.proxy
+  }
+  return option.multisigs[0].address === value.multisigs[0].address
+}
+
 const MultiProxySelection = ({ className }: Props) => {
   const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
   const ref = useRef<HTMLInputElement>(null)
@@ -65,6 +74,7 @@ const MultiProxySelection = ({ className }: Props) => {
   return (
     <Autocomplete
       className={className}
+      isOptionEqualToValue={isOptionEqualToValue}
       disableClearable
       filterOptions={filterOptions}
       options={multiProxyList}
