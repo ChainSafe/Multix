@@ -36,7 +36,7 @@ const AccountDisplay = ({
   const [encodedAddress, setEncodedAddress] = useState('')
 
   useEffect(() => {
-    if (!chainInfo?.ss58Format) {
+    if (!chainInfo) {
       return
     }
 

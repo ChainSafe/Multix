@@ -7,7 +7,7 @@ import { ApiPromise } from '@polkadot/api'
 import { useApi } from '../../contexts/ApiContext'
 import { getDifference, getDisplayArgs, getIntersection } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { ISanitizedCall, parseGenericCall } from '../../utils/decode'
+import { ISanitizedCall, parseGenericCall } from '../../utils'
 import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
 import FlareIcon from '@mui/icons-material/Flare'
@@ -182,6 +182,8 @@ const TransactionList = ({ className }: Props) => {
               isProposer={isProposer}
               onSuccess={refresh}
               possibleSigners={possibleSigners}
+              multisigSignatories={multisigSignatories}
+              threshold={multisig.threshold}
             />
           )
         })}
