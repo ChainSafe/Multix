@@ -19,7 +19,7 @@ import CheckIcon from '@mui/icons-material/Check'
 interface TransactionProgressProps {
   value: number
   threshold: number
-  possibleSigners: string[]
+  multisigSignatories: string[]
   approvals: string[]
 }
 
@@ -47,7 +47,7 @@ const ListItemButtonStyled = styled(ListItemButton)`
 const TransactionProgress = ({
   value,
   threshold,
-  possibleSigners,
+  multisigSignatories,
   approvals
 }: LinearProgressProps & TransactionProgressProps) => {
   const progressBarFillPercent = (value / threshold) * 100
@@ -72,7 +72,7 @@ const TransactionProgress = ({
       </AccordionSummaryStyled>
       <AccordionDetailsStyled>
         <List dense>
-          {possibleSigners.map((signer: string) => {
+          {multisigSignatories.map((signer: string) => {
             return (
               <ListItemToSign
                 key={signer}

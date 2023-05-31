@@ -15,6 +15,7 @@ interface Props {
   aggregatedData: AggregatedData
   isProposer: boolean
   possibleSigners: string[]
+  multisigSignatories: string[]
   onSuccess: () => void
   threshold: number
 }
@@ -24,6 +25,7 @@ const Transaction = ({
   aggregatedData,
   isProposer,
   possibleSigners,
+  multisigSignatories,
   onSuccess,
   threshold
 }: Props) => {
@@ -67,7 +69,7 @@ const Transaction = ({
           }
         />
         <TransactionProgress
-          possibleSigners={possibleSigners}
+          multisigSignatories={multisigSignatories}
           approvals={aggregatedData.info?.approvals || []}
           value={aggregatedData.info?.approvals.length || 0}
           threshold={threshold}
