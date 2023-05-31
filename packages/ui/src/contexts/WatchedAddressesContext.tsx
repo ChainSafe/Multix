@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
-import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
+import { encodeAccounts } from '../utils/encodeAccounts'
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
 import { u8aToHex } from '@polkadot/util'
 
@@ -28,15 +28,19 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (chainInfo) {
       setWatchedAddresses((prev) => {
-        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as string[]
+        return encodeAccounts(prev, chainInfo.ss58Format) as string[]
       })
     }
   }, [chainInfo])
 
   const addWatchedAccount = useCallback(
     (address: string) => {
-      const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
-      setWatchedAddresses((prev) => [...prev, encodedAddress])
+      try {
+        const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
+        setWatchedAddresses((prev) => [...prev, encodedAddress])
+      } catch (e) {
+        console.error(`Error encoding the address ${address}, skipping`, e)
+      }
     },
     [chainInfo]
   )
@@ -59,9 +63,8 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       ? JSON.parse(localStorageWatchedAccount)
       : []
 
-    const encodedAddresses = watchedArray.map((pubKey) =>
-      encodeAddress(pubKey, chainInfo.ss58Format)
-    )
+    const encodedAddresses = encodeAccounts(watchedArray, chainInfo.ss58Format) as string[]
+
     setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
   }, [chainInfo])
@@ -74,7 +77,17 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (!isInitialized) return
 
-    const pubKeyArray = watchedAddresses.map((address) => u8aToHex(decodeAddress(address)))
+    const pubKeyArray = watchedAddresses
+      .map((address) => {
+        try {
+          return u8aToHex(decodeAddress(address))
+        } catch (e) {
+          console.error(`Error decoding the address ${address}, skipping`, e)
+          return undefined
+        }
+      })
+      .filter((address) => !!address)
+
     localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(pubKeyArray))
   }, [isInitialized, watchedAddresses])
 

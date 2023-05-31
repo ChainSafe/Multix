@@ -40,7 +40,11 @@ const AccountDisplay = ({
       return
     }
 
-    setEncodedAddress(encodeAddress(address, chainInfo.ss58Format))
+    try {
+      setEncodedAddress(encodeAddress(address, chainInfo.ss58Format))
+    } catch (e) {
+      console.error(`Error encoding the address ${address}, skipping`, e)
+    }
   }, [address, chainInfo, encodedAddress])
 
   useEffect(() => {

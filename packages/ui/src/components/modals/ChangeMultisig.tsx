@@ -105,10 +105,15 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     const otherOldSignatories = sortAddresses(
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const newMultiAddress = encodeAddress(
-      createKeyMulti(newSignatories, newThreshold),
-      chainInfo.ss58Format
-    )
+
+    const multisigPubKey = createKeyMulti(newSignatories, newThreshold)
+    let newMultiAddress: string | undefined
+    try {
+      newMultiAddress = encodeAddress(multisigPubKey, chainInfo.ss58Format)
+    } catch (e) {
+      console.error(`Error encoding the address ${multisigPubKey}, skipping`, e)
+    }
+
     const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
