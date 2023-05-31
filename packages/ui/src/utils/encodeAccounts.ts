@@ -1,7 +1,7 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-export const reEncodeInjectedAccounts = (
+export const encodeAccounts = (
   accounts: InjectedAccountWithMeta[] | string[],
   ss58Format: number
 ) => {

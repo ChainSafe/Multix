@@ -4,7 +4,7 @@ import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-
 import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
 import { useApi } from './ApiContext'
-import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
+import { encodeAccounts } from '../utils/encodeAccounts'
 
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
@@ -45,7 +45,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   useEffect(() => {
     if (chainInfo) {
       setOwnAccountList((prev) => {
-        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as InjectedAccountWithMeta[]
+        return encodeAccounts(prev, chainInfo.ss58Format) as InjectedAccountWithMeta[]
       })
     }
   }, [chainInfo])

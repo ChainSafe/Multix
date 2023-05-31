@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
-import { reEncodeInjectedAccounts } from '../utils/reEncodeInjectedAccounts'
+import { encodeAccounts } from '../utils/encodeAccounts'
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
 import { u8aToHex } from '@polkadot/util'
 
@@ -28,7 +28,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (chainInfo) {
       setWatchedAddresses((prev) => {
-        return reEncodeInjectedAccounts(prev, chainInfo.ss58Format) as string[]
+        return encodeAccounts(prev, chainInfo.ss58Format) as string[]
       })
     }
   }, [chainInfo])
@@ -63,10 +63,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       ? JSON.parse(localStorageWatchedAccount)
       : []
 
-    const encodedAddresses = reEncodeInjectedAccounts(
-      watchedArray,
-      chainInfo.ss58Format
-    ) as string[]
+    const encodedAddresses = encodeAccounts(watchedArray, chainInfo.ss58Format) as string[]
 
     setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
