@@ -1,5 +1,5 @@
 import IconButton from '@mui/material/IconButton'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { ChevronRight as ChevronRightIcon } from '@mui/icons-material'
 import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'

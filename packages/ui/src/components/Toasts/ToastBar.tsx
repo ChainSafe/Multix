@@ -1,6 +1,6 @@
 import { IconButton, Snackbar } from '@mui/material'
 import { Toast, useToasts } from '../../contexts/ToastContext'
-import CloseIcon from '@mui/icons-material/Close'
+import { Close as CloseIcon } from '@mui/icons-material'
 import ToastContent from './ToastContent'
 import React, { useCallback } from 'react'
 import { styled } from '@mui/material/styles'

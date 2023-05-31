@@ -1,7 +1,7 @@
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { MoreVert as MoreVertIcon } from '@mui/icons-material'
 import { ListItemIcon, ListItemText } from '@mui/material'
 import { useState, MouseEvent, ReactNode, useCallback } from 'react'
 

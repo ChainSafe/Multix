@@ -4,16 +4,18 @@ import { useMultiProxy } from '../contexts/MultiProxyContext'
 import ProposalList from '../components/Transactions/TransactionList'
 import { Link, useSearchParams } from 'react-router-dom'
 import AccountDisplay from '../components/AccountDisplay'
-import SendIcon from '@mui/icons-material/Send'
+import {
+  Send as SendIcon,
+  Edit as EditIcon,
+  LockReset as LockResetIcon,
+  ErrorOutline as ErrorOutlineIcon
+} from '@mui/icons-material'
 import Send from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
-import EditIcon from '@mui/icons-material/Edit'
 import EditNames from '../components/modals/EditNames'
-import LockResetIcon from '@mui/icons-material/LockReset'
 import ChangeMultisig from '../components/modals/ChangeMultisig'
 import { AccountBadge } from '../types'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import SuccessCreation from '../components/SuccessCreation'
 import NewMulisigAlert from '../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'

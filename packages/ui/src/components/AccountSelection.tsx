@@ -15,7 +15,7 @@ import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isValidAddress } from '../utils'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import IconButton from '@mui/material/IconButton'
-import AddIcon from '@mui/icons-material/Add'
+import { Add as AddIcon } from '@mui/icons-material'
 import MultixIdenticon from './MultixIdenticon'
 
 interface Props {

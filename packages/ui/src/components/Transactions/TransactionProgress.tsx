@@ -11,10 +11,12 @@ import {
   ListItemButton,
   ListItemIcon
 } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
+import {
+  ExpandMore as ExpandMoreIcon,
+  HourglassBottom as HourglassBottomIcon,
+  Check as CheckIcon
+} from '@mui/icons-material'
 import AccountDisplay from '../AccountDisplay'
-import CheckIcon from '@mui/icons-material/Check'
 
 interface TransactionProgressProps {
   value: number
