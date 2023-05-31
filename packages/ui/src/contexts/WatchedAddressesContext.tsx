@@ -35,8 +35,12 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
 
   const addWatchedAccount = useCallback(
     (address: string) => {
-      const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
-      setWatchedAddresses((prev) => [...prev, encodedAddress])
+      try {
+        const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
+        setWatchedAddresses((prev) => [...prev, encodedAddress])
+      } catch (e) {
+        console.error(`Error encoding the address ${address}, skipping`, e)
+      }
     },
     [chainInfo]
   )
@@ -59,9 +63,11 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       ? JSON.parse(localStorageWatchedAccount)
       : []
 
-    const encodedAddresses = watchedArray.map((pubKey) =>
-      encodeAddress(pubKey, chainInfo.ss58Format)
-    )
+    const encodedAddresses = reEncodeInjectedAccounts(
+      watchedArray,
+      chainInfo.ss58Format
+    ) as string[]
+
     setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
   }, [chainInfo])
@@ -74,7 +80,17 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (!isInitialized) return
 
-    const pubKeyArray = watchedAddresses.map((address) => u8aToHex(decodeAddress(address)))
+    const pubKeyArray = watchedAddresses
+      .map((address) => {
+        try {
+          return u8aToHex(decodeAddress(address))
+        } catch (e) {
+          console.error(`Error decoding the address ${address}, skipping`, e)
+          return undefined
+        }
+      })
+      .filter((address) => !!address)
+
     localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(pubKeyArray))
   }, [isInitialized, watchedAddresses])
 

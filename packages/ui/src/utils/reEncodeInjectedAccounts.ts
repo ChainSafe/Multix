@@ -5,12 +5,27 @@ export const reEncodeInjectedAccounts = (
   accounts: InjectedAccountWithMeta[] | string[],
   ss58Format: number
 ) => {
-  return accounts.map((account) =>
-    typeof account === 'string'
-      ? encodeAddress(account, ss58Format)
-      : ({
-          ...account,
-          address: encodeAddress(account.address, ss58Format)
-        } as InjectedAccountWithMeta)
-  )
+  return accounts
+    .map((account) => {
+      let encodedAddress: string | undefined
+      const addressToEncode = typeof account === 'string' ? account : account.address
+
+      try {
+        encodedAddress = encodeAddress(addressToEncode, ss58Format)
+      } catch (e) {
+        console.error(`Error encoding the address ${addressToEncode}, skipping`, e)
+      }
+
+      if (typeof account === 'string') {
+        return encodedAddress
+      }
+
+      return encodedAddress
+        ? ({
+            ...account,
+            address: encodedAddress
+          } as InjectedAccountWithMeta)
+        : null
+    })
+    .filter((acc) => !!acc) as (string | InjectedAccountWithMeta)[]
 }
