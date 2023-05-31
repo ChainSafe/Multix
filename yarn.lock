@@ -1700,7 +1700,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@chainsafe/multix@workspace:."
   dependencies:
-    "@fontsource/jost": ^5.0.1
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^4.2.1
     prettier: ^2.8.8
@@ -9916,6 +9915,7 @@ __metadata:
   dependencies:
     "@emotion/react": ^11.11.0
     "@emotion/styled": ^11.11.0
+    "@fontsource/jost": ^5.0.1
     "@graphql-codegen/cli": 3.3.1
     "@graphql-codegen/client-preset": 3.0.1
     "@graphql-codegen/typescript-react-query": ^4.1.0
