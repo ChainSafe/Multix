@@ -50,6 +50,9 @@ export const theme = createTheme({
       black: '#000000de'
     }
   },
+  typography: {
+    fontFamily: ['Jost', 'sans-serif', 'Roboto'].join(',')
+  },
   custom: {
     text: {
       addressColorLightGray: '#777575',
