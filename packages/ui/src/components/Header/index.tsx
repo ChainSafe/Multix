@@ -12,11 +12,10 @@ import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../NetworkSelection'
 
 interface Props {
-  className?: string
   handleDrawerOpen: () => void
 }
 
-const Header = ({ className, handleDrawerOpen }: Props) => {
+const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
   const { multiProxyList } = useMultiProxy()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
@@ -24,10 +23,7 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
-    <MuiAppBar
-      position="fixed"
-      className={className}
-    >
+    <MuiAppBarStyled position="sticky">
       <Toolbar>
         <TypographyStyled
           variant="h6"
@@ -39,14 +35,12 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
           {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
             (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
             (isAccountConnected || isDisplayWhenNoWallet) ? (
-              <ButtonStyled
+              <LinkStyled
                 key={name}
-                component={Link}
                 to={path}
-                className="buttonHeader"
               >
                 {name}
-              </ButtonStyled>
+              </LinkStyled>
             ) : null
           )}
           <RightButtonsWrapper>
@@ -66,9 +60,13 @@ const Header = ({ className, handleDrawerOpen }: Props) => {
           <MenuIcon />
         </IconButtonStyled>
       </Toolbar>
-    </MuiAppBar>
+    </MuiAppBarStyled>
   )
 }
+
+const MuiAppBarStyled = styled(MuiAppBar)`
+  margin-bottom: 1rem;
+`
 
 const RightButtonsWrapper = styled(Box)`
   flex: 1;
@@ -115,6 +113,32 @@ const IconButtonStyled = styled(IconButton)(
     @media (min-width: ${theme.breakpoints.values.sm}px) {
         display: none;
     }
+`
+)
+
+const LinkStyled = styled(Link)(
+  ({ theme }) => `
+  color: ${theme.palette.primary.white};
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  &:hover {
+    background-color: ${theme.palette.primary.white};
+    color: ${theme.palette.primary.black};
+  }
 `
 )
 

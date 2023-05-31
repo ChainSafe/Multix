@@ -1,4 +1,4 @@
-import { Paper, Button } from '@mui/material'
+import { Badge, Box, Button, Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import GestureIcon from '@mui/icons-material/Gesture'
@@ -6,16 +6,18 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 import { AggregatedData } from './TransactionList'
 import { useCallback, useMemo, useState } from 'react'
 import ProposalSigningModal from '../modals/ProposalSigning'
-import { Badge } from '@mui/material'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
+import TransactionProgress from './TransactionProgress'
 
 interface Props {
   className?: string
   aggregatedData: AggregatedData
   isProposer: boolean
   possibleSigners: string[]
+  multisigSignatories: string[]
   onSuccess: () => void
+  threshold: number
 }
 
 const Transaction = ({
@@ -23,7 +25,9 @@ const Transaction = ({
   aggregatedData,
   isProposer,
   possibleSigners,
-  onSuccess
+  multisigSignatories,
+  onSuccess,
+  threshold
 }: Props) => {
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
@@ -52,17 +56,25 @@ const Transaction = ({
           <GestureIcon className="callIcon" />
         )}
       </Badge>
-      <CallInfo
-        withLink
-        aggregatedData={aggregatedData}
-        children={
-          (isProposer || possibleSigners.length > 0) && (
-            <TransactionFooterStyled>
-              <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
-            </TransactionFooterStyled>
-          )
-        }
-      />
+      <TransactionCallInfoBoxStyled>
+        <CallInfo
+          withLink
+          aggregatedData={aggregatedData}
+          children={
+            (isProposer || possibleSigners.length > 0) && (
+              <TransactionFooterStyled>
+                <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
+              </TransactionFooterStyled>
+            )
+          }
+        />
+        <TransactionProgress
+          multisigSignatories={multisigSignatories}
+          approvals={aggregatedData.info?.approvals || []}
+          value={aggregatedData.info?.approvals.length || 0}
+          threshold={threshold}
+        />
+      </TransactionCallInfoBoxStyled>
       {isSigningModalOpen && (
         <ProposalSigningModal
           possibleSigners={possibleSigners}
@@ -87,28 +99,51 @@ const TransactionFooterStyled = styled('div')`
   display: flex;
 `
 
+const TransactionCallInfoBoxStyled = styled(Box)(
+  ({ theme }) => `
+  flex: 1 1 0;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.values.sm}px) {
+    overflow: hidden;
+  }
+`
+)
+
 export default styled(Transaction)(
   ({ theme }) => `
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+
+  @media (min-width: ${theme.breakpoints.values.sm}px) {
     flex-direction: row;
-    margin-left: .5rem;
-    margin-bottom: 1rem;
+    margin-left: 0.5rem;
+  }
+
+  .buttonWrapper {
+    flex: 1;
+    align-self: flex-end;
+    text-align: end;
+    margin-right: 0.5rem;
+  }
 
   .callIcon {
     font-size: 7rem;
     background-color: ${theme.custom.background.backgroundColorLightGray};
-    margin: .5rem;
+    margin: 0.5rem;
     padding: 1rem;
     height: auto;
   }
 
-    // FIXME this is duplicated
+  // FIXME this is duplicated
   .badge > .MuiBadge-badge {
     left: 29px;
     top: 19px;
     border-radius: 0 50px 50px 50px;
   }
-  
+
   .badge.red > .MuiBadge-badge {
     background-color: ${theme.custom.text.errorColor};
   }
