@@ -1,6 +1,6 @@
 import { Alert, IconButton } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import CloseIcon from '@mui/icons-material/Close'
+import { Close as CloseIcon } from '@mui/icons-material'
 
 interface Props {
   className?: string

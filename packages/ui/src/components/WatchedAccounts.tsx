@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, IconButton } from '@mui/material'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import AccountDisplay from './AccountDisplay'
-import CloseIcon from '@mui/icons-material/Close'
+import { Close as CloseIcon } from '@mui/icons-material'
 import AccountSelection from './AccountSelection'
 
 interface Props {

@@ -27,7 +27,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import Warning from '../Warning'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 
 interface Props {

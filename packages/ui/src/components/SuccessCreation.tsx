@@ -1,6 +1,6 @@
 import { Box, Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import { AccessTime as AccessTimeIcon } from '@mui/icons-material'
 
 interface Props {
   className?: string

@@ -1,7 +1,7 @@
 import { Box, Collapse } from '@mui/material'
 import { ReactNode, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import { KeyboardArrowRight as KeyboardArrowRightIcon } from '@mui/icons-material'
 
 interface Props {
   className?: string

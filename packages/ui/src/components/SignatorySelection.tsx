@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { styled } from '@mui/material/styles'
 import AccountSelection from './AccountSelection'
 import IconButton from '@mui/material/IconButton'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { Delete as DeleteIcon } from '@mui/icons-material'
 import AccountDisplay from './AccountDisplay'
 
 interface Props {

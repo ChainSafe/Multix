@@ -1,7 +1,9 @@
 import { Box, CircularProgress } from '@mui/material'
-import LaunchIcon from '@mui/icons-material/Launch'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import {
+  Launch as LaunchIcon,
+  ErrorOutline as ErrorOutlineIcon,
+  CheckCircleOutline as CheckCircleOutlineIcon
+} from '@mui/icons-material'
 import { styled } from '@mui/material/styles'
 import { useCallback } from 'react'
 import { Toast } from '../../contexts/ToastContext'

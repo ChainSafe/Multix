@@ -10,7 +10,7 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { ISanitizedCall, parseGenericCall } from '../../utils'
 import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
-import FlareIcon from '@mui/icons-material/Flare'
+import { Flare as FlareIcon } from '@mui/icons-material'
 import Transaction from './Transaction'
 
 export interface AggregatedData {

@@ -1,7 +1,9 @@
 import { Tooltip } from '@mui/material'
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types'
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
-import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded'
+import {
+  CheckCircleRounded as CheckCircleRoundedIcon,
+  RemoveCircleOutlineRounded as RemoveCircleOutlineRoundedIcon
+} from '@mui/icons-material'
 import { useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 

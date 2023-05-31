@@ -1,8 +1,7 @@
-import React from 'react'
 import { Box, Fab, Tooltip } from '@mui/material'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { Settings as SettingsIcon } from '@mui/icons-material'
 
-export const Settings: React.FC = () => {
+export const Settings = () => {
   return (
     <Box
       role="presentation"
