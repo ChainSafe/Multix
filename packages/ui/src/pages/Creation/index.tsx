@@ -48,7 +48,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    if (!chainInfo?.ss58Format) {
+    if (!chainInfo) {
       return
     }
 
