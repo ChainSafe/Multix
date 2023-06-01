@@ -23,6 +23,8 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
 
     if (!call) return
 
+    if (!api.consts.multisig.depositFactor || api.consts.multisig.depositBase) return
+
     try {
       const genericCall = api.createType('Call', call)
 

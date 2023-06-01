@@ -11,6 +11,8 @@ export const useProxyAdditionNeededFunds = () => {
 
     if (!chainInfo?.tokenDecimals) return
 
+    if (!api.consts.proxy.proxyDepositFactor) return
+
     // the proxy is already created (with proxyDepositBase already deposited by the first account
     // that added the first proxy) we are only adding one account as proxy
     const reserved = api.consts.proxy.proxyDepositFactor as unknown as BN

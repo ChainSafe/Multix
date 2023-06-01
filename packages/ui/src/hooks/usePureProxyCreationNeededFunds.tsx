@@ -11,6 +11,13 @@ export const usePureProxyCreationNeededFunds = () => {
 
     if (!chainInfo?.tokenDecimals) return
 
+    if (
+      !api.consts.proxy.proxyDepositFactor ||
+      !api.consts.proxy.proxyDepositBase ||
+      !api.consts.balances.existentialDeposit
+    )
+      return
+
     const reserved = (api.consts.proxy.proxyDepositFactor as unknown as BN)
       // we only create one proxy here
       .muln(1)
