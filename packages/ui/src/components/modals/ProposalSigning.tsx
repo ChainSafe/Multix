@@ -361,12 +361,10 @@ const ProposalSigning = ({
                     !needCallData
                       ? proposalData
                       : {
-                          from: proposalData.from,
                           args: getDisplayArgs(callInfo.call),
                           callData: addedCallData,
-                          hash: proposalData.hash,
-                          info: proposalData.info,
-                          name: getExtrinsicName(callInfo.section, callInfo.method)
+                          name: getExtrinsicName(callInfo.section, callInfo.method),
+                          ...proposalData
                         }
                   }
                   expanded
