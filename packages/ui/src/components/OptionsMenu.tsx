@@ -1,9 +1,9 @@
-import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { MoreVert as MoreVertIcon } from '@mui/icons-material'
 import { ListItemIcon, ListItemText } from '@mui/material'
-import { useState, MouseEvent, ReactNode, useCallback } from 'react'
+import { MouseEvent, ReactNode, useCallback, useState } from 'react'
+import { Button } from './library'
+import { styled } from '@mui/material/styles'
 
 export interface MenuOption {
   text: string
@@ -39,7 +39,7 @@ const OptionsMenu = ({ className, options }: Props) => {
 
   return (
     <div className={className}>
-      <IconButton
+      <Button
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
@@ -47,8 +47,8 @@ const OptionsMenu = ({ className, options }: Props) => {
         aria-haspopup="true"
         onClick={handleMenuClick}
       >
-        <MoreVertIcon />
-      </IconButton>
+        Settings
+      </Button>
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -79,4 +79,6 @@ const OptionsMenu = ({ className, options }: Props) => {
   )
 }
 
-export default OptionsMenu
+export default styled(OptionsMenu)`
+  margin-left: 1rem;
+`

@@ -1,12 +1,12 @@
 import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 import {
   ChangeEvent,
+  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
-  SyntheticEvent
+  useState
 } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../contexts/AccountsContext'
@@ -14,9 +14,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isValidAddress } from '../utils'
 import { useAccountNames } from '../contexts/AccountNamesContext'
-import IconButton from '@mui/material/IconButton'
-import { Add as AddIcon } from '@mui/icons-material'
 import MultixIdenticon from './MultixIdenticon'
+import { Button } from './library'
 
 interface Props {
   className?: string
@@ -122,7 +121,7 @@ const AccountSelection = ({
   }, [])
 
   return (
-    <Box className={className}>
+    <BoxStyled className={className}>
       <Autocomplete
         className="addressField"
         disabled={addressDisabled}
@@ -178,18 +177,25 @@ const AccountSelection = ({
         />
       )}
       {withAddButton && (
-        <IconButton
-          className="addButton"
-          aria-label="add"
+        <ButtonStyled
           onClick={onAddSignatory}
+          variant="secondary"
           disabled={!selected || !!errorMessage}
         >
-          <AddIcon />
-        </IconButton>
+          Add
+        </ButtonStyled>
       )}
-    </Box>
+    </BoxStyled>
   )
 }
+
+const BoxStyled = styled(Box)`
+  align-items: center;
+`
+
+const ButtonStyled = styled(Button)`
+  margin-left: 1rem;
+`
 
 export default styled(AccountSelection)`
   display: flex;

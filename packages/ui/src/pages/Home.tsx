@@ -1,15 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from '@mui/material'
+import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
 import { Link, useSearchParams } from 'react-router-dom'
+import { Button, ButtonWithIcon } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
-  Send as SendIcon,
   Edit as EditIcon,
   LockReset as LockResetIcon,
   ErrorOutline as ErrorOutlineIcon
 } from '@mui/icons-material'
+import { ReactComponent as SendIcon } from '../styles/icons/send.svg'
 import Send from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
@@ -250,7 +251,23 @@ const Home = ({ className }: Props) => {
                   />
                 </div>
               )}
-              <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
+              <HeaderStyled>
+                <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
+                <BoxStyled>
+                  {!selectedIsWatched && (
+                    <>
+                      <ButtonWithIcon
+                        aria-label="send"
+                        onClick={() => setIsSendModalOpen(true)}
+                      >
+                        <SendIcon />
+                        Send
+                      </ButtonWithIcon>
+                      <OptionsMenu options={options} />
+                    </>
+                  )}
+                </BoxStyled>
+              </HeaderStyled>
               {selectedMultiProxy.multisigs.map((multisig) => {
                 return (
                   <Paper
@@ -284,18 +301,6 @@ const Home = ({ className }: Props) => {
                 )
               })}
             </div>
-            <div className="buttonColumn">
-              {!selectedIsWatched && (
-                <IconButton
-                  className="sendButton"
-                  aria-label="send"
-                  onClick={() => setIsSendModalOpen(true)}
-                >
-                  <SendIcon />
-                </IconButton>
-              )}
-              <OptionsMenu options={options} />
-            </div>
           </div>
         )}
       </Grid>
@@ -326,6 +331,16 @@ const Home = ({ className }: Props) => {
 
 const AccountDisplayWrapperStyled = styled('div')`
   margin: 1rem 0 0 2rem;
+`
+
+const HeaderStyled = styled('header')`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const BoxStyled = styled('div')`
+  display: flex;
 `
 
 export default styled(Home)(
@@ -370,10 +385,6 @@ export default styled(Home)(
     margin-left: 2rem;
   }
 
-  .sendButton {
-    margin-left: 1rem;
-    height: 2.5rem;
-  }
   .titleWrapper {
     align-items: center;
   }
