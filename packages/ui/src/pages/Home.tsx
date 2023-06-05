@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import ProposalList from '../components/Transactions/TransactionList'
+import TransactionList from '../components/Transactions/TransactionList'
 import { Link, useSearchParams } from 'react-router-dom'
 import AccountDisplay from '../components/AccountDisplay'
 import {
@@ -307,7 +307,7 @@ const Home = ({ className }: Props) => {
         >
           <div className="actionWrapper">
             <h3>Transactions</h3>
-            <ProposalList />
+            <TransactionList />
           </div>
         </Grid>
       )}

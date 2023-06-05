@@ -12,15 +12,22 @@ import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
 import { Flare as FlareIcon } from '@mui/icons-material'
 import Transaction from './Transaction'
+import { HexString } from '../../types'
+import dayjs from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+dayjs.extend(localizedFormat)
 
 export interface AggregatedData {
-  callData?: `0x${string}`
+  callData?: HexString
   hash?: string
   name?: string
   args?: AnyJson
   info?: PendingTx['info']
   from: string
+  timestamp: Date | undefined
 }
+
+type AggGroupedByDate = { [index: string]: AggregatedData[] }
 
 interface Props {
   className?: string
@@ -66,6 +73,24 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     const blockHash = await api.rpc.chain.getBlockHash(pendingTx.info.when.height)
     const signedBlock = await api.rpc.chain.getBlock(blockHash)
 
+    let date: Date | undefined
+
+    // get the timestamp which is an unsigned extrinsic set by the validator in each block
+    // the information for each of the contained extrinsics
+    signedBlock.block.extrinsics.some(({ method: { args, method, section } }) => {
+      // check for timestamp.set
+      if (section === 'timestamp' && method === 'set') {
+        // extract the Option<Moment> as Moment
+        const moment = args.toString()
+
+        // convert to date (unix ms since epoch in Moment - exactly as per the Rust code)
+        date = new Date(Number(moment))
+        return true
+      }
+
+      return false
+    })
+
     const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
 
     const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
@@ -104,12 +129,13 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
       name,
       args: getDisplayArgs(call),
       info: pendingTx.info,
-      from: pendingTx.from
+      from: pendingTx.from,
+      timestamp: date
     } as AggregatedData
   })
 
 const TransactionList = ({ className }: Props) => {
-  const [aggregatedData, setAggregatedData] = useState<AggregatedData[]>([])
+  const [aggregatedData, setAggregatedData] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
   const {
     data: pendingTxData,
@@ -125,7 +151,7 @@ const TransactionList = ({ className }: Props) => {
     }
 
     if (!pendingTxData || !pendingTxData.length) {
-      setAggregatedData([])
+      setAggregatedData({})
       return
     }
 
@@ -134,7 +160,23 @@ const TransactionList = ({ className }: Props) => {
     Promise.all(agregatedDataPromise)
       .then((res) => {
         const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
-        setAggregatedData(filtered)
+        const timestampObj: AggGroupedByDate = {}
+
+        // sort by date
+        const sorted = filtered.sort((a, b) => {
+          if (!a.timestamp || !b.timestamp) return 0
+
+          return a.timestamp.valueOf() - b.timestamp.valueOf()
+        })
+
+        // populate the object
+        sorted.forEach((data) => {
+          const date = dayjs(data.timestamp).format('LL')
+          const previousData = timestampObj[date] || []
+          timestampObj[date] = [...previousData, data]
+        })
+
+        setAggregatedData(timestampObj)
       })
       .catch(console.error)
   }, [api, pendingTxData, isApiReady, selectedMultiProxy])
@@ -153,43 +195,54 @@ const TransactionList = ({ className }: Props) => {
         </Paper>
       )}
       {!!pendingTxData.length &&
-        aggregatedData.map((agg, index) => {
-          const { callData, info, from } = agg
-          const multisig = getMultisigByAddress(from)
-
-          if (!info || !multisig?.threshold) return null
-
-          const multisigSignatories = multisig?.signatories || []
-          // if the threshold is met, but the transaction is still not executed
-          // it means we need one signtory to submit with asMulti
-          // so any signatory should be able to approve (again)
-          const neededSigners =
-            info?.approvals.length >= multisig.threshold
-              ? multisigSignatories
-              : getDifference(multisigSignatories, info?.approvals)
-          const possibleSigners = getIntersection(neededSigners, ownAddressList)
-          const isProposer = !!info?.depositor && ownAddressList.includes(info.depositor)
-
-          // if we have the proposer in the extension it can always reject the proposal
-          if (isProposer) {
-            possibleSigners.push(info.depositor)
-          }
-
+        Object.entries(aggregatedData).map(([date, aggregatedData]) => {
           return (
-            <Transaction
-              key={`${index}-${callData}`}
-              aggregatedData={agg}
-              isProposer={isProposer}
-              onSuccess={refresh}
-              possibleSigners={possibleSigners}
-              multisigSignatories={multisigSignatories}
-              threshold={multisig.threshold}
-            />
+            <Box>
+              <DateContainerStyled>{date}</DateContainerStyled>
+              {aggregatedData.map((agg, index) => {
+                const { callData, info, from } = agg
+                const multisig = getMultisigByAddress(from)
+
+                if (!info || !multisig?.threshold) return null
+
+                const multisigSignatories = multisig?.signatories || []
+                // if the threshold is met, but the transaction is still not executed
+                // it means we need one signtory to submit with asMulti
+                // so any signatory should be able to approve (again)
+                const neededSigners =
+                  info?.approvals.length >= multisig.threshold
+                    ? multisigSignatories
+                    : getDifference(multisigSignatories, info?.approvals)
+                const possibleSigners = getIntersection(neededSigners, ownAddressList)
+                const isProposer = !!info?.depositor && ownAddressList.includes(info.depositor)
+
+                // if we have the proposer in the extension it can always reject the proposal
+                if (isProposer) {
+                  possibleSigners.push(info.depositor)
+                }
+
+                return (
+                  <Transaction
+                    key={`${index}-${callData}`}
+                    aggregatedData={agg}
+                    isProposer={isProposer}
+                    onSuccess={refresh}
+                    possibleSigners={possibleSigners}
+                    multisigSignatories={multisigSignatories}
+                    threshold={multisig.threshold}
+                  />
+                )
+              })}
+            </Box>
           )
         })}
     </Box>
   )
 }
+
+const DateContainerStyled = styled(Box)`
+  margin-bottom: 0.3rem;
+`
 
 export default styled(TransactionList)(
   ({ theme }) => `

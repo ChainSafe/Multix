@@ -14,6 +14,7 @@
     "@polkadot/util-crypto": "^12.0.1",
     "@tanstack/react-query": "^4.29.3",
     "@types/react-router-dom": "^5.3.3",
+    "dayjs": "^1.11.7",
     "eslint-plugin-ternary": "^2.0.0",
     "graphql": "^15.8.0",
     "graphql-request": "^6.0.0",
