@@ -2,8 +2,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
-import { Link, useSearchParams } from 'react-router-dom'
-import { Button, ButtonWithIcon } from '../components/library'
+import { useSearchParams } from 'react-router-dom'
+import { Button, ButtonWithIcon, RouterLink } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
   Edit as EditIcon,
@@ -106,12 +106,7 @@ const Home = ({ className }: Props) => {
         <h1>Multix is an interface to easily manage complex multisigs.</h1>
         <p>Connect an extension to interact with Multix or watch an address.</p>
         <Button onClick={allowConnectionToExtension}>Connect Wallet</Button> or
-        <Button
-          component={Link}
-          to="/settings"
-        >
-          Watch an address
-        </Button>
+        <RouterLink to="/settings">Watch an address</RouterLink>
       </Center>
     )
   }
@@ -200,23 +195,13 @@ const Home = ({ className }: Props) => {
               No multisig found for your accounts.{' '}
               {isAllowedToConnectToExtension ? (
                 <>
-                  <Button
-                    component={Link}
-                    to="/create"
-                  >
-                    Create one
-                  </Button>
+                  <RouterLink to="/create">Create one</RouterLink>
                 </>
               ) : (
                 <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
               )}
               or
-              <Button
-                component={Link}
-                to="/settings"
-              >
-                Watch one
-              </Button>
+              <RouterLink to="/settings">Watch one</RouterLink>
             </div>
           )}
         </Box>
@@ -345,7 +330,6 @@ const BoxStyled = styled('div')`
 
 export default styled(Home)(
   ({ theme }) => `
-
   .loader {
     display: flex;
     justify-content: center;

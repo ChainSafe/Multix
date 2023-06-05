@@ -1,4 +1,4 @@
 import { Button, ButtonWithIcon } from './Button'
-import Link from './Link'
+import { Link, RouterLink } from './Link'
 
-export { Button, ButtonWithIcon, Link }
+export { Button, ButtonWithIcon, Link, RouterLink }

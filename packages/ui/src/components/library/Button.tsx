@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = styled('button')<ButtonProps>`
-  display: block;
+  display: inline-flex;
   padding: 0.5rem 1rem;
   font-size: 1.15rem;
   max-height: 43px;

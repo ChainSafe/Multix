@@ -1,10 +1,12 @@
-import { styled } from '@mui/material/styles'
+import { css, styled } from '@mui/material/styles'
+import { Link as RouterLinkDom, LinkProps } from 'react-router-dom'
 
-const Link = styled('a')`
+const BaseLinkStyles = css`
   color: #3a3b3b;
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
+  padding: 0.5rem 1rem;
 
   &:focus,
   &:hover {
@@ -19,4 +21,10 @@ const Link = styled('a')`
   }
 `
 
-export default Link
+export const Link = styled('a')`
+  ${BaseLinkStyles};
+`
+
+export const RouterLink = styled(RouterLinkDom)<LinkProps>`
+  ${BaseLinkStyles};
+`
