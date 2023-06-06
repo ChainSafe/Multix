@@ -60,7 +60,7 @@ export default styled(NetworkSelection)(
     
     .MuiSelect-select {
       display: flex;
-      height: 1rem;
+      max-height: 1rem;
     }
 
     .networkName {
