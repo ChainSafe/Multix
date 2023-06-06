@@ -31,6 +31,26 @@ interface Props {
   className?: string
 }
 
+interface MultisigActionMenuProps {
+  setIsSendModalOpen: (isOpen: boolean) => void
+  options: MenuOption[]
+}
+
+const MultisigActionMenu = ({ setIsSendModalOpen, options }: MultisigActionMenuProps) => {
+  return (
+    <>
+      <ButtonWithIcon
+        aria-label="send"
+        onClick={() => setIsSendModalOpen(true)}
+      >
+        <SendIcon />
+        Send
+      </ButtonWithIcon>
+      <OptionsMenu options={options} />
+    </>
+  )
+}
+
 const Home = ({ className }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
@@ -105,7 +125,7 @@ const Home = ({ className }: Props) => {
       <Center>
         <h1>Multix is an interface to easily manage complex multisigs.</h1>
         <p>Connect an extension to interact with Multix or watch an address.</p>
-        <Button onClick={allowConnectionToExtension}>Connect Wallet</Button> or
+        <Button onClick={allowConnectionToExtension}>Connect Wallet</Button> or{' '}
         <RouterLink to="/settings">Watch an address</RouterLink>
       </Center>
     )
@@ -234,22 +254,22 @@ const Home = ({ className }: Props) => {
                     badge={AccountBadge.PURE}
                     withBalance
                   />
+                  <BoxStyled>
+                    <MultisigActionMenu
+                      setIsSendModalOpen={setIsSendModalOpen}
+                      options={options}
+                    />
+                  </BoxStyled>
                 </div>
               )}
               <HeaderStyled>
                 <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
                 <BoxStyled>
-                  {!selectedIsWatched && (
-                    <>
-                      <ButtonWithIcon
-                        aria-label="send"
-                        onClick={() => setIsSendModalOpen(true)}
-                      >
-                        <SendIcon />
-                        Send
-                      </ButtonWithIcon>
-                      <OptionsMenu options={options} />
-                    </>
+                  {!selectedIsWatched && !selectedHasProxy && (
+                    <MultisigActionMenu
+                      setIsSendModalOpen={setIsSendModalOpen}
+                      options={options}
+                    />
                   )}
                 </BoxStyled>
               </HeaderStyled>
@@ -326,6 +346,7 @@ const HeaderStyled = styled('header')`
 
 const BoxStyled = styled('div')`
   display: flex;
+  align-items: center;
 `
 
 export default styled(Home)(
@@ -389,6 +410,8 @@ export default styled(Home)(
 
   .pureHeader {
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
   }
 
   .multisigWrapper {
