@@ -64,6 +64,6 @@ export const ButtonWithIcon = styled(Button)`
   justify-content: center;
 
   svg {
-    margin-right: 10px;
+    margin-right: 4px;
   }
 `

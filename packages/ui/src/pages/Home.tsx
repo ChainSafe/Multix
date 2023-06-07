@@ -10,7 +10,7 @@ import {
   LockReset as LockResetIcon,
   ErrorOutline as ErrorOutlineIcon
 } from '@mui/icons-material'
-import { ReactComponent as SendIcon } from '../styles/icons/send.svg'
+import { HiOutlinePaperAirplane } from 'react-icons/hi2'
 import Send from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
@@ -43,7 +43,7 @@ const MultisigActionMenu = ({ setIsSendModalOpen, options }: MultisigActionMenuP
         aria-label="send"
         onClick={() => setIsSendModalOpen(true)}
       >
-        <SendIcon />
+        <HiOutlinePaperAirplaneStyled />
         Send
       </ButtonWithIcon>
       <OptionsMenu options={options} />
@@ -347,6 +347,11 @@ const HeaderStyled = styled('header')`
 const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
+`
+
+const HiOutlinePaperAirplaneStyled = styled(HiOutlinePaperAirplane)`
+  transform: rotate(315deg);
+  margin-top: -4px;
 `
 
 export default styled(Home)(

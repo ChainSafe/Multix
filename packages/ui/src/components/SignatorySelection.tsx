@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { styled } from '@mui/material/styles'
 import AccountSelection from './AccountSelection'
 import IconButton from '@mui/material/IconButton'
-import { ReactComponent as DeleteIcon } from '../styles/icons/trash-bin.svg'
+import { HiOutlineTrash } from 'react-icons/hi2'
 import AccountDisplay from './AccountDisplay'
 
 interface Props {
@@ -46,7 +46,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
                   aria-label="delete"
                   onClick={() => removeSignatory(index)}
                 >
-                  <DeleteIcon />
+                  <HiOutlineTrash />
                 </IconButton>
               </div>
             ))}
