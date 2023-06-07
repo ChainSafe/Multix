@@ -9,7 +9,6 @@ export const Button = styled('button')<ButtonProps>`
   display: inline-flex;
   padding: 0.5rem 1rem;
   font-size: 1.15rem;
-  max-height: 43px;
   line-height: 1.625rem;
   font-weight: 500;
   border-radius: 10px;
