@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { AccountNames, useAccountNames } from '../../contexts/AccountNamesContext'
 import AccountEditName, { OnChangeArgs } from '../AccountEditName'
+import { renderMultisigHeading } from '../../pages/multisigHelpers'
 
 interface Props {
   onClose: () => void
@@ -43,11 +44,6 @@ const EditNames = ({ onClose, className }: Props) => {
     [newNames]
   )
 
-  console.log(
-    '!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1',
-    !!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1
-  )
-  console.log('!!selectedMultiProxy', selectedMultiProxy)
   return (
     <Dialog
       fullWidth
@@ -79,9 +75,9 @@ const EditNames = ({ onClose, className }: Props) => {
             xs={12}
           >
             <h4>
-              {!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1
-                ? 'Multisigs'
-                : 'Multisig'}
+              {renderMultisigHeading(
+                !!selectedMultiProxy?.multisigs?.length && selectedMultiProxy.multisigs.length > 1
+              )}
             </h4>
             {selectedMultiProxy?.multisigs.map(({ address }) => (
               <AccountEditName
