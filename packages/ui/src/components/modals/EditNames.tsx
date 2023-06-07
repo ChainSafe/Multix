@@ -43,6 +43,11 @@ const EditNames = ({ onClose, className }: Props) => {
     [newNames]
   )
 
+  console.log(
+    '!!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1',
+    !!selectedMultiProxy && selectedMultiProxy.multisigs.length > 1
+  )
+  console.log('!!selectedMultiProxy', selectedMultiProxy)
   return (
     <Dialog
       fullWidth
