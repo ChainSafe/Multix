@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'link'
 }
 
 export const Button = styled('button')<ButtonProps>`
@@ -54,6 +54,23 @@ export const Button = styled('button')<ButtonProps>`
       background: #F4F4F4;
       color: #D2D2D2;
       box-shadow: none;
+    }
+  `}
+
+  ${(props) =>
+    props.variant === 'link' &&
+    `
+    background: none;
+    box-shadow: none;
+    color: #18191A;
+    
+    &:focus {
+      background: #E6ECF1;
+    }
+    
+    &:disabled {
+      cursor: not-allowed;
+      color: #A8B3DC
     }
   `}
 `

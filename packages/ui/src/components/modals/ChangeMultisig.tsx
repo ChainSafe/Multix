@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid
-} from '@mui/material'
+import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -29,6 +21,7 @@ import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { Link, Button } from '../library'
 
 interface Props {
   onClose: () => void
@@ -461,9 +454,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 text={errorMessage}
               />
             )}
-            {currentStep === 'summary' && <Button onClick={onGoBack}>Back</Button>}
+            {currentStep === 'summary' && <Link onClick={onGoBack}>Back</Link>}
             {!isCallStep && (
               <Button
+                variant="link"
                 disabled={
                   !!errorMessage ||
                   !hasProxyEnoughFunds ||
