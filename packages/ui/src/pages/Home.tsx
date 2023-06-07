@@ -432,8 +432,13 @@ export default styled(Home)(
 
   .pureHeader {
     margin: 0 0 1rem 0.5rem;
+    margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
+    
+    @media (min-width: ${theme.breakpoints.values.md}px) {
+        margin: 0 0 1rem 0;
+    }
   }
 
   .multisigWrapper {
