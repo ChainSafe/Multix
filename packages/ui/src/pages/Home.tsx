@@ -250,7 +250,7 @@ const Home = ({ className }: Props) => {
                   />
                 </div>
               )}
-              <h3>{renderMultisigHeading(!!selectedMultiProxy.multisigs.length)}</h3>
+              <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
               {selectedMultiProxy.multisigs.map((multisig) => {
                 return (
                   <Paper
