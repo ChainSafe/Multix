@@ -125,8 +125,11 @@ const Home = ({ className }: Props) => {
       <Center>
         <h1>Multix is an interface to easily manage complex multisigs.</h1>
         <p>Connect an extension to interact with Multix or watch an address.</p>
-        <Button onClick={allowConnectionToExtension}>Connect Wallet</Button> or{' '}
-        <RouterLink to="/settings">Watch an address</RouterLink>
+        <WrapperConnectButtonStyled>
+          <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
+          or
+          <RouterLink to="/settings">Watch an address</RouterLink>
+        </WrapperConnectButtonStyled>
       </Center>
     )
   }
@@ -352,6 +355,20 @@ const BoxStyled = styled('div')`
 const HiOutlinePaperAirplaneStyled = styled(HiOutlinePaperAirplane)`
   transform: rotate(315deg);
   margin-top: -4px;
+`
+
+const WrapperConnectButtonStyled = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > button {
+    margin-right: 24px;
+  }
+
+  & :last-child {
+    margin-left: 8px;
+  }
 `
 
 export default styled(Home)(
