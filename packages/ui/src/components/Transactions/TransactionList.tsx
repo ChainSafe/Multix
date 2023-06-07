@@ -197,7 +197,7 @@ const TransactionList = ({ className }: Props) => {
       {!!pendingTxData.length &&
         Object.entries(aggregatedData).map(([date, aggregatedData]) => {
           return (
-            <Box>
+            <Box key={date}>
               <DateContainerStyled>{date}</DateContainerStyled>
               {aggregatedData.map((agg, index) => {
                 const { callData, info, from } = agg
