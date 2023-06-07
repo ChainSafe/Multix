@@ -34,7 +34,7 @@ const ToastBar = ({ toast, className }: Props) => {
       className={className}
       open={true}
       anchorOrigin={{ vertical: VERTICAL_POSITION, horizontal: HORIZONTAL_POSITION }}
-      autoHideDuration={toast.type === 'error' ? 0 : duration || DEFAULT_AUTO_HIDE_DURATION}
+      autoHideDuration={toast.type === 'error' ? null : duration || DEFAULT_AUTO_HIDE_DURATION}
       onClose={handleClose}
       key={id}
       action={
