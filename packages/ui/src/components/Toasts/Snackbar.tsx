@@ -26,7 +26,7 @@ const Snackbar = ({ className }: Props) => {
 }
 
 export default styled(Snackbar)`
-  position: absolute;
+  position: fixed;
   bottom: 1rem;
   left: 1rem;
 `
