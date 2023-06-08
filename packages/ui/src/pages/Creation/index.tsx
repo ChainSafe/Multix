@@ -1,4 +1,5 @@
-import { Alert, Box, Button, Grid, Step, StepLabel, Stepper } from '@mui/material'
+import { Alert, Box, Grid, Step, StepLabel, Stepper } from '@mui/material'
+import { Button } from '../../components/library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
@@ -307,12 +308,14 @@ const MultisigCreation = ({ className }: Props) => {
         {!!errorMessage && <div className="errorMessage">{errorMessage}</div>}
         <div className="buttonWrapper">
           <Button
+            variant="link"
             disabled={currentStep === 0}
             onClick={goBack}
           >
             Back
           </Button>
           <Button
+            variant="link"
             disabled={!canGoNext}
             onClick={goNext}
           >

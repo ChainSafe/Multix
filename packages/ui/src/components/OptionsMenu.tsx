@@ -1,9 +1,10 @@
-import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import { IconButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material'
+import { MouseEvent, ReactNode, useCallback, useState } from 'react'
+import { Button } from './library'
+import { styled } from '@mui/material/styles'
 import { MoreVert as MoreVertIcon } from '@mui/icons-material'
-import { ListItemIcon, ListItemText } from '@mui/material'
-import { useState, MouseEvent, ReactNode, useCallback } from 'react'
 
 export interface MenuOption {
   text: string
@@ -19,6 +20,8 @@ interface Props {
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
+  const theme = useTheme()
+  const matchesMediumScreen = useMediaQuery(theme.breakpoints.up('md'))
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleMenuClick = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -39,16 +42,30 @@ const OptionsMenu = ({ className, options }: Props) => {
 
   return (
     <div className={className}>
-      <IconButton
-        aria-label="more"
-        id="long-button"
-        aria-controls={open ? 'long-menu' : undefined}
-        aria-expanded={open ? 'true' : undefined}
-        aria-haspopup="true"
-        onClick={handleMenuClick}
-      >
-        <MoreVertIcon />
-      </IconButton>
+      {matchesMediumScreen ? (
+        <Button
+          aria-label="more"
+          id="long-button"
+          aria-controls={open ? 'long-menu' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+        >
+          Settings
+        </Button>
+      ) : (
+        <IconButton
+          aria-label="more"
+          id="long-button"
+          aria-controls={open ? 'long-menu' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleMenuClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      )}
+
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -79,4 +96,10 @@ const OptionsMenu = ({ className, options }: Props) => {
   )
 }
 
-export default OptionsMenu
+export default styled(OptionsMenu)`
+  margin-left: 0.5rem;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+    margin-left: 1rem;
+  }
+`

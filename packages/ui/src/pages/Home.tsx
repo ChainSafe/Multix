@@ -1,15 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Chip, CircularProgress, Grid, IconButton, Paper } from '@mui/material'
+import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Button, ButtonWithIcon, Link, RouterLink } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
-  Send as SendIcon,
   Edit as EditIcon,
   LockReset as LockResetIcon,
   ErrorOutline as ErrorOutlineIcon
 } from '@mui/icons-material'
+import { HiOutlinePaperAirplane } from 'react-icons/hi2'
 import Send from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
@@ -28,6 +29,26 @@ import { useNetwork } from '../contexts/NetworkContext'
 
 interface Props {
   className?: string
+}
+
+interface MultisigActionMenuProps {
+  setIsSendModalOpen: (isOpen: boolean) => void
+  options: MenuOption[]
+}
+
+const MultisigActionMenu = ({ setIsSendModalOpen, options }: MultisigActionMenuProps) => {
+  return (
+    <>
+      <ButtonWithIcon
+        aria-label="send"
+        onClick={() => setIsSendModalOpen(true)}
+      >
+        <HiOutlinePaperAirplaneStyled />
+        Send
+      </ButtonWithIcon>
+      <OptionsMenu options={options} />
+    </>
+  )
 }
 
 const Home = ({ className }: Props) => {
@@ -101,17 +122,15 @@ const Home = ({ className }: Props) => {
 
   if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
     return (
-      <Center>
+      <CenterStyled>
         <h1>Multix is an interface to easily manage complex multisigs.</h1>
         <p>Connect an extension to interact with Multix or watch an address.</p>
-        <Button onClick={allowConnectionToExtension}>Connect Wallet</Button> or
-        <Button
-          component={Link}
-          to="/settings"
-        >
-          Watch an address
-        </Button>
-      </Center>
+        <WrapperConnectButtonStyled>
+          <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
+          or
+          <RouterLink to="/settings">Watch an address</RouterLink>
+        </WrapperConnectButtonStyled>
+      </CenterStyled>
     )
   }
 
@@ -138,18 +157,18 @@ const Home = ({ className }: Props) => {
 
   if (isExtensionError)
     return (
-      <Center>
+      <CenterStyled>
         <h1>
           No account found. Please connect at least one in a wallet extension. More info at{' '}
-          <a
+          <Link
             href="https://wiki.polkadot.network/docs/wallets"
             target={'_blank'}
             rel="noreferrer"
           >
             wiki.polkadot.network
-          </a>
+          </Link>
         </h1>
-      </Center>
+      </CenterStyled>
     )
 
   if (isLoading) {
@@ -199,23 +218,13 @@ const Home = ({ className }: Props) => {
               No multisig found for your accounts.{' '}
               {isAllowedToConnectToExtension ? (
                 <>
-                  <Button
-                    component={Link}
-                    to="/create"
-                  >
-                    Create one
-                  </Button>
+                  <RouterLink to="/create">Create one</RouterLink>
                 </>
               ) : (
                 <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
               )}
               or
-              <Button
-                component={Link}
-                to="/settings"
-              >
-                Watch one
-              </Button>
+              <RouterLink to="/settings">Watch one</RouterLink>
             </div>
           )}
         </Box>
@@ -248,9 +257,25 @@ const Home = ({ className }: Props) => {
                     badge={AccountBadge.PURE}
                     withBalance
                   />
+                  <BoxStyled>
+                    <MultisigActionMenu
+                      setIsSendModalOpen={setIsSendModalOpen}
+                      options={options}
+                    />
+                  </BoxStyled>
                 </div>
               )}
-              <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
+              <HeaderStyled>
+                <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
+                <BoxStyled>
+                  {!selectedIsWatched && !selectedHasProxy && (
+                    <MultisigActionMenu
+                      setIsSendModalOpen={setIsSendModalOpen}
+                      options={options}
+                    />
+                  )}
+                </BoxStyled>
+              </HeaderStyled>
               {selectedMultiProxy.multisigs.map((multisig) => {
                 return (
                   <Paper
@@ -284,18 +309,6 @@ const Home = ({ className }: Props) => {
                 )
               })}
             </div>
-            <div className="buttonColumn">
-              {!selectedIsWatched && (
-                <IconButton
-                  className="sendButton"
-                  aria-label="send"
-                  onClick={() => setIsSendModalOpen(true)}
-                >
-                  <SendIcon />
-                </IconButton>
-              )}
-              <OptionsMenu options={options} />
-            </div>
           </div>
         )}
       </Grid>
@@ -328,9 +341,42 @@ const AccountDisplayWrapperStyled = styled('div')`
   margin: 1rem 0 0 2rem;
 `
 
+const HeaderStyled = styled('header')`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const BoxStyled = styled('div')`
+  display: flex;
+  align-items: center;
+`
+
+const HiOutlinePaperAirplaneStyled = styled(HiOutlinePaperAirplane)`
+  transform: rotate(315deg);
+  margin-top: -4px;
+`
+
+const WrapperConnectButtonStyled = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > button {
+    margin-right: 24px;
+  }
+
+  & :last-child {
+    margin-left: 8px;
+  }
+`
+
+const CenterStyled = styled(Center)`
+  text-align: center;
+`
+
 export default styled(Home)(
   ({ theme }) => `
-
   .loader {
     display: flex;
     justify-content: center;
@@ -370,10 +416,6 @@ export default styled(Home)(
     margin-left: 2rem;
   }
 
-  .sendButton {
-    margin-left: 1rem;
-    height: 2.5rem;
-  }
   .titleWrapper {
     align-items: center;
   }
@@ -393,7 +435,14 @@ export default styled(Home)(
   }
 
   .pureHeader {
+    margin: 0 0 1rem 0.5rem;
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    
+    @media (min-width: ${theme.breakpoints.values.md}px) {
+        margin: 0 0 1rem 0;
+    }
   }
 
   .multisigWrapper {

@@ -4,6 +4,7 @@ import { Box } from '@mui/material'
 import { chainsafeSVG } from '../logos/chainsafeSVG'
 import { w3fSvg } from '../logos/w3fSVG'
 import { chainsPolkadotCircleSVG } from '../logos/polkadot-circleSVG'
+import { Link } from '../components/library'
 
 interface Props {
   className?: string
@@ -51,7 +52,7 @@ const About = ({ className }: Props) => {
       <h1 className="title">
         Built by
         <Box className="logoWrapper">
-          <a
+          <Link
             className="link chainsafe"
             target="_blank"
             rel="noreferrer"
@@ -63,13 +64,13 @@ const About = ({ className }: Props) => {
               alt="chainsafe systems logo"
             />{' '}
             ChainSafe Systems
-          </a>
+          </Link>
         </Box>
       </h1>
       <h1 className="title">
         Supported by
         <Box className="logoWrapper">
-          <a
+          <Link
             className="link"
             target="_blank"
             rel="noreferrer"
@@ -80,24 +81,32 @@ const About = ({ className }: Props) => {
               src={w3fSvg}
               alt="web 3 foudation logo"
             />
-          </a>
-          <a
+          </Link>
+          <LinkPolkadotLogoStyled
             className="link"
             target="_blank"
             rel="noreferrer"
             href="https://polkadot.network"
           >
             <img
-              className="logo-pokadot"
               src={chainsPolkadotCircleSVG}
               alt="Polkadot logo"
             />
-          </a>
+          </LinkPolkadotLogoStyled>
         </Box>
       </h1>
     </Center>
   )
 }
+
+const LinkPolkadotLogoStyled = styled(Link)`
+  margin-left: 1rem;
+
+  img {
+    display: block;
+    max-width: 5rem;
+  }
+`
 
 export default styled(About)`
   .title {
@@ -136,11 +145,7 @@ export default styled(About)`
   }
 
   .logo-w3f {
+    display: block;
     min-width: 8rem;
-  }
-
-  .logo-pokadot {
-    max-width: 5rem;
-    margin-left: 1rem;
   }
 `

@@ -9954,6 +9954,7 @@ __metadata:
     graphql-ws: ^5.12.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-icons: ^4.9.0
     react-query-subscription: 2.0.0-beta.1
     react-router-dom: ^6.11.1
     reactflow: ^11.7.0
@@ -10920,6 +10921,15 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "react-icons@npm:4.9.0"
+  peerDependencies:
+    react: "*"
+  checksum: 66eb6d170643d2a35a92418e9fa4416f728ebb537d99d3d0d875faa3e46952667da31777f9ca10b7351515785b3d92dd052fd67b7863471d332cd3b68beec7d1
   languageName: node
   linkType: hard
 
