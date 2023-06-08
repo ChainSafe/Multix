@@ -459,6 +459,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             )}
             {!isCallStep && (
               <Button
+                variant={currentStep === 'selection' ? 'secondary' : 'primary'}
                 disabled={
                   !!errorMessage ||
                   !hasProxyEnoughFunds ||
