@@ -46,7 +46,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
           )}
           <RightButtonsWrapper>
             {!isAllowedToConnectToExtension && (
-              <ButtonStyled onClick={allowConnectionToExtension}>Connect</ButtonStyled>
+              <Button onClick={allowConnectionToExtension}>Connect</Button>
             )}
             <MultiProxySelection />
             <NetworkSelectionStyled />
@@ -83,18 +83,6 @@ const RouterLinkStyled = styled(RouterLink)`
   &:hover, &:focus, &:active {
     color: #D1E8FE;
 `
-
-const ButtonStyled = styled(Button)(
-  ({ theme }) => `
-  color: ${theme.palette.primary.white};
-  text-align: center;
-  display: block;
-  &:hover { 
-    background-color: ${theme.palette.primary.white};
-    color: ${theme.palette.primary.black}; 
-  }
-`
-) as typeof Button
 
 const BoxStyled = styled(Box)(
   ({ theme }) => `

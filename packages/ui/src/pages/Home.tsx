@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Button, ButtonWithIcon, Link, RouterLink } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
@@ -52,6 +52,7 @@ const MultisigActionMenu = ({ setIsSendModalOpen, options }: MultisigActionMenuP
 }
 
 const Home = ({ className }: Props) => {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
@@ -128,7 +129,7 @@ const Home = ({ className }: Props) => {
         <WrapperConnectButtonStyled>
           <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
           or
-          <RouterLink to="/settings">Watch an address</RouterLink>
+          <Button onClick={() => navigate('/settings')}>Watch an address</Button>
         </WrapperConnectButtonStyled>
       </CenterStyled>
     )
@@ -363,11 +364,7 @@ const WrapperConnectButtonStyled = styled('div')`
   align-items: center;
 
   & > button {
-    margin-right: 24px;
-  }
-
-  & :last-child {
-    margin-left: 8px;
+    margin: 0 1rem;
   }
 `
 

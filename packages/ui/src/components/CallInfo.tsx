@@ -149,14 +149,12 @@ const CallNameStyled = styled('h4')`
   margin-left: 0.5rem;
   margin-bottom: 0.5rem;
   display: flex;
+  align-items: center;
 `
 
 const Linkstyled = styled(Link)(
   ({ theme }) => `
-  text-decoration: none;
   display: flex;
-  color: ${theme.custom.text.addressColorLightGray};
-  align-items: center;
 
   .icon {
     margin-left: .5rem;
