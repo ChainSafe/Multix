@@ -7,11 +7,11 @@ const BaseLinkStyles = css`
   font-weight: 500;
   cursor: pointer;
   padding: 0.5rem 1rem;
+  transition: color 0.2s linear;
 
   &:focus,
   &:hover {
     color: #1244f5;
-    border-radius: 20px;
   }
 
   &:disabled {

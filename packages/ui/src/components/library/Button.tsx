@@ -32,8 +32,8 @@ export const Button = styled('button')<ButtonProps>`
     background: #3e67f8;
     color: ${props.theme.palette.primary.white};
     
-    &:focus {
-      background: #1244f5;
+    &:hover, &:focus {
+      background: #1244F5;
     }
   
     &:disabled {
@@ -52,7 +52,7 @@ export const Button = styled('button')<ButtonProps>`
   
     &:focus,
     &:hover {
-      background: #E8ECF0;
+      background: #FAFCFD;
     }
   
     &:disabled {

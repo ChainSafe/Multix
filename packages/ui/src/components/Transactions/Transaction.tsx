@@ -94,8 +94,7 @@ const ButtonStyled = styled(Button)`
 const TransactionFooterStyled = styled('div')`
   align-self: flex-end;
   text-align: end;
-  margin-right: 0.5rem;
-  margin-top: 1rem;
+  margin: 1rem 0.5rem 0.5rem 0;
   display: flex;
 `
 

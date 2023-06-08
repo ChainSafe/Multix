@@ -308,14 +308,14 @@ const MultisigCreation = ({ className }: Props) => {
         {!!errorMessage && <div className="errorMessage">{errorMessage}</div>}
         <div className="buttonWrapper">
           <Button
-            variant="link"
+            variant="primary"
             disabled={currentStep === 0}
             onClick={goBack}
           >
             Back
           </Button>
           <Button
-            variant="link"
+            variant="primary"
             disabled={!canGoNext}
             onClick={goNext}
           >
