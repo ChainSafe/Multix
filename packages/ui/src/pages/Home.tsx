@@ -3,7 +3,7 @@ import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
 import { useSearchParams } from 'react-router-dom'
-import { Button, ButtonWithIcon, RouterLink } from '../components/library'
+import { Button, ButtonWithIcon, Link, RouterLink } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
   Edit as EditIcon,
@@ -122,7 +122,7 @@ const Home = ({ className }: Props) => {
 
   if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
     return (
-      <Center>
+      <CenterStyled>
         <h1>Multix is an interface to easily manage complex multisigs.</h1>
         <p>Connect an extension to interact with Multix or watch an address.</p>
         <WrapperConnectButtonStyled>
@@ -130,7 +130,7 @@ const Home = ({ className }: Props) => {
           or
           <RouterLink to="/settings">Watch an address</RouterLink>
         </WrapperConnectButtonStyled>
-      </Center>
+      </CenterStyled>
     )
   }
 
@@ -157,18 +157,18 @@ const Home = ({ className }: Props) => {
 
   if (isExtensionError)
     return (
-      <Center>
+      <CenterStyled>
         <h1>
           No account found. Please connect at least one in a wallet extension. More info at{' '}
-          <a
+          <Link
             href="https://wiki.polkadot.network/docs/wallets"
             target={'_blank'}
             rel="noreferrer"
           >
             wiki.polkadot.network
-          </a>
+          </Link>
         </h1>
-      </Center>
+      </CenterStyled>
     )
 
   if (isLoading) {
@@ -369,6 +369,10 @@ const WrapperConnectButtonStyled = styled('div')`
   & :last-child {
     margin-left: 8px;
   }
+`
+
+const CenterStyled = styled(Center)`
+  text-align: center;
 `
 
 export default styled(Home)(

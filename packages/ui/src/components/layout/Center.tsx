@@ -10,7 +10,6 @@ export const Center = ({ children, className }: Props) => (
     className={className}
     container
     spacing={0}
-    textAlign="center"
     direction="column"
     alignItems="center"
     justifyContent="center"
