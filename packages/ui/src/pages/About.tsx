@@ -19,13 +19,13 @@ const About = ({ className }: Props) => {
           <h2>Open</h2>
           <p>
             Multix is open-source from the get-go. The back-end and front-end code can be{' '}
-            <Link
+            <a
               href="https://github.com/ChainSafe/Multix"
               target="_blank"
               rel="noreferrer"
             >
               found on GitHub
-            </Link>
+            </a>
             .
           </p>
         </li>

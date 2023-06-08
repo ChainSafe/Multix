@@ -454,10 +454,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 text={errorMessage}
               />
             )}
-            {currentStep === 'summary' && <Link onClick={onGoBack}>Back</Link>}
+            {currentStep === 'summary' && (
+              <BackButtonStyled onClick={onGoBack}>Back</BackButtonStyled>
+            )}
             {!isCallStep && (
               <Button
-                variant="link"
                 disabled={
                   !!errorMessage ||
                   !hasProxyEnoughFunds ||
@@ -475,6 +476,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     </Dialog>
   )
 }
+
+const BackButtonStyled = styled(Button)`
+  margin-right: 1rem;
+`
 
 export default styled(ChangeMultisig)`
   .buttonContainer {
