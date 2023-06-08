@@ -19,6 +19,13 @@ export const Button = styled('button')<ButtonProps>`
   box-shadow: 0 1.21622px 2.43243px rgba(0, 0, 0, 0.1), 0 1.21622px 3.64865px rgba(0, 0, 0, 0.25);
   transition: background 0.2s ease-in-out;
 
+  &:disabled {
+    cursor: not-allowed;
+    color: #d7d7d7;
+    background: #f4f4f4;
+    box-shadow: none;
+  }
+
   ${(props) =>
     props.variant === 'primary' &&
     `
@@ -40,8 +47,8 @@ export const Button = styled('button')<ButtonProps>`
   ${(props) =>
     props.variant === 'secondary' &&
     `
-    background: #F1F5F9;
-    color: #3A3B3B;
+    background: ${props.theme.palette.primary.white};
+    color: #18191A;
   
     &:focus,
     &:hover {
@@ -51,7 +58,7 @@ export const Button = styled('button')<ButtonProps>`
     &:disabled {
       cursor: not-allowed;
       background: #F4F4F4;
-      color: #D2D2D2;
+      color: #D7D7D7;
       box-shadow: none;
     }
   `}
@@ -73,6 +80,10 @@ export const Button = styled('button')<ButtonProps>`
     }
   `}
 `
+
+Button.defaultProps = {
+  variant: 'secondary'
+}
 
 export const ButtonWithIcon = styled(Button)`
   display: flex;

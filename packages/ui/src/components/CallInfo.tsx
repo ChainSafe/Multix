@@ -9,8 +9,8 @@ import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { Launch as LaunchIcon } from '@mui/icons-material'
 import { useNetwork } from '../contexts/NetworkContext'
-import { Link } from '@mui/material'
 import NoCallInfo from './NoCallInfo'
+import { Link } from './library'
 
 interface Props {
   aggregatedData: AggregatedData

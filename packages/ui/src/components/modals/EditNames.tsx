@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Button } from '../library'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'

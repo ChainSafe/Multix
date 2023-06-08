@@ -10,8 +10,7 @@ const BaseLinkStyles = css`
 
   &:focus,
   &:hover {
-    color: #000000;
-    background: #e3e9ff;
+    color: #1244f5;
     border-radius: 20px;
   }
 

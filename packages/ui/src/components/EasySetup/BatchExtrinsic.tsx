@@ -1,4 +1,5 @@
-import { Box, Button } from '@mui/material'
+import { Box } from '@mui/material'
+import { Button } from '../library'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'

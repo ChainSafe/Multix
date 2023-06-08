@@ -1,4 +1,5 @@
-import { Badge, Box, Button, Paper } from '@mui/material'
+import { Badge, Box, Paper } from '@mui/material'
+import { Button } from '../library'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import { Gesture as GestureIcon, QuestionMark as QuestionMarkIcon } from '@mui/icons-material'
