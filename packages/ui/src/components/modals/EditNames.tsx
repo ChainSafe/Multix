@@ -108,7 +108,12 @@ const EditNames = ({ onClose, className }: Props) => {
             xs={12}
             className="buttonContainer"
           >
-            <Button onClick={onSave}>Save</Button>
+            <Button
+              variant="primary"
+              onClick={onSave}
+            >
+              Save
+            </Button>
           </Grid>
         </Grid>
       </DialogContent>

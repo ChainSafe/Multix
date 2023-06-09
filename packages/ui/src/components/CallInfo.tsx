@@ -155,10 +155,6 @@ const CallNameStyled = styled('h4')`
 const Linkstyled = styled(Link)(
   ({ theme }) => `
   display: flex;
-
-  .icon {
-    margin-left: .5rem;
-  }
 `
 )
 

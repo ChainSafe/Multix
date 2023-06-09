@@ -397,6 +397,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             className="buttonContainer"
           >
             <Button
+              variant="primary"
               onClick={onSign}
               disabled={
                 !!easyOptionErrorMessage || !!errorMessage || isSubmitting || !extrinsicToCall

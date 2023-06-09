@@ -392,6 +392,7 @@ const ProposalSigning = ({
           >
             {!isGettingCallInfo && isProposerSelected && (
               <Button
+                variant="primary"
                 onClick={() => onSign(false)}
                 disabled={isSubmitting}
               >
@@ -406,7 +407,7 @@ const ProposalSigning = ({
                 Approve
               </Button>
             )}
-            {!!isGettingCallInfo && (
+            {isGettingCallInfo && (
               <Button disabled>
                 <CircularProgress />
               </Button>
