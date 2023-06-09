@@ -9,8 +9,8 @@ import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { Launch as LaunchIcon } from '@mui/icons-material'
 import { useNetwork } from '../contexts/NetworkContext'
-import { Link } from '@mui/material'
 import NoCallInfo from './NoCallInfo'
+import { Link } from './library'
 
 interface Props {
   aggregatedData: AggregatedData
@@ -149,18 +149,13 @@ const CallNameStyled = styled('h4')`
   margin-left: 0.5rem;
   margin-bottom: 0.5rem;
   display: flex;
+  align-items: center;
 `
 
 const Linkstyled = styled(Link)(
   ({ theme }) => `
-  text-decoration: none;
   display: flex;
-  color: ${theme.custom.text.addressColorLightGray};
-  align-items: center;
-
-  .icon {
-    margin-left: .5rem;
-  }
+  padding-left: 0.5rem;
 `
 )
 

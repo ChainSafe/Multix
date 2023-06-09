@@ -1,15 +1,16 @@
-import { Box, Button, IconButton, Toolbar, Typography } from '@mui/material'
+import { Box, IconButton, Toolbar, Typography } from '@mui/material'
+import { Button } from '../library'
 import { styled } from '@mui/material/styles'
 import { useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { Link } from 'react-router-dom'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../NetworkSelection'
+import { RouterLink } from '../library'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -35,17 +36,17 @@ const Header = ({ handleDrawerOpen }: Props) => {
           {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
             (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
             (isAccountConnected || isDisplayWhenNoWallet) ? (
-              <LinkStyled
+              <RouterLinkStyled
                 key={name}
                 to={path}
               >
                 {name}
-              </LinkStyled>
+              </RouterLinkStyled>
             ) : null
           )}
           <RightButtonsWrapper>
             {!isAllowedToConnectToExtension && (
-              <ButtonStyled onClick={allowConnectionToExtension}>Connect</ButtonStyled>
+              <Button onClick={allowConnectionToExtension}>Connect</Button>
             )}
             <MultiProxySelection />
             <NetworkSelectionStyled />
@@ -66,6 +67,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
 
 const MuiAppBarStyled = styled(MuiAppBar)`
   margin-bottom: 1rem;
+  background: #3e67f8;
 `
 
 const RightButtonsWrapper = styled(Box)`
@@ -75,17 +77,12 @@ const RightButtonsWrapper = styled(Box)`
   justify-content: flex-end;
 `
 
-const ButtonStyled = styled(Button)(
-  ({ theme }) => `
-  color: ${theme.palette.primary.white};
-  text-align: center;
-  display: block;
-  &:hover { 
-    background-color: ${theme.palette.primary.white};
-    color: ${theme.palette.primary.black}; 
-  }
+const RouterLinkStyled = styled(RouterLink)`
+  color: ${({ theme }) => theme.palette.primary.white};
+
+  &:hover, &:focus, &:active {
+    color: #D1E8FE;
 `
-) as typeof Button
 
 const BoxStyled = styled(Box)(
   ({ theme }) => `
@@ -113,32 +110,6 @@ const IconButtonStyled = styled(IconButton)(
     @media (min-width: ${theme.breakpoints.values.sm}px) {
         display: none;
     }
-`
-)
-
-const LinkStyled = styled(Link)(
-  ({ theme }) => `
-  color: ${theme.palette.primary.white};
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.875rem;
-  line-height: 1.75;
-  letter-spacing: 0.02857em;
-  text-transform: uppercase;
-  min-width: 64px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-
-  &:hover {
-    background-color: ${theme.palette.primary.white};
-    color: ${theme.palette.primary.black};
-  }
 `
 )
 

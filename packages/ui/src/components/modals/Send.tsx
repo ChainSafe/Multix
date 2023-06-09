@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -8,6 +7,7 @@ import {
   Select,
   SelectChangeEvent
 } from '@mui/material'
+import { Button } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -397,6 +397,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             className="buttonContainer"
           >
             <Button
+              variant="primary"
               onClick={onSign}
               disabled={
                 !!easyOptionErrorMessage || !!errorMessage || isSubmitting || !extrinsicToCall

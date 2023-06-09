@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Button } from '../library'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -107,7 +108,12 @@ const EditNames = ({ onClose, className }: Props) => {
             xs={12}
             className="buttonContainer"
           >
-            <Button onClick={onSave}>Save</Button>
+            <Button
+              variant="primary"
+              onClick={onSave}
+            >
+              Save
+            </Button>
           </Grid>
         </Grid>
       </DialogContent>

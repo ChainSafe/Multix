@@ -21,7 +21,7 @@ import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
-import { Link, Button } from '../library'
+import { Button } from '../library'
 
 interface Props {
   onClose: () => void
@@ -459,6 +459,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             )}
             {!isCallStep && (
               <Button
+                variant="primary"
                 disabled={
                   !!errorMessage ||
                   !hasProxyEnoughFunds ||

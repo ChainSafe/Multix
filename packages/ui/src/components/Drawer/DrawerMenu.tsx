@@ -4,7 +4,6 @@ import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
-import { Link } from 'react-router-dom'
 import ListItemText from '@mui/material/ListItemText'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -14,6 +13,7 @@ import MultiProxySelection from '../MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import { useMemo } from 'react'
+import { RouterLink } from '../library'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -53,13 +53,12 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
               key={name}
               disablePadding
             >
-              <ListItemButton
+              <RouterLink
                 onClick={handleDrawerClose}
-                component={Link}
                 to={path}
               >
                 <ListItemText primary={name} />
-              </ListItemButton>
+              </RouterLink>
             </ListItem>
           ) : null
         )}
