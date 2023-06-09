@@ -155,6 +155,7 @@ const CallNameStyled = styled('h4')`
 const Linkstyled = styled(Link)(
   ({ theme }) => `
   display: flex;
+  padding-left: 0.5rem;
 `
 )
 
