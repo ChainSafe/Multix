@@ -319,10 +319,10 @@ const Home = ({ className }: Props) => {
           xs={12}
           md={6}
         >
-          <div className="actionWrapper">
+          <TransactionsWrapperStyled>
             <h3>Transactions</h3>
             <TransactionList />
-          </div>
+          </TransactionsWrapperStyled>
         </Grid>
       )}
       {isSendModalOpen && (
@@ -337,6 +337,14 @@ const Home = ({ className }: Props) => {
     </Grid>
   )
 }
+
+const TransactionsWrapperStyled = styled('div')(
+  ({ theme }) => `
+    @media (min-width: ${theme.breakpoints.values.md}px) {
+        margin-left: 1.5rem;
+    }
+`
+)
 
 const AccountDisplayWrapperStyled = styled('div')`
   margin: 1rem 0 0 2rem;

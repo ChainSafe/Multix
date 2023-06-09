@@ -401,6 +401,7 @@ const ProposalSigning = ({
             )}
             {!isGettingCallInfo && !isProposerSelected && (
               <Button
+                variant="primary"
                 onClick={() => onSign(true)}
                 disabled={isSubmitting || (needCallData && !callInfo.method)}
               >

@@ -76,7 +76,7 @@ const BatchExtrinsic = ({ className, onSetExtrinsic, onSetErrorMessage }: Props)
 }
 
 const RemoveButtonStyled = styled(Button)`
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
 `
 
 export default BatchExtrinsic
