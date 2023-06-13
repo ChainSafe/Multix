@@ -1,6 +1,7 @@
-import { Box, InputAdornment, TextField } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
+import { TextFieldStyled } from '../../components/library'
 
 interface Props {
   className?: string
@@ -53,7 +54,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
 
   return (
     <Box className={className}>
-      <TextField
+      <TextFieldStyled
         fullWidth
         error={!!error}
         helperText={error}

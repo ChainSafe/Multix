@@ -490,7 +490,7 @@ export default styled(ChangeMultisig)`
 
   .accountEdition {
     margin-bottom: 1rem;
-    align-items: center;
+    align-items: end;
   }
 
   .subSection {

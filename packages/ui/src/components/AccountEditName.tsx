@@ -1,9 +1,10 @@
-import { Grid, TextField } from '@mui/material'
+import { Grid } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import AccountDisplay from './AccountDisplay'
 import { debounce } from '../utils/debounce'
+import { InputField } from './library'
 
 export interface OnChangeArgs {
   address: string
@@ -67,8 +68,7 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
         sm={6}
         md={8}
       >
-        <TextField
-          className="nameField"
+        <InputField
           label={`Name${isExtensionAccount ? ' (from extension)' : ''}`}
           onChange={onChange}
           disabled={isExtensionAccount}

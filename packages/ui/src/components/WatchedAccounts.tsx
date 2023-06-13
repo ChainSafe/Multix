@@ -62,7 +62,6 @@ const AccountSelectionWrapperStyled = styled(Box)`
 
   .accountDropdown {
     flex: 1;
-    align-content: center;
   }
 `
 
