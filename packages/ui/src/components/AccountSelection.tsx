@@ -1,4 +1,4 @@
-import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
+import { Autocomplete, Box, InputAdornment } from '@mui/material'
 import {
   ChangeEvent,
   SyntheticEvent,
@@ -15,7 +15,7 @@ import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isValidAddress } from '../utils'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import MultixIdenticon from './MultixIdenticon'
-import { Button } from './library'
+import { Button, InputField, TextFieldStyled } from './library'
 
 interface Props {
   className?: string
@@ -145,7 +145,7 @@ const AccountSelection = ({
           </Box>
         )}
         renderInput={(params) => (
-          <TextField
+          <TextFieldStyled
             {...params}
             inputRef={ref}
             error={!!errorMessage}
@@ -155,7 +155,10 @@ const AccountSelection = ({
               ...params.InputProps,
               startAdornment: selected ? (
                 <InputAdornment position="start">
-                  <MultixIdenticon value={selected} />
+                  <MultixIdenticonAutocompleteStyled
+                    size={24}
+                    value={selected}
+                  />
                 </InputAdornment>
               ) : null
             }}
@@ -167,8 +170,7 @@ const AccountSelection = ({
         value={selected}
       />
       {withName && (
-        <TextField
-          className="nameField"
+        <InputField
           label="Name"
           onChange={onNameChange}
           disabled={!!extensionName || nameDisabled}
@@ -195,24 +197,26 @@ const BoxStyled = styled(Box)`
 
 const ButtonStyled = styled(Button)`
   margin-left: 1rem;
+  align-self: end;
+`
+
+const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)`
+  padding-left: 1.125rem;
 `
 
 export default styled(AccountSelection)`
   display: flex;
   flex: 1;
 
-  .addressField {
+  & > * {
     flex: 1;
+  }
+
+  .addressField {
     margin-right: 0.5rem;
   }
 
-  .nameField {
-    flex: 1;
-  }
-
-  .addButton {
-    margin-left: 1rem;
-    height: 2.5rem;
-    align-self: center;
+  & > button {
+    flex: 0;
   }
 `

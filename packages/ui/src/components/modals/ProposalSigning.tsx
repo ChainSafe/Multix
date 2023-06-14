@@ -6,7 +6,7 @@ import {
   Grid,
   TextField
 } from '@mui/material'
-import { Button } from '../library'
+import { Button, TextFieldStyled } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -327,7 +327,7 @@ const ProposalSigning = ({
                 xs={12}
                 md={6}
               >
-                <TextField
+                <TextFieldStyled
                   className="addedCallData"
                   label="Call data"
                   onChange={onAddedCallDataChange}

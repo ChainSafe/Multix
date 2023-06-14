@@ -39,7 +39,7 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
 export default styled(IdenticonBadge)(
   ({ theme }) => `
     &.red > .MuiBadge-badge {
-        background-color: ${theme.custom.text.errorColor}
+        background-color: ${theme.custom.identity.red}
     }
 `
 )

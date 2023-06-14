@@ -8,6 +8,9 @@ declare module '@mui/material/styles' {
         white: 'white'
         black: '#000000de'
       }
+      error: {
+        main: string
+      }
     }
     custom: {
       text: {
@@ -48,6 +51,9 @@ export const theme = createTheme({
       main: '#3F8AE0',
       white: 'white',
       black: '#000000de'
+    },
+    error: {
+      main: '#ff8a65'
     }
   },
   typography: {
@@ -56,7 +62,7 @@ export const theme = createTheme({
   custom: {
     text: {
       addressColorLightGray: '#777575',
-      errorColor: 'firebrick'
+      errorColor: '#ff8a65'
     },
     background: {
       backgroundColorLightGray: '#ebebeb'

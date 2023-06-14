@@ -1,5 +1,6 @@
-import { Box, TextField } from '@mui/material'
+import { Box } from '@mui/material'
 import React, { useCallback, useState } from 'react'
+import { TextFieldStyled } from '../../components/library'
 
 interface Props {
   className?: string
@@ -27,7 +28,7 @@ const NameSelection = ({ className, name, setName }: Props) => {
 
   return (
     <Box className={className}>
-      <TextField
+      <TextFieldStyled
         fullWidth
         error={!!error}
         helperText={error}

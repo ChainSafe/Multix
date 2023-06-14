@@ -128,6 +128,6 @@ export default styled(EditNames)`
 
   .accountEdition {
     margin-bottom: 1rem;
-    align-items: center;
+    align-items: end;
   }
 `
