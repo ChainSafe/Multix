@@ -259,10 +259,12 @@ const Home = ({ className }: Props) => {
                     withBalance
                   />
                   <BoxStyled>
-                    <MultisigActionMenu
-                      setIsSendModalOpen={setIsSendModalOpen}
-                      options={options}
-                    />
+                    {!selectedIsWatched && (
+                      <MultisigActionMenu
+                        setIsSendModalOpen={setIsSendModalOpen}
+                        options={options}
+                      />
+                    )}
                   </BoxStyled>
                 </div>
               )}
