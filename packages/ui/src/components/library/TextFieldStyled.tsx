@@ -24,7 +24,7 @@ export const TextFieldStyled = styled(TextField)`
   .MuiInputBase-root {
     ${InputStyledBaseCss};
     max-height: 41px;
-    padding: 0 1.25rem;
+    padding: 0 1.25rem 0 0;
 
     .MuiAutocomplete-input {
       border: none;
