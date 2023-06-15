@@ -40,15 +40,15 @@ export const networkList = {
     logo: chainsRococoSVG
   } as NetworkInfo,
   phala: {
-    explorerNetworkName: '',
-    rpcUrl: 'wss://subbridge-test.phala.network/phala/ws',
+    explorerNetworkName: 'phala',
+    rpcUrl: 'wss://api.phala.network/ws',
     wsGraphqlUrl: 'wss://phala.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://phala.multix.chainsafe.io/graphql',
     logo: phalaSVG
   } as NetworkInfo,
   khala: {
-    explorerNetworkName: '',
-    rpcUrl: 'wss://subbridge-test.phala.network/khala/ws',
+    explorerNetworkName: 'khala',
+    rpcUrl: 'wss://khala-api.phala.network/ws',
     wsGraphqlUrl: 'wss://khala.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://khala.multix.chainsafe.io/graphql',
     logo: nodesKhalaSVG

@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      - add-khala-phala # run this workflow if the branch starts with ci/*
+      # - ci/* # run this workflow if the branch starts with ci/*
 
 env:
   # secrets are listed here to simplify the readability
