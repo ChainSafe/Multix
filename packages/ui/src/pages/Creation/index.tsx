@@ -353,6 +353,7 @@ export default styled(MultisigCreation)(
   }
 
   .buttonWrapper {
+    margin-top: 1rem;
     align-self: center;
   }
 `
