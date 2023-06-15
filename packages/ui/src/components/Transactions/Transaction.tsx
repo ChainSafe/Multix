@@ -144,7 +144,7 @@ export default styled(Transaction)(
   }
 
   .badge.red > .MuiBadge-badge {
-    background-color: ${theme.custom.text.errorColor};
+    background-color: ${theme.custom.identity.red};
   }
 `
 )

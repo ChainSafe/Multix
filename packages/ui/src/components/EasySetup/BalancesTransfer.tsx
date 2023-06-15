@@ -1,4 +1,4 @@
-import { Box, InputAdornment, TextField } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
@@ -9,6 +9,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
+import { TextFieldStyled } from '../library'
 
 interface Props {
   className?: string
@@ -119,7 +120,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         label="to"
         allowAnyAddressInput={true}
       />
-      <TextField
+      <TextFieldStyled
         className="amount"
         label={`Amount`}
         onChange={onAmountChange}
