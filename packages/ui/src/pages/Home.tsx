@@ -222,18 +222,16 @@ const Home = ({ className }: Props) => {
           {creationInProgress ? (
             <SuccessCreation />
           ) : (
-            <div>
+            <WrapperConnectButtonStyled>
               No multisig found for your accounts.{' '}
               {isAllowedToConnectToExtension ? (
-                <>
-                  <RouterLink to="/create">Create one</RouterLink>
-                </>
+                <Button onClick={() => navigate('/create')}>Create one</Button>
               ) : (
                 <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
               )}
               or
-              <RouterLink to="/settings">Watch one</RouterLink>
-            </div>
+              <Button onClick={() => navigate('/settings')}>Watch one</Button>
+            </WrapperConnectButtonStyled>
           )}
         </Box>
       </Grid>
