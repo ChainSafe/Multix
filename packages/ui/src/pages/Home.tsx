@@ -34,18 +34,25 @@ interface Props {
 interface MultisigActionMenuProps {
   setIsSendModalOpen: (isOpen: boolean) => void
   options: MenuOption[]
+  withSendButton?: boolean
 }
 
-const MultisigActionMenu = ({ setIsSendModalOpen, options }: MultisigActionMenuProps) => {
+const MultisigActionMenu = ({
+  setIsSendModalOpen,
+  options,
+  withSendButton = true
+}: MultisigActionMenuProps) => {
   return (
     <>
-      <ButtonWithIcon
-        aria-label="send"
-        onClick={() => setIsSendModalOpen(true)}
-      >
-        <HiOutlinePaperAirplaneStyled />
-        Send
-      </ButtonWithIcon>
+      {withSendButton && (
+        <ButtonWithIcon
+          aria-label="send"
+          onClick={() => setIsSendModalOpen(true)}
+        >
+          <HiOutlinePaperAirplaneStyled />
+          Send
+        </ButtonWithIcon>
+      )}
       <OptionsMenu options={options} />
     </>
   )
@@ -262,6 +269,7 @@ const Home = ({ className }: Props) => {
                     <MultisigActionMenu
                       setIsSendModalOpen={setIsSendModalOpen}
                       options={options}
+                      withSendButton={!selectedIsWatched}
                     />
                   </BoxStyled>
                 </div>
