@@ -225,9 +225,7 @@ const Home = ({ className }: Props) => {
             <WrapperConnectButtonStyled>
               No multisig found for your accounts.{' '}
               {isAllowedToConnectToExtension ? (
-                <>
-                  <Button onClick={() => navigate('/create')}>Create one</Button>
-                </>
+                <Button onClick={() => navigate('/create')}>Create one</Button>
               ) : (
                 <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
               )}
