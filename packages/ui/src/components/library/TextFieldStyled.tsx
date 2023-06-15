@@ -46,4 +46,11 @@ export const TextFieldStyled = styled(TextField)`
       outline: 3px solid #ff8a65;
     }
   }
+
+  .MuiFormHelperText-root {
+    &.Mui-error {
+      position: absolute;
+      bottom: -24px;
+    }
+  }
 `
