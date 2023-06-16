@@ -20,18 +20,11 @@ interface Props {
 const AccountEditName = ({ address, onNameChange, className }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { ownAddressList } = useAccounts()
-  const [name, setName] = useState('')
+  const [name, setName] = useState(getNamesWithExtension(address) || '')
   const isExtensionAccount = useMemo(
     () => ownAddressList.includes(address),
     [address, ownAddressList]
   )
-
-  useEffect(() => {
-    if (!name) {
-      const defaultName = getNamesWithExtension(address) || ''
-      setName(defaultName)
-    }
-  }, [address, getNamesWithExtension, name])
 
   const debouncedNameChange = useMemo(() => debounce(onNameChange, 300), [onNameChange])
 
