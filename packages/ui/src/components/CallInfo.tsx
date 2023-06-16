@@ -13,7 +13,7 @@ import NoCallInfo from './NoCallInfo'
 import { Link } from './library'
 
 interface Props {
-  aggregatedData: AggregatedData
+  aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
   expanded?: boolean
   children?: ReactNode
   className?: string
@@ -79,7 +79,7 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   )
 }
 
-const filterProxyProxy = (agg: AggregatedData): AggregatedData => {
+const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
   const { args, name } = agg
   const isProxy = isProxyCall(name)
 

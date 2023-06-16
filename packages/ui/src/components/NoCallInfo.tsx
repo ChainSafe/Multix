@@ -10,7 +10,7 @@ const NoCallInfo = ({ className }: Props) => (
     severity="info"
     variant="outlined"
   >
-    No callData found on-chain. Use Multix to initiate multisig transactions and avoid this
+    No Call data found on-chain. Use Multix to initiate multisig transactions and avoid this
     annoyance.
   </Alert>
 )
