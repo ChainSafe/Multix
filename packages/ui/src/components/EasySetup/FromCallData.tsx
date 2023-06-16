@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Alert, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
@@ -9,6 +9,7 @@ import CallInfo from '../CallInfo'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { HexString } from '../../types'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { usePjsLinks } from '../../hooks/usePjsLinks'
 
 interface Props {
   className?: string
@@ -21,6 +22,7 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
   const [callData, setCallData] = useState<HexString | undefined>(undefined)
   const [callDataError, setCallDataError] = useState('')
   const { callInfo } = useCallInfoFromCallData(callData)
+  const { extrinsicUrl } = usePjsLinks()
 
   useEffect(() => {
     if (!isApiReady || !api) {
@@ -41,6 +43,17 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
 
   return (
     <Box className={className}>
+      <AlertStyled severity="info">
+        Paste below the "encoded call data" from a{' '}
+        <a
+          href={extrinsicUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
+          manual extrinsic
+        </a>
+        .<br /> Multix will take care of wrapping it in a multisig/proxy call
+      </AlertStyled>
       <TextFieldStyled
         label={`Call data`}
         onChange={onCallDataChange}
@@ -63,4 +76,7 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
   )
 }
 
-export default styled(FromCallData)``
+const AlertStyled = styled(Alert)`
+  margin: 0.5rem 0 0.5rem 0;
+`
+export default FromCallData

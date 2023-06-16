@@ -8,9 +8,9 @@ import { getExtrinsicName, isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { Launch as LaunchIcon } from '@mui/icons-material'
-import { useNetwork } from '../contexts/NetworkContext'
-import NoCallInfo from './NoCallInfo'
 import { Link } from './library'
+import { usePjsLinks } from '../hooks/usePjsLinks'
+import { Alert } from '@mui/material'
 
 interface Props {
   aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
@@ -109,11 +109,11 @@ const CallInfo = ({
   const { chainInfo } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
-  const { selectedNetworkInfo } = useNetwork()
-  const link = useMemo(() => {
-    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl || '')
-    return `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#/extrinsics/decode/${aggregatedData.callData}`
-  }, [aggregatedData, selectedNetworkInfo])
+  const { getDecodeUrl } = usePjsLinks()
+  const link = useMemo(
+    () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
+    [aggregatedData, getDecodeUrl]
+  )
 
   return (
     <div className={className}>
@@ -131,7 +131,16 @@ const CallInfo = ({
           </Linkstyled>
         )}
       </CallNameStyled>
-      {!aggregatedData.callData && <NoCallInfo />}
+      {!aggregatedData.callData && (
+        <AlertStyled
+          className={className}
+          severity="info"
+          variant="outlined"
+        >
+          No Call data found on-chain. Use Multix to initiate multisig transactions and avoid this
+          annoyance.
+        </AlertStyled>
+      )}
       {args && Object.keys(args).length > 0 && (
         <Expander
           expanded={expanded}
@@ -143,6 +152,11 @@ const CallInfo = ({
     </div>
   )
 }
+
+const AlertStyled = styled(Alert)`
+  margin-right: 0.5rem;
+  border: 0;
+`
 
 const CallNameStyled = styled('h4')`
   margin-top: 0.5rem;
