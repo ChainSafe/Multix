@@ -1,5 +1,4 @@
 import { GenericCall } from '@polkadot/types'
-
 import { Weight } from '@polkadot/types/interfaces'
 
 export interface MultisigStorageInfo {
