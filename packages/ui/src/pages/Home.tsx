@@ -3,7 +3,7 @@ import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Button, ButtonWithIcon, Link, RouterLink } from '../components/library'
+import { Button, ButtonWithIcon, Link } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
 import {
   Edit as EditIcon,

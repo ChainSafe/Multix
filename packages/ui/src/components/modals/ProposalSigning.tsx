@@ -1,11 +1,4 @@
-import {
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  TextField
-} from '@mui/material'
+import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -16,14 +9,13 @@ import CallInfo from '../CallInfo'
 import { AggregatedData } from '../Transactions/TransactionList'
 import SignerSelection from '../SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { GenericCall } from '@polkadot/types'
 import { useToasts } from '../../contexts/ToastContext'
-import { Weight } from '@polkadot/types/interfaces'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { sortAddresses } from '@polkadot/util-crypto'
 import { HexString, MultisigStorageInfo } from '../../types'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 
 interface Props {
   onClose: () => void
@@ -31,13 +23,6 @@ interface Props {
   possibleSigners: string[]
   proposalData: AggregatedData
   onSuccess: () => void
-}
-
-interface SubmittingCall {
-  call?: GenericCall
-  method?: string
-  section?: string
-  weight?: Weight
 }
 
 const ProposalSigning = ({
@@ -65,8 +50,6 @@ const ProposalSigning = ({
     () => proposalData?.info?.depositor === selectedAccount?.address,
     [proposalData, selectedAccount]
   )
-  const [callInfo, setCallInfo] = useState<SubmittingCall>({})
-  const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
   const needCallData = useMemo(
     () =>
       // if we don't have the calldata and it's the last approval
@@ -74,6 +57,9 @@ const ProposalSigning = ({
       proposalData.info?.approvals.length === threshold - 1 &&
       !proposalData.callData,
     [proposalData, threshold]
+  )
+  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
+    needCallData ? addedCallData : proposalData.callData
   )
 
   const onSubmitting = useCallback(() => {
@@ -90,59 +76,12 @@ const ProposalSigning = ({
     }
   }, [isProposerSelected])
 
-  const getCallInfo = useCallback(async () => {
-    // the proposer doesn't need the call data
-    if (isProposerSelected) {
-      return
-    }
-
-    if (!api || !isApiReady) {
-      return
-    }
-
-    if (!proposalData.callData && !addedCallData) {
-      return
-    }
-
-    if (!selectedAccount) {
-      return
-    }
-
-    let call: GenericCall
-    try {
-      call = api.createType('Call', proposalData.callData || addedCallData)
-    } catch (error) {
-      console.error(error)
-      setCallInfo({})
-      return
-    }
-
-    if (call.hash.toHex() !== proposalData.hash) {
-      setErrorMessage('The callData provided doesnot match')
-      setCallInfo({})
-      return
-    }
-
-    return api
-      .tx(call)
-      .paymentInfo(selectedAccount.address)
-      .then(({ weight }) => {
-        setCallInfo({
-          call,
-          weight,
-          method: call.method,
-          section: call.section
-        })
-      })
-  }, [addedCallData, api, isApiReady, isProposerSelected, proposalData, selectedAccount])
-
   useEffect(() => {
-    setIsGettingCallInfo(true)
-
-    getCallInfo()
-      .catch(console.error)
-      .finally(() => setIsGettingCallInfo(false))
-  }, [getCallInfo])
+    if (!!callInfo?.call && callInfo.call.hash.toHex() !== proposalData.hash) {
+      setErrorMessage("The callData provided doesn't match with the on-chain proposal")
+      return
+    }
+  }, [callInfo, proposalData])
 
   const onSign = useCallback(
     async (isApproving: boolean) => {
@@ -225,7 +164,7 @@ const ProposalSigning = ({
         )
 
         // If we can submit the proposal and have the call data
-      } else if (shouldSubmit && callInfo.call && callInfo.weight) {
+      } else if (shouldSubmit && callInfo?.call && callInfo?.weight) {
         tx = api.tx.multisig.asMulti(
           threshold,
           otherSigners,
@@ -244,7 +183,7 @@ const ProposalSigning = ({
           0
         )
       } else {
-        console.error('We donnot have the required data to submit the call')
+        console.error("We don't have the required data to submit the call")
         return
       }
 
@@ -343,7 +282,7 @@ const ProposalSigning = ({
             </>
           )}
 
-          {(!needCallData || !!callInfo.call) && (
+          {(!needCallData || !!callInfo?.call) && !errorMessage && (
             <>
               <Grid
                 item
@@ -361,10 +300,9 @@ const ProposalSigning = ({
                     !needCallData
                       ? proposalData
                       : {
-                          ...proposalData,
-                          args: getDisplayArgs(callInfo.call),
+                          args: getDisplayArgs(callInfo?.call),
                           callData: addedCallData,
-                          name: getExtrinsicName(callInfo.section, callInfo.method)
+                          name: getExtrinsicName(callInfo?.section, callInfo?.method)
                         }
                   }
                   expanded
@@ -403,7 +341,7 @@ const ProposalSigning = ({
               <Button
                 variant="primary"
                 onClick={() => onSign(true)}
-                disabled={isSubmitting || (needCallData && !callInfo.method)}
+                disabled={!!errorMessage || isSubmitting || (needCallData && !callInfo?.method)}
               >
                 Approve
               </Button>

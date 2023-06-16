@@ -27,6 +27,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import BatchExtrinsic from '../EasySetup/BatchExtrinsic'
+import FromCallData from '../EasySetup/FromCallData'
 
 interface Props {
   onClose: () => void
@@ -171,6 +172,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       ),
       'Batch extrinsic': (
         <BatchExtrinsic
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+        />
+      ),
+      'From call data': (
+        <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
         />
@@ -370,7 +377,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             item
             xs={12}
             md={10}
-            className="errorMessage"
           >
             {easySetupOptions[selectedEasyOption]}
           </Grid>

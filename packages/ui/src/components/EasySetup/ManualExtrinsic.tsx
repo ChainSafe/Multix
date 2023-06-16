@@ -334,6 +334,8 @@ const ManualExtrinsic = ({
 }
 
 export default styled(ManualExtrinsic)`
+  margin-top: 0.5rem;
+
   .palletSelection {
     margin-right: 0.5rem;
   }

@@ -17,6 +17,8 @@ export interface NetworkInfo {
   logo: string
 }
 
+export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
+
 export const networkList = {
   kusama: {
     explorerNetworkName: 'kusama',
