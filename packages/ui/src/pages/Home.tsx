@@ -398,6 +398,7 @@ export default styled(Home)(
   }
 
   .proxy, .multisig {
+    min-width: 0;
     margin-bottom: 0;
   }
 
