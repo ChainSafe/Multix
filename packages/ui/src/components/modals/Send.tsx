@@ -176,7 +176,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
         />
       ),
-      'From Call data': (
+      'From call data': (
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
