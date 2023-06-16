@@ -7,7 +7,7 @@ export const usePjsLinks = () => {
     if (!selectedNetworkInfo?.rpcUrl) return ''
 
     const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl)
-    return `https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=${encodedRpc}#`
+    return `https://polkadot.js.org/apps/?rpc=${encodedRpc}#`
   }, [selectedNetworkInfo])
 
   return {
