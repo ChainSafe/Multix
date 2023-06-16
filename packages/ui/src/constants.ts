@@ -3,6 +3,7 @@ import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
 import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
 import { chainsRococoSVG } from './logos/rococoSVG'
+import { phalaSVG } from './logos/phalaSVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE = 40
@@ -37,6 +38,20 @@ export const networkList = {
     wsGraphqlUrl: 'wss://rococo.multix.chainsafe.io/graphql',
     httpGraphqlUrl: 'https://rococo.multix.chainsafe.io/graphql',
     logo: chainsRococoSVG
+  } as NetworkInfo,
+  phala: {
+    explorerNetworkName: 'phala',
+    rpcUrl: 'wss://api.phala.network/ws',
+    wsGraphqlUrl: 'wss://phala.multix.chainsafe.io/graphql',
+    httpGraphqlUrl: 'https://phala.multix.chainsafe.io/graphql',
+    logo: phalaSVG
+  } as NetworkInfo,
+  khala: {
+    explorerNetworkName: 'khala',
+    rpcUrl: 'wss://khala-api.phala.network/ws',
+    wsGraphqlUrl: 'wss://khala.multix.chainsafe.io/graphql',
+    httpGraphqlUrl: 'https://khala.multix.chainsafe.io/graphql',
+    logo: nodesKhalaSVG
   } as NetworkInfo,
   'rhala testnet': {
     explorerNetworkName: '',
