@@ -365,6 +365,7 @@ const HeaderStyled = styled('header')`
 const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
+  padding-left: 1rem;
 `
 
 const HiOutlinePaperAirplaneStyled = styled(HiOutlinePaperAirplane)`

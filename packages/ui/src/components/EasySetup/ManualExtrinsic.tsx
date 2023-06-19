@@ -1,4 +1,12 @@
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
+import {
+  Alert,
+  Box,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
@@ -12,6 +20,7 @@ interface Props {
   className?: string
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>, key?: string) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  onSelectFromCallData: () => void
 }
 
 interface ParamField {
@@ -94,7 +103,8 @@ const ManualExtrinsic = ({
   className,
   onSetExtrinsic,
   onSetErrorMessage,
-  extrinsicIndex
+  extrinsicIndex,
+  onSelectFromCallData
 }: Props) => {
   const { api, isApiReady } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
@@ -192,6 +202,10 @@ const ManualExtrinsic = ({
   useEffect(updateCallables, [updateCallables])
   useEffect(updateParamFields, [updateParamFields])
 
+  const onClickSelectFromCallData = useCallback(() => {
+    onSelectFromCallData()
+  }, [onSelectFromCallData])
+
   const onPalletCallableParamChange = useCallback(
     (event: SelectChangeEvent<string>, state: string) => {
       // reset the params
@@ -267,6 +281,13 @@ const ManualExtrinsic = ({
 
   return (
     <Box className={className}>
+      <AlertStyled severity="info">
+        If this doesn't suit your needs, try{' '}
+        <LinkStyled onClick={onClickSelectFromCallData}>
+          submitting the extrinsic "From call data"
+        </LinkStyled>
+        .
+      </AlertStyled>
       <FormControl>
         <Select
           className="palletSelection"
@@ -332,6 +353,15 @@ const ManualExtrinsic = ({
     </Box>
   )
 }
+
+const LinkStyled = styled('span')`
+  text-decoration: underline;
+  cursor: pointer;
+`
+
+const AlertStyled = styled(Alert)`
+  margin: 0.5rem 0 0.5rem 0;
+`
 
 export default styled(ManualExtrinsic)`
   margin-top: 0.5rem;
