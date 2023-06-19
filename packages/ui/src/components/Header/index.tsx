@@ -65,10 +65,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
   )
 }
 
-const MuiAppBarStyled = styled(MuiAppBar)`
+const MuiAppBarStyled = styled(MuiAppBar)(
+  ({ theme }) => `
   margin-bottom: 1rem;
-  background: #3e67f8;
+  background: ${theme.palette.primary.main}
 `
+)
 
 const RightButtonsWrapper = styled(Box)`
   flex: 1;
@@ -80,8 +82,11 @@ const RightButtonsWrapper = styled(Box)`
 const RouterLinkStyled = styled(RouterLink)`
   color: ${({ theme }) => theme.palette.primary.white};
 
-  &:hover, &:focus, &:active {
-    color: #D1E8FE;
+  &:hover,
+  &:focus,
+  &:active {
+    color: #c7d0e7;
+  }
 `
 
 const BoxStyled = styled(Box)(

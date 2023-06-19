@@ -4,9 +4,9 @@ declare module '@mui/material/styles' {
   interface Theme {
     palette: {
       primary: {
-        main: '#3F8AE0'
-        white: 'white'
-        black: '#000000de'
+        main: string
+        white: string
+        black: string
       }
       error: {
         main: string
@@ -48,7 +48,7 @@ declare module '@mui/material/styles' {
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#3F8AE0',
+      main: '#4964a8',
       white: 'white',
       black: '#000000de'
     },

@@ -268,7 +268,7 @@ const MultisigCreation = ({ className }: Props) => {
               severity="info"
             >
               The threshold determines the minimum amount of signatory approvals needed for a
-              multisig proposal to be executed.
+              multisig transaction to be executed.
             </Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
