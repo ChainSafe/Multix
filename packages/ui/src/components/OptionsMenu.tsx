@@ -1,8 +1,7 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { IconButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material'
+import { IconButton, ListItemIcon, ListItemText } from '@mui/material'
 import { MouseEvent, ReactNode, useCallback, useState } from 'react'
-import { Button } from './library'
 import { styled } from '@mui/material/styles'
 import { MoreVert as MoreVertIcon } from '@mui/icons-material'
 
@@ -20,8 +19,6 @@ interface Props {
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
-  const theme = useTheme()
-  const matchesMediumScreen = useMediaQuery(theme.breakpoints.up('md'))
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleMenuClick = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -42,30 +39,16 @@ const OptionsMenu = ({ className, options }: Props) => {
 
   return (
     <div className={className}>
-      {matchesMediumScreen ? (
-        <Button
-          aria-label="more"
-          id="long-button"
-          aria-controls={open ? 'long-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-        >
-          Settings
-        </Button>
-      ) : (
-        <IconButton
-          aria-label="more"
-          id="long-button"
-          aria-controls={open ? 'long-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      )}
-
+      <IconButton
+        aria-label="more"
+        id="long-button"
+        aria-controls={open ? 'long-menu' : undefined}
+        aria-expanded={open ? 'true' : undefined}
+        aria-haspopup="true"
+        onClick={handleMenuClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
       <Menu
         id="long-menu"
         MenuListProps={{
