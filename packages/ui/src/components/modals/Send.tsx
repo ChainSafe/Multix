@@ -26,8 +26,11 @@ import Warning from '../Warning'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
-import BatchExtrinsic from '../EasySetup/BatchExtrinsic'
 import FromCallData from '../EasySetup/FromCallData'
+
+const SEND_TOKEN_MENU = 'Send tokens'
+const FROM_CALL_DATA_MENU = 'From call data'
+const MANUEL_EXTRINSIC_MENU = 'Manual extrinsic'
 
 interface Props {
   onClose: () => void
@@ -69,6 +72,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [extrinsicToCall, setExtrinsicToCall] = useState<
     SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   >()
+  const [selectedEasyOption, setSelectedEasyOption] = useState(SEND_TOKEN_MENU)
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
       console.error('selected multisig is undefined')
@@ -157,26 +161,21 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
   const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => {
     return {
-      'Send tokens': (
+      [SEND_TOKEN_MENU]: (
         <BalancesTransfer
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
         />
       ),
-      'Manual extrinsic': (
+      [MANUEL_EXTRINSIC_MENU]: (
         <ManualExtrinsic
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+          onSelectFromCallData={() => setSelectedEasyOption(FROM_CALL_DATA_MENU)}
         />
       ),
-      'Batch extrinsic': (
-        <BatchExtrinsic
-          onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
-        />
-      ),
-      'From call data': (
+      [FROM_CALL_DATA_MENU]: (
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
@@ -185,7 +184,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     }
   }, [selectedOrigin])
 
-  const [selectedEasyOption, setSelectedEasyOption] = useState(Object.keys(easySetupOptions)[0])
   const signCallback = useSigningCallback({
     onSuccess,
     onSubmitting,
