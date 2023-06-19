@@ -78,7 +78,7 @@ const ProposalSigning = ({
 
   useEffect(() => {
     if (!!callInfo?.call && callInfo.call.hash.toHex() !== proposalData.hash) {
-      setErrorMessage("The callData provided doesn't match with the on-chain proposal")
+      setErrorMessage("The callData provided doesn't match with the on-chain transaction")
       return
     }
   }, [callInfo, proposalData])
@@ -131,8 +131,8 @@ const ProposalSigning = ({
         return
       }
 
-      // In case the proposal has been approved between the last couple block
-      // and the proposal in the indexer hasn't been updated we should query the latest state
+      // In case the tx has been approved between the last couple block
+      // and the tx in the indexer hasn't been updated we should query the latest state
       // right before sending the tx.
       const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
 
@@ -231,7 +231,7 @@ const ProposalSigning = ({
       onClose={onClose}
       className={className}
     >
-      <DialogTitle>Signing proposal</DialogTitle>
+      <DialogTitle>Transaction signing</DialogTitle>
       <DialogContent>
         <Grid container>
           <Grid

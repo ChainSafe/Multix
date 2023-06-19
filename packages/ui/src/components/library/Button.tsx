@@ -29,11 +29,11 @@ export const Button = styled('button')<ButtonProps>`
   ${(props) =>
     props.variant === 'primary' &&
     `
-    background: #3e67f8;
+    background: ${props.theme.palette.primary.main};
     color: ${props.theme.palette.primary.white};
     
     &:hover, &:focus {
-      background: #1244F5;
+      filter: brightness(1.1);
     }
   
     &:disabled {
