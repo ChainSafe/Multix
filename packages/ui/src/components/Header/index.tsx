@@ -11,6 +11,7 @@ import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../NetworkSelection'
 import { RouterLink } from '../library'
+import { multixlogo } from '../../logos/multixLogo'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -26,12 +27,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
   return (
     <MuiAppBarStyled position="sticky">
       <Toolbar>
-        <TypographyStyled
-          variant="h6"
-          noWrap
-        >
-          Multix
-        </TypographyStyled>
+        <LogoWrapperStyled>
+          <LogoStyled
+            alt={`multix logo`}
+            src={multixlogo}
+          />
+        </LogoWrapperStyled>
         <BoxStyled>
           {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
             (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
@@ -101,12 +102,17 @@ const BoxStyled = styled(Box)(
 `
 )
 
+const LogoWrapperStyled = styled(Box)`
+  display: flex;
+  flex: 1;
+`
+
 const NetworkSelectionStyled = styled(NetworkSelection)`
   margin-left: 0.5rem;
 `
 
-const TypographyStyled = styled(Typography)`
-  flex-grow: 1;
+const LogoStyled = styled('img')`
+  height: 3rem;
 `
 
 const IconButtonStyled = styled(IconButton)(
