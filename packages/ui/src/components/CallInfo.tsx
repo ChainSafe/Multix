@@ -18,6 +18,7 @@ interface Props {
   children?: ReactNode
   className?: string
   withLink?: boolean
+  withProxyFiltered?: boolean
 }
 
 interface CreateTreeParams {
@@ -103,9 +104,10 @@ const CallInfo = ({
   expanded = false,
   children,
   className,
-  withLink = false
+  withLink = false,
+  withProxyFiltered = true
 }: Props) => {
-  const { args, name } = filterProxyProxy(aggregatedData)
+  const { args, name } = withProxyFiltered ? filterProxyProxy(aggregatedData) : aggregatedData
   const { chainInfo } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])

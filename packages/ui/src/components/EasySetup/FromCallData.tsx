@@ -70,6 +70,7 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
             name: getExtrinsicName(callInfo.section, callInfo.method)
           }}
           expanded
+          withProxyFiltered={false}
         />
       )}
     </Box>
