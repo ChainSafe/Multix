@@ -30,5 +30,5 @@
     "**/codegen.ts",
     "graphql.config.js"
   ],
-  "exclude": ["src/interfaces/**/*"]
+  "exclude": ["src/interfaces/**/*", "/src/interfaces/types-lookup.ts"]
 }

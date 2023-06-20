@@ -131,6 +131,13 @@ const ProposalSigning = ({
         return
       }
 
+      if (!proposalData.callData || addedCallData) {
+        const error = 'No callData found or supplied'
+        console.error(error)
+        setErrorMessage(error)
+        return
+      }
+
       // In case the tx has been approved between the last couple block
       // and the tx in the indexer hasn't been updated we should query the latest state
       // right before sending the tx.
@@ -180,7 +187,7 @@ const ProposalSigning = ({
           otherSigners,
           proposalData.info.when,
           proposalData.hash,
-          0
+          { refTime: 0, proofSize: 0 }
         )
       } else {
         console.error("We don't have the required data to submit the call")

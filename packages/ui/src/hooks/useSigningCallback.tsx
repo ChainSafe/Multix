@@ -2,6 +2,8 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useApi } from '../contexts/ApiContext'
 import { useGetSubscanLinks } from './useSubscanLink'
 import { useToasts } from '../contexts/ToastContext'
+import { getIncompleteMessage } from '../utils/extinsicErrorChecks'
+import { EventRecord } from '@polkadot/types/interfaces'
 
 interface Args {
   onSubmitting?: () => void
@@ -39,46 +41,19 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         const { data, method, section } = event
         console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
 
+        const incomplete = getIncompleteMessage({ event } as EventRecord)
+
+        console.log('incomplete', `${section}.${method}`, incomplete)
+
         // check if multisig or proxy or batch has an error
-        if (
-          api.events.multisig.MultisigExecuted.is(event) ||
-          api.events.proxy.ProxyExecuted.is(event)
-        ) {
-          // extract the data for this event
-          const dataJSON = data.toJSON() as { [index: string]: any }[]
-
-          Array.isArray(dataJSON) &&
-            dataJSON.some((dispatchError) => {
-              let mod: any
-              if (dispatchError?.err?.module) {
-                mod = dispatchError.err.module as { [index: string]: any }
-              }
-
-              if (mod?.error && mod?.index) {
-                const error = api.registry.findMetaError(
-                  new Uint8Array([Number(mod.index), Number(mod.error.slice(0, 4))])
-                )
-
-                errorInfo = Array.isArray(error.docs) ? error.docs.join('') : error.docs || ''
-                // stop looping we found an error
-                return true
-              }
-              return false
-            })
+        if (incomplete) {
+          errorInfo = incomplete
         }
 
         // if the extrinsic fails alltogether
-        if (
-          !errorInfo &&
-          (api.events.system.ExtrinsicFailed.is(event) ||
-            api.events.utility.BatchInterrupted.is(event))
-        ) {
+        if (!errorInfo && api.events.system.ExtrinsicFailed.is(event)) {
           // extract the data for this event
-          const dispatchError = api.events.system.ExtrinsicFailed.is(event)
-            ? // it's a normal extrinsic
-              data[0]
-            : // it's a batch utility.BatchInterrupted data: [0,{"module":{"index":4,"error":"0x02000000"}}]
-              data[1]
+          const dispatchError = data[0]
 
           // decode the error
           if ((dispatchError as any).isModule) {
