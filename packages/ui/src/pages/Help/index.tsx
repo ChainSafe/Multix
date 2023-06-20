@@ -17,8 +17,8 @@ const getMultisigInfo = (multisig: MultiProxy['multisigs'][0]) => {
   return (
     <div>
       This account is a multisig comprised of {signatoryLegnth} signatories. Its threshold is{' '}
-      {multisig.threshold} out of {signatoryLegnth}. It means that for every multisig proposal, at
-      least {multisig?.threshold} signatories need to approve it before it can be executed.
+      {multisig.threshold} out of {signatoryLegnth}. It means that for every multisig transaction,
+      at least {multisig?.threshold} signatories need to approve it before it can be executed.
       {signatoryLegnth === multisig.threshold && (
         <Alert
           className="errorBox"

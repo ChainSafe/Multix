@@ -216,7 +216,7 @@ const TransactionList = ({ className }: Props) => {
                 const possibleSigners = getIntersection(neededSigners, ownAddressList)
                 const isProposer = !!info?.depositor && ownAddressList.includes(info.depositor)
 
-                // if we have the proposer in the extension it can always reject the proposal
+                // if we have the proposer in the extension it can always reject the transaction
                 if (isProposer) {
                   possibleSigners.push(info.depositor)
                 }
