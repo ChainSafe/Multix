@@ -111,7 +111,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         tx = extrinsicToCall
       }
 
-      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, 0)
+      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, {
+        refTime: 0,
+        proofSize: 0
+      })
     } catch (e) {
       console.error('Error in multisigTx')
       console.error(e)

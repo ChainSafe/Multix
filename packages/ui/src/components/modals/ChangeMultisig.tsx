@@ -75,7 +75,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!selectedAccount) {
+    if (!selectedAccount || !selectedMultiProxy?.proxy) {
       // console.error('no selected address')
       return
     }
@@ -104,13 +104,17 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     try {
       newMultiAddress = encodeAddress(multisigPubKey, chainInfo.ss58Format)
     } catch (e) {
-      console.error(`Error encoding the address ${multisigPubKey}, skipping`, e)
+      console.error(`Error encoding the address ${multisigPubKey}`, e)
+      return
     }
 
     const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
-    return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, 0)
+    return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, {
+      refTime: 0,
+      proofSize: 0
+    })
   }, [
     api,
     chainInfo,
@@ -129,7 +133,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!selectedAccount) {
+    if (!selectedAccount || !selectedMultisig?.address || !selectedMultiProxy?.proxy) {
       // console.error('no selected address')
       return
     }
@@ -154,7 +158,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     )
     const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, removeProxyTx)
-    return api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, 0)
+    return api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, {
+      refTime: 0,
+      proofSize: 0
+    })
   }, [
     api,
     chainInfo,
