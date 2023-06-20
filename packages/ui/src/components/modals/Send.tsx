@@ -62,6 +62,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
+  const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const threshold = useMemo(() => {
@@ -103,7 +104,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
     try {
       // the proxy is selected
-      if (selectedOrigin.meta?.isProxy) {
+      if (isProxySelected) {
         tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
         // a multisig is selected
       } else {
@@ -119,6 +120,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     api,
     extrinsicToCall,
     isApiReady,
+    isProxySelected,
     selectedAccount,
     selectedMultisig,
     selectedOrigin,
@@ -179,10 +181,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+          isProxySelected={!!isProxySelected}
         />
       )
     }
-  }, [selectedOrigin])
+  }, [selectedOrigin, isProxySelected])
 
   const signCallback = useSigningCallback({
     onSuccess,
@@ -294,7 +297,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
               value={selectedOrigin}
             />
           </Grid>
-          {selectedOrigin.meta?.isProxy && multisigList.length > 1 && (
+          {isProxySelected && multisigList.length > 1 && (
             <>
               <Grid
                 item

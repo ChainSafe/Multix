@@ -2,7 +2,7 @@ import { Alert, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { TextFieldStyled } from '../library'
 import CallInfo from '../CallInfo'
@@ -10,18 +10,54 @@ import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { HexString } from '../../types'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { usePjsLinks } from '../../hooks/usePjsLinks'
+import { u8aToHex } from '@polkadot/util'
 
 interface Props {
   className?: string
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  isProxySelected: boolean
 }
 
-const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) => {
+const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMessage }: Props) => {
   const { api, isApiReady } = useApi()
-  const [callData, setCallData] = useState<HexString | undefined>(undefined)
+  const [pastedCallData, setPastedCallData] = useState<HexString | undefined>(undefined)
   const [callDataError, setCallDataError] = useState('')
-  const { callInfo } = useCallInfoFromCallData(callData)
+  const [isProxyProxyRemoved, setIsProxyProxyRemoved] = useState(false)
+
+  const removeProxyProxyCall = useCallback(
+    (call: HexString) => {
+      setIsProxyProxyRemoved(false)
+      if (!api || !isApiReady) return call
+
+      if (!isProxySelected) return call
+
+      const proxyProxyString = u8aToHex(api?.tx.proxy?.proxy.callIndex).toString()
+
+      // check if this call is a proxy.proxy
+      if (!call.startsWith(proxyProxyString)) {
+        return call
+      }
+
+      // a proxy.proxy call is encoded with e.g
+      // callIndex 1e00
+      // real 00 eb53ed54b7f921a438923e6eb52c4d89afc5c0fed5d0d15fb78648c53da227a0
+      // forceProxyType 00
+      setIsProxyProxyRemoved(true)
+      return `0x${call.substring(74)}` as HexString
+    },
+    [api, isApiReady, isProxySelected]
+  )
+
+  // users may erroneously paste callData from the multisig calldata
+  // this may start by proxy.proxy although this will be
+  // added by Multix too. For this reason we strip it.
+  const callDataToUse = useMemo(
+    () => pastedCallData && removeProxyProxyCall(pastedCallData),
+    [pastedCallData, removeProxyProxyCall]
+  )
+  const { callInfo } = useCallInfoFromCallData(callDataToUse)
+  const { callInfo: pastedCallInfo } = useCallInfoFromCallData(pastedCallData)
   const { extrinsicUrl } = usePjsLinks()
 
   useEffect(() => {
@@ -29,16 +65,19 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
       return
     }
 
-    if (!callData || !callInfo?.call) {
+    if (!pastedCallData || !callInfo?.call) {
       return
     }
 
     onSetExtrinsic(api.tx(callInfo.call))
-  }, [api, callData, callInfo, isApiReady, onSetExtrinsic])
+  }, [api, pastedCallData, callInfo, isApiReady, onSetExtrinsic])
 
   const onCallDataChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCallDataError('')
-    setCallData(event.target.value.trim() as HexString)
+
+    const pastedCallData = event.target.value.trim() as HexString
+
+    setPastedCallData(pastedCallData)
   }, [])
 
   return (
@@ -54,22 +93,28 @@ const FromCallData = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) =
         </a>
         .<br /> Multix will take care of wrapping it in a multisig/proxy call
       </AlertStyled>
+      {isProxyProxyRemoved && (
+        <AlertStyled severity="warning">
+          Multix will override the proxy.proxy call with the proxy you have selected
+        </AlertStyled>
+      )}
       <TextFieldStyled
         label={`Call data`}
         onChange={onCallDataChange}
-        value={callData}
+        value={pastedCallData}
         helperText={callDataError}
         error={!!callDataError}
         fullWidth
       />
-      {!!callData && !!callInfo && !callDataError && (
+      {!!pastedCallData && !!pastedCallInfo && !callDataError && (
         <CallInfo
           aggregatedData={{
-            args: getDisplayArgs(callInfo.call),
-            callData,
-            name: getExtrinsicName(callInfo.section, callInfo.method)
+            args: getDisplayArgs(pastedCallInfo.call),
+            callData: pastedCallData,
+            name: getExtrinsicName(pastedCallInfo.section, pastedCallInfo.method)
           }}
           expanded
+          withProxyFiltered={false}
         />
       )}
     </Box>

@@ -137,7 +137,7 @@ export default styled(MultiProxySelection)(
   }
 
   .MuiInputBase-root {
-    background-color: ${theme.palette.primary.white};;
+    background-color: ${theme.palette.primary.white};
   }
 `
 )
