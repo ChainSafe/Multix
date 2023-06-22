@@ -32,6 +32,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
 
 export default styled(NewMulisigAlert)`
   width: 100%;
+  margin-top: 1rem;
 
   .infoText {
     flex: 1;
@@ -41,5 +42,9 @@ export default styled(NewMulisigAlert)`
     display: flex;
     align-items: center;
     width: 100%;
+  }
+
+  .MuiAlert-icon {
+    align-items: center;
   }
 `

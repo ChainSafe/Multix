@@ -163,19 +163,19 @@ const Home = ({ className }: Props) => {
     )
   }
 
-  if (isExtensionError)
+  if (isExtensionError && !watchedAddresses)
     return (
       <CenterStyled>
-        <h1>
+        <h3>
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Link
             href="https://wiki.polkadot.network/docs/wallets"
-            target={'_blank'}
+            target="_blank"
             rel="noreferrer"
           >
             wiki.polkadot.network
           </Link>
-        </h1>
+        </h3>
       </CenterStyled>
     )
 
@@ -223,7 +223,7 @@ const Home = ({ className }: Props) => {
             <SuccessCreation />
           ) : (
             <WrapperConnectButtonStyled>
-              No multisig found for your accounts.{' '}
+              No multisig found for your accounts or watched accounts.{' '}
               {isAllowedToConnectToExtension ? (
                 <Button onClick={() => navigate('/create')}>Create one</Button>
               ) : (

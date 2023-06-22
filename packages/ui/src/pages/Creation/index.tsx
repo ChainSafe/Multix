@@ -1,5 +1,5 @@
-import { Alert, Box, Grid, Step, StepLabel, Stepper } from '@mui/material'
-import { Button } from '../../components/library'
+import { Alert, Box, CircularProgress, Grid, Step, StepLabel, Stepper } from '@mui/material'
+import { Button, ButtonWithIcon } from '../../components/library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
@@ -38,6 +38,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { addToast } = useToasts()
   const [name, setName] = useState('')
   const { addName } = useAccountNames()
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const ownAccountPartOfSignatories = useMemo(
     () => signatories.some((sig) => ownAddressList.includes(sig)),
     [ownAddressList, signatories]
@@ -164,10 +165,13 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     multiAddress && addName(name, multiAddress)
+    setIsSubmitted(true)
 
     batchCall
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
       .catch((error: Error) => {
+        setIsSubmitted(false)
+
         addToast({
           title: error.message,
           type: 'error',
@@ -317,18 +321,40 @@ const MultisigCreation = ({ className }: Props) => {
           >
             Back
           </Button>
-          <Button
-            variant="primary"
-            disabled={!canGoNext}
-            onClick={goNext}
-          >
-            {isLastStep ? 'Create' : 'Next'}
-          </Button>
+          {!isSubmitted && (
+            <Button
+              variant="primary"
+              disabled={!canGoNext}
+              onClick={goNext}
+            >
+              {isLastStep ? 'Create' : 'Next'}
+            </Button>
+          )}
+          {isSubmitted && (
+            <ButtonWithIcon
+              variant="primary"
+              aria-label="send"
+              disabled={true}
+            >
+              <LoaderStyled />
+              Creating...
+            </ButtonWithIcon>
+          )}
         </div>
       </Grid>
     </Grid>
   )
 }
+
+const LoaderStyled = styled(CircularProgress)`
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  margin-right: 4px;
+
+  & > svg {
+    margin: 0;
+  }
+`
 
 export default styled(MultisigCreation)(
   ({ theme }) => `
@@ -356,6 +382,7 @@ export default styled(MultisigCreation)(
   }
 
   .buttonWrapper {
+    display: flex;
     margin-top: 1rem;
     align-self: center;
   }
