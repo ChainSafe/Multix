@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, Chip, CircularProgress, Grid, Paper } from '@mui/material'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import TransactionList from '../components/Transactions/TransactionList'
@@ -80,11 +80,7 @@ const Home = ({ className }: Props) => {
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
   const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
-  const creationInProgress = useMemo(
-    () => searchParams.get('creationInProgress') === 'true',
-    [searchParams]
-  )
-  const [isNewMultisigAlertOpen, setIsNewMultisigAlertOpen] = useState(true)
+  const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
     isAllowedToConnectToExtension,
     isExtensionError,
@@ -103,9 +99,18 @@ const Home = ({ className }: Props) => {
   }, [refresh])
 
   const onClosenewMultisigAlert = useCallback(() => {
-    setIsNewMultisigAlertOpen(false)
+    setShowNewMultisigAlert(false)
     setSearchParams({ creationInProgress: 'false' })
   }, [setSearchParams])
+
+  useEffect(() => {
+    if (searchParams.get('creationInProgress') === 'true') {
+      setShowNewMultisigAlert(true)
+      setTimeout(() => {
+        onClosenewMultisigAlert()
+      }, 20000)
+    }
+  }, [])
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
@@ -163,19 +168,19 @@ const Home = ({ className }: Props) => {
     )
   }
 
-  if (isExtensionError)
+  if (isExtensionError && !watchedAddresses)
     return (
       <CenterStyled>
-        <h1>
+        <h3>
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Link
             href="https://wiki.polkadot.network/docs/wallets"
-            target={'_blank'}
+            target="_blank"
             rel="noreferrer"
           >
             wiki.polkadot.network
           </Link>
-        </h1>
+        </h3>
       </CenterStyled>
     )
 
@@ -219,11 +224,11 @@ const Home = ({ className }: Props) => {
         spacing={2}
       >
         <Box className="loader">
-          {creationInProgress ? (
+          {showNewMultisigAlert ? (
             <SuccessCreation />
           ) : (
             <WrapperConnectButtonStyled>
-              No multisig found for your accounts.{' '}
+              No multisig found for your accounts or watched accounts.{' '}
               {isAllowedToConnectToExtension ? (
                 <Button onClick={() => navigate('/create')}>Create one</Button>
               ) : (
@@ -244,7 +249,7 @@ const Home = ({ className }: Props) => {
       container
       spacing={2}
     >
-      {creationInProgress && multiProxyList.length > 0 && isNewMultisigAlertOpen && (
+      {showNewMultisigAlert && multiProxyList.length > 0 && showNewMultisigAlert && (
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
       <Grid
