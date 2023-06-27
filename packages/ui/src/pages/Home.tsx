@@ -409,7 +409,7 @@ export default styled(Home)(
   }
 
   .threshold {
-    background-color: ${theme.custom.background.backgroundColorLightGray};
+    background-color: ${theme.custom.background.primary};
   }
 
   .addressList {

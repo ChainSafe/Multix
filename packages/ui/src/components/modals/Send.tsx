@@ -443,7 +443,7 @@ export default styled(Send)(
 
   .errorMessage {
     margin-top: 0.5rem;
-    color: ${theme.custom.text.errorColor};
+    color: ${theme.custom.error};
   }
 `
 )

@@ -13,12 +13,36 @@ declare module '@mui/material/styles' {
       }
     }
     custom: {
+      boxShadow: string
+      error: string
       text: {
+        primary: string
+        secondary: string
+        placeholder: string
         addressColorLightGray: string
-        errorColor: string
+        borderColor: string
+        black: string
+      }
+      gray: {
+        100: string
+        200: string
+        300: string
+        400: string
+        500: string
+        600: string
+        700: string
+        800: string
+        900: string
+      }
+      button: {
+        primaryDisabledColor: string
+        primaryDisabledBackground: string
+        secondaryDisabledColor: string
+        secondaryDisabledBackground: string
       }
       background: {
-        backgroundColorLightGray: string
+        primary: string
+        secondary: string
       }
       identity: {
         green: string
@@ -29,14 +53,38 @@ declare module '@mui/material/styles' {
   }
   interface ThemeOptions {
     custom: {
-      text?: {
+      boxShadow: string
+      error: string
+      text: {
+        primary: string
+        secondary: string
+        placeholder: string
         addressColorLightGray: string
-        errorColor: string
+        borderColor: string
+        black: string
       }
-      background?: {
-        backgroundColorLightGray: string
+      gray: {
+        100: string
+        200: string
+        300: string
+        400: string
+        500: string
+        600: string
+        700: string
+        800: string
+        900: string
       }
-      identity?: {
+      button: {
+        primaryDisabledColor: string
+        primaryDisabledBackground: string
+        secondaryDisabledColor: string
+        secondaryDisabledBackground: string
+      }
+      background: {
+        primary: string
+        secondary: string
+      }
+      identity: {
         green: string
         grey: string
         red: string
@@ -60,12 +108,37 @@ export const theme = createTheme({
     fontFamily: ['Jost', 'sans-serif', 'Roboto'].join(',')
   },
   custom: {
+    boxShadow:
+      '0 1.21622px 2.43243px rgba(0, 0, 0, 0.1), 0 1.21622px 3.64865px rgba(0, 0, 0, 0.25)',
+    error: '#ff8a65',
     text: {
+      primary: '#334155',
+      secondary: '#64748B',
+      placeholder: '#83878B',
       addressColorLightGray: '#777575',
-      errorColor: '#ff8a65'
+      borderColor: '#E0E2E8',
+      black: '#18191A'
+    },
+    gray: {
+      100: '#FFFFFF',
+      200: '#FAFCFD',
+      300: '#F1F5F9',
+      400: '#E6ECF1',
+      500: '#C6CDE0',
+      600: '#94A3B8',
+      700: '#64748B',
+      800: '#485568',
+      900: '#020617'
+    },
+    button: {
+      primaryDisabledColor: '#A8B3DC',
+      primaryDisabledBackground: '#E3E9FF',
+      secondaryDisabledColor: '#D7D7D7',
+      secondaryDisabledBackground: '#F1F5F9'
     },
     background: {
-      backgroundColorLightGray: '#ebebeb'
+      primary: '#F1F5F9',
+      secondary: '#F8FAFC'
     },
     identity: {
       green: 'green',
