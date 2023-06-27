@@ -14,23 +14,23 @@ export const Button = styled('button')<ButtonProps>`
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  background: ${(props) => props.theme.palette.primary.white};
-  color: #334155;
-  box-shadow: 0 1.21622px 2.43243px rgba(0, 0, 0, 0.1), 0 1.21622px 3.64865px rgba(0, 0, 0, 0.25);
+  background: ${({ theme }) => theme.palette.primary.white};
+  color: ${({ theme }) => theme.custom.text.primary};
+  box-shadow: ${({ theme }) => theme.custom.boxShadow};
   transition: background 0.2s ease-in-out;
 
   &:disabled {
     cursor: not-allowed;
-    color: #d7d7d7;
+    color: ${({ theme }) => theme.custom.button.secondaryDisabledColor};
     background: #f4f4f4;
     box-shadow: none;
   }
 
-  ${(props) =>
-    props.variant === 'primary' &&
+  ${({ variant, theme }) =>
+    variant === 'primary' &&
     `
-    background: ${props.theme.palette.primary.main};
-    color: ${props.theme.palette.primary.white};
+    background: ${theme.palette.primary.main};
+    color: ${theme.palette.primary.white};
     
     &:hover, &:focus {
       filter: brightness(1.1);
@@ -38,17 +38,17 @@ export const Button = styled('button')<ButtonProps>`
   
     &:disabled {
       cursor: not-allowed;
-      background: #e3e9ff;
-      color: #a8b3dc;
+      background: ${theme.custom.button.primaryDisabledBackground};
+      color: ${theme.custom.button.primaryDisabledColor};
       box-shadow: none;
     }
   `}
 
-  ${(props) =>
-    props.variant === 'secondary' &&
+  ${({ variant, theme }) =>
+    variant === 'secondary' &&
     `
-    background: ${props.theme.palette.primary.white};
-    color: #18191A;
+    background: ${theme.custom.gray[100]};
+    color: ${theme.custom.text.black};
   
     &:focus,
     &:hover {
@@ -58,25 +58,25 @@ export const Button = styled('button')<ButtonProps>`
     &:disabled {
       cursor: not-allowed;
       background: #F4F4F4;
-      color: #D7D7D7;
+      color: ${theme.custom.button.secondaryDisabledColor};
       box-shadow: none;
     }
   `}
 
-  ${(props) =>
-    props.variant === 'link' &&
+  ${({ variant, theme }) =>
+    variant === 'link' &&
     `
     background: none;
     box-shadow: none;
-    color: #18191A;
+    color: ${theme.custom.text.black};
     
     &:focus {
-      background: #E6ECF1;
+      background: ${theme.custom.gray[400]};
     }
     
     &:disabled {
       cursor: not-allowed;
-      color: #A8B3DC
+      color: ${theme.custom.button.primaryDisabledColor};
     }
   `}
 `

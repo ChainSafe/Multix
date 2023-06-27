@@ -378,7 +378,7 @@ export default styled(MultisigCreation)(
 
   .errorMessage {
     margin-top: 0.5rem;
-    color: ${theme.custom.text.errorColor};
+    color: ${theme.custom.error};
   }
 
   .buttonWrapper {

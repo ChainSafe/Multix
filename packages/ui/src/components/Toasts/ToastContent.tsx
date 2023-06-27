@@ -72,7 +72,7 @@ export default styled(ToastContent)(
     }
 
     .errorIcon {
-        color: ${theme.custom.text.errorColor}
+        color: ${theme.custom.error}
     }
 `
 )

@@ -252,7 +252,7 @@ export default styled(TransactionList)(
   }
 
   .noCall {
-    background-color: ${theme.custom.background.backgroundColorLightGray};
+    background-color: ${theme.custom.background.primary};
     display: flex;
     flex-direction: column;
     align-content: center;

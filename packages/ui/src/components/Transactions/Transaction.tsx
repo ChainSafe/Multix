@@ -130,7 +130,7 @@ export default styled(Transaction)(
 
   .callIcon {
     font-size: 7rem;
-    background-color: ${theme.custom.background.backgroundColorLightGray};
+    background-color: ${theme.custom.background.primary};
     margin: 0.5rem;
     padding: 1rem;
     height: auto;
@@ -144,6 +144,7 @@ export default styled(Transaction)(
   }
 
   .badge.red > .MuiBadge-badge {
+    box-shadow: ${theme.custom.boxShadow};
     background-color: ${theme.custom.identity.red};
   }
 `
