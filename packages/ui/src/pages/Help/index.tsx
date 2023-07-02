@@ -77,13 +77,13 @@ const Help = ({ className }: Props) => {
           </Box>
           <Box className="sectionWrapper">
             <h1>{renderMultisigHeading(hasSeveralMultisigs)}</h1>
-            {selectedMultiProxy?.multisigs.map((multisig) => (
+            {selectedMultiProxy?.multisigs.map((multisig, index) => (
               <Box
                 className="multisigWithProxy"
                 key={multisig.address}
               >
                 <MultisigCompactDisplay
-                  address={selectedMultiProxy?.multisigs[0].address || ''}
+                  address={selectedMultiProxy?.multisigs[index].address || ''}
                   expanded={false}
                 />
                 {getMultisigInfo(multisig)}
