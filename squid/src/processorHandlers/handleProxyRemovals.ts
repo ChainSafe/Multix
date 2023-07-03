@@ -1,6 +1,6 @@
 import { In } from 'typeorm'
 import { ProxyAccount } from '../model'
-import { Ctx } from '../processor'
+import { Ctx } from '../main'
 
 export const handleProxyRemovals = async (ctx: Ctx, proxyRemovals: string[]) => {
   const toRemove = await ctx.store.findBy(ProxyAccount, {

@@ -1,0 +1,20 @@
+manifestVersion: subsquid.io/v0.1
+name: multix-test
+version: 1
+description: |-
+  Test squid for Multix
+
+build:
+
+deploy:
+  addons:
+    postgres:
+  processor:
+    env:
+      BLOCK_START: 3510000
+      PREFIX: 42
+      RPC_WS: 'wss://rococo-rpc.polkadot.io'
+      ARCHIVE_NAME: 'rococo'
+    cmd: ['node', '-r', 'dotenv/config', 'lib/main']
+  api:
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']

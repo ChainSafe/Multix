@@ -1,6 +1,6 @@
 import { In } from 'typeorm'
 import { Account } from '../model'
-import { Ctx } from '../processor'
+import { Ctx } from '../main'
 // import { JsonLog } from "./JsonLog"
 
 export async function getOrCreateAccounts(ctx: Ctx, ids: string[]): Promise<Account[]> {

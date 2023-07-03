@@ -1,5 +1,5 @@
 import { Account, ProxyAccount, ProxyType } from '../model'
-import { Ctx } from '../processor'
+import { Ctx } from '../main'
 import { getOrCreateAccounts } from '../util'
 import { getProxyAccountId } from '../util/getProxyAccountId'
 

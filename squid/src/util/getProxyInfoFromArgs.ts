@@ -2,7 +2,7 @@ import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSele
 import { encodeAddress } from '@polkadot/util-crypto'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { getProxyAccountId } from './getProxyAccountId'
-import { dataEvent, env } from '../processor'
+import { dataEvent, env } from '../main'
 
 export const getProxyInfoFromArgs = (
   item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>

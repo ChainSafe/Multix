@@ -1,5 +1,5 @@
 import { Account, AccountMultisig } from '../model'
-import { Ctx } from '../processor'
+import { Ctx } from '../main'
 import { getOrCreateAccounts, getAccountMultisigId } from '../util'
 
 export interface NewMultisigsInfo extends Account {

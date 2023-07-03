@@ -11,7 +11,7 @@
     "db:generate-migration": "npx squid-typeorm-migration generate",
     "codegen": "npx squid-typeorm-codegen",
     "typegen": "npx squid-substrate-typegen typegen.json",
-    "start:indexer": "node -r dotenv/config lib/processor.js",
+    "start:indexer": "node -r dotenv/config lib/main.js",
     "start:graphql-server": "npx squid-graphql-server --subscriptions --sql-statement-timeout 3000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,ts,tsx}' --fix"
@@ -38,5 +38,8 @@
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0"
+  },
+  "overrides": {
+    "graphql": "^16.0.0"
   }
 }

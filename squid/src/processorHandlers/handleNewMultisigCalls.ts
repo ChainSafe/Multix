@@ -1,6 +1,6 @@
 import { In } from 'typeorm'
 import { Account, MultisigCall } from '../model'
-import { Ctx } from '../processor'
+import { Ctx } from '../main'
 
 export interface MultisigCallInfo extends Omit<MultisigCall, 'multisig'> {
   multisigAddress: string
