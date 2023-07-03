@@ -131,7 +131,7 @@ const ProposalSigning = ({
         return
       }
 
-      if (!proposalData.callData || addedCallData) {
+      if (!proposalData.callData && !addedCallData) {
         const error = 'No callData found or supplied'
         console.error(error)
         setErrorMessage(error)
