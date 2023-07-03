@@ -1,6 +1,6 @@
-import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { MultisigsByAccountsSubscription, ProxyType } from '../../types-and-hooks'
-import { AccountBaseInfo } from '../components/GenericAccountSelection'
+import { AccountBaseInfo } from '../components/selectors/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'

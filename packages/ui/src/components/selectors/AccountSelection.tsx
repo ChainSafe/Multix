@@ -9,13 +9,13 @@ import {
   useState
 } from 'react'
 import { styled } from '@mui/material/styles'
-import { useAccounts } from '../contexts/AccountsContext'
+import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { isValidAddress } from '../utils'
-import { useAccountNames } from '../contexts/AccountNamesContext'
-import MultixIdenticon from './MultixIdenticon'
-import { Button, InputField, TextFieldStyled } from './library'
+import { isValidAddress } from '../../utils'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import MultixIdenticon from '../MultixIdenticon'
+import { Button, InputField, TextFieldStyled } from '../library'
 
 interface Props {
   className?: string

@@ -2,10 +2,10 @@ import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 import { useCallback, useEffect, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { useAccounts } from '../contexts/AccountsContext'
+import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import AccountDisplay from './AccountDisplay'
-import MultixIdenticon from './MultixIdenticon'
+import AccountDisplay from '../AccountDisplay'
+import MultixIdenticon from '../MultixIdenticon'
 
 interface Props {
   className?: string

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { AccountBaseInfo } from '../components/GenericAccountSelection'
+import { AccountBaseInfo } from '../components/selectors/GenericAccountSelection'
 import { useAccounts } from '../contexts/AccountsContext'
 
 export const useAccountBaseFromAccountList = () => {

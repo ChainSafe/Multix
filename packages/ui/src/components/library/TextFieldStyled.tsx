@@ -10,7 +10,7 @@ export const TextFieldStyled = styled(TextField)`
     margin-bottom: 4px;
     font-size: 1.125rem;
     font-weight: 500;
-    color: ${({ theme }) => theme.custom.text.primary};;
+    color: ${({ theme }) => theme.custom.text.primary};
 
     &.Mui-focused {
       color: ${({ theme }) => theme.custom.text.primary};
@@ -39,7 +39,7 @@ export const TextFieldStyled = styled(TextField)`
     }
 
     &.Mui-focused {
-      outline: 3px solid ${({ theme }) => theme.custom.text.borderColor}};
+      outline: 3px solid ${({ theme }) => theme.custom.text.borderColor};
     }
 
     &.Mui-error {

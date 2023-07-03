@@ -2,11 +2,11 @@ import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { MultiProxy, useMultiProxy } from '../contexts/MultiProxyContext'
-import AccountDisplay from './AccountDisplay'
-import IdenticonBadge from './IdenticonBadge'
-import { useAccountNames } from '../contexts/AccountNamesContext'
-import { AccountBadge } from '../types'
+import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
+import AccountDisplay from '../AccountDisplay'
+import IdenticonBadge from '../IdenticonBadge'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import { AccountBadge } from '../../types'
 
 interface Props {
   className?: string

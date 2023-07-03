@@ -2,10 +2,10 @@ import { Autocomplete, Box, FilterOptionsState, InputAdornment, TextField } from
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import AccountDisplay from './AccountDisplay'
-import { useAccountNames } from '../contexts/AccountNamesContext'
-import IdenticonBadge from './IdenticonBadge'
-import { AccountBadge } from '../types'
+import AccountDisplay from '../AccountDisplay'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import IdenticonBadge from '../IdenticonBadge'
+import { AccountBadge } from '../../types'
 
 export interface AccountBaseInfo {
   address: string
