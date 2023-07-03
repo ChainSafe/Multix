@@ -23,7 +23,7 @@
     "@subsquid/ss58": "^0.1.4",
     "@subsquid/substrate-processor": "^2.4.1",
     "@subsquid/typeorm-migration": "^1.2.0",
-    "@subsquid/typeorm-store": "^1.2.1",
+    "@subsquid/typeorm-store": "^0.2.2",
     "dotenv": "^16.3.1",
     "pg": "8.11.1",
     "typeorm": "0.3.17",

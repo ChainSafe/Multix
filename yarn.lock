@@ -4858,15 +4858,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@subsquid/typeorm-store@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@subsquid/typeorm-store@npm:1.2.1"
+"@subsquid/typeorm-store@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@subsquid/typeorm-store@npm:0.2.2"
   dependencies:
-    "@subsquid/typeorm-config": ^3.2.0
-    "@subsquid/util-internal": ^2.3.1
+    "@subsquid/typeorm-config": ^2.0.2
+    "@subsquid/util-internal": ^1.1.0
   peerDependencies:
-    typeorm: ^0.3.16
-  checksum: 3ed773145b8e7ae3eb24303248c5b65aec3b25c66856bd70d13272eb17b09309c180eac02f782e50275fc4c32ae8e09b3f915d4b29ba16073ea6f4db4d6cbaad
+    typeorm: ^0.3.11
+  checksum: 67cba3acb6ca117e08f5df1c1eeaecb308912e337b0888c15e343ea2f84eab1db37c605bd69f9f4251c1d2b4cb5eff0be06f397fa266d145b4af0bffdfed8261
   languageName: node
   linkType: hard
 
@@ -5026,7 +5026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@subsquid/util-internal@npm:^2.3.0, @subsquid/util-internal@npm:^2.3.1":
+"@subsquid/util-internal@npm:^2.3.0":
   version: 2.3.1
   resolution: "@subsquid/util-internal@npm:2.3.1"
   checksum: fb92f945bb8e6b5e5e5ef629076e6495a0bfc2489a9b639e4f5cd5c549083b11f2bf47508d0711f37a677031b6eb0a3412a3702adf8cc3af8a3009858ee84ec8
@@ -9308,14 +9308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^15.8.0":
-  version: 15.8.0
-  resolution: "graphql@npm:15.8.0"
-  checksum: 30cc09b77170a9d1ed68e4c017ec8c5265f69501c96e4f34f8f6613f39a886c96dd9853eac925f212566ed651736334c8fe24ceae6c44e8d7625c95c3009a801
-  languageName: node
-  linkType: hard
-
-"graphql@npm:^16.7.1":
+"graphql@npm:^16.0.0":
   version: 16.7.1
   resolution: "graphql@npm:16.7.1"
   checksum: 0b4e83382bf3cb9c82ddf61a51aab382c4de50c34025173285c580135fe8646aa281c264fcf0c2214ae92ea925742d86999fe5e2ad842b6f3b54a9ffb0b299d2
@@ -10686,7 +10679,7 @@ __metadata:
     "@subsquid/substrate-typegen": 2.2.1
     "@subsquid/typeorm-codegen": 1.2.0
     "@subsquid/typeorm-migration": ^1.2.0
-    "@subsquid/typeorm-store": ^1.2.1
+    "@subsquid/typeorm-store": ^0.2.2
     "@types/node": 20.3.3
     "@typescript-eslint/eslint-plugin": ^5.60.1
     "@typescript-eslint/parser": ^5.60.1
