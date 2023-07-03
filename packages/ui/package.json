@@ -72,8 +72,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "@graphql-typed-document-node/core": "3.2.0"
   }
 }
