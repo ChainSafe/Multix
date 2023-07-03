@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
   MenuItem,
   Select,
   SelectChangeEvent
@@ -27,6 +28,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
+import { Close as CloseIcon } from '@mui/icons-material'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -276,10 +278,22 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       fullWidth
       maxWidth={'md'}
       open
-      onClose={onClose}
       className={className}
     >
-      <DialogTitle>Send tx</DialogTitle>
+      <DialogTitle>
+        Send tx
+        {onClose ? (
+          <IconButton
+            className="closeButton"
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={onClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
           <Grid
@@ -444,6 +458,12 @@ export default styled(Send)(
   .errorMessage {
     margin-top: 0.5rem;
     color: ${theme.custom.error};
+  }
+  
+  .closeButton {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
   }
 `
 )

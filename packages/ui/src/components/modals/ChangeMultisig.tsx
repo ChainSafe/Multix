@@ -1,4 +1,12 @@
-import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton
+} from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -22,6 +30,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
+import { Close as CloseIcon } from '@mui/icons-material'
 
 interface Props {
   onClose: () => void
@@ -342,10 +351,22 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       fullWidth
       maxWidth={'sm'}
       open
-      onClose={handleClose}
       className={className}
     >
-      <DialogTitle>Change multisig</DialogTitle>
+      <DialogTitle>
+        Change multisig
+        {onClose ? (
+          <IconButton
+            className="closeButton"
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={onClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
       <DialogContent
         className="generalContainer"
         ref={modalRef}
@@ -524,5 +545,11 @@ export default styled(ChangeMultisig)`
   .callErrorMessage {
     text-align: center;
     margin-top: 1rem;
+  }
+
+  .closeButton {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
   }
 `
