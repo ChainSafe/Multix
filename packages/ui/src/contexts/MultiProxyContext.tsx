@@ -46,6 +46,7 @@ const getSignatoriesFromAccount = (
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
+  console.log('selectedMultiProxy', selectedMultiProxy)
   const [multiProxyList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
@@ -71,8 +72,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
       const res: MultiProxy[] = []
 
-      // FIXME could be pp at this point
-      // iterate through the multisigs
+      // iterate through the multisigs and pure proxies
       data.accounts.forEach((account) => {
         // if the account is a pure proxy
         if (account.isPureProxy) {
@@ -80,6 +80,13 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
           account.delegatorFor.forEach(({ delegatee, type }) => {
             if (delegatee.isMultisig) {
               const previousMultisigsForProxy = pureProxyMap.get(account.id)?.multisigs || []
+
+              const isAlreadyInMultisigList = !!previousMultisigsForProxy.find(
+                ({ address }) => address === delegatee.id
+              )
+
+              // do not add a second time a multisig
+              if (isAlreadyInMultisigList) return
 
               const newMultisigForProxy = {
                 address: delegatee.id,
