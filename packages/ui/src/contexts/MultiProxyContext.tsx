@@ -82,7 +82,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
               const previousMultisigsForProxy = pureProxyMap.get(account.address)?.multisigs || []
 
               const isAlreadyInMultisigList = !!previousMultisigsForProxy.find(
-                ({ address }) => address === delegatee.id
+                ({ address }) => address === delegatee.address
               )
 
               // do not add a second time a multisig
