@@ -44,6 +44,12 @@ const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, classNam
 const TooltipIconStyled = styled('div')`
   display: inherit;
   line-height: 0;
+  padding-left: 1rem;
+
+  svg {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 `
 
 export default MultixIdenticon

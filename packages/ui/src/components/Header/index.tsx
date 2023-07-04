@@ -68,7 +68,9 @@ const Header = ({ handleDrawerOpen }: Props) => {
 const MuiAppBarStyled = styled(MuiAppBar)(
   ({ theme }) => `
   margin-bottom: 1rem;
-  background: ${theme.palette.primary.main}
+  height: 4.8125rem;
+  background: ${theme.palette.primary.main};
+  justify-content: center;
 `
 )
 

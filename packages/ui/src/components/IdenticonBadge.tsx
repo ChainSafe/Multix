@@ -25,16 +25,31 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
   }
 
   return (
-    <Badge
+    <BadgeStyled
       className={`${className} ${appliedClass}`}
+      badgeType={badge}
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
     >
       <AccountIcon />
-    </Badge>
+    </BadgeStyled>
   )
 }
+
+const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
+  .MuiBadge-badge {
+    background-color: ${({ theme, badgeType }) =>
+      `${
+        badgeType === AccountBadge.PURE
+          ? theme.custom.proxyBadge.pure
+          : theme.custom.proxyBadge.multi
+      } !important`};
+    transform: scale(1) translate(-28%, 0);
+    padding: 0.25rem 0.5rem;
+    border-radius: 2rem;
+  }
+`
 
 export default styled(IdenticonBadge)`
   .MuiBadge-badge {

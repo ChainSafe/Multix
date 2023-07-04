@@ -89,6 +89,13 @@ const SelectMuiStyled = styled(SelectMui)<SelectMuiProps & { minifiedVersion: bo
   .MuiList-root {
     margin-top: 0.5rem;
   }
+
+  svg {
+    color: ${({ theme }) => theme.custom.text.black};
+    width: 1.25rem;
+    height: 1.25rem;
+    top: calc(50% - 0.65em);
+  }
 `
 
 const MenuItemStyled = styled(MenuItem)`

@@ -1,5 +1,5 @@
-import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
-import React, { useCallback, useMemo, useRef } from 'react'
+import { Box, InputAdornment } from '@mui/material'
+import React, { useCallback, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -7,6 +7,7 @@ import AccountDisplay from '../AccountDisplay'
 import IdenticonBadge from '../IdenticonBadge'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { AccountBadge } from '../../types'
+import { Autocomplete } from '../library'
 
 interface Props {
   className?: string
@@ -26,7 +27,7 @@ const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy 
 
 const MultiProxySelection = ({ className }: Props) => {
   const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
-  const ref = useRef<HTMLInputElement>(null)
+
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
@@ -61,14 +62,31 @@ const MultiProxySelection = ({ className }: Props) => {
     [selectMultiProxy]
   )
 
-  const handleSpecialKeys = useCallback((e: any) => {
-    if (['Enter', 'Escape'].includes(e.key)) {
-      ref?.current?.blur()
-    }
-  }, [])
-
   if (multiProxyList.length === 0) {
     return null
+  }
+
+  const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: any) => {
+    const displayAddress = getDisplayAddress(option)
+
+    return (
+      <Box
+        component="li"
+        sx={{
+          mr: '.5rem',
+          pt: '.8rem !important',
+          pl: '2rem !important',
+          flexShrink: 0
+        }}
+        {...props}
+        key={displayAddress}
+      >
+        <AccountDisplay
+          address={displayAddress || ''}
+          badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
+        />
+      </Box>
+    )
   }
 
   return (
@@ -78,47 +96,17 @@ const MultiProxySelection = ({ className }: Props) => {
       disableClearable
       filterOptions={filterOptions}
       options={multiProxyList}
-      renderOption={(props, option) => {
-        const displayAddress = getDisplayAddress(option)
-
-        return (
-          <Box
-            component="li"
-            sx={{
-              mr: '.5rem',
-              pt: '.8rem !important',
-              pl: '2rem !important',
-              flexShrink: 0
-            }}
-            {...props}
-            key={displayAddress}
-          >
-            <AccountDisplay
-              address={displayAddress || ''}
-              badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
+      renderOption={renderOptions}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <IdenticonBadge
+              address={addressToShow}
+              badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
             />
-          </Box>
+          </InputAdornment>
         )
       }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          inputRef={ref}
-          label=""
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <IdenticonBadge
-                  address={addressToShow}
-                  badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
-                />
-              </InputAdornment>
-            )
-          }}
-          onKeyDown={handleSpecialKeys}
-        />
-      )}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={selectedMultiProxy || multiProxyList[0]}
@@ -133,11 +121,15 @@ export default styled(MultiProxySelection)(
   text-align: right;
 
   .MuiTextField-root {
-    max-width: 20rem;
+    max-width: 18.875rem;
   }
 
   .MuiInputBase-root {
     background-color: ${theme.palette.primary.white};
+  }
+  
+  .MuiAutocomplete-endAdornment {
+    right: 1rem !important;
   }
 `
 )
