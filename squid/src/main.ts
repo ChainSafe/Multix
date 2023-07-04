@@ -168,7 +168,8 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
   newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
   newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
-  newPureProxies.size && (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
+  newPureProxies.size &&
+    (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
   newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values()), chainId))
   proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
 })

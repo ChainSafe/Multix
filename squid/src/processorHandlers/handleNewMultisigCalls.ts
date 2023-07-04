@@ -7,7 +7,11 @@ export interface MultisigCallInfo extends Omit<MultisigCall, 'multisig'> {
   multisigAddress: string
 }
 
-export const handleNewMultisigCalls = async (ctx: Ctx, newMultisigCalls: MultisigCallInfo[], chainId: string) => {
+export const handleNewMultisigCalls = async (
+  ctx: Ctx,
+  newMultisigCalls: MultisigCallInfo[],
+  chainId: string
+) => {
   const multisigIds = newMultisigCalls.map((multi) => getAccountId(multi.multisigAddress, chainId))
   const multisigCalls: MultisigCall[] = []
 

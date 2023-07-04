@@ -13,7 +13,11 @@ export interface NewPureProxy {
   createdAt: Date
 }
 
-export const handleNewPureProxies = async (ctx: Ctx, newPureProxies: NewPureProxy[], chainId: string) => {
+export const handleNewPureProxies = async (
+  ctx: Ctx,
+  newPureProxies: NewPureProxy[],
+  chainId: string
+) => {
   const dedupPure = new Set<string>()
   const dedupWho = new Set<string>()
 

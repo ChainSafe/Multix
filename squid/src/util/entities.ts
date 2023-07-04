@@ -4,7 +4,11 @@ import { Ctx } from '../main'
 import { getAccountId } from './getAccountId'
 // import { JsonLog } from "./JsonLog"
 
-export async function getOrCreateAccounts(ctx: Ctx, addresses: string[], chainId: string): Promise<Account[]> {
+export async function getOrCreateAccounts(
+  ctx: Ctx,
+  addresses: string[],
+  chainId: string
+): Promise<Account[]> {
   const ids = addresses.map((address) => getAccountId(address, chainId))
   const dbAccounts = await ctx.store.findBy(Account, { id: In([...ids]) })
 

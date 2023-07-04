@@ -21,7 +21,11 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[], chainId
     allAccountsStringSet.add(delegator)
   })
 
-  const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()), chainId)
+  const accountsToUpdate = await getOrCreateAccounts(
+    ctx,
+    Array.from(allAccountsStringSet.values()),
+    chainId
+  )
 
   const accountMap = new Map<string, Account>()
   accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
