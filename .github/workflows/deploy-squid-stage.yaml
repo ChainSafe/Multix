@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      # - ci/* # run this workflow if the branch starts with ci/*
+      - ci/khala # run this workflow if the branch starts with ci/*
 
 env:
   # secrets are listed here to simplify the readability
@@ -70,7 +70,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        network: ['kusama', 'polkadot', 'rococo', 'phala', 'khala']
+        network: ['khala']
 
     permissions:
       contents: read
