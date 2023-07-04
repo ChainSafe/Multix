@@ -1,14 +1,14 @@
 name: Lint squid
 on:
   pull_request:
-    paths: ['packages/squid/**/*', '.github/workflows/lint-squid.yaml']
+    paths: ['squid/**/*', '.github/workflows/lint-squid.yaml']
 jobs:
   extract:
     name: eslint
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/squid/
+        working-directory: ./squid/
     steps:
       - uses: actions/checkout@v3
 
@@ -23,7 +23,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: install packages
-        run: corepack enable && yarn install --immutable
+        run: npm install
 
       - name: lint
-        run: yarn squid:lint
+        run: npm run lint
