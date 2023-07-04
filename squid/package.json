@@ -6,7 +6,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "rm -rf lib && yarn tsc",
+    "build": "rm -rf lib && tsc",
     "db:migrate": "npx squid-typeorm-migration apply",
     "db:generate-migration": "npx squid-typeorm-migration generate",
     "codegen": "npx squid-typeorm-codegen",

@@ -6,15 +6,17 @@ export interface NewMultisigsInfo extends Account {
   newSignatories: string[]
 }
 
-export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]) => {
+export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[], chainId: string) => {
   const newMultisigs: Map<string, Account> = new Map()
   const newAccountMultisigs: Map<string, AccountMultisig> = new Map()
 
-  for (const { newSignatories, threshold, id, isMultisig, isPureProxy } of multisigs) {
-    const accounts = await getOrCreateAccounts(ctx, newSignatories)
+  for (const { address, newSignatories, threshold, id, isMultisig, isPureProxy } of multisigs) {
+  
+    const signatoriesAccounts = await getOrCreateAccounts(ctx, newSignatories, chainId)
 
     const newMultisig = new Account({
       id,
+      address,
       threshold,
       isMultisig,
       isPureProxy
@@ -22,7 +24,7 @@ export const handleNewMultisigs = async (ctx: Ctx, multisigs: NewMultisigsInfo[]
 
     newMultisigs.set(id, newMultisig)
 
-    accounts.forEach((account) => {
+    signatoriesAccounts.forEach((account) => {
       const newAccountMultisigId = getAccountMultisigId(newMultisig.id, account.id)
 
       const newAccountMultisig = new AccountMultisig({

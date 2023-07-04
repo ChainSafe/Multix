@@ -26,6 +26,7 @@ import {
   NewPureProxy
 } from './processorHandlers'
 import { Env } from './util/Env'
+import { getAccountId } from './util/getAccountId'
 
 export const dataEvent = {
   data: {
@@ -56,6 +57,7 @@ const archiveUrl =
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
     release: 'FireSquid'
   })
+const chainId = env.chainId
 
 const processor = new SubstrateBatchProcessor()
   .setDataSource({
@@ -103,8 +105,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
         const { otherSignatories, threshold } = handleMultisigCall(callArgs)
         const signatories = [signer, ...otherSignatories]
 
+        const multisigAddress = getMultisigAddress(signatories, threshold)
         const newMulti = {
-          id: getMultisigAddress(signatories, threshold),
+          id: getAccountId(multisigAddress, chainId),
+          address: multisigAddress,
           threshold,
           newSignatories: signatories,
           isMultisig: true,
@@ -117,14 +121,14 @@ processor.run(new TypeormDatabase(), async (ctx) => {
 
         newMultisigCalls.push({
           id: getMultisigCallId(
-            newMulti.id,
+            newMulti.address,
             blockNumber,
             callItem.extrinsic.indexInBlock,
             callItem.call.pos
           ),
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
-          multisigAddress: newMulti.id,
+          multisigAddress: newMulti.address,
           timestamp
         })
       }
@@ -162,10 +166,10 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     }
   }
 
-  newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo))
-  newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls))
-  newPureProxies.size && (await handleNewPureProxies(ctx, Array.from(newPureProxies.values())))
-  newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values())))
+  newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
+  newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
+  newPureProxies.size && (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
+  newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values()), chainId))
   proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
 })
 

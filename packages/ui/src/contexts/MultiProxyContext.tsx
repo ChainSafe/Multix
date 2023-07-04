@@ -4,6 +4,7 @@ import { AccountBaseInfo } from '../components/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'
+import { useAccountId } from '../hooks/useAccountId'
 
 const LOCALSTORAGE_KEY = 'multix.selectedMultiProxy'
 
@@ -40,7 +41,7 @@ const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 const getSignatoriesFromAccount = (
   signatories: MultisigsByAccountsSubscription['accounts'][0]['signatories']
 ) => {
-  return signatories.map(({ signatory }) => signatory.id)
+  return signatories.map(({ signatory }) => signatory.address)
 }
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
@@ -79,16 +80,16 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
           // find the delegatee that are multisigs and put all the infos right away
           account.delegatorFor.forEach(({ delegatee, type }) => {
             if (delegatee.isMultisig) {
-              const previousMultisigsForProxy = pureProxyMap.get(account.id)?.multisigs || []
+              const previousMultisigsForProxy = pureProxyMap.get(account.address)?.multisigs || []
 
               const newMultisigForProxy = {
-                address: delegatee.id,
+                address: delegatee.address,
                 signatories: getSignatoriesFromAccount(delegatee.signatories),
                 threshold: delegatee?.threshold || undefined,
                 type
               }
 
-              pureProxyMap.set(account.id, {
+              pureProxyMap.set(account.address, {
                 multisigs: [...previousMultisigsForProxy, newMultisigForProxy]
               })
             }
@@ -110,13 +111,13 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             // if a pure was already added, e.g because it is watched
             // we shouldn't associate this multisig to it twice
             const currentMultisigsForProxy = pureProxyMap
-              .get(delegator.id)
+              .get(delegator.address)
               ?.multisigs.map(({ address }) => address)
 
             // finding all the accounts that are pure proxy and that don't include this multisig already
-            if (delegator?.isPureProxy && !currentMultisigsForProxy?.includes(account.id)) {
+            if (delegator?.isPureProxy && !currentMultisigsForProxy?.includes(account.address)) {
               pureProxyAddresses.push({
-                pureAddress: delegator.id,
+                pureAddress: delegator.address,
                 type: type
               })
             }
@@ -128,7 +129,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             const previousMultisigsForProxy = pureProxyMap.get(pureAddress)?.multisigs || []
 
             const newMultisigForProxy = {
-              address: account.id,
+              address: account.address,
               signatories: getSignatoriesFromAccount(account.signatories),
               threshold: account?.threshold || undefined,
               type
@@ -145,7 +146,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             proxy: undefined,
             multisigs: [
               {
-                address: account.id,
+                address: account.address,
                 signatories: getSignatoriesFromAccount(account.signatories),
                 threshold: account.threshold
               }
@@ -171,9 +172,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [])
 
+  const ownAddressIds = useAccountId(ownAddressList)
+  const watchedAddressesIds = useAccountId(watchedAddresses)
   const { isLoading, error } = useMultisigsByAccountSubscription({
-    accounts: ownAddressList,
-    watchedAccounts: watchedAddresses,
+    accountIds: ownAddressIds,
+    watchedAccountIds: watchedAddressesIds,
     onUpdate: refreshAccounList
   })
 

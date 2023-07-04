@@ -10,6 +10,7 @@ export const ICON_SIZE = 40
 export const ICON_THEME = 'polkadot'
 
 export interface NetworkInfo {
+  chainId: string
   explorerNetworkName?: string
   rpcUrl: string
   wsGraphqlUrl: string
@@ -21,6 +22,7 @@ export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbf
 
 export const networkList = {
   kusama: {
+    chainId: 'kusama',
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://kusama.multix.chainsafe.io/graphql',
@@ -28,6 +30,7 @@ export const networkList = {
     logo: chainsKusamaSVG
   } as NetworkInfo,
   polkadot: {
+    chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.polkadot.io',
     wsGraphqlUrl: 'wss://polkadot.multix.chainsafe.io/graphql',
@@ -35,6 +38,7 @@ export const networkList = {
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   rococo: {
+    chainId: 'rococo',
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://rococo.multix.chainsafe.io/graphql',
@@ -42,6 +46,7 @@ export const networkList = {
     logo: chainsRococoSVG
   } as NetworkInfo,
   phala: {
+    chainId: 'phala',
     explorerNetworkName: 'phala',
     rpcUrl: 'wss://api.phala.network/ws',
     wsGraphqlUrl: 'wss://phala.multix.chainsafe.io/graphql',
@@ -49,6 +54,7 @@ export const networkList = {
     logo: phalaSVG
   } as NetworkInfo,
   khala: {
+    chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
     wsGraphqlUrl: 'wss://khala.multix.chainsafe.io/graphql',
@@ -56,6 +62,7 @@ export const networkList = {
     logo: nodesKhalaSVG
   } as NetworkInfo,
   'rhala testnet': {
+    chainId: 'rhala',
     explorerNetworkName: '',
     rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
     wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
@@ -63,6 +70,7 @@ export const networkList = {
     logo: nodesKhalaSVG
   } as NetworkInfo,
   local: {
+    chainId: import.meta.env.VITE_CHAIN_ID,
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
     rpcUrl: import.meta.env.VITE_WS_PROVIDER,
     wsGraphqlUrl: import.meta.env.VITE_GRAPHQL_WS_PROVIDER,

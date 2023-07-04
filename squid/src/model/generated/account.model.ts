@@ -12,6 +12,9 @@ export class Account {
     @PrimaryColumn_()
     id!: string
 
+    @Column_("text", {nullable: false})
+    address!: string
+
     @OneToMany_(() => AccountMultisig, e => e.signatory)
     multisigs!: AccountMultisig[]
 

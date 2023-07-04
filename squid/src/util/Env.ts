@@ -6,6 +6,7 @@ interface EnvValues {
   rpcWs: string
   archiveName?: string
   archiveUrl?: string
+  chainId: string
 }
 
 export class Env {
@@ -17,7 +18,8 @@ export class Env {
       prefix: Number(process.env.PREFIX) || 0,
       rpcWs: process.env.RPC_WS || '',
       archiveName: process.env.ARCHIVE_NAME || '',
-      archiveUrl: process.env.ARCHIVE_URL || ''
+      archiveUrl: process.env.ARCHIVE_URL || '',
+      chainId: process.env.CHAIN_ID || ''
     }
 
     this.checkForUndefined()

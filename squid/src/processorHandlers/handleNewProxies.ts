@@ -1,6 +1,7 @@
 import { Account, ProxyAccount, ProxyType } from '../model'
 import { Ctx } from '../main'
 import { getOrCreateAccounts } from '../util'
+import { getAccountId } from '../util/getAccountId'
 
 export interface NewProxy {
   id: string
@@ -11,7 +12,7 @@ export interface NewProxy {
   createdAt: Date
 }
 
-export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
+export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[], chainId: string) => {
   // Aggregate all accounts we deal with using a set to make sure we don't have dublicates
   const allAccountsStringSet = new Set<string>()
 
@@ -20,7 +21,7 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
     allAccountsStringSet.add(delegator)
   })
 
-  const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()))
+  const accountsToUpdate = await getOrCreateAccounts(ctx, Array.from(allAccountsStringSet.values()), chainId)
 
   const accountMap = new Map<string, Account>()
   accountsToUpdate.forEach((account) => accountMap.set(account.id, account))
@@ -28,11 +29,14 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
 
   for (const { id, delegatee, delegator, delay, type, createdAt } of newProxies) {
     // ctx.log.info(`---> type ${type}`)
+    const delegatorAccount = accountMap.get(getAccountId(delegator, chainId))
+    const delegateeAccount = accountMap.get(getAccountId(delegatee, chainId))
+
     proxyAccounts.push(
       new ProxyAccount({
         id,
-        delegator: accountMap.get(delegator),
-        delegatee: accountMap.get(delegatee),
+        delegator: delegatorAccount,
+        delegatee: delegateeAccount,
         type,
         delay,
         createdAt
@@ -40,5 +44,6 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[]) => {
     )
   }
 
+  // ctx.log.info(`new proxy account to save' ${JsonLog(proxyAccounts)}`)
   await ctx.store.save(proxyAccounts)
 }

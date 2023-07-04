@@ -4,6 +4,7 @@ import { MultiProxy } from '../contexts/MultiProxyContext'
 import { MultisigStorageInfo } from '../types'
 import { useMultisigCallSubscription } from './useMultisigCallsSubscription'
 import { isEmptyArray } from '../utils'
+import { useAccountId } from './useAccountId'
 
 export interface PendingTx {
   from: string
@@ -66,9 +67,10 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
     refresh()
   }, [refresh])
 
+  const multisigIds = useAccountId(multisigs)
   // re-fetch the on-chain if some new event appeared for any of the
   // multisig we are watching
-  useMultisigCallSubscription({ onUpdate: refresh, multisigs })
+  useMultisigCallSubscription({ onUpdate: refresh, multisigIds })
 
   return { isLoading, data, refresh }
 }
