@@ -5,7 +5,7 @@ import { dataEvent, env } from '../main'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 
 export const getPureProxyInfoFromArgs = (
-  item: EventItem<'Proxy.PureCreated', (typeof dataEvent)['data']>
+  item: EventItem<'Proxy.PureCreated', (typeof dataEvent)['data']>, chainId: string
 ) => {
   const { pure, who, proxyType } = item.event.args
   // pure proxy have no creation delay, they have a disambiguationIndex
@@ -13,7 +13,7 @@ export const getPureProxyInfoFromArgs = (
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _who = encodeAddress(who, env.prefix)
   const _pure = encodeAddress(pure, env.prefix)
-  const id = getProxyAccountId(_who, _pure, _type, delay)
+  const id = getProxyAccountId(_who, _pure, _type, delay, chainId)
 
   return {
     id,

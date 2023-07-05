@@ -44,7 +44,7 @@ export const handleNewPureProxies = async (
 
   const proxyAccounts: ProxyAccount[] = []
   for (const { who, pure, delay, createdAt, type } of newPureProxies) {
-    const id = getProxyAccountId(who, pure, ProxyType.Any, delay)
+    const id = getProxyAccountId(who, pure, ProxyType.Any, delay, chainId)
 
     proxyAccounts.push(
       new ProxyAccount({

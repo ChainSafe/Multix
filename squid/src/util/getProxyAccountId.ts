@@ -4,7 +4,8 @@ export const getProxyAccountId = (
   delegatee: string,
   delegator: string,
   type: ProxyType,
-  delay = 0
+  delay = 0,
+  chainId: string
 ) => {
-  return `${delegatee}-${delegator}-${type}-${delay}`
+  return `${chainId}-${delegatee}-${delegator}-${type}-${delay}`
 }

@@ -5,14 +5,14 @@ import { getProxyAccountId } from './getProxyAccountId'
 import { dataEvent, env } from '../main'
 
 export const getProxyInfoFromArgs = (
-  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
+  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>, chainId: string
 ) => {
   const { delegator, delegatee, proxyType, delay } = item.event.args
   const _delegator = encodeAddress(delegator, env.prefix)
   const _delegatee = encodeAddress(delegatee, env.prefix)
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _delay = Number(delay) || 0
-  const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay)
+  const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay, chainId)
 
   return {
     id: _id,

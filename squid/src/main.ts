@@ -124,7 +124,8 @@ processor.run(new TypeormDatabase({ stateSchema: chainId }), async (ctx) => {
             newMulti.address,
             blockNumber,
             callItem.extrinsic.indexInBlock,
-            callItem.call.pos
+            callItem.call.pos,
+            chainId
           ),
           blockHash,
           callIndex: callItem.extrinsic.indexInBlock,
@@ -134,7 +135,7 @@ processor.run(new TypeormDatabase({ stateSchema: chainId }), async (ctx) => {
       }
 
       if (item.name === 'Proxy.PureCreated') {
-        const newPureProxy = getPureProxyInfoFromArgs(item)
+        const newPureProxy = getPureProxyInfoFromArgs(item, chainId)
         // ctx.log.info(`pure ${newPureProxy.pure}`)
         // ctx.log.info(`who ${newPureProxy.who}`)
 
@@ -145,14 +146,14 @@ processor.run(new TypeormDatabase({ stateSchema: chainId }), async (ctx) => {
       }
 
       if (item.name === 'Proxy.ProxyAdded') {
-        const newProxy = getProxyInfoFromArgs(item)
+        const newProxy = getProxyInfoFromArgs(item, chainId)
         // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
         // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
         newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
       }
 
       if (item.name === 'Proxy.ProxyRemoved') {
-        const proxyRemoval = getProxyInfoFromArgs(item)
+        const proxyRemoval = getProxyInfoFromArgs(item, chainId)
         // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
         // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
         if (newProxies.has(proxyRemoval.id)) {

@@ -28,7 +28,7 @@ export const handleNewMultisigs = async (
     newMultisigs.set(id, newMultisig)
 
     signatoriesAccounts.forEach((account) => {
-      const newAccountMultisigId = getAccountMultisigId(newMultisig.id, account.id)
+      const newAccountMultisigId = getAccountMultisigId(newMultisig.id, account.id, chainId)
 
       const newAccountMultisig = new AccountMultisig({
         id: newAccountMultisigId,
