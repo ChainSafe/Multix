@@ -1,5 +1,5 @@
-import { Box, InputAdornment } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import { Box, InputAdornment, TextField } from '@mui/material'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -8,6 +8,7 @@ import IdenticonBadge from '../IdenticonBadge'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 
 interface Props {
   className?: string
@@ -26,6 +27,7 @@ const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy 
 }
 
 const MultiProxySelection = ({ className }: Props) => {
+  const ref = useRef<HTMLInputElement>(null)
   const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
 
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
@@ -62,9 +64,11 @@ const MultiProxySelection = ({ className }: Props) => {
     [selectMultiProxy]
   )
 
-  if (multiProxyList.length === 0) {
-    return null
-  }
+  const handleSpecialKeys = useCallback((e: any) => {
+    if (['Enter', 'Escape'].includes(e.key)) {
+      ref?.current?.blur()
+    }
+  }, [])
 
   const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: any) => {
     const displayAddress = getDisplayAddress(option)
@@ -89,15 +93,13 @@ const MultiProxySelection = ({ className }: Props) => {
     )
   }
 
-  return (
-    <Autocomplete
-      className={className}
-      isOptionEqualToValue={isOptionEqualToValue}
-      disableClearable
-      filterOptions={filterOptions}
-      options={multiProxyList}
-      renderOption={renderOptions}
+  const renderInputs = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      inputRef={ref}
+      label=""
       InputProps={{
+        ...params.InputProps,
         startAdornment: (
           <InputAdornment position="start">
             <IdenticonBadge
@@ -107,12 +109,59 @@ const MultiProxySelection = ({ className }: Props) => {
           </InputAdornment>
         )
       }}
+      onKeyDown={handleSpecialKeys}
+    />
+  )
+
+  if (multiProxyList.length === 0) {
+    return null
+  }
+
+  return (
+    <Autocomplete
+      className={className}
+      isOptionEqualToValue={isOptionEqualToValue}
+      disableClearable
+      filterOptions={filterOptions}
+      options={multiProxyList}
+      renderOption={renderOptions}
+      renderInput={renderInputs}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={selectedMultiProxy || multiProxyList[0]}
     />
   )
 }
+
+const TextFieldStyled = styled(TextField)`
+  .MuiInputBase-root {
+    height: 3.5rem;
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    border: none;
+    outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
+
+    &:hover {
+      border: none;
+    }
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border: none;
+  }
+
+  fieldset {
+    &:hover {
+      border: none;
+    }
+  }
+
+  input {
+    max-width: 8.625rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: ${({ theme }) => theme.custom.text.primary};
+  }
+`
 
 export default styled(MultiProxySelection)(
   ({ theme }) => `

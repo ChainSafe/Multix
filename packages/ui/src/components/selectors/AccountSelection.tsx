@@ -1,4 +1,4 @@
-import { Autocomplete, Box, InputAdornment } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
 import {
   ChangeEvent,
   SyntheticEvent,
@@ -15,7 +15,7 @@ import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isValidAddress } from '../../utils'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import MultixIdenticon from '../MultixIdenticon'
-import { Button, InputField, TextFieldStyled } from '../library'
+import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
 
 interface Props {
   className?: string
@@ -120,6 +120,45 @@ const AccountSelection = ({
     setName(value)
   }, [])
 
+  const renderOption = (props: any, option: any) => (
+    <Box
+      component="li"
+      sx={{
+        '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 }
+      }}
+      {...props}
+      key={option.address}
+    >
+      <MultixIdenticon
+        className="renderOptionIdenticon"
+        value={option.address}
+      />
+      {option.address} - {option.meta.name}
+    </Box>
+  )
+
+  const renderInput = (params: any) => (
+    <TextFieldStyled
+      {...params}
+      inputRef={ref}
+      error={!!errorMessage}
+      helperText={errorMessage}
+      label={inputLabel}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: selected ? (
+          <InputAdornment position="start">
+            <MultixIdenticonAutocompleteStyled
+              size={24}
+              value={selected}
+            />
+          </InputAdornment>
+        ) : null
+      }}
+      onKeyDown={handleSpecialKeys}
+    />
+  )
+
   return (
     <BoxStyled className={className}>
       <Autocomplete
@@ -128,43 +167,9 @@ const AccountSelection = ({
         freeSolo
         filterOptions={filterOptions}
         options={withPreselection ? dedupedSignatories : []}
-        renderOption={(props, option) => (
-          <Box
-            component="li"
-            sx={{
-              '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 }
-            }}
-            {...props}
-            key={option.address}
-          >
-            <MultixIdenticon
-              className="renderOptionIdenticon"
-              value={option.address}
-            />
-            {option.address} - {option.meta.name}
-          </Box>
-        )}
-        renderInput={(params) => (
-          <TextFieldStyled
-            {...params}
-            inputRef={ref}
-            error={!!errorMessage}
-            helperText={errorMessage}
-            label={inputLabel}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: selected ? (
-                <InputAdornment position="start">
-                  <MultixIdenticonAutocompleteStyled
-                    size={24}
-                    value={selected}
-                  />
-                </InputAdornment>
-              ) : null
-            }}
-            onKeyDown={handleSpecialKeys}
-          />
-        )}
+        renderOption={renderOption}
+        onKeyDown={handleSpecialKeys}
+        renderInput={renderInput}
         getOptionLabel={getOptionLabel}
         onInputChange={onChangeAutocomplete}
         value={selected}

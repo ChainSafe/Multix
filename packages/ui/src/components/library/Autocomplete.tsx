@@ -1,20 +1,29 @@
-import { Autocomplete as AutocompleteMui, TextField } from '@mui/material'
-import React, { useCallback, useRef } from 'react'
+import { Autocomplete as AutocompleteMui } from '@mui/material'
+import React, { SyntheticEvent } from 'react'
 import { styled } from '@mui/material/styles'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 
 interface AutocompleteProps {
   InputProps?: Partial<AutocompleteRenderInputParams['InputProps']>
   className?: string
-  isOptionEqualToValue: (option: any, value: any) => boolean
+  isOptionEqualToValue?: (option: any, value: any) => boolean
   filterOptions?: (options: any[], state: any) => any[]
   options: any[]
   getOptionLabel: (option: any) => string
-  onChange: (event: any, value: any) => void
+  onChange?: (event: any, value: any) => void
   value?: any
   renderOption: (props: any, option: any, state: any) => React.ReactNode
   disableClearable?: boolean
+  onKeyDown?: (e: any) => void
+  onInputChange?: (
+    _: SyntheticEvent<Element, Event>,
+    val: string | InjectedAccountWithMeta | null
+  ) => void
+  disabled?: boolean
+  freeSolo?: boolean
+  renderInput: (params: AutocompleteRenderInputParams) => React.ReactNode
 }
 
 const Autocomplete = ({
@@ -27,15 +36,11 @@ const Autocomplete = ({
   value,
   renderOption,
   disableClearable,
-  InputProps
+  disabled,
+  freeSolo,
+  onInputChange,
+  renderInput
 }: AutocompleteProps) => {
-  const ref = useRef<HTMLInputElement>(null)
-  const handleSpecialKeys = useCallback((e: any) => {
-    if (['Enter', 'Escape'].includes(e.key)) {
-      ref?.current?.blur()
-    }
-  }, [])
-
   return (
     <AutocompleteWrapper className={className}>
       <AutocompleteMui
@@ -47,22 +52,12 @@ const Autocomplete = ({
         getOptionLabel={getOptionLabel}
         onChange={onChange}
         value={value}
+        disabled={disabled}
+        freeSolo={freeSolo}
+        onInputChange={onInputChange}
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
-        renderInput={(params) => {
-          return (
-            <TextFieldStyled
-              {...params}
-              inputRef={ref}
-              label=""
-              InputProps={{
-                ...params.InputProps,
-                ...InputProps
-              }}
-              onKeyDown={handleSpecialKeys}
-            />
-          )
-        }}
+        renderInput={renderInput}
       />
     </AutocompleteWrapper>
   )
@@ -83,36 +78,6 @@ const AutocompleteWrapper = styled('div')`
 
   .MuiAutocomplete-popper {
     margin-top: 0.75rem !important;
-  }
-`
-
-const TextFieldStyled = styled(TextField)`
-  .MuiInputBase-root {
-    height: 3.5rem;
-    padding: 0.5rem 0.75rem 0.5rem 1rem;
-    border: none;
-    outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
-
-    &:hover {
-      border: none;
-    }
-  }
-
-  .MuiOutlinedInput-notchedOutline {
-    border: none;
-  }
-
-  fieldset {
-    &:hover {
-      border: none;
-    }
-  }
-
-  input {
-    max-width: 8.625rem;
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.custom.text.primary};
   }
 `
 
