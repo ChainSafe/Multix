@@ -1,25 +1,55 @@
 {
-    "$schema": "https://cdn.subsquid.io/schemas/commands.json",
-    "commands": {
-      "start-rococo": {
-        "description": "starts the indexer with rococo",
-        "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.rococo"]
-      },
-      "start-kusama": {
-        "description": "starts the indexer with kusama",
-        "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.kusama"]
-      },
-      "start-polkadot": {
-        "description": "starts the indexer with polkadot",
-        "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.polkadot"]
-      },
-      "start-phala": {
-        "description": "starts the indexer with phala",
-        "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.phala"]
-      },
-      "start-khala": {
-        "description": "starts the indexer with khala",
-        "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.khala"]
-      }
+  "$schema": "https://cdn.subsquid.io/schemas/commands.json",
+  "commands": {
+    "start-rococo": {
+      "description": "starts the indexer with rococo",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.rococo"
+      ]
+    },
+    "start-kusama": {
+      "description": "starts the indexer with kusama",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.kusama"
+      ]
+    },
+    "start-polkadot": {
+      "description": "starts the indexer with polkadot",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.polkadot"
+      ]
+    },
+    "start-phala": {
+      "description": "starts the indexer with phala",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.phala"
+      ]
+    },
+    "start-khala": {
+      "description": "starts the indexer with khala",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.khala"
+      ]
     }
   }
+}

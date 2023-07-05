@@ -82,7 +82,7 @@ const processor = new SubstrateBatchProcessor()
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
-processor.run(new TypeormDatabase({stateSchema: chainId}), async (ctx) => {
+processor.run(new TypeormDatabase({ stateSchema: chainId }), async (ctx) => {
   const newMultisigsInfo: NewMultisigsInfo[] = []
   const newPureProxies: Map<string, NewPureProxy> = new Map()
   const newMultisigCalls: MultisigCallInfo[] = []
