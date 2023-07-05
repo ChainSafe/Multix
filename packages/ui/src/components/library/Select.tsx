@@ -15,14 +15,16 @@ interface SelectProps {
   menuItems: { name: string; logo?: string }[]
   onChange: (event: SelectChangeEvent<string>) => void
   minified?: boolean
+  inputSize?: 'medium' | 'large'
 }
 
-export const Select = ({ value, onChange, menuItems, minified }: SelectProps) => {
+export const Select = ({ value, onChange, menuItems, minified, inputSize }: SelectProps) => {
   const matchesMediumScreen = !useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const minifiedVersion = minified ?? matchesMediumScreen
 
   return (
     <SelectMuiStyled
+      inputSize={inputSize}
       value={value}
       IconComponent={HiOutlineChevronDown}
       MenuProps={{
@@ -54,14 +56,18 @@ export const Select = ({ value, onChange, menuItems, minified }: SelectProps) =>
 }
 
 Select.defaultProps = {
-  minified: false
+  minified: false,
+  inputSize: 'medium'
 }
 
-const SelectMuiStyled = styled(SelectMui)<SelectMuiProps & { minifiedVersion: boolean }>`
+const SelectMuiStyled = styled(SelectMui)<
+  SelectMuiProps & { minifiedVersion: boolean; inputSize?: string }
+>`
   display: inline-flex;
-  height: 2.5625rem;
+  max-width: 9.875rem;
+  width: 100%;
+  height: ${({ inputSize }) => (inputSize === 'large' ? '3.5rem' : '2.5rem')};
   padding: ${({ minifiedVersion }) => (minifiedVersion ? '0.75rem' : '1rem')};
-
   background: ${({ theme }) => theme.palette.primary.white};
   outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
   margin-left: 1rem;

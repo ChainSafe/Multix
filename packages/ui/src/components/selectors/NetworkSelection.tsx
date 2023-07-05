@@ -26,6 +26,7 @@ const NetworkSelection = () => {
 
   return (
     <Select
+      inputSize="large"
       value={selectedNetwork}
       onChange={handleNetworkSelection}
       menuItems={networksToShow.map(([name, { logo }]) => ({

@@ -69,10 +69,6 @@ const Autocomplete = ({
 }
 
 const AutocompleteWrapper = styled('div')`
-  .MuiInputBase-root {
-    padding: 0.5rem 1.25rem;
-  }
-
   .MuiIconButton-root {
     &:hover {
       background: none;
@@ -84,11 +80,32 @@ const AutocompleteWrapper = styled('div')`
       height: 1.25rem;
     }
   }
+
+  .MuiAutocomplete-popper {
+    margin-top: 0.75rem !important;
+  }
 `
 
 const TextFieldStyled = styled(TextField)`
   .MuiInputBase-root {
-    padding: 0.5rem 0.75rem 0.5rem 1.25rem;
+    height: 3.5rem;
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    border: none;
+    outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
+
+    &:hover {
+      border: none;
+    }
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border: none;
+  }
+
+  fieldset {
+    &:hover {
+      border: none;
+    }
   }
 
   input {

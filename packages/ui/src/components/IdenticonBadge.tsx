@@ -38,16 +38,22 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
 }
 
 const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
+  padding-left: 1rem;
+
   .MuiBadge-badge {
+    max-width: 2.625rem;
+    padding: 0.25rem 0.5rem;
+    max-height: 1rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+    border-radius: 2rem;
     background-color: ${({ theme, badgeType }) =>
       `${
         badgeType === AccountBadge.PURE
           ? theme.custom.proxyBadge.pure
           : theme.custom.proxyBadge.multi
       } !important`};
-    transform: scale(1) translate(-28%, 0);
-    padding: 0.25rem 0.5rem;
-    border-radius: 2rem;
+    transform: scale(1) translate(-20%, 0);
   }
 `
 
