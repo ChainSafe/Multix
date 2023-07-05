@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-test
-version: 1
+version: 2
 description: |-
   Test squid for Multix
 
@@ -11,37 +11,15 @@ deploy:
     postgres:
   processor:
     - name: rococo-processor
-      env:
-        BLOCK_START: 3510000
-        PREFIX: 42
-        RPC_WS: 'wss://rococo-rpc.polkadot.io'
-        CHAIN_ID: 'rococo'
-        ARCHIVE_NAME: 'rococo'
-      cmd: ['node', '-r', 'dotenv/config', 'lib/main']
+      cmd: ['sqd', 'start-rococo']
     - name: kusama-processor
-      env:
-        BLOCK_START: 15000000
-        PREFIX: 2
-        RPC_WS: 'wss://kusama-rpc.polkadot.io'
-        CHAIN_ID: 'kusama'
-        ARCHIVE_NAME: 'kusama'
-      cmd: ['node', '-r', 'dotenv/config', 'lib/main']
+      cmd: ['sqd', 'start-kusama']
     - name: polkadot-processor
-      env:
-        BLOCK_START: 12000000
-        PREFIX: 0
-        RPC_WS: 'wss://polkadot-rpc.polkadot.io'
-        CHAIN_ID: 'polkadot'
-        ARCHIVE_NAME: 'polkadot'
-      cmd: ['node', '-r', 'dotenv/config', 'lib/main']
+      cmd: ['sqd', 'start-polkadot']
+    - name: phala-processor
+      cmd: ['sqd', 'start-phala']
     - name: khala-processor
-      env:
-        BLOCK_START: 0
-        PREFIX: 30
-        RPC_WS: 'wss://khala-api.phala.network/ws'
-        CHAIN_ID: 'khala'
-        ARCHIVE_NAME: 'khala'
-      cmd: ['node', '-r', 'dotenv/config', 'lib/main']
+      cmd: ['sqd', 'start-khala']
   api:
     cmd: ['npx', 'squid-graphql-server', '--subscriptions']
 scale:

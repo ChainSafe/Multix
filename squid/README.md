@@ -1,7 +1,7 @@
-# squid-template
+# Multix-squid
 
-Sample [squid](https://subsquid.io) project to demonstrate its structure and conventions.
-It accumulates [rococo](https://rococo.network) account balances and serves them via graphql API.
+A [squid](https://subsquid.io) project to support the Multix UI.
+It accumulates [rococo](https://rococo.network) accounts, multisigs and proxy relations.
 
 ## Prerequisites
 
@@ -13,27 +13,27 @@ It accumulates [rococo](https://rococo.network) account balances and serves them
 
 ```bash
 # 1. Install dependencies
-yarn install
+npm run install
 
 # 1.1
-yarn codegen
-yarn typegen
+npm run codegen
+npm run typegen
 
 # 2. Compile typescript files
-yarn build
+npm run build
 
 # 3. Start target Postgres database from the root of the project
 docker compose up -d db
 
 # 4. Apply database migrations from db/migrations
-yarn db:migrate
+npm run db:migrate
 
-# 5. Now start the squid processor
-yarn start:indexer
+# 5. Now start the squid processor that you wish, see commands.json
+npm run start:indexer:rococo #or specify your own .env based on the .env.example and use "start:indexer"
 
 # 6. The above command will block the terminal
 # start the graphql server using the following command in a new terminal
-yarn start:graphql-server
+npm run start:graphql-server
 
 # 7. Optionally to see the logs from the db
 docker compose logs -f
@@ -253,6 +253,7 @@ PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
 ARCHIVE_NAME="rococo" # optional - must be empty or set to the archive name if part of the @subsquid/archive-registry'
 ARCHIVE_URL="http://localhost:4444/graphql" # optional - must be set if ARCHIVE_NAME is empty - the subsquid archive url. Consider submitting a PR to subsquid/archive-registry github repo to extend the registry.
+ CHAIN_ID='rococo' # a unique chain id for the database prefix
 ```
 
 ## Differences from polkadot.js
