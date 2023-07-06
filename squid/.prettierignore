@@ -1,0 +1,4 @@
+db/**/*
+src/types/**/*
+src/model/**/*
+lib/**/*
