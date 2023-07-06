@@ -280,20 +280,16 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       open
       className={className}
     >
-      <DialogTitle>
-        Send tx
-        {onClose ? (
-          <IconButton
-            className="closeButton"
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        ) : null}
-      </DialogTitle>
+      <IconButton
+        className="closeButton"
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={onClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+      <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
           <Grid

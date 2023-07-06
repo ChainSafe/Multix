@@ -53,20 +53,16 @@ const EditNames = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      <DialogTitle>
-        Edit names
-        {onClose ? (
-          <IconButton
-            className="closeButton"
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        ) : null}
-      </DialogTitle>
+      <IconButton
+        className="closeButton"
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={onClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+      <DialogTitle>Edit names</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
           <Grid

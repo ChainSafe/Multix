@@ -245,20 +245,16 @@ const ProposalSigning = ({
       open
       className={className}
     >
-      <DialogTitle>
-        Transaction signing
-        {onClose ? (
-          <IconButton
-            className="closeButton"
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        ) : null}
-      </DialogTitle>
+      <IconButton
+        className="closeButton"
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={onClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+      <DialogTitle>Transaction signing</DialogTitle>
       <DialogContent>
         <Grid container>
           <Grid

@@ -367,20 +367,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      <DialogTitle>
-        Change multisig
-        {onClose ? (
-          <IconButton
-            className="closeButton"
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        ) : null}
-      </DialogTitle>
+      <IconButton
+        className="closeButton"
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={onClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+      <DialogTitle>Change multisig</DialogTitle>
       <DialogContent
         className="generalContainer"
         ref={modalRef}
