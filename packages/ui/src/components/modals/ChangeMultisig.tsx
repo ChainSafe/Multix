@@ -57,6 +57,25 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       ).length > 0,
     [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
+  const newMultisigAddress = useMemo(() => {
+    if (!newThreshold || !chainInfo) return
+
+    const multisigPubKey = createKeyMulti(newSignatories, newThreshold)
+    let newMultiAddress: string | undefined
+    try {
+      newMultiAddress = encodeAddress(multisigPubKey, chainInfo.ss58Format)
+    } catch (e) {
+      console.error(`Error encoding the address ${multisigPubKey}`, e)
+      return
+    }
+
+    return newMultiAddress
+  }, [chainInfo, newSignatories, newThreshold])
+
+  const canGoNext = useMemo(
+    () => newMultisigAddress !== selectedMultisig?.address,
+    [newMultisigAddress, selectedMultisig]
+  )
   const isCallStep = useMemo(
     () => currentStep === 'call1' || currentStep === 'call2',
     [currentStep]
@@ -95,20 +114,15 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
+    if (!newMultisigAddress) {
+      return
+    }
+
     const otherOldSignatories = sortAddresses(
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
 
-    const multisigPubKey = createKeyMulti(newSignatories, newThreshold)
-    let newMultiAddress: string | undefined
-    try {
-      newMultiAddress = encodeAddress(multisigPubKey, chainInfo.ss58Format)
-    } catch (e) {
-      console.error(`Error encoding the address ${multisigPubKey}`, e)
-      return
-    }
-
-    const addProxyTx = api.tx.proxy.addProxy(newMultiAddress, 'Any', 0)
+    const addProxyTx = api.tx.proxy.addProxy(newMultisigAddress, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
     return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, {
@@ -119,11 +133,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     api,
     chainInfo,
     isApiReady,
-    newSignatories,
+    newMultisigAddress,
     newThreshold,
     oldThreshold,
     selectedAccount,
-    selectedMultiProxy?.proxy,
+    selectedMultiProxy,
     selectedMultisig
   ])
 
@@ -468,6 +482,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               <Button
                 variant="primary"
                 disabled={
+                  !canGoNext ||
                   !!errorMessage ||
                   !hasProxyEnoughFunds ||
                   (currentStep === 'summary' && !hasSignerEnoughFunds)
