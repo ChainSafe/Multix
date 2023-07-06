@@ -2,6 +2,7 @@
 /squid/db/**/*
 /squid/src/types/**/*
 /squid/src/model/**/*
+/squid/lib/**/*
 /packages/ui/src/gql/**/*
 /packages/ui/src/interfaces/**/*
 /packages/ui/types-and-hooks.tsx
