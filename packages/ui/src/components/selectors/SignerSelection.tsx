@@ -1,4 +1,4 @@
-import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
+import { InputAdornment } from '@mui/material'
 import { useCallback, useEffect, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -6,6 +6,8 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import AccountDisplay from '../AccountDisplay'
 import MultixIdenticon from '../MultixIdenticon'
+import { Autocomplete, TextFieldStyled } from '../library'
+import OptionMenu from './OptionMenu'
 
 interface Props {
   className?: string
@@ -68,25 +70,18 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       className={className}
       options={signersList}
       filterOptions={filterOptions}
-      renderOption={(props, option, index) => (
-        <Box
+      renderOption={(props, option) => (
+        <OptionMenu
           component="li"
-          sx={{
-            mr: '.5rem',
-            pt: '.8rem !important',
-            pl: '1.5rem !important',
-            flexShrink: 0
-          }}
           {...props}
           key={option?.address}
         >
           <AccountDisplay address={option?.address || ''} />
-        </Box>
+        </OptionMenu>
       )}
       renderInput={(params) => (
-        <TextField
+        <TextFieldStyled
           {...params}
-          label="Signing with"
           InputProps={{
             ...params.InputProps,
             startAdornment: (

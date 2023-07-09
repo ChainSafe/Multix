@@ -26,6 +26,10 @@ const NetworkSelection = () => {
 
   return (
     <Select
+      sx={{
+        'max-width': '9.875rem',
+        'margin-left': '1rem'
+      }}
       inputSize="large"
       value={selectedNetwork}
       onChange={handleNetworkSelection}

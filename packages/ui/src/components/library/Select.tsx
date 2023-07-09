@@ -9,23 +9,38 @@ import { styled } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
 import React from 'react'
+import { SxProps } from '@mui/system'
 
 interface SelectProps {
   value: string
-  menuItems: { name: string; logo?: string }[]
+  menuItems?: { name: string; logo?: string }[]
   onChange: (event: SelectChangeEvent<string>) => void
   minified?: boolean
   inputSize?: 'medium' | 'large'
+  fullWidth?: boolean
+  children?: React.ReactNode[]
+  sx?: SxProps<Theme>
 }
 
-export const Select = ({ value, onChange, menuItems, minified, inputSize }: SelectProps) => {
+export const Select = ({
+  value,
+  onChange,
+  menuItems,
+  minified,
+  fullWidth,
+  inputSize,
+  children,
+  sx
+}: SelectProps) => {
   const matchesMediumScreen = !useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const minifiedVersion = minified ?? matchesMediumScreen
 
   return (
     <SelectMuiStyled
+      sx={sx}
       inputSize={inputSize}
       value={value}
+      fullWidth={fullWidth}
       IconComponent={HiOutlineChevronDown}
       MenuProps={{
         sx: {
@@ -35,22 +50,23 @@ export const Select = ({ value, onChange, menuItems, minified, inputSize }: Sele
       onChange={(event) => onChange(event as SelectChangeEvent<string>)}
       minifiedVersion={minifiedVersion}
     >
-      {menuItems &&
-        menuItems.map(({ name, logo }) => (
-          <MenuItemStyled
-            key={name}
-            value={name}
-          >
-            {logo && (
-              <ImgStyled
-                minifiedVersion={minifiedVersion}
-                alt={`network-logo-${name}`}
-                src={logo}
-              />
-            )}
-            {<NetworkNameStyled>{name}</NetworkNameStyled>}
-          </MenuItemStyled>
-        ))}
+      {menuItems
+        ? menuItems.map(({ name, logo }) => (
+            <MenuItemStyled
+              key={name}
+              value={name}
+            >
+              {logo && (
+                <ImgStyled
+                  minifiedVersion={minifiedVersion}
+                  alt={`network-logo-${name}`}
+                  src={logo}
+                />
+              )}
+              {<ItemNameStyled>{name}</ItemNameStyled>}
+            </MenuItemStyled>
+          ))
+        : children}
     </SelectMuiStyled>
   )
 }
@@ -64,18 +80,27 @@ const SelectMuiStyled = styled(SelectMui)<
   SelectMuiProps & { minifiedVersion: boolean; inputSize?: string }
 >`
   display: inline-flex;
-  max-width: 9.875rem;
   width: 100%;
   height: ${({ inputSize }) => (inputSize === 'large' ? '3.5rem' : '2.5rem')};
   padding: ${({ minifiedVersion }) => (minifiedVersion ? '0.75rem' : '1rem')};
   background: ${({ theme }) => theme.palette.primary.white};
   outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
-  margin-left: 1rem;
   text-transform: capitalize;
 
   fieldset {
     min-width: ${({ minifiedVersion }) => (minifiedVersion ? '3.75rem' : '9.875rem')};
     max-width: ${({ minifiedVersion }) => (minifiedVersion ? '3.75rem' : '12rem')};
+  }
+
+  svg {
+    color: ${({ theme }) => theme.custom.text.black};
+    width: 1.25rem;
+    height: 1.25rem;
+    top: calc(50% - 0.65em);
+  }
+
+  .MuiSelect-icon {
+    right: 9px;
   }
 
   .MuiSelect-select {
@@ -94,13 +119,6 @@ const SelectMuiStyled = styled(SelectMui)<
 
   .MuiList-root {
     margin-top: 0.5rem;
-  }
-
-  svg {
-    color: ${({ theme }) => theme.custom.text.black};
-    width: 1.25rem;
-    height: 1.25rem;
-    top: calc(50% - 0.65em);
   }
 `
 
@@ -121,7 +139,7 @@ const ImgStyled = styled('img')<
   max-height: 2rem;
 `
 
-const NetworkNameStyled = styled('div')`
+const ItemNameStyled = styled('div')`
   display: flex;
   align-items: center;
 `

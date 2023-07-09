@@ -4,10 +4,9 @@ import {
   DialogTitle,
   Grid,
   MenuItem,
-  Select,
   SelectChangeEvent
 } from '@mui/material'
-import { Button } from '../library'
+import { Button, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -281,7 +280,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     >
       <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
-        <Grid container>
+        <Grid
+          sx={{ alignItems: 'center' }}
+          container
+        >
           <Grid
             item
             xs={12}
@@ -357,7 +359,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             md={10}
           >
             <Select
-              className="easySetupOption"
               value={selectedEasyOption}
               onChange={onChangeEasySetupOption}
               fullWidth
@@ -430,10 +431,6 @@ export default styled(Send)(
       padding-right: 3rem;
     }
     padding-top: 0.3rem;
-  }
-
-  .easySetupOption {
-    margin-top: 0.5rem
   }
 
   .buttonContainer {

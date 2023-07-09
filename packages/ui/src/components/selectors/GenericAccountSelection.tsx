@@ -1,4 +1,4 @@
-import { Autocomplete, Box, FilterOptionsState, InputAdornment, TextField } from '@mui/material'
+import { FilterOptionsState, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -6,6 +6,8 @@ import AccountDisplay from '../AccountDisplay'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import IdenticonBadge from '../IdenticonBadge'
 import { AccountBadge } from '../../types'
+import { Autocomplete, TextFieldStyled } from '../library'
+import OptionMenu from './OptionMenu'
 
 export interface AccountBaseInfo {
   address: string
@@ -22,6 +24,7 @@ interface Props {
   value: AccountBaseInfo
   label?: string
   allowAnyAddressInput?: boolean
+  withBadge?: boolean
 }
 
 const getBadge = (account: AccountBaseInfo | string) => {
@@ -44,12 +47,13 @@ const GenericAccountSelection = ({
   value,
   onChange,
   label = '',
-  allowAnyAddressInput = false
+  allowAnyAddressInput = false,
+  withBadge = false
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
   const valueAddress = useMemo(() => (typeof value === 'string' ? value : value.address), [value])
-  const valueBadge = useMemo(() => getBadge(value), [value])
+  const valueBadge = useMemo(() => (withBadge ? getBadge(value) : undefined), [value])
 
   const getOptionLabel = useCallback(
     (option: (typeof accountList)[0] | string) => {
@@ -136,21 +140,19 @@ const GenericAccountSelection = ({
       options={accountList}
       renderOption={(props, option) => {
         return (
-          <Box
-            component="li"
-            sx={{ mr: '.5rem', pt: '.8rem !important', pl: '2rem !important' }}
-            {...props}
+          <OptionMenu
             key={option.address}
+            {...props}
           >
             <AccountDisplay
               address={option.address}
-              badge={getBadge(option)}
+              badge={withBadge ? getBadge(option) : undefined}
             />
-          </Box>
+          </OptionMenu>
         )
       }}
       renderInput={(params) => (
-        <TextField
+        <TextFieldStyled
           {...params}
           inputRef={inputRef}
           label={label}

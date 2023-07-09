@@ -94,7 +94,7 @@ const MultiProxySelection = ({ className }: Props) => {
   }
 
   const renderInputs = (params: AutocompleteRenderInputParams) => (
-    <TextFieldStyled
+    <TextFieldLargeStyled
       {...params}
       inputRef={ref}
       label=""
@@ -129,11 +129,12 @@ const MultiProxySelection = ({ className }: Props) => {
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={selectedMultiProxy || multiProxyList[0]}
+      iconSize="2.75rem"
     />
   )
 }
 
-const TextFieldStyled = styled(TextField)`
+const TextFieldLargeStyled = styled(TextField)`
   .MuiInputBase-root {
     height: 3.5rem;
     padding: 0.5rem 0.75rem 0.5rem 1rem;
@@ -163,8 +164,7 @@ const TextFieldStyled = styled(TextField)`
   }
 `
 
-export default styled(MultiProxySelection)(
-  ({ theme }) => `
+export default styled(MultiProxySelection)`
   min-width: 180px;
   flex: 1;
   text-align: right;
@@ -174,11 +174,10 @@ export default styled(MultiProxySelection)(
   }
 
   .MuiInputBase-root {
-    background-color: ${theme.palette.primary.white};
+    background-color: ${({ theme }) => theme.palette.primary.white};
   }
-  
+
   .MuiAutocomplete-endAdornment {
     right: 1rem !important;
   }
 `
-)

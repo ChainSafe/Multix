@@ -12,10 +12,11 @@ import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { isValidAddress } from '../../utils'
+import { getDisplayAddress, isValidAddress } from '../../utils'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
+import OptionMenu from './OptionMenu'
 
 interface Props {
   className?: string
@@ -120,21 +121,22 @@ const AccountSelection = ({
     setName(value)
   }, [])
 
-  const renderOption = (props: any, option: any) => (
-    <Box
-      component="li"
-      sx={{
-        '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 }
-      }}
-      {...props}
+  const renderOption = (
+    props: any,
+    option: {
+      address: string
+      meta: {
+        name: string
+      }
+    }
+  ) => (
+    <OptionMenu
       key={option.address}
+      {...props}
     >
-      <MultixIdenticon
-        className="renderOptionIdenticon"
-        value={option.address}
-      />
-      {option.address} - {option.meta.name}
-    </Box>
+      <MultixIdenticonStyled value={option.address} />
+      {getDisplayAddress(option.address)} - {option.meta.name}
+    </OptionMenu>
   )
 
   const renderInput = (params: any) => (
@@ -167,9 +169,9 @@ const AccountSelection = ({
         freeSolo
         filterOptions={filterOptions}
         options={withPreselection ? dedupedSignatories : []}
-        renderOption={renderOption}
         onKeyDown={handleSpecialKeys}
         renderInput={renderInput}
+        renderOption={renderOption}
         getOptionLabel={getOptionLabel}
         onInputChange={onChangeAutocomplete}
         value={selected}
@@ -207,6 +209,11 @@ const ButtonStyled = styled(Button)`
 
 const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)`
   padding-left: 1.125rem;
+`
+
+const MultixIdenticonStyled = styled(MultixIdenticon)`
+  margin-right: 0.5rem;
+  flex-shrink: 0;
 `
 
 export default styled(AccountSelection)`
