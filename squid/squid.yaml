@@ -20,6 +20,8 @@ deploy:
       cmd: ['sqd', 'start-phala']
     - name: khala-processor
       cmd: ['sqd', 'start-khala']
+    - name: rhala-processor
+      cmd: ['sqd', 'start-rhala']
   api:
     cmd: ['npx', 'squid-graphql-server', '--subscriptions']
 scale:

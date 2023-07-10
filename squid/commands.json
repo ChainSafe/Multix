@@ -50,6 +50,16 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.khala"
       ]
+    },
+    "start-rhala": {
+      "description": "starts the indexer with rhala",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.rhala"
+      ]
     }
   }
 }
