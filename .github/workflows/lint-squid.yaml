@@ -23,7 +23,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: install packages
-        run: npm install
+        run: npm ci
 
       - name: lint
         run: npm run lint
