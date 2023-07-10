@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import AccountDisplay from '../AccountDisplay'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, TextFieldStyled } from '../library'
-import OptionMenu from './OptionMenu'
+import OptionMenuItem from './OptionMenuItem'
 
 interface Props {
   className?: string
@@ -71,13 +71,13 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       options={signersList}
       filterOptions={filterOptions}
       renderOption={(props, option) => (
-        <OptionMenu
+        <OptionMenuItem
           component="li"
           {...props}
           key={option?.address}
         >
           <AccountDisplay address={option?.address || ''} />
-        </OptionMenu>
+        </OptionMenuItem>
       )}
       renderInput={(params) => (
         <TextFieldStyled

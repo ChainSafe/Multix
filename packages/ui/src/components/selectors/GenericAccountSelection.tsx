@@ -7,7 +7,7 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import IdenticonBadge from '../IdenticonBadge'
 import { AccountBadge } from '../../types'
 import { Autocomplete, TextFieldStyled } from '../library'
-import OptionMenu from './OptionMenu'
+import OptionMenuItem from './OptionMenuItem'
 
 export interface AccountBaseInfo {
   address: string
@@ -123,6 +123,41 @@ const GenericAccountSelection = ({
     [onInputBlur]
   )
 
+  const getRenderOption = (props: any, option: any) => {
+    return (
+      <OptionMenuItem
+        key={option.address}
+        {...props}
+      >
+        <AccountDisplay
+          address={option.address}
+          badge={withBadge ? getBadge(option) : undefined}
+        />
+      </OptionMenuItem>
+    )
+  }
+
+  const getRenderInput = (params: any) => (
+    <TextFieldStyled
+      {...params}
+      inputRef={inputRef}
+      label={label}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: (
+          <InputAdornment position="start">
+            <IdenticonBadge
+              address={valueAddress}
+              badge={valueBadge}
+            />
+          </InputAdornment>
+        )
+      }}
+      onBlur={onInputBlur}
+      onKeyDown={handleSpecialKeys}
+    />
+  )
+
   if (accountList.length === 0) {
     return null
   }
@@ -138,39 +173,8 @@ const GenericAccountSelection = ({
       disableClearable
       filterOptions={filterOptions}
       options={accountList}
-      renderOption={(props, option) => {
-        return (
-          <OptionMenu
-            key={option.address}
-            {...props}
-          >
-            <AccountDisplay
-              address={option.address}
-              badge={withBadge ? getBadge(option) : undefined}
-            />
-          </OptionMenu>
-        )
-      }}
-      renderInput={(params) => (
-        <TextFieldStyled
-          {...params}
-          inputRef={inputRef}
-          label={label}
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <IdenticonBadge
-                  address={valueAddress}
-                  badge={valueBadge}
-                />
-              </InputAdornment>
-            )
-          }}
-          onBlur={onInputBlur}
-          onKeyDown={handleSpecialKeys}
-        />
-      )}
+      renderOption={getRenderOption}
+      renderInput={getRenderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChangeAutocomplete}
       value={value}
@@ -183,5 +187,9 @@ export default styled(GenericAccountSelection)`
 
   .MuiInputBase-root {
     background-color: white;
+  }
+
+  .MuiAutocomplete-listbox {
+    border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   }
 `

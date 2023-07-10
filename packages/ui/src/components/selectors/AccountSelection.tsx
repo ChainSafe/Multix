@@ -16,7 +16,7 @@ import { getDisplayAddress, isValidAddress } from '../../utils'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
-import OptionMenu from './OptionMenu'
+import OptionMenuItem from './OptionMenuItem'
 
 interface Props {
   className?: string
@@ -130,13 +130,13 @@ const AccountSelection = ({
       }
     }
   ) => (
-    <OptionMenu
+    <OptionMenuItem
       key={option.address}
       {...props}
     >
       <MultixIdenticonStyled value={option.address} />
       {getDisplayAddress(option.address)} - {option.meta.name}
-    </OptionMenu>
+    </OptionMenuItem>
   )
 
   const renderInput = (params: any) => (

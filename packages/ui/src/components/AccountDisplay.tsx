@@ -120,8 +120,9 @@ const NameWrapperStyled = styled('div')`
 
 const AddressStyled = styled('div')(
   ({ theme }) => `
-    color: ${theme.custom.text.addressColorLightGray};
-    font-size: small;
+    color: ${theme.custom.text.primary};
+    font-size: 1rem;
+    font-weight: 400;
 `
 )
 
@@ -131,7 +132,9 @@ const BoxStyled = styled(Box)`
 `
 
 const NameStyled = styled('span')`
-  font-size: large;
+  color: ${({ theme }) => theme.custom.text.primary};
+  font-size: 1rem;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

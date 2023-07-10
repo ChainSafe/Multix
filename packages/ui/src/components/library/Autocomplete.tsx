@@ -103,19 +103,35 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
     margin-top: 0.75rem !important;
   }
 
+  .MuiPaper-root {
+    box-shadow: none;
+  }
+
   .MuiAutocomplete-listbox {
-    border: none;
+    border-radius: 0.5rem;
+    box-shadow: none;
     padding: 0;
-    outline: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   }
 
   .MuiAutocomplete-option {
+    border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    overflow: hidden;
+
     &:hover {
       background: none;
     }
 
     &[aria-selected='true'].Mui-focused {
       background: none;
+    }
+
+    &:last-child {
+      border-bottom: none;
+      outline: none;
     }
 
     padding-left: 0.5rem;

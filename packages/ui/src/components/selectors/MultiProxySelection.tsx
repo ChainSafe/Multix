@@ -1,4 +1,4 @@
-import { Box, InputAdornment, TextField } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -9,6 +9,7 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
+import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
 
 interface Props {
   className?: string
@@ -75,15 +76,9 @@ const MultiProxySelection = ({ className }: Props) => {
 
     return (
       <Box
-        component="li"
-        sx={{
-          mr: '.5rem',
-          pt: '.8rem !important',
-          pl: '2rem !important',
-          flexShrink: 0
-        }}
-        {...props}
         key={displayAddress}
+        component="li"
+        {...props}
       >
         <AccountDisplay
           address={displayAddress || ''}
@@ -134,36 +129,6 @@ const MultiProxySelection = ({ className }: Props) => {
   )
 }
 
-const TextFieldLargeStyled = styled(TextField)`
-  .MuiInputBase-root {
-    height: 3.5rem;
-    padding: 0.5rem 0.75rem 0.5rem 1rem;
-    border: none;
-    outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
-
-    &:hover {
-      border: none;
-    }
-  }
-
-  .MuiOutlinedInput-notchedOutline {
-    border: none;
-  }
-
-  fieldset {
-    &:hover {
-      border: none;
-    }
-  }
-
-  input {
-    max-width: 8.625rem;
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.custom.text.primary};
-  }
-`
-
 export default styled(MultiProxySelection)`
   min-width: 180px;
   flex: 1;
@@ -179,5 +144,15 @@ export default styled(MultiProxySelection)`
 
   .MuiAutocomplete-endAdornment {
     right: 1rem !important;
+  }
+
+  .MuiAutocomplete-option {
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 `

@@ -10,10 +10,11 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
 import React from 'react'
 import { SxProps } from '@mui/system'
+import { theme } from '../../styles/theme'
 
 interface SelectProps {
   value: string
-  menuItems?: { name: string; logo?: string }[]
+  menuItems?: { value: string; logo?: string }[]
   onChange: (event: SelectChangeEvent<string>) => void
   minified?: boolean
   inputSize?: 'medium' | 'large'
@@ -22,7 +23,7 @@ interface SelectProps {
   sx?: SxProps<Theme>
 }
 
-export const Select = ({
+const Select = ({
   value,
   onChange,
   menuItems,
@@ -44,26 +45,44 @@ export const Select = ({
       IconComponent={HiOutlineChevronDown}
       MenuProps={{
         sx: {
-          marginTop: '0.75rem'
+          marginTop: '.75rem',
+          '.MuiPaper-root': {
+            boxShadow: 'none'
+          },
+
+          '.MuiList-root': {
+            padding: 0,
+            border: `1px solid ${theme.custom.text.borderColor}`,
+            borderRadius: '0.5rem'
+          },
+
+          '.MuiMenuItem-root': {
+            maxWidth: '100%',
+            padding: '0.75rem',
+            borderBottom: `1px solid ${theme.custom.text.borderColor}`,
+            '&:last-child': {
+              borderBottom: 'none'
+            }
+          }
         }
       }}
       onChange={(event) => onChange(event as SelectChangeEvent<string>)}
       minifiedVersion={minifiedVersion}
     >
       {menuItems
-        ? menuItems.map(({ name, logo }) => (
+        ? menuItems.map(({ value, logo }) => (
             <MenuItemStyled
-              key={name}
-              value={name}
+              key={value}
+              value={value}
             >
               {logo && (
                 <ImgStyled
                   minifiedVersion={minifiedVersion}
-                  alt={`network-logo-${name}`}
+                  alt={`network-logo-${value}`}
                   src={logo}
                 />
               )}
-              {<ItemNameStyled>{name}</ItemNameStyled>}
+              {<ItemNameStyled>{value}</ItemNameStyled>}
             </MenuItemStyled>
           ))
         : children}
@@ -116,10 +135,6 @@ const SelectMuiStyled = styled(SelectMui)<
   .MuiOutlinedInput-notchedOutline {
     border: none;
   }
-
-  .MuiList-root {
-    margin-top: 0.5rem;
-  }
 `
 
 const MenuItemStyled = styled(MenuItem)`
@@ -142,4 +157,8 @@ const ImgStyled = styled('img')<
 const ItemNameStyled = styled('div')`
   display: flex;
   align-items: center;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.custom.text.black};
 `
+
+export default Select

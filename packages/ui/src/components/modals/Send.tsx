@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  MenuItem,
-  SelectChangeEvent
-} from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, Grid, SelectChangeEvent } from '@mui/material'
 import { Button, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -362,16 +355,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
               value={selectedEasyOption}
               onChange={onChangeEasySetupOption}
               fullWidth
-            >
-              {Object.keys(easySetupOptions).map((key) => (
-                <MenuItem
-                  key={key}
-                  value={key}
-                >
-                  {key}
-                </MenuItem>
-              ))}
-            </Select>
+              menuItems={Object.keys(easySetupOptions).map((key) => ({
+                value: key
+              }))}
+            />
           </Grid>
           <Grid
             item

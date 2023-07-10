@@ -7,7 +7,7 @@ interface OptionMenuProps {
   children: React.ReactNode[] | React.ReactNode
 }
 
-const OptionMenu = ({ key, children, ...props }: OptionMenuProps) => (
+const OptionMenuItem = ({ key, children, ...props }: OptionMenuProps) => (
   <BoxStyled
     key={key}
     component="li"
@@ -21,12 +21,16 @@ const BoxStyled = styled(Box)`
   &.MuiAutocomplete-option {
     background-color: transparent;
     cursor: pointer;
-    padding: 0.25rem 0.75rem;
-    border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    padding: 0.75rem;
+    border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
     font-weight: 500;
     font-size: 1rem;
     color: ${({ theme }) => theme.custom.gray[900]};
     transition: background-color 0.2s ease-in-out;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     &[aria-selected='true'].Mui-focused {
       background-color: transparent;
@@ -46,4 +50,4 @@ const BoxStyled = styled(Box)`
   }
 `
 
-export default OptionMenu
+export default OptionMenuItem

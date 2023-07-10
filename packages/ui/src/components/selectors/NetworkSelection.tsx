@@ -34,7 +34,7 @@ const NetworkSelection = () => {
       value={selectedNetwork}
       onChange={handleNetworkSelection}
       menuItems={networksToShow.map(([name, { logo }]) => ({
-        name,
+        value: name,
         logo
       }))}
     />

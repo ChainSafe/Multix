@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { TextField } from '@mui/material'
 import { InputStyledBaseCss } from './InputField'
 
-export const TextFieldStyled = styled(TextField)`
+const TextFieldStyled = styled(TextField)`
   label {
     display: block;
     transform: none;
@@ -61,3 +61,5 @@ export const TextFieldStyled = styled(TextField)`
     }
   }
 `
+
+export default TextFieldStyled
