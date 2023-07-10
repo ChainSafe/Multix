@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      - tbaut-use-aquarium # run this workflow if the branch starts with ci/*
+      - tbaut-use-aquarium # run this workflow if the branch starts is tbaut-use-aquarium
 
 jobs:
   deploy:
