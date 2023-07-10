@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name: multix-test
-version: 2
+name: multix
+version: 1
 description: |-
-  Test squid for Multix
+  Squid for Multix
 
 build:
 
