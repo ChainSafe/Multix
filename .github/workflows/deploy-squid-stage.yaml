@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy-squid-stage.yaml'
     branches:
       - main
-      - tbaut-use-aquarium # run this workflow if the branch starts is tbaut-use-aquarium
+      - tbaut-use-aquarium # run this workflow if the branch is tbaut-use-aquarium
 
 jobs:
   deploy:
@@ -21,6 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'npm'
       - name: install @subsquid/cli
         run: npm install --location=global @subsquid/cli
       - name: auth subsquid
