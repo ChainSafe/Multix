@@ -1,4 +1,4 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -50,16 +50,16 @@ const ProposalSigning = ({
     () => proposalData?.info?.depositor === selectedAccount?.address,
     [proposalData, selectedAccount]
   )
+  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
+    proposalData.callData || addedCallData
+  )
   const needCallData = useMemo(
     () =>
-      // if we don't have the calldata and it's the last approval
+      // if we don't have the calldata from the chain and it's the last approval
       !!threshold &&
       proposalData.info?.approvals.length === threshold - 1 &&
       !proposalData.callData,
     [proposalData, threshold]
-  )
-  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
-    needCallData ? addedCallData : proposalData.callData
   )
 
   const onSubmitting = useCallback(() => {
@@ -131,7 +131,8 @@ const ProposalSigning = ({
         return
       }
 
-      if (!proposalData.callData && !addedCallData) {
+      // if the callData is needed, but none was supplied or found
+      if (needCallData && !proposalData.callData && !addedCallData) {
         const error = 'No callData found or supplied'
         console.error(error)
         setErrorMessage(error)
@@ -213,10 +214,11 @@ const ProposalSigning = ({
       api,
       selectedAccount,
       multisig,
+      needCallData,
+      addedCallData,
       callInfo,
       selectedSigner,
       signCallback,
-      addedCallData,
       addToast,
       getSubscanExtrinsicLink
     ]
@@ -288,7 +290,27 @@ const ProposalSigning = ({
               />
             </>
           )}
-
+          {!needCallData && !callInfo?.call && (
+            <>
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <HashGridStyled
+                item
+                xs={12}
+                md={6}
+              >
+                {proposalData.hash}
+              </HashGridStyled>
+              <Grid
+                item
+                xs={0}
+                md={5}
+              />
+            </>
+          )}
           {(!needCallData || !!callInfo?.call) && !errorMessage && (
             <>
               <Grid
@@ -365,6 +387,9 @@ const ProposalSigning = ({
   )
 }
 
+const HashGridStyled = styled(Grid)`
+  margin: 1rem 0 1rem 0;
+`
 export default styled(ProposalSigning)(
   ({ theme }) => `
   .buttonContainer {
