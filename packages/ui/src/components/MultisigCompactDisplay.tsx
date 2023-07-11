@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchData } from '../fetcher'
 import { useNetwork } from '../contexts/NetworkContext'
+import { useAccountId } from '../hooks/useAccountId'
 
 interface Props {
   address: string
@@ -22,13 +23,14 @@ interface Props {
 const MultisigCompactDisplay = ({ className, address, expanded = false }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const { selectedNetworkInfo } = useNetwork()
+  const accountId = useAccountId(address)
   // we can't use the useMultisigById that got generated in types-and-hooks because we need a dynamic url
   // to fetch for the right network
   const { data, error, isFetching } = useQuery<MultisigByIdQuery, unknown, MultisigByIdQuery>(
-    ['MultisigById', { account: address }],
+    ['MultisigById', { id: accountId }],
     fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(
       MultisigByIdDocument,
-      { account: address },
+      { id: accountId },
       undefined,
       selectedNetworkInfo?.httpGraphqlUrl
     )
@@ -47,7 +49,7 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 
     if (data?.accounts[0]) {
       // this is a query by id, so it should return just 1 account
-      setSignatories(data.accounts[0].signatories.map(({ signatory }) => signatory.id))
+      setSignatories(data.accounts[0].signatories.map(({ signatory }) => signatory.address))
       setThreshold(data.accounts[0].threshold)
       setBadge(AccountBadge.MULTI)
     }

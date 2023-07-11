@@ -7,14 +7,14 @@ import { useNetwork } from '../contexts/NetworkContext'
 
 interface Args {
   onUpdate: (data: MultisigsByAccountsSubscription | null) => void
-  accounts: string[]
-  watchedAccounts: string[]
+  accountIds: string[]
+  watchedAccountIds: string[]
 }
 
 export const useMultisigsByAccountSubscription = ({
   onUpdate,
-  accounts,
-  watchedAccounts
+  accountIds,
+  watchedAccountIds
 }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
@@ -45,7 +45,7 @@ export const useMultisigsByAccountSubscription = ({
   }
 
   const { isError, error, data, isLoading } = useSubscription(
-    [`KeyMultisigsByAccount-${accounts}-${watchedAccounts}-${selectedNetwork}`],
+    [`KeyMultisigsByAccount-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
 
@@ -54,8 +54,8 @@ export const useMultisigsByAccountSubscription = ({
       }>(client, {
         query: MultisigsByAccountsDocument,
         variables: {
-          accounts: [...watchedAccounts, ...accounts],
-          watchedAccounts
+          accountIds: [...watchedAccountIds, ...accountIds],
+          watchedAccountIds
         }
       })
     },
