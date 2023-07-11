@@ -4,7 +4,7 @@
 
 ### an interface to easily manage complex multisigs.
 
-### Play with Multix on https://multix.chainsafe.io/
+###https://multix.chainsafe.io
 
 This repo contains the code to run an indexer see `./squid` and a front-end, see `./packages/ui`.
 
@@ -26,7 +26,7 @@ BLOCK_START=3510000 # this is the starging block of the indexer
 PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to the blockchain
 ARCHIVE_NAME="rococo" # the archive name from subsquid archives
- CHAIN_ID='rococo' # the name that will prefix most ids in the indexer's DB
+CHAIN_ID='rococo' # the name that will prefix most ids in the indexer's DB
 ```
 
 ### Running the project locally
