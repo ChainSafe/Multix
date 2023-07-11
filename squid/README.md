@@ -1,7 +1,7 @@
 # Multix-squid
 
 A [squid](https://subsquid.io) project to support the Multix UI.
-It accumulates [rococo](https://rococo.network) accounts, multisigs and proxy relations.
+It accumulates the chain's accounts, multisigs and proxy relations.
 
 ## Prerequisites
 
