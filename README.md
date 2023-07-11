@@ -1,6 +1,7 @@
 # Multix
 
 <div style="text-align:center" width=500><img src=".github/images/MULTIX_LOGO_FULL_BLUE_1200px.png" /></div>
+
 ### an interface to easily manage complex multisigs.
 
 ### Play with Multix on https://multix.chainsafe.io/
