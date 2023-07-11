@@ -17,6 +17,8 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
 import OptionMenuItem from './OptionMenuItem'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
+import * as React from 'react'
 
 interface Props {
   className?: string
@@ -122,7 +124,7 @@ const AccountSelection = ({
   }, [])
 
   const renderOption = (
-    props: any,
+    props: React.HTMLAttributes<HTMLLIElement>,
     option: {
       address: string
       meta: {
@@ -131,7 +133,7 @@ const AccountSelection = ({
     }
   ) => (
     <OptionMenuItem
-      key={option.address}
+      keyValue={option.address}
       {...props}
     >
       <MultixIdenticonStyled value={option.address} />
@@ -139,7 +141,7 @@ const AccountSelection = ({
     </OptionMenuItem>
   )
 
-  const renderInput = (params: any) => (
+  const renderInput = (params: AutocompleteRenderInputParams) => (
     <TextFieldStyled
       {...params}
       inputRef={ref}
@@ -164,9 +166,8 @@ const AccountSelection = ({
   return (
     <BoxStyled className={className}>
       <Autocomplete
-        className="addressField"
-        disabled={addressDisabled}
         freeSolo
+        disabled={addressDisabled}
         filterOptions={filterOptions}
         options={withPreselection ? dedupedSignatories : []}
         onKeyDown={handleSpecialKeys}
@@ -207,9 +208,7 @@ const ButtonStyled = styled(Button)`
   align-self: end;
 `
 
-const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)`
-  padding-left: 1.125rem;
-`
+const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)``
 
 const MultixIdenticonStyled = styled(MultixIdenticon)`
   margin-right: 0.5rem;
@@ -220,12 +219,12 @@ export default styled(AccountSelection)`
   display: flex;
   flex: 1;
 
-  & > * {
-    flex: 1;
+  .MuiAutocomplete-root {
+    margin-right: 0.5rem;
   }
 
-  .addressField {
-    margin-right: 0.5rem;
+  & > * {
+    flex: 1;
   }
 
   & > button {

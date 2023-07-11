@@ -8,6 +8,7 @@ import IdenticonBadge from '../IdenticonBadge'
 import { AccountBadge } from '../../types'
 import { Autocomplete, TextFieldStyled } from '../library'
 import OptionMenuItem from './OptionMenuItem'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 
 export interface AccountBaseInfo {
   address: string
@@ -53,7 +54,7 @@ const GenericAccountSelection = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
   const valueAddress = useMemo(() => (typeof value === 'string' ? value : value.address), [value])
-  const valueBadge = useMemo(() => (withBadge ? getBadge(value) : undefined), [value])
+  const valueBadge = useMemo(() => (withBadge ? getBadge(value) : undefined), [value, withBadge])
 
   const getOptionLabel = useCallback(
     (option: (typeof accountList)[0] | string) => {
@@ -123,10 +124,10 @@ const GenericAccountSelection = ({
     [onInputBlur]
   )
 
-  const getRenderOption = (props: any, option: any) => {
+  const getRenderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: AccountBaseInfo) => {
     return (
       <OptionMenuItem
-        key={option.address}
+        keyValue={option.address}
         {...props}
       >
         <AccountDisplay
@@ -137,7 +138,7 @@ const GenericAccountSelection = ({
     )
   }
 
-  const getRenderInput = (params: any) => (
+  const getRenderInput = (params: AutocompleteRenderInputParams) => (
     <TextFieldStyled
       {...params}
       inputRef={inputRef}
@@ -184,12 +185,4 @@ const GenericAccountSelection = ({
 
 export default styled(GenericAccountSelection)`
   flex: 1;
-
-  .MuiInputBase-root {
-    background-color: white;
-  }
-
-  .MuiAutocomplete-listbox {
-    border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
-  }
 `

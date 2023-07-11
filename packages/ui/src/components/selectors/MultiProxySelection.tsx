@@ -71,7 +71,7 @@ const MultiProxySelection = ({ className }: Props) => {
     }
   }, [])
 
-  const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: any) => {
+  const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: MultiProxy) => {
     const displayAddress = getDisplayAddress(option)
 
     return (
@@ -136,10 +136,6 @@ export default styled(MultiProxySelection)`
 
   .MuiTextField-root {
     max-width: 18.875rem;
-  }
-
-  .MuiInputBase-root {
-    background-color: ${({ theme }) => theme.palette.primary.white};
   }
 
   .MuiAutocomplete-endAdornment {

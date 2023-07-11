@@ -8,6 +8,8 @@ import AccountDisplay from '../AccountDisplay'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, TextFieldStyled } from '../library'
 import OptionMenuItem from './OptionMenuItem'
+import * as React from 'react'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 
 interface Props {
   className?: string
@@ -59,6 +61,32 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
     [onChange, selectAccount]
   )
 
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: InjectedAccountWithMeta
+  ) => (
+    <OptionMenuItem
+      {...props}
+      keyValue={option?.address}
+    >
+      <AccountDisplay address={option?.address || ''} />
+    </OptionMenuItem>
+  )
+
+  const renderInput = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: (
+          <InputAdornment position="start">
+            <MultixIdenticon value={selectedAccount?.address} />
+          </InputAdornment>
+        )
+      }}
+    />
+  )
+
   if (signersList.length === 0) {
     return null
   }
@@ -70,28 +98,8 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       className={className}
       options={signersList}
       filterOptions={filterOptions}
-      renderOption={(props, option) => (
-        <OptionMenuItem
-          component="li"
-          {...props}
-          key={option?.address}
-        >
-          <AccountDisplay address={option?.address || ''} />
-        </OptionMenuItem>
-      )}
-      renderInput={(params) => (
-        <TextFieldStyled
-          {...params}
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <MultixIdenticon value={selectedAccount?.address} />
-              </InputAdornment>
-            )
-          }}
-        />
-      )}
+      renderOption={renderOption}
+      renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChangeSigner}
       value={selectedAccount || signersList[0]}

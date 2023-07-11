@@ -15,6 +15,8 @@ interface AutocompleteProps {
   onChange?: (event: any, value: any) => void
   value?: any
   renderOption: (props: any, option: any, state: any) => React.ReactNode
+  renderInput: (params: AutocompleteRenderInputParams) => React.ReactNode
+
   disableClearable?: boolean
   onKeyDown?: (e: any) => void
   onInputChange?: (
@@ -23,7 +25,6 @@ interface AutocompleteProps {
   ) => void
   disabled?: boolean
   freeSolo?: boolean
-  renderInput: (params: AutocompleteRenderInputParams) => React.ReactNode
   iconSize?: string
   selectOnFocus?: boolean
   clearOnBlur?: boolean
@@ -99,6 +100,10 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
     }
   }
 
+  .MuiInputBase-root {
+    background-color: ${({ theme }) => theme.palette.primary.white};
+  }
+
   .MuiAutocomplete-popper {
     margin-top: 0.75rem !important;
   }
@@ -108,10 +113,10 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
   }
 
   .MuiAutocomplete-listbox {
-    border-radius: 0.5rem;
-    box-shadow: none;
     padding: 0;
     border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    border-radius: 0.5rem;
+    box-shadow: none;
   }
 
   .MuiAutocomplete-option {
@@ -120,6 +125,7 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
     white-space: nowrap;
     min-width: 0;
     overflow: hidden;
+    padding-left: 0.75rem;
 
     &:hover {
       background: none;
@@ -133,8 +139,6 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
       border-bottom: none;
       outline: none;
     }
-
-    padding-left: 0.5rem;
   }
 `
 

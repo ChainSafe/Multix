@@ -121,7 +121,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         allowAnyAddressInput={true}
       />
       <TextFieldStyled
-        className="amount"
         label={`Amount`}
         onChange={onAmountChange}
         value={amountString}

@@ -21,24 +21,23 @@ const TextFieldStyled = styled(TextField)`
     display: none;
   }
 
-  .MuiInputAdornment-root {
-    margin-left: 1rem;
-  }
-
   .MuiInputBase-root {
     ${InputStyledBaseCss};
     max-height: 41px;
-    padding: 0 1.25rem 0 0;
+    padding: 0 1.25rem 0 1rem;
+
+    .MuiInputBase-input {
+      padding: 0;
+    }
 
     .MuiAutocomplete-input {
       font-size: 1rem;
       font-weight: 500;
       color: ${({ theme }) => theme.custom.gray[900]};
       border: none;
-      margin-top: -3px;
       height: 41px;
       box-sizing: border-box;
-      padding: 0.5rem 1.25rem 0.5rem 0 !important;
+      padding: 0.5rem 1.25rem 0.5rem 0;
     }
 
     .MuiInputBase-inputAdornedStart {

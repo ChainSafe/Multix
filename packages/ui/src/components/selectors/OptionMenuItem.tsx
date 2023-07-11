@@ -3,13 +3,13 @@ import { styled } from '@mui/material/styles'
 import React from 'react'
 
 interface OptionMenuProps {
-  key: string
+  keyValue: string
   children: React.ReactNode[] | React.ReactNode
 }
 
-const OptionMenuItem = ({ key, children, ...props }: OptionMenuProps) => (
+const OptionMenuItem = ({ keyValue, children, ...props }: OptionMenuProps) => (
   <BoxStyled
-    key={key}
+    key={keyValue}
     component="li"
     {...props}
   >
