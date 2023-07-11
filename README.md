@@ -1,6 +1,6 @@
-# Multix
+<p align="center"><img src=".github/images/MULTIX_LOGO_FULL_BLUE_1200px.png" width=500 /></p>
 
-<div style="text-align:center" width=500><img src=".github/images/MULTIX_LOGO_FULL_BLUE_1200px.png" /></div>
+# Multix
 
 ### an interface to easily manage complex multisigs.
 
