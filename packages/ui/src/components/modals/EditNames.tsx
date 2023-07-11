@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid, IconButton } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button } from '../library'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -6,7 +6,7 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { AccountNames, useAccountNames } from '../../contexts/AccountNamesContext'
 import AccountEditName, { OnChangeArgs } from '../AccountEditName'
 import { renderMultisigHeading } from '../../pages/multisigHelpers'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { CloseButton } from '../library/CloseButton'
 
 interface Props {
   onClose: () => void
@@ -53,15 +53,7 @@ const EditNames = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      <IconButton
-        className="closeButton"
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={onClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
+      <CloseButton onClose={onClose} />
       <DialogTitle>Edit names</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
@@ -138,11 +130,5 @@ export default styled(EditNames)`
   .accountEdition {
     margin-bottom: 1rem;
     align-items: end;
-  }
-
-  .closeButton {
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
   }
 `

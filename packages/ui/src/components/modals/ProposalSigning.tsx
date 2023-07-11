@@ -1,11 +1,4 @@
-import {
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton
-} from '@mui/material'
+import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -23,7 +16,7 @@ import { HexString, MultisigStorageInfo } from '../../types'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { CloseButton } from '../library/CloseButton'
 
 interface Props {
   onClose: () => void
@@ -245,15 +238,7 @@ const ProposalSigning = ({
       open
       className={className}
     >
-      <IconButton
-        className="closeButton"
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={onClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
+      <CloseButton onClose={onClose} />
       <DialogTitle>Transaction signing</DialogTitle>
       <DialogContent>
         <Grid container>
@@ -395,12 +380,6 @@ export default styled(ProposalSigning)(
   .errorMessage {
     margin-top: 0.5rem;
     color: ${theme.custom.error};
-  }
-
-  .closeButton {
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
   }
 `
 )

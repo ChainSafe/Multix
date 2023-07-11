@@ -1,12 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton
-} from '@mui/material'
+import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -30,7 +22,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { CloseButton } from '../library/CloseButton'
 
 interface Props {
   onClose: () => void
@@ -231,17 +223,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     [getMultisigByAddress]
   )
 
-  const handleClose = useCallback(
-    (_: any, reason: 'backdropClick' | 'escapeKeyDown') => {
-      // Prevent closing unless the calls aren't made yet.
-      // a dedicated close button is present for this step
-      if (!isCallStep) {
-        onClose()
-      }
-    },
-    [isCallStep, onClose]
-  )
-
   const onErrorCallback = useCallback((errorMessage?: string) => {
     !!errorMessage && setCallError(errorMessage)
   }, [])
@@ -367,15 +348,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      <IconButton
-        className="closeButton"
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={onClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
+      {!isCallStep && <CloseButton onClose={onClose} />}
       <DialogTitle>Change multisig</DialogTitle>
       <DialogContent
         className="generalContainer"
@@ -556,11 +529,5 @@ export default styled(ChangeMultisig)`
   .callErrorMessage {
     text-align: center;
     margin-top: 1rem;
-  }
-
-  .closeButton {
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
   }
 `
