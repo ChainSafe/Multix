@@ -37,11 +37,11 @@ const TextFieldStyled = styled(TextField)`
       border: none;
       height: 41px;
       box-sizing: border-box;
-      padding: 0.5rem 1.25rem 0.5rem 0;
+      padding: 0.5rem 0 0.5rem 0;
     }
 
     .MuiInputBase-inputAdornedStart {
-      padding-left: 0.25rem;
+      padding: 0.5rem 0.25rem;
     }
 
     &.Mui-focused {

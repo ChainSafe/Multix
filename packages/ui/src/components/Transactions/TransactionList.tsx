@@ -98,8 +98,6 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     // console.log('decoded', decoded)
     const multisigInfos = getMultisigInfo(decoded) || {}
 
-    // console.log("multisigInfos", multisigInfos)
-
     const info = multisigInfos.find(({ name, hash, callData }) => {
       if (!!hash && hash === pendingTx.hash) {
         return { name, hash, callData }
