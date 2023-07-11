@@ -110,7 +110,7 @@ const Home = ({ className }: Props) => {
         onClosenewMultisigAlert()
       }, 20000)
     }
-  }, [])
+  }, [onClosenewMultisigAlert, searchParams])
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [

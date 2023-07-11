@@ -32,16 +32,7 @@
     "lint:fix": "yarn workspaces foreach run lint:fix",
     "formatAll": "prettier --write .",
     "ui:start": "yarn workspace multix-ui start",
-    "ui:lint": "yarn workspace multix-ui lint",
-    "squid:start": "yarn squid:build && yarn squid:codegen && yarn squid:migrate && yarn squid:start:indexer",
-    "squid:lint": "yarn workspace multix-squid lint",
-    "squid:codegen": "yarn workspace multix-squid codegen",
-    "squid:typegen": "yarn workspace multix-squid typegen",
-    "squid:build": "yarn workspace multix-squid build",
-    "squid:install": "yarn workspaces focus multix-squid",
-    "squid:migrate": "yarn workspace multix-squid db:migrate",
-    "squid:start:indexer": "yarn workspace multix-squid start:indexer",
-    "squid:start:graphql-server": "yarn workspace multix-squid start:graphql-server"
+    "ui:lint": "yarn workspace multix-ui lint"
   },
   "devDependencies": {
     "eslint-config-prettier": "^8.8.0",

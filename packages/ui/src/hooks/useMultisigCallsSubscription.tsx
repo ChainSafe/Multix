@@ -10,10 +10,10 @@ import { useNetwork } from '../contexts/NetworkContext'
 
 interface Args {
   onUpdate: () => void
-  multisigs: string[]
+  multisigIds: string[]
 }
 
-export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
+export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
     () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
@@ -39,7 +39,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
   }
 
   const { isError, error } = useSubscription(
-    [`KeyMultisigCallsByMultisigId-${multisigs}-${selectedNetwork}`],
+    [`KeyMultisigCallsByMultisigId-${multisigIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
 
@@ -48,7 +48,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigs }: Args) => {
       }>(client, {
         query: MultisigCallsByMultisigIdDocument,
         variables: {
-          multisigs
+          multisigs: multisigIds
         }
       })
     },
