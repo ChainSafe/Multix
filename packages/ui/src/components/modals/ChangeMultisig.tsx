@@ -22,7 +22,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
-import { CloseButton } from '../library/CloseButton'
+import { ModalCloseButton } from '../library/ModalCloseButton'
 
 interface Props {
   onClose: () => void
@@ -348,7 +348,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      {!isCallStep && <CloseButton onClose={onClose} />}
+      {(!isCallStep || !!callError) && <ModalCloseButton onClose={onClose} />}
       <DialogTitle>Change multisig</DialogTitle>
       <DialogContent
         className="generalContainer"
@@ -482,7 +482,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {currentStep === 'selection' ? 'Next' : 'Save'}
               </Button>
             )}
-            {isCallStep && !!callError && <Button onClick={onClose}>Close</Button>}
           </Grid>
         </Grid>
       </DialogContent>
