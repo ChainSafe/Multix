@@ -2,7 +2,7 @@ import { Box, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
+import { isMultiProxy, MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
 import AccountDisplay from '../AccountDisplay'
 import IdenticonBadge from '../IdenticonBadge'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
@@ -10,9 +10,6 @@ import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
-
-const isMultiProxy = (value: any): value is MultiProxy =>
-  value && value.multisigs && value.multisigs.length > 0
 
 interface Props {
   className?: string

@@ -41,9 +41,6 @@ const filterOptions = createFilterOptions({
   stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name
 })
 
-const isInjectedAccountWithMeta = (value: any): value is InjectedAccountWithMeta =>
-  value && value.address && value.meta && value.meta.source
-
 const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
   if (!option) return ''
 

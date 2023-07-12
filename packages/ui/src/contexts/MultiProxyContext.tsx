@@ -24,6 +24,9 @@ export interface MultiProxy {
   multisigs: MultisigAggregated[]
 }
 
+export const isMultiProxy = (value: any): value is MultiProxy =>
+  value && value.multisigs && value.multisigs.length > 0
+
 export interface IMultisigContext {
   selectedMultiProxy?: MultiProxy
   multiProxyList: MultiProxy[]
