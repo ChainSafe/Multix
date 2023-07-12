@@ -43,8 +43,6 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
 
         const incomplete = getIncompleteMessage({ event } as EventRecord)
 
-        console.log('incomplete', `${section}.${method}`, incomplete)
-
         // check if multisig or proxy or batch has an error
         if (incomplete) {
           errorInfo = incomplete

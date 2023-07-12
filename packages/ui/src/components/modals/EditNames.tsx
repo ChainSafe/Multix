@@ -6,7 +6,7 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { AccountNames, useAccountNames } from '../../contexts/AccountNamesContext'
 import AccountEditName, { OnChangeArgs } from '../AccountEditName'
 import { renderMultisigHeading } from '../../pages/multisigHelpers'
-import { CloseButton } from '../library/CloseButton'
+import { ModalCloseButton } from '../library/ModalCloseButton'
 
 interface Props {
   onClose: () => void
@@ -53,7 +53,7 @@ const EditNames = ({ onClose, className }: Props) => {
       open
       className={className}
     >
-      <CloseButton onClose={onClose} />
+      <ModalCloseButton onClose={onClose} />
       <DialogTitle>Edit names</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
