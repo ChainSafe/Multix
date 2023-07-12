@@ -27,6 +27,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
+import { CloseButton } from '../library/CloseButton'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -276,9 +277,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       fullWidth
       maxWidth={'md'}
       open
-      onClose={onClose}
       className={className}
     >
+      <CloseButton onClose={onClose} />
       <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>

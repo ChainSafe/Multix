@@ -16,6 +16,7 @@ import { HexString, MultisigStorageInfo } from '../../types'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
+import { CloseButton } from '../library/CloseButton'
 
 interface Props {
   onClose: () => void
@@ -237,9 +238,9 @@ const ProposalSigning = ({
       fullWidth
       maxWidth={'md'}
       open
-      onClose={onClose}
       className={className}
     >
+      <CloseButton onClose={onClose} />
       <DialogTitle>Transaction signing</DialogTitle>
       <DialogContent>
         <Grid container>
