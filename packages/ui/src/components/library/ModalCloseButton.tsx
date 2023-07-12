@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material'
 
 interface Props {
   onClose: () => void
-  className: string
+  className?: string
 }
 
 const CloseButton = ({ onClose, className }: Props) => (
