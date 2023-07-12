@@ -37,7 +37,7 @@ Install and launch the indexer and its DB. This will block the terminal
 
 ```bash
 cd squid;
-npm run install;
+npm install;
 docker compose up db -d;
 npm run codegen;
 npm run build;
@@ -47,13 +47,15 @@ npm run start:indexer # this will start the indexer using the envirnoment variab
 node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.polkadot
 ```
 
-In another terminal, run the graphql server
+In the squid directory but another terminal window, run the graphql server
 
 ```bash
 npm run start:graphql-server
 ```
 
 #### Running the front-end (user interface) locally
+
+From the repostiory root
 
 ```bash
 # install all dependancies
