@@ -36,8 +36,8 @@ CHAIN_ID='rococo' # the name that will prefix most ids in the indexer's DB
 Install and launch the indexer and its DB. This will block the terminal
 
 ```bash
-cd /squid;
-npm install;
+cd squid;
+npm run install;
 docker compose up db -d;
 npm run codegen;
 npm run build;
