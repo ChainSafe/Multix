@@ -11,6 +11,9 @@ import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
 
+const isMultiProxy = (value: any): value is MultiProxy =>
+  value && value.multisigs && value.multisigs.length > 0
+
 interface Props {
   className?: string
 }
@@ -18,7 +21,7 @@ interface Props {
 const getDisplayAddress = (option?: MultiProxy) =>
   option?.proxy ? option?.proxy : option?.multisigs[0].address
 
-const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy | undefined) => {
+const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
   if (!option || !value) return false
 
   if (!!option.proxy || !!value.proxy) {
@@ -30,7 +33,6 @@ const isOptionEqualToValue = (option: MultiProxy | undefined, value: MultiProxy 
 const MultiProxySelection = ({ className }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
   const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
-
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
@@ -47,31 +49,42 @@ const MultiProxySelection = ({ className }: Props) => {
   })
 
   const getOptionLabel = useCallback(
-    (option: typeof selectedMultiProxy) => {
+    (option?: NonNullable<MultiProxy | string>): string => {
       // We only support one multisigs if they have no proxy
-      const addressToSearch = option?.proxy || option?.multisigs[0].address
-      const name = !!addressToSearch && accountNames[addressToSearch]
-      return name || (addressToSearch as string)
+
+      if (isMultiProxy(option)) {
+        const addressToSearch = option?.proxy || option?.multisigs[0].address
+        const name = !!addressToSearch && accountNames[addressToSearch]
+        return name || (addressToSearch as string)
+      }
+
+      return ''
     },
     [accountNames]
   )
 
   const onChange = useCallback(
-    (_: React.SyntheticEvent<Element, Event>, val: typeof selectedMultiProxy) => {
-      if (!val) return
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      value: NonNullable<MultiProxy | string | undefined | (string | MultiProxy | undefined)[]>
+    ) => {
+      if (!value) return
 
-      selectMultiProxy(val)
+      isMultiProxy(value) && selectMultiProxy(value)
     },
     [selectMultiProxy]
   )
 
-  const handleSpecialKeys = useCallback((e: any) => {
+  const handleSpecialKeys = useCallback((e: React.KeyboardEvent) => {
     if (['Enter', 'Escape'].includes(e.key)) {
       ref?.current?.blur()
     }
   }, [])
 
-  const renderOptions = (props: React.HTMLAttributes<HTMLLIElement>, option: MultiProxy) => {
+  const renderOptions = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: typeof selectedMultiProxy
+  ): React.ReactNode => {
     const displayAddress = getDisplayAddress(option)
 
     return (

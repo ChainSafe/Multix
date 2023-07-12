@@ -1,37 +1,57 @@
 import { Autocomplete as AutocompleteMui } from '@mui/material'
-import React, { SyntheticEvent } from 'react'
+import React from 'react'
 import { styled } from '@mui/material/styles'
-import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
+import {
+  AutocompleteRenderInputParams,
+  AutocompleteRenderOptionState
+} from '@mui/material/Autocomplete/Autocomplete'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
+import {
+  AutocompleteFreeSoloValueMapping,
+  AutocompleteInputChangeReason,
+  AutocompleteValue,
+  FilterOptionsState
+} from '@mui/base/useAutocomplete/useAutocomplete'
 
-interface AutocompleteProps {
+interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   InputProps?: Partial<AutocompleteRenderInputParams['InputProps']>
   className?: string
-  isOptionEqualToValue?: (option: any, value: any) => boolean
-  filterOptions?: (options: any[], state: any) => any[]
-  options: any[]
-  getOptionLabel: (option: any) => string
-  onChange?: (event: any, value: any) => void
-  value?: any
-  renderOption: (props: any, option: any, state: any) => React.ReactNode
+  isOptionEqualToValue?: (option: T, value: T) => boolean
+  filterOptions?: (options: T[], state: FilterOptionsState<T>) => T[]
+  options: ReadonlyArray<T>
+  getOptionLabel?: (option: T | AutocompleteFreeSoloValueMapping<FreeSolo>) => string
+  onChange?: (
+    event: React.SyntheticEvent,
+    value: AutocompleteValue<T, Multiple, DisableClearable, FreeSolo>
+  ) => void
+  value?: AutocompleteValue<T, Multiple, DisableClearable, FreeSolo>
+  renderOption?: (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: T,
+    state: AutocompleteRenderOptionState
+  ) => React.ReactNode
   renderInput: (params: AutocompleteRenderInputParams) => React.ReactNode
-
-  disableClearable?: boolean
-  onKeyDown?: (e: any) => void
+  disableClearable?: DisableClearable
+  onKeyDown?: (e: React.SyntheticEvent) => void
   onInputChange?: (
-    _: SyntheticEvent<Element, Event>,
-    val: string | InjectedAccountWithMeta | null
+    event: React.SyntheticEvent,
+    value: string,
+    reason: AutocompleteInputChangeReason
   ) => void
   disabled?: boolean
-  freeSolo?: boolean
+  freeSolo?: FreeSolo
   iconSize?: string
   selectOnFocus?: boolean
   clearOnBlur?: boolean
   handleHomeEndKeys?: boolean
 }
 
-const Autocomplete = ({
+const Autocomplete = <
+  T,
+  Multiple extends boolean | undefined,
+  DisableClearable extends boolean | undefined,
+  FreeSolo extends boolean | undefined
+>({
   className,
   isOptionEqualToValue,
   filterOptions,
@@ -49,7 +69,7 @@ const Autocomplete = ({
   clearOnBlur,
   handleHomeEndKeys,
   iconSize
-}: AutocompleteProps) => {
+}: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
   return (
     <AutocompleteWrapper
       iconSize={iconSize}
@@ -115,7 +135,7 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
   .MuiAutocomplete-listbox {
     padding: 0;
     border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     box-shadow: none;
   }
 

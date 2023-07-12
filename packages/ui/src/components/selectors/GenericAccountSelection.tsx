@@ -42,6 +42,10 @@ const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) =
   return option.address === value.address
 }
 
+const isAccountBaseInfo = (value: any): value is AccountBaseInfo => {
+  return value && value.address
+}
+
 const GenericAccountSelection = ({
   className,
   accountList = [],
@@ -102,13 +106,18 @@ const GenericAccountSelection = ({
   }, [])
 
   const onChangeAutocomplete = useCallback(
-    (_: React.SyntheticEvent<Element, Event>, val: AccountBaseInfo | string) => {
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
+      >
+    ) => {
       if (typeof val === 'string') {
         onChange({
           address: val
         })
       } else {
-        onChange(val)
+        isAccountBaseInfo(val) && onChange(val)
       }
       onInputBlur()
     },

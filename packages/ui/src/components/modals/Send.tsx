@@ -274,7 +274,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid
-          sx={{ alignItems: 'center' }}
+          alignItems="center"
           container
         >
           <Grid

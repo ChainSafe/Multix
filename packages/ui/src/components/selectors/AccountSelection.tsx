@@ -1,4 +1,5 @@
 import { Box, InputAdornment } from '@mui/material'
+import * as React from 'react'
 import {
   ChangeEvent,
   SyntheticEvent,
@@ -17,8 +18,10 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import MultixIdenticon from '../MultixIdenticon'
 import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
 import OptionMenuItem from './OptionMenuItem'
-import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
-import * as React from 'react'
+import {
+  AutocompleteRenderInputParams,
+  AutocompleteRenderOptionState
+} from '@mui/material/Autocomplete/Autocomplete'
 
 interface Props {
   className?: string
@@ -37,6 +40,9 @@ const filterOptions = createFilterOptions({
   ignoreCase: true,
   stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name
 })
+
+const isInjectedAccountWithMeta = (value: any): value is InjectedAccountWithMeta =>
+  value && value.address && value.meta && value.meta.source
 
 const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
   if (!option) return ''
@@ -77,10 +83,19 @@ const AccountSelection = ({
   }, [accountNames, selected])
 
   const onChangeAutocomplete = useCallback(
-    (_: SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
+    (
+      _: SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        | InjectedAccountWithMeta
+        | string
+        | undefined
+        | (string | InjectedAccountWithMeta | undefined)[]
+      >
+    ) => {
       setErrorMessage('')
       setName('')
-      const value = getOptionLabel(val)
+
+      const value = getOptionLabel(val as string)
       setSelected(value)
     },
     []
@@ -125,12 +140,8 @@ const AccountSelection = ({
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
-    option: {
-      address: string
-      meta: {
-        name: string
-      }
-    }
+    option: InjectedAccountWithMeta,
+    _: AutocompleteRenderOptionState
   ) => (
     <OptionMenuItem
       keyValue={option.address}
