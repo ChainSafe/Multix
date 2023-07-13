@@ -29,7 +29,6 @@ const TextFieldLargeStyled = styled(TextField)`
   }
 
   input {
-    max-width: 8.625rem;
     font-size: 1rem;
     font-weight: 400;
     color: ${({ theme }) => theme.custom.text.primary};

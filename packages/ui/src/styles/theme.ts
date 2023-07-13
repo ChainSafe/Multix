@@ -150,7 +150,7 @@ export const theme = createTheme({
     },
     proxyBadge: {
       pure: '#4C66AA',
-      multi: '#94A3B8'
+      multi: '#F1F5F9'
     },
     identity: {
       green: 'green',

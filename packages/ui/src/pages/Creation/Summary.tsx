@@ -150,6 +150,7 @@ export default styled(Summary)`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    min-width: 0;
   }
 
   .signerSelection {

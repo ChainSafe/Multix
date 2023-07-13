@@ -43,26 +43,26 @@ const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
   .MuiBadge-badge {
     max-width: 2.625rem;
     padding: 0.25rem 0.5rem;
-    max-height: 1rem;
+    max-height: 1.3125rem;
     font-size: 0.625rem;
     font-weight: 500;
-    border-radius: 2rem;
-    background-color: ${({ theme, badgeType }) =>
-      `${
-        badgeType === AccountBadge.PURE
-          ? theme.custom.proxyBadge.pure
-          : theme.custom.proxyBadge.multi
-      } !important`};
+    border-radius: 0.9375rem;
+    border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
-  }
+
+    ${({ theme, badgeType }) =>
+      badgeType === AccountBadge.PURE &&
+      `
+        color: ${theme.custom.gray[100]};
+        background-color: ${theme.custom.proxyBadge.pure} !important;
+      `};
+
+    ${({ theme, badgeType }) =>
+      badgeType === AccountBadge.MULTI &&
+      `
+        color: ${theme.custom.text.black};
+        background-color: ${theme.custom.proxyBadge.multi} !important;
+      `};
 `
 
-export default styled(IdenticonBadge)`
-  .MuiBadge-badge {
-    box-shadow: ${({ theme }) => theme.custom.boxShadow};
-  }
-
-  &.red > .MuiBadge-badge {
-    background-color: ${({ theme }) => theme.custom.identity.red};
-  }
-`
+export default IdenticonBadge

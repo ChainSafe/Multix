@@ -132,11 +132,13 @@ export const AutocompleteStyles = css`
     background-color: ${theme.palette.primary.white};
   }
 
-  .MuiAutocomplete-popper {
-  }
-
   .MuiPaper-root {
     box-shadow: none;
+  }
+
+  .MuiBox-root {
+    display: flex;
+    align-items: center;
   }
 
   .MuiAutocomplete-listbox {

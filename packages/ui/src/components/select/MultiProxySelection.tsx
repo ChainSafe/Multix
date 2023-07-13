@@ -83,7 +83,6 @@ const MultiProxySelection = ({ className }: Props) => {
     option: typeof selectedMultiProxy
   ): React.ReactNode => {
     const displayAddress = getDisplayAddress(option)
-
     return (
       <Box
         key={displayAddress}
@@ -98,7 +97,7 @@ const MultiProxySelection = ({ className }: Props) => {
     )
   }
 
-  const renderInputs = (params: AutocompleteRenderInputParams) => (
+  const renderInput = (params: AutocompleteRenderInputParams) => (
     <TextFieldLargeStyled
       {...params}
       inputRef={ref}
@@ -130,7 +129,7 @@ const MultiProxySelection = ({ className }: Props) => {
       filterOptions={filterOptions}
       options={multiProxyList}
       renderOption={renderOptions}
-      renderInput={renderInputs}
+      renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       disablePortal
