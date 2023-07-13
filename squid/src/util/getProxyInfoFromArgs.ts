@@ -2,13 +2,29 @@ import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSele
 import { encodeAddress } from '@polkadot/util-crypto'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { getProxyAccountId } from './getProxyAccountId'
-import { dataEvent, env } from '../main'
+import { Ctx, dataEvent, env } from '../main'
+import { ProxyProxyAddedEvent } from '../types/events'
+import { ProxyType } from '../types/v504'
 
-export const getProxyInfoFromArgs = (
-  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>,
+interface Params {
+  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
   chainId: string
-) => {
-  const { delegator, delegatee, proxyType, delay } = item.event.args
+  ctx: Ctx
+  isAdded: boolean
+}
+export const getProxyInfoFromArgs = ({ item, chainId, ctx, isAdded }: Params) => {
+  let delegator: Uint8Array
+  let delegatee: Uint8Array
+  let proxyType: ProxyType
+  let delay: number
+
+  const event = isAdded && new ProxyProxyAddedEvent(ctx, item.event)
+  if (event && event.isV504) {
+    [delegator, delegatee, proxyType, delay] = event.asV504
+  } else {
+    ({ delegator, delegatee, proxyType, delay } = item.event.args)
+  }
+
   const _delegator = encodeAddress(delegator, env.prefix)
   const _delegatee = encodeAddress(delegatee, env.prefix)
   const _type = getProxyTypeFromRaw(proxyType.__kind)

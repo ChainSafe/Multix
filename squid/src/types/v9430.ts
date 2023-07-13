@@ -157,7 +157,6 @@ export type SystemCall = SystemCall_remark | SystemCall_set_heap_pages | SystemC
 /**
  * Make some on-chain remark.
  * 
- * ## Complexity
  * - `O(1)`
  */
 export interface SystemCall_remark {
@@ -175,9 +174,6 @@ export interface SystemCall_set_heap_pages {
 
 /**
  * Set the new runtime code.
- * 
- * ## Complexity
- * - `O(C + S)` where `C` length of `code` and `S` complexity of `can_set_code`
  */
 export interface SystemCall_set_code {
     __kind: 'set_code'
@@ -186,9 +182,6 @@ export interface SystemCall_set_code {
 
 /**
  * Set the new runtime code without doing any checks of the given `code`.
- * 
- * ## Complexity
- * - `O(C)` where `C` length of `code`
  */
 export interface SystemCall_set_code_without_checks {
     __kind: 'set_code_without_checks'
@@ -734,7 +727,7 @@ export interface PolkadotXcmCall_reserve_transfer_assets {
  */
 export interface PolkadotXcmCall_execute {
     __kind: 'execute'
-    message: Type_256
+    message: Type_260
     maxWeight: Weight
 }
 
@@ -1342,7 +1335,7 @@ export interface ProxyCall_proxy_announced {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_start_destroy | AssetsCall_destroy_accounts | AssetsCall_destroy_approvals | AssetsCall_finish_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund | AssetsCall_set_min_balance
+export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_start_destroy | AssetsCall_destroy_accounts | AssetsCall_destroy_approvals | AssetsCall_finish_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund | AssetsCall_set_min_balance | AssetsCall_touch_other | AssetsCall_refund_other | AssetsCall_block
 
 /**
  * Issue a new class of fungible assets from a public origin.
@@ -1603,7 +1596,9 @@ export interface AssetsCall_force_transfer {
 }
 
 /**
- * Disallow further unprivileged transfers from an account.
+ * Disallow further unprivileged transfers of an asset `id` from an account `who`. `who`
+ * must already exist as an entry in `Account`s of the asset. If you want to freeze an
+ * account that does not have an entry, use `touch_other` first.
  * 
  * Origin must be Signed and the sender should be the Freezer of the asset `id`.
  * 
@@ -1621,7 +1616,7 @@ export interface AssetsCall_freeze {
 }
 
 /**
- * Allow unprivileged transfers from an account again.
+ * Allow unprivileged transfers to and from an account again.
  * 
  * Origin must be Signed and the sender should be the Admin of the asset `id`.
  * 
@@ -1950,11 +1945,13 @@ export interface AssetsCall_touch {
 }
 
 /**
- * Return the deposit (if any) of an asset account.
+ * Return the deposit (if any) of an asset account or a consumer reference (if any) of an
+ * account.
  * 
  * The origin must be Signed.
  * 
- * - `id`: The identifier of the asset for the account to be created.
+ * - `id`: The identifier of the asset for which the caller would like the deposit
+ *   refunded.
  * - `allow_burn`: If `true` then assets may be destroyed in order to complete the refund.
  * 
  * Emits `Refunded` event when successful.
@@ -1983,6 +1980,60 @@ export interface AssetsCall_set_min_balance {
     __kind: 'set_min_balance'
     id: number
     minBalance: bigint
+}
+
+/**
+ * Create an asset account for `who`.
+ * 
+ * A deposit will be taken from the signer account.
+ * 
+ * - `origin`: Must be Signed by `Freezer` or `Admin` of the asset `id`; the signer account
+ *   must have sufficient funds for a deposit to be taken.
+ * - `id`: The identifier of the asset for the account to be created.
+ * - `who`: The account to be created.
+ * 
+ * Emits `Touched` event when successful.
+ */
+export interface AssetsCall_touch_other {
+    __kind: 'touch_other'
+    id: number
+    who: MultiAddress
+}
+
+/**
+ * Return the deposit (if any) of a target asset account. Useful if you are the depositor.
+ * 
+ * The origin must be Signed and either the account owner, depositor, or asset `Admin`. In
+ * order to burn a non-zero balance of the asset, the caller must be the account and should
+ * use `refund`.
+ * 
+ * - `id`: The identifier of the asset for the account holding a deposit.
+ * - `who`: The account to refund.
+ * 
+ * Emits `Refunded` event when successful.
+ */
+export interface AssetsCall_refund_other {
+    __kind: 'refund_other'
+    id: number
+    who: MultiAddress
+}
+
+/**
+ * Disallow further unprivileged transfers of an asset `id` to and from an account `who`.
+ * 
+ * Origin must be Signed and the sender should be the Freezer of the asset `id`.
+ * 
+ * - `id`: The identifier of the account's asset.
+ * - `who`: The account to be unblocked.
+ * 
+ * Emits `Blocked`.
+ * 
+ * Weight: `O(1)`
+ */
+export interface AssetsCall_block {
+    __kind: 'block'
+    id: number
+    who: MultiAddress
 }
 
 /**
@@ -2634,7 +2685,7 @@ export interface NftsCall_force_create {
 export interface NftsCall_destroy {
     __kind: 'destroy'
     collection: number
-    witness: Type_292
+    witness: Type_296
 }
 
 /**
@@ -3416,7 +3467,7 @@ export interface NftsCall_set_attributes_pre_signed {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ForeignAssetsCall = ForeignAssetsCall_create | ForeignAssetsCall_force_create | ForeignAssetsCall_start_destroy | ForeignAssetsCall_destroy_accounts | ForeignAssetsCall_destroy_approvals | ForeignAssetsCall_finish_destroy | ForeignAssetsCall_mint | ForeignAssetsCall_burn | ForeignAssetsCall_transfer | ForeignAssetsCall_transfer_keep_alive | ForeignAssetsCall_force_transfer | ForeignAssetsCall_freeze | ForeignAssetsCall_thaw | ForeignAssetsCall_freeze_asset | ForeignAssetsCall_thaw_asset | ForeignAssetsCall_transfer_ownership | ForeignAssetsCall_set_team | ForeignAssetsCall_set_metadata | ForeignAssetsCall_clear_metadata | ForeignAssetsCall_force_set_metadata | ForeignAssetsCall_force_clear_metadata | ForeignAssetsCall_force_asset_status | ForeignAssetsCall_approve_transfer | ForeignAssetsCall_cancel_approval | ForeignAssetsCall_force_cancel_approval | ForeignAssetsCall_transfer_approved | ForeignAssetsCall_touch | ForeignAssetsCall_refund | ForeignAssetsCall_set_min_balance
+export type ForeignAssetsCall = ForeignAssetsCall_create | ForeignAssetsCall_force_create | ForeignAssetsCall_start_destroy | ForeignAssetsCall_destroy_accounts | ForeignAssetsCall_destroy_approvals | ForeignAssetsCall_finish_destroy | ForeignAssetsCall_mint | ForeignAssetsCall_burn | ForeignAssetsCall_transfer | ForeignAssetsCall_transfer_keep_alive | ForeignAssetsCall_force_transfer | ForeignAssetsCall_freeze | ForeignAssetsCall_thaw | ForeignAssetsCall_freeze_asset | ForeignAssetsCall_thaw_asset | ForeignAssetsCall_transfer_ownership | ForeignAssetsCall_set_team | ForeignAssetsCall_set_metadata | ForeignAssetsCall_clear_metadata | ForeignAssetsCall_force_set_metadata | ForeignAssetsCall_force_clear_metadata | ForeignAssetsCall_force_asset_status | ForeignAssetsCall_approve_transfer | ForeignAssetsCall_cancel_approval | ForeignAssetsCall_force_cancel_approval | ForeignAssetsCall_transfer_approved | ForeignAssetsCall_touch | ForeignAssetsCall_refund | ForeignAssetsCall_set_min_balance | ForeignAssetsCall_touch_other | ForeignAssetsCall_refund_other | ForeignAssetsCall_block
 
 /**
  * Issue a new class of fungible assets from a public origin.
@@ -3677,7 +3728,9 @@ export interface ForeignAssetsCall_force_transfer {
 }
 
 /**
- * Disallow further unprivileged transfers from an account.
+ * Disallow further unprivileged transfers of an asset `id` from an account `who`. `who`
+ * must already exist as an entry in `Account`s of the asset. If you want to freeze an
+ * account that does not have an entry, use `touch_other` first.
  * 
  * Origin must be Signed and the sender should be the Freezer of the asset `id`.
  * 
@@ -3695,7 +3748,7 @@ export interface ForeignAssetsCall_freeze {
 }
 
 /**
- * Allow unprivileged transfers from an account again.
+ * Allow unprivileged transfers to and from an account again.
  * 
  * Origin must be Signed and the sender should be the Admin of the asset `id`.
  * 
@@ -4024,11 +4077,13 @@ export interface ForeignAssetsCall_touch {
 }
 
 /**
- * Return the deposit (if any) of an asset account.
+ * Return the deposit (if any) of an asset account or a consumer reference (if any) of an
+ * account.
  * 
  * The origin must be Signed.
  * 
- * - `id`: The identifier of the asset for the account to be created.
+ * - `id`: The identifier of the asset for which the caller would like the deposit
+ *   refunded.
  * - `allow_burn`: If `true` then assets may be destroyed in order to complete the refund.
  * 
  * Emits `Refunded` event when successful.
@@ -4057,6 +4112,60 @@ export interface ForeignAssetsCall_set_min_balance {
     __kind: 'set_min_balance'
     id: V3MultiLocation
     minBalance: bigint
+}
+
+/**
+ * Create an asset account for `who`.
+ * 
+ * A deposit will be taken from the signer account.
+ * 
+ * - `origin`: Must be Signed by `Freezer` or `Admin` of the asset `id`; the signer account
+ *   must have sufficient funds for a deposit to be taken.
+ * - `id`: The identifier of the asset for the account to be created.
+ * - `who`: The account to be created.
+ * 
+ * Emits `Touched` event when successful.
+ */
+export interface ForeignAssetsCall_touch_other {
+    __kind: 'touch_other'
+    id: V3MultiLocation
+    who: MultiAddress
+}
+
+/**
+ * Return the deposit (if any) of a target asset account. Useful if you are the depositor.
+ * 
+ * The origin must be Signed and either the account owner, depositor, or asset `Admin`. In
+ * order to burn a non-zero balance of the asset, the caller must be the account and should
+ * use `refund`.
+ * 
+ * - `id`: The identifier of the asset for the account holding a deposit.
+ * - `who`: The account to refund.
+ * 
+ * Emits `Refunded` event when successful.
+ */
+export interface ForeignAssetsCall_refund_other {
+    __kind: 'refund_other'
+    id: V3MultiLocation
+    who: MultiAddress
+}
+
+/**
+ * Disallow further unprivileged transfers of an asset `id` to and from an account `who`.
+ * 
+ * Origin must be Signed and the sender should be the Freezer of the asset `id`.
+ * 
+ * - `id`: The identifier of the account's asset.
+ * - `who`: The account to be unblocked.
+ * 
+ * Emits `Blocked`.
+ * 
+ * Weight: `O(1)`
+ */
+export interface ForeignAssetsCall_block {
+    __kind: 'block'
+    id: V3MultiLocation
+    who: MultiAddress
 }
 
 export interface ParachainInherentData {
@@ -4106,16 +4215,16 @@ export interface VersionedMultiAssets_V3 {
     value: V3MultiAsset[]
 }
 
-export type Type_256 = Type_256_V2 | Type_256_V3
+export type Type_260 = Type_260_V2 | Type_260_V3
 
-export interface Type_256_V2 {
+export interface Type_260_V2 {
     __kind: 'V2'
-    value: Type_259[]
+    value: Type_263[]
 }
 
-export interface Type_256_V3 {
+export interface Type_260_V3 {
     __kind: 'V3'
-    value: Type_263[]
+    value: Type_267[]
 }
 
 export interface V3MultiLocation {
@@ -4148,7 +4257,7 @@ export interface OriginCaller_PolkadotXcm {
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Type_312
+    value: Type_316
 }
 
 export interface OriginCaller_Void {
@@ -4168,7 +4277,7 @@ export interface CollectionConfig {
     mintSettings: MintSettings
 }
 
-export interface Type_292 {
+export interface Type_296 {
     itemMetadatas: number
     itemConfigs: number
     attributes: number
@@ -4735,215 +4844,47 @@ export interface V3MultiAsset {
     fun: V3Fungibility
 }
 
-export type Type_259 = Type_259_WithdrawAsset | Type_259_ReserveAssetDeposited | Type_259_ReceiveTeleportedAsset | Type_259_QueryResponse | Type_259_TransferAsset | Type_259_TransferReserveAsset | Type_259_Transact | Type_259_HrmpNewChannelOpenRequest | Type_259_HrmpChannelAccepted | Type_259_HrmpChannelClosing | Type_259_ClearOrigin | Type_259_DescendOrigin | Type_259_ReportError | Type_259_DepositAsset | Type_259_DepositReserveAsset | Type_259_ExchangeAsset | Type_259_InitiateReserveWithdraw | Type_259_InitiateTeleport | Type_259_QueryHolding | Type_259_BuyExecution | Type_259_RefundSurplus | Type_259_SetErrorHandler | Type_259_SetAppendix | Type_259_ClearError | Type_259_ClaimAsset | Type_259_Trap | Type_259_SubscribeVersion | Type_259_UnsubscribeVersion
+export type Type_263 = Type_263_WithdrawAsset | Type_263_ReserveAssetDeposited | Type_263_ReceiveTeleportedAsset | Type_263_QueryResponse | Type_263_TransferAsset | Type_263_TransferReserveAsset | Type_263_Transact | Type_263_HrmpNewChannelOpenRequest | Type_263_HrmpChannelAccepted | Type_263_HrmpChannelClosing | Type_263_ClearOrigin | Type_263_DescendOrigin | Type_263_ReportError | Type_263_DepositAsset | Type_263_DepositReserveAsset | Type_263_ExchangeAsset | Type_263_InitiateReserveWithdraw | Type_263_InitiateTeleport | Type_263_QueryHolding | Type_263_BuyExecution | Type_263_RefundSurplus | Type_263_SetErrorHandler | Type_263_SetAppendix | Type_263_ClearError | Type_263_ClaimAsset | Type_263_Trap | Type_263_SubscribeVersion | Type_263_UnsubscribeVersion
 
-export interface Type_259_WithdrawAsset {
+export interface Type_263_WithdrawAsset {
     __kind: 'WithdrawAsset'
     value: V2MultiAsset[]
 }
 
-export interface Type_259_ReserveAssetDeposited {
+export interface Type_263_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     value: V2MultiAsset[]
 }
 
-export interface Type_259_ReceiveTeleportedAsset {
+export interface Type_263_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     value: V2MultiAsset[]
 }
 
-export interface Type_259_QueryResponse {
+export interface Type_263_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V2Response
     maxWeight: bigint
 }
 
-export interface Type_259_TransferAsset {
-    __kind: 'TransferAsset'
-    assets: V2MultiAsset[]
-    beneficiary: V2MultiLocation
-}
-
-export interface Type_259_TransferReserveAsset {
-    __kind: 'TransferReserveAsset'
-    assets: V2MultiAsset[]
-    dest: V2MultiLocation
-    xcm: V2Instruction[]
-}
-
-export interface Type_259_Transact {
-    __kind: 'Transact'
-    originType: V2OriginKind
-    requireWeightAtMost: bigint
-    call: DoubleEncoded
-}
-
-export interface Type_259_HrmpNewChannelOpenRequest {
-    __kind: 'HrmpNewChannelOpenRequest'
-    sender: number
-    maxMessageSize: number
-    maxCapacity: number
-}
-
-export interface Type_259_HrmpChannelAccepted {
-    __kind: 'HrmpChannelAccepted'
-    recipient: number
-}
-
-export interface Type_259_HrmpChannelClosing {
-    __kind: 'HrmpChannelClosing'
-    initiator: number
-    sender: number
-    recipient: number
-}
-
-export interface Type_259_ClearOrigin {
-    __kind: 'ClearOrigin'
-}
-
-export interface Type_259_DescendOrigin {
-    __kind: 'DescendOrigin'
-    value: V2Junctions
-}
-
-export interface Type_259_ReportError {
-    __kind: 'ReportError'
-    queryId: bigint
-    dest: V2MultiLocation
-    maxResponseWeight: bigint
-}
-
-export interface Type_259_DepositAsset {
-    __kind: 'DepositAsset'
-    assets: V2MultiAssetFilter
-    maxAssets: number
-    beneficiary: V2MultiLocation
-}
-
-export interface Type_259_DepositReserveAsset {
-    __kind: 'DepositReserveAsset'
-    assets: V2MultiAssetFilter
-    maxAssets: number
-    dest: V2MultiLocation
-    xcm: V2Instruction[]
-}
-
-export interface Type_259_ExchangeAsset {
-    __kind: 'ExchangeAsset'
-    give: V2MultiAssetFilter
-    receive: V2MultiAsset[]
-}
-
-export interface Type_259_InitiateReserveWithdraw {
-    __kind: 'InitiateReserveWithdraw'
-    assets: V2MultiAssetFilter
-    reserve: V2MultiLocation
-    xcm: V2Instruction[]
-}
-
-export interface Type_259_InitiateTeleport {
-    __kind: 'InitiateTeleport'
-    assets: V2MultiAssetFilter
-    dest: V2MultiLocation
-    xcm: V2Instruction[]
-}
-
-export interface Type_259_QueryHolding {
-    __kind: 'QueryHolding'
-    queryId: bigint
-    dest: V2MultiLocation
-    assets: V2MultiAssetFilter
-    maxResponseWeight: bigint
-}
-
-export interface Type_259_BuyExecution {
-    __kind: 'BuyExecution'
-    fees: V2MultiAsset
-    weightLimit: V2WeightLimit
-}
-
-export interface Type_259_RefundSurplus {
-    __kind: 'RefundSurplus'
-}
-
-export interface Type_259_SetErrorHandler {
-    __kind: 'SetErrorHandler'
-    value: Type_259[]
-}
-
-export interface Type_259_SetAppendix {
-    __kind: 'SetAppendix'
-    value: Type_259[]
-}
-
-export interface Type_259_ClearError {
-    __kind: 'ClearError'
-}
-
-export interface Type_259_ClaimAsset {
-    __kind: 'ClaimAsset'
-    assets: V2MultiAsset[]
-    ticket: V2MultiLocation
-}
-
-export interface Type_259_Trap {
-    __kind: 'Trap'
-    value: bigint
-}
-
-export interface Type_259_SubscribeVersion {
-    __kind: 'SubscribeVersion'
-    queryId: bigint
-    maxResponseWeight: bigint
-}
-
-export interface Type_259_UnsubscribeVersion {
-    __kind: 'UnsubscribeVersion'
-}
-
-export type Type_263 = Type_263_WithdrawAsset | Type_263_ReserveAssetDeposited | Type_263_ReceiveTeleportedAsset | Type_263_QueryResponse | Type_263_TransferAsset | Type_263_TransferReserveAsset | Type_263_Transact | Type_263_HrmpNewChannelOpenRequest | Type_263_HrmpChannelAccepted | Type_263_HrmpChannelClosing | Type_263_ClearOrigin | Type_263_DescendOrigin | Type_263_ReportError | Type_263_DepositAsset | Type_263_DepositReserveAsset | Type_263_ExchangeAsset | Type_263_InitiateReserveWithdraw | Type_263_InitiateTeleport | Type_263_ReportHolding | Type_263_BuyExecution | Type_263_RefundSurplus | Type_263_SetErrorHandler | Type_263_SetAppendix | Type_263_ClearError | Type_263_ClaimAsset | Type_263_Trap | Type_263_SubscribeVersion | Type_263_UnsubscribeVersion | Type_263_BurnAsset | Type_263_ExpectAsset | Type_263_ExpectOrigin | Type_263_ExpectError | Type_263_ExpectTransactStatus | Type_263_QueryPallet | Type_263_ExpectPallet | Type_263_ReportTransactStatus | Type_263_ClearTransactStatus | Type_263_UniversalOrigin | Type_263_ExportMessage | Type_263_LockAsset | Type_263_UnlockAsset | Type_263_NoteUnlockable | Type_263_RequestUnlock | Type_263_SetFeesMode | Type_263_SetTopic | Type_263_ClearTopic | Type_263_AliasOrigin | Type_263_UnpaidExecution
-
-export interface Type_263_WithdrawAsset {
-    __kind: 'WithdrawAsset'
-    value: V3MultiAsset[]
-}
-
-export interface Type_263_ReserveAssetDeposited {
-    __kind: 'ReserveAssetDeposited'
-    value: V3MultiAsset[]
-}
-
-export interface Type_263_ReceiveTeleportedAsset {
-    __kind: 'ReceiveTeleportedAsset'
-    value: V3MultiAsset[]
-}
-
-export interface Type_263_QueryResponse {
-    __kind: 'QueryResponse'
-    queryId: bigint
-    response: V3Response
-    maxWeight: Weight
-    querier: (V3MultiLocation | undefined)
-}
-
 export interface Type_263_TransferAsset {
     __kind: 'TransferAsset'
-    assets: V3MultiAsset[]
-    beneficiary: V3MultiLocation
+    assets: V2MultiAsset[]
+    beneficiary: V2MultiLocation
 }
 
 export interface Type_263_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
-    assets: V3MultiAsset[]
-    dest: V3MultiLocation
-    xcm: V3Instruction[]
+    assets: V2MultiAsset[]
+    dest: V2MultiLocation
+    xcm: V2Instruction[]
 }
 
 export interface Type_263_Transact {
     __kind: 'Transact'
-    originKind: V2OriginKind
-    requireWeightAtMost: Weight
+    originType: V2OriginKind
+    requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
@@ -4972,58 +4913,63 @@ export interface Type_263_ClearOrigin {
 
 export interface Type_263_DescendOrigin {
     __kind: 'DescendOrigin'
-    value: V3Junctions
+    value: V2Junctions
 }
 
 export interface Type_263_ReportError {
     __kind: 'ReportError'
-    value: V3QueryResponseInfo
+    queryId: bigint
+    dest: V2MultiLocation
+    maxResponseWeight: bigint
 }
 
 export interface Type_263_DepositAsset {
     __kind: 'DepositAsset'
-    assets: V3MultiAssetFilter
-    beneficiary: V3MultiLocation
+    assets: V2MultiAssetFilter
+    maxAssets: number
+    beneficiary: V2MultiLocation
 }
 
 export interface Type_263_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
-    assets: V3MultiAssetFilter
-    dest: V3MultiLocation
-    xcm: V3Instruction[]
+    assets: V2MultiAssetFilter
+    maxAssets: number
+    dest: V2MultiLocation
+    xcm: V2Instruction[]
 }
 
 export interface Type_263_ExchangeAsset {
     __kind: 'ExchangeAsset'
-    give: V3MultiAssetFilter
-    want: V3MultiAsset[]
-    maximal: boolean
+    give: V2MultiAssetFilter
+    receive: V2MultiAsset[]
 }
 
 export interface Type_263_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
-    assets: V3MultiAssetFilter
-    reserve: V3MultiLocation
-    xcm: V3Instruction[]
+    assets: V2MultiAssetFilter
+    reserve: V2MultiLocation
+    xcm: V2Instruction[]
 }
 
 export interface Type_263_InitiateTeleport {
     __kind: 'InitiateTeleport'
-    assets: V3MultiAssetFilter
-    dest: V3MultiLocation
-    xcm: V3Instruction[]
+    assets: V2MultiAssetFilter
+    dest: V2MultiLocation
+    xcm: V2Instruction[]
 }
 
-export interface Type_263_ReportHolding {
-    __kind: 'ReportHolding'
-    responseInfo: V3QueryResponseInfo
-    assets: V3MultiAssetFilter
+export interface Type_263_QueryHolding {
+    __kind: 'QueryHolding'
+    queryId: bigint
+    dest: V2MultiLocation
+    assets: V2MultiAssetFilter
+    maxResponseWeight: bigint
 }
 
 export interface Type_263_BuyExecution {
     __kind: 'BuyExecution'
-    fees: V3MultiAsset
-    weightLimit: V3WeightLimit
+    fees: V2MultiAsset
+    weightLimit: V2WeightLimit
 }
 
 export interface Type_263_RefundSurplus {
@@ -5046,8 +4992,8 @@ export interface Type_263_ClearError {
 
 export interface Type_263_ClaimAsset {
     __kind: 'ClaimAsset'
-    assets: V3MultiAsset[]
-    ticket: V3MultiLocation
+    assets: V2MultiAsset[]
+    ticket: V2MultiLocation
 }
 
 export interface Type_263_Trap {
@@ -5058,45 +5004,208 @@ export interface Type_263_Trap {
 export interface Type_263_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
-    maxResponseWeight: Weight
+    maxResponseWeight: bigint
 }
 
 export interface Type_263_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export interface Type_263_BurnAsset {
+export type Type_267 = Type_267_WithdrawAsset | Type_267_ReserveAssetDeposited | Type_267_ReceiveTeleportedAsset | Type_267_QueryResponse | Type_267_TransferAsset | Type_267_TransferReserveAsset | Type_267_Transact | Type_267_HrmpNewChannelOpenRequest | Type_267_HrmpChannelAccepted | Type_267_HrmpChannelClosing | Type_267_ClearOrigin | Type_267_DescendOrigin | Type_267_ReportError | Type_267_DepositAsset | Type_267_DepositReserveAsset | Type_267_ExchangeAsset | Type_267_InitiateReserveWithdraw | Type_267_InitiateTeleport | Type_267_ReportHolding | Type_267_BuyExecution | Type_267_RefundSurplus | Type_267_SetErrorHandler | Type_267_SetAppendix | Type_267_ClearError | Type_267_ClaimAsset | Type_267_Trap | Type_267_SubscribeVersion | Type_267_UnsubscribeVersion | Type_267_BurnAsset | Type_267_ExpectAsset | Type_267_ExpectOrigin | Type_267_ExpectError | Type_267_ExpectTransactStatus | Type_267_QueryPallet | Type_267_ExpectPallet | Type_267_ReportTransactStatus | Type_267_ClearTransactStatus | Type_267_UniversalOrigin | Type_267_ExportMessage | Type_267_LockAsset | Type_267_UnlockAsset | Type_267_NoteUnlockable | Type_267_RequestUnlock | Type_267_SetFeesMode | Type_267_SetTopic | Type_267_ClearTopic | Type_267_AliasOrigin | Type_267_UnpaidExecution
+
+export interface Type_267_WithdrawAsset {
+    __kind: 'WithdrawAsset'
+    value: V3MultiAsset[]
+}
+
+export interface Type_267_ReserveAssetDeposited {
+    __kind: 'ReserveAssetDeposited'
+    value: V3MultiAsset[]
+}
+
+export interface Type_267_ReceiveTeleportedAsset {
+    __kind: 'ReceiveTeleportedAsset'
+    value: V3MultiAsset[]
+}
+
+export interface Type_267_QueryResponse {
+    __kind: 'QueryResponse'
+    queryId: bigint
+    response: V3Response
+    maxWeight: Weight
+    querier: (V3MultiLocation | undefined)
+}
+
+export interface Type_267_TransferAsset {
+    __kind: 'TransferAsset'
+    assets: V3MultiAsset[]
+    beneficiary: V3MultiLocation
+}
+
+export interface Type_267_TransferReserveAsset {
+    __kind: 'TransferReserveAsset'
+    assets: V3MultiAsset[]
+    dest: V3MultiLocation
+    xcm: V3Instruction[]
+}
+
+export interface Type_267_Transact {
+    __kind: 'Transact'
+    originKind: V2OriginKind
+    requireWeightAtMost: Weight
+    call: DoubleEncoded
+}
+
+export interface Type_267_HrmpNewChannelOpenRequest {
+    __kind: 'HrmpNewChannelOpenRequest'
+    sender: number
+    maxMessageSize: number
+    maxCapacity: number
+}
+
+export interface Type_267_HrmpChannelAccepted {
+    __kind: 'HrmpChannelAccepted'
+    recipient: number
+}
+
+export interface Type_267_HrmpChannelClosing {
+    __kind: 'HrmpChannelClosing'
+    initiator: number
+    sender: number
+    recipient: number
+}
+
+export interface Type_267_ClearOrigin {
+    __kind: 'ClearOrigin'
+}
+
+export interface Type_267_DescendOrigin {
+    __kind: 'DescendOrigin'
+    value: V3Junctions
+}
+
+export interface Type_267_ReportError {
+    __kind: 'ReportError'
+    value: V3QueryResponseInfo
+}
+
+export interface Type_267_DepositAsset {
+    __kind: 'DepositAsset'
+    assets: V3MultiAssetFilter
+    beneficiary: V3MultiLocation
+}
+
+export interface Type_267_DepositReserveAsset {
+    __kind: 'DepositReserveAsset'
+    assets: V3MultiAssetFilter
+    dest: V3MultiLocation
+    xcm: V3Instruction[]
+}
+
+export interface Type_267_ExchangeAsset {
+    __kind: 'ExchangeAsset'
+    give: V3MultiAssetFilter
+    want: V3MultiAsset[]
+    maximal: boolean
+}
+
+export interface Type_267_InitiateReserveWithdraw {
+    __kind: 'InitiateReserveWithdraw'
+    assets: V3MultiAssetFilter
+    reserve: V3MultiLocation
+    xcm: V3Instruction[]
+}
+
+export interface Type_267_InitiateTeleport {
+    __kind: 'InitiateTeleport'
+    assets: V3MultiAssetFilter
+    dest: V3MultiLocation
+    xcm: V3Instruction[]
+}
+
+export interface Type_267_ReportHolding {
+    __kind: 'ReportHolding'
+    responseInfo: V3QueryResponseInfo
+    assets: V3MultiAssetFilter
+}
+
+export interface Type_267_BuyExecution {
+    __kind: 'BuyExecution'
+    fees: V3MultiAsset
+    weightLimit: V3WeightLimit
+}
+
+export interface Type_267_RefundSurplus {
+    __kind: 'RefundSurplus'
+}
+
+export interface Type_267_SetErrorHandler {
+    __kind: 'SetErrorHandler'
+    value: Type_267[]
+}
+
+export interface Type_267_SetAppendix {
+    __kind: 'SetAppendix'
+    value: Type_267[]
+}
+
+export interface Type_267_ClearError {
+    __kind: 'ClearError'
+}
+
+export interface Type_267_ClaimAsset {
+    __kind: 'ClaimAsset'
+    assets: V3MultiAsset[]
+    ticket: V3MultiLocation
+}
+
+export interface Type_267_Trap {
+    __kind: 'Trap'
+    value: bigint
+}
+
+export interface Type_267_SubscribeVersion {
+    __kind: 'SubscribeVersion'
+    queryId: bigint
+    maxResponseWeight: Weight
+}
+
+export interface Type_267_UnsubscribeVersion {
+    __kind: 'UnsubscribeVersion'
+}
+
+export interface Type_267_BurnAsset {
     __kind: 'BurnAsset'
     value: V3MultiAsset[]
 }
 
-export interface Type_263_ExpectAsset {
+export interface Type_267_ExpectAsset {
     __kind: 'ExpectAsset'
     value: V3MultiAsset[]
 }
 
-export interface Type_263_ExpectOrigin {
+export interface Type_267_ExpectOrigin {
     __kind: 'ExpectOrigin'
     value: (V3MultiLocation | undefined)
 }
 
-export interface Type_263_ExpectError {
+export interface Type_267_ExpectError {
     __kind: 'ExpectError'
     value: ([number, V3Error] | undefined)
 }
 
-export interface Type_263_ExpectTransactStatus {
+export interface Type_267_ExpectTransactStatus {
     __kind: 'ExpectTransactStatus'
     value: V3MaybeErrorCode
 }
 
-export interface Type_263_QueryPallet {
+export interface Type_267_QueryPallet {
     __kind: 'QueryPallet'
     moduleName: Uint8Array
     responseInfo: V3QueryResponseInfo
 }
 
-export interface Type_263_ExpectPallet {
+export interface Type_267_ExpectPallet {
     __kind: 'ExpectPallet'
     index: number
     name: Uint8Array
@@ -5105,71 +5214,71 @@ export interface Type_263_ExpectPallet {
     minCrateMinor: number
 }
 
-export interface Type_263_ReportTransactStatus {
+export interface Type_267_ReportTransactStatus {
     __kind: 'ReportTransactStatus'
     value: V3QueryResponseInfo
 }
 
-export interface Type_263_ClearTransactStatus {
+export interface Type_267_ClearTransactStatus {
     __kind: 'ClearTransactStatus'
 }
 
-export interface Type_263_UniversalOrigin {
+export interface Type_267_UniversalOrigin {
     __kind: 'UniversalOrigin'
     value: V3Junction
 }
 
-export interface Type_263_ExportMessage {
+export interface Type_267_ExportMessage {
     __kind: 'ExportMessage'
     network: V3NetworkId
     destination: V3Junctions
     xcm: V3Instruction[]
 }
 
-export interface Type_263_LockAsset {
+export interface Type_267_LockAsset {
     __kind: 'LockAsset'
     asset: V3MultiAsset
     unlocker: V3MultiLocation
 }
 
-export interface Type_263_UnlockAsset {
+export interface Type_267_UnlockAsset {
     __kind: 'UnlockAsset'
     asset: V3MultiAsset
     target: V3MultiLocation
 }
 
-export interface Type_263_NoteUnlockable {
+export interface Type_267_NoteUnlockable {
     __kind: 'NoteUnlockable'
     asset: V3MultiAsset
     owner: V3MultiLocation
 }
 
-export interface Type_263_RequestUnlock {
+export interface Type_267_RequestUnlock {
     __kind: 'RequestUnlock'
     asset: V3MultiAsset
     locker: V3MultiLocation
 }
 
-export interface Type_263_SetFeesMode {
+export interface Type_267_SetFeesMode {
     __kind: 'SetFeesMode'
     jitWithdraw: boolean
 }
 
-export interface Type_263_SetTopic {
+export interface Type_267_SetTopic {
     __kind: 'SetTopic'
     value: Uint8Array
 }
 
-export interface Type_263_ClearTopic {
+export interface Type_267_ClearTopic {
     __kind: 'ClearTopic'
 }
 
-export interface Type_263_AliasOrigin {
+export interface Type_267_AliasOrigin {
     __kind: 'AliasOrigin'
     value: V3MultiLocation
 }
 
-export interface Type_263_UnpaidExecution {
+export interface Type_267_UnpaidExecution {
     __kind: 'UnpaidExecution'
     weightLimit: V3WeightLimit
     checkOrigin: (V3MultiLocation | undefined)
@@ -5248,13 +5357,13 @@ export interface Origin_Response {
     value: V3MultiLocation
 }
 
-export type Type_312 = Type_312_Relay | Type_312_SiblingParachain
+export type Type_316 = Type_316_Relay | Type_316_SiblingParachain
 
-export interface Type_312_Relay {
+export interface Type_316_Relay {
     __kind: 'Relay'
 }
 
-export interface Type_312_SiblingParachain {
+export interface Type_316_SiblingParachain {
     __kind: 'SiblingParachain'
     value: number
 }

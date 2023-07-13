@@ -5,6 +5,10 @@ export interface Timepoint {
     index: number
 }
 
+export interface Weight {
+    refTime: bigint
+}
+
 export type Call = Call_System | Call_ParachainSystem | Call_Timestamp | Call_Balances | Call_Authorship | Call_CollatorSelection | Call_Session | Call_XcmpQueue | Call_PolkadotXcm | Call_DmpQueue | Call_Utility | Call_Multisig | Call_Proxy | Call_Assets | Call_Uniques
 
 export interface Call_System {
@@ -82,11 +86,6 @@ export interface Call_Uniques {
     value: UniquesCall
 }
 
-export interface Weight {
-    refTime: bigint
-    proofSize: bigint
-}
-
 export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
 
 export interface MultiAddress_Id {
@@ -147,7 +146,15 @@ export interface ProxyType_Collator {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+
+/**
+ * A dispatch that will fill the block weight up to the given ratio.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+    ratio: number
+}
 
 /**
  * Make some on-chain remark.
@@ -562,7 +569,7 @@ export type XcmpQueueCall = XcmpQueueCall_service_overweight | XcmpQueueCall_sus
 export interface XcmpQueueCall_service_overweight {
     __kind: 'service_overweight'
     index: bigint
-    weightLimit: bigint
+    weightLimit: Weight
 }
 
 /**
@@ -629,7 +636,7 @@ export interface XcmpQueueCall_update_resume_threshold {
  */
 export interface XcmpQueueCall_update_threshold_weight {
     __kind: 'update_threshold_weight'
-    new: bigint
+    new: Weight
 }
 
 /**
@@ -641,7 +648,7 @@ export interface XcmpQueueCall_update_threshold_weight {
  */
 export interface XcmpQueueCall_update_weight_restrict_decay {
     __kind: 'update_weight_restrict_decay'
-    new: bigint
+    new: Weight
 }
 
 /**
@@ -653,7 +660,7 @@ export interface XcmpQueueCall_update_weight_restrict_decay {
  */
 export interface XcmpQueueCall_update_xcmp_max_individual_weight {
     __kind: 'update_xcmp_max_individual_weight'
-    new: bigint
+    new: Weight
 }
 
 /**
@@ -733,8 +740,8 @@ export interface PolkadotXcmCall_reserve_transfer_assets {
  */
 export interface PolkadotXcmCall_execute {
     __kind: 'execute'
-    message: Type_226
-    maxWeight: bigint
+    message: Type_228
+    maxWeight: Weight
 }
 
 /**
@@ -866,24 +873,24 @@ export type DmpQueueCall = DmpQueueCall_service_overweight
 export interface DmpQueueCall_service_overweight {
     __kind: 'service_overweight'
     index: bigint
-    weightLimit: bigint
+    weightLimit: Weight
 }
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
+export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch
 
 /**
  * Send a batch of dispatch calls.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -925,13 +932,13 @@ export interface UtilityCall_as_derivative {
  * Send a batch of dispatch calls and atomically execute them.
  * The whole transaction will rollback and fail if any of the calls failed.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -964,13 +971,13 @@ export interface UtilityCall_dispatch_as {
  * Send a batch of dispatch calls.
  * Unlike `batch`, it allows errors and won't interrupt.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatch without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -979,20 +986,6 @@ export interface UtilityCall_dispatch_as {
 export interface UtilityCall_force_batch {
     __kind: 'force_batch'
     calls: Call[]
-}
-
-/**
- * Dispatch a function call with a specified weight.
- * 
- * This function does not check the weight of the call, and instead allows the
- * Root origin to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Root_.
- */
-export interface UtilityCall_with_weight {
-    __kind: 'with_weight'
-    call: Call
-    weight: Weight
 }
 
 /**
@@ -1066,8 +1059,8 @@ export interface MultisigCall_as_multi_threshold_1 {
  *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  * -------------------------------
  * - DB Weight:
- *     - Reads: Multisig Storage, [Caller Account]
- *     - Writes: Multisig Storage, [Caller Account]
+ *     - Reads: Multisig Storage, [Caller Account], Calls (if `store_call`)
+ *     - Writes: Multisig Storage, [Caller Account], Calls (if `store_call`)
  * - Plus Call Weight
  * # </weight>
  */
@@ -1076,7 +1069,8 @@ export interface MultisigCall_as_multi {
     threshold: number
     otherSignatories: Uint8Array[]
     maybeTimepoint: (Timepoint | undefined)
-    call: Call
+    call: Uint8Array
+    storeCall: boolean
     maxWeight: Weight
 }
 
@@ -1150,8 +1144,8 @@ export interface MultisigCall_approve_as_multi {
  * - Storage: removes one item.
  * ----------------------------------
  * - DB Weight:
- *     - Read: Multisig Storage, [Caller Account], Refund Account
- *     - Write: Multisig Storage, [Caller Account], Refund Account
+ *     - Read: Multisig Storage, [Caller Account], Refund Account, Calls
+ *     - Write: Multisig Storage, [Caller Account], Refund Account, Calls
  * # </weight>
  */
 export interface MultisigCall_cancel_as_multi {
@@ -1165,7 +1159,7 @@ export interface MultisigCall_cancel_as_multi {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_create_pure | ProxyCall_kill_pure | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
+export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
 
 /**
  * Dispatch the given `call` from an account that the sender is authorised for through
@@ -1179,6 +1173,10 @@ export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_proxy {
     __kind: 'proxy'
@@ -1197,6 +1195,10 @@ export interface ProxyCall_proxy {
  * - `proxy_type`: The permissions allowed for this proxy account.
  * - `delay`: The announcement period required of the initial proxy. Will generally be
  * zero.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_add_proxy {
     __kind: 'add_proxy'
@@ -1213,6 +1215,10 @@ export interface ProxyCall_add_proxy {
  * Parameters:
  * - `proxy`: The account that the `caller` would like to remove as a proxy.
  * - `proxy_type`: The permissions currently enabled for the removed proxy account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxy {
     __kind: 'remove_proxy'
@@ -1226,8 +1232,12 @@ export interface ProxyCall_remove_proxy {
  * 
  * The dispatch origin for this call must be _Signed_.
  * 
- * WARNING: This may be called on accounts created by `pure`, however if done, then
+ * WARNING: This may be called on accounts created by `anonymous`, however if done, then
  * the unreserved fees will be inaccessible. **All access to this account will be lost.**
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxies {
     __kind: 'remove_proxies'
@@ -1252,34 +1262,43 @@ export interface ProxyCall_remove_proxies {
  * same sender, with the same parameters.
  * 
  * Fails if there are insufficient funds to pay for deposit.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
+ * TODO: Might be over counting 1 read
  */
-export interface ProxyCall_create_pure {
-    __kind: 'create_pure'
+export interface ProxyCall_anonymous {
+    __kind: 'anonymous'
     proxyType: ProxyType
     delay: number
     index: number
 }
 
 /**
- * Removes a previously spawned pure proxy.
+ * Removes a previously spawned anonymous proxy.
  * 
  * WARNING: **All access to this account will be lost.** Any funds held in it will be
  * inaccessible.
  * 
  * Requires a `Signed` origin, and the sender account must have been created by a call to
- * `pure` with corresponding parameters.
+ * `anonymous` with corresponding parameters.
  * 
- * - `spawner`: The account that originally called `pure` to create this account.
- * - `index`: The disambiguation index originally passed to `pure`. Probably `0`.
- * - `proxy_type`: The proxy type originally passed to `pure`.
- * - `height`: The height of the chain when the call to `pure` was processed.
- * - `ext_index`: The extrinsic index in which the call to `pure` was processed.
+ * - `spawner`: The account that originally called `anonymous` to create this account.
+ * - `index`: The disambiguation index originally passed to `anonymous`. Probably `0`.
+ * - `proxy_type`: The proxy type originally passed to `anonymous`.
+ * - `height`: The height of the chain when the call to `anonymous` was processed.
+ * - `ext_index`: The extrinsic index in which the call to `anonymous` was processed.
  * 
- * Fails with `NoPermission` in case the caller is not a previously created pure
- * account whose `pure` call has corresponding parameters.
+ * Fails with `NoPermission` in case the caller is not a previously created anonymous
+ * account whose `anonymous` call has corresponding parameters.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
-export interface ProxyCall_kill_pure {
-    __kind: 'kill_pure'
+export interface ProxyCall_kill_anonymous {
+    __kind: 'kill_anonymous'
     spawner: MultiAddress
     proxyType: ProxyType
     index: number
@@ -1303,6 +1322,12 @@ export interface ProxyCall_kill_pure {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_announce {
     __kind: 'announce'
@@ -1321,6 +1346,12 @@ export interface ProxyCall_announce {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_remove_announcement {
     __kind: 'remove_announcement'
@@ -1339,6 +1370,12 @@ export interface ProxyCall_remove_announcement {
  * Parameters:
  * - `delegate`: The account that previously announced the call.
  * - `call_hash`: The hash of the call to be made.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_reject_announcement {
     __kind: 'reject_announcement'
@@ -1358,6 +1395,12 @@ export interface ProxyCall_reject_announcement {
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_proxy_announced {
     __kind: 'proxy_announced'
@@ -1370,14 +1413,14 @@ export interface ProxyCall_proxy_announced {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_start_destroy | AssetsCall_destroy_accounts | AssetsCall_destroy_approvals | AssetsCall_finish_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund
+export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund
 
 /**
  * Issue a new class of fungible assets from a public origin.
  * 
  * This new asset class has no assets initially and its owner is the origin.
  * 
- * The origin must conform to the configured `CreateOrigin` and have sufficient funds free.
+ * The origin must be Signed and the sender must have sufficient funds free.
  * 
  * Funds of sender are reserved by `AssetDeposit`.
  * 
@@ -1430,76 +1473,29 @@ export interface AssetsCall_force_create {
 }
 
 /**
- * Start the process of destroying a fungible asset class.
+ * Destroy a class of fungible assets.
  * 
- * `start_destroy` is the first in a series of extrinsics that should be called, to allow
- * destruction of an asset class.
- * 
- * The origin must conform to `ForceOrigin` or must be `Signed` by the asset's `owner`.
+ * The origin must conform to `ForceOrigin` or must be Signed and the sender must be the
+ * owner of the asset `id`.
  * 
  * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
+ * asset.
  * 
- * The asset class must be frozen before calling `start_destroy`.
+ * Emits `Destroyed` event when successful.
+ * 
+ * NOTE: It can be helpful to first freeze an asset before destroying it so that you
+ * can provide accurate witness information and prevent users from manipulating state
+ * in a way that can make it harder to destroy.
+ * 
+ * Weight: `O(c + p + a)` where:
+ * - `c = (witness.accounts - witness.sufficients)`
+ * - `s = witness.sufficients`
+ * - `a = witness.approvals`
  */
-export interface AssetsCall_start_destroy {
-    __kind: 'start_destroy'
+export interface AssetsCall_destroy {
+    __kind: 'destroy'
     id: number
-}
-
-/**
- * Destroy all accounts associated with a given asset.
- * 
- * `destroy_accounts` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state.
- * 
- * Due to weight restrictions, this function may need to be called multiple times to fully
- * destroy all accounts. It will destroy `RemoveItemsLimit` accounts at a time.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each call emits the `Event::DestroyedAccounts` event.
- */
-export interface AssetsCall_destroy_accounts {
-    __kind: 'destroy_accounts'
-    id: number
-}
-
-/**
- * Destroy all approvals associated with a given asset up to the max (T::RemoveItemsLimit).
- * 
- * `destroy_approvals` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state.
- * 
- * Due to weight restrictions, this function may need to be called multiple times to fully
- * destroy all approvals. It will destroy `RemoveItemsLimit` approvals at a time.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each call emits the `Event::DestroyedApprovals` event.
- */
-export interface AssetsCall_destroy_approvals {
-    __kind: 'destroy_approvals'
-    id: number
-}
-
-/**
- * Complete destroying asset and unreserve currency.
- * 
- * `finish_destroy` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state. All accounts or approvals should be destroyed before
- * hand.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each successful call emits the `Event::Destroyed` event.
- */
-export interface AssetsCall_finish_destroy {
-    __kind: 'finish_destroy'
-    id: number
+    witness: DestroyWitness
 }
 
 /**
@@ -2003,7 +1999,7 @@ export type UniquesCall = UniquesCall_create | UniquesCall_force_create | Unique
  * 
  * This new collection has no items initially and its owner is the origin.
  * 
- * The origin must conform to the configured `CreateOrigin` and have sufficient funds free.
+ * The origin must be Signed and the sender must have sufficient funds free.
  * 
  * `ItemDeposit` funds of sender are reserved.
  * 
@@ -2068,7 +2064,7 @@ export interface UniquesCall_force_create {
 export interface UniquesCall_destroy {
     __kind: 'destroy'
     collection: number
-    witness: DestroyWitness
+    witness: Type_260
 }
 
 /**
@@ -2094,9 +2090,7 @@ export interface UniquesCall_mint {
 /**
  * Destroy a single item.
  * 
- * Origin must be Signed and the signing account must be either:
- * - the Admin of the `collection`;
- * - the Owner of the `item`;
+ * Origin must be Signed and the sender should be the Admin of the `collection`.
  * 
  * - `collection`: The collection of the item to be burned.
  * - `item`: The item of the item to be burned.
@@ -2629,21 +2623,21 @@ export interface VersionedMultiAssets_V1 {
     value: V1MultiAsset[]
 }
 
-export type Type_226 = Type_226_V0 | Type_226_V1 | Type_226_V2
+export type Type_228 = Type_228_V0 | Type_228_V1 | Type_228_V2
 
-export interface Type_226_V0 {
+export interface Type_228_V0 {
     __kind: 'V0'
-    value: Type_227
+    value: Type_229
 }
 
-export interface Type_226_V1 {
+export interface Type_228_V1 {
     __kind: 'V1'
-    value: Type_232
+    value: Type_234
 }
 
-export interface Type_226_V2 {
+export interface Type_228_V2 {
     __kind: 'V2'
-    value: Type_238[]
+    value: Type_240[]
 }
 
 export interface V1MultiLocation {
@@ -2676,7 +2670,7 @@ export interface OriginCaller_PolkadotXcm {
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Type_262
+    value: Type_266
 }
 
 export interface OriginCaller_Void {
@@ -2685,6 +2679,12 @@ export interface OriginCaller_Void {
 }
 
 export interface DestroyWitness {
+    accounts: number
+    sufficients: number
+    approvals: number
+}
+
+export interface Type_260 {
     items: number
     itemMetadatas: number
     attributes: number
@@ -3147,245 +3147,245 @@ export interface V1MultiAsset {
     fun: V1Fungibility
 }
 
-export type Type_227 = Type_227_WithdrawAsset | Type_227_ReserveAssetDeposit | Type_227_TeleportAsset | Type_227_QueryResponse | Type_227_TransferAsset | Type_227_TransferReserveAsset | Type_227_Transact | Type_227_HrmpNewChannelOpenRequest | Type_227_HrmpChannelAccepted | Type_227_HrmpChannelClosing | Type_227_RelayedFrom
+export type Type_229 = Type_229_WithdrawAsset | Type_229_ReserveAssetDeposit | Type_229_TeleportAsset | Type_229_QueryResponse | Type_229_TransferAsset | Type_229_TransferReserveAsset | Type_229_Transact | Type_229_HrmpNewChannelOpenRequest | Type_229_HrmpChannelAccepted | Type_229_HrmpChannelClosing | Type_229_RelayedFrom
 
-export interface Type_227_WithdrawAsset {
+export interface Type_229_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V0MultiAsset[]
-    effects: Type_229[]
+    effects: Type_231[]
 }
 
-export interface Type_227_ReserveAssetDeposit {
+export interface Type_229_ReserveAssetDeposit {
     __kind: 'ReserveAssetDeposit'
     assets: V0MultiAsset[]
-    effects: Type_229[]
+    effects: Type_231[]
 }
 
-export interface Type_227_TeleportAsset {
+export interface Type_229_TeleportAsset {
     __kind: 'TeleportAsset'
     assets: V0MultiAsset[]
-    effects: Type_229[]
+    effects: Type_231[]
 }
 
-export interface Type_227_QueryResponse {
+export interface Type_229_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V0Response
 }
 
-export interface Type_227_TransferAsset {
+export interface Type_229_TransferAsset {
     __kind: 'TransferAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_227_TransferReserveAsset {
+export interface Type_229_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_227_Transact {
+export interface Type_229_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_227_HrmpNewChannelOpenRequest {
+export interface Type_229_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_227_HrmpChannelAccepted {
+export interface Type_229_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_227_HrmpChannelClosing {
+export interface Type_229_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_227_RelayedFrom {
+export interface Type_229_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V0MultiLocation
-    message: Type_227
+    message: Type_229
 }
 
-export type Type_232 = Type_232_WithdrawAsset | Type_232_ReserveAssetDeposited | Type_232_ReceiveTeleportedAsset | Type_232_QueryResponse | Type_232_TransferAsset | Type_232_TransferReserveAsset | Type_232_Transact | Type_232_HrmpNewChannelOpenRequest | Type_232_HrmpChannelAccepted | Type_232_HrmpChannelClosing | Type_232_RelayedFrom | Type_232_SubscribeVersion | Type_232_UnsubscribeVersion
+export type Type_234 = Type_234_WithdrawAsset | Type_234_ReserveAssetDeposited | Type_234_ReceiveTeleportedAsset | Type_234_QueryResponse | Type_234_TransferAsset | Type_234_TransferReserveAsset | Type_234_Transact | Type_234_HrmpNewChannelOpenRequest | Type_234_HrmpChannelAccepted | Type_234_HrmpChannelClosing | Type_234_RelayedFrom | Type_234_SubscribeVersion | Type_234_UnsubscribeVersion
 
-export interface Type_232_WithdrawAsset {
+export interface Type_234_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V1MultiAsset[]
-    effects: Type_234[]
+    effects: Type_236[]
 }
 
-export interface Type_232_ReserveAssetDeposited {
+export interface Type_234_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     assets: V1MultiAsset[]
-    effects: Type_234[]
+    effects: Type_236[]
 }
 
-export interface Type_232_ReceiveTeleportedAsset {
+export interface Type_234_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     assets: V1MultiAsset[]
-    effects: Type_234[]
+    effects: Type_236[]
 }
 
-export interface Type_232_QueryResponse {
+export interface Type_234_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V1Response
 }
 
-export interface Type_232_TransferAsset {
+export interface Type_234_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_232_TransferReserveAsset {
+export interface Type_234_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_232_Transact {
+export interface Type_234_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_232_HrmpNewChannelOpenRequest {
+export interface Type_234_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_232_HrmpChannelAccepted {
+export interface Type_234_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_232_HrmpChannelClosing {
+export interface Type_234_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_232_RelayedFrom {
+export interface Type_234_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V1Junctions
-    message: Type_232
+    message: Type_234
 }
 
-export interface Type_232_SubscribeVersion {
+export interface Type_234_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_232_UnsubscribeVersion {
+export interface Type_234_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export type Type_238 = Type_238_WithdrawAsset | Type_238_ReserveAssetDeposited | Type_238_ReceiveTeleportedAsset | Type_238_QueryResponse | Type_238_TransferAsset | Type_238_TransferReserveAsset | Type_238_Transact | Type_238_HrmpNewChannelOpenRequest | Type_238_HrmpChannelAccepted | Type_238_HrmpChannelClosing | Type_238_ClearOrigin | Type_238_DescendOrigin | Type_238_ReportError | Type_238_DepositAsset | Type_238_DepositReserveAsset | Type_238_ExchangeAsset | Type_238_InitiateReserveWithdraw | Type_238_InitiateTeleport | Type_238_QueryHolding | Type_238_BuyExecution | Type_238_RefundSurplus | Type_238_SetErrorHandler | Type_238_SetAppendix | Type_238_ClearError | Type_238_ClaimAsset | Type_238_Trap | Type_238_SubscribeVersion | Type_238_UnsubscribeVersion
+export type Type_240 = Type_240_WithdrawAsset | Type_240_ReserveAssetDeposited | Type_240_ReceiveTeleportedAsset | Type_240_QueryResponse | Type_240_TransferAsset | Type_240_TransferReserveAsset | Type_240_Transact | Type_240_HrmpNewChannelOpenRequest | Type_240_HrmpChannelAccepted | Type_240_HrmpChannelClosing | Type_240_ClearOrigin | Type_240_DescendOrigin | Type_240_ReportError | Type_240_DepositAsset | Type_240_DepositReserveAsset | Type_240_ExchangeAsset | Type_240_InitiateReserveWithdraw | Type_240_InitiateTeleport | Type_240_QueryHolding | Type_240_BuyExecution | Type_240_RefundSurplus | Type_240_SetErrorHandler | Type_240_SetAppendix | Type_240_ClearError | Type_240_ClaimAsset | Type_240_Trap | Type_240_SubscribeVersion | Type_240_UnsubscribeVersion
 
-export interface Type_238_WithdrawAsset {
+export interface Type_240_WithdrawAsset {
     __kind: 'WithdrawAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_238_ReserveAssetDeposited {
+export interface Type_240_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     value: V1MultiAsset[]
 }
 
-export interface Type_238_ReceiveTeleportedAsset {
+export interface Type_240_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_238_QueryResponse {
+export interface Type_240_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V2Response
     maxWeight: bigint
 }
 
-export interface Type_238_TransferAsset {
+export interface Type_240_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_238_TransferReserveAsset {
+export interface Type_240_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_238_Transact {
+export interface Type_240_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_238_HrmpNewChannelOpenRequest {
+export interface Type_240_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_238_HrmpChannelAccepted {
+export interface Type_240_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_238_HrmpChannelClosing {
+export interface Type_240_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_238_ClearOrigin {
+export interface Type_240_ClearOrigin {
     __kind: 'ClearOrigin'
 }
 
-export interface Type_238_DescendOrigin {
+export interface Type_240_DescendOrigin {
     __kind: 'DescendOrigin'
     value: V1Junctions
 }
 
-export interface Type_238_ReportError {
+export interface Type_240_ReportError {
     __kind: 'ReportError'
     queryId: bigint
     dest: V1MultiLocation
     maxResponseWeight: bigint
 }
 
-export interface Type_238_DepositAsset {
+export interface Type_240_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_238_DepositReserveAsset {
+export interface Type_240_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -3393,27 +3393,27 @@ export interface Type_238_DepositReserveAsset {
     xcm: V2Instruction[]
 }
 
-export interface Type_238_ExchangeAsset {
+export interface Type_240_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_238_InitiateReserveWithdraw {
+export interface Type_240_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_238_InitiateTeleport {
+export interface Type_240_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_238_QueryHolding {
+export interface Type_240_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
@@ -3421,48 +3421,48 @@ export interface Type_238_QueryHolding {
     maxResponseWeight: bigint
 }
 
-export interface Type_238_BuyExecution {
+export interface Type_240_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weightLimit: V2WeightLimit
 }
 
-export interface Type_238_RefundSurplus {
+export interface Type_240_RefundSurplus {
     __kind: 'RefundSurplus'
 }
 
-export interface Type_238_SetErrorHandler {
+export interface Type_240_SetErrorHandler {
     __kind: 'SetErrorHandler'
-    value: Type_238[]
+    value: Type_240[]
 }
 
-export interface Type_238_SetAppendix {
+export interface Type_240_SetAppendix {
     __kind: 'SetAppendix'
-    value: Type_238[]
+    value: Type_240[]
 }
 
-export interface Type_238_ClearError {
+export interface Type_240_ClearError {
     __kind: 'ClearError'
 }
 
-export interface Type_238_ClaimAsset {
+export interface Type_240_ClaimAsset {
     __kind: 'ClaimAsset'
     assets: V1MultiAsset[]
     ticket: V1MultiLocation
 }
 
-export interface Type_238_Trap {
+export interface Type_240_Trap {
     __kind: 'Trap'
     value: bigint
 }
 
-export interface Type_238_SubscribeVersion {
+export interface Type_240_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_238_UnsubscribeVersion {
+export interface Type_240_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
@@ -3539,13 +3539,13 @@ export interface Origin_Response {
     value: V1MultiLocation
 }
 
-export type Type_262 = Type_262_Relay | Type_262_SiblingParachain
+export type Type_266 = Type_266_Relay | Type_266_SiblingParachain
 
-export interface Type_262_Relay {
+export interface Type_266_Relay {
     __kind: 'Relay'
 }
 
-export interface Type_262_SiblingParachain {
+export interface Type_266_SiblingParachain {
     __kind: 'SiblingParachain'
     value: number
 }
@@ -3878,75 +3878,75 @@ export interface V1Fungibility_NonFungible {
     value: V1AssetInstance
 }
 
-export type Type_229 = Type_229_Null | Type_229_DepositAsset | Type_229_DepositReserveAsset | Type_229_ExchangeAsset | Type_229_InitiateReserveWithdraw | Type_229_InitiateTeleport | Type_229_QueryHolding | Type_229_BuyExecution
+export type Type_231 = Type_231_Null | Type_231_DepositAsset | Type_231_DepositReserveAsset | Type_231_ExchangeAsset | Type_231_InitiateReserveWithdraw | Type_231_InitiateTeleport | Type_231_QueryHolding | Type_231_BuyExecution
 
-export interface Type_229_Null {
+export interface Type_231_Null {
     __kind: 'Null'
 }
 
-export interface Type_229_DepositAsset {
+export interface Type_231_DepositAsset {
     __kind: 'DepositAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_229_DepositReserveAsset {
+export interface Type_231_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_229_ExchangeAsset {
+export interface Type_231_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V0MultiAsset[]
     receive: V0MultiAsset[]
 }
 
-export interface Type_229_InitiateReserveWithdraw {
+export interface Type_231_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V0MultiAsset[]
     reserve: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_229_InitiateTeleport {
+export interface Type_231_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_229_QueryHolding {
+export interface Type_231_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V0MultiLocation
     assets: V0MultiAsset[]
 }
 
-export interface Type_229_BuyExecution {
+export interface Type_231_BuyExecution {
     __kind: 'BuyExecution'
     fees: V0MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    xcm: Type_227[]
+    xcm: Type_229[]
 }
 
-export type Type_234 = Type_234_Noop | Type_234_DepositAsset | Type_234_DepositReserveAsset | Type_234_ExchangeAsset | Type_234_InitiateReserveWithdraw | Type_234_InitiateTeleport | Type_234_QueryHolding | Type_234_BuyExecution
+export type Type_236 = Type_236_Noop | Type_236_DepositAsset | Type_236_DepositReserveAsset | Type_236_ExchangeAsset | Type_236_InitiateReserveWithdraw | Type_236_InitiateTeleport | Type_236_QueryHolding | Type_236_BuyExecution
 
-export interface Type_234_Noop {
+export interface Type_236_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_234_DepositAsset {
+export interface Type_236_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_234_DepositReserveAsset {
+export interface Type_236_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -3954,40 +3954,40 @@ export interface Type_234_DepositReserveAsset {
     effects: V1Order[]
 }
 
-export interface Type_234_ExchangeAsset {
+export interface Type_236_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_234_InitiateReserveWithdraw {
+export interface Type_236_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_234_InitiateTeleport {
+export interface Type_236_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_234_QueryHolding {
+export interface Type_236_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
     assets: V1MultiAssetFilter
 }
 
-export interface Type_234_BuyExecution {
+export interface Type_236_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    instructions: Type_232[]
+    instructions: Type_234[]
 }
 
 export type V1Junction = V1Junction_Parachain | V1Junction_AccountId32 | V1Junction_AccountIndex64 | V1Junction_AccountKey20 | V1Junction_PalletInstance | V1Junction_GeneralIndex | V1Junction_GeneralKey | V1Junction_OnlyChild | V1Junction_Plurality
@@ -4059,7 +4059,7 @@ export interface V0NetworkId_Kusama {
     __kind: 'Kusama'
 }
 
-export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial | V0BodyId_Defense | V0BodyId_Administration | V0BodyId_Treasury
+export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial
 
 export interface V0BodyId_Unit {
     __kind: 'Unit'
@@ -4089,18 +4089,6 @@ export interface V0BodyId_Legislative {
 
 export interface V0BodyId_Judicial {
     __kind: 'Judicial'
-}
-
-export interface V0BodyId_Defense {
-    __kind: 'Defense'
-}
-
-export interface V0BodyId_Administration {
-    __kind: 'Administration'
-}
-
-export interface V0BodyId_Treasury {
-    __kind: 'Treasury'
 }
 
 export type V0BodyPart = V0BodyPart_Voice | V0BodyPart_Members | V0BodyPart_Fraction | V0BodyPart_AtLeastProportion | V0BodyPart_MoreThanProportion
