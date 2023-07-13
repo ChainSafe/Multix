@@ -60,7 +60,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
         return
       }
 
-      selectNetwork('rococo')
+      selectNetwork('kusama')
     }
   }, [searchParams, selectNetwork, selectedNetwork])
 
