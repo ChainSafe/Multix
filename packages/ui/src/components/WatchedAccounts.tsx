@@ -3,7 +3,7 @@ import { Box, IconButton } from '@mui/material'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import AccountDisplay from './AccountDisplay'
 import { Close as CloseIcon } from '@mui/icons-material'
-import AccountSelection from './selectors/AccountSelection'
+import AccountSelection from './select/AccountSelection'
 
 interface Props {
   className?: string

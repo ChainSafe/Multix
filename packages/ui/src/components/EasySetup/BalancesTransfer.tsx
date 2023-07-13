@@ -2,7 +2,7 @@ import { Box, InputAdornment } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import GenericAccountSelection, { AccountBaseInfo } from '../selectors/GenericAccountSelection'
+import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { useApi } from '../../contexts/ApiContext'
@@ -118,6 +118,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         onChange={onAddressDestChange}
         value={selected}
         label="to"
+        disablePortal={false}
         allowAnyAddressInput={true}
       />
       <TextFieldStyled

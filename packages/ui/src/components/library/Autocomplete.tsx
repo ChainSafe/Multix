@@ -1,6 +1,6 @@
 import { Autocomplete as AutocompleteMui } from '@mui/material'
 import React from 'react'
-import { styled } from '@mui/material/styles'
+import { css, styled } from '@mui/material/styles'
 import {
   AutocompleteRenderInputParams,
   AutocompleteRenderOptionState
@@ -12,6 +12,7 @@ import {
   AutocompleteValue,
   FilterOptionsState
 } from '@mui/base/useAutocomplete/useAutocomplete'
+import { theme } from '../../styles/theme'
 
 interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   InputProps?: Partial<AutocompleteRenderInputParams['InputProps']>
@@ -44,6 +45,7 @@ interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   selectOnFocus?: boolean
   clearOnBlur?: boolean
   handleHomeEndKeys?: boolean
+  disablePortal?: boolean
 }
 
 const Autocomplete = <
@@ -68,6 +70,7 @@ const Autocomplete = <
   selectOnFocus,
   clearOnBlur,
   handleHomeEndKeys,
+  disablePortal,
   iconSize
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
   return (
@@ -79,7 +82,7 @@ const Autocomplete = <
         handleHomeEndKeys={handleHomeEndKeys}
         selectOnFocus={selectOnFocus}
         clearOnBlur={clearOnBlur}
-        disablePortal
+        disablePortal={disablePortal}
         isOptionEqualToValue={isOptionEqualToValue}
         disableClearable={disableClearable}
         filterOptions={filterOptions}
@@ -99,18 +102,23 @@ const Autocomplete = <
 }
 
 Autocomplete.defaultProps = {
-  iconSize: '1.25rem'
+  iconSize: '1.5rem',
+  disablePortal: false
 }
 
-const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
+export const AutocompleteStyles = css`
   svg {
-    width: ${({ iconSize }) => iconSize};
-    height: ${({ iconSize }) => iconSize};
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .MuiPaper-root {
+    border-radius: 0.75rem;
   }
 
   .MuiIconButton-root {
     svg {
-      color: ${({ theme }) => theme.custom.text.black};
+      color: ${theme.custom.text.black};
       width: 1.25rem;
       height: 1.25rem;
     }
@@ -121,11 +129,10 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
   }
 
   .MuiInputBase-root {
-    background-color: ${({ theme }) => theme.palette.primary.white};
+    background-color: ${theme.palette.primary.white};
   }
 
   .MuiAutocomplete-popper {
-    margin-top: 0.75rem !important;
   }
 
   .MuiPaper-root {
@@ -134,13 +141,13 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
 
   .MuiAutocomplete-listbox {
     padding: 0;
-    border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    border: 1px solid ${theme.custom.text.borderColor};
     border-radius: 0.75rem;
     box-shadow: none;
   }
 
   .MuiAutocomplete-option {
-    border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+    border-bottom: 1px solid ${theme.custom.text.borderColor};
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
@@ -159,6 +166,15 @@ const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
       border-bottom: none;
       outline: none;
     }
+  }
+`
+
+const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
+  ${AutocompleteStyles}
+
+  svg {
+    width: ${({ iconSize }) => iconSize};
+    height: ${({ iconSize }) => iconSize};
   }
 `
 

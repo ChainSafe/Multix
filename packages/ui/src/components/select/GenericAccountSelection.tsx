@@ -26,6 +26,7 @@ interface Props {
   label?: string
   allowAnyAddressInput?: boolean
   withBadge?: boolean
+  disablePortal?: boolean
 }
 
 const getBadge = (account: AccountBaseInfo | string) => {
@@ -53,7 +54,8 @@ const GenericAccountSelection = ({
   onChange,
   label = '',
   allowAnyAddressInput = false,
-  withBadge = false
+  withBadge = false,
+  disablePortal = true
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -188,6 +190,7 @@ const GenericAccountSelection = ({
       getOptionLabel={getOptionLabel}
       onChange={onChangeAutocomplete}
       value={value}
+      disablePortal={disablePortal}
     />
   )
 }
