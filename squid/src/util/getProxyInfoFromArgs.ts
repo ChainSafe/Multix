@@ -20,9 +20,9 @@ export const getProxyInfoFromArgs = ({ item, chainId, ctx, isAdded }: Params) =>
 
   const event = isAdded && new ProxyProxyAddedEvent(ctx, item.event)
   if (event && event.isV504) {
-    [delegator, delegatee, proxyType, delay] = event.asV504
+    ;[delegator, delegatee, proxyType, delay] = event.asV504
   } else {
-    ({ delegator, delegatee, proxyType, delay } = item.event.args)
+    ;({ delegator, delegatee, proxyType, delay } = item.event.args)
   }
 
   const _delegator = encodeAddress(delegator, env.prefix)
