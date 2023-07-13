@@ -157,6 +157,10 @@ export default styled(MultiProxySelection)`
     flex-shrink: 0;
     border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
 
+    .MuiBox-root {
+      max-width: 12rem;
+    }
+
     &:last-child {
       border-bottom: none;
     }

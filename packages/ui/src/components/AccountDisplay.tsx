@@ -131,7 +131,6 @@ const AddressStyled = styled('div')(
 const BoxStyled = styled(Box)`
   min-width: 0;
   margin-left: 0.5rem;
-  max-width: 12rem;
 `
 
 const NameStyled = styled('div')`
