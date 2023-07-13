@@ -22,6 +22,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
+import { ModalCloseButton } from '../library/ModalCloseButton'
 
 interface Props {
   onClose: () => void
@@ -222,17 +223,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     [getMultisigByAddress]
   )
 
-  const handleClose = useCallback(
-    (_: any, reason: 'backdropClick' | 'escapeKeyDown') => {
-      // Prevent closing unless the calls aren't made yet.
-      // a dedicated close button is present for this step
-      if (!isCallStep) {
-        onClose()
-      }
-    },
-    [isCallStep, onClose]
-  )
-
   const onErrorCallback = useCallback((errorMessage?: string) => {
     !!errorMessage && setCallError(errorMessage)
   }, [])
@@ -356,9 +346,9 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       fullWidth
       maxWidth={'sm'}
       open
-      onClose={handleClose}
       className={className}
     >
+      {(!isCallStep || !!callError) && <ModalCloseButton onClose={onClose} />}
       <DialogTitle>Change multisig</DialogTitle>
       <DialogContent
         className="generalContainer"
@@ -492,7 +482,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {currentStep === 'selection' ? 'Next' : 'Save'}
               </Button>
             )}
-            {isCallStep && !!callError && <Button onClick={onClose}>Close</Button>}
           </Grid>
         </Grid>
       </DialogContent>
