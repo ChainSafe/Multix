@@ -114,10 +114,16 @@ const AccountDisplay = ({
   )
 }
 
-const NameWrapperStyled = styled('div')`
-  display: flex;
-  align-items: center;
+const BoxStyled = styled(Box)`
   min-width: 0;
+  margin-left: 0.5rem;
+  display: grid !important;
+  justify-content: start;
+  justify-items: start;
+`
+
+const NameWrapperStyled = styled('div')`
+  display: grid;
 `
 
 const AddressStyled = styled('div')(
@@ -128,19 +134,14 @@ const AddressStyled = styled('div')(
 `
 )
 
-const BoxStyled = styled(Box)`
-  min-width: 0;
-  margin-left: 0.5rem;
-`
-
 const NameStyled = styled('div')`
   color: ${({ theme }) => theme.custom.text.primary};
   font-size: 1rem;
   font-weight: 500;
-  white-space: nowrap;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+  white-space: nowrap;
 `
 
 const BalanceStyled = styled('div')(

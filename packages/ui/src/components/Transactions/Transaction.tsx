@@ -114,7 +114,7 @@ export default styled(Transaction)(
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
-  padding: 0.5rem;
+
 
   @media (min-width: ${theme.breakpoints.values.sm}px) {
     flex-direction: row;
@@ -138,14 +138,20 @@ export default styled(Transaction)(
 
   // FIXME this is duplicated
   .badge > .MuiBadge-badge {
+    max-height: 1.3125rem;
     left: 29px;
     top: 19px;
-    border-radius: 0 50px 50px 50px;
+    border-radius: 0.9375rem;
+    padding: 0.25rem 0.5rem;
+    max-width: 2.625rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+    border: 1px solid ${theme.custom.gray[400]};
   }
 
   .badge.red > .MuiBadge-badge {
-    box-shadow: ${theme.custom.boxShadow};
-    background-color: ${theme.custom.identity.red};
+    background-color: ${theme.custom.proxyBadge.multi};
+    color: ${theme.custom.text.black};
   }
 `
 )
