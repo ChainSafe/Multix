@@ -105,6 +105,7 @@ const SelectMuiStyled = styled(SelectMui)<
   background: ${({ theme }) => theme.palette.primary.white};
   outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
   text-transform: capitalize;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
 
   fieldset {
     min-width: ${({ minifiedVersion }) => (minifiedVersion ? '3.75rem' : '9.875rem')};

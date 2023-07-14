@@ -6,6 +6,7 @@ const TextFieldLargeStyled = styled(TextField)`
     height: 3.5rem;
     padding: 0.5rem 0.75rem 0.5rem 1rem;
     border: none;
+    border-radius: ${({ theme }) => theme.custom.borderRadius};
     outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
 
     &:hover {

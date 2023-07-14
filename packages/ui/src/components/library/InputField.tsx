@@ -51,7 +51,7 @@ export const InputStyledBaseCss = css`
   padding: 0.5rem 1.25rem;
   border: none;
   outline: 1.5px solid ${theme.custom.text.borderColor};
-  border-radius: 0.75rem;
+  border-radius: ${theme.custom.borderRadius};
   font-size: 1rem;
   font-family: 'Jost', sans-serif;
 
@@ -63,7 +63,7 @@ export const InputStyledBaseCss = css`
     cursor: not-allowed;
     background: #f3f6f9;
     outline: 1.5px solid #e7e7e7;
-    border-radius: 0.75rem;
+    border-radius: ${theme.custom.borderRadius};
   }
 `
 
