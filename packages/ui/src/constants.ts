@@ -28,80 +28,80 @@ export const networkList = {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
   'assethub-kusama': {
     chainId: 'assethub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   'assethub-polkadot': {
     chainId: 'assethub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   astar: {
     chainId: 'astar',
     explorerNetworkName: 'astar',
     rpcUrl: 'wss://rpc.astar.network',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesAstarPNG
   } as NetworkInfo,
   hydradx: {
     chainId: 'hydradx',
     explorerNetworkName: 'hydradx',
     rpcUrl: 'wss://hydradx.api.onfinality.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: hydradxSVG
   } as NetworkInfo,
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
     rpcUrl: 'wss://api.phala.network/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: phalaSVG
   } as NetworkInfo,
   khala: {
     chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   rococo: {
     chainId: 'rococo',
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: chainsRococoSVG
   } as NetworkInfo,
   'rhala testnet': {
     chainId: 'rhala',
     explorerNetworkName: '',
     rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
-    wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
-    httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   local: {
