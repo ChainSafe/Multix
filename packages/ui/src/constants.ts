@@ -40,7 +40,7 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
-  'assethub-kusama': {
+  'assethub-ksm': {
     chainId: 'assethub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
@@ -48,7 +48,7 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
-  'assethub-polkadot': {
+  'assethub-dot': {
     chainId: 'assethub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
