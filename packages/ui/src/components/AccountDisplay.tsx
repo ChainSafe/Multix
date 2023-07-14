@@ -124,6 +124,13 @@ const BoxStyled = styled(Box)`
 
 const NameWrapperStyled = styled('div')`
   display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `
 
 const AddressStyled = styled('div')(
