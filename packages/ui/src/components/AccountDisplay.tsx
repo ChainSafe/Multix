@@ -102,7 +102,7 @@ const AccountDisplay = ({
             <NameStyled>{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>)
+        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
