@@ -44,6 +44,10 @@ declare module '@mui/material/styles' {
         primary: string
         secondary: string
       }
+      proxyBadge: {
+        pure: string
+        multi: string
+      }
       identity: {
         green: string
         grey: string
@@ -83,6 +87,10 @@ declare module '@mui/material/styles' {
       background: {
         primary: string
         secondary: string
+      }
+      proxyBadge: {
+        pure: string
+        multi: string
       }
       identity: {
         green: string
@@ -139,6 +147,10 @@ export const theme = createTheme({
     background: {
       primary: '#F1F5F9',
       secondary: '#F8FAFC'
+    },
+    proxyBadge: {
+      pure: '#4C66AA',
+      multi: '#F1F5F9'
     },
     identity: {
       green: 'green',

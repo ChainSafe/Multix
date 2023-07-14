@@ -2,7 +2,7 @@ import { Alert, Box, Chip, Paper } from '@mui/material'
 import { useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import AccountDisplay from '../../components/AccountDisplay'
-import SignerSelection from '../../components/SignerSelection'
+import SignerSelection from '../../components/select/SignerSelection'
 import { MultiProxy } from '../../contexts/MultiProxyContext'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { getIntersection } from '../../utils'
@@ -150,6 +150,7 @@ export default styled(Summary)`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    min-width: 0;
   }
 
   .signerSelection {

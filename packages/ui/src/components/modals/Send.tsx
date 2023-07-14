@@ -1,25 +1,17 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  MenuItem,
-  Select,
-  SelectChangeEvent
-} from '@mui/material'
-import { Button } from '../library'
+import { Dialog, DialogContent, DialogTitle, Grid, SelectChangeEvent } from '@mui/material'
+import { Button, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import SignerSelection from '../SignerSelection'
+import SignerSelection from '../select/SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { sortAddresses } from '@polkadot/util-crypto'
-import GenericAccountSelection, { AccountBaseInfo } from '../GenericAccountSelection'
+import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
 import Warning from '../Warning'
@@ -282,7 +274,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       <ModalCloseButton onClose={onClose} />
       <DialogTitle>Send tx</DialogTitle>
       <DialogContent className="generalContainer">
-        <Grid container>
+        <Grid
+          alignItems="center"
+          container
+        >
           <Grid
             item
             xs={12}
@@ -358,20 +353,13 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             md={10}
           >
             <Select
-              className="easySetupOption"
               value={selectedEasyOption}
               onChange={onChangeEasySetupOption}
               fullWidth
-            >
-              {Object.keys(easySetupOptions).map((key) => (
-                <MenuItem
-                  key={key}
-                  value={key}
-                >
-                  {key}
-                </MenuItem>
-              ))}
-            </Select>
+              menuItems={Object.keys(easySetupOptions).map((key) => ({
+                value: key
+              }))}
+            />
           </Grid>
           <Grid
             item
@@ -431,10 +419,6 @@ export default styled(Send)(
       padding-right: 3rem;
     }
     padding-top: 0.3rem;
-  }
-
-  .easySetupOption {
-    margin-top: 0.5rem
   }
 
   .buttonContainer {
