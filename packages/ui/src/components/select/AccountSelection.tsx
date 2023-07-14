@@ -1,4 +1,5 @@
-import { Autocomplete, Box, InputAdornment } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
+import * as React from 'react'
 import {
   ChangeEvent,
   SyntheticEvent,
@@ -9,13 +10,18 @@ import {
   useState
 } from 'react'
 import { styled } from '@mui/material/styles'
-import { useAccounts } from '../contexts/AccountsContext'
+import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { isValidAddress } from '../utils'
-import { useAccountNames } from '../contexts/AccountNamesContext'
-import MultixIdenticon from './MultixIdenticon'
-import { Button, InputField, TextFieldStyled } from './library'
+import { getDisplayAddress, isValidAddress } from '../../utils'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import MultixIdenticon from '../MultixIdenticon'
+import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
+import OptionMenuItem from './OptionMenuItem'
+import {
+  AutocompleteRenderInputParams,
+  AutocompleteRenderOptionState
+} from '@mui/material/Autocomplete/Autocomplete'
 
 interface Props {
   className?: string
@@ -74,10 +80,19 @@ const AccountSelection = ({
   }, [accountNames, selected])
 
   const onChangeAutocomplete = useCallback(
-    (_: SyntheticEvent<Element, Event>, val: string | InjectedAccountWithMeta | null) => {
+    (
+      _: SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        | InjectedAccountWithMeta
+        | string
+        | undefined
+        | (string | InjectedAccountWithMeta | undefined)[]
+      >
+    ) => {
       setErrorMessage('')
       setName('')
-      const value = getOptionLabel(val)
+
+      const value = getOptionLabel(val as string)
       setSelected(value)
     },
     []
@@ -120,51 +135,52 @@ const AccountSelection = ({
     setName(value)
   }, [])
 
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: InjectedAccountWithMeta,
+    _: AutocompleteRenderOptionState
+  ) => (
+    <OptionMenuItem
+      keyValue={option.address}
+      {...props}
+    >
+      <MultixIdenticonStyled value={option.address} />
+      {getDisplayAddress(option.address)} - {option.meta.name}
+    </OptionMenuItem>
+  )
+
+  const renderInput = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      inputRef={ref}
+      error={!!errorMessage}
+      helperText={errorMessage}
+      label={inputLabel}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: selected ? (
+          <InputAdornment position="start">
+            <MultixIdenticonAutocompleteStyled
+              size={24}
+              value={selected}
+            />
+          </InputAdornment>
+        ) : null
+      }}
+      onKeyDown={handleSpecialKeys}
+    />
+  )
+
   return (
     <BoxStyled className={className}>
       <Autocomplete
-        className="addressField"
-        disabled={addressDisabled}
         freeSolo
+        disabled={addressDisabled}
         filterOptions={filterOptions}
         options={withPreselection ? dedupedSignatories : []}
-        renderOption={(props, option) => (
-          <Box
-            component="li"
-            sx={{
-              '& > .renderOptionIdenticon': { mr: '.5rem', flexShrink: 0 }
-            }}
-            {...props}
-            key={option.address}
-          >
-            <MultixIdenticon
-              className="renderOptionIdenticon"
-              value={option.address}
-            />
-            {option.address} - {option.meta.name}
-          </Box>
-        )}
-        renderInput={(params) => (
-          <TextFieldStyled
-            {...params}
-            inputRef={ref}
-            error={!!errorMessage}
-            helperText={errorMessage}
-            label={inputLabel}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: selected ? (
-                <InputAdornment position="start">
-                  <MultixIdenticonAutocompleteStyled
-                    size={24}
-                    value={selected}
-                  />
-                </InputAdornment>
-              ) : null
-            }}
-            onKeyDown={handleSpecialKeys}
-          />
-        )}
+        onKeyDown={handleSpecialKeys}
+        renderInput={renderInput}
+        renderOption={renderOption}
         getOptionLabel={getOptionLabel}
         onInputChange={onChangeAutocomplete}
         value={selected}
@@ -200,20 +216,23 @@ const ButtonStyled = styled(Button)`
   align-self: end;
 `
 
-const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)`
-  padding-left: 1.125rem;
+const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)``
+
+const MultixIdenticonStyled = styled(MultixIdenticon)`
+  margin-right: 0.5rem;
+  flex-shrink: 0;
 `
 
 export default styled(AccountSelection)`
   display: flex;
   flex: 1;
 
-  & > * {
-    flex: 1;
+  .MuiAutocomplete-root {
+    margin-right: 0.5rem;
   }
 
-  .addressField {
-    margin-right: 0.5rem;
+  & > * {
+    flex: 1;
   }
 
   & > button {

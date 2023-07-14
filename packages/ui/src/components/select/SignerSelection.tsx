@@ -1,11 +1,19 @@
-import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
+import { InputAdornment } from '@mui/material'
+import * as React from 'react'
 import { useCallback, useEffect, useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { useAccounts } from '../contexts/AccountsContext'
+import { useAccounts } from '../../contexts/AccountsContext'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import AccountDisplay from './AccountDisplay'
-import MultixIdenticon from './MultixIdenticon'
+import AccountDisplay from '../AccountDisplay'
+import MultixIdenticon from '../MultixIdenticon'
+import { Autocomplete, TextFieldStyled } from '../library'
+import OptionMenuItem from './OptionMenuItem'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
+
+const isInjectedAccountWithMeta = (value: any): value is InjectedAccountWithMeta => {
+  return value && value.address && value.meta && value.meta.name
+}
 
 interface Props {
   className?: string
@@ -13,10 +21,10 @@ interface Props {
   onChange?: () => void
 }
 
-const getOptionLabel = (option: InjectedAccountWithMeta | undefined) => {
-  if (!option) return ''
+const getOptionLabel = (option?: NonNullable<InjectedAccountWithMeta | string>): string => {
+  if (!option || !isInjectedAccountWithMeta(option)) return ''
 
-  return option.meta.name || ''
+  return option.meta.name as string
 }
 
 const isOptionEqualToValue = (
@@ -50,11 +58,49 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
   })
 
   const onChangeSigner = useCallback(
-    (_: any, newSelected: (typeof signersList)[0]) => {
-      newSelected && selectAccount(newSelected)
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      newSelected: NonNullable<
+        | (typeof signersList)[0]
+        | string
+        | undefined
+        | (string | (typeof signersList)[0] | undefined)[]
+      >
+    ) => {
+      isInjectedAccountWithMeta(newSelected) && selectAccount(newSelected)
       onChange && onChange()
     },
     [onChange, selectAccount]
+  )
+
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option?: InjectedAccountWithMeta
+  ) => {
+    if (!option) return null
+
+    return (
+      <OptionMenuItem
+        {...props}
+        keyValue={option.address}
+      >
+        <AccountDisplay address={option?.address || ''} />
+      </OptionMenuItem>
+    )
+  }
+
+  const renderInput = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: (
+          <InputAdornment position="start">
+            <MultixIdenticon value={selectedAccount?.address} />
+          </InputAdornment>
+        )
+      }}
+    />
   )
 
   if (signersList.length === 0) {
@@ -68,35 +114,8 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       className={className}
       options={signersList}
       filterOptions={filterOptions}
-      renderOption={(props, option, index) => (
-        <Box
-          component="li"
-          sx={{
-            mr: '.5rem',
-            pt: '.8rem !important',
-            pl: '1.5rem !important',
-            flexShrink: 0
-          }}
-          {...props}
-          key={option?.address}
-        >
-          <AccountDisplay address={option?.address || ''} />
-        </Box>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Signing with"
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <MultixIdenticon value={selectedAccount?.address} />
-              </InputAdornment>
-            )
-          }}
-        />
-      )}
+      renderOption={renderOption}
+      renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChangeSigner}
       value={selectedAccount || signersList[0]}

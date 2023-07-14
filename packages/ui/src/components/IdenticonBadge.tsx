@@ -25,23 +25,44 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
   }
 
   return (
-    <Badge
+    <BadgeStyled
       className={`${className} ${appliedClass}`}
+      badgeType={badge}
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
     >
       <AccountIcon />
-    </Badge>
+    </BadgeStyled>
   )
 }
 
-export default styled(IdenticonBadge)`
-  .MuiBadge-badge {
-    box-shadow: ${({ theme }) => theme.custom.boxShadow};
-  }
+const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
+  padding-left: 1rem;
 
-  &.red > .MuiBadge-badge {
-    background-color: ${({ theme }) => theme.custom.identity.red};
-  }
+  .MuiBadge-badge {
+    max-width: 2.625rem;
+    padding: 0.25rem 0.5rem;
+    max-height: 1.3125rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+    border-radius: 0.9375rem;
+    border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+    transform: scale(1) translate(-20%, 0);
+
+    ${({ theme, badgeType }) =>
+      badgeType === AccountBadge.PURE &&
+      `
+        color: ${theme.custom.gray[100]};
+        background-color: ${theme.custom.proxyBadge.pure} !important;
+      `};
+
+    ${({ theme, badgeType }) =>
+      badgeType === AccountBadge.MULTI &&
+      `
+        color: ${theme.custom.text.black};
+        background-color: ${theme.custom.proxyBadge.multi} !important;
+      `};
 `
+
+export default IdenticonBadge

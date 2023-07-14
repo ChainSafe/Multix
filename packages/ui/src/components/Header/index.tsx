@@ -1,16 +1,15 @@
 import { Box, IconButton, Toolbar } from '@mui/material'
-import { Button } from '../library'
+import { Button, RouterLink } from '../library'
 import { styled } from '@mui/material/styles'
 import { useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
-import MultiProxySelection from '../MultiProxySelection'
+import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
-import NetworkSelection from '../NetworkSelection'
-import { RouterLink } from '../library'
+import NetworkSelection from '../select/NetworkSelection'
 import { multixlogo } from '../../logos/multixLogo'
 
 interface Props {
@@ -69,7 +68,9 @@ const Header = ({ handleDrawerOpen }: Props) => {
 const MuiAppBarStyled = styled(MuiAppBar)(
   ({ theme }) => `
   margin-bottom: 1rem;
-  background: ${theme.palette.primary.main}
+  height: 4.8125rem;
+  background: ${theme.palette.primary.main};
+  justify-content: center;
 `
 )
 
