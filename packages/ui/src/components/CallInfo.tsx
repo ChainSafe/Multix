@@ -162,7 +162,6 @@ const AlertStyled = styled(Alert)`
 
 const CallNameStyled = styled('h4')`
   margin-top: 0.5rem;
-  margin-left: 0.5rem;
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;

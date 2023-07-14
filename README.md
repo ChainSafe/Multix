@@ -4,7 +4,7 @@
 
 ### an interface to easily manage complex multisigs.
 
-###https://multix.chainsafe.io
+### https://multix.chainsafe.io
 
 This repo contains the code to run an indexer see `./squid` and a front-end, see `./packages/ui`.
 
