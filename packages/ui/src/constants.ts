@@ -67,7 +67,7 @@ export const networkList = {
   hydradx: {
     chainId: 'hydradx',
     explorerNetworkName: 'hydradx',
-    rpcUrl: 'wss://hydradx.api.onfinality.io',
+    rpcUrl: 'wss://hydradx-rpc.dwellir.com',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix/v/v2/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/v/v2/graphql',
     logo: hydradxSVG
