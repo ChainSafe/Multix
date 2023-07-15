@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles'
 import AccountSelection from './AccountSelection'
 import IconButton from '@mui/material/IconButton'
 import { HiOutlineTrash } from 'react-icons/hi2'
-import AccountDisplay from './AccountDisplay'
+import AccountDisplay from '../AccountDisplay'
 
 interface Props {
   className?: string

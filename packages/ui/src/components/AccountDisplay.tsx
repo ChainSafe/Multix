@@ -102,7 +102,8 @@ const AccountDisplay = ({
             <NameStyled>{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
+        {!withName ||
+          (encodedAddress && <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>)}
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
@@ -113,28 +114,41 @@ const AccountDisplay = ({
   )
 }
 
+const BoxStyled = styled(Box)`
+  min-width: 0;
+  margin-left: 0.5rem;
+  display: grid !important;
+  justify-content: start;
+  justify-items: start;
+`
+
 const NameWrapperStyled = styled('div')`
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
   align-items: center;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `
 
 const AddressStyled = styled('div')(
   ({ theme }) => `
-    color: ${theme.custom.text.addressColorLightGray};
-    font-size: small;
+    color: ${theme.custom.text.primary};
+    font-size: 1rem;
+    font-weight: 400;
 `
 )
 
-const BoxStyled = styled(Box)`
+const NameStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.text.primary};
+  font-size: 1rem;
+  font-weight: 500;
   min-width: 0;
-  margin-left: 0.5rem;
-`
-
-const NameStyled = styled('span')`
-  font-size: large;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const BalanceStyled = styled('div')(

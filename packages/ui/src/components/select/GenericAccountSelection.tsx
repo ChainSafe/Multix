@@ -1,11 +1,14 @@
-import { Autocomplete, Box, FilterOptionsState, InputAdornment, TextField } from '@mui/material'
+import { FilterOptionsState, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import AccountDisplay from './AccountDisplay'
-import { useAccountNames } from '../contexts/AccountNamesContext'
-import IdenticonBadge from './IdenticonBadge'
-import { AccountBadge } from '../types'
+import AccountDisplay from '../AccountDisplay'
+import { useAccountNames } from '../../contexts/AccountNamesContext'
+import IdenticonBadge from '../IdenticonBadge'
+import { AccountBadge } from '../../types'
+import { Autocomplete, TextFieldStyled } from '../library'
+import OptionMenuItem from './OptionMenuItem'
+import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 
 export interface AccountBaseInfo {
   address: string
@@ -22,6 +25,8 @@ interface Props {
   value: AccountBaseInfo
   label?: string
   allowAnyAddressInput?: boolean
+  withBadge?: boolean
+  disablePortal?: boolean
 }
 
 const getBadge = (account: AccountBaseInfo | string) => {
@@ -38,18 +43,24 @@ const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) =
   return option.address === value.address
 }
 
+const isAccountBaseInfo = (value: any): value is AccountBaseInfo => {
+  return value && value.address
+}
+
 const GenericAccountSelection = ({
   className,
   accountList = [],
   value,
   onChange,
   label = '',
-  allowAnyAddressInput = false
+  allowAnyAddressInput = false,
+  withBadge = false,
+  disablePortal = true
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
   const valueAddress = useMemo(() => (typeof value === 'string' ? value : value.address), [value])
-  const valueBadge = useMemo(() => getBadge(value), [value])
+  const valueBadge = useMemo(() => (withBadge ? getBadge(value) : undefined), [value, withBadge])
 
   const getOptionLabel = useCallback(
     (option: (typeof accountList)[0] | string) => {
@@ -97,13 +108,18 @@ const GenericAccountSelection = ({
   }, [])
 
   const onChangeAutocomplete = useCallback(
-    (_: React.SyntheticEvent<Element, Event>, val: AccountBaseInfo | string) => {
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
+      >
+    ) => {
       if (typeof val === 'string') {
         onChange({
           address: val
         })
       } else {
-        onChange(val)
+        isAccountBaseInfo(val) && onChange(val)
       }
       onInputBlur()
     },
@@ -117,6 +133,41 @@ const GenericAccountSelection = ({
       }
     },
     [onInputBlur]
+  )
+
+  const getRenderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: AccountBaseInfo) => {
+    return (
+      <OptionMenuItem
+        keyValue={option.address}
+        {...props}
+      >
+        <AccountDisplay
+          address={option.address}
+          badge={withBadge ? getBadge(option) : undefined}
+        />
+      </OptionMenuItem>
+    )
+  }
+
+  const getRenderInput = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      inputRef={inputRef}
+      label={label}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: (
+          <InputAdornment position="start">
+            <IdenticonBadge
+              address={valueAddress}
+              badge={valueBadge}
+            />
+          </InputAdornment>
+        )
+      }}
+      onBlur={onInputBlur}
+      onKeyDown={handleSpecialKeys}
+    />
   )
 
   if (accountList.length === 0) {
@@ -134,52 +185,16 @@ const GenericAccountSelection = ({
       disableClearable
       filterOptions={filterOptions}
       options={accountList}
-      renderOption={(props, option) => {
-        return (
-          <Box
-            component="li"
-            sx={{ mr: '.5rem', pt: '.8rem !important', pl: '2rem !important' }}
-            {...props}
-            key={option.address}
-          >
-            <AccountDisplay
-              address={option.address}
-              badge={getBadge(option)}
-            />
-          </Box>
-        )
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          inputRef={inputRef}
-          label={label}
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <IdenticonBadge
-                  address={valueAddress}
-                  badge={valueBadge}
-                />
-              </InputAdornment>
-            )
-          }}
-          onBlur={onInputBlur}
-          onKeyDown={handleSpecialKeys}
-        />
-      )}
+      renderOption={getRenderOption}
+      renderInput={getRenderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChangeAutocomplete}
       value={value}
+      disablePortal={disablePortal}
     />
   )
 }
 
 export default styled(GenericAccountSelection)`
   flex: 1;
-
-  .MuiInputBase-root {
-    background-color: white;
-  }
 `

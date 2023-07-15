@@ -330,7 +330,6 @@ const ManualExtrinsic = ({
             <MenuItem
               key={text}
               value={text}
-              sx={{}}
             >
               <div className="networkName">{text}</div>
             </MenuItem>

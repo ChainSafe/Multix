@@ -1,6 +1,6 @@
-import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { MultisigsByAccountsSubscription, ProxyType } from '../../types-and-hooks'
-import { AccountBaseInfo } from '../components/GenericAccountSelection'
+import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
 import { useMultisigsByAccountSubscription } from '../hooks/useMultisigsByAccountSubscription'
 import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'
@@ -23,6 +23,9 @@ export interface MultiProxy {
   proxy?: string
   multisigs: MultisigAggregated[]
 }
+
+export const isMultiProxy = (value: any): value is MultiProxy =>
+  value && value.multisigs && value.multisigs.length > 0
 
 export interface IMultisigContext {
   selectedMultiProxy?: MultiProxy

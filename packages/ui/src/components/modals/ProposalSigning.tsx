@@ -7,7 +7,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import { AggregatedData } from '../Transactions/TransactionList'
-import SignerSelection from '../SignerSelection'
+import SignerSelection from '../select/SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
@@ -54,15 +54,13 @@ const ProposalSigning = ({
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
     proposalData.callData || addedCallData
   )
-  const needCallData = useMemo(
-    () =>
-      // if we don't have the calldata from the chain and it's the last approval
-      !!threshold &&
-      proposalData.info?.approvals.length === threshold - 1 &&
-      !proposalData.callData,
-    [proposalData, threshold]
-  )
+  const mustSubmitCallData = useMemo(() => {
+    if (!threshold || !proposalData.info?.approvals) return true
 
+    // if it's the last approval call, we must use asMulti and have the call data
+    // either from the chain, or from users
+    return proposalData.info?.approvals.length >= threshold - 1
+  }, [proposalData, threshold])
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
@@ -133,7 +131,7 @@ const ProposalSigning = ({
       }
 
       // if the callData is needed, but none was supplied or found
-      if (needCallData && !proposalData.callData && !addedCallData) {
+      if (mustSubmitCallData && !callInfo?.call) {
         const error = 'No callData found or supplied'
         console.error(error)
         setErrorMessage(error)
@@ -215,7 +213,7 @@ const ProposalSigning = ({
       api,
       selectedAccount,
       multisig,
-      needCallData,
+      mustSubmitCallData,
       addedCallData,
       callInfo,
       selectedSigner,
@@ -264,7 +262,23 @@ const ProposalSigning = ({
             xs={0}
             md={5}
           />
-          {!isProposerSelected && needCallData && (
+          <>
+            <Grid
+              item
+              xs={0}
+              md={1}
+            />
+            <HashGridStyled
+              item
+              xs={12}
+              md={11}
+            >
+              <span className="title">Call hash</span>
+              <br />
+              <span className="hash">{proposalData.hash}</span>
+            </HashGridStyled>
+          </>
+          {!isProposerSelected && !proposalData.callData && (
             <>
               <Grid
                 item
@@ -278,9 +292,9 @@ const ProposalSigning = ({
               >
                 <TextFieldStyled
                   className="addedCallData"
-                  label="Call data"
+                  label={`Call data ${mustSubmitCallData ? '' : '(optional)'}`}
                   onChange={onAddedCallDataChange}
-                  value={addedCallData}
+                  value={addedCallData || ''}
                   fullWidth
                 />
               </Grid>
@@ -291,28 +305,7 @@ const ProposalSigning = ({
               />
             </>
           )}
-          {!needCallData && !callInfo?.call && (
-            <>
-              <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <HashGridStyled
-                item
-                xs={12}
-                md={6}
-              >
-                {proposalData.hash}
-              </HashGridStyled>
-              <Grid
-                item
-                xs={0}
-                md={5}
-              />
-            </>
-          )}
-          {(!needCallData || !!callInfo?.call) && !errorMessage && (
+          {!!callInfo?.call && !errorMessage && (
             <>
               <Grid
                 item
@@ -327,7 +320,7 @@ const ProposalSigning = ({
               >
                 <CallInfo
                   aggregatedData={
-                    !needCallData
+                    proposalData.callData
                       ? proposalData
                       : {
                           args: getDisplayArgs(callInfo?.call),
@@ -371,7 +364,7 @@ const ProposalSigning = ({
               <Button
                 variant="primary"
                 onClick={() => onSign(true)}
-                disabled={!!errorMessage || isSubmitting || (needCallData && !callInfo?.method)}
+                disabled={!!errorMessage || isSubmitting || (mustSubmitCallData && !callInfo?.call)}
               >
                 Approve
               </Button>
@@ -389,7 +382,19 @@ const ProposalSigning = ({
 }
 
 const HashGridStyled = styled(Grid)`
-  margin: 1rem 0 1rem 0;
+  margin-top: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .title {
+    color: ${({ theme }) => theme.custom.text.primary};
+    font-weight: 500;
+    font-size: large;
+  }
+
+  .hash {
+    font-size: small;
+  }
 `
 export default styled(ProposalSigning)(
   ({ theme }) => `
