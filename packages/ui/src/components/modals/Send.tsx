@@ -294,6 +294,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
               accountList={possibleOrigin}
               onChange={handleSelectOrigin}
               value={selectedOrigin}
+              withBadge
             />
           </Grid>
           {isProxySelected && multisigList.length > 1 && (

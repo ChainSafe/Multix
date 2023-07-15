@@ -161,6 +161,7 @@ const GenericAccountSelection = ({
             <IdenticonBadge
               address={valueAddress}
               badge={valueBadge}
+              sideBadge
             />
           </InputAdornment>
         )

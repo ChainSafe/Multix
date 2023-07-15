@@ -16,7 +16,10 @@ import { AutocompleteStyles } from './components/library/Autocomplete'
 const appGlobalStyles = css`
   .MuiAutocomplete-popper {
     margin-top: 0.75rem !important;
-    ${AutocompleteStyles}
+    ${AutocompleteStyles}/* svg {
+      width: 40px;
+      height: 40px;
+    } */
   }
 `
 

@@ -102,15 +102,15 @@ const Autocomplete = <
 }
 
 Autocomplete.defaultProps = {
-  iconSize: '1.5rem',
+  iconSize: '40px',
   disablePortal: false
 }
 
 export const AutocompleteStyles = css`
-  svg {
+  /* svg {
     width: 1.5rem;
     height: 1.5rem;
-  }
+  } */
 
   .MuiPaper-root {
     border-radius: 0.75rem;
@@ -173,7 +173,6 @@ export const AutocompleteStyles = css`
 
 const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
   ${AutocompleteStyles}
-
   svg {
     width: ${({ iconSize }) => iconSize};
     height: ${({ iconSize }) => iconSize};

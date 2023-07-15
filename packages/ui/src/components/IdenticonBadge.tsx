@@ -8,9 +8,10 @@ interface Props {
   className?: string
   badge?: AccountBadge
   address?: string
+  sideBadge?: boolean
 }
 
-export const IdenticonBadge = ({ className, badge, address }: Props) => {
+export const IdenticonBadge = ({ className, badge, address, sideBadge = false }: Props) => {
   const AccountIcon = () => (
     <MultixIdenticon
       value={address}
@@ -31,14 +32,22 @@ export const IdenticonBadge = ({ className, badge, address }: Props) => {
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+      sideBadge={sideBadge}
     >
       <AccountIcon />
     </BadgeStyled>
   )
 }
 
-const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
+const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean }>`
   padding-left: 1rem;
+
+  ${({ sideBadge }) =>
+    sideBadge &&
+    `
+      padding-left: 0;
+      align-items: center;
+      `}
 
   .MuiBadge-badge {
     max-width: 2.625rem;
@@ -63,6 +72,14 @@ const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge }>`
         color: ${theme.custom.text.black};
         background-color: ${theme.custom.proxyBadge.multi} !important;
       `};
+
+    ${({ sideBadge }) =>
+      sideBadge &&
+      `
+        position: relative;
+        transform: unset;
+      `}
+  }
 `
 
 export default IdenticonBadge

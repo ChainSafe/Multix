@@ -102,8 +102,7 @@ const AccountDisplay = ({
             <NameStyled>{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        {!withName ||
-          (encodedAddress && <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>)}
+        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
@@ -166,5 +165,7 @@ export default styled(AccountDisplay)`
 
   .identityBadge {
     margin-right: 0.3rem;
+    height: 1.5rem;
+    width: 1.5rem;
   }
 `
