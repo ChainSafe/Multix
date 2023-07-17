@@ -13,6 +13,7 @@ declare module '@mui/material/styles' {
       }
     }
     custom: {
+      borderRadius: string
       boxShadow: string
       error: string
       text: {
@@ -116,6 +117,7 @@ export const theme = createTheme({
     fontFamily: ['Jost', 'sans-serif', 'Roboto'].join(',')
   },
   custom: {
+    borderRadius: '0.75rem',
     boxShadow:
       '0 1.21622px 2.43243px rgba(0, 0, 0, 0.1), 0 1.21622px 3.64865px rgba(0, 0, 0, 0.25)',
     error: '#ff8a65',
