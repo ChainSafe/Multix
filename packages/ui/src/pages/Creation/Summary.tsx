@@ -108,7 +108,10 @@ const Summary = ({
         </Alert>
       </Box>
       <Box className="signerSelection">
-        <SignerSelection possibleSigners={possibleSigners} />
+        <SignerSelection
+          inputLabel="Signing with"
+          possibleSigners={possibleSigners}
+        />
       </Box>
       {isBalanceError && balanceMin && (
         <BalanceWarning
