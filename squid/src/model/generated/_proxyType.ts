@@ -9,5 +9,5 @@ export enum ProxyType {
     SudoBalances = "SudoBalances",
     NominationPools = "NominationPools",
     Society = "Society",
-    Unkown = "Unkown",
+    Unknown = "Unknown",
 }

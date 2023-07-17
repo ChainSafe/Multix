@@ -253,6 +253,7 @@ const ProposalSigning = ({
             md={6}
           >
             <SignerSelection
+              inputLabel="Signing with"
               possibleSigners={possibleSigners}
               onChange={() => setErrorMessage('')}
             />

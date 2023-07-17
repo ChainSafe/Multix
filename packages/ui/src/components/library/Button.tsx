@@ -11,7 +11,7 @@ export const Button = styled('button')<ButtonProps>`
   font-size: 1rem;
   line-height: 1.625rem;
   font-weight: 500;
-  border-radius: 10px;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
   border: none;
   cursor: pointer;
   background: ${({ theme }) => theme.palette.primary.white};

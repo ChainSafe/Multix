@@ -4,6 +4,9 @@ import { localSVG } from './logos/localSVG'
 import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
 import { chainsRococoSVG } from './logos/rococoSVG'
 import { phalaSVG } from './logos/phalaSVG'
+import { nodesAstarPNG } from './logos/astarPNG'
+import { nodesAssetHubSVG } from './logos/assetHubSVG'
+import { hydradxSVG } from './logos/hydradxSVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE = 40
@@ -21,14 +24,6 @@ export interface NetworkInfo {
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
 export const networkList = {
-  kusama: {
-    chainId: 'kusama',
-    explorerNetworkName: 'kusama',
-    rpcUrl: 'wss://kusama-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
-    logo: chainsKusamaSVG
-  } as NetworkInfo,
   polkadot: {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
@@ -37,13 +32,45 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
-  rococo: {
-    chainId: 'rococo',
-    explorerNetworkName: 'rococo',
-    rpcUrl: 'wss://rococo-rpc.polkadot.io',
+  kusama: {
+    chainId: 'kusama',
+    explorerNetworkName: 'kusama',
+    rpcUrl: 'wss://kusama-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
-    logo: chainsRococoSVG
+    logo: chainsKusamaSVG
+  } as NetworkInfo,
+  'assethub-ksm': {
+    chainId: 'assethub-kusama',
+    explorerNetworkName: 'assethub-kusama',
+    rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    logo: nodesAssetHubSVG
+  } as NetworkInfo,
+  'assethub-dot': {
+    chainId: 'assethub-polkadot',
+    explorerNetworkName: 'assethub-polkadot',
+    rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    logo: nodesAssetHubSVG
+  } as NetworkInfo,
+  astar: {
+    chainId: 'astar',
+    explorerNetworkName: 'astar',
+    rpcUrl: 'wss://rpc.astar.network',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    logo: nodesAstarPNG
+  } as NetworkInfo,
+  hydradx: {
+    chainId: 'hydradx',
+    explorerNetworkName: 'hydradx',
+    rpcUrl: 'wss://hydradx-rpc.dwellir.com',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    logo: hydradxSVG
   } as NetworkInfo,
   phala: {
     chainId: 'phala',
@@ -61,12 +88,20 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
+  rococo: {
+    chainId: 'rococo',
+    explorerNetworkName: 'rococo',
+    rpcUrl: 'wss://rococo-rpc.polkadot.io',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    logo: chainsRococoSVG
+  } as NetworkInfo,
   'rhala testnet': {
     chainId: 'rhala',
     explorerNetworkName: '',
     rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
-    wsGraphqlUrl: 'wss://api.multix.chainsafe.io/graphql',
-    httpGraphqlUrl: 'https://api.multix.chainsafe.io/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   local: {

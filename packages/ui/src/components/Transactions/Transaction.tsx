@@ -141,7 +141,7 @@ export default styled(Transaction)(
     max-height: 1.3125rem;
     left: 29px;
     top: 19px;
-    border-radius: 0 0.9375rem 0.9375rem 0.9375rem;
+    border-radius: ${theme.custom.borderRadius};
     padding: 0.25rem 0.5rem;
     max-width: 2.625rem;
     font-size: 0.625rem;

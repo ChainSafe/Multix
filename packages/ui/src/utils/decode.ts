@@ -99,6 +99,7 @@ export function parseGenericCall(genericCall: GenericCall, registry: Registry): 
         // serialize to a polkadot-js Call and parse so it is not a hex blob.
         try {
           const call = registry.createType('Call', argument.toHex())
+          newArgs['callData'] = call.toHex()
           newArgs[paramName] = parseGenericCall(call, registry)
         } catch {
           newArgs[paramName] = argument

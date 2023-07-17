@@ -51,5 +51,5 @@ enum ProxyType {
   SudoBalances
   NominationPools
   Society
-  Unkown # this is added in case a new proxy type comes up and isn't supported yet
+  Unknown # this is added in case a new proxy type comes up and isn't supported yet
 }

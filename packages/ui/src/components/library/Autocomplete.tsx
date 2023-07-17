@@ -113,7 +113,7 @@ export const AutocompleteStyles = css`
   } */
 
   .MuiPaper-root {
-    border-radius: 0.75rem;
+    border-radius: ${theme.custom.borderRadius};
   }
 
   .MuiIconButton-root {
@@ -144,7 +144,7 @@ export const AutocompleteStyles = css`
   .MuiAutocomplete-listbox {
     padding: 0;
     border: 1px solid ${theme.custom.text.borderColor};
-    border-radius: 0.75rem;
+    border-radius: ${theme.custom.borderRadius};
     box-shadow: none;
   }
 

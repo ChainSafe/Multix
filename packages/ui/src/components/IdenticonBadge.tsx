@@ -55,7 +55,7 @@ const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean 
     max-height: 1.3125rem;
     font-size: 0.625rem;
     font-weight: 500;
-    border-radius: 0.9375rem;
+    border-radius: ${({ theme }) => theme.custom.borderRadius};
     border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
 
