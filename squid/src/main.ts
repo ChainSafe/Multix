@@ -55,7 +55,9 @@ export const env = new Env().getEnv()
 const archiveUrl =
   env.archiveUrl ||
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-    release: 'FireSquid'
+    release: 'FireSquid',
+    genesis: env.genesis,
+    type: 'Substrate'
   })
 const chainId = env.chainId
 
@@ -146,14 +148,14 @@ processor.run(new TypeormDatabase({ stateSchema: chainId }), async (ctx) => {
       }
 
       if (item.name === 'Proxy.ProxyAdded') {
-        const newProxy = getProxyInfoFromArgs(item, chainId)
+        const newProxy = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: true })
         // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
         // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
         newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
       }
 
       if (item.name === 'Proxy.ProxyRemoved') {
-        const proxyRemoval = getProxyInfoFromArgs(item, chainId)
+        const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: false })
         // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
         // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
         if (newProxies.has(proxyRemoval.id)) {
