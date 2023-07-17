@@ -15,10 +15,11 @@ const isInjectedAccountWithMeta = (value: any): value is InjectedAccountWithMeta
   return value && value.address && value.meta && value.meta.name
 }
 
-interface Props {
+interface SignerSelectionProps {
   className?: string
   possibleSigners: string[]
   onChange?: () => void
+  inputLabel?: string
 }
 
 const getOptionLabel = (option?: NonNullable<InjectedAccountWithMeta | string>): string => {
@@ -36,7 +37,12 @@ const isOptionEqualToValue = (
   return option.address === value.address
 }
 
-const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
+const SignerSelection = ({
+  className,
+  possibleSigners,
+  onChange,
+  inputLabel
+}: SignerSelectionProps) => {
   const { selectAccount, selectedAccount, ownAccountList } = useAccounts()
   const signersList = useMemo(() => {
     return ownAccountList?.filter((account) => possibleSigners.includes(account.address)) || []
@@ -73,6 +79,21 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
     [onChange, selectAccount]
   )
 
+  const renderInput = (params: AutocompleteRenderInputParams) => (
+    <TextFieldStyled
+      {...params}
+      label={inputLabel}
+      InputProps={{
+        ...params.InputProps,
+        startAdornment: (
+          <InputAdornment position="start">
+            <MultixIdenticon value={selectedAccount?.address} />
+          </InputAdornment>
+        )
+      }}
+    />
+  )
+
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
     option?: InjectedAccountWithMeta
@@ -88,20 +109,6 @@ const SignerSelection = ({ className, possibleSigners, onChange }: Props) => {
       </OptionMenuItem>
     )
   }
-
-  const renderInput = (params: AutocompleteRenderInputParams) => (
-    <TextFieldStyled
-      {...params}
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: (
-          <InputAdornment position="start">
-            <MultixIdenticon value={selectedAccount?.address} />
-          </InputAdornment>
-        )
-      }}
-    />
-  )
 
   if (signersList.length === 0) {
     return null
