@@ -3,19 +3,28 @@ import { useMemo } from 'react'
 import { styled } from '@mui/material/styles'
 import { AccountBadge } from '../types'
 import MultixIdenticon from './MultixIdenticon'
+import { ICON_SIZE_MEDIUM, ICON_SIZE_SMALL } from '../constants'
 
 interface Props {
   className?: string
   badge?: AccountBadge
   address?: string
   sideBadge?: boolean
+  small?: boolean
 }
 
-export const IdenticonBadge = ({ className, badge, address, sideBadge = false }: Props) => {
+export const IdenticonBadge = ({
+  className,
+  badge,
+  address,
+  sideBadge = false,
+  small = false
+}: Props) => {
   const AccountIcon = () => (
     <MultixIdenticon
       value={address}
       className="identicon"
+      size={small ? ICON_SIZE_SMALL : ICON_SIZE_MEDIUM}
     />
   )
 

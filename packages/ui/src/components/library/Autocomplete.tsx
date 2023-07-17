@@ -1,6 +1,6 @@
-import { Autocomplete as AutocompleteMui } from '@mui/material'
+import { Autocomplete as AutocompleteMui, Box } from '@mui/material'
 import React from 'react'
-import { css, styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import {
   AutocompleteRenderInputParams,
   AutocompleteRenderOptionState
@@ -41,7 +41,6 @@ interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   ) => void
   disabled?: boolean
   freeSolo?: FreeSolo
-  iconSize?: string
   selectOnFocus?: boolean
   clearOnBlur?: boolean
   handleHomeEndKeys?: boolean
@@ -70,14 +69,10 @@ const Autocomplete = <
   selectOnFocus,
   clearOnBlur,
   handleHomeEndKeys,
-  disablePortal,
-  iconSize
+  disablePortal
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
   return (
-    <AutocompleteWrapper
-      iconSize={iconSize}
-      className={className}
-    >
+    <AutocompleteWrapper className={className}>
       <AutocompleteMui
         handleHomeEndKeys={handleHomeEndKeys}
         selectOnFocus={selectOnFocus}
@@ -101,16 +96,10 @@ const Autocomplete = <
   )
 }
 
-Autocomplete.defaultProps = {
-  iconSize: '40px',
-  disablePortal: false
-}
-
-export const AutocompleteStyles = css`
-  /* svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  } */
+const AutocompleteWrapper = styled(Box)`
+  .MuiAutocomplete-popper {
+    margin-top: 0.75rem !important;
+  }
 
   .MuiPaper-root {
     border-radius: ${theme.custom.borderRadius};
@@ -130,6 +119,7 @@ export const AutocompleteStyles = css`
 
   .MuiInputBase-root {
     background-color: ${theme.palette.primary.white};
+    align-content: center;
   }
 
   .MuiPaper-root {
@@ -168,14 +158,6 @@ export const AutocompleteStyles = css`
       border-bottom: none;
       outline: none;
     }
-  }
-`
-
-const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
-  ${AutocompleteStyles}
-  svg {
-    width: ${({ iconSize }) => iconSize};
-    height: ${({ iconSize }) => iconSize};
   }
 `
 
