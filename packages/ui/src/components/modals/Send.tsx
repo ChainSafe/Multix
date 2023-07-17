@@ -136,7 +136,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   useEffect(() => {
     if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
       setErrorMessage(
-        `The "Signing with" account doens't have enough funds to submit this transaction`
+        `The "Signing with" account doesn't have enough funds to submit this transaction`
       )
     }
   }, [hasSignerEnoughFunds, multisigProposalNeededFunds])
