@@ -8,6 +8,8 @@ export interface MultisigStorageInfo {
   when: { height: number; index: number }
 }
 
+export type IconSizeVariant = 'small' | 'medium' | 'large'
+
 export enum AccountBadge {
   PURE = 'pure',
   MULTI = 'multi'

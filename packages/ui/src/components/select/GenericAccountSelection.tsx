@@ -160,7 +160,7 @@ const GenericAccountSelection = ({
               address={valueAddress}
               badge={valueBadge}
               sideBadge
-              small
+              size="small"
             />
           </InputAdornment>
         )
