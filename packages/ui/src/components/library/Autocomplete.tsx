@@ -1,4 +1,4 @@
-import { Autocomplete as AutocompleteMui, Box } from '@mui/material'
+import { Autocomplete as AutocompleteMui, Box, Popper } from '@mui/material'
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import {
@@ -44,7 +44,6 @@ interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   selectOnFocus?: boolean
   clearOnBlur?: boolean
   handleHomeEndKeys?: boolean
-  disablePortal?: boolean
 }
 
 const Autocomplete = <
@@ -68,16 +67,18 @@ const Autocomplete = <
   renderInput,
   selectOnFocus,
   clearOnBlur,
-  handleHomeEndKeys,
-  disablePortal
+  handleHomeEndKeys
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
+  const PopperMy = function (props: any) {
+    return <PopperStyled {...props} />
+  }
+
   return (
     <AutocompleteWrapper className={className}>
       <AutocompleteMui
         handleHomeEndKeys={handleHomeEndKeys}
         selectOnFocus={selectOnFocus}
         clearOnBlur={clearOnBlur}
-        disablePortal={disablePortal}
         isOptionEqualToValue={isOptionEqualToValue}
         disableClearable={disableClearable}
         filterOptions={filterOptions}
@@ -91,35 +92,17 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
+        PopperComponent={PopperMy}
       />
     </AutocompleteWrapper>
   )
 }
 
-const AutocompleteWrapper = styled(Box)`
-  .MuiAutocomplete-popper {
-    margin-top: 0.75rem !important;
-  }
+const PopperStyled = styled(Popper)`
+  margin-top: 0.75rem !important;
 
   .MuiPaper-root {
     border-radius: ${theme.custom.borderRadius};
-  }
-
-  .MuiIconButton-root {
-    svg {
-      color: ${theme.custom.text.black};
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    &:hover {
-      background: none;
-    }
-  }
-
-  .MuiInputBase-root {
-    background-color: ${theme.palette.primary.white};
-    align-content: center;
   }
 
   .MuiPaper-root {
@@ -157,6 +140,25 @@ const AutocompleteWrapper = styled(Box)`
     &:last-child {
       border-bottom: none;
       outline: none;
+    }
+  }
+`
+
+const AutocompleteWrapper = styled(Box)`
+  .MuiInputBase-root {
+    background-color: ${theme.palette.primary.white};
+    align-content: center;
+  }
+
+  .MuiIconButton-root {
+    svg {
+      color: ${theme.custom.text.black};
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &:hover {
+      background: none;
     }
   }
 `

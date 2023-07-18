@@ -132,7 +132,6 @@ const MultiProxySelection = ({ className }: Props) => {
       renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
-      disablePortal
       value={selectedMultiProxy || multiProxyList[0]}
     />
   )

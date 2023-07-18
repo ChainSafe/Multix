@@ -118,7 +118,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         onChange={onAddressDestChange}
         value={selected}
         label="to"
-        disablePortal={false}
         allowAnyAddressInput={true}
       />
       <TextFieldStyled
