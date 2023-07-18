@@ -60,6 +60,46 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.rhala"
       ]
+    },
+    "start-astar": {
+      "description": "starts the indexer with astar",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.astar"
+      ]
+    },
+    "start-assethub-polkadot": {
+      "description": "starts the indexer with assethub-polkadot",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.assethub-polkadot"
+      ]
+    },
+    "start-assethub-kusama": {
+      "description": "starts the indexer with assethub-kusama",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.assethub-kusama"
+      ]
+    },
+    "start-hydradx": {
+      "description": "starts the indexer with hydradx",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.hydradx"
+      ]
     }
   }
 }

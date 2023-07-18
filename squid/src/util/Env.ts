@@ -7,6 +7,7 @@ interface EnvValues {
   archiveName?: string
   archiveUrl?: string
   chainId: string
+  genesis?: string
 }
 
 export class Env {
@@ -19,7 +20,8 @@ export class Env {
       rpcWs: process.env.RPC_WS || '',
       archiveName: process.env.ARCHIVE_NAME || '',
       archiveUrl: process.env.ARCHIVE_URL || '',
-      chainId: process.env.CHAIN_ID || ''
+      chainId: process.env.CHAIN_ID || '',
+      genesis: process.env.GENESIS || undefined
     }
 
     this.checkForUndefined()

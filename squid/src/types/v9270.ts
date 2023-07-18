@@ -1,10 +1,5 @@
 import type {Result, Option} from './support'
 
-export interface Timepoint {
-    height: number
-    index: number
-}
-
 export type Call = Call_System | Call_ParachainSystem | Call_Timestamp | Call_Balances | Call_Authorship | Call_CollatorSelection | Call_Session | Call_XcmpQueue | Call_PolkadotXcm | Call_DmpQueue | Call_Utility | Call_Multisig | Call_Proxy | Call_Assets | Call_Uniques
 
 export interface Call_System {
@@ -82,38 +77,6 @@ export interface Call_Uniques {
     value: UniquesCall
 }
 
-export interface Weight {
-    refTime: bigint
-    proofSize: bigint
-}
-
-export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
-
-export interface MultiAddress_Id {
-    __kind: 'Id'
-    value: Uint8Array
-}
-
-export interface MultiAddress_Index {
-    __kind: 'Index'
-    value: null
-}
-
-export interface MultiAddress_Raw {
-    __kind: 'Raw'
-    value: Uint8Array
-}
-
-export interface MultiAddress_Address32 {
-    __kind: 'Address32'
-    value: Uint8Array
-}
-
-export interface MultiAddress_Address20 {
-    __kind: 'Address20'
-    value: Uint8Array
-}
-
 export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_CancelProxy | ProxyType_Assets | ProxyType_AssetOwner | ProxyType_AssetManager | ProxyType_Collator
 
 export interface ProxyType_Any {
@@ -147,7 +110,15 @@ export interface ProxyType_Collator {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+
+/**
+ * A dispatch that will fill the block weight up to the given ratio.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+    ratio: number
+}
 
 /**
  * Make some on-chain remark.
@@ -872,18 +843,18 @@ export interface DmpQueueCall_service_overweight {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
+export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch
 
 /**
  * Send a batch of dispatch calls.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -925,13 +896,13 @@ export interface UtilityCall_as_derivative {
  * Send a batch of dispatch calls and atomically execute them.
  * The whole transaction will rollback and fail if any of the calls failed.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -964,13 +935,13 @@ export interface UtilityCall_dispatch_as {
  * Send a batch of dispatch calls.
  * Unlike `batch`, it allows errors and won't interrupt.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatch without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -979,20 +950,6 @@ export interface UtilityCall_dispatch_as {
 export interface UtilityCall_force_batch {
     __kind: 'force_batch'
     calls: Call[]
-}
-
-/**
- * Dispatch a function call with a specified weight.
- * 
- * This function does not check the weight of the call, and instead allows the
- * Root origin to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Root_.
- */
-export interface UtilityCall_with_weight {
-    __kind: 'with_weight'
-    call: Call
-    weight: Weight
 }
 
 /**
@@ -1066,8 +1023,8 @@ export interface MultisigCall_as_multi_threshold_1 {
  *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  * -------------------------------
  * - DB Weight:
- *     - Reads: Multisig Storage, [Caller Account]
- *     - Writes: Multisig Storage, [Caller Account]
+ *     - Reads: Multisig Storage, [Caller Account], Calls (if `store_call`)
+ *     - Writes: Multisig Storage, [Caller Account], Calls (if `store_call`)
  * - Plus Call Weight
  * # </weight>
  */
@@ -1076,8 +1033,9 @@ export interface MultisigCall_as_multi {
     threshold: number
     otherSignatories: Uint8Array[]
     maybeTimepoint: (Timepoint | undefined)
-    call: Call
-    maxWeight: Weight
+    call: Uint8Array
+    storeCall: boolean
+    maxWeight: bigint
 }
 
 /**
@@ -1123,7 +1081,7 @@ export interface MultisigCall_approve_as_multi {
     otherSignatories: Uint8Array[]
     maybeTimepoint: (Timepoint | undefined)
     callHash: Uint8Array
-    maxWeight: Weight
+    maxWeight: bigint
 }
 
 /**
@@ -1150,8 +1108,8 @@ export interface MultisigCall_approve_as_multi {
  * - Storage: removes one item.
  * ----------------------------------
  * - DB Weight:
- *     - Read: Multisig Storage, [Caller Account], Refund Account
- *     - Write: Multisig Storage, [Caller Account], Refund Account
+ *     - Read: Multisig Storage, [Caller Account], Refund Account, Calls
+ *     - Write: Multisig Storage, [Caller Account], Refund Account, Calls
  * # </weight>
  */
 export interface MultisigCall_cancel_as_multi {
@@ -1165,7 +1123,7 @@ export interface MultisigCall_cancel_as_multi {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_create_pure | ProxyCall_kill_pure | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
+export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
 
 /**
  * Dispatch the given `call` from an account that the sender is authorised for through
@@ -1179,10 +1137,14 @@ export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_proxy {
     __kind: 'proxy'
-    real: MultiAddress
+    real: Uint8Array
     forceProxyType: (ProxyType | undefined)
     call: Call
 }
@@ -1197,10 +1159,14 @@ export interface ProxyCall_proxy {
  * - `proxy_type`: The permissions allowed for this proxy account.
  * - `delay`: The announcement period required of the initial proxy. Will generally be
  * zero.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_add_proxy {
     __kind: 'add_proxy'
-    delegate: MultiAddress
+    delegate: Uint8Array
     proxyType: ProxyType
     delay: number
 }
@@ -1213,10 +1179,14 @@ export interface ProxyCall_add_proxy {
  * Parameters:
  * - `proxy`: The account that the `caller` would like to remove as a proxy.
  * - `proxy_type`: The permissions currently enabled for the removed proxy account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxy {
     __kind: 'remove_proxy'
-    delegate: MultiAddress
+    delegate: Uint8Array
     proxyType: ProxyType
     delay: number
 }
@@ -1226,8 +1196,12 @@ export interface ProxyCall_remove_proxy {
  * 
  * The dispatch origin for this call must be _Signed_.
  * 
- * WARNING: This may be called on accounts created by `pure`, however if done, then
+ * WARNING: This may be called on accounts created by `anonymous`, however if done, then
  * the unreserved fees will be inaccessible. **All access to this account will be lost.**
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxies {
     __kind: 'remove_proxies'
@@ -1252,35 +1226,44 @@ export interface ProxyCall_remove_proxies {
  * same sender, with the same parameters.
  * 
  * Fails if there are insufficient funds to pay for deposit.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
+ * TODO: Might be over counting 1 read
  */
-export interface ProxyCall_create_pure {
-    __kind: 'create_pure'
+export interface ProxyCall_anonymous {
+    __kind: 'anonymous'
     proxyType: ProxyType
     delay: number
     index: number
 }
 
 /**
- * Removes a previously spawned pure proxy.
+ * Removes a previously spawned anonymous proxy.
  * 
  * WARNING: **All access to this account will be lost.** Any funds held in it will be
  * inaccessible.
  * 
  * Requires a `Signed` origin, and the sender account must have been created by a call to
- * `pure` with corresponding parameters.
+ * `anonymous` with corresponding parameters.
  * 
- * - `spawner`: The account that originally called `pure` to create this account.
- * - `index`: The disambiguation index originally passed to `pure`. Probably `0`.
- * - `proxy_type`: The proxy type originally passed to `pure`.
- * - `height`: The height of the chain when the call to `pure` was processed.
- * - `ext_index`: The extrinsic index in which the call to `pure` was processed.
+ * - `spawner`: The account that originally called `anonymous` to create this account.
+ * - `index`: The disambiguation index originally passed to `anonymous`. Probably `0`.
+ * - `proxy_type`: The proxy type originally passed to `anonymous`.
+ * - `height`: The height of the chain when the call to `anonymous` was processed.
+ * - `ext_index`: The extrinsic index in which the call to `anonymous` was processed.
  * 
- * Fails with `NoPermission` in case the caller is not a previously created pure
- * account whose `pure` call has corresponding parameters.
+ * Fails with `NoPermission` in case the caller is not a previously created anonymous
+ * account whose `anonymous` call has corresponding parameters.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
-export interface ProxyCall_kill_pure {
-    __kind: 'kill_pure'
-    spawner: MultiAddress
+export interface ProxyCall_kill_anonymous {
+    __kind: 'kill_anonymous'
+    spawner: Uint8Array
     proxyType: ProxyType
     index: number
     height: number
@@ -1303,10 +1286,16 @@ export interface ProxyCall_kill_pure {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_announce {
     __kind: 'announce'
-    real: MultiAddress
+    real: Uint8Array
     callHash: Uint8Array
 }
 
@@ -1321,10 +1310,16 @@ export interface ProxyCall_announce {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_remove_announcement {
     __kind: 'remove_announcement'
-    real: MultiAddress
+    real: Uint8Array
     callHash: Uint8Array
 }
 
@@ -1339,10 +1334,16 @@ export interface ProxyCall_remove_announcement {
  * Parameters:
  * - `delegate`: The account that previously announced the call.
  * - `call_hash`: The hash of the call to be made.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_reject_announcement {
     __kind: 'reject_announcement'
-    delegate: MultiAddress
+    delegate: Uint8Array
     callHash: Uint8Array
 }
 
@@ -1358,11 +1359,17 @@ export interface ProxyCall_reject_announcement {
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_proxy_announced {
     __kind: 'proxy_announced'
-    delegate: MultiAddress
-    real: MultiAddress
+    delegate: Uint8Array
+    real: Uint8Array
     forceProxyType: (ProxyType | undefined)
     call: Call
 }
@@ -1370,14 +1377,14 @@ export interface ProxyCall_proxy_announced {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_start_destroy | AssetsCall_destroy_accounts | AssetsCall_destroy_approvals | AssetsCall_finish_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund
+export type AssetsCall = AssetsCall_create | AssetsCall_force_create | AssetsCall_destroy | AssetsCall_mint | AssetsCall_burn | AssetsCall_transfer | AssetsCall_transfer_keep_alive | AssetsCall_force_transfer | AssetsCall_freeze | AssetsCall_thaw | AssetsCall_freeze_asset | AssetsCall_thaw_asset | AssetsCall_transfer_ownership | AssetsCall_set_team | AssetsCall_set_metadata | AssetsCall_clear_metadata | AssetsCall_force_set_metadata | AssetsCall_force_clear_metadata | AssetsCall_force_asset_status | AssetsCall_approve_transfer | AssetsCall_cancel_approval | AssetsCall_force_cancel_approval | AssetsCall_transfer_approved | AssetsCall_touch | AssetsCall_refund
 
 /**
  * Issue a new class of fungible assets from a public origin.
  * 
  * This new asset class has no assets initially and its owner is the origin.
  * 
- * The origin must conform to the configured `CreateOrigin` and have sufficient funds free.
+ * The origin must be Signed and the sender must have sufficient funds free.
  * 
  * Funds of sender are reserved by `AssetDeposit`.
  * 
@@ -1430,76 +1437,29 @@ export interface AssetsCall_force_create {
 }
 
 /**
- * Start the process of destroying a fungible asset class.
+ * Destroy a class of fungible assets.
  * 
- * `start_destroy` is the first in a series of extrinsics that should be called, to allow
- * destruction of an asset class.
- * 
- * The origin must conform to `ForceOrigin` or must be `Signed` by the asset's `owner`.
+ * The origin must conform to `ForceOrigin` or must be Signed and the sender must be the
+ * owner of the asset `id`.
  * 
  * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
+ * asset.
  * 
- * The asset class must be frozen before calling `start_destroy`.
+ * Emits `Destroyed` event when successful.
+ * 
+ * NOTE: It can be helpful to first freeze an asset before destroying it so that you
+ * can provide accurate witness information and prevent users from manipulating state
+ * in a way that can make it harder to destroy.
+ * 
+ * Weight: `O(c + p + a)` where:
+ * - `c = (witness.accounts - witness.sufficients)`
+ * - `s = witness.sufficients`
+ * - `a = witness.approvals`
  */
-export interface AssetsCall_start_destroy {
-    __kind: 'start_destroy'
+export interface AssetsCall_destroy {
+    __kind: 'destroy'
     id: number
-}
-
-/**
- * Destroy all accounts associated with a given asset.
- * 
- * `destroy_accounts` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state.
- * 
- * Due to weight restrictions, this function may need to be called multiple times to fully
- * destroy all accounts. It will destroy `RemoveItemsLimit` accounts at a time.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each call emits the `Event::DestroyedAccounts` event.
- */
-export interface AssetsCall_destroy_accounts {
-    __kind: 'destroy_accounts'
-    id: number
-}
-
-/**
- * Destroy all approvals associated with a given asset up to the max (T::RemoveItemsLimit).
- * 
- * `destroy_approvals` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state.
- * 
- * Due to weight restrictions, this function may need to be called multiple times to fully
- * destroy all approvals. It will destroy `RemoveItemsLimit` approvals at a time.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each call emits the `Event::DestroyedApprovals` event.
- */
-export interface AssetsCall_destroy_approvals {
-    __kind: 'destroy_approvals'
-    id: number
-}
-
-/**
- * Complete destroying asset and unreserve currency.
- * 
- * `finish_destroy` should only be called after `start_destroy` has been called, and the
- * asset is in a `Destroying` state. All accounts or approvals should be destroyed before
- * hand.
- * 
- * - `id`: The identifier of the asset to be destroyed. This must identify an existing
- *   asset.
- * 
- * Each successful call emits the `Event::Destroyed` event.
- */
-export interface AssetsCall_finish_destroy {
-    __kind: 'finish_destroy'
-    id: number
+    witness: DestroyWitness
 }
 
 /**
@@ -2003,7 +1963,7 @@ export type UniquesCall = UniquesCall_create | UniquesCall_force_create | Unique
  * 
  * This new collection has no items initially and its owner is the origin.
  * 
- * The origin must conform to the configured `CreateOrigin` and have sufficient funds free.
+ * The origin must be Signed and the sender must have sufficient funds free.
  * 
  * `ItemDeposit` funds of sender are reserved.
  * 
@@ -2068,7 +2028,7 @@ export interface UniquesCall_force_create {
 export interface UniquesCall_destroy {
     __kind: 'destroy'
     collection: number
-    witness: DestroyWitness
+    witness: Type_258
 }
 
 /**
@@ -2094,9 +2054,7 @@ export interface UniquesCall_mint {
 /**
  * Destroy a single item.
  * 
- * Origin must be Signed and the signing account must be either:
- * - the Admin of the `collection`;
- * - the Owner of the `item`;
+ * Origin must be Signed and the sender should be the Admin of the `collection`.
  * 
  * - `collection`: The collection of the item to be burned.
  * - `item`: The item of the item to be burned.
@@ -2117,8 +2075,6 @@ export interface UniquesCall_burn {
 
 /**
  * Move an item from the sender account to another.
- * 
- * This resets the approved account of the item.
  * 
  * Origin must be Signed and the signing account must be either:
  * - the Admin of the `collection`;
@@ -2278,14 +2234,11 @@ export interface UniquesCall_set_team {
 /**
  * Approve an item to be transferred by a delegated third-party account.
  * 
- * The origin must conform to `ForceOrigin` or must be `Signed` and the sender must be
- * either the owner of the `item` or the admin of the collection.
+ * Origin must be Signed and must be the owner of the `item`.
  * 
  * - `collection`: The collection of the item to be approved for delegated transfer.
  * - `item`: The item of the item to be approved for delegated transfer.
  * - `delegate`: The account to delegate permission to transfer the item.
- * 
- * Important NOTE: The `approved` account gets reset after each transfer.
  * 
  * Emits `ApprovedTransfer` on success.
  * 
@@ -2576,6 +2529,33 @@ export interface ParachainInherentData {
     horizontalMessages: [number, InboundHrmpMessage[]][]
 }
 
+export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
+
+export interface MultiAddress_Id {
+    __kind: 'Id'
+    value: Uint8Array
+}
+
+export interface MultiAddress_Index {
+    __kind: 'Index'
+    value: null
+}
+
+export interface MultiAddress_Raw {
+    __kind: 'Raw'
+    value: Uint8Array
+}
+
+export interface MultiAddress_Address32 {
+    __kind: 'Address32'
+    value: Uint8Array
+}
+
+export interface MultiAddress_Address20 {
+    __kind: 'Address20'
+    value: Uint8Array
+}
+
 export interface Header {
     parentHash: Uint8Array
     number: number
@@ -2676,7 +2656,7 @@ export interface OriginCaller_PolkadotXcm {
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Type_262
+    value: Type_264
 }
 
 export interface OriginCaller_Void {
@@ -2684,7 +2664,18 @@ export interface OriginCaller_Void {
     value: Void
 }
 
+export interface Timepoint {
+    height: number
+    index: number
+}
+
 export interface DestroyWitness {
+    accounts: number
+    sufficients: number
+    approvals: number
+}
+
+export interface Type_258 {
     items: number
     itemMetadatas: number
     attributes: number
@@ -3539,13 +3530,13 @@ export interface Origin_Response {
     value: V1MultiLocation
 }
 
-export type Type_262 = Type_262_Relay | Type_262_SiblingParachain
+export type Type_264 = Type_264_Relay | Type_264_SiblingParachain
 
-export interface Type_262_Relay {
+export interface Type_264_Relay {
     __kind: 'Relay'
 }
 
-export interface Type_262_SiblingParachain {
+export interface Type_264_SiblingParachain {
     __kind: 'SiblingParachain'
     value: number
 }
@@ -4059,7 +4050,7 @@ export interface V0NetworkId_Kusama {
     __kind: 'Kusama'
 }
 
-export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial | V0BodyId_Defense | V0BodyId_Administration | V0BodyId_Treasury
+export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial
 
 export interface V0BodyId_Unit {
     __kind: 'Unit'
@@ -4089,18 +4080,6 @@ export interface V0BodyId_Legislative {
 
 export interface V0BodyId_Judicial {
     __kind: 'Judicial'
-}
-
-export interface V0BodyId_Defense {
-    __kind: 'Defense'
-}
-
-export interface V0BodyId_Administration {
-    __kind: 'Administration'
-}
-
-export interface V0BodyId_Treasury {
-    __kind: 'Treasury'
 }
 
 export type V0BodyPart = V0BodyPart_Voice | V0BodyPart_Members | V0BodyPart_Fraction | V0BodyPart_AtLeastProportion | V0BodyPart_MoreThanProportion

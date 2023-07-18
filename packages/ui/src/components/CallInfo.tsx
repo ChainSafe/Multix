@@ -38,8 +38,8 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
   return (
     <ul className="params">
       {Object.entries(args).map(([key, value]) => {
-        const destAddress = value?.Id
-
+        // in case the call was a WrapperOpaque<Call> the destination is the value and has no Id
+        const destAddress = value?.Id || value
         // show nice dest
         if (
           ((isBalancesTransferAlike && key === 'dest') ||
