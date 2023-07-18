@@ -12,10 +12,11 @@ import {
   ListItemIcon
 } from '@mui/material'
 import {
-  ExpandMore as ExpandMoreIcon,
-  HourglassBottom as HourglassBottomIcon,
-  Check as CheckIcon
-} from '@mui/icons-material'
+  HiOutlineChevronDown as ExpandMoreIcon,
+  HiOutlineCheck as CheckIcon
+} from 'react-icons/hi2'
+import { MdOutlineHourglassBottom } from 'react-icons/md'
+
 import AccountDisplay from '../AccountDisplay'
 
 interface TransactionProgressProps {
@@ -30,7 +31,11 @@ const ListItemToSign = ({ approvals, signer }: { approvals: string[]; signer: st
     <ListItem disablePadding>
       <ListItemButtonStyled>
         <ListItemIcon>
-          {approvals.includes(signer) ? <CheckIconStyled /> : <HourglassBottomIcon />}
+          {approvals.includes(signer) ? (
+            <CheckIconStyled size={24} />
+          ) : (
+            <MdOutlineHourglassBottom size={24} />
+          )}
         </ListItemIcon>
         <AccountDisplay address={signer} />
       </ListItemButtonStyled>
@@ -56,7 +61,7 @@ const TransactionProgress = ({
 
   return (
     <AccordionStyled>
-      <AccordionSummaryStyled expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={16} />}>
         <BoxWrapperStyled>
           <LinearProgressBoxStyled>
             <LinearProgress

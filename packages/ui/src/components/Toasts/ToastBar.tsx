@@ -1,6 +1,6 @@
 import { IconButton, Snackbar } from '@mui/material'
 import { Toast, useToasts } from '../../contexts/ToastContext'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 import ToastContent from './ToastContent'
 import React, { useCallback } from 'react'
 import { styled } from '@mui/material/styles'
@@ -44,7 +44,7 @@ const ToastBar = ({ toast, className }: Props) => {
           color="inherit"
           onClick={handleClose}
         >
-          <CloseIcon fontSize="small" />
+          <CloseIcon size={20} />
         </IconButton>
       }
       message={<ToastContent toast={toast} />}

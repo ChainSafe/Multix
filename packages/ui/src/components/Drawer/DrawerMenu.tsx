@@ -1,5 +1,5 @@
 import IconButton from '@mui/material/IconButton'
-import { ChevronRight as ChevronRightIcon } from '@mui/icons-material'
+import { HiOutlineChevronRight as ChevronRightIcon } from 'react-icons/hi2'
 import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
@@ -30,7 +30,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
     <>
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
-          <ChevronRightIcon />
+          <ChevronRightIcon size={20} />
         </IconButton>
       </DrawerHeader>
       <Divider />

@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, IconButton } from '@mui/material'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import AccountDisplay from './AccountDisplay'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 import AccountSelection from './select/AccountSelection'
 
 interface Props {
@@ -29,7 +29,7 @@ const WatchedAccounts = ({ className }: Props) => {
                 color="inherit"
                 onClick={removeItem}
               >
-                <CloseIcon fontSize="small" />
+                <CloseIcon size={20} />
               </IconButtontyled>
             </li>
           )

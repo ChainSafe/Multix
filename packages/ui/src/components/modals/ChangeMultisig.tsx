@@ -19,7 +19,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import Warning from '../Warning'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { ErrorOutline as ErrorOutlineIcon } from '@mui/icons-material'
+import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
@@ -437,7 +437,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               spacing={2}
             >
               <Box className="loader">
-                {callError ? <ErrorOutlineIcon className="errorIcon" /> : <CircularProgress />}
+                {callError ? <ErrorOutlineIcon size={20} /> : <CircularProgress size={20} />}
                 {!!callError && (
                   <div className="callErrorMessage">
                     {callError.includes('multisig.NoTimepoint')
@@ -519,10 +519,6 @@ export default styled(ChangeMultisig)`
     flex-direction: column;
     width: 100%;
     padding: 1rem;
-  }
-
-  .errorIcon {
-    font-size: 4rem;
   }
 
   .callErrorMessage {

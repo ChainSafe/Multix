@@ -1,6 +1,6 @@
 import { Alert, IconButton } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 
 interface Props {
   className?: string
@@ -24,7 +24,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
         color="inherit"
         onClick={onClose}
       >
-        <CloseIcon fontSize="small" />
+        <CloseIcon size={20} />
       </IconButton>
     </Alert>
   )
