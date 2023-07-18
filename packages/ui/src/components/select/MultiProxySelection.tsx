@@ -134,7 +134,6 @@ const MultiProxySelection = ({ className }: Props) => {
       onChange={onChange}
       disablePortal
       value={selectedMultiProxy || multiProxyList[0]}
-      iconSize="2.75rem"
     />
   )
 }
