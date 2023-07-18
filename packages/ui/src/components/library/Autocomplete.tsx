@@ -69,10 +69,6 @@ const Autocomplete = <
   clearOnBlur,
   handleHomeEndKeys
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
-  const PopperMy = function (props: any) {
-    return <PopperStyled {...props} />
-  }
-
   return (
     <AutocompleteWrapper className={className}>
       <AutocompleteMui
@@ -92,14 +88,15 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
-        PopperComponent={PopperMy}
+        PopperComponent={PopperStyled}
       />
     </AutocompleteWrapper>
   )
 }
 
 const PopperStyled = styled(Popper)`
-  margin-top: 0.75rem !important;
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
 
   .MuiPaper-root {
     border-radius: ${theme.custom.borderRadius};
