@@ -3173,22 +3173,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/icons-material@npm:^5.11.16":
-  version: 5.13.7
-  resolution: "@mui/icons-material@npm:5.13.7"
-  dependencies:
-    "@babel/runtime": ^7.22.5
-  peerDependencies:
-    "@mui/material": ^5.0.0
-    "@types/react": ^17.0.0 || ^18.0.0
-    react: ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 37003114fc345d747406231cbe5d7257992912484923f3a56c9968754b3bfd94c6cc7314b2dea023a9f7aec0d449cb682201f455e42e9b587bd3e806d8f89ce7
-  languageName: node
-  linkType: hard
-
 "@mui/material@npm:^5.13.6":
   version: 5.13.7
   resolution: "@mui/material@npm:5.13.7"
@@ -8718,7 +8702,6 @@ __metadata:
     "@graphql-codegen/client-preset": 4.0.1
     "@graphql-codegen/typescript-react-query": ^4.1.0
     "@graphql-eslint/eslint-plugin": ^3.19.3
-    "@mui/icons-material": ^5.11.16
     "@mui/material": ^5.13.6
     "@mui/styled-engine": ^5.13.2
     "@polkadot/api": ^10.9.1

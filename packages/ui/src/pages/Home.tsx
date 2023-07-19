@@ -5,12 +5,11 @@ import TransactionList from '../components/Transactions/TransactionList'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Button, ButtonWithIcon, Link } from '../components/library'
 import AccountDisplay from '../components/AccountDisplay'
+import { HiOutlinePaperAirplane, HiOutlinePencil } from 'react-icons/hi2'
 import {
-  Edit as EditIcon,
-  LockReset as LockResetIcon,
-  ErrorOutline as ErrorOutlineIcon
-} from '@mui/icons-material'
-import { HiOutlinePaperAirplane } from 'react-icons/hi2'
+  MdOutlineLockReset as LockResetIcon,
+  MdErrorOutline as ErrorOutlineIcon
+} from 'react-icons/md'
 import Send from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
@@ -116,7 +115,7 @@ const Home = ({ className }: Props) => {
     const opts = [
       {
         text: 'Edit names',
-        icon: <EditIcon />,
+        icon: <HiOutlinePencil size={20} />,
         onClick: () => setIsEditModalOpen(true)
       }
     ]
@@ -126,7 +125,7 @@ const Home = ({ className }: Props) => {
       !selectedIsWatched &&
       opts.push({
         text: 'Change multisig',
-        icon: <LockResetIcon />,
+        icon: <LockResetIcon size={20} />,
         onClick: () => setIsChangeMultiModalOpen(true)
       })
 
@@ -208,7 +207,7 @@ const Home = ({ className }: Props) => {
       >
         <Box className="loader">
           <div className="multisigErrorMessage">
-            <ErrorOutlineIcon className="errorIcon" />
+            <ErrorOutlineIcon size={64} />
             <div>An error occurred.</div>
           </div>
         </Box>

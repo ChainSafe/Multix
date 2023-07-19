@@ -1,7 +1,7 @@
 import { Box, Collapse } from '@mui/material'
 import { ReactNode, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { KeyboardArrowRight as KeyboardArrowRightIcon } from '@mui/icons-material'
+import { HiChevronRight as ChevronRightIcon } from 'react-icons/hi2'
 
 interface Props {
   className?: string
@@ -19,7 +19,7 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
         onClick={() => setOpen(!open)}
         className="titleWrapper"
       >
-        <KeyboardArrowRightIcon className={`${open ? 'rotated' : ''} expanderIcon`} />
+        <ChevronRightIcon className={`${open ? 'rotated' : ''} expanderIcon`} />
         {title}
       </div>
       <Collapse in={open}>{content}</Collapse>
