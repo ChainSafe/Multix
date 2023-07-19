@@ -165,5 +165,7 @@ export default styled(AccountDisplay)`
 
   .identityBadge {
     margin-right: 0.3rem;
+    height: 1.5rem;
+    width: 1.5rem;
   }
 `

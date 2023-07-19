@@ -24,11 +24,6 @@ const TextFieldLargeStyled = styled(TextField)`
     }
   }
 
-  svg {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
   input {
     font-size: 1rem;
     font-weight: 400;

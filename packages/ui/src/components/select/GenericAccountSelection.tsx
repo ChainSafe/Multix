@@ -26,7 +26,6 @@ interface Props {
   label?: string
   allowAnyAddressInput?: boolean
   withBadge?: boolean
-  disablePortal?: boolean
 }
 
 const getBadge = (account: AccountBaseInfo | string) => {
@@ -54,8 +53,7 @@ const GenericAccountSelection = ({
   onChange,
   label = '',
   allowAnyAddressInput = false,
-  withBadge = false,
-  disablePortal = true
+  withBadge = false
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -161,6 +159,8 @@ const GenericAccountSelection = ({
             <IdenticonBadge
               address={valueAddress}
               badge={valueBadge}
+              sideBadge
+              size="small"
             />
           </InputAdornment>
         )
@@ -190,7 +190,6 @@ const GenericAccountSelection = ({
       getOptionLabel={getOptionLabel}
       onChange={onChangeAutocomplete}
       value={value}
-      disablePortal={disablePortal}
     />
   )
 }

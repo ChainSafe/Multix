@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
-import { ICON_SIZE, ICON_THEME } from '../constants'
+import { ICON_SIZE_MEDIUM, ICON_THEME } from '../constants'
 import Identicon from '@polkadot/react-identicon'
 import { IconTheme } from '@polkadot/react-identicon/types'
 import { styled } from '@mui/material/styles'
@@ -15,7 +15,12 @@ interface Props {
   size?: number
   className?: string
 }
-const MultixIdenticon = ({ value, theme = ICON_THEME, size = ICON_SIZE, className }: Props) => {
+const MultixIdenticon = ({
+  value,
+  theme = ICON_THEME,
+  size = ICON_SIZE_MEDIUM,
+  className
+}: Props) => {
   const [open, setOpen] = useState(false)
   const handleTooltipClose = useCallback(() => setOpen(false), [])
   const handleTooltipOpen = useCallback(() => setOpen(true), [])

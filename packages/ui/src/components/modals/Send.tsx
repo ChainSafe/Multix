@@ -146,7 +146,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         tokenSymbol: chainInfo?.tokenSymbol
       })
       setErrorMessage(
-        `The "Signing with" account doens't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
+        `The "Signing with" account doesn't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
       )
     }
   }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
@@ -306,6 +306,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
               accountList={possibleOrigin}
               onChange={handleSelectOrigin}
               value={selectedOrigin}
+              withBadge
             />
           </Grid>
           {isProxySelected && multisigList.length > 1 && (
