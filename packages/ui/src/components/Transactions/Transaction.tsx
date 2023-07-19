@@ -2,7 +2,8 @@ import { Badge, Box, Paper } from '@mui/material'
 import { Button } from '../library'
 import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
-import { Gesture as GestureIcon, QuestionMark as QuestionMarkIcon } from '@mui/icons-material'
+import { MdOutlineGesture as GestureIcon } from 'react-icons/md'
+import { HiOutlineQuestionMarkCircle as QuestionMarkIcon } from 'react-icons/hi2'
 import { AggregatedData } from './TransactionList'
 import { useCallback, useMemo, useState } from 'react'
 import ProposalSigningModal from '../modals/ProposalSigning'
@@ -51,9 +52,15 @@ const Transaction = ({
         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
       >
         {!aggregatedData.callData ? (
-          <QuestionMarkIcon className="callIcon unknownCall" />
+          <QuestionMarkIcon
+            size={112}
+            className="callIcon"
+          />
         ) : (
-          <GestureIcon className="callIcon" />
+          <GestureIcon
+            size={112}
+            className="callIcon"
+          />
         )}
       </Badge>
       <TransactionCallInfoBoxStyled>
@@ -98,25 +105,21 @@ const TransactionFooterStyled = styled('div')`
   display: flex;
 `
 
-const TransactionCallInfoBoxStyled = styled(Box)(
-  ({ theme }) => `
+const TransactionCallInfoBoxStyled = styled(Box)`
   flex: 1 1 0;
   width: 100%;
 
-  @media (min-width: ${theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
     overflow: hidden;
   }
 `
-)
 
-export default styled(Transaction)(
-  ({ theme }) => `
+export default styled(Transaction)`
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 
-
-  @media (min-width: ${theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
     flex-direction: row;
     margin-left: 0.5rem;
   }
@@ -129,8 +132,7 @@ export default styled(Transaction)(
   }
 
   .callIcon {
-    font-size: 7rem;
-    background-color: ${theme.custom.background.primary};
+    background-color: ${({ theme }) => theme.custom.background.primary};
     margin: 0.5rem;
     padding: 1rem;
     height: auto;
@@ -141,17 +143,16 @@ export default styled(Transaction)(
     max-height: 1.3125rem;
     left: 29px;
     top: 19px;
-    border-radius: ${theme.custom.borderRadius};
+    border-radius: ${({ theme }) => theme.custom.borderRadius};
     padding: 0.25rem 0.5rem;
     max-width: 2.625rem;
     font-size: 0.625rem;
     font-weight: 500;
-    border: 1px solid ${theme.custom.gray[400]};
+    border: 1px solid ${({ theme }) => theme.custom.gray[400]};
   }
 
   .badge.red > .MuiBadge-badge {
-    background-color: ${theme.custom.proxyBadge.multi};
-    color: ${theme.custom.text.black};
+    background-color: ${({ theme }) => theme.custom.proxyBadge.multi};
+    color: ${({ theme }) => theme.custom.text.black};
   }
 `
-)

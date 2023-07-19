@@ -20,8 +20,5 @@ export default defineConfig({
   ],
   resolve: {
     preserveSymlinks: true // this is the fix!
-  },
-  optimizeDeps: {
-    include: ['@mui/icons-material']
   }
 })

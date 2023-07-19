@@ -1,9 +1,6 @@
 import { Box, CircularProgress } from '@mui/material'
-import {
-  Launch as LaunchIcon,
-  ErrorOutline as ErrorOutlineIcon,
-  CheckCircleOutline as CheckCircleOutlineIcon
-} from '@mui/icons-material'
+import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
+import { HiOutlineArrowTopRightOnSquare as LaunchIcon, HiOutlineCheckCircle } from 'react-icons/hi2'
 import { styled } from '@mui/material/styles'
 import { useCallback } from 'react'
 import { Toast } from '../../contexts/ToastContext'
@@ -26,11 +23,11 @@ const ToastContent = ({ className, toast }: ToastContentProps) => {
     <div className={className}>
       <div className="iconContainer">
         {type === 'success' ? (
-          <CheckCircleOutlineIcon className="toastIcon" />
+          <HiOutlineCheckCircle size={25} />
         ) : type === 'loading' ? (
-          <CircularProgress className="toastIcon" />
+          <CircularProgress size={25} />
         ) : (
-          <ErrorOutlineIcon className="toastIcon errorIcon" />
+          <ErrorOutlineIconStyled size={25} />
         )}
       </div>
       <Box
@@ -44,35 +41,30 @@ const ToastContent = ({ className, toast }: ToastContentProps) => {
           className="linkIcon"
           onClick={onOpenLink}
         >
-          <LaunchIcon fontSize="small" />
+          <LaunchIcon size={20} />
         </Box>
       )}
     </div>
   )
 }
 
-export default styled(ToastContent)(
-  ({ theme }) => `
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    .linkIcon {
-        display: flex;
-        cursor: pointer;
-        padding-left: 1rem; 
-    }
-
-    .iconContainer {
-        margin-right: 1rem;
-    }
-
-    .toastIcon {
-        font-size: 2.5rem;
-    }
-
-    .errorIcon {
-        color: ${theme.custom.error}
-    }
+const ErrorOutlineIconStyled = styled(ErrorOutlineIcon)`
+  color: ${({ theme }) => theme.custom.error};
 `
-)
+
+export default styled(ToastContent)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .linkIcon {
+    display: flex;
+    cursor: pointer;
+    padding-left: 1rem;
+  }
+
+  .iconContainer {
+    margin-right: 1rem;
+    display: flex;
+  }
+`

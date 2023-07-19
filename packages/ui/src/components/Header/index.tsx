@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { Menu as MenuIcon } from '@mui/icons-material'
+import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
@@ -91,17 +91,15 @@ const RouterLinkStyled = styled(RouterLink)`
   }
 `
 
-const BoxStyled = styled(Box)(
-  ({ theme }) => `
-    display: none;
-    
-    @media (min-width: ${theme.breakpoints.values.sm}px) {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-    }
+const BoxStyled = styled(Box)`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
 `
-)
 
 const LogoWrapperStyled = styled(Box)`
   display: flex;
@@ -116,13 +114,12 @@ const LogoStyled = styled('img')`
   height: 3rem;
 `
 
-const IconButtonStyled = styled(IconButton)(
-  ({ theme }) => `
-    display: block;
-    @media (min-width: ${theme.breakpoints.values.sm}px) {
-        display: none;
-    }
+const IconButtonStyled = styled(IconButton)`
+  display: block;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+    display: none;
+  }
 `
-)
 
 export default Header

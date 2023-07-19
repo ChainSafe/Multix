@@ -7,7 +7,7 @@ import { useApi } from '../contexts/ApiContext'
 import { getExtrinsicName, isProxyCall } from '../utils'
 import { formatBnBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
-import { Launch as LaunchIcon } from '@mui/icons-material'
+import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
@@ -126,10 +126,7 @@ const CallInfo = ({
             href={link}
             target="_blank"
           >
-            <LaunchIcon
-              className="icon"
-              fontSize="small"
-            />
+            <LaunchIcon size={20} />
           </Linkstyled>
         )}
       </CallNameStyled>

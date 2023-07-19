@@ -1,6 +1,6 @@
 import { Box, Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { AccessTime as AccessTimeIcon } from '@mui/icons-material'
+import { HiOutlineClock as AccessTimeIcon } from 'react-icons/hi2'
 
 interface Props {
   className?: string

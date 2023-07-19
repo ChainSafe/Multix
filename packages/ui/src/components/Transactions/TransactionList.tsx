@@ -10,7 +10,7 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { ISanitizedCall, parseGenericCall } from '../../utils'
 import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
-import { Flare as FlareIcon } from '@mui/icons-material'
+import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
 import Transaction from './Transaction'
 import { HexString } from '../../types'
 import dayjs from 'dayjs'
@@ -188,7 +188,10 @@ const TransactionList = ({ className }: Props) => {
       )}
       {!pendingTxData.length && !isLoadingPendingTxs && (
         <Paper className="noCall">
-          <FlareIcon className="noCallIcon" />
+          <FlareIcon
+            size={24}
+            className="noCallIcon"
+          />
           <div className="noCallText">You're all set!</div>
         </Paper>
       )}

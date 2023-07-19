@@ -1,5 +1,5 @@
 import { IconButton, styled } from '@mui/material'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 
 interface Props {
   onClose: () => void
@@ -14,7 +14,7 @@ const CloseButton = ({ onClose, className }: Props) => (
     onClick={onClose}
     className={className}
   >
-    <CloseIcon fontSize="small" />
+    <CloseIcon size={20} />
   </IconButton>
 )
 

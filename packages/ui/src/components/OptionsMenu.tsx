@@ -3,7 +3,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { IconButton, ListItemIcon, ListItemText } from '@mui/material'
 import { MouseEvent, ReactNode, useCallback, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { MoreVert as MoreVertIcon } from '@mui/icons-material'
+import { HiEllipsisVertical as MoreVertIcon } from 'react-icons/hi2'
 
 export interface MenuOption {
   text: string
