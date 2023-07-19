@@ -109,7 +109,7 @@ const Summary = ({
       </Box>
       <Box className="signerSelection">
         <SignerSelection
-          inputLabel="Signing with"
+          label="Signing with"
           possibleSigners={possibleSigners}
         />
       </Box>

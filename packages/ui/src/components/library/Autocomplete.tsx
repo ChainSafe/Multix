@@ -1,6 +1,6 @@
-import { Autocomplete as AutocompleteMui } from '@mui/material'
+import { Autocomplete as AutocompleteMui, Box, Popper } from '@mui/material'
 import React from 'react'
-import { css, styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import {
   AutocompleteRenderInputParams,
   AutocompleteRenderOptionState
@@ -41,11 +41,9 @@ interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
   ) => void
   disabled?: boolean
   freeSolo?: FreeSolo
-  iconSize?: string
   selectOnFocus?: boolean
   clearOnBlur?: boolean
   handleHomeEndKeys?: boolean
-  disablePortal?: boolean
 }
 
 const Autocomplete = <
@@ -69,20 +67,14 @@ const Autocomplete = <
   renderInput,
   selectOnFocus,
   clearOnBlur,
-  handleHomeEndKeys,
-  disablePortal,
-  iconSize
+  handleHomeEndKeys
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
   return (
-    <AutocompleteWrapper
-      iconSize={iconSize}
-      className={className}
-    >
+    <AutocompleteWrapper className={className}>
       <AutocompleteMui
         handleHomeEndKeys={handleHomeEndKeys}
         selectOnFocus={selectOnFocus}
         clearOnBlur={clearOnBlur}
-        disablePortal={disablePortal}
         isOptionEqualToValue={isOptionEqualToValue}
         disableClearable={disableClearable}
         filterOptions={filterOptions}
@@ -96,40 +88,18 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
+        PopperComponent={PopperStyled}
       />
     </AutocompleteWrapper>
   )
 }
 
-Autocomplete.defaultProps = {
-  iconSize: '1.5rem',
-  disablePortal: false
-}
-
-export const AutocompleteStyles = css`
-  svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
+const PopperStyled = styled(Popper)`
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
 
   .MuiPaper-root {
     border-radius: ${theme.custom.borderRadius};
-  }
-
-  .MuiIconButton-root {
-    svg {
-      color: ${theme.custom.text.black};
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    &:hover {
-      background: none;
-    }
-  }
-
-  .MuiInputBase-root {
-    background-color: ${theme.palette.primary.white};
   }
 
   .MuiPaper-root {
@@ -171,12 +141,22 @@ export const AutocompleteStyles = css`
   }
 `
 
-const AutocompleteWrapper = styled('div')<{ iconSize?: string }>`
-  ${AutocompleteStyles}
+const AutocompleteWrapper = styled(Box)`
+  .MuiInputBase-root {
+    background-color: ${theme.palette.primary.white};
+    align-content: center;
+  }
 
-  svg {
-    width: ${({ iconSize }) => iconSize};
-    height: ${({ iconSize }) => iconSize};
+  .MuiIconButton-root {
+    svg {
+      color: ${theme.custom.text.black};
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &:hover {
+      background: none;
+    }
   }
 `
 

@@ -1,52 +1,25 @@
-import { InputAdornment } from '@mui/material'
-import * as React from 'react'
 import { useCallback, useEffect, useMemo } from 'react'
-import { styled } from '@mui/material/styles'
-import { createFilterOptions } from '@mui/material/Autocomplete'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import AccountDisplay from '../AccountDisplay'
-import MultixIdenticon from '../MultixIdenticon'
-import { Autocomplete, TextFieldStyled } from '../library'
-import OptionMenuItem from './OptionMenuItem'
-import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
-
-const isInjectedAccountWithMeta = (value: any): value is InjectedAccountWithMeta => {
-  return value && value.address && value.meta && value.meta.name
-}
+import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
+import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 
 interface SignerSelectionProps {
   className?: string
   possibleSigners: string[]
   onChange?: () => void
-  inputLabel?: string
+  label?: string
 }
 
-const getOptionLabel = (option?: NonNullable<InjectedAccountWithMeta | string>): string => {
-  if (!option || !isInjectedAccountWithMeta(option)) return ''
-
-  return option.meta.name as string
-}
-
-const isOptionEqualToValue = (
-  option: InjectedAccountWithMeta | undefined,
-  value: InjectedAccountWithMeta | undefined
-) => {
-  if (!option || !value) return false
-
-  return option.address === value.address
-}
-
-const SignerSelection = ({
-  className,
-  possibleSigners,
-  onChange,
-  inputLabel
-}: SignerSelectionProps) => {
-  const { selectAccount, selectedAccount, ownAccountList } = useAccounts()
+const SignerSelection = ({ className, possibleSigners, onChange, label }: SignerSelectionProps) => {
+  const { selectAccount, selectedAccount, getAccountByAddress } = useAccounts()
+  const accountBase = useAccountBaseFromAccountList()
+  const selectedAccountBaseInfo = useMemo(
+    () => accountBase.find(({ address }) => selectedAccount?.address === address),
+    [accountBase, selectedAccount?.address]
+  )
   const signersList = useMemo(() => {
-    return ownAccountList?.filter((account) => possibleSigners.includes(account.address)) || []
-  }, [ownAccountList, possibleSigners])
+    return accountBase?.filter((account) => possibleSigners.includes(account.address)) || []
+  }, [accountBase, possibleSigners])
 
   useEffect(() => {
     if (!selectedAccount || signersList.length === 0) {
@@ -54,82 +27,33 @@ const SignerSelection = ({
     }
 
     if (!possibleSigners.includes(selectedAccount.address)) {
-      selectAccount(signersList[0])
+      const account = getAccountByAddress(signersList[0].address)
+      account && selectAccount(account)
     }
-  }, [possibleSigners, selectAccount, selectedAccount, signersList])
-
-  const filterOptions = createFilterOptions({
-    ignoreCase: true,
-    stringify: (option: typeof selectedAccount) => `${option?.address}${option?.meta.name}` || ''
-  })
+  }, [getAccountByAddress, possibleSigners, selectAccount, selectedAccount, signersList])
 
   const onChangeSigner = useCallback(
-    (
-      _: React.SyntheticEvent<Element, Event>,
-      newSelected: NonNullable<
-        | (typeof signersList)[0]
-        | string
-        | undefined
-        | (string | (typeof signersList)[0] | undefined)[]
-      >
-    ) => {
-      isInjectedAccountWithMeta(newSelected) && selectAccount(newSelected)
+    (newAccount?: AccountBaseInfo) => {
+      const account = newAccount && getAccountByAddress(newAccount.address)
+      account && selectAccount(account)
       onChange && onChange()
     },
-    [onChange, selectAccount]
+    [getAccountByAddress, onChange, selectAccount]
   )
-
-  const renderInput = (params: AutocompleteRenderInputParams) => (
-    <TextFieldStyled
-      {...params}
-      label={inputLabel}
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: (
-          <InputAdornment position="start">
-            <MultixIdenticon value={selectedAccount?.address} />
-          </InputAdornment>
-        )
-      }}
-    />
-  )
-
-  const renderOption = (
-    props: React.HTMLAttributes<HTMLLIElement>,
-    option?: InjectedAccountWithMeta
-  ) => {
-    if (!option) return null
-
-    return (
-      <OptionMenuItem
-        {...props}
-        keyValue={option.address}
-      >
-        <AccountDisplay address={option?.address || ''} />
-      </OptionMenuItem>
-    )
-  }
 
   if (signersList.length === 0) {
     return null
   }
 
   return (
-    <Autocomplete
-      isOptionEqualToValue={isOptionEqualToValue}
-      disableClearable
-      className={className}
-      options={signersList}
-      filterOptions={filterOptions}
-      renderOption={renderOption}
-      renderInput={renderInput}
-      getOptionLabel={getOptionLabel}
+    <GenericAccountSelection
+      label={label}
+      accountList={signersList}
       onChange={onChangeSigner}
-      value={selectedAccount || signersList[0]}
+      value={selectedAccountBaseInfo || signersList[0]}
+      allowAnyAddressInput={false}
     />
   )
 }
 
-export default styled(SignerSelection)`
-  margin-top: 0.3rem;
-`
+export default SignerSelection
