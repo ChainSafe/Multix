@@ -20,6 +20,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
+import { formatBnBalance } from '../../utils/formatBnBalance'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -34,11 +35,11 @@ interface Props {
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, isApiReady } = useApi()
+  const { api, isApiReady, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
-  const [easyOptionErrorMessage, setEasyOptionErrorMessageorMessage] = useState('')
+  const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const possibleOrigin = useMemo(() => {
@@ -123,7 +124,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     threshold
   ])
 
-  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
+  const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,
     signatories: selectedMultisig?.signatories,
     call: multisigTx
@@ -135,11 +136,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
 
   useEffect(() => {
     if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBnBalance(
+        multisigProposalNeededFunds,
+        chainInfo?.tokenDecimals,
+        { tokenSymbol: chainInfo?.tokenSymbol }
+      )
+
+      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
       setErrorMessage(
-        `The "Signing with" account doens't have enough funds to submit this transaction`
+        `The "Signing with" account doens't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
       )
     }
-  }, [hasSignerEnoughFunds, multisigProposalNeededFunds])
+  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -163,20 +173,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         <BalancesTransfer
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+          onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
       [MANUEL_EXTRINSIC_MENU]: (
         <ManualExtrinsic
           onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+          onSetErrorMessage={setEasyOptionErrorMessage}
           onSelectFromCallData={() => setSelectedEasyOption(FROM_CALL_DATA_MENU)}
         />
       ),
       [FROM_CALL_DATA_MENU]: (
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={setEasyOptionErrorMessageorMessage}
+          onSetErrorMessage={setEasyOptionErrorMessage}
           isProxySelected={!!isProxySelected}
         />
       )
@@ -257,6 +267,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   ])
 
   const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
+    setErrorMessage('')
+    setEasyOptionErrorMessage('')
     setSelectedEasyOption(event.target.value)
   }, [])
 
