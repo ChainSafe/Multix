@@ -32,8 +32,9 @@ const About = ({ className }: Props) => {
         <li>
           <h2>Permissionless</h2>
           <p>
-            The is no permissioned database behind Multix. Any information shown comes from the
-            chain.
+            While Multix uses an open source indexer, the database is trust minimized and only
+            contains information coming from the chain. No user information is stored and anyone can
+            re-build this database at will.
           </p>
         </li>
         <li>
