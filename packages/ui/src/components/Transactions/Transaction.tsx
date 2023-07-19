@@ -52,7 +52,10 @@ const Transaction = ({
         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
       >
         {!aggregatedData.callData ? (
-          <QuestionMarkIcon className="callIcon unknownCall" />
+          <QuestionMarkIcon
+            size={112}
+            className="callIcon"
+          />
         ) : (
           <GestureIcon
             size={112}

@@ -23,11 +23,11 @@ const ToastContent = ({ className, toast }: ToastContentProps) => {
     <div className={className}>
       <div className="iconContainer">
         {type === 'success' ? (
-          <HiOutlineCheckCircle size={20} />
+          <HiOutlineCheckCircle size={25} />
         ) : type === 'loading' ? (
-          <CircularProgress size={20} />
+          <CircularProgress size={25} />
         ) : (
-          <ErrorOutlineIconStyled size={20} />
+          <ErrorOutlineIconStyled size={25} />
         )}
       </div>
       <Box
@@ -65,5 +65,6 @@ export default styled(ToastContent)`
 
   .iconContainer {
     margin-right: 1rem;
+    display: flex;
   }
 `

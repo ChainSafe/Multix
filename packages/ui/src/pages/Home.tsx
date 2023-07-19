@@ -207,7 +207,7 @@ const Home = ({ className }: Props) => {
       >
         <Box className="loader">
           <div className="multisigErrorMessage">
-            <ErrorOutlineIcon className="errorIcon" />
+            <ErrorOutlineIcon size={64} />
             <div>An error occurred.</div>
           </div>
         </Box>
