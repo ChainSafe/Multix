@@ -13,6 +13,7 @@ interface Props {
 export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
   const { isApiReady, api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
+  const [reserved, setReserved] = useState(new BN(0))
 
   useEffect(() => {
     if (!isApiReady || !api || !signatories || signatories.length < 2) return
@@ -34,12 +35,13 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
         .paymentInfo('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
         .then((info) => {
           // add the funds reserved for a multisig call
-          const reserved = (api.consts.multisig.depositFactor as unknown as BN)
+          const reservedTemp = (api.consts.multisig.depositFactor as unknown as BN)
             .muln(threshold)
             .add(api.consts.multisig.depositBase as unknown as BN)
 
-          // console.log('reserved', formatBnBalance(reserved, chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
-          setMin(reserved.add(info.partialFee))
+          // console.log('reservedTemp', formatBnBalance(reservedTemp, chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
+          setMin(reservedTemp.add(info.partialFee))
+          setReserved(reservedTemp)
         })
         .catch(console.error)
     } catch (e) {
@@ -48,5 +50,5 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
     }
   }, [api, call, chainInfo, isApiReady, signatories, threshold])
 
-  return { multisigProposalNeededFunds: min }
+  return { multisigProposalNeededFunds: min, reserved }
 }
