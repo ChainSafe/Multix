@@ -30,11 +30,11 @@ const About = ({ className }: Props) => {
           </p>
         </li>
         <li>
-          <h2>Trust minimized</h2>
+          <h2>Permissionless</h2>
           <p>
-            While Multix uses an open source indexer, the database only contains information coming
-            straight from the chain. No user information is stored and anyone can re-build this
-            database at will.
+            While Multix uses an open source indexer, the database is trust minimized and only
+            contains information coming from the chain. No user information is stored and anyone can
+            re-build this database at will.
           </p>
         </li>
         <li>
