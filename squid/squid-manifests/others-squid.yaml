@@ -24,3 +24,13 @@ deploy:
     cmd: ['npx', 'squid-graphql-server', '--subscriptions']
 scale:
   dedicated: true
+  addons:
+    postgres:
+      storage: 100G
+      profile: medium
+  processor:
+    profile: medium
+  api:
+    profile: large
+    # load-balance three replicas
+    replicas: 3
