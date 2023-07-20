@@ -1,0 +1,18 @@
+manifestVersion: subsquid.io/v0.1
+name: multix-assethub-polkadot
+version: 1
+description: |-
+  assethub-polkadot squid for Multix
+
+build:
+
+deploy:
+  addons:
+    postgres:
+  processor:
+    - name: assethub-polkadot-processor
+      cmd: ['sqd', 'start-assethub-polkadot']
+  api:
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
+scale:
+  dedicated: true
