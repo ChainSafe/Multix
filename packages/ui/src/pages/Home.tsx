@@ -279,10 +279,11 @@ const Home = ({ className }: Props) => {
               <HeaderStyled>
                 <h3>{renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}</h3>
                 <BoxStyled>
-                  {!selectedIsWatched && !selectedHasProxy && (
+                  {!selectedHasProxy && (
                     <MultisigActionMenu
                       setIsSendModalOpen={setIsSendModalOpen}
                       options={options}
+                      withSendButton={!selectedIsWatched}
                     />
                   )}
                 </BoxStyled>
