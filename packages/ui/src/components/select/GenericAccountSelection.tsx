@@ -22,18 +22,19 @@ interface Props {
   className?: string
   accountList?: AccountBaseInfo[]
   onChange: (account: AccountBaseInfo) => void
-  value: AccountBaseInfo
+  value?: AccountBaseInfo
   label?: string
   allowAnyAddressInput?: boolean
   withBadge?: boolean
+  disabled?: boolean
 }
 
-const getBadge = (account: AccountBaseInfo | string) => {
+const getBadge = (account?: AccountBaseInfo | string) => {
   return typeof account === 'string'
     ? undefined
-    : account.meta?.isProxy
+    : account?.meta?.isProxy
     ? AccountBadge.PURE
-    : account.meta?.isMulti
+    : account?.meta?.isMulti
     ? AccountBadge.MULTI
     : undefined
 }
@@ -53,12 +54,16 @@ const GenericAccountSelection = ({
   onChange,
   label = '',
   allowAnyAddressInput = false,
-  withBadge = false
+  withBadge = false,
+  disabled = false
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
-  const valueAddress = useMemo(() => (typeof value === 'string' ? value : value.address), [value])
-  const valueBadge = useMemo(() => (withBadge ? getBadge(value) : undefined), [value, withBadge])
+  const valueAddress = useMemo(() => (typeof value === 'string' ? value : value?.address), [value])
+  const valueBadge = useMemo(
+    () => (withBadge ? getBadge(value || '') : undefined),
+    [value, withBadge]
+  )
 
   const getOptionLabel = useCallback(
     (option: (typeof accountList)[0] | string) => {
@@ -170,10 +175,6 @@ const GenericAccountSelection = ({
     />
   )
 
-  if (accountList.length === 0) {
-    return null
-  }
-
   return (
     <Autocomplete
       isOptionEqualToValue={isOptionEqualToValue}
@@ -189,7 +190,8 @@ const GenericAccountSelection = ({
       renderInput={getRenderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChangeAutocomplete}
-      value={value}
+      value={value || ({ address: '' } as AccountBaseInfo)}
+      disabled={disabled}
     />
   )
 }
