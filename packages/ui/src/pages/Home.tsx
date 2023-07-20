@@ -283,6 +283,7 @@ const Home = ({ className }: Props) => {
                     <MultisigActionMenu
                       setIsSendModalOpen={setIsSendModalOpen}
                       options={options}
+                      withSendButton={!selectedIsWatched}
                     />
                   )}
                 </BoxStyled>
