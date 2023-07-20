@@ -12,6 +12,9 @@ on:
 
 jobs:
   deploy:
+    strategy:
+      matrix:
+        network: ['polkadot', 'kusama', 'rococo', 'assethub-kusama', 'assethub-polkadot', 'others']
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,4 +32,4 @@ jobs:
           sqd auth -k ${{ secrets.SUBSQUID_DEPLOYMENT_KEY }}
       - name: deploy subsquid
         id: deploy
-        run: sqd deploy -u .
+        run: sqd deploy -m squid-manifests/${{ matrix.network }}-squid.yaml -u .

@@ -1,0 +1,18 @@
+manifestVersion: subsquid.io/v0.1
+name: multix-kusama
+version: 1
+description: |-
+  kusama squid for Multix
+
+build:
+
+deploy:
+  addons:
+    postgres:
+  processor:
+    - name: kusama-processor
+      cmd: ['sqd', 'start-kusama']
+  api:
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
+scale:
+  dedicated: true

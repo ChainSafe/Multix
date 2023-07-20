@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix
-version: 2
+version: 3
 description: |-
   Squid for Multix
 
@@ -10,12 +10,6 @@ deploy:
   addons:
     postgres:
   processor:
-    - name: rococo-processor
-      cmd: ['sqd', 'start-rococo']
-    - name: kusama-processor
-      cmd: ['sqd', 'start-kusama']
-    - name: polkadot-processor
-      cmd: ['sqd', 'start-polkadot']
     - name: phala-processor
       cmd: ['sqd', 'start-phala']
     - name: khala-processor
@@ -24,10 +18,6 @@ deploy:
       cmd: ['sqd', 'start-rhala']
     - name: astar-processor
       cmd: ['sqd', 'start-astar']
-    - name: assethub-polkadot-processor
-      cmd: ['sqd', 'start-assethub-polkadot']
-    - name: assethub-kusama-processor
-      cmd: ['sqd', 'start-assethub-kusama']
     - name: hydradx-processor
       cmd: ['sqd', 'start-hydradx']
   api:
