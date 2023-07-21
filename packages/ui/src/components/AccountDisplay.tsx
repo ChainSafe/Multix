@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccountNames } from '../contexts/AccountNamesContext'
-import { AccountBadge } from '../types'
+import { AccountBadge, IconSizeVariant } from '../types'
 import { getDisplayAddress } from '../utils'
 import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
@@ -17,6 +17,7 @@ interface Props {
   badge?: AccountBadge
   withName?: boolean
   withBalance?: boolean
+  iconSize?: IconSizeVariant
 }
 
 const AccountDisplay = ({
@@ -24,7 +25,8 @@ const AccountDisplay = ({
   address,
   badge,
   withName = true,
-  withBalance = false
+  withBalance = false,
+  iconSize = 'medium'
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { balanceFormatted } = useGetBalance({ address })
@@ -88,6 +90,7 @@ const AccountDisplay = ({
       <IdenticonBadge
         badge={badge}
         address={encodedAddress}
+        size={iconSize}
       />
       <BoxStyled>
         {withName && (
@@ -150,14 +153,12 @@ const NameStyled = styled('div')`
   white-space: nowrap;
 `
 
-const BalanceStyled = styled('div')(
-  ({ theme }) => `
-  margin-top: 4px;  
+const BalanceStyled = styled('div')`
   display: flex;
-  color: ${theme.custom.text.addressColorLightGray};
+  color: ${({ theme }) => theme.custom.text.addressColorLightGray};
   font-size: small;
+  margin-top: 4px;
 `
-)
 
 export default styled(AccountDisplay)`
   display: flex;

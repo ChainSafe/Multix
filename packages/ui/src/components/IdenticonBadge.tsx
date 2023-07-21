@@ -58,7 +58,7 @@ const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean 
     `
       padding-left: 0;
       align-items: center;
-      `}
+    `}
 
   .MuiBadge-badge {
     max-width: 2.625rem;
