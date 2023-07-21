@@ -13,23 +13,6 @@ interface Props {
   identity: DeriveAccountRegistration
 }
 
-const StyledPopup = styled('div')(
-  () => `
-  list-style: none;
-  padding: .5rem;
-  
-  li:not(:last-child) {
-      margin-bottom: 0.3rem;
-  }
-  .desc {
-      margin-right: 0.3rem;
-  }
-  .judgments {
-      display: inline list-item;
-  }
-`
-)
-
 const IdentityIcon = ({ className, identity }: Props) => {
   const judgements = useMemo(
     () => identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid),
@@ -108,29 +91,49 @@ const IdentityIcon = ({ className, identity }: Props) => {
       className={className}
       title={tooltipContent}
     >
-      {isGood ? (
-        <CheckCircleRoundedIcon className="green" />
-      ) : (
-        <RemoveCircleOutlineRoundedIcon className={isBad ? 'red' : 'grey'} />
-      )}
+      <span>
+        {isGood ? (
+          <CheckCircleRoundedIcon className="green" />
+        ) : (
+          <RemoveCircleOutlineRoundedIcon className={isBad ? 'red' : 'grey'} />
+        )}
+      </span>
     </Tooltip>
   )
 }
 
-export default styled(IdentityIcon)(
-  ({ theme }) => `
-  display: inline;
+const StyledPopup = styled('div')`
+  list-style: none;
+  padding: 0.5rem;
 
-  &.green {
-    color: ${theme.custom.identity.green};
+  li:not(:last-child) {
+    margin-bottom: 0.3rem;
   }
-
-  &.grey {
-    color: ${theme.custom.identity.grey};
+  .desc {
+    margin-right: 0.3rem;
   }
-
-  &.red {
-    color: ${theme.custom.identity.red};
+  .judgments {
+    display: inline list-item;
   }
 `
-)
+
+export default styled(IdentityIcon)`
+  display: inline;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .green {
+    color: ${({ theme }) => theme.custom.identity.green};
+  }
+
+  .grey {
+    color: ${({ theme }) => theme.custom.identity.grey};
+  }
+
+  .red {
+    color: ${({ theme }) => theme.custom.identity.red};
+  }
+`

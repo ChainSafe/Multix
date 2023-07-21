@@ -30,32 +30,32 @@ export const networkList = {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-polkadot/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-polkadot/v/v1/graphql',
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-kusama/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-kusama/v/v1/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
   'assethub-ksm': {
     chainId: 'assethub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-assethub-kusama/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-assethub-kusama/v/v1/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   'assethub-dot': {
     chainId: 'assethub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-assethub-polkadot/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-assethub-polkadot/v/v1/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   astar: {
@@ -94,8 +94,8 @@ export const networkList = {
     chainId: 'rococo',
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-rococo/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-rococo/v/v1/graphql',
     logo: chainsRococoSVG
   } as NetworkInfo,
   'rhala testnet': {
