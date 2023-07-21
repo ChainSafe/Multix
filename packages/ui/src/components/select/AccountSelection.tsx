@@ -1,5 +1,5 @@
-import { Box } from '@mui/material'
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { Box, Grid } from '@mui/material'
+import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { isValidAddress } from '../../utils'
@@ -7,6 +7,7 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { Button, InputField } from '../library'
 import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
+import Warning from '../Warning'
 
 interface Props {
   className?: string
@@ -19,6 +20,12 @@ interface Props {
   withName?: boolean
   withAddButton?: boolean
   withPreselection?: boolean
+}
+
+const getOptionLabel = (option: string | AccountBaseInfo | null) => {
+  if (!option) return ''
+
+  return typeof option === 'string' ? option : option.address
 }
 
 const AccountSelection = ({
@@ -58,7 +65,7 @@ const AccountSelection = ({
     newAccount && setSelected(newAccount)
   }, [])
 
-  const onAddSignatory = useCallback(() => {
+  const onAdd = useCallback(() => {
     if (!selected) {
       return
     }
@@ -84,10 +91,10 @@ const AccountSelection = ({
   const handleSpecialKeys = useCallback(
     (e: any) => {
       if (['Enter', 'Escape'].includes(e.key)) {
-        onAddSignatory()
+        onAdd()
       }
     },
-    [onAddSignatory]
+    [onAdd]
   )
 
   const onNameChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -95,37 +102,74 @@ const AccountSelection = ({
     setName(value)
   }, [])
 
+  const onInputChange = useCallback(
+    (
+      _: SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
+      >
+    ) => {
+      setErrorMessage('')
+      setName('')
+
+      const value = getOptionLabel(val as string)
+      isValidAddress(value)
+      setSelected(value && isValidAddress(value) ? { address: value } : undefined)
+    },
+    []
+  )
+
   return (
-    <BoxStyled className={className}>
-      <GenericAccountSelection
-        allowAnyAddressInput={true}
-        disabled={addressDisabled}
-        accountList={withPreselection ? dedupedSignatories : []}
-        onChange={onChange}
-        value={selected}
-        label={label}
-      />
-      {withName && (
-        <InputField
-          label="Name"
-          onChange={onNameChange}
-          disabled={!!extensionName || nameDisabled}
-          value={extensionName || name || ''}
-          onKeyDown={handleSpecialKeys}
-        />
-      )}
-      {withAddButton && (
-        <ButtonStyled
-          onClick={onAddSignatory}
-          variant="secondary"
-          disabled={!selected || !!errorMessage}
+    <Grid container>
+      {!!errorMessage && (
+        <Grid
+          item
+          xs={12}
         >
-          Add
-        </ButtonStyled>
+          <WarningStyled text={errorMessage} />
+        </Grid>
       )}
-    </BoxStyled>
+      <Grid
+        item
+        xs={12}
+      >
+        <BoxStyled className={className}>
+          <GenericAccountSelection
+            allowAnyAddressInput={true}
+            disabled={addressDisabled}
+            accountList={withPreselection ? dedupedSignatories : []}
+            onChange={onChange}
+            onInputChange={onInputChange}
+            value={selected}
+            label={label}
+          />
+          {withName && (
+            <InputField
+              label="Name"
+              onChange={onNameChange}
+              disabled={!!extensionName || nameDisabled}
+              value={extensionName || name || ''}
+              onKeyDown={handleSpecialKeys}
+            />
+          )}
+          {withAddButton && (
+            <ButtonStyled
+              onClick={onAdd}
+              variant="secondary"
+              disabled={!selected || !!errorMessage}
+            >
+              Add
+            </ButtonStyled>
+          )}
+        </BoxStyled>
+      </Grid>
+    </Grid>
   )
 }
+
+const WarningStyled = styled(Warning)`
+  margin: 1rem 0 1rem 0;
+`
 
 const BoxStyled = styled(Box)`
   align-items: center;

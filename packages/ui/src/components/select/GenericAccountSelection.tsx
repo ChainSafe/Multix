@@ -1,5 +1,5 @@
 import { FilterOptionsState, InputAdornment } from '@mui/material'
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { SyntheticEvent, useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import AccountDisplay from '../AccountDisplay'
@@ -27,6 +27,12 @@ interface Props {
   allowAnyAddressInput?: boolean
   withBadge?: boolean
   disabled?: boolean
+  onInputChange?: (
+    _: SyntheticEvent<Element, Event>,
+    val: NonNullable<
+      AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
+    >
+  ) => void
 }
 
 const getBadge = (account?: AccountBaseInfo | string) => {
@@ -55,7 +61,8 @@ const GenericAccountSelection = ({
   label = '',
   allowAnyAddressInput = false,
   withBadge = false,
-  disabled = false
+  disabled = false,
+  onInputChange
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -72,9 +79,13 @@ const GenericAccountSelection = ({
         return option
       }
 
+      if (allowAnyAddressInput) {
+        return option.address
+      }
+
       return getNamesWithExtension(option.address) || option.address
     },
-    [getNamesWithExtension]
+    [allowAnyAddressInput, getNamesWithExtension]
   )
 
   const filter = useMemo(
@@ -107,15 +118,12 @@ const GenericAccountSelection = ({
 
   const onInputBlur = useCallback(() => {
     inputRef.current?.setSelectionRange(0, 0)
-    // inputRef?.current?.blur()
   }, [])
 
   const onChangeAutocomplete = useCallback(
     (
       _: React.SyntheticEvent<Element, Event>,
-      val: NonNullable<
-        AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
-      >
+      val: NonNullable<string | AccountBaseInfo> | (string | AccountBaseInfo)[] | null
     ) => {
       if (typeof val === 'string') {
         onChange({
@@ -159,7 +167,7 @@ const GenericAccountSelection = ({
       label={label}
       InputProps={{
         ...params.InputProps,
-        startAdornment: (
+        startAdornment: valueAddress ? (
           <InputAdornment position="start">
             <IdenticonBadge
               address={valueAddress}
@@ -168,7 +176,7 @@ const GenericAccountSelection = ({
               size="small"
             />
           </InputAdornment>
-        )
+        ) : null
       }}
       onBlur={onInputBlur}
       onKeyDown={handleSpecialKeys}
@@ -177,13 +185,13 @@ const GenericAccountSelection = ({
 
   return (
     <Autocomplete
+      className={className}
       isOptionEqualToValue={isOptionEqualToValue}
       freeSolo={allowAnyAddressInput}
       selectOnFocus={allowAnyAddressInput}
       clearOnBlur={allowAnyAddressInput}
       handleHomeEndKeys={allowAnyAddressInput}
-      className={className}
-      disableClearable
+      disableClearable={!allowAnyAddressInput}
       filterOptions={filterOptions}
       options={accountList}
       renderOption={getRenderOption}
@@ -192,6 +200,7 @@ const GenericAccountSelection = ({
       onChange={onChangeAutocomplete}
       value={value || ({ address: '' } as AccountBaseInfo)}
       disabled={disabled}
+      onInputChange={onInputChange}
     />
   )
 }
