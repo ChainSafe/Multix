@@ -19,6 +19,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
 import PureProxyHeaderView from './PureProxyHeaderView'
 import LoaderWrapper from './LoaderWrapper'
+import HomeModalsContext, { useHomeModals } from '../../contexts/HomeModalsContext'
 
 interface HomeProps {
   className?: string
@@ -29,23 +30,28 @@ const Home = ({ className }: HomeProps) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const {
     isLoading,
     multiProxyList,
     selectedMultiProxy,
-    selectedHasProxy,
-    error: multisigQueryError,
-    selectedIsWatched
+    error: multisigQueryError
   } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { isApiReady } = useApi()
   const { refresh } = usePendingTx()
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
+  const {
+    isChangeMultiModalOpen,
+    isEditModalOpen,
+    isSendModalOpen,
+    setIsEditModalOpen,
+    setIsChangeMultiModalOpen,
+    setIsSendModalOpen
+  } = useHomeModals()
+
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
   const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
+
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
     isAllowedToConnectToExtension,
@@ -184,16 +190,7 @@ const Home = ({ className }: HomeProps) => {
         alignItems="center"
         xs={12}
       >
-        {selectedMultiProxy && (
-          <PureProxyHeaderView
-            selectedHasProxy={selectedHasProxy}
-            selectedIsWatched={selectedIsWatched}
-            setIsSendModalOpen={setIsSendModalOpen}
-            setIsEditModalOpen={setIsEditModalOpen}
-            setIsChangeMultiModalOpen={setIsChangeMultiModalOpen}
-            multiProxy={selectedMultiProxy}
-          />
-        )}
+        {selectedMultiProxy && <PureProxyHeaderView />}
       </Grid>
       {isSendModalOpen && (
         <Send

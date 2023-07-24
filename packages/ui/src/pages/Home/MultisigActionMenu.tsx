@@ -1,17 +1,40 @@
 import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
+import { useMemo } from 'react'
+import { HiOutlinePencil } from 'react-icons/hi2'
+import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { useHomeModals } from '../../contexts/HomeModalsContext'
 
 interface MultisigActionMenuProps {
-  setIsSendModalOpen: (isOpen: boolean) => void
-  options: MenuOption[]
   withSendButton?: boolean
 }
 
-const MultisigActionMenu = ({
-  setIsSendModalOpen,
-  options,
-  withSendButton = true
-}: MultisigActionMenuProps) => {
+const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {
+  const { selectedHasProxy, selectedIsWatched } = useMultiProxy()
+  const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useHomeModals()
+
+  const options: MenuOption[] = useMemo(() => {
+    const opts = [
+      {
+        text: 'Edit names',
+        icon: <HiOutlinePencil size={20} />,
+        onClick: () => setIsEditModalOpen(true)
+      }
+    ]
+
+    // allow rotation only for the multisigs with a proxy
+    selectedHasProxy &&
+      !selectedIsWatched &&
+      opts.push({
+        text: 'Change multisig',
+        icon: <LockResetIcon size={20} />,
+        onClick: () => setIsChangeMultiModalOpen(true)
+      })
+
+    return opts
+  }, [selectedHasProxy, selectedIsWatched, setIsChangeMultiModalOpen, setIsEditModalOpen])
+
   return (
     <>
       {withSendButton && (
