@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Box, CircularProgress, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import TransactionList from '../../components/Transactions/TransactionList'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Link } from '../../components/library'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
@@ -19,7 +18,9 @@ import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
 import PureProxyHeaderView from './PureProxyHeaderView'
 import LoaderWrapper from './LoaderWrapper'
-import HomeModalsContext, { useHomeModals } from '../../contexts/HomeModalsContext'
+import { useHomeModals } from '../../contexts/HomeModalsContext'
+import MultisigView from './MultisigView'
+import TransactionList from '../../components/Transactions/TransactionList'
 
 interface HomeProps {
   className?: string
@@ -39,6 +40,8 @@ const Home = ({ className }: HomeProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const { isApiReady } = useApi()
   const { refresh } = usePendingTx()
+
+  // Modals
   const {
     isChangeMultiModalOpen,
     isEditModalOpen,
@@ -51,6 +54,13 @@ const Home = ({ className }: HomeProps) => {
   const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
   const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
+  const onSuccessSendModal = useCallback(() => {
+    onCloseSendModal()
+    refresh()
+  }, [onCloseSendModal, refresh])
+  const onFinalizedSendModal = useCallback(() => {
+    refresh()
+  }, [refresh])
 
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
@@ -60,15 +70,6 @@ const Home = ({ className }: HomeProps) => {
     allowConnectionToExtension
   } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
-
-  const onSuccessSendModal = useCallback(() => {
-    onCloseSendModal()
-    refresh()
-  }, [onCloseSendModal, refresh])
-
-  const onFinalizedSendModal = useCallback(() => {
-    refresh()
-  }, [refresh])
 
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
@@ -192,6 +193,26 @@ const Home = ({ className }: HomeProps) => {
       >
         {selectedMultiProxy && <PureProxyHeaderView />}
       </Grid>
+      <Grid
+        item
+        alignItems="center"
+        xs={12}
+        md={6}
+      >
+        {<MultisigView />}
+      </Grid>
+      {multiProxyList.length > 0 && (
+        <Grid
+          item
+          xs={12}
+          md={6}
+        >
+          <TransactionsWrapperStyled>
+            <h3>Transactions</h3>
+            <TransactionList />
+          </TransactionsWrapperStyled>
+        </Grid>
+      )}
       {isSendModalOpen && (
         <Send
           onClose={onCloseSendModal}

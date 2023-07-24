@@ -4,16 +4,9 @@ import { renderMultisigHeading } from '../multisigHelpers'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
 import { Chip, Paper } from '@mui/material'
-import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
 
-interface MultisigViewProps {
-  multiProxy: MultiProxy
-  selectedIsWatched: boolean
-  selectedHasProxy: boolean
-  setIsSendModalOpen: (isOpen: boolean) => void
-}
-
-const MultisigView = ({ multiProxy }: MultisigViewProps) => {
+const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
 
   return (
