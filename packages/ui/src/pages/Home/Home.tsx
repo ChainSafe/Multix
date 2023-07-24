@@ -17,8 +17,8 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
-import PureProxyView from './PureProxyView'
-import Loader from './Loader'
+import PureProxyHeaderView from './PureProxyHeaderView'
+import LoaderWrapper from './LoaderWrapper'
 
 interface HomeProps {
   className?: string
@@ -131,27 +131,27 @@ const Home = ({ className }: HomeProps) => {
 
   if (isLoading) {
     return (
-      <Loader>
+      <LoaderWrapper>
         <CircularProgress />
         <div>Loading your multisigs...</div>
-      </Loader>
+      </LoaderWrapper>
     )
   }
 
   if (multisigQueryError) {
     return (
-      <Loader>
+      <LoaderWrapper>
         <ErrorMessageStyled>
           <ErrorOutlineIcon size={64} />
           <div>An error occurred.</div>
         </ErrorMessageStyled>
-      </Loader>
+      </LoaderWrapper>
     )
   }
 
   if (multiProxyList.length === 0) {
     return (
-      <Loader>
+      <LoaderWrapper>
         {showNewMultisigAlert ? (
           <SuccessCreation />
         ) : (
@@ -166,7 +166,7 @@ const Home = ({ className }: HomeProps) => {
             <Button onClick={() => navigate('/settings')}>Watch one</Button>
           </ConnectButtonWrapperStyled>
         )}
-      </Loader>
+      </LoaderWrapper>
     )
   }
 
@@ -181,10 +181,11 @@ const Home = ({ className }: HomeProps) => {
       )}
       <Grid
         item
+        alignItems="center"
         xs={12}
       >
         {selectedMultiProxy && (
-          <PureProxyView
+          <PureProxyHeaderView
             selectedHasProxy={selectedHasProxy}
             selectedIsWatched={selectedIsWatched}
             setIsSendModalOpen={setIsSendModalOpen}
@@ -194,18 +195,6 @@ const Home = ({ className }: HomeProps) => {
           />
         )}
       </Grid>
-      {multiProxyList.length > 0 && (
-        <Grid
-          item
-          xs={12}
-          md={6}
-        >
-          <TransactionsWrapperStyled>
-            <h3>Transactions</h3>
-            <TransactionList />
-          </TransactionsWrapperStyled>
-        </Grid>
-      )}
       {isSendModalOpen && (
         <Send
           onClose={onCloseSendModal}

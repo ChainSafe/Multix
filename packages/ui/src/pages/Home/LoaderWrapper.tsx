@@ -2,7 +2,7 @@ import { Box, Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import React, { PropsWithChildren } from 'react'
 
-const Loader = (props: PropsWithChildren) => {
+const LoaderWrapper = (props: PropsWithChildren) => {
   return (
     <Grid
       container
@@ -22,4 +22,4 @@ const LoaderBoxStyled = styled(Box)`
   padding: 1rem;
 `
 
-export default Loader
+export default LoaderWrapper

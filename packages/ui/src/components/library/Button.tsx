@@ -9,7 +9,8 @@ export const Button = styled('button')<ButtonProps>`
   display: inline-flex;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  line-height: 1.625rem;
+  height: 100%;
+  max-height: 2.25rem;
   font-weight: 500;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   border: none;

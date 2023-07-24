@@ -9,6 +9,7 @@ import { MenuOption } from '../../components/OptionsMenu'
 import { useMemo } from 'react'
 import { HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
+import { useGetBalance } from '../../hooks/useGetBalance'
 
 interface PureProxyViewProps {
   className?: string
@@ -20,7 +21,7 @@ interface PureProxyViewProps {
   setIsChangeMultiModalOpen: (isOpen: boolean) => void
 }
 
-const PureProxyView = ({
+const PureProxyHeaderView = ({
   multiProxy,
   selectedHasProxy,
   selectedIsWatched,
@@ -28,6 +29,7 @@ const PureProxyView = ({
   setIsEditModalOpen,
   setIsChangeMultiModalOpen
 }: PureProxyViewProps) => {
+  const { balanceFormatted: pureProxyBalance } = useGetBalance({ address: multiProxy?.proxy || '' })
   const options: MenuOption[] = useMemo(() => {
     const opts = [
       {
@@ -55,9 +57,14 @@ const PureProxyView = ({
         {selectedHasProxy && (
           <PureHeaderStyled>
             <AccountDisplayStyled
+              iconSize={'large'}
               address={multiProxy?.proxy || ''}
               badge={AccountBadge.PURE}
             />
+            <BalanceStyled>
+              <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+              <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
+            </BalanceStyled>
             <BoxStyled>
               <MultisigActionMenu
                 setIsSendModalOpen={setIsSendModalOpen}
@@ -83,7 +90,6 @@ const PureProxyView = ({
             <MultisigPaperStyled key={multisig.address}>
               <AccountDisplayWrapperStyled>
                 <AccountDisplay
-                  iconSize={'large'}
                   address={multisig.address || ''}
                   badge={AccountBadge.MULTI}
                   withBalance
@@ -110,9 +116,38 @@ const PureProxyView = ({
   )
 }
 
+const BalanceStyled = styled('div')`
+  padding: 0.5rem 1rem;
+  background: ${({ theme }) => theme.custom.gray[100]};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+  align-self: flex-end;
+`
+
+const BalanceHeaderStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.gray[700]};
+`
+
+const BalanceAmountStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.gray[800]};
+`
+
 const AccountDisplayStyled = styled(AccountDisplay)`
   min-width: 0;
-  margin-bottom: 0;
+
+  .multisig__name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: ${({ theme }) => theme.custom.gray[800]};
+  }
+
+  .multisig__address {
+    color: ${({ theme }) => theme.custom.text.secondary};
+  }
+
+  & > div:last-child {
+    margin: 1.44rem 1.37rem 0.75rem 0.87rem;
+  }
 `
 
 const MultisigPaperStyled = styled(Paper)`
@@ -161,8 +196,15 @@ const MultiProxyColumnStyled = styled('div')`
 
 const PureHeaderStyled = styled('div')`
   display: flex;
-  justify-content: space-between;
   margin: 0 0 1rem 0.5rem;
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  padding: 1rem 1.3rem 1rem 0.625rem;
+
+  & > div:last-child {
+    flex: 1;
+    justify-content: flex-end;
+  }
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     margin: 0 0 1rem 0;
@@ -178,7 +220,8 @@ const HeaderStyled = styled('header')`
 const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
+  align-self: flex-end;
   padding-left: 1rem;
 `
 
-export default PureProxyView
+export default PureProxyHeaderView

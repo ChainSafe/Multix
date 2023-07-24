@@ -1,9 +1,10 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { IconButton, ListItemIcon, ListItemText } from '@mui/material'
+import { ListItemIcon, ListItemText } from '@mui/material'
 import { MouseEvent, ReactNode, useCallback, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { HiEllipsisVertical as MoreVertIcon } from 'react-icons/hi2'
+import { ButtonWithIcon } from './library'
 
 export interface MenuOption {
   text: string
@@ -39,7 +40,7 @@ const OptionsMenu = ({ className, options }: Props) => {
 
   return (
     <div className={className}>
-      <IconButton
+      <ButtonWithIconStyled
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
@@ -48,7 +49,7 @@ const OptionsMenu = ({ className, options }: Props) => {
         onClick={handleMenuClick}
       >
         <MoreVertIcon />
-      </IconButton>
+      </ButtonWithIconStyled>
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -57,10 +58,12 @@ const OptionsMenu = ({ className, options }: Props) => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch'
+        slotProps={{
+          paper: {
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: '20ch'
+            }
           }
         }}
       >
@@ -78,6 +81,16 @@ const OptionsMenu = ({ className, options }: Props) => {
     </div>
   )
 }
+
+const ButtonWithIconStyled = styled(ButtonWithIcon)`
+  padding: 0.5rem;
+  width: 2.25rem;
+  border-radius: 0.5rem;
+
+  svg {
+    margin: 0;
+  }
+`
 
 export default styled(OptionsMenu)`
   margin-left: 0.5rem;

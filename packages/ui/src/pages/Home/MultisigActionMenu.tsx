@@ -1,7 +1,5 @@
-import { ButtonWithIcon } from '../../components/library'
+import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
-import { HiOutlinePaperAirplane } from 'react-icons/hi2'
-import { styled } from '@mui/material/styles'
 
 interface MultisigActionMenuProps {
   setIsSendModalOpen: (isOpen: boolean) => void
@@ -17,22 +15,17 @@ const MultisigActionMenu = ({
   return (
     <>
       {withSendButton && (
-        <ButtonWithIcon
+        <Button
+          variant="primary"
           aria-label="send"
           onClick={() => setIsSendModalOpen(true)}
         >
-          <HiOutlinePaperAirplaneStyled />
-          Send
-        </ButtonWithIcon>
+          New transaction
+        </Button>
       )}
       <OptionsMenu options={options} />
     </>
   )
 }
-
-const HiOutlinePaperAirplaneStyled = styled(HiOutlinePaperAirplane)`
-  transform: rotate(315deg);
-  margin-top: -4px;
-`
 
 export default MultisigActionMenu

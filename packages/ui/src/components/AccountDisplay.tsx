@@ -102,10 +102,12 @@ const AccountDisplay = ({
               />
             )}
             {!!sub && <span>{sub}</span>}
-            <NameStyled>{localName || mainDisplay}</NameStyled>
+            <NameStyled className={'multisig__name'}>{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
+        <AddressStyled className={'multisig__address'}>
+          {getDisplayAddress(encodedAddress)}
+        </AddressStyled>
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>

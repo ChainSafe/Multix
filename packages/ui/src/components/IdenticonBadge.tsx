@@ -40,6 +40,7 @@ export const IdenticonBadge = ({
     <BadgeStyled
       className={`${className} ${appliedClass}`}
       badgeType={badge}
+      size={size}
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
@@ -50,7 +51,11 @@ export const IdenticonBadge = ({
   )
 }
 
-const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean }>`
+const BadgeStyled = styled(Badge)<{
+  size: IconSizeVariant
+  badgeType: AccountBadge
+  sideBadge: boolean
+}>`
   padding-left: 1rem;
 
   ${({ sideBadge }) =>
@@ -90,7 +95,14 @@ const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean 
         position: relative;
         transform: unset;
       `}
-  }
+
+    ${({ size }) =>
+      size === 'large' &&
+      `
+          padding: 0.16069rem 0.64288rem;
+          height: 1.7rem;
+          transform: scale(1) translate(20%,30%);
+      `}
 `
 
 export default IdenticonBadge
