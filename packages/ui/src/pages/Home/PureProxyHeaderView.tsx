@@ -12,43 +12,59 @@ const PureProxyHeaderView = () => {
   })
 
   return (
-    <MultisigWrapperStyled>
-      <MultiProxyColumnStyled>
-        {selectedHasProxy && (
-          <PureHeaderStyled>
-            <AccountDisplayStyled
-              iconSize={'large'}
-              address={selectedMultiProxy?.proxy || ''}
-              badge={AccountBadge.PURE}
-            />
-            <BalanceStyled>
-              <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-              <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
-            </BalanceStyled>
-            <BoxStyled>
-              <MultisigActionMenu />
-            </BoxStyled>
-          </PureHeaderStyled>
-        )}
-      </MultiProxyColumnStyled>
-    </MultisigWrapperStyled>
+    <PureProxyWrapper>
+      {selectedHasProxy && (
+        <PureHeaderStyled>
+          <AccountDisplayStyled
+            iconSize={'large'}
+            address={selectedMultiProxy?.proxy || ''}
+            badge={AccountBadge.PURE}
+          />
+          <BalanceStyled>
+            <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+            <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
+          </BalanceStyled>
+          <BoxStyled>
+            <MultisigActionMenu />
+          </BoxStyled>
+        </PureHeaderStyled>
+      )}
+    </PureProxyWrapper>
   )
 }
 
-const BalanceStyled = styled('div')`
-  padding: 0.5rem 1rem;
-  background: ${({ theme }) => theme.custom.gray[100]};
+const PureProxyWrapper = styled('div')`
+  flex: 1;
+  min-width: 0;
+`
+
+const PureHeaderStyled = styled('div')`
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 1rem 0.5rem;
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
-  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
-  align-self: flex-end;
-`
+  padding: 1rem 1.3rem 1rem 0.625rem;
 
-const BalanceHeaderStyled = styled('div')`
-  color: ${({ theme }) => theme.custom.gray[700]};
-`
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    flex-wrap: nowrap;
+  }
 
-const BalanceAmountStyled = styled('div')`
-  color: ${({ theme }) => theme.custom.gray[800]};
+  & > div:last-child {
+    flex: 1;
+    justify-content: center;
+    align-self: flex-end;
+    margin-top: 16px;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      justify-content: flex-end;
+      margin-top: 0;
+    }
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    margin: 0 0 1rem 0;
+  }
 `
 
 const AccountDisplayStyled = styled(AccountDisplay)`
@@ -69,36 +85,20 @@ const AccountDisplayStyled = styled(AccountDisplay)`
   }
 `
 
-const MultisigWrapperStyled = styled('div')`
-  display: flex;
-  align-items: center;
-  margin: 1rem 0;
-`
-
-const MultiProxyColumnStyled = styled('div')`
-  flex: 1;
-  min-width: 0;
-
-  & > h3 {
-    margin-top: 0;
-  }
-`
-
-const PureHeaderStyled = styled('div')`
-  display: flex;
-  margin: 0 0 1rem 0.5rem;
-  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+const BalanceStyled = styled('div')`
+  padding: 0.5rem 1rem;
+  background: ${({ theme }) => theme.custom.gray[100]};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
-  padding: 1rem 1.3rem 1rem 0.625rem;
+  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+  align-self: flex-end;
+`
 
-  & > div:last-child {
-    flex: 1;
-    justify-content: flex-end;
-  }
+const BalanceHeaderStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.gray[700]};
+`
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
-    margin: 0 0 1rem 0;
-  }
+const BalanceAmountStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.gray[800]};
 `
 
 const BoxStyled = styled('div')`

@@ -181,7 +181,6 @@ const Home = ({ className }: HomeProps) => {
     <Grid
       className={className}
       container
-      spacing={2}
     >
       {showNewMultisigAlert && multiProxyList.length > 0 && showNewMultisigAlert && (
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />

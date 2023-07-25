@@ -86,7 +86,7 @@ const SignatoriesWrapperStyled = styled('div')`
 const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
-  align-self: flex-end;
+  align-self: center;
   padding-left: 1rem;
 `
 

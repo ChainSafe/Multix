@@ -65,14 +65,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
   )
 }
 
-const MuiAppBarStyled = styled(MuiAppBar)(
-  ({ theme }) => `
-  margin-bottom: 1rem;
+const MuiAppBarStyled = styled(MuiAppBar)`
+  margin-bottom: 2rem;
   height: 4.8125rem;
-  background: ${theme.palette.primary.main};
+  background: ${({ theme }) => theme.palette.primary.main};
   justify-content: center;
 `
-)
 
 const RightButtonsWrapper = styled(Box)`
   flex: 1;
