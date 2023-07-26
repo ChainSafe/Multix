@@ -61,11 +61,13 @@ const PureHeaderStyled = styled('div')`
   & > div:nth-child(2) {
     display: flex;
     justify-content: center;
+    align-self: center;
     flex: 1;
     margin-top: 1rem;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       justify-content: initial;
+      align-self: flex-end;
       flex: 0;
       margin: 0;
     }
@@ -120,6 +122,7 @@ const BalanceHeaderStyled = styled('div')`
 
 const BalanceAmountStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[800]};
+  white-space: nowrap;
 `
 
 const BoxStyled = styled('div')`
