@@ -61,6 +61,9 @@ const AccountDisplayWrapperStyled = styled('div')`
 const MultisigPaperStyled = styled(Paper)`
   padding: 0.5rem 0;
   margin-bottom: 0.5rem;
+  box-shadow: none;
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
 `
 
 const ChipStyled = styled(Chip)`
