@@ -92,7 +92,7 @@ const RouterLinkStyled = styled(RouterLink)`
 const BoxStyled = styled(Box)`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     flex-grow: 1;
     display: flex;
     align-items: center;
@@ -115,7 +115,7 @@ const LogoStyled = styled('img')`
 const IconButtonStyled = styled(IconButton)`
   display: block;
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     display: none;
   }
 `

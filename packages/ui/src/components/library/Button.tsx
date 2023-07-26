@@ -19,6 +19,7 @@ export const Button = styled('button')<ButtonProps>`
   color: ${({ theme }) => theme.custom.text.primary};
   box-shadow: ${({ theme }) => theme.custom.boxShadow};
   transition: background 0.2s ease-in-out;
+  white-space: nowrap;
 
   &:disabled {
     cursor: not-allowed;

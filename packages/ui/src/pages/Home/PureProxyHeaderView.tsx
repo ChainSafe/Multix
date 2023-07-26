@@ -50,6 +50,27 @@ const PureHeaderStyled = styled('div')`
     flex-wrap: nowrap;
   }
 
+  & > div:first-child {
+    margin: auto;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      margin: initial;
+    }
+  }
+
+  & > div:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    margin-top: 1rem;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      justify-content: initial;
+      flex: 0;
+      margin: 0;
+    }
+  }
+
   & > div:last-child {
     flex: 1;
     justify-content: center;
