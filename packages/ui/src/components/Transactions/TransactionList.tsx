@@ -198,7 +198,7 @@ const TransactionList = ({ className }: Props) => {
       {!!pendingTxData.length &&
         Object.entries(aggregatedData).map(([date, aggregatedData]) => {
           return (
-            <Box key={date}>
+            <TransactionWrapper key={date}>
               <DateContainerStyled>{date}</DateContainerStyled>
               {aggregatedData.map((agg, index) => {
                 const { callData, info, from } = agg
@@ -234,12 +234,18 @@ const TransactionList = ({ className }: Props) => {
                   />
                 )
               })}
-            </Box>
+            </TransactionWrapper>
           )
         })}
     </Box>
   )
 }
+
+const TransactionWrapper = styled(Box)`
+  .MuiPaper-root {
+    padding: 0.5rem;
+  }
+`
 
 const DateContainerStyled = styled(Box)`
   margin-bottom: 0.3rem;
