@@ -4,31 +4,44 @@ import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
 import { useGetBalance } from '../../hooks/useGetBalance'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { ButtonWithIcon } from '../../components/library'
+import { HiOutlineArrowLongRight } from 'react-icons/hi2'
+import { useNavigate } from 'react-router-dom'
 
 const PureProxyHeaderView = () => {
+  const navigate = useNavigate()
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
   const { balanceFormatted: pureProxyBalance } = useGetBalance({
     address: selectedMultiProxy?.proxy || ''
   })
 
+  if (!selectedHasProxy) return null
+
   return (
     <PureProxyWrapper>
-      {selectedHasProxy && (
-        <PureHeaderStyled>
-          <AccountDisplayStyled
-            iconSize={'large'}
-            address={selectedMultiProxy?.proxy || ''}
-            badge={AccountBadge.PURE}
-          />
-          <BalanceStyled>
-            <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-            <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
-          </BalanceStyled>
-          <BoxStyled>
-            <MultisigActionMenu />
-          </BoxStyled>
-        </PureHeaderStyled>
-      )}
+      <OverviewWrapper>
+        <ButtonWithIcon
+          onClick={() => navigate('/help')}
+          variant="link"
+        >
+          See overview
+          <HiOutlineArrowLongRight size={24} />
+        </ButtonWithIcon>
+      </OverviewWrapper>
+      <PureHeaderStyled>
+        <AccountDisplayStyled
+          iconSize={'large'}
+          address={selectedMultiProxy?.proxy || ''}
+          badge={AccountBadge.PURE}
+        />
+        <BalanceStyled>
+          <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+          <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
+        </BalanceStyled>
+        <BoxStyled>
+          <MultisigActionMenu />
+        </BoxStyled>
+      </PureHeaderStyled>
     </PureProxyWrapper>
   )
 }
@@ -36,14 +49,25 @@ const PureProxyHeaderView = () => {
 const PureProxyWrapper = styled('div')`
   flex: 1;
   min-width: 0;
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+`
+
+const OverviewWrapper = styled('div')`
+  height: 3rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: ${({ theme }) => theme.custom.gray[300]};
+  border-top-right-radius: ${({ theme }) => theme.custom.borderRadius};
+  border-top-left-radius: ${({ theme }) => theme.custom.borderRadius};
 `
 
 const PureHeaderStyled = styled('div')`
   display: flex;
   flex-wrap: wrap;
   margin: 0 0 1rem 0.5rem;
-  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
-  border-radius: ${({ theme }) => theme.custom.borderRadius};
+
   padding: 1rem 1.3rem 1rem 0.625rem;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {

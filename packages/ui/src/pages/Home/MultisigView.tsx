@@ -83,6 +83,7 @@ const SignatoriesWrapperStyled = styled('div')`
   & > h2 {
     margin-bottom: 0;
   }
+
   margin-left: 2rem;
 `
 
