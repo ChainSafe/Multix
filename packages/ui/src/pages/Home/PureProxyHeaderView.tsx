@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 const PureProxyHeaderView = () => {
   const navigate = useNavigate()
-  const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
+  const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
   const { balanceFormatted: pureProxyBalance } = useGetBalance({
     address: selectedMultiProxy?.proxy || ''
   })
@@ -39,7 +39,7 @@ const PureProxyHeaderView = () => {
           <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
         </BalanceStyled>
         <BoxStyled>
-          <MultisigActionMenu />
+          <MultisigActionMenu withSendButton={!selectedIsWatched} />
         </BoxStyled>
       </PureHeaderStyled>
     </PureProxyWrapper>
@@ -142,6 +142,7 @@ const BalanceStyled = styled('div')`
 
 const BalanceHeaderStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[700]};
+  margin-right: 0.25rem;
 `
 
 const BalanceAmountStyled = styled('div')`

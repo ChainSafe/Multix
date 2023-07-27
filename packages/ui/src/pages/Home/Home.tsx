@@ -198,7 +198,7 @@ const Home = ({ className }: HomeProps) => {
         xs={12}
         md={6}
       >
-        {<MultisigView />}
+        <MultisigView />
       </Grid>
       {multiProxyList.length > 0 && (
         <Grid
