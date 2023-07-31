@@ -10,7 +10,7 @@ interface SignerSelectionProps {
   label?: string
 }
 
-const SignerSelection = ({ className, possibleSigners, onChange, label }: SignerSelectionProps) => {
+const SignerSelection = ({ possibleSigners, onChange, label }: SignerSelectionProps) => {
   const { selectAccount, selectedAccount, getAccountByAddress } = useAccounts()
   const accountBase = useAccountBaseFromAccountList()
   const selectedAccountBaseInfo = useMemo(

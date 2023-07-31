@@ -1,27 +1,13 @@
-import { Box, InputAdornment } from '@mui/material'
-import * as React from 'react'
-import {
-  ChangeEvent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react'
+import { Box, Grid } from '@mui/material'
+import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import { createFilterOptions } from '@mui/material/Autocomplete'
-import { getDisplayAddress, isValidAddress } from '../../utils'
+import { isValidAddress } from '../../utils'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
-import MultixIdenticon from '../MultixIdenticon'
-import { Autocomplete, Button, InputField, TextFieldStyled } from '../library'
-import OptionMenuItem from './OptionMenuItem'
-import {
-  AutocompleteRenderInputParams,
-  AutocompleteRenderOptionState
-} from '@mui/material/Autocomplete/Autocomplete'
+import { Button, InputField } from '../library'
+import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
+import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
+import Warning from '../Warning'
 
 interface Props {
   className?: string
@@ -29,94 +15,75 @@ interface Props {
   nameDisabled?: boolean
   addAccount?: (address: string) => void
   value?: string
-  inputLabel?: string
+  label?: string
   currentSelection?: string[]
   withName?: boolean
   withAddButton?: boolean
   withPreselection?: boolean
 }
 
-const filterOptions = createFilterOptions({
-  ignoreCase: true,
-  stringify: (option: InjectedAccountWithMeta) => option.address + option.meta.name
-})
-
-const getOptionLabel = (option: string | InjectedAccountWithMeta | null) => {
+const getOptionLabel = (option: string | AccountBaseInfo | null) => {
   if (!option) return ''
 
   return typeof option === 'string' ? option : option.address
 }
+
 const AccountSelection = ({
   className,
   addAccount,
   addressDisabled = false,
   nameDisabled = false,
   value,
-  inputLabel = 'Address',
+  label = 'Address',
   currentSelection = [],
   withName = false,
   withAddButton = false,
   withPreselection = true
 }: Props) => {
-  const { ownAccountList = [], getAccountByAddress } = useAccounts()
-  const [selected, setSelected] = useState(value)
+  const { getAccountByAddress } = useAccounts()
   const [errorMessage, setErrorMessage] = useState('')
-  const ref = useRef<HTMLInputElement>(null)
   const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState('')
+  const accountBase = useAccountBaseFromAccountList()
+  const [selected, setSelected] = useState(accountBase.find(({ address }) => address === value))
   const dedupedSignatories = useMemo(() => {
-    return ownAccountList.filter((account) => !currentSelection.includes(account.address))
-  }, [ownAccountList, currentSelection])
+    return accountBase.filter((account) => !currentSelection.includes(account.address))
+  }, [accountBase, currentSelection])
   const extensionName = useMemo(() => {
     if (!selected) return ''
-    return getAccountByAddress(selected)?.meta.name
+    return getAccountByAddress(selected.address)?.meta.name
   }, [getAccountByAddress, selected])
 
   useEffect(() => {
-    const previouslyNameAccount = selected && accountNames[selected]
+    const previouslyNameAccount = selected && accountNames[selected.address]
     if (previouslyNameAccount) {
       setName(previouslyNameAccount)
     }
   }, [accountNames, selected])
 
-  const onChangeAutocomplete = useCallback(
-    (
-      _: SyntheticEvent<Element, Event>,
-      val: NonNullable<
-        | InjectedAccountWithMeta
-        | string
-        | undefined
-        | (string | InjectedAccountWithMeta | undefined)[]
-      >
-    ) => {
-      setErrorMessage('')
-      setName('')
+  const onChange = useCallback((newAccount?: AccountBaseInfo) => {
+    newAccount && setSelected(newAccount)
+  }, [])
 
-      const value = getOptionLabel(val as string)
-      setSelected(value)
-    },
-    []
-  )
-
-  const onAddSignatory = useCallback(() => {
+  const onAdd = useCallback(() => {
     if (!selected) {
       return
     }
 
-    if (!isValidAddress(selected)) {
+    if (!isValidAddress(selected.address)) {
       setErrorMessage('Invalid address')
       return
     }
 
-    if (currentSelection.includes(selected)) {
+    if (currentSelection.includes(selected.address)) {
       setErrorMessage('Signatory already added')
       return
     }
 
     if (addAccount) {
-      name && addName(name, selected)
-      addAccount(selected)
-      setSelected('')
+      name && addName(name, selected.address)
+      addAccount(selected.address)
+      setSelected(undefined)
       setName('')
     }
   }, [addName, addAccount, currentSelection, name, selected])
@@ -124,10 +91,10 @@ const AccountSelection = ({
   const handleSpecialKeys = useCallback(
     (e: any) => {
       if (['Enter', 'Escape'].includes(e.key)) {
-        onAddSignatory()
+        onAdd()
       }
     },
-    [onAddSignatory]
+    [onAdd]
   )
 
   const onNameChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -135,77 +102,74 @@ const AccountSelection = ({
     setName(value)
   }, [])
 
-  const renderOption = (
-    props: React.HTMLAttributes<HTMLLIElement>,
-    option: InjectedAccountWithMeta,
-    _: AutocompleteRenderOptionState
-  ) => (
-    <OptionMenuItem
-      keyValue={option.address}
-      {...props}
-    >
-      <MultixIdenticonStyled value={option.address} />
-      {getDisplayAddress(option.address)} - {option.meta.name}
-    </OptionMenuItem>
-  )
+  const onInputChange = useCallback(
+    (
+      _: SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
+      >
+    ) => {
+      setErrorMessage('')
+      setName('')
 
-  const renderInput = (params: AutocompleteRenderInputParams) => (
-    <TextFieldStyled
-      {...params}
-      inputRef={ref}
-      error={!!errorMessage}
-      helperText={errorMessage}
-      label={inputLabel}
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: selected ? (
-          <InputAdornment position="start">
-            <MultixIdenticonAutocompleteStyled
-              size={24}
-              value={selected}
-            />
-          </InputAdornment>
-        ) : null
-      }}
-      onKeyDown={handleSpecialKeys}
-    />
+      const value = getOptionLabel(val as string)
+      isValidAddress(value)
+      setSelected(value && isValidAddress(value) ? { address: value } : undefined)
+    },
+    []
   )
 
   return (
-    <BoxStyled className={className}>
-      <Autocomplete
-        freeSolo
-        disabled={addressDisabled}
-        filterOptions={filterOptions}
-        options={withPreselection ? dedupedSignatories : []}
-        onKeyDown={handleSpecialKeys}
-        renderInput={renderInput}
-        renderOption={renderOption}
-        getOptionLabel={getOptionLabel}
-        onInputChange={onChangeAutocomplete}
-        value={selected}
-      />
-      {withName && (
-        <InputField
-          label="Name"
-          onChange={onNameChange}
-          disabled={!!extensionName || nameDisabled}
-          value={extensionName || name || ''}
-          onKeyDown={handleSpecialKeys}
-        />
-      )}
-      {withAddButton && (
-        <ButtonStyled
-          onClick={onAddSignatory}
-          variant="secondary"
-          disabled={!selected || !!errorMessage}
+    <Grid container>
+      {!!errorMessage && (
+        <Grid
+          item
+          xs={12}
         >
-          Add
-        </ButtonStyled>
+          <WarningStyled text={errorMessage} />
+        </Grid>
       )}
-    </BoxStyled>
+      <Grid
+        item
+        xs={12}
+      >
+        <BoxStyled className={className}>
+          <GenericAccountSelection
+            allowAnyAddressInput={true}
+            disabled={addressDisabled}
+            accountList={withPreselection ? dedupedSignatories : []}
+            onChange={onChange}
+            onInputChange={onInputChange}
+            value={selected}
+            label={label}
+          />
+          {withName && (
+            <InputField
+              label="Name"
+              onChange={onNameChange}
+              disabled={!!extensionName || nameDisabled}
+              value={extensionName || name || ''}
+              onKeyDown={handleSpecialKeys}
+            />
+          )}
+          {withAddButton && (
+            <ButtonStyled
+              onClick={onAdd}
+              variant="secondary"
+              disabled={!selected || !!errorMessage}
+            >
+              Add
+            </ButtonStyled>
+          )}
+        </BoxStyled>
+      </Grid>
+    </Grid>
   )
 }
+
+const WarningStyled = styled(Warning)`
+  margin: 1rem 0 1rem 0;
+`
 
 const BoxStyled = styled(Box)`
   align-items: center;
@@ -214,13 +178,6 @@ const BoxStyled = styled(Box)`
 const ButtonStyled = styled(Button)`
   margin-left: 1rem;
   align-self: end;
-`
-
-const MultixIdenticonAutocompleteStyled = styled(MultixIdenticon)``
-
-const MultixIdenticonStyled = styled(MultixIdenticon)`
-  margin-right: 0.5rem;
-  flex-shrink: 0;
 `
 
 export default styled(AccountSelection)`

@@ -23,7 +23,6 @@ const BoxStyled = styled(Box)`
     cursor: pointer;
     padding: 0.75rem;
     border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
-    font-weight: 500;
     font-size: 1rem;
     color: ${({ theme }) => theme.custom.gray[900]};
     transition: background-color 0.2s ease-in-out;
@@ -43,7 +42,6 @@ const BoxStyled = styled(Box)`
 
   .MuiBox-root {
     div {
-      font-weight: 500;
       font-size: 1rem;
       color: ${({ theme }) => theme.custom.gray[900]};
     }

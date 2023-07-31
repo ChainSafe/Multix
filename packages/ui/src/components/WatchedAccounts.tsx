@@ -59,6 +59,7 @@ const TitleStyled = styled(Box)`
 
 const AccountSelectionWrapperStyled = styled(Box)`
   display: flex;
+  margin-bottom: 2rem;
 
   .accountDropdown {
     flex: 1;
