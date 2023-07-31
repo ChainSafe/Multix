@@ -42,7 +42,6 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
   const [isReady, setIsReady] = useState(false)
 
-  console.log('chainInfo', chainInfo)
   useEffect(() => {
     if (!provider) return
 
@@ -73,6 +72,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
 
         setChainInfo({
+          // some parachains such as interlay have a comma in the format, e.g: "2,042"
           ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,
           tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
           tokenSymbol: raw?.tokenSymbol[0] || ''
