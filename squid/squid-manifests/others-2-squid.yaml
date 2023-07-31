@@ -10,10 +10,10 @@ deploy:
   addons:
     postgres:
   processor:
-    - name: pendulum-processor
-      cmd: ['sqd', 'start-pendulum']
-    - name: amplitude-processor
-      cmd: ['sqd', 'start-amplitude']
+    # - name: pendulum-processor
+    #   cmd: ['sqd', 'start-pendulum']
+    # - name: amplitude-processor
+    #   cmd: ['sqd', 'start-amplitude']
     # - name: westend-processor
     #   cmd: ['sqd', 'start-westend']
     - name: acala-processor

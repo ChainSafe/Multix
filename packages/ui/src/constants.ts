@@ -7,8 +7,8 @@ import { phalaSVG } from './logos/phalaSVG'
 import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
 import { hydradxSVG } from './logos/hydradxSVG'
-import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
-import { chainsPendulumSVG } from './logos/pendulumSVG'
+// import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
+// import { chainsPendulumSVG } from './logos/pendulumSVG'
 // import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
@@ -72,14 +72,14 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
     logo: chainsAcalaSVG
   } as NetworkInfo,
-  amplitude: {
-    chainId: 'amplitude',
-    explorerNetworkName: 'amplitude',
-    rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
-    logo: chainsAmplitudeSVG
-  } as NetworkInfo,
+  // amplitude: {
+  //   chainId: 'amplitude',
+  //   explorerNetworkName: 'amplitude',
+  //   rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   logo: chainsAmplitudeSVG
+  // } as NetworkInfo,
   astar: {
     chainId: 'astar',
     explorerNetworkName: 'astar',
@@ -120,14 +120,14 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
-  pendulum: {
-    chainId: 'pendulum',
-    explorerNetworkName: 'pendulum',
-    rpcUrl: 'wss://rpc-pendulum.prd.pendulumchain.tech',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
-    logo: chainsPendulumSVG
-  } as NetworkInfo,
+  // pendulum: {
+  //   chainId: 'pendulum',
+  //   explorerNetworkName: 'pendulum',
+  //   rpcUrl: 'wss://rpc-pendulum.prd.pendulumchain.tech',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   logo: chainsPendulumSVG
+  // } as NetworkInfo,
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
