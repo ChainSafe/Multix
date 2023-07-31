@@ -64,7 +64,7 @@ export const useMultisigsByAccountSubscription = ({
         !!data && onUpdate(data)
       },
       onError(error) {
-        console.error('KeyMultisigsByAccount subscription error', error)
+        console.error('MultisigsByAccount subscription error', error)
       },
       retry: (failureCount: number, error: Error) => {
         console.error(
@@ -79,9 +79,9 @@ export const useMultisigsByAccountSubscription = ({
     }
   )
 
-  if (isError) {
-    console.error('Subscription MultisigsByAccount error', error)
-  }
+  // if (isError) {
+  //   console.error('Subscription MultisigsByAccount error', error)
+  // }
 
   // if (isSubsriptionLoading) {
   //     console.log('subscription loading', multisigs);
