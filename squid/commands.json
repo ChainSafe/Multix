@@ -100,6 +100,66 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.hydradx"
       ]
+    },
+    "start-amplitude": {
+      "description": "starts the indexer with amplitude",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.amplitude"
+      ]
+    },
+    "start-pendulum": {
+      "description": "starts the indexer with pendulum",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.pendulum"
+      ]
+    },
+    "start-westend": {
+      "description": "starts the indexer with westend",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.westend"
+      ]
+    },
+    "start-acala": {
+      "description": "starts the indexer with acala",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.acala"
+      ]
+    },
+    "start-bifrost-polkadot": {
+      "description": "starts the indexer with bifrost-polkadot",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.bifrost-polkadot"
+      ]
+    },
+    "start-interlay": {
+      "description": "starts the indexer with interlay",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.interlay"
+      ]
     }
   }
 }

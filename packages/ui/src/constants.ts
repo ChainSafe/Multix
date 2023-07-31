@@ -7,6 +7,12 @@ import { phalaSVG } from './logos/phalaSVG'
 import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
 import { hydradxSVG } from './logos/hydradxSVG'
+import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
+import { chainsPendulumSVG } from './logos/pendulumSVG'
+import { nodesWestendColourSVG } from './logos/westend_colourSVG'
+import { chainsAcalaSVG } from './logos/acalaSVG'
+import { nodesBifrostSVG } from './logos/bifrostSVG'
+import { nodesInterlaySVG } from './logos/interlaySVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 50
@@ -90,6 +96,54 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
+  amplitude: {
+    chainId: 'amplitude',
+    explorerNetworkName: 'amplitude',
+    rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+    logo: chainsAmplitudeSVG
+  } as NetworkInfo,
+  pendulum: {
+    chainId: 'pendulum',
+    explorerNetworkName: 'pendulum',
+    rpcUrl: 'wss://rpc-pendulum.pendulumchain.tech',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+    logo: chainsPendulumSVG
+  } as NetworkInfo,
+  acala: {
+    chainId: 'acala',
+    explorerNetworkName: 'acala',
+    rpcUrl: 'wss://acala-rpc-3.aca-api.network/ws',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+    logo: chainsAcalaSVG
+  } as NetworkInfo,
+  'bifrost-dot': {
+    chainId: 'bifrost-polkadot',
+    explorerNetworkName: 'bifrost',
+    rpcUrl: 'wss://bifrost-polkadot.api.onfinality.io/public-ws',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+    logo: nodesBifrostSVG
+  } as NetworkInfo,
+  interlay: {
+    chainId: 'interlay',
+    explorerNetworkName: 'interlay',
+    rpcUrl: 'wss://interlay.api.onfinality.io/public-ws',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+    logo: nodesInterlaySVG
+  } as NetworkInfo,
+  // westend: {
+  //   chainId: 'westend',
+  //   explorerNetworkName: 'westend',
+  //   rpcUrl: 'wss://westend-rpc.polkadot.io',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-2/v/v1/graphql',
+  //   logo: nodesWestendColourSVG
+  // } as NetworkInfo,
   rococo: {
     chainId: 'rococo',
     explorerNetworkName: 'rococo',

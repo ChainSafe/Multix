@@ -1,0 +1,38 @@
+manifestVersion: subsquid.io/v0.1
+name: multix-2
+version: 1
+description: |-
+  Squid for Multix
+
+build:
+
+deploy:
+  addons:
+    postgres:
+  processor:
+    - name: pendulum-processor
+      cmd: ['sqd', 'start-pendulum']
+    - name: amplitude-processor
+      cmd: ['sqd', 'start-amplitude']
+    # - name: westend-processor
+    #   cmd: ['sqd', 'start-westend']
+    - name: acala-processor
+      cmd: ['sqd', 'start-acala']
+    - name: bifrost-polkadot-processor
+      cmd: ['sqd', 'start-bifrost-polkadot']
+    - name: interlay-processor
+      cmd: ['sqd', 'start-interlay']
+  api:
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
+scale:
+  dedicated: true
+  addons:
+    postgres:
+      storage: 100Gi
+      profile: medium
+  processor:
+    profile: medium
+  api:
+    profile: medium
+    # load-balance three replicas
+    # replicas: 3
