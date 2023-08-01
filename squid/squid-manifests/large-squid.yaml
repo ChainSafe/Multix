@@ -10,6 +10,10 @@ deploy:
   addons:
     postgres:
   processor:
+    - name: assethub-kusama-processor
+      cmd: ['sqd', 'start-assethub-kusama']
+    - name: assethub-polkadot-processor
+      cmd: ['sqd', 'start-assethub-polkadot']
     - name: rococo-processor
       cmd: ['sqd', 'start-rococo']
     - name: kusama-processor
@@ -28,12 +32,6 @@ deploy:
       cmd: ['sqd', 'start-bifrost-polkadot']
     - name: interlay-processor
       cmd: ['sqd', 'start-interlay']
-    - name: phala-processor
-      cmd: ['sqd', 'start-phala']
-    - name: khala-processor
-      cmd: ['sqd', 'start-khala']
-    - name: rhala-processor
-      cmd: ['sqd', 'start-rhala']
     - name: astar-processor
       cmd: ['sqd', 'start-astar']
     - name: hydradx-processor
