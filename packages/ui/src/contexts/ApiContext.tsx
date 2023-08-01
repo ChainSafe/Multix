@@ -72,7 +72,8 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
 
         setChainInfo({
-          ss58Format: Number(raw?.ss58Format) || 0,
+          // some parachains such as interlay have a comma in the format, e.g: "2,042"
+          ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,
           tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
           tokenSymbol: raw?.tokenSymbol[0] || ''
         })
