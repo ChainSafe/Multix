@@ -55,14 +55,26 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => 
     {
       onData: () => {
         onUpdate()
+      },
+      onError(error) {
+        console.error('MultisigCallsByMultisigId subscription error', error)
+      },
+      retry: (failureCount: number, error: Error) => {
+        console.error(
+          'Subscription MultisigCallsByMultisigId failed',
+          failureCount,
+          'times with error',
+          error
+        )
+        // will retry until it returns falls
+        return true
       }
-      // options
     }
   )
 
-  if (isError) {
-    console.error('subscription error', error)
-  }
+  // if (isError) {
+  //   console.error('Subscription MultisigCallsByMultisigId error', error)
+  // }
 
   // if (isSubsriptionLoading) {
   //     console.log('subscription loading', multisigs);
