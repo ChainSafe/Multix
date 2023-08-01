@@ -1,0 +1,19 @@
+subscription PureByIds($pureIds: [String!]) {
+  accounts(where: { AND: [{ id_in: $pureIds }, { isPureProxy_eq: true }] }) {
+    address
+    delegatorFor {
+      id
+      type
+      delegatee {
+        address
+        isMultisig
+        threshold
+        signatories {
+          signatory {
+            address
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,19 +1,16 @@
 import { useSubscription } from 'react-query-subscription'
 import { Client, createClient, SubscribePayload } from 'graphql-ws'
 import { Observable } from 'rxjs'
-import {
-  MultisigCallsByMultisigIdDocument,
-  MultisigCallsByMultisigIdSubscription
-} from '../../types-and-hooks'
+import { PureByIdsDocument, PureByIdsSubscription } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
 interface Args {
-  onUpdate: () => void
-  multisigIds: string[]
+  onUpdate: (data: PureByIdsSubscription | null) => void
+  pureIds: string[]
 }
 
-export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => {
+export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
   const client = useMemo(
     () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
@@ -29,39 +26,43 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => 
   ) {
     return new Observable<TData | null>((observer) =>
       client.subscribe<TData>(payload, {
-        next: (data) => observer.next(data.data),
-        error: (err) => observer.error(err),
+        next: (data) => {
+          return observer.next(data.data)
+        },
+        error: (err) => {
+          return observer.error(err)
+        },
         complete: () => {
-          observer.complete()
+          return observer.complete()
         }
       })
     )
   }
 
-  const { isError, error, refetch } = useSubscription(
-    [`KeyMultisigCallsByMultisigId-${multisigIds}-${selectedNetwork}`],
+  const { isError, error, data, isLoading, refetch } = useSubscription(
+    [`KeyWatchedPureById-${pureIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
 
       return fromWsClientSubscription<{
-        multisigCalls: MultisigCallsByMultisigIdSubscription
+        accounts: PureByIdsSubscription['accounts']
       }>(client, {
-        query: MultisigCallsByMultisigIdDocument,
+        query: PureByIdsDocument,
         variables: {
-          multisigs: multisigIds
+          pureIds
         }
       })
     },
     {
-      onData: () => {
-        onUpdate()
+      onData(data) {
+        !!data && onUpdate(data)
       }
       // onError(error) {
-      //   console.error('MultisigCallsByMultisigId subscription error', error)
+      //   console.error('WatchedPureById subscription error', error)
       // },
       // retry: (failureCount: number, error: Error) => {
       //   console.error(
-      //     'Subscription MultisigCallsByMultisigId failed',
+      //     'Subscription WatchedPureById failed',
       //     failureCount,
       //     'times with error',
       //     error
@@ -73,7 +74,7 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => 
   )
 
   if (isError) {
-    console.error('Subscription MultisigCallsByMultisigId error, refetching', error)
+    console.error('Subscription WatchedPureById error, refetching', error)
     refetch()
   }
 
@@ -87,4 +88,6 @@ export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => 
   // }
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
+
+  return { data, isLoading, error }
 }

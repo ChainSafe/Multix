@@ -461,7 +461,7 @@ export enum ProxyType {
   Society = 'Society',
   Staking = 'Staking',
   SudoBalances = 'SudoBalances',
-  Unkown = 'Unkown'
+  Unknown = 'Unknown'
 }
 
 export type Query = {
@@ -681,13 +681,20 @@ export type MultisigCallsByMultisigIdSubscriptionVariables = Exact<{
 
 export type MultisigCallsByMultisigIdSubscription = { __typename?: 'Subscription', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
 
-export type MultisigsByAccountsSubscriptionVariables = Exact<{
+export type MultisigsBySignatoriesOrWatchedSubscriptionVariables = Exact<{
   accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   watchedAccountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 
-export type MultisigsByAccountsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', address: string, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', address: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', address: string, isPureProxy?: boolean | null } }>, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }> } }> }> };
+export type MultisigsBySignatoriesOrWatchedSubscription = { __typename?: 'Subscription', accountMultisigs: Array<{ __typename?: 'AccountMultisig', multisig: { __typename?: 'Account', address: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', type: ProxyType, delegator: { __typename?: 'Account', address: string, isPureProxy?: boolean | null } }> } }> };
+
+export type PureByIdsSubscriptionVariables = Exact<{
+  pureIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+}>;
+
+
+export type PureByIdsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', address: string, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }> } }> }> };
 
 
 export const MultisigByIdDocument = `
@@ -730,32 +737,34 @@ export const MultisigCallsByMultisigIdDocument = `
   }
 }
     `;
-export const MultisigsByAccountsDocument = `
-    subscription MultisigsByAccounts($accountIds: [String!], $watchedAccountIds: [String!]) {
-  accounts(
-    where: {id_in: $watchedAccountIds, AND: {isMultisig_eq: true, OR: {isPureProxy_eq: true}}, OR: {signatories_some: {signatory: {id_in: $accountIds}}}}
+export const MultisigsBySignatoriesOrWatchedDocument = `
+    subscription MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds: [String!]) {
+  accountMultisigs(
+    where: {OR: [{multisig: {id_in: $watchedAccountIds}}, {signatory: {id_in: $accountIds}}, {signatory: {id_in: $watchedAccountIds}}]}
   ) {
+    multisig {
+      address
+      threshold
+      signatories {
+        signatory {
+          address
+        }
+      }
+      delegateeFor {
+        type
+        delegator {
+          address
+          isPureProxy
+        }
+      }
+    }
+  }
+}
+    `;
+export const PureByIdsDocument = `
+    subscription PureByIds($pureIds: [String!]) {
+  accounts(where: {AND: [{id_in: $pureIds}, {isPureProxy_eq: true}]}) {
     address
-    isMultisig
-    isPureProxy
-    threshold
-    signatories {
-      signatory {
-        address
-      }
-    }
-    delegateeFor {
-      id
-      type
-      delegator {
-        address
-        isPureProxy
-      }
-      delegatee {
-        address
-        isPureProxy
-      }
-    }
     delegatorFor {
       id
       type

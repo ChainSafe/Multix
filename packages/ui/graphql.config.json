@@ -1,6 +1,6 @@
 {
   "overwrite": true,
-  "schema": "http://localhost:4350/graphql",
+  "schema": "https://squid.subsquid.io/multix-kusama/v/v1/graphql",
   "documents": "src/**/*.graphql",
   "generates": {
     "src/gql/": {
@@ -8,7 +8,11 @@
       "plugins": []
     },
     "types-and-hooks.tsx": {
-      "plugins": ["typescript", "typescript-operations", "typescript-react-query"],
+      "plugins": [
+        "typescript",
+        "typescript-operations",
+        "typescript-react-query"
+      ],
       "config": {
         "fetcher": "./src/fetcher#fetchData"
       }
