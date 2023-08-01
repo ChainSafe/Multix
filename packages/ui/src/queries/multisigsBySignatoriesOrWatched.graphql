@@ -1,11 +1,16 @@
-subscription MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds: [String!]) {
-  accountMultisigs(where: {
-    OR: [
-      {multisig: {id_in: $watchedAccountIds}}, 
-      {signatory: {id_in: $accountIds}},
-      {signatory: {id_in: $watchedAccountIds}}
-    ]
-  }) {
+subscription MultisigsBySignatoriesOrWatched(
+  $accountIds: [String!]
+  $watchedAccountIds: [String!]
+) {
+  accountMultisigs(
+    where: {
+      OR: [
+        { multisig: { id_in: $watchedAccountIds } }
+        { signatory: { id_in: $accountIds } }
+        { signatory: { id_in: $watchedAccountIds } }
+      ]
+    }
+  ) {
     multisig {
       address
       threshold
