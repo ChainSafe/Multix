@@ -114,7 +114,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         })
 
         // flatten out multisigMap
-        const multisigArray = Array.from(multisigMap.entries()).map(([, multip]) => multip)
+        const multisigArray = Array.from(multisigMap.values())
         setMultisigList(multisigArray)
 
         // add the selection to the pure to query
@@ -139,7 +139,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
           if (delegatee.isMultisig) {
             const previousMultisigsForProxy = pureProxyMap.get(account.address)?.multisigs || []
 
-            const isAlreadyInMultisigList = !!previousMultisigsForProxy.find(
+            const isAlreadyInMultisigList = previousMultisigsForProxy.some(
               ({ address }) => address === delegatee.address
             )
 
