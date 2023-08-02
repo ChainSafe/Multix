@@ -63,7 +63,7 @@ const ProposalSigning = ({
     // if it's the last approval call, we must use asMulti and have the call data
     // either from the chain, or from users
     return proposalData.info?.approvals.length >= threshold - 1
-  }, [isProposerSelected, proposalData.info?.approvals, threshold])
+  }, [isProposerSelected, proposalData, threshold])
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
