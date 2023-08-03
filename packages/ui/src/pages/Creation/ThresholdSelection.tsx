@@ -5,7 +5,7 @@ import { TextFieldStyled } from '../../components/library'
 
 interface Props {
   className?: string
-  threshold?: number
+  threshold?: number | null
   setThreshold: (threshold?: number) => void
   signatoriesNumber: number
 }
