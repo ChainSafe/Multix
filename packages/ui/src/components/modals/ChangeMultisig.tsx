@@ -44,7 +44,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { selectedAccount, selectedSigner, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
-  const [newThreshold, setNewThreshold] = useState<number | undefined>(oldThreshold)
+  const [newThreshold, setNewThreshold] = useState<number | null | undefined>(oldThreshold)
   const [newSignatories, setNewSignatories] = useState<string[]>(
     selectedMultisig?.signatories || []
   )

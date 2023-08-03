@@ -14,7 +14,7 @@ import { useApi } from '../../contexts/ApiContext'
 
 interface Props {
   className?: string
-  threshold?: number
+  threshold?: number | null
   signatories: string[]
   name?: string
   proxyAddress?: string

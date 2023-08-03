@@ -1,17 +1,20 @@
 import { useSubscription } from 'react-query-subscription'
 import { Client, createClient, SubscribePayload } from 'graphql-ws'
 import { Observable } from 'rxjs'
-import { MultisigsByAccountsDocument, MultisigsByAccountsSubscription } from '../../types-and-hooks'
+import {
+  MultisigsBySignatoriesOrWatchedDocument,
+  MultisigsBySignatoriesOrWatchedSubscription
+} from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
 interface Args {
-  onUpdate: (data: MultisigsByAccountsSubscription | null) => void
+  onUpdate: (data: MultisigsBySignatoriesOrWatchedSubscription | null) => void
   accountIds: string[]
   watchedAccountIds: string[]
 }
 
-export const useMultisigsByAccountSubscription = ({
+export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   onUpdate,
   accountIds,
   watchedAccountIds
@@ -44,17 +47,17 @@ export const useMultisigsByAccountSubscription = ({
     )
   }
 
-  const { isError, error, data, isLoading } = useSubscription(
-    [`KeyMultisigsByAccount-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
+  const { isError, error, data, isLoading, refetch } = useSubscription(
+    [`KeyMultisigsBySignatoriesOrWatched-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
 
       return fromWsClientSubscription<{
-        accounts: MultisigsByAccountsSubscription['accounts']
+        accountMultisigs: MultisigsBySignatoriesOrWatchedSubscription['accountMultisigs']
       }>(client, {
-        query: MultisigsByAccountsDocument,
+        query: MultisigsBySignatoriesOrWatchedDocument,
         variables: {
-          accountIds: [...watchedAccountIds, ...accountIds],
+          accountIds,
           watchedAccountIds
         }
       })
@@ -62,26 +65,27 @@ export const useMultisigsByAccountSubscription = ({
     {
       onData(data) {
         !!data && onUpdate(data)
-      },
-      onError(error) {
-        console.error('MultisigsByAccount subscription error', error)
-      },
-      retry: (failureCount: number, error: Error) => {
-        console.error(
-          'Subscription MultisigsByAccount failed',
-          failureCount,
-          'times with error',
-          error
-        )
-        // will retry until it returns falls
-        return true
       }
+      // onError(error) {
+      //   console.error('MultisigsBySignatoriesOrWatched subscription error', error)
+      // },
+      // retry: (failureCount: number, error: Error) => {
+      //   console.error(
+      //     'Subscription MultisigsBySignatoriesOrWatched failed',
+      //     failureCount,
+      //     'times with error',
+      //     error
+      //   )
+      //   // will retry until it returns falls
+      //   return true
+      // }
     }
   )
 
-  // if (isError) {
-  //   console.error('Subscription MultisigsByAccount error', error)
-  // }
+  if (isError) {
+    console.error('Subscription MultisigsBySignatoriesOrWatched error, refetching', error)
+    refetch()
+  }
 
   // if (isSubsriptionLoading) {
   //     console.log('subscription loading', multisigs);

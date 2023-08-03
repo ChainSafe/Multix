@@ -5,7 +5,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 
 interface Props {
-  threshold?: number
+  threshold?: number | null
   signatories?: string[]
   call?: SubmittableExtrinsic<'promise', ISubmittableResult>
 }

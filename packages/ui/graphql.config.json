@@ -1,6 +1,6 @@
 {
   "overwrite": true,
-  "schema": "http://localhost:4350/graphql",
+  "schema": "https://squid.subsquid.io/multix-kusama/v/v1/graphql",
   "documents": "src/**/*.graphql",
   "generates": {
     "src/gql/": {
