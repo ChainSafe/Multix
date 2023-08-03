@@ -55,12 +55,15 @@ const ProposalSigning = ({
     proposalData.callData || addedCallData
   )
   const mustSubmitCallData = useMemo(() => {
+    // the proposer can only reject, and the calldata isn't needed for this
+    if (isProposerSelected) return false
+
     if (!threshold || !proposalData.info?.approvals) return true
 
     // if it's the last approval call, we must use asMulti and have the call data
     // either from the chain, or from users
     return proposalData.info?.approvals.length >= threshold - 1
-  }, [proposalData, threshold])
+  }, [isProposerSelected, proposalData, threshold])
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()
