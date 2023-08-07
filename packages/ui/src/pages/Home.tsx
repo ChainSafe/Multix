@@ -10,11 +10,7 @@ import {
   MdOutlineLockReset as LockResetIcon,
   MdErrorOutline as ErrorOutlineIcon
 } from 'react-icons/md'
-import Send from '../components/modals/Send'
-import { usePendingTx } from '../hooks/usePendingTx'
 import OptionsMenu, { MenuOption } from '../components/OptionsMenu'
-import EditNames from '../components/modals/EditNames'
-import ChangeMultisig from '../components/modals/ChangeMultisig'
 import { AccountBadge } from '../types'
 import SuccessCreation from '../components/SuccessCreation'
 import NewMulisigAlert from '../components/NewMulisigAlert'
@@ -25,6 +21,7 @@ import { useAccounts } from '../contexts/AccountsContext'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useApi } from '../contexts/ApiContext'
 import { useNetwork } from '../contexts/NetworkContext'
+import { useHomeModals } from '../contexts/ModalsContext'
 
 interface Props {
   className?: string
@@ -62,7 +59,7 @@ const Home = ({ className }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
+  const { setIsSendModalOpen, setIsEditModalOpen, setIsChangeMultiModalOpen } = useHomeModals()
   const {
     isLoading,
     multiProxyList,
@@ -73,30 +70,14 @@ const Home = ({ className }: Props) => {
   } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { isApiReady } = useApi()
-  const { refresh } = usePendingTx()
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
-  const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
-  const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
-  const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
-  const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
     isAllowedToConnectToExtension,
     isExtensionError,
     isAccountLoading,
     allowConnectionToExtension
   } = useAccounts()
+  const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const { watchedAddresses } = useWatchedAddresses()
-
-  const onSuccessSendModal = useCallback(() => {
-    onCloseSendModal()
-    refresh()
-  }, [onCloseSendModal, refresh])
-
-  const onFinalizedSendModal = useCallback(() => {
-    refresh()
-  }, [refresh])
-
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
     setSearchParams({ creationInProgress: 'false' })
@@ -130,7 +111,7 @@ const Home = ({ className }: Props) => {
       })
 
     return opts
-  }, [selectedHasProxy, selectedIsWatched])
+  }, [selectedHasProxy, selectedIsWatched, setIsChangeMultiModalOpen, setIsEditModalOpen])
 
   if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
     return (
@@ -336,15 +317,6 @@ const Home = ({ className }: Props) => {
           </TransactionsWrapperStyled>
         </Grid>
       )}
-      {isSendModalOpen && (
-        <Send
-          onClose={onCloseSendModal}
-          onSuccess={onSuccessSendModal}
-          onFinalized={onFinalizedSendModal}
-        />
-      )}
-      {isEditModalOpen && <EditNames onClose={onCloseEditModal} />}
-      {isChangeMultiModalOpen && <ChangeMultisig onClose={onCloseChangeMultiModal} />}
     </Grid>
   )
 }
