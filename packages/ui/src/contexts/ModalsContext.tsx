@@ -55,12 +55,12 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   )
 }
 
-const useHomeModals = () => {
+const useModals = () => {
   const context = useContext(ModalsContext)
   if (context === undefined) {
-    throw new Error('useHomeModals must be used within a HomeModalsContextProvider')
+    throw new Error('useModals must be used within a ModalsContextProvider')
   }
   return context
 }
 
-export { ModalsContextProvider as HomeModalsContextProvider, useHomeModals }
+export { ModalsContextProvider, useModals }

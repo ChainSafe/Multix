@@ -21,7 +21,7 @@ import { useAccounts } from '../contexts/AccountsContext'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useApi } from '../contexts/ApiContext'
 import { useNetwork } from '../contexts/NetworkContext'
-import { useHomeModals } from '../contexts/ModalsContext'
+import { useModals } from '../contexts/ModalsContext'
 
 interface Props {
   className?: string
@@ -59,7 +59,7 @@ const Home = ({ className }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const { setIsSendModalOpen, setIsEditModalOpen, setIsChangeMultiModalOpen } = useHomeModals()
+  const { setIsSendModalOpen, setIsEditModalOpen, setIsChangeMultiModalOpen } = useModals()
   const {
     isLoading,
     multiProxyList,
