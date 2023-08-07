@@ -1,0 +1,67 @@
+import { SignClientTypes } from '@walletconnect/types'
+import { useCallback, useEffect } from 'react'
+import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import { POLKADOT_SIGNING_METHODS } from '../constants'
+import { useWalletConnect } from '../contexts/WalletConnectContext'
+
+export default function useWalletConnectEventsManager() {
+  const { web3wallet } = useWalletConnect()
+
+  // Open session proposal modal for confirmation / rejection
+  const onSessionProposal = useCallback(
+    (proposal: SignClientTypes.EventArguments['session_proposal']) => {
+      // ModalStore.open('SessionProposalModal', { proposal })
+      console.log('---> session_proposal', proposal)
+    },
+    []
+  )
+
+  const onAuthRequest = useCallback((request: Web3WalletTypes.AuthRequest) => {
+    // ModalStore.open('AuthRequestModal', { request })
+    console.log('---> AuthRequestModal', request)
+  }, [])
+
+  // Open request handling modal based on method that was used
+  const onSessionRequest = useCallback(
+    async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
+      if (!web3wallet) {
+        console.error('web3Wallet is undefined')
+        return
+      }
+      console.log('---> session_request', requestEvent)
+      const { topic, params } = requestEvent
+      const { request } = params
+      // const requestSession = signClient.session.get(topic)
+      const requestSession = web3wallet.engine.signClient.session.get(topic)
+
+      switch (request.method) {
+        case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_MESSAGE:
+        case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_TRANSACTION:
+          console.log(
+            'SessionSignPolkadotModal requestEvent, requestSession',
+            requestEvent,
+            requestSession
+          )
+          return null
+        // ModalStore.open('SessionSignPolkadotModal', { requestEvent, requestSession })
+
+        default:
+          console.log('Session Unsuported Method Modal', requestEvent, requestSession)
+          return null
+      }
+    },
+    [web3wallet]
+  )
+
+  useEffect(() => {
+    if (web3wallet) {
+      // sign
+      web3wallet.on('session_proposal', onSessionProposal)
+      web3wallet.on('session_request', onSessionRequest)
+      // auth
+      web3wallet.on('auth_request', onAuthRequest)
+      // session deleted
+      web3wallet.on('session_delete', (data) => console.log('session deleted', data))
+    }
+  }, [onSessionProposal, onSessionRequest, onAuthRequest, web3wallet])
+}

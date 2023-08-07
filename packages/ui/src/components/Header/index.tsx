@@ -11,6 +11,7 @@ import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
 import { multixlogo } from '../../logos/multixLogo'
+import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -22,6 +23,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  useWalletConnectEventsManager()
 
   return (
     <MuiAppBarStyled position="sticky">
