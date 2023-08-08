@@ -11,6 +11,7 @@ import { AccountNamesContextProvider } from './contexts/AccountNamesContext'
 import { NetworkContextProvider } from './contexts/NetworkContext'
 import MainLayout from './components/layout/Main'
 import { WatchedAddressesContextProvider } from './contexts/WatchedAddressesContext'
+import { ModalsContextProvider } from './contexts/ModalsContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -26,7 +27,9 @@ const App = () => {
                 <AccountContextProvider>
                   <AccountNamesContextProvider>
                     <MultiProxyContextProvider>
-                      <MainLayout />
+                      <ModalsContextProvider>
+                        <MainLayout />
+                      </ModalsContextProvider>
                     </MultiProxyContextProvider>
                   </AccountNamesContextProvider>
                 </AccountContextProvider>
