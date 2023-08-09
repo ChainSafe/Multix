@@ -3,17 +3,19 @@ import { useCallback, useEffect } from 'react'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { POLKADOT_SIGNING_METHODS } from '../constants'
 import { useWalletConnect } from '../contexts/WalletConnectContext'
+import { useModals } from '../contexts/ModalsContext'
 
 export default function useWalletConnectEventsManager() {
   const { web3wallet } = useWalletConnect()
+  const { openWCModal } = useModals()
 
   // Open session proposal modal for confirmation / rejection
   const onSessionProposal = useCallback(
     (proposal: SignClientTypes.EventArguments['session_proposal']) => {
       // ModalStore.open('SessionProposalModal', { proposal })
-      console.log('---> session_proposal', proposal)
+      openWCModal({ sessionProposal: proposal })
     },
-    []
+    [openWCModal]
   )
 
   const onAuthRequest = useCallback((request: Web3WalletTypes.AuthRequest) => {

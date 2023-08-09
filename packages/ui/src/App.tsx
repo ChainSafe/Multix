@@ -28,11 +28,11 @@ const App = () => {
                 <AccountContextProvider>
                   <AccountNamesContextProvider>
                     <MultiProxyContextProvider>
-                      <ModalsContextProvider>
-                        <WalletConnectContextProvider>
+                      <WalletConnectContextProvider>
+                        <ModalsContextProvider>
                           <MainLayout />
-                        </WalletConnectContextProvider>
-                      </ModalsContextProvider>
+                        </ModalsContextProvider>
+                      </WalletConnectContextProvider>
                     </MultiProxyContextProvider>
                   </AccountNamesContextProvider>
                 </AccountContextProvider>
