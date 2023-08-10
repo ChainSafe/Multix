@@ -14,13 +14,12 @@ import { getOptionLabel } from '../../utils/getOptionLabel'
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
+  onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
-  const [toAddress, setToAddress] = useState('')
   const { api, isApiReady, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<BN | undefined>()
@@ -30,6 +29,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     address: from
   })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
+  const toAddress = useMemo(() => selected?.address || '', [selected?.address])
 
   useEffect(() => {
     if (!!amount && !hasEnoughFreeBalance) {
@@ -41,14 +41,12 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
   useEffect(() => {
     if (!isApiReady || !api) {
+      onSetExtrinsic(undefined)
       return
     }
 
-    if (!toAddress) {
-      return
-    }
-
-    if (!amount) {
+    if (!toAddress || !amount) {
+      onSetExtrinsic(undefined)
       return
     }
 
@@ -56,7 +54,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
 
   const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
-    setToAddress(account.address)
     setSelected(account)
   }, [])
 
@@ -105,7 +102,9 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     ) => {
       const value = getOptionLabel(val as string)
 
-      if (!value) setSelected(undefined)
+      if (!value) {
+        setSelected(undefined)
+      }
     },
     []
   )
