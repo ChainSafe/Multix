@@ -92,9 +92,12 @@ const GenericAccountSelection = ({
     () =>
       createFilterOptions({
         ignoreCase: true,
-        stringify: (option: (typeof accountList)[0]) => `${option.address}${getOptionLabel(option)}`
+        stringify: (option: (typeof accountList)[0]) => {
+          const addressName = `${option.address}${getNamesWithExtension(option.address)}`
+          return addressName
+        }
       }),
-    [getOptionLabel]
+    [getNamesWithExtension]
   )
 
   const filterOptions = useCallback(
