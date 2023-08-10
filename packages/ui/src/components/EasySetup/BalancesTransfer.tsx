@@ -4,12 +4,12 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import { TextFieldStyled } from '../library'
+import { getOptionLabel } from '../../utils/getOptionLabel'
 
 interface Props {
   className?: string
@@ -19,9 +19,8 @@ interface Props {
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const acountBase = useAccountBaseFromAccountList()
-  const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
-  const [toAddress, setToAddress] = useState(acountBase[0].address)
+  const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
+  const [toAddress, setToAddress] = useState('')
   const { api, isApiReady, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<BN | undefined>()
@@ -56,20 +55,9 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     onSetExtrinsic(api.tx.balances.transferKeepAlive(toAddress, amount.toString()))
   }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
 
-  const onAddressDestChange = useCallback((account?: AccountBaseInfo | string) => {
-    if (!account) {
-      return
-    }
-
-    if (typeof account === 'string') {
-      setToAddress(account)
-      setSelected({
-        address: account
-      })
-    } else {
-      setToAddress(account.address)
-      setSelected(account)
-    }
+  const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
+    setToAddress(account.address)
+    setSelected(account)
   }, [])
 
   const onAmountChange = useCallback(
@@ -108,17 +96,29 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     [chainInfo, maxValue, onSetErrorMessage]
   )
 
-  if (!selected) return null
+  const onInputChange = useCallback(
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        string | AccountBaseInfo | (string | AccountBaseInfo | undefined)[] | undefined
+      >
+    ) => {
+      const value = getOptionLabel(val as string)
+
+      if (!value) setSelected(undefined)
+    },
+    []
+  )
 
   return (
     <Box className={className}>
       <GenericAccountSelection
         className="to"
-        accountList={acountBase}
         onChange={onAddressDestChange}
         value={selected}
         label="to"
         allowAnyAddressInput={true}
+        onInputChange={onInputChange}
       />
       <TextFieldStyled
         label={`Amount`}
