@@ -10,6 +10,7 @@ import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import { TextFieldStyled } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
+import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 
 interface Props {
   className?: string
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
+  const accountBase = useAccountBaseFromAccountList()
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
   const { api, isApiReady, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
@@ -118,6 +120,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         label="to"
         allowAnyAddressInput={true}
         onInputChange={onInputChange}
+        accountList={accountBase}
       />
       <TextFieldStyled
         label={`Amount`}
