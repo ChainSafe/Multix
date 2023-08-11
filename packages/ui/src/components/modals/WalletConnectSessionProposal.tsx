@@ -6,7 +6,7 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { SignClientTypes } from '@walletconnect/types'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
-import { useGetWCNamespace } from '../../hooks/useWCNamespace'
+import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
 import AccountDisplay from '../AccountDisplay'
 import { AccountBadge } from '../../types'
 import { getSdkError } from '@walletconnect/utils'
@@ -17,10 +17,10 @@ interface Props {
   sessionProposal?: SignClientTypes.EventArguments['session_proposal']
 }
 
-const WCSessionProposal = ({ onClose, className, sessionProposal }: Props) => {
+const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: Props) => {
   const { selectedMultiProxy } = useMultiProxy()
   const { web3wallet } = useWalletConnect()
-  const { currentNamespace, getAccountsWithNamespace } = useGetWCNamespace()
+  const { currentNamespace, getAccountsWithNamespace } = useGetWalletConnectNamespace()
   const [errorMessage, setErrorMessage] = useState('')
   const accountsToShare = useMemo(() => {
     const accountsToShare = [
@@ -141,7 +141,8 @@ const WCSessionProposal = ({ onClose, className, sessionProposal }: Props) => {
             <Button
               variant="primary"
               onClick={onApprove}
-              disabled={!!errorMessage}
+              // FIXME add this back
+              // disabled={!!errorMessage}
             >
               Approve
             </Button>
@@ -172,7 +173,7 @@ const ButtonContainerStyled = styled(Grid)`
     margin-left: 1rem;
   }
 `
-export default styled(WCSessionProposal)`
+export default styled(WalletConnectSessionProposal)`
   .accountEdition {
     margin-bottom: 1rem;
     align-items: end;

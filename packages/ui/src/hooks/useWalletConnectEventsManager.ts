@@ -4,10 +4,12 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { POLKADOT_SIGNING_METHODS } from '../constants'
 import { useWalletConnect } from '../contexts/WalletConnectContext'
 import { useModals } from '../contexts/ModalsContext'
+import { useGetWalletConnectNamespace } from './useWalletConnectNamespace'
 
 export default function useWalletConnectEventsManager() {
   const { web3wallet } = useWalletConnect()
-  const { openWCModal } = useModals()
+  const { openWCModal, onOpenSigningModal } = useModals()
+  const { currentNamespace } = useGetWalletConnectNamespace()
 
   // Open session proposal modal for confirmation / rejection
   const onSessionProposal = useCallback(
@@ -44,7 +46,24 @@ export default function useWalletConnectEventsManager() {
             requestEvent,
             requestSession
           )
-          return null
+          if (requestEvent.params.chainId !== currentNamespace) {
+            console.error(
+              "The chain from WC don't match with the current. Switch to the right network"
+            )
+            return
+          }
+
+          if (request.params.transactionPayload) {
+            onOpenSigningModal({
+              possibleSigners: [],
+              proposalData: {
+                from: request.params.address,
+                timestamp: new Date(),
+                callData: request.params.transactionPayload.method
+              }
+            })
+          }
+          break
         // ModalStore.open('SessionSignPolkadotModal', { requestEvent, requestSession })
 
         default:
@@ -52,7 +71,7 @@ export default function useWalletConnectEventsManager() {
           return null
       }
     },
-    [web3wallet]
+    [currentNamespace, onOpenSigningModal, web3wallet]
   )
 
   useEffect(() => {

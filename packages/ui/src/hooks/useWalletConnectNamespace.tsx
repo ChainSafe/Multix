@@ -1,14 +1,16 @@
 import { useCallback, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
 
-export const useGetWCNamespace = () => {
+export const useGetWalletConnectNamespace = () => {
   const { isApiReady, api } = useApi()
   const genesisTruncated = useMemo(() => {
     if (!isApiReady || !api) return ''
 
     return api.genesisHash.toHex().substring(2, 34)
   }, [api, isApiReady])
-  const namespace = useMemo(() => `polkadot:${genesisTruncated}`, [genesisTruncated])
+  // const namespace = useMemo(() => `polkadot:${genesisTruncated}`, [genesisTruncated])
+  // FIXME bring back the dynamic one
+  const namespace = 'polkadot:afdc188f45c71dacbaa0b62e16a91f72'
 
   const getAccountsWithNamespace = useCallback(
     (accounts: string[]) => {
