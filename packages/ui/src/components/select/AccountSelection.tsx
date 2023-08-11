@@ -8,6 +8,7 @@ import { Button, InputField } from '../library'
 import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import Warning from '../Warning'
+import { getOptionLabel } from '../../utils/getOptionLabel'
 
 interface Props {
   className?: string
@@ -20,12 +21,6 @@ interface Props {
   withName?: boolean
   withAddButton?: boolean
   withPreselection?: boolean
-}
-
-const getOptionLabel = (option: string | AccountBaseInfo | null) => {
-  if (!option) return ''
-
-  return typeof option === 'string' ? option : option.address
 }
 
 const AccountSelection = ({
