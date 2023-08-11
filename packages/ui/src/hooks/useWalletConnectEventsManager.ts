@@ -8,7 +8,7 @@ import { useGetWalletConnectNamespace } from './useWalletConnectNamespace'
 
 export default function useWalletConnectEventsManager() {
   const { web3wallet } = useWalletConnect()
-  const { openWCModal, onOpenSigningModal } = useModals()
+  const { openWCModal, onOpenWalletConnectSigning } = useModals()
   const { currentNamespace } = useGetWalletConnectNamespace()
 
   // Open session proposal modal for confirmation / rejection
@@ -54,14 +54,7 @@ export default function useWalletConnectEventsManager() {
           }
 
           if (request.params.transactionPayload) {
-            onOpenSigningModal({
-              possibleSigners: [],
-              proposalData: {
-                from: request.params.address,
-                timestamp: new Date(),
-                callData: request.params.transactionPayload.method
-              }
-            })
+            onOpenWalletConnectSigning(requestEvent)
           }
           break
         // ModalStore.open('SessionSignPolkadotModal', { requestEvent, requestSession })
@@ -71,7 +64,7 @@ export default function useWalletConnectEventsManager() {
           return null
       }
     },
-    [currentNamespace, onOpenSigningModal, web3wallet]
+    [currentNamespace, onOpenWalletConnectSigning, web3wallet]
   )
 
   useEffect(() => {

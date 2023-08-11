@@ -6,6 +6,7 @@ import { usePendingTx } from '../hooks/usePendingTx'
 import { SignClientTypes } from '@walletconnect/types'
 import WCSessionProposal from '../components/modals/WalletConnectSessionProposal'
 import ProposalSigningModal, { SigningModalProps } from '../components/modals/ProposalSigning'
+import WalletConnectSigning from '../components/modals/WalletConnectSigning'
 
 interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
@@ -13,6 +14,7 @@ interface ModalsContextProps {
   setIsSendModalOpen: (isOpen: boolean) => void
   openWCModal: ({ sessionProposal }: OpenWCModalParams) => void
   onOpenSigningModal: (info: SigningInfo) => void
+  onOpenWalletConnectSigning: (request: SignClientTypes.EventArguments['session_request']) => void
 }
 
 interface OpenWCModalParams {
@@ -30,6 +32,10 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const [isWCModalOpen, setIsWCModalOpen] = useState(false)
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const [signingModalInfo, setSigningModalInfo] = useState<SigningInfo | undefined>()
+  const [isOpenWalletConnectSigning, setIsOpenWalletConnectSigning] = useState(false)
+  const [walletConnectRequest, setWalletConnectRequest] = useState<
+    SignClientTypes.EventArguments['session_request'] | undefined
+  >()
 
   const [wCSessionProposal, setWCSessionProposal] = useState<
     OpenWCModalParams['sessionProposal'] | undefined
@@ -69,6 +75,19 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     setIsSigningModalOpen(true)
   }, [])
 
+  const onOpenWalletConnectSigning = useCallback(
+    (request: SignClientTypes.EventArguments['session_request']) => {
+      setWalletConnectRequest(request)
+      setIsOpenWalletConnectSigning(true)
+    },
+    []
+  )
+
+  const onCloseWalletConnectSigning = useCallback(() => {
+    setWalletConnectRequest(undefined)
+    setIsOpenWalletConnectSigning(false)
+  }, [])
+
   return (
     <ModalsContext.Provider
       value={{
@@ -76,7 +95,8 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
         setIsChangeMultiModalOpen,
         setIsSendModalOpen,
         openWCModal,
-        onOpenSigningModal
+        onOpenSigningModal,
+        onOpenWalletConnectSigning
       }}
     >
       {children}
@@ -101,6 +121,12 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
           onClose={onCloseSigningModal}
           proposalData={signingModalInfo.proposalData}
           onSuccess={signingModalInfo.onSuccess}
+        />
+      )}
+      {isOpenWalletConnectSigning && !!walletConnectRequest && (
+        <WalletConnectSigning
+          onClose={onCloseWalletConnectSigning}
+          request={walletConnectRequest}
         />
       )}
     </ModalsContext.Provider>

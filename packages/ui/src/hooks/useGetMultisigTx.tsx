@@ -11,7 +11,7 @@ interface Params {
   senderAddress?: string
   fromAddress?: string
   isProxy?: boolean
-  extrinsicToCall: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+  extrinsicToCall?: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
 }
 
 export const useGetMultisigTx = ({
