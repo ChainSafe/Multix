@@ -73,7 +73,7 @@ const PureHeaderStyled = styled('div')`
     flex-wrap: nowrap;
   }
 
-  & > div:first-child {
+  & > div:first-of-type {
     margin: auto;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
@@ -81,15 +81,17 @@ const PureHeaderStyled = styled('div')`
     }
   }
 
-  & > div:nth-child(2) {
+  & > div:nth-of-type(2) {
     display: flex;
     justify-content: center;
     align-self: center;
     flex-direction: column;
     flex: 1;
     margin-top: 1rem;
+    text-align: center;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      text-align: initial;
       justify-content: initial;
       align-self: flex-end;
       flex: 0;
@@ -97,7 +99,7 @@ const PureHeaderStyled = styled('div')`
     }
   }
 
-  & > div:last-child {
+  & > div:last-of-type {
     flex: 1;
     justify-content: center;
     align-self: flex-end;

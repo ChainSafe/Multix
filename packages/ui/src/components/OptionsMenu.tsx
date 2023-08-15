@@ -1,10 +1,11 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { ListItemIcon, ListItemText } from '@mui/material'
+import { ListItemIcon, ListItemText, Theme } from '@mui/material'
 import { MouseEvent, ReactNode, useCallback, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { HiEllipsisVertical as MoreVertIcon } from 'react-icons/hi2'
 import { ButtonWithIcon } from './library'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export interface MenuOption {
   text: string
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
+  const matchesMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleMenuClick = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -48,7 +50,7 @@ const OptionsMenu = ({ className, options }: Props) => {
         aria-haspopup="true"
         onClick={handleMenuClick}
       >
-        <MoreVertIcon />
+        {matchesMediumScreen ? <MoreVertIcon /> : 'Settings'}
       </ButtonWithIconStyled>
       <Menu
         id="long-menu"
@@ -84,8 +86,12 @@ const OptionsMenu = ({ className, options }: Props) => {
 
 const ButtonWithIconStyled = styled(ButtonWithIcon)`
   padding: 0.5rem;
-  width: 2.25rem;
+  width: 100%;
   border-radius: 0.5rem;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+    width: 2.25rem;
+  }
 
   svg {
     margin: 0;
