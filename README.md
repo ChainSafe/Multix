@@ -22,7 +22,7 @@ GQL_PORT=4350
 SQD_DEBUG=sqd:processor:mapping
 
 # rococo
-BLOCK_START=3510000 # this is the starging block of the indexer
+BLOCK_START=3510000 # this is the starting block of the indexer
 PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to the blockchain
 ARCHIVE_NAME="rococo" # the archive name from subsquid archives
@@ -42,7 +42,7 @@ docker compose up db -d;
 npm run codegen;
 npm run build;
 npm run db:migrate;
-npm run start:indexer # this will start the indexer using the envirnoment variables set in your .env
+npm run start:indexer # this will start the indexer using the environment variables set in your .env
 # alternatively, you can run with predefined values, see in /squid/assets/envs/, e.g here with polkadot
 node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.polkadot
 ```
@@ -55,10 +55,10 @@ npm run start:graphql-server
 
 #### Running the front-end (user interface) locally
 
-From the repostiory root
+From the repository root
 
 ```bash
-# install all dependancies
+# install all dependencies
 yarn;
 
 # install and launch the db in a docker
