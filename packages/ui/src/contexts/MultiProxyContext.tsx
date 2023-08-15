@@ -91,8 +91,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         // iterate through the multisigs and populate the multiproxy map
         // and the list of pure to query
         data.accountMultisigs.forEach(({ multisig }) => {
+          const hasPureDelegation =
+            multisig.delegateeFor.length > 0 &&
+            multisig.delegateeFor.some(({ delegator }) => delegator.isPureProxy)
           // if the multisig is a delegatee for at least one pure
-          if (multisig.delegateeFor.length > 0) {
+          if (hasPureDelegation) {
             // add the pures to the list to query if they are pure proxies
             multisig.delegateeFor.forEach(({ delegator }) => {
               delegator.isPureProxy && pureToQuerySet.add(delegator.address)
