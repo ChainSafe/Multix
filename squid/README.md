@@ -248,7 +248,7 @@ GQL_PORT=4350
 SQD_DEBUG=sqd:processor:mapping
 
 # rococo
-BLOCK_START=3510000 # this is the starging block of the indexer
+BLOCK_START=3510000 # this is the starting block of the indexer
 PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
 ARCHIVE_NAME="rococo" # optional - must be empty or set to the archive name if part of the @subsquid/archive-registry'
