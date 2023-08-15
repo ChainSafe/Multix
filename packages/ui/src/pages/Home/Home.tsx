@@ -1,13 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Box, CircularProgress, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Link } from '../../components/library'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
-import Send from '../../components/modals/Send'
-import { usePendingTx } from '../../hooks/usePendingTx'
-import EditNames from '../../components/modals/EditNames'
-import ChangeMultisig from '../../components/modals/ChangeMultisig'
 import SuccessCreation from '../../components/SuccessCreation'
 import NewMulisigAlert from '../../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'
@@ -17,8 +13,6 @@ import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
 import PureProxyHeaderView from './PureProxyHeaderView'
-import LoaderWrapper from './LoaderWrapper'
-import { useHomeModals } from '../../contexts/HomeModalsContext'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 
@@ -39,29 +33,6 @@ const Home = ({ className }: HomeProps) => {
   } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { isApiReady } = useApi()
-  const { refresh } = usePendingTx()
-
-  // Modals
-  const {
-    isChangeMultiModalOpen,
-    isEditModalOpen,
-    isSendModalOpen,
-    setIsEditModalOpen,
-    setIsChangeMultiModalOpen,
-    setIsSendModalOpen
-  } = useHomeModals()
-
-  const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [])
-  const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [])
-  const onCloseChangeMultiModal = useCallback(() => setIsChangeMultiModalOpen(false), [])
-  const onSuccessSendModal = useCallback(() => {
-    onCloseSendModal()
-    refresh()
-  }, [onCloseSendModal, refresh])
-  const onFinalizedSendModal = useCallback(() => {
-    refresh()
-  }, [refresh])
-
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
     isAllowedToConnectToExtension,
@@ -138,27 +109,27 @@ const Home = ({ className }: HomeProps) => {
 
   if (isLoading) {
     return (
-      <LoaderWrapper>
+      <MessageWrapper>
         <CircularProgress />
         <div>Loading your multisigs...</div>
-      </LoaderWrapper>
+      </MessageWrapper>
     )
   }
 
   if (multisigQueryError) {
     return (
-      <LoaderWrapper>
+      <MessageWrapper>
         <ErrorMessageStyled>
           <ErrorOutlineIcon size={64} />
           <div>An error occurred.</div>
         </ErrorMessageStyled>
-      </LoaderWrapper>
+      </MessageWrapper>
     )
   }
 
   if (multiProxyList.length === 0) {
     return (
-      <LoaderWrapper>
+      <MessageWrapper>
         {showNewMultisigAlert ? (
           <SuccessCreation />
         ) : (
@@ -173,7 +144,7 @@ const Home = ({ className }: HomeProps) => {
             <Button onClick={() => navigate('/settings')}>Watch one</Button>
           </ConnectButtonWrapperStyled>
         )}
-      </LoaderWrapper>
+      </MessageWrapper>
     )
   }
 
@@ -212,18 +183,29 @@ const Home = ({ className }: HomeProps) => {
           </TransactionsWrapperStyled>
         </Grid>
       )}
-      {isSendModalOpen && (
-        <Send
-          onClose={onCloseSendModal}
-          onSuccess={onSuccessSendModal}
-          onFinalized={onFinalizedSendModal}
-        />
-      )}
-      {isEditModalOpen && <EditNames onClose={onCloseEditModal} />}
-      {isChangeMultiModalOpen && <ChangeMultisig onClose={onCloseChangeMultiModal} />}
     </Grid>
   )
 }
+
+const MessageWrapper = (props: PropsWithChildren) => {
+  return (
+    <Grid
+      container
+      spacing={2}
+    >
+      <LoaderBoxStyled>{props.children}</LoaderBoxStyled>
+    </Grid>
+  )
+}
+
+const LoaderBoxStyled = styled(Box)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+`
 
 const TransactionsWrapperStyled = styled('div')`
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {

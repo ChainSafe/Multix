@@ -67,7 +67,6 @@ const PureHeaderStyled = styled('div')`
   display: flex;
   flex-wrap: wrap;
   margin: 0 0 1rem 0.5rem;
-
   padding: 1rem 1.3rem 1rem 0.625rem;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
@@ -86,6 +85,7 @@ const PureHeaderStyled = styled('div')`
     display: flex;
     justify-content: center;
     align-self: center;
+    flex-direction: column;
     flex: 1;
     margin-top: 1rem;
 
@@ -117,13 +117,13 @@ const PureHeaderStyled = styled('div')`
 const AccountDisplayStyled = styled(AccountDisplay)`
   min-width: 0;
 
-  .multisig__name {
+  .multisigName {
     font-size: 1.5rem;
     font-weight: 500;
     color: ${({ theme }) => theme.custom.gray[800]};
   }
 
-  .multisig__address {
+  .multisigAddress {
     color: ${({ theme }) => theme.custom.text.secondary};
   }
 
@@ -141,11 +141,13 @@ const BalanceStyled = styled('div')`
 `
 
 const BalanceHeaderStyled = styled('div')`
+  font-size: 1rem;
   color: ${({ theme }) => theme.custom.gray[700]};
   margin-right: 0.25rem;
 `
 
 const BalanceAmountStyled = styled('div')`
+  font-size: 1rem;
   color: ${({ theme }) => theme.custom.gray[800]};
   white-space: nowrap;
 `

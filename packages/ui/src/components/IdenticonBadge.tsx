@@ -66,11 +66,12 @@ const BadgeStyled = styled(Badge)<{
     `}
 
   .MuiBadge-badge {
-    max-width: 2.625rem;
+    max-width: 3.285rem;
+    max-height: 1.69rem;
     padding: 0.25rem 0.5rem;
-    max-height: 1.3125rem;
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     font-weight: 500;
+    height: 1.3125rem;
     border-radius: ${({ theme }) => theme.custom.borderRadius};
     border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
@@ -99,10 +100,12 @@ const BadgeStyled = styled(Badge)<{
     ${({ size }) =>
       size === 'large' &&
       `
+          font-size: 0.96431rem;
           padding: 0.16069rem 0.64288rem;
           height: 1.7rem;
-          transform: scale(1) translate(20%,30%);
+          transform: scale(1) translate(0,15%);
       `}
+  }
 `
 
 export default IdenticonBadge

@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { useHomeModals } from '../../contexts/HomeModalsContext'
+import { useModals } from '../../contexts/ModalsContext'
 
 interface MultisigActionMenuProps {
   withSendButton?: boolean
@@ -12,7 +12,7 @@ interface MultisigActionMenuProps {
 
 const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched } = useMultiProxy()
-  const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useHomeModals()
+  const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useModals()
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
