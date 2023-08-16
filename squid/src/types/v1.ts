@@ -1,5 +1,35 @@
 import type {Result, Option} from './support'
 
+export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_CancelProxy | ProxyType_Assets | ProxyType_AssetOwner | ProxyType_AssetManager | ProxyType_Staking
+
+export interface ProxyType_Any {
+    __kind: 'Any'
+}
+
+export interface ProxyType_NonTransfer {
+    __kind: 'NonTransfer'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Assets {
+    __kind: 'Assets'
+}
+
+export interface ProxyType_AssetOwner {
+    __kind: 'AssetOwner'
+}
+
+export interface ProxyType_AssetManager {
+    __kind: 'AssetManager'
+}
+
+export interface ProxyType_Staking {
+    __kind: 'Staking'
+}
+
 export interface Timepoint {
     height: number
     index: number
@@ -85,36 +115,6 @@ export interface Type_140_Assets {
 export interface Type_140_Uniques {
     __kind: 'Uniques'
     value: UniquesCall
-}
-
-export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_CancelProxy | ProxyType_Assets | ProxyType_AssetOwner | ProxyType_AssetManager | ProxyType_Staking
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_NonTransfer {
-    __kind: 'NonTransfer'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Assets {
-    __kind: 'Assets'
-}
-
-export interface ProxyType_AssetOwner {
-    __kind: 'AssetOwner'
-}
-
-export interface ProxyType_AssetManager {
-    __kind: 'AssetManager'
-}
-
-export interface ProxyType_Staking {
-    __kind: 'Staking'
 }
 
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
