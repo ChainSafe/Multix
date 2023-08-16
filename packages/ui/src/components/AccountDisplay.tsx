@@ -96,12 +96,14 @@ const AccountDisplay = ({
         {withName && (
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
+              // Class name for external styling
               <IdentityIcon
                 className="identityBadge"
                 identity={identity}
               />
             )}
             {!!sub && <span>{sub}</span>}
+            {/*// Class name for external styling*/}
             <NameStyled className="multisigName">{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
