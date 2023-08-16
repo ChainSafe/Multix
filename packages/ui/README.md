@@ -1,6 +1,6 @@
 # Getting started with Multix
 
-This UI is meant to be run either alongside an indexer as presented in `../squid`, or pointing at a live instance (see bellow)
+This UI is meant to be run either alongside an indexer as presented in `../squid`, or pointing at a live instance (see below)
 
 ## Available scripts
 

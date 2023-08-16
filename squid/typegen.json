@@ -4,6 +4,7 @@
   "events": ["Proxy.PureCreated", "Proxy.ProxyAdded", "Proxy.ProxyRemoved"],
   "calls": [
     "Proxy.proxy",
+    "Proxy.remove_proxies",
     "Multisig.as_multi",
     "Multisig.approve_as_multi",
     "Multisig.cancel_as_multi",

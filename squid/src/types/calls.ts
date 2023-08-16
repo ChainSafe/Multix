@@ -2809,3 +2809,50 @@ export class ProxyProxyCall {
         return this._chain.decodeCall(this.call)
     }
 }
+
+export class ProxyRemoveProxiesCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'Proxy.remove_proxies')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     *  Unregister all proxy accounts for the sender.
+     * 
+     *  The dispatch origin for this call must be _Signed_.
+     * 
+     *  WARNING: This may be called on accounts created by `anonymous`, however if done, then
+     *  the unreserved fees will be inaccessible. **All access to this account will be lost.**
+     * 
+     *  # <weight>
+     *  Weight is a function of the number of proxies the user has (P).
+     *  # </weight>
+     */
+    get isV1(): boolean {
+        return this._chain.getCallHash('Proxy.remove_proxies') === '01f2f9c28aa1d4d36a81ff042620b6677d25bf07c2bf4acc37b58658778a4fca'
+    }
+
+    /**
+     *  Unregister all proxy accounts for the sender.
+     * 
+     *  The dispatch origin for this call must be _Signed_.
+     * 
+     *  WARNING: This may be called on accounts created by `anonymous`, however if done, then
+     *  the unreserved fees will be inaccessible. **All access to this account will be lost.**
+     * 
+     *  # <weight>
+     *  Weight is a function of the number of proxies the user has (P).
+     *  # </weight>
+     */
+    get asV1(): null {
+        assert(this.isV1)
+        return this._chain.decodeCall(this.call)
+    }
+}
