@@ -12,7 +12,8 @@ import {
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs
+  getProxyInfoFromArgs,
+  JsonLog
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -77,6 +78,7 @@ const processor = new SubstrateBatchProcessor()
   .addCall('Multisig.cancel_as_multi', dataCall)
   .addCall('Multisig.as_multi_threshold_1', dataCall)
   .addEvent('Proxy.PureCreated', dataEvent)
+  .addEvent('Proxy.AnonymousCreated', dataEvent)
   .addEvent('Proxy.ProxyAdded', dataEvent)
   .addEvent('Proxy.ProxyRemoved', dataEvent)
 
@@ -170,10 +172,11 @@ processor.run(
           delegatorToRemoveIds.add(signerAccountId)
         }
 
-        if (item.name === 'Proxy.PureCreated') {
+        if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
+          item.name === 'Proxy.AnonymousCreated' && ctx.log.info(JsonLog(item))
           const newPureProxy = getPureProxyInfoFromArgs(item, chainId)
-          // ctx.log.info(`pure ${newPureProxy.pure}`)
-          // ctx.log.info(`who ${newPureProxy.who}`)
+          ctx.log.info(`pure ${newPureProxy.pure}`)
+          ctx.log.info(`who ${newPureProxy.who}`)
 
           newPureProxies.set(newPureProxy.id, {
             ...newPureProxy,

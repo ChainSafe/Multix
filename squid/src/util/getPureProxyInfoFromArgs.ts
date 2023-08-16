@@ -5,15 +5,16 @@ import { dataEvent, env } from '../main'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 
 export const getPureProxyInfoFromArgs = (
-  item: EventItem<'Proxy.PureCreated', (typeof dataEvent)['data']>,
+  item: EventItem<'Proxy.PureCreated' | 'Proxy.AnonymousCreated', (typeof dataEvent)['data']>,
   chainId: string
 ) => {
-  const { pure, who, proxyType } = item.event.args
+  const { pure, who, proxyType, anonymous } = item.event.args
   // pure proxy have no creation delay, they have a disambiguationIndex
   const delay = 0
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _who = encodeAddress(who, env.prefix)
-  const _pure = encodeAddress(pure, env.prefix)
+  // older versions of substrate use `anonymous` instead of `pure`
+  const _pure = anonymous ? encodeAddress(anonymous, env.prefix) : encodeAddress(pure, env.prefix)
   const id = getProxyAccountId(_who, _pure, _type, delay, chainId)
 
   return {
