@@ -1,7 +1,12 @@
 {
-  "outDir": "src/types",
+  "outDir": "../types",
   "specVersions": "https://statemine.archive.subsquid.io/graphql",
-  "events": ["Proxy.PureCreated", "Proxy.ProxyAdded", "Proxy.ProxyRemoved"],
+  "events": [
+    "Proxy.AnonymousCreated",
+    "Proxy.PureCreated",
+    "Proxy.ProxyAdded",
+    "Proxy.ProxyRemoved"
+  ],
   "calls": [
     "Proxy.proxy",
     "Proxy.remove_proxies",

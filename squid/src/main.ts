@@ -77,6 +77,7 @@ const processor = new SubstrateBatchProcessor()
   .addCall('Multisig.cancel_as_multi', dataCall)
   .addCall('Multisig.as_multi_threshold_1', dataCall)
   .addEvent('Proxy.PureCreated', dataEvent)
+  .addEvent('Proxy.AnonymousCreated', dataEvent)
   .addEvent('Proxy.ProxyAdded', dataEvent)
   .addEvent('Proxy.ProxyRemoved', dataEvent)
 
@@ -170,15 +171,21 @@ processor.run(
           delegatorToRemoveIds.add(signerAccountId)
         }
 
-        if (item.name === 'Proxy.PureCreated') {
-          const newPureProxy = getPureProxyInfoFromArgs(item, chainId)
+        if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
+          const newPureProxy = getPureProxyInfoFromArgs({
+            item,
+            chainId,
+            ctx,
+            isAnonymous: item.name === 'Proxy.AnonymousCreated'
+          })
           // ctx.log.info(`pure ${newPureProxy.pure}`)
           // ctx.log.info(`who ${newPureProxy.who}`)
 
-          newPureProxies.set(newPureProxy.id, {
-            ...newPureProxy,
-            createdAt: timestamp
-          })
+          newPureProxy &&
+            newPureProxies.set(newPureProxy.id, {
+              ...newPureProxy,
+              createdAt: timestamp
+            })
         }
 
         if (item.name === 'Proxy.ProxyAdded') {
