@@ -12,7 +12,7 @@ import {
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs,
+  getProxyInfoFromArgs
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -172,14 +172,20 @@ processor.run(
         }
 
         if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
-          const newPureProxy = getPureProxyInfoFromArgs({ item, chainId, ctx, isAnonymous: item.name === 'Proxy.AnonymousCreated' })
+          const newPureProxy = getPureProxyInfoFromArgs({
+            item,
+            chainId,
+            ctx,
+            isAnonymous: item.name === 'Proxy.AnonymousCreated'
+          })
           // ctx.log.info(`pure ${newPureProxy.pure}`)
           // ctx.log.info(`who ${newPureProxy.who}`)
 
-          newPureProxy && newPureProxies.set(newPureProxy.id, {
-            ...newPureProxy,
-            createdAt: timestamp
-          })
+          newPureProxy &&
+            newPureProxies.set(newPureProxy.id, {
+              ...newPureProxy,
+              createdAt: timestamp
+            })
         }
 
         if (item.name === 'Proxy.ProxyAdded') {
