@@ -1,8 +1,7 @@
 {
   "outDir": "../src/types",
   "specVersions": "https://hydradx.archive.subsquid.io/graphql",
-    "events": ["Proxy.AnonymousCreated"],
-  "calls": [
-  ],
+  "events": ["Proxy.AnonymousCreated"],
+  "calls": [],
   "storage": []
 }

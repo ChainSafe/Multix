@@ -12,7 +12,7 @@ import {
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs,
+  getProxyInfoFromArgs
 } from './util'
 import {
   handleNewMultisigCalls,
