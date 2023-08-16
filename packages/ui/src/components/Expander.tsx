@@ -35,6 +35,7 @@ export default styled(Expander)`
   .titleWrapper {
     cursor: pointer;
     display: flex;
+    align-items: center;
   }
 
   .expanderIcon {

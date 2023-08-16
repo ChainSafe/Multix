@@ -1,9 +1,11 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { IconButton, ListItemIcon, ListItemText } from '@mui/material'
+import { ListItemIcon, ListItemText, Theme } from '@mui/material'
 import { MouseEvent, ReactNode, useCallback, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { HiEllipsisVertical as MoreVertIcon } from 'react-icons/hi2'
+import { ButtonWithIcon } from './library'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export interface MenuOption {
   text: string
@@ -19,6 +21,7 @@ interface Props {
 }
 
 const OptionsMenu = ({ className, options }: Props) => {
+  const matchesMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleMenuClick = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -39,7 +42,7 @@ const OptionsMenu = ({ className, options }: Props) => {
 
   return (
     <div className={className}>
-      <IconButton
+      <ButtonWithIconStyled
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
@@ -47,8 +50,8 @@ const OptionsMenu = ({ className, options }: Props) => {
         aria-haspopup="true"
         onClick={handleMenuClick}
       >
-        <MoreVertIcon />
-      </IconButton>
+        {matchesMediumScreen ? <MoreVertIcon /> : 'Settings'}
+      </ButtonWithIconStyled>
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -57,10 +60,12 @@ const OptionsMenu = ({ className, options }: Props) => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch'
+        slotProps={{
+          paper: {
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: '20ch'
+            }
           }
         }}
       >
@@ -78,6 +83,20 @@ const OptionsMenu = ({ className, options }: Props) => {
     </div>
   )
 }
+
+const ButtonWithIconStyled = styled(ButtonWithIcon)`
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 0.5rem;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+    width: 2.25rem;
+  }
+
+  svg {
+    margin: 0;
+  }
+`
 
 export default styled(OptionsMenu)`
   margin-left: 0.5rem;
