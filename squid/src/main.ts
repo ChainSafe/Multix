@@ -13,7 +13,6 @@ import {
   getOriginAccount,
   getPureProxyInfoFromArgs,
   getProxyInfoFromArgs,
-  JsonLog
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -173,10 +172,9 @@ processor.run(
         }
 
         if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
-          item.name === 'Proxy.AnonymousCreated' && ctx.log.info(JsonLog(item))
           const newPureProxy = getPureProxyInfoFromArgs(item, chainId)
-          ctx.log.info(`pure ${newPureProxy.pure}`)
-          ctx.log.info(`who ${newPureProxy.who}`)
+          // ctx.log.info(`pure ${newPureProxy.pure}`)
+          // ctx.log.info(`who ${newPureProxy.who}`)
 
           newPureProxies.set(newPureProxy.id, {
             ...newPureProxy,
