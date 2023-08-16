@@ -1,6 +1,0 @@
-{
-  "outDir": "../types-hydra",
-  "specVersions": "https://hydradx.archive.subsquid.io/graphql",
-  "events": ["Proxy.AnonymousCreated"],
-  "storage": []
-}

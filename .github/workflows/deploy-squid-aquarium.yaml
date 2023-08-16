@@ -14,16 +14,7 @@ jobs:
   deploy:
     strategy:
       matrix:
-        network:
-          [
-            'polkadot',
-            'kusama',
-            'rococo',
-            'assethub-kusama',
-            'assethub-polkadot',
-            'others',
-            'others-2'
-          ]
+        network: ['large']
     runs-on: ubuntu-latest
     defaults:
       run:
