@@ -1,6 +1,6 @@
 {
   "outDir": "../types",
-  "specVersions": "https://statemine.archive.subsquid.io/graphql",
+  "specVersions": "https://kusama.archive.subsquid.io/graphql",
   "events": [
     "Proxy.AnonymousCreated",
     "Proxy.PureCreated",
