@@ -1,11 +1,40 @@
 import type {Result, Option} from './support'
 
-export interface Timepoint {
-    height: number
-    index: number
+export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_Governance | ProxyType_Staking | ProxyType_IdentityJudgement | ProxyType_CancelProxy | ProxyType_Auction | ProxyType_Society
+
+export interface ProxyType_Any {
+    __kind: 'Any'
 }
 
-export type Call = Call_System | Call_Babe | Call_Timestamp | Call_Indices | Call_Balances | Call_Authorship | Call_Staking | Call_Session | Call_Grandpa | Call_ImOnline | Call_Democracy | Call_Council | Call_TechnicalCommittee | Call_PhragmenElection | Call_TechnicalMembership | Call_Treasury | Call_ConvictionVoting | Call_Referenda | Call_FellowshipCollective | Call_FellowshipReferenda | Call_Whitelist | Call_Claims | Call_Utility | Call_Identity | Call_Society | Call_Recovery | Call_Vesting | Call_Scheduler | Call_Proxy | Call_Multisig | Call_Preimage | Call_Bounties | Call_ChildBounties | Call_Tips | Call_ElectionProviderMultiPhase | Call_Nis | Call_NisCounterpartBalances | Call_VoterList | Call_NominationPools | Call_FastUnstake | Call_Configuration | Call_ParasShared | Call_ParaInclusion | Call_ParaInherent | Call_Paras | Call_Initializer | Call_Dmp | Call_Ump | Call_Hrmp | Call_ParasDisputes | Call_Registrar | Call_Slots | Call_Auctions | Call_Crowdloan | Call_XcmPallet
+export interface ProxyType_NonTransfer {
+    __kind: 'NonTransfer'
+}
+
+export interface ProxyType_Governance {
+    __kind: 'Governance'
+}
+
+export interface ProxyType_Staking {
+    __kind: 'Staking'
+}
+
+export interface ProxyType_IdentityJudgement {
+    __kind: 'IdentityJudgement'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Auction {
+    __kind: 'Auction'
+}
+
+export interface ProxyType_Society {
+    __kind: 'Society'
+}
+
+export type Call = Call_System | Call_Babe | Call_Timestamp | Call_Indices | Call_Balances | Call_Authorship | Call_Staking | Call_Session | Call_Grandpa | Call_ImOnline | Call_Democracy | Call_Council | Call_TechnicalCommittee | Call_PhragmenElection | Call_TechnicalMembership | Call_Treasury | Call_Claims | Call_Utility | Call_Identity | Call_Society | Call_Recovery | Call_Vesting | Call_Scheduler | Call_Proxy | Call_Multisig | Call_Preimage | Call_Bounties | Call_ChildBounties | Call_Tips | Call_ElectionProviderMultiPhase | Call_Gilt | Call_VoterList | Call_NominationPools | Call_FastUnstake | Call_Configuration | Call_ParasShared | Call_ParaInclusion | Call_ParaInherent | Call_Paras | Call_Initializer | Call_Dmp | Call_Ump | Call_Hrmp | Call_ParasDisputes | Call_Registrar | Call_Slots | Call_Auctions | Call_Crowdloan | Call_XcmPallet
 
 export interface Call_System {
     __kind: 'System'
@@ -87,31 +116,6 @@ export interface Call_Treasury {
     value: TreasuryCall
 }
 
-export interface Call_ConvictionVoting {
-    __kind: 'ConvictionVoting'
-    value: ConvictionVotingCall
-}
-
-export interface Call_Referenda {
-    __kind: 'Referenda'
-    value: ReferendaCall
-}
-
-export interface Call_FellowshipCollective {
-    __kind: 'FellowshipCollective'
-    value: FellowshipCollectiveCall
-}
-
-export interface Call_FellowshipReferenda {
-    __kind: 'FellowshipReferenda'
-    value: FellowshipReferendaCall
-}
-
-export interface Call_Whitelist {
-    __kind: 'Whitelist'
-    value: WhitelistCall
-}
-
 export interface Call_Claims {
     __kind: 'Claims'
     value: ClaimsCall
@@ -182,14 +186,9 @@ export interface Call_ElectionProviderMultiPhase {
     value: ElectionProviderMultiPhaseCall
 }
 
-export interface Call_Nis {
-    __kind: 'Nis'
-    value: NisCall
-}
-
-export interface Call_NisCounterpartBalances {
-    __kind: 'NisCounterpartBalances'
-    value: NisCounterpartBalancesCall
+export interface Call_Gilt {
+    __kind: 'Gilt'
+    value: GiltCall
 }
 
 export interface Call_VoterList {
@@ -282,11 +281,6 @@ export interface Call_XcmPallet {
     value: XcmPalletCall
 }
 
-export interface Weight {
-    refTime: bigint
-    proofSize: bigint
-}
-
 export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
 
 export interface MultiAddress_Id {
@@ -314,44 +308,18 @@ export interface MultiAddress_Address20 {
     value: Uint8Array
 }
 
-export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_Governance | ProxyType_Staking | ProxyType_IdentityJudgement | ProxyType_CancelProxy | ProxyType_Auction | ProxyType_Society
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_NonTransfer {
-    __kind: 'NonTransfer'
-}
-
-export interface ProxyType_Governance {
-    __kind: 'Governance'
-}
-
-export interface ProxyType_Staking {
-    __kind: 'Staking'
-}
-
-export interface ProxyType_IdentityJudgement {
-    __kind: 'IdentityJudgement'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Auction {
-    __kind: 'Auction'
-}
-
-export interface ProxyType_Society {
-    __kind: 'Society'
-}
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
+
+/**
+ * A dispatch that will fill the block weight up to the given ratio.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+    ratio: number
+}
 
 /**
  * Make some on-chain remark.
@@ -790,7 +758,7 @@ export interface AuthorshipCall_set_uncles {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_unbond | StakingCall_withdraw_unbonded | StakingCall_validate | StakingCall_nominate | StakingCall_chill | StakingCall_set_payee | StakingCall_set_controller | StakingCall_set_validator_count | StakingCall_increase_validator_count | StakingCall_scale_validator_count | StakingCall_force_no_eras | StakingCall_force_new_era | StakingCall_set_invulnerables | StakingCall_force_unstake | StakingCall_force_new_era_always | StakingCall_cancel_deferred_slash | StakingCall_payout_stakers | StakingCall_rebond | StakingCall_reap_stash | StakingCall_kick | StakingCall_set_staking_configs | StakingCall_chill_other | StakingCall_force_apply_min_commission | StakingCall_set_min_commission
+export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_unbond | StakingCall_withdraw_unbonded | StakingCall_validate | StakingCall_nominate | StakingCall_chill | StakingCall_set_payee | StakingCall_set_controller | StakingCall_set_validator_count | StakingCall_increase_validator_count | StakingCall_scale_validator_count | StakingCall_force_no_eras | StakingCall_force_new_era | StakingCall_set_invulnerables | StakingCall_force_unstake | StakingCall_force_new_era_always | StakingCall_cancel_deferred_slash | StakingCall_payout_stakers | StakingCall_rebond | StakingCall_reap_stash | StakingCall_kick | StakingCall_set_staking_configs | StakingCall_chill_other | StakingCall_force_apply_min_commission
 
 /**
  * Take the origin account as a stash and lock up `value` of its balance. `controller` will
@@ -851,8 +819,8 @@ export interface StakingCall_bond_extra {
  * the funds out of management ready for transfer.
  * 
  * No more than a limited number of unlocking chunks (see `MaxUnlockingChunks`)
- * can co-exists at the same time. If there are no unlocking chunks slots available
- * [`Call::withdraw_unbonded`] is called to remove some of the chunks (if possible).
+ * can co-exists at the same time. In that case, [`Call::withdraw_unbonded`] need
+ * to be called first to remove some of the chunks (if possible).
  * 
  * If a user encounters the `InsufficientBond` error when calling this extrinsic,
  * they should call `chill` first in order to free up their bonded funds.
@@ -997,8 +965,7 @@ export interface StakingCall_set_validator_count {
 }
 
 /**
- * Increments the ideal number of validators upto maximum of
- * `ElectionProviderBase::MaxWinners`.
+ * Increments the ideal number of validators.
  * 
  * The dispatch origin must be Root.
  * 
@@ -1012,8 +979,7 @@ export interface StakingCall_increase_validator_count {
 }
 
 /**
- * Scale up the ideal number of validators by a factor upto maximum of
- * `ElectionProviderBase::MaxWinners`.
+ * Scale up the ideal number of validators by a factor.
  * 
  * The dispatch origin must be Root.
  * 
@@ -1108,7 +1074,7 @@ export interface StakingCall_force_new_era_always {
 /**
  * Cancel enactment of a deferred slash.
  * 
- * Can be called by the `T::AdminOrigin`.
+ * Can be called by the `T::SlashCancelOrigin`.
  * 
  * Parameters: era and indices of the slashes for that era to kill.
  */
@@ -1224,10 +1190,10 @@ export interface StakingCall_set_staking_configs {
     __kind: 'set_staking_configs'
     minNominatorBond: ConfigOp
     minValidatorBond: ConfigOp
-    maxNominatorCount: Type_104
-    maxValidatorCount: Type_104
-    chillThreshold: Type_105
-    minCommission: Type_106
+    maxNominatorCount: Type_257
+    maxValidatorCount: Type_257
+    chillThreshold: Type_258
+    minCommission: Type_259
 }
 
 /**
@@ -1271,17 +1237,6 @@ export interface StakingCall_chill_other {
 export interface StakingCall_force_apply_min_commission {
     __kind: 'force_apply_min_commission'
     validatorStash: Uint8Array
-}
-
-/**
- * Sets the minimum amount of commission that each validators must maintain.
- * 
- * This call has lower privilege requirements than `set_staking_config` and can be called
- * by the `T::AdminOrigin`. Root can always call this.
- */
-export interface StakingCall_set_min_commission {
-    __kind: 'set_min_commission'
-    new: number
 }
 
 /**
@@ -1346,7 +1301,7 @@ export type GrandpaCall = GrandpaCall_report_equivocation | GrandpaCall_report_e
  */
 export interface GrandpaCall_report_equivocation {
     __kind: 'report_equivocation'
-    equivocationProof: Type_113
+    equivocationProof: Type_278
     keyOwnerProof: MembershipProof
 }
 
@@ -1363,7 +1318,7 @@ export interface GrandpaCall_report_equivocation {
  */
 export interface GrandpaCall_report_equivocation_unsigned {
     __kind: 'report_equivocation_unsigned'
-    equivocationProof: Type_113
+    equivocationProof: Type_278
     keyOwnerProof: MembershipProof
 }
 
@@ -1412,7 +1367,7 @@ export interface ImOnlineCall_heartbeat {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type DemocracyCall = DemocracyCall_propose | DemocracyCall_second | DemocracyCall_vote | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_majority | DemocracyCall_external_propose_default | DemocracyCall_fast_track | DemocracyCall_veto_external | DemocracyCall_cancel_referendum | DemocracyCall_delegate | DemocracyCall_undelegate | DemocracyCall_clear_public_proposals | DemocracyCall_unlock | DemocracyCall_remove_vote | DemocracyCall_remove_other_vote | DemocracyCall_blacklist | DemocracyCall_cancel_proposal
+export type DemocracyCall = DemocracyCall_propose | DemocracyCall_second | DemocracyCall_vote | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_majority | DemocracyCall_external_propose_default | DemocracyCall_fast_track | DemocracyCall_veto_external | DemocracyCall_cancel_referendum | DemocracyCall_cancel_queued | DemocracyCall_delegate | DemocracyCall_undelegate | DemocracyCall_clear_public_proposals | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_reap_preimage | DemocracyCall_unlock | DemocracyCall_remove_vote | DemocracyCall_remove_other_vote | DemocracyCall_enact_proposal | DemocracyCall_blacklist | DemocracyCall_cancel_proposal
 
 /**
  * Propose a sensitive action to be taken.
@@ -1424,10 +1379,12 @@ export type DemocracyCall = DemocracyCall_propose | DemocracyCall_second | Democ
  * - `value`: The amount of deposit (must be at least `MinimumDeposit`).
  * 
  * Emits `Proposed`.
+ * 
+ * Weight: `O(p)`
  */
 export interface DemocracyCall_propose {
     __kind: 'propose'
-    proposal: Bounded
+    proposalHash: Uint8Array
     value: bigint
 }
 
@@ -1438,10 +1395,15 @@ export interface DemocracyCall_propose {
  * must have funds to cover the deposit, equal to the original deposit.
  * 
  * - `proposal`: The index of the proposal to second.
+ * - `seconds_upper_bound`: an upper bound on the current number of seconds on this
+ *   proposal. Extrinsic is weighted according to this value with no refund.
+ * 
+ * Weight: `O(S)` where S is the number of seconds a proposal already has.
  */
 export interface DemocracyCall_second {
     __kind: 'second'
     proposal: number
+    secondsUpperBound: number
 }
 
 /**
@@ -1452,6 +1414,8 @@ export interface DemocracyCall_second {
  * 
  * - `ref_index`: The index of the referendum to vote for.
  * - `vote`: The vote configuration.
+ * 
+ * Weight: `O(R)` where R is the number of referendums the voter has voted on.
  */
 export interface DemocracyCall_vote {
     __kind: 'vote'
@@ -1481,10 +1445,13 @@ export interface DemocracyCall_emergency_cancel {
  * The dispatch origin of this call must be `ExternalOrigin`.
  * 
  * - `proposal_hash`: The preimage hash of the proposal.
+ * 
+ * Weight: `O(V)` with V number of vetoers in the blacklist of proposal.
+ *   Decoding vec of length V. Charged as maximum
  */
 export interface DemocracyCall_external_propose {
     __kind: 'external_propose'
-    proposal: Bounded
+    proposalHash: Uint8Array
 }
 
 /**
@@ -1502,7 +1469,7 @@ export interface DemocracyCall_external_propose {
  */
 export interface DemocracyCall_external_propose_majority {
     __kind: 'external_propose_majority'
-    proposal: Bounded
+    proposalHash: Uint8Array
 }
 
 /**
@@ -1520,7 +1487,7 @@ export interface DemocracyCall_external_propose_majority {
  */
 export interface DemocracyCall_external_propose_default {
     __kind: 'external_propose_default'
-    proposal: Bounded
+    proposalHash: Uint8Array
 }
 
 /**
@@ -1531,7 +1498,7 @@ export interface DemocracyCall_external_propose_default {
  * The dispatch of this call must be `FastTrackOrigin`.
  * 
  * - `proposal_hash`: The hash of the current external proposal.
- * - `voting_period`: The period that is allowed for voting on this proposal. Increased to
+ * - `voting_period`: The period that is allowed for voting on this proposal.
  * 	Must be always greater than zero.
  * 	For `FastTrackOrigin` must be equal or greater than `FastTrackVotingPeriod`.
  * - `delay`: The number of block after voting has ended in approval and this should be
@@ -1576,6 +1543,20 @@ export interface DemocracyCall_veto_external {
 export interface DemocracyCall_cancel_referendum {
     __kind: 'cancel_referendum'
     refIndex: number
+}
+
+/**
+ * Cancel a proposal queued for enactment.
+ * 
+ * The dispatch origin of this call must be _Root_.
+ * 
+ * - `which`: The index of the referendum to cancel.
+ * 
+ * Weight: `O(D)` where `D` is the items in the dispatch queue. Weighted as `D = 10`.
+ */
+export interface DemocracyCall_cancel_queued {
+    __kind: 'cancel_queued'
+    which: number
 }
 
 /**
@@ -1634,6 +1615,81 @@ export interface DemocracyCall_undelegate {
  */
 export interface DemocracyCall_clear_public_proposals {
     __kind: 'clear_public_proposals'
+}
+
+/**
+ * Register the preimage for an upcoming proposal. This doesn't require the proposal to be
+ * in the dispatch queue but does require a deposit, returned once enacted.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `encoded_proposal`: The preimage of a proposal.
+ * 
+ * Emits `PreimageNoted`.
+ * 
+ * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
+ */
+export interface DemocracyCall_note_preimage {
+    __kind: 'note_preimage'
+    encodedProposal: Uint8Array
+}
+
+/**
+ * Same as `note_preimage` but origin is `OperationalPreimageOrigin`.
+ */
+export interface DemocracyCall_note_preimage_operational {
+    __kind: 'note_preimage_operational'
+    encodedProposal: Uint8Array
+}
+
+/**
+ * Register the preimage for an upcoming proposal. This requires the proposal to be
+ * in the dispatch queue. No deposit is needed. When this call is successful, i.e.
+ * the preimage has not been uploaded before and matches some imminent proposal,
+ * no fee is paid.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `encoded_proposal`: The preimage of a proposal.
+ * 
+ * Emits `PreimageNoted`.
+ * 
+ * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
+ */
+export interface DemocracyCall_note_imminent_preimage {
+    __kind: 'note_imminent_preimage'
+    encodedProposal: Uint8Array
+}
+
+/**
+ * Same as `note_imminent_preimage` but origin is `OperationalPreimageOrigin`.
+ */
+export interface DemocracyCall_note_imminent_preimage_operational {
+    __kind: 'note_imminent_preimage_operational'
+    encodedProposal: Uint8Array
+}
+
+/**
+ * Remove an expired proposal preimage and collect the deposit.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `proposal_hash`: The preimage hash of a proposal.
+ * - `proposal_length_upper_bound`: an upper bound on length of the proposal. Extrinsic is
+ *   weighted according to this value with no refund.
+ * 
+ * This will only work after `VotingPeriod` blocks from the time that the preimage was
+ * noted, if it's the same account doing it. If it's a different account, then it'll only
+ * work an additional `EnactmentPeriod` later.
+ * 
+ * Emits `PreimageReaped`.
+ * 
+ * Weight: `O(D)` where D is length of proposal.
+ */
+export interface DemocracyCall_reap_preimage {
+    __kind: 'reap_preimage'
+    proposalHash: Uint8Array
+    proposalLenUpperBound: number
 }
 
 /**
@@ -1708,6 +1764,15 @@ export interface DemocracyCall_remove_other_vote {
 }
 
 /**
+ * Enact a proposal from a referendum. For now we just make the weight be the maximum.
+ */
+export interface DemocracyCall_enact_proposal {
+    __kind: 'enact_proposal'
+    proposalHash: Uint8Array
+    index: number
+}
+
+/**
  * Permanently place a proposal into the blacklist. This prevents it from ever being
  * proposed again.
  * 
@@ -1747,7 +1812,7 @@ export interface DemocracyCall_cancel_proposal {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type CouncilCall = CouncilCall_set_members | CouncilCall_execute | CouncilCall_propose | CouncilCall_vote | CouncilCall_close_old_weight | CouncilCall_disapprove_proposal | CouncilCall_close
+export type CouncilCall = CouncilCall_set_members | CouncilCall_execute | CouncilCall_propose | CouncilCall_vote | CouncilCall_close | CouncilCall_disapprove_proposal
 
 /**
  * Set the collective's membership.
@@ -1903,8 +1968,8 @@ export interface CouncilCall_vote {
  * - up to 3 events
  * # </weight>
  */
-export interface CouncilCall_close_old_weight {
-    __kind: 'close_old_weight'
+export interface CouncilCall_close {
+    __kind: 'close'
     proposalHash: Uint8Array
     index: number
     proposalWeightBound: bigint
@@ -1933,51 +1998,9 @@ export interface CouncilCall_disapprove_proposal {
 }
 
 /**
- * Close a vote that is either approved, disapproved or whose voting period has ended.
- * 
- * May be called by any signed account in order to finish voting and close the proposal.
- * 
- * If called before the end of the voting period it will only close the vote if it is
- * has enough votes to be approved or disapproved.
- * 
- * If called after the end of the voting period abstentions are counted as rejections
- * unless there is a prime member set and the prime member cast an approval.
- * 
- * If the close operation completes successfully with disapproval, the transaction fee will
- * be waived. Otherwise execution of the approved operation will be charged to the caller.
- * 
- * + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed
- * proposal.
- * + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
- * `storage::read` so it is `size_of::<u32>() == 4` larger than the pure length.
- * 
- * # <weight>
- * ## Weight
- * - `O(B + M + P1 + P2)` where:
- *   - `B` is `proposal` size in bytes (length-fee-bounded)
- *   - `M` is members-count (code- and governance-bounded)
- *   - `P1` is the complexity of `proposal` preimage.
- *   - `P2` is proposal-count (code-bounded)
- * - DB:
- *  - 2 storage reads (`Members`: codec `O(M)`, `Prime`: codec `O(1)`)
- *  - 3 mutations (`Voting`: codec `O(M)`, `ProposalOf`: codec `O(B)`, `Proposals`: codec
- *    `O(P2)`)
- *  - any mutations done while executing `proposal` (`P1`)
- * - up to 3 events
- * # </weight>
- */
-export interface CouncilCall_close {
-    __kind: 'close'
-    proposalHash: Uint8Array
-    index: number
-    proposalWeightBound: Weight
-    lengthBound: number
-}
-
-/**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type TechnicalCommitteeCall = TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_vote | TechnicalCommitteeCall_close_old_weight | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_close
+export type TechnicalCommitteeCall = TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_vote | TechnicalCommitteeCall_close | TechnicalCommitteeCall_disapprove_proposal
 
 /**
  * Set the collective's membership.
@@ -2133,8 +2156,8 @@ export interface TechnicalCommitteeCall_vote {
  * - up to 3 events
  * # </weight>
  */
-export interface TechnicalCommitteeCall_close_old_weight {
-    __kind: 'close_old_weight'
+export interface TechnicalCommitteeCall_close {
+    __kind: 'close'
     proposalHash: Uint8Array
     index: number
     proposalWeightBound: bigint
@@ -2160,48 +2183,6 @@ export interface TechnicalCommitteeCall_close_old_weight {
 export interface TechnicalCommitteeCall_disapprove_proposal {
     __kind: 'disapprove_proposal'
     proposalHash: Uint8Array
-}
-
-/**
- * Close a vote that is either approved, disapproved or whose voting period has ended.
- * 
- * May be called by any signed account in order to finish voting and close the proposal.
- * 
- * If called before the end of the voting period it will only close the vote if it is
- * has enough votes to be approved or disapproved.
- * 
- * If called after the end of the voting period abstentions are counted as rejections
- * unless there is a prime member set and the prime member cast an approval.
- * 
- * If the close operation completes successfully with disapproval, the transaction fee will
- * be waived. Otherwise execution of the approved operation will be charged to the caller.
- * 
- * + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed
- * proposal.
- * + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
- * `storage::read` so it is `size_of::<u32>() == 4` larger than the pure length.
- * 
- * # <weight>
- * ## Weight
- * - `O(B + M + P1 + P2)` where:
- *   - `B` is `proposal` size in bytes (length-fee-bounded)
- *   - `M` is members-count (code- and governance-bounded)
- *   - `P1` is the complexity of `proposal` preimage.
- *   - `P2` is proposal-count (code-bounded)
- * - DB:
- *  - 2 storage reads (`Members`: codec `O(M)`, `Prime`: codec `O(1)`)
- *  - 3 mutations (`Voting`: codec `O(M)`, `ProposalOf`: codec `O(B)`, `Proposals`: codec
- *    `O(P2)`)
- *  - any mutations done while executing `proposal` (`P1`)
- * - up to 3 events
- * # </weight>
- */
-export interface TechnicalCommitteeCall_close {
-    __kind: 'close'
-    proposalHash: Uint8Array
-    index: number
-    proposalWeightBound: Weight
-    lengthBound: number
 }
 
 /**
@@ -2519,524 +2500,6 @@ export interface TreasuryCall_remove_approval {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ConvictionVotingCall = ConvictionVotingCall_vote | ConvictionVotingCall_delegate | ConvictionVotingCall_undelegate | ConvictionVotingCall_unlock | ConvictionVotingCall_remove_vote | ConvictionVotingCall_remove_other_vote
-
-/**
- * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
- * otherwise it is a vote to keep the status quo.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `poll_index`: The index of the poll to vote for.
- * - `vote`: The vote configuration.
- * 
- * Weight: `O(R)` where R is the number of polls the voter has voted on.
- */
-export interface ConvictionVotingCall_vote {
-    __kind: 'vote'
-    pollIndex: number
-    vote: Type_145
-}
-
-/**
- * Delegate the voting power (with some given conviction) of the sending account for a
- * particular class of polls.
- * 
- * The balance delegated is locked for as long as it's delegated, and thereafter for the
- * time appropriate for the conviction's lock period.
- * 
- * The dispatch origin of this call must be _Signed_, and the signing account must either:
- *   - be delegating already; or
- *   - have no voting activity (if there is, then it will need to be removed/consolidated
- *     through `reap_vote` or `unvote`).
- * 
- * - `to`: The account whose voting the `target` account's voting power will follow.
- * - `class`: The class of polls to delegate. To delegate multiple classes, multiple calls
- *   to this function are required.
- * - `conviction`: The conviction that will be attached to the delegated votes. When the
- *   account is undelegated, the funds will be locked for the corresponding period.
- * - `balance`: The amount of the account's balance to be used in delegating. This must not
- *   be more than the account's current balance.
- * 
- * Emits `Delegated`.
- * 
- * Weight: `O(R)` where R is the number of polls the voter delegating to has
- *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
- */
-export interface ConvictionVotingCall_delegate {
-    __kind: 'delegate'
-    class: number
-    to: MultiAddress
-    conviction: Conviction
-    balance: bigint
-}
-
-/**
- * Undelegate the voting power of the sending account for a particular class of polls.
- * 
- * Tokens may be unlocked following once an amount of time consistent with the lock period
- * of the conviction with which the delegation was issued has passed.
- * 
- * The dispatch origin of this call must be _Signed_ and the signing account must be
- * currently delegating.
- * 
- * - `class`: The class of polls to remove the delegation from.
- * 
- * Emits `Undelegated`.
- * 
- * Weight: `O(R)` where R is the number of polls the voter delegating to has
- *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
- */
-export interface ConvictionVotingCall_undelegate {
-    __kind: 'undelegate'
-    class: number
-}
-
-/**
- * Remove the lock caused by prior voting/delegating which has expired within a particular
- * class.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `class`: The class of polls to unlock.
- * - `target`: The account to remove the lock on.
- * 
- * Weight: `O(R)` with R number of vote of target.
- */
-export interface ConvictionVotingCall_unlock {
-    __kind: 'unlock'
-    class: number
-    target: MultiAddress
-}
-
-/**
- * Remove a vote for a poll.
- * 
- * If:
- * - the poll was cancelled, or
- * - the poll is ongoing, or
- * - the poll has ended such that
- *   - the vote of the account was in opposition to the result; or
- *   - there was no conviction to the account's vote; or
- *   - the account made a split vote
- * ...then the vote is removed cleanly and a following call to `unlock` may result in more
- * funds being available.
- * 
- * If, however, the poll has ended and:
- * - it finished corresponding to the vote of the account, and
- * - the account made a standard vote with conviction, and
- * - the lock period of the conviction is not over
- * ...then the lock will be aggregated into the overall account's lock, which may involve
- * *overlocking* (where the two locks are combined into a single lock that is the maximum
- * of both the amount locked and the time is it locked for).
- * 
- * The dispatch origin of this call must be _Signed_, and the signer must have a vote
- * registered for poll `index`.
- * 
- * - `index`: The index of poll of the vote to be removed.
- * - `class`: Optional parameter, if given it indicates the class of the poll. For polls
- *   which have finished or are cancelled, this must be `Some`.
- * 
- * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
- *   Weight is calculated for the maximum number of vote.
- */
-export interface ConvictionVotingCall_remove_vote {
-    __kind: 'remove_vote'
-    class: (number | undefined)
-    index: number
-}
-
-/**
- * Remove a vote for a poll.
- * 
- * If the `target` is equal to the signer, then this function is exactly equivalent to
- * `remove_vote`. If not equal to the signer, then the vote must have expired,
- * either because the poll was cancelled, because the voter lost the poll or
- * because the conviction period is over.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `target`: The account of the vote to be removed; this account must have voted for poll
- *   `index`.
- * - `index`: The index of poll of the vote to be removed.
- * - `class`: The class of the poll.
- * 
- * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
- *   Weight is calculated for the maximum number of vote.
- */
-export interface ConvictionVotingCall_remove_other_vote {
-    __kind: 'remove_other_vote'
-    target: MultiAddress
-    class: number
-    index: number
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type ReferendaCall = ReferendaCall_submit | ReferendaCall_place_decision_deposit | ReferendaCall_refund_decision_deposit | ReferendaCall_cancel | ReferendaCall_kill | ReferendaCall_nudge_referendum | ReferendaCall_one_fewer_deciding | ReferendaCall_refund_submission_deposit
-
-/**
- * Propose a referendum on a privileged action.
- * 
- * - `origin`: must be `SubmitOrigin` and the account must have `SubmissionDeposit` funds
- *   available.
- * - `proposal_origin`: The origin from which the proposal should be executed.
- * - `proposal`: The proposal.
- * - `enactment_moment`: The moment that the proposal should be enacted.
- * 
- * Emits `Submitted`.
- */
-export interface ReferendaCall_submit {
-    __kind: 'submit'
-    proposalOrigin: OriginCaller
-    proposal: Bounded
-    enactmentMoment: DispatchTime
-}
-
-/**
- * Post the Decision Deposit for a referendum.
- * 
- * - `origin`: must be `Signed` and the account must have funds available for the
- *   referendum's track's Decision Deposit.
- * - `index`: The index of the submitted referendum whose Decision Deposit is yet to be
- *   posted.
- * 
- * Emits `DecisionDepositPlaced`.
- */
-export interface ReferendaCall_place_decision_deposit {
-    __kind: 'place_decision_deposit'
-    index: number
-}
-
-/**
- * Refund the Decision Deposit for a closed referendum back to the depositor.
- * 
- * - `origin`: must be `Signed` or `Root`.
- * - `index`: The index of a closed referendum whose Decision Deposit has not yet been
- *   refunded.
- * 
- * Emits `DecisionDepositRefunded`.
- */
-export interface ReferendaCall_refund_decision_deposit {
-    __kind: 'refund_decision_deposit'
-    index: number
-}
-
-/**
- * Cancel an ongoing referendum.
- * 
- * - `origin`: must be the `CancelOrigin`.
- * - `index`: The index of the referendum to be cancelled.
- * 
- * Emits `Cancelled`.
- */
-export interface ReferendaCall_cancel {
-    __kind: 'cancel'
-    index: number
-}
-
-/**
- * Cancel an ongoing referendum and slash the deposits.
- * 
- * - `origin`: must be the `KillOrigin`.
- * - `index`: The index of the referendum to be cancelled.
- * 
- * Emits `Killed` and `DepositSlashed`.
- */
-export interface ReferendaCall_kill {
-    __kind: 'kill'
-    index: number
-}
-
-/**
- * Advance a referendum onto its next logical state. Only used internally.
- * 
- * - `origin`: must be `Root`.
- * - `index`: the referendum to be advanced.
- */
-export interface ReferendaCall_nudge_referendum {
-    __kind: 'nudge_referendum'
-    index: number
-}
-
-/**
- * Advance a track onto its next logical state. Only used internally.
- * 
- * - `origin`: must be `Root`.
- * - `track`: the track to be advanced.
- * 
- * Action item for when there is now one fewer referendum in the deciding phase and the
- * `DecidingCount` is not yet updated. This means that we should either:
- * - begin deciding another referendum (and leave `DecidingCount` alone); or
- * - decrement `DecidingCount`.
- */
-export interface ReferendaCall_one_fewer_deciding {
-    __kind: 'one_fewer_deciding'
-    track: number
-}
-
-/**
- * Refund the Submission Deposit for a closed referendum back to the depositor.
- * 
- * - `origin`: must be `Signed` or `Root`.
- * - `index`: The index of a closed referendum whose Submission Deposit has not yet been
- *   refunded.
- * 
- * Emits `SubmissionDepositRefunded`.
- */
-export interface ReferendaCall_refund_submission_deposit {
-    __kind: 'refund_submission_deposit'
-    index: number
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type FellowshipCollectiveCall = FellowshipCollectiveCall_add_member | FellowshipCollectiveCall_promote_member | FellowshipCollectiveCall_demote_member | FellowshipCollectiveCall_remove_member | FellowshipCollectiveCall_vote | FellowshipCollectiveCall_cleanup_poll
-
-/**
- * Introduce a new member.
- * 
- * - `origin`: Must be the `AdminOrigin`.
- * - `who`: Account of non-member which will become a member.
- * - `rank`: The rank to give the new member.
- * 
- * Weight: `O(1)`
- */
-export interface FellowshipCollectiveCall_add_member {
-    __kind: 'add_member'
-    who: MultiAddress
-}
-
-/**
- * Increment the rank of an existing member by one.
- * 
- * - `origin`: Must be the `AdminOrigin`.
- * - `who`: Account of existing member.
- * 
- * Weight: `O(1)`
- */
-export interface FellowshipCollectiveCall_promote_member {
-    __kind: 'promote_member'
-    who: MultiAddress
-}
-
-/**
- * Decrement the rank of an existing member by one. If the member is already at rank zero,
- * then they are removed entirely.
- * 
- * - `origin`: Must be the `AdminOrigin`.
- * - `who`: Account of existing member of rank greater than zero.
- * 
- * Weight: `O(1)`, less if the member's index is highest in its rank.
- */
-export interface FellowshipCollectiveCall_demote_member {
-    __kind: 'demote_member'
-    who: MultiAddress
-}
-
-/**
- * Remove the member entirely.
- * 
- * - `origin`: Must be the `AdminOrigin`.
- * - `who`: Account of existing member of rank greater than zero.
- * - `min_rank`: The rank of the member or greater.
- * 
- * Weight: `O(min_rank)`.
- */
-export interface FellowshipCollectiveCall_remove_member {
-    __kind: 'remove_member'
-    who: MultiAddress
-    minRank: number
-}
-
-/**
- * Add an aye or nay vote for the sender to the given proposal.
- * 
- * - `origin`: Must be `Signed` by a member account.
- * - `poll`: Index of a poll which is ongoing.
- * - `aye`: `true` if the vote is to approve the proposal, `false` otherwise.
- * 
- * Transaction fees are be waived if the member is voting on any particular proposal
- * for the first time and the call is successful. Subsequent vote changes will charge a
- * fee.
- * 
- * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
- */
-export interface FellowshipCollectiveCall_vote {
-    __kind: 'vote'
-    poll: number
-    aye: boolean
-}
-
-/**
- * Remove votes from the given poll. It must have ended.
- * 
- * - `origin`: Must be `Signed` by any account.
- * - `poll_index`: Index of a poll which is completed and for which votes continue to
- *   exist.
- * - `max`: Maximum number of vote items from remove in this call.
- * 
- * Transaction fees are waived if the operation is successful.
- * 
- * Weight `O(max)` (less if there are fewer items to remove than `max`).
- */
-export interface FellowshipCollectiveCall_cleanup_poll {
-    __kind: 'cleanup_poll'
-    pollIndex: number
-    max: number
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type FellowshipReferendaCall = FellowshipReferendaCall_submit | FellowshipReferendaCall_place_decision_deposit | FellowshipReferendaCall_refund_decision_deposit | FellowshipReferendaCall_cancel | FellowshipReferendaCall_kill | FellowshipReferendaCall_nudge_referendum | FellowshipReferendaCall_one_fewer_deciding | FellowshipReferendaCall_refund_submission_deposit
-
-/**
- * Propose a referendum on a privileged action.
- * 
- * - `origin`: must be `SubmitOrigin` and the account must have `SubmissionDeposit` funds
- *   available.
- * - `proposal_origin`: The origin from which the proposal should be executed.
- * - `proposal`: The proposal.
- * - `enactment_moment`: The moment that the proposal should be enacted.
- * 
- * Emits `Submitted`.
- */
-export interface FellowshipReferendaCall_submit {
-    __kind: 'submit'
-    proposalOrigin: OriginCaller
-    proposal: Bounded
-    enactmentMoment: DispatchTime
-}
-
-/**
- * Post the Decision Deposit for a referendum.
- * 
- * - `origin`: must be `Signed` and the account must have funds available for the
- *   referendum's track's Decision Deposit.
- * - `index`: The index of the submitted referendum whose Decision Deposit is yet to be
- *   posted.
- * 
- * Emits `DecisionDepositPlaced`.
- */
-export interface FellowshipReferendaCall_place_decision_deposit {
-    __kind: 'place_decision_deposit'
-    index: number
-}
-
-/**
- * Refund the Decision Deposit for a closed referendum back to the depositor.
- * 
- * - `origin`: must be `Signed` or `Root`.
- * - `index`: The index of a closed referendum whose Decision Deposit has not yet been
- *   refunded.
- * 
- * Emits `DecisionDepositRefunded`.
- */
-export interface FellowshipReferendaCall_refund_decision_deposit {
-    __kind: 'refund_decision_deposit'
-    index: number
-}
-
-/**
- * Cancel an ongoing referendum.
- * 
- * - `origin`: must be the `CancelOrigin`.
- * - `index`: The index of the referendum to be cancelled.
- * 
- * Emits `Cancelled`.
- */
-export interface FellowshipReferendaCall_cancel {
-    __kind: 'cancel'
-    index: number
-}
-
-/**
- * Cancel an ongoing referendum and slash the deposits.
- * 
- * - `origin`: must be the `KillOrigin`.
- * - `index`: The index of the referendum to be cancelled.
- * 
- * Emits `Killed` and `DepositSlashed`.
- */
-export interface FellowshipReferendaCall_kill {
-    __kind: 'kill'
-    index: number
-}
-
-/**
- * Advance a referendum onto its next logical state. Only used internally.
- * 
- * - `origin`: must be `Root`.
- * - `index`: the referendum to be advanced.
- */
-export interface FellowshipReferendaCall_nudge_referendum {
-    __kind: 'nudge_referendum'
-    index: number
-}
-
-/**
- * Advance a track onto its next logical state. Only used internally.
- * 
- * - `origin`: must be `Root`.
- * - `track`: the track to be advanced.
- * 
- * Action item for when there is now one fewer referendum in the deciding phase and the
- * `DecidingCount` is not yet updated. This means that we should either:
- * - begin deciding another referendum (and leave `DecidingCount` alone); or
- * - decrement `DecidingCount`.
- */
-export interface FellowshipReferendaCall_one_fewer_deciding {
-    __kind: 'one_fewer_deciding'
-    track: number
-}
-
-/**
- * Refund the Submission Deposit for a closed referendum back to the depositor.
- * 
- * - `origin`: must be `Signed` or `Root`.
- * - `index`: The index of a closed referendum whose Submission Deposit has not yet been
- *   refunded.
- * 
- * Emits `SubmissionDepositRefunded`.
- */
-export interface FellowshipReferendaCall_refund_submission_deposit {
-    __kind: 'refund_submission_deposit'
-    index: number
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type WhitelistCall = WhitelistCall_whitelist_call | WhitelistCall_remove_whitelisted_call | WhitelistCall_dispatch_whitelisted_call | WhitelistCall_dispatch_whitelisted_call_with_preimage
-
-export interface WhitelistCall_whitelist_call {
-    __kind: 'whitelist_call'
-    callHash: Uint8Array
-}
-
-export interface WhitelistCall_remove_whitelisted_call {
-    __kind: 'remove_whitelisted_call'
-    callHash: Uint8Array
-}
-
-export interface WhitelistCall_dispatch_whitelisted_call {
-    __kind: 'dispatch_whitelisted_call'
-    callHash: Uint8Array
-    callEncodedLen: number
-    callWeightWitness: Weight
-}
-
-export interface WhitelistCall_dispatch_whitelisted_call_with_preimage {
-    __kind: 'dispatch_whitelisted_call_with_preimage'
-    call: Call
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export type ClaimsCall = ClaimsCall_claim | ClaimsCall_mint_claim | ClaimsCall_claim_attest | ClaimsCall_attest | ClaimsCall_move_claim
 
 /**
@@ -3165,18 +2628,18 @@ export interface ClaimsCall_move_claim {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
+export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch
 
 /**
  * Send a batch of dispatch calls.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -3218,13 +2681,13 @@ export interface UtilityCall_as_derivative {
  * Send a batch of dispatch calls and atomically execute them.
  * The whole transaction will rollback and fail if any of the calls failed.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -3257,13 +2720,13 @@ export interface UtilityCall_dispatch_as {
  * Send a batch of dispatch calls.
  * Unlike `batch`, it allows errors and won't interrupt.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatch without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -3272,20 +2735,6 @@ export interface UtilityCall_dispatch_as {
 export interface UtilityCall_force_batch {
     __kind: 'force_batch'
     calls: Call[]
-}
-
-/**
- * Dispatch a function call with a specified weight.
- * 
- * This function does not check the weight of the call, and instead allows the
- * Root origin to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Root_.
- */
-export interface UtilityCall_with_weight {
-    __kind: 'with_weight'
-    call: Call
-    weight: Weight
 }
 
 /**
@@ -3977,7 +3426,7 @@ export interface SocietyCall_judge_suspended_member {
 export interface SocietyCall_judge_suspended_candidate {
     __kind: 'judge_suspended_candidate'
     who: MultiAddress
-    judgement: Type_222
+    judgement: Type_388
 }
 
 /**
@@ -4306,7 +3755,7 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -4327,7 +3776,7 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -4350,7 +3799,7 @@ export interface SchedulerCall_schedule_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -4366,7 +3815,7 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -4645,8 +4094,8 @@ export interface MultisigCall_as_multi_threshold_1 {
  *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  * -------------------------------
  * - DB Weight:
- *     - Reads: Multisig Storage, [Caller Account]
- *     - Writes: Multisig Storage, [Caller Account]
+ *     - Reads: Multisig Storage, [Caller Account], Calls (if `store_call`)
+ *     - Writes: Multisig Storage, [Caller Account], Calls (if `store_call`)
  * - Plus Call Weight
  * # </weight>
  */
@@ -4655,7 +4104,8 @@ export interface MultisigCall_as_multi {
     threshold: number
     otherSignatories: Uint8Array[]
     maybeTimepoint: (Timepoint | undefined)
-    call: Call
+    call: Uint8Array
+    storeCall: boolean
     maxWeight: Weight
 }
 
@@ -4729,8 +4179,8 @@ export interface MultisigCall_approve_as_multi {
  * - Storage: removes one item.
  * ----------------------------------
  * - DB Weight:
- *     - Read: Multisig Storage, [Caller Account], Refund Account
- *     - Write: Multisig Storage, [Caller Account], Refund Account
+ *     - Read: Multisig Storage, [Caller Account], Refund Account, Calls
+ *     - Write: Multisig Storage, [Caller Account], Refund Account, Calls
  * # </weight>
  */
 export interface MultisigCall_cancel_as_multi {
@@ -4759,11 +4209,6 @@ export interface PreimageCall_note_preimage {
 
 /**
  * Clear an unrequested preimage from the runtime storage.
- * 
- * If `len` is provided, then it will be a much cheaper operation.
- * 
- * - `hash`: The hash of the preimage to be removed from the store.
- * - `len`: The length of the preimage of `hash`.
  */
 export interface PreimageCall_unnote_preimage {
     __kind: 'unnote_preimage'
@@ -4820,7 +4265,7 @@ export interface BountiesCall_propose_bounty {
  * Approve a bounty proposal. At a later time, the bounty will be funded and become active
  * and the original deposit will be returned.
  * 
- * May only be called from `T::SpendOrigin`.
+ * May only be called from `T::ApproveOrigin`.
  * 
  * # <weight>
  * - O(1).
@@ -4834,7 +4279,7 @@ export interface BountiesCall_approve_bounty {
 /**
  * Assign a curator to a funded bounty.
  * 
- * May only be called from `T::SpendOrigin`.
+ * May only be called from `T::ApproveOrigin`.
  * 
  * # <weight>
  * - O(1).
@@ -5412,22 +4857,24 @@ export interface ElectionProviderMultiPhaseCall_governance_fallback {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type NisCall = NisCall_place_bid | NisCall_retract_bid | NisCall_fund_deficit | NisCall_thaw
+export type GiltCall = GiltCall_place_bid | GiltCall_retract_bid | GiltCall_set_target | GiltCall_thaw
 
 /**
- * Place a bid.
+ * Place a bid for a gilt to be issued.
  * 
  * Origin must be Signed, and account must have at least `amount` in free balance.
  * 
- * - `amount`: The amount of the bid; these funds will be reserved, and if/when
- *   consolidated, removed. Must be at least `MinBid`.
- * - `duration`: The number of periods before which the newly consolidated bid may be
- *   thawed. Must be greater than 1 and no more than `QueueCount`.
+ * - `amount`: The amount of the bid; these funds will be reserved. If the bid is
+ * successfully elevated into an issued gilt, then these funds will continue to be
+ * reserved until the gilt expires. Must be at least `MinFreeze`.
+ * - `duration`: The number of periods for which the funds will be locked if the gilt is
+ * issued. It will expire only after this period has elapsed after the point of issuance.
+ * Must be greater than 1 and no more than `QueueCount`.
  * 
  * Complexities:
  * - `Queues[duration].len()` (just take max).
  */
-export interface NisCall_place_bid {
+export interface GiltCall_place_bid {
     __kind: 'place_bid'
     amount: bigint
     duration: number
@@ -5442,155 +4889,37 @@ export interface NisCall_place_bid {
  * - `amount`: The amount of the previous bid.
  * - `duration`: The duration of the previous bid.
  */
-export interface NisCall_retract_bid {
+export interface GiltCall_retract_bid {
     __kind: 'retract_bid'
     amount: bigint
     duration: number
 }
 
 /**
- * Ensure we have sufficient funding for all potential payouts.
+ * Set target proportion of gilt-funds.
  * 
- * - `origin`: Must be accepted by `FundOrigin`.
+ * Origin must be `AdminOrigin`.
+ * 
+ * - `target`: The target proportion of effective issued funds that should be under gilts
+ * at any one time.
  */
-export interface NisCall_fund_deficit {
-    __kind: 'fund_deficit'
+export interface GiltCall_set_target {
+    __kind: 'set_target'
+    target: bigint
 }
 
 /**
- * Reduce or remove an outstanding receipt, placing the according proportion of funds into
- * the account of the owner.
+ * Remove an active but expired gilt. Reserved funds under gilt are freed and balance is
+ * adjusted to ensure that the funds grow or shrink to maintain the equivalent proportion
+ * of effective total issued funds.
  * 
- * - `origin`: Must be Signed and the account must be the owner of the receipt `index` as
- *   well as any fungible counterpart.
- * - `index`: The index of the receipt.
- * - `portion`: If `Some`, then only the given portion of the receipt should be thawed. If
- *   `None`, then all of it should be.
+ * Origin must be Signed and the account must be the owner of the gilt of the given index.
+ * 
+ * - `index`: The index of the gilt to be thawed.
  */
-export interface NisCall_thaw {
+export interface GiltCall_thaw {
     __kind: 'thaw'
     index: number
-    portion: (bigint | undefined)
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type NisCounterpartBalancesCall = NisCounterpartBalancesCall_transfer | NisCounterpartBalancesCall_set_balance | NisCounterpartBalancesCall_force_transfer | NisCounterpartBalancesCall_transfer_keep_alive | NisCounterpartBalancesCall_transfer_all | NisCounterpartBalancesCall_force_unreserve
-
-/**
- * Transfer some liquid free balance to another account.
- * 
- * `transfer` will set the `FreeBalance` of the sender and receiver.
- * If the sender's account is below the existential deposit as a result
- * of the transfer, the account will be reaped.
- * 
- * The dispatch origin for this call must be `Signed` by the transactor.
- * 
- * # <weight>
- * - Dependent on arguments but not critical, given proper implementations for input config
- *   types. See related functions below.
- * - It contains a limited number of reads and writes internally and no complex
- *   computation.
- * 
- * Related functions:
- * 
- *   - `ensure_can_withdraw` is always called internally but has a bounded complexity.
- *   - Transferring balances to accounts that did not exist before will cause
- *     `T::OnNewAccount::on_new_account` to be called.
- *   - Removing enough funds from an account will trigger `T::DustRemoval::on_unbalanced`.
- *   - `transfer_keep_alive` works the same way as `transfer`, but has an additional check
- *     that the transfer will not kill the origin account.
- * ---------------------------------
- * - Origin account is already in memory, so no DB operations for them.
- * # </weight>
- */
-export interface NisCounterpartBalancesCall_transfer {
-    __kind: 'transfer'
-    dest: MultiAddress
-    value: bigint
-}
-
-/**
- * Set the balances of a given account.
- * 
- * This will alter `FreeBalance` and `ReservedBalance` in storage. it will
- * also alter the total issuance of the system (`TotalIssuance`) appropriately.
- * If the new free or reserved balance is below the existential deposit,
- * it will reset the account nonce (`frame_system::AccountNonce`).
- * 
- * The dispatch origin for this call is `root`.
- */
-export interface NisCounterpartBalancesCall_set_balance {
-    __kind: 'set_balance'
-    who: MultiAddress
-    newFree: bigint
-    newReserved: bigint
-}
-
-/**
- * Exactly as `transfer`, except the origin must be root and the source account may be
- * specified.
- * # <weight>
- * - Same as transfer, but additional read and write because the source account is not
- *   assumed to be in the overlay.
- * # </weight>
- */
-export interface NisCounterpartBalancesCall_force_transfer {
-    __kind: 'force_transfer'
-    source: MultiAddress
-    dest: MultiAddress
-    value: bigint
-}
-
-/**
- * Same as the [`transfer`] call, but with a check that the transfer will not kill the
- * origin account.
- * 
- * 99% of the time you want [`transfer`] instead.
- * 
- * [`transfer`]: struct.Pallet.html#method.transfer
- */
-export interface NisCounterpartBalancesCall_transfer_keep_alive {
-    __kind: 'transfer_keep_alive'
-    dest: MultiAddress
-    value: bigint
-}
-
-/**
- * Transfer the entire transferable balance from the caller account.
- * 
- * NOTE: This function only attempts to transfer _transferable_ balances. This means that
- * any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
- * transferred by this function. To ensure that this function results in a killed account,
- * you might need to prepare the account by removing any reference counters, storage
- * deposits, etc...
- * 
- * The dispatch origin of this call must be Signed.
- * 
- * - `dest`: The recipient of the transfer.
- * - `keep_alive`: A boolean to determine if the `transfer_all` operation should send all
- *   of the funds the account has, causing the sender account to be killed (false), or
- *   transfer everything except at least the existential deposit, which will guarantee to
- *   keep the sender account alive (true). # <weight>
- * - O(1). Just like transfer, but reading the user's transferable balance first.
- *   #</weight>
- */
-export interface NisCounterpartBalancesCall_transfer_all {
-    __kind: 'transfer_all'
-    dest: MultiAddress
-    keepAlive: boolean
-}
-
-/**
- * Unreserve some balance from a user by force.
- * 
- * Can only be called by ROOT.
- */
-export interface NisCounterpartBalancesCall_force_unreserve {
-    __kind: 'force_unreserve'
-    who: MultiAddress
-    amount: bigint
 }
 
 /**
@@ -5633,7 +4962,7 @@ export interface VoterListCall_put_in_front_of {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type NominationPoolsCall = NominationPoolsCall_join | NominationPoolsCall_bond_extra | NominationPoolsCall_claim_payout | NominationPoolsCall_unbond | NominationPoolsCall_pool_withdraw_unbonded | NominationPoolsCall_withdraw_unbonded | NominationPoolsCall_create | NominationPoolsCall_create_with_pool_id | NominationPoolsCall_nominate | NominationPoolsCall_set_state | NominationPoolsCall_set_metadata | NominationPoolsCall_set_configs | NominationPoolsCall_update_roles | NominationPoolsCall_chill
+export type NominationPoolsCall = NominationPoolsCall_join | NominationPoolsCall_bond_extra | NominationPoolsCall_claim_payout | NominationPoolsCall_unbond | NominationPoolsCall_pool_withdraw_unbonded | NominationPoolsCall_withdraw_unbonded | NominationPoolsCall_create | NominationPoolsCall_nominate | NominationPoolsCall_set_state | NominationPoolsCall_set_metadata | NominationPoolsCall_set_configs | NominationPoolsCall_update_roles | NominationPoolsCall_chill
 
 /**
  * Stake funds with a pool. The amount to bond is transferred from the member to the
@@ -5704,12 +5033,9 @@ export interface NominationPoolsCall_claim_payout {
  * # Note
  * 
  * If there are too many unlocking chunks to unbond with the pool account,
- * [`Call::pool_withdraw_unbonded`] can be called to try and minimize unlocking chunks.
- * The [`StakingInterface::unbond`] will implicitly call [`Call::pool_withdraw_unbonded`]
- * to try to free chunks if necessary (ie. if unbound was called and no unlocking chunks
- * are available). However, it may not be possible to release the current unlocking chunks,
- * in which case, the result of this call will likely be the `NoMoreChunks` error from the
- * staking system.
+ * [`Call::pool_withdraw_unbonded`] can be called to try and minimize unlocking chunks. If
+ * there are too many unlocking chunks, the result of this call will likely be the
+ * `NoMoreChunks` error from the staking system.
  */
 export interface NominationPoolsCall_unbond {
     __kind: 'unbond'
@@ -5786,23 +5112,6 @@ export interface NominationPoolsCall_create {
 }
 
 /**
- * Create a new delegation pool with a previously used pool id
- * 
- * # Arguments
- * 
- * same as `create` with the inclusion of
- * * `pool_id` - `A valid PoolId.
- */
-export interface NominationPoolsCall_create_with_pool_id {
-    __kind: 'create_with_pool_id'
-    amount: bigint
-    root: MultiAddress
-    nominator: MultiAddress
-    stateToggler: MultiAddress
-    poolId: number
-}
-
-/**
  * Nominate on behalf of the pool.
  * 
  * The dispatch origin of this call must be signed by the pool nominator or the pool
@@ -5863,9 +5172,9 @@ export interface NominationPoolsCall_set_configs {
     __kind: 'set_configs'
     minJoinBond: ConfigOp
     minCreateBond: ConfigOp
-    maxPools: Type_330
-    maxMembers: Type_330
-    maxMembersPerPool: Type_330
+    maxPools: Type_493
+    maxMembers: Type_493
+    maxMembersPerPool: Type_493
 }
 
 /**
@@ -5880,9 +5189,9 @@ export interface NominationPoolsCall_set_configs {
 export interface NominationPoolsCall_update_roles {
     __kind: 'update_roles'
     poolId: number
-    newRoot: Type_331
-    newNominator: Type_331
-    newStateToggler: Type_331
+    newRoot: Type_494
+    newNominator: Type_494
+    newStateToggler: Type_494
 }
 
 /**
@@ -5954,7 +5263,7 @@ export interface FastUnstakeCall_control {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ConfigurationCall = ConfigurationCall_set_validation_upgrade_cooldown | ConfigurationCall_set_validation_upgrade_delay | ConfigurationCall_set_code_retention_period | ConfigurationCall_set_max_code_size | ConfigurationCall_set_max_pov_size | ConfigurationCall_set_max_head_data_size | ConfigurationCall_set_parathread_cores | ConfigurationCall_set_parathread_retries | ConfigurationCall_set_group_rotation_frequency | ConfigurationCall_set_chain_availability_period | ConfigurationCall_set_thread_availability_period | ConfigurationCall_set_scheduling_lookahead | ConfigurationCall_set_max_validators_per_core | ConfigurationCall_set_max_validators | ConfigurationCall_set_dispute_period | ConfigurationCall_set_dispute_post_conclusion_acceptance_period | ConfigurationCall_set_dispute_conclusion_by_time_out_period | ConfigurationCall_set_no_show_slots | ConfigurationCall_set_n_delay_tranches | ConfigurationCall_set_zeroth_delay_tranche_width | ConfigurationCall_set_needed_approvals | ConfigurationCall_set_relay_vrf_modulo_samples | ConfigurationCall_set_max_upward_queue_count | ConfigurationCall_set_max_upward_queue_size | ConfigurationCall_set_max_downward_message_size | ConfigurationCall_set_ump_service_total_weight | ConfigurationCall_set_max_upward_message_size | ConfigurationCall_set_max_upward_message_num_per_candidate | ConfigurationCall_set_hrmp_open_request_ttl | ConfigurationCall_set_hrmp_sender_deposit | ConfigurationCall_set_hrmp_recipient_deposit | ConfigurationCall_set_hrmp_channel_max_capacity | ConfigurationCall_set_hrmp_channel_max_total_size | ConfigurationCall_set_hrmp_max_parachain_inbound_channels | ConfigurationCall_set_hrmp_max_parathread_inbound_channels | ConfigurationCall_set_hrmp_channel_max_message_size | ConfigurationCall_set_hrmp_max_parachain_outbound_channels | ConfigurationCall_set_hrmp_max_parathread_outbound_channels | ConfigurationCall_set_hrmp_max_message_num_per_candidate | ConfigurationCall_set_ump_max_individual_weight | ConfigurationCall_set_pvf_checking_enabled | ConfigurationCall_set_pvf_voting_ttl | ConfigurationCall_set_minimum_validation_upgrade_delay | ConfigurationCall_set_bypass_consistency_check
+export type ConfigurationCall = ConfigurationCall_set_validation_upgrade_cooldown | ConfigurationCall_set_validation_upgrade_delay | ConfigurationCall_set_code_retention_period | ConfigurationCall_set_max_code_size | ConfigurationCall_set_max_pov_size | ConfigurationCall_set_max_head_data_size | ConfigurationCall_set_parathread_cores | ConfigurationCall_set_parathread_retries | ConfigurationCall_set_group_rotation_frequency | ConfigurationCall_set_chain_availability_period | ConfigurationCall_set_thread_availability_period | ConfigurationCall_set_scheduling_lookahead | ConfigurationCall_set_max_validators_per_core | ConfigurationCall_set_max_validators | ConfigurationCall_set_dispute_period | ConfigurationCall_set_dispute_post_conclusion_acceptance_period | ConfigurationCall_set_dispute_max_spam_slots | ConfigurationCall_set_dispute_conclusion_by_time_out_period | ConfigurationCall_set_no_show_slots | ConfigurationCall_set_n_delay_tranches | ConfigurationCall_set_zeroth_delay_tranche_width | ConfigurationCall_set_needed_approvals | ConfigurationCall_set_relay_vrf_modulo_samples | ConfigurationCall_set_max_upward_queue_count | ConfigurationCall_set_max_upward_queue_size | ConfigurationCall_set_max_downward_message_size | ConfigurationCall_set_ump_service_total_weight | ConfigurationCall_set_max_upward_message_size | ConfigurationCall_set_max_upward_message_num_per_candidate | ConfigurationCall_set_hrmp_open_request_ttl | ConfigurationCall_set_hrmp_sender_deposit | ConfigurationCall_set_hrmp_recipient_deposit | ConfigurationCall_set_hrmp_channel_max_capacity | ConfigurationCall_set_hrmp_channel_max_total_size | ConfigurationCall_set_hrmp_max_parachain_inbound_channels | ConfigurationCall_set_hrmp_max_parathread_inbound_channels | ConfigurationCall_set_hrmp_channel_max_message_size | ConfigurationCall_set_hrmp_max_parachain_outbound_channels | ConfigurationCall_set_hrmp_max_parathread_outbound_channels | ConfigurationCall_set_hrmp_max_message_num_per_candidate | ConfigurationCall_set_ump_max_individual_weight | ConfigurationCall_set_pvf_checking_enabled | ConfigurationCall_set_pvf_voting_ttl | ConfigurationCall_set_minimum_validation_upgrade_delay | ConfigurationCall_set_bypass_consistency_check
 
 /**
  * Set the validation upgrade cooldown.
@@ -6081,6 +5390,14 @@ export interface ConfigurationCall_set_dispute_period {
  */
 export interface ConfigurationCall_set_dispute_post_conclusion_acceptance_period {
     __kind: 'set_dispute_post_conclusion_acceptance_period'
+    new: number
+}
+
+/**
+ * Set the maximum number of dispute spam slots.
+ */
+export interface ConfigurationCall_set_dispute_max_spam_slots {
+    __kind: 'set_dispute_max_spam_slots'
     new: number
 }
 
@@ -6479,7 +5796,7 @@ export interface UmpCall_service_overweight {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type HrmpCall = HrmpCall_hrmp_init_open_channel | HrmpCall_hrmp_accept_open_channel | HrmpCall_hrmp_close_channel | HrmpCall_force_clean_hrmp | HrmpCall_force_process_hrmp_open | HrmpCall_force_process_hrmp_close | HrmpCall_hrmp_cancel_open_request | HrmpCall_force_open_hrmp_channel
+export type HrmpCall = HrmpCall_hrmp_init_open_channel | HrmpCall_hrmp_accept_open_channel | HrmpCall_hrmp_close_channel | HrmpCall_force_clean_hrmp | HrmpCall_force_process_hrmp_open | HrmpCall_force_process_hrmp_close | HrmpCall_hrmp_cancel_open_request
 
 /**
  * Initiate opening a channel from a parachain to a given recipient with given channel
@@ -6580,22 +5897,6 @@ export interface HrmpCall_hrmp_cancel_open_request {
 }
 
 /**
- * Open a channel from a `sender` to a `recipient` `ParaId` using the Root origin. Although
- * opened by Root, the `max_capacity` and `max_message_size` are still subject to the Relay
- * Chain's configured limits.
- * 
- * Expected use is when one of the `ParaId`s involved in the channel is governed by the
- * Relay Chain, e.g. a common good parachain.
- */
-export interface HrmpCall_force_open_hrmp_channel {
-    __kind: 'force_open_hrmp_channel'
-    sender: number
-    recipient: number
-    maxCapacity: number
-    maxMessageSize: number
-}
-
-/**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
 export type ParasDisputesCall = ParasDisputesCall_force_unfreeze
@@ -6607,7 +5908,7 @@ export interface ParasDisputesCall_force_unfreeze {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type RegistrarCall = RegistrarCall_register | RegistrarCall_force_register | RegistrarCall_deregister | RegistrarCall_swap | RegistrarCall_remove_lock | RegistrarCall_reserve | RegistrarCall_add_lock | RegistrarCall_schedule_code_upgrade | RegistrarCall_set_current_head
+export type RegistrarCall = RegistrarCall_register | RegistrarCall_force_register | RegistrarCall_deregister | RegistrarCall_swap | RegistrarCall_force_remove_lock | RegistrarCall_reserve
 
 /**
  * Register head data and validation code for a reserved Para Id.
@@ -6682,10 +5983,10 @@ export interface RegistrarCall_swap {
  * Remove a manager lock from a para. This will allow the manager of a
  * previously locked para to deregister or swap a para without using governance.
  * 
- * Can only be called by the Root origin or the parachain.
+ * Can only be called by the Root origin.
  */
-export interface RegistrarCall_remove_lock {
-    __kind: 'remove_lock'
+export interface RegistrarCall_force_remove_lock {
+    __kind: 'force_remove_lock'
     para: number
 }
 
@@ -6707,39 +6008,6 @@ export interface RegistrarCall_remove_lock {
  */
 export interface RegistrarCall_reserve {
     __kind: 'reserve'
-}
-
-/**
- * Add a manager lock from a para. This will prevent the manager of a
- * para to deregister or swap a para.
- * 
- * Can be called by Root, the parachain, or the parachain manager if the parachain is unlocked.
- */
-export interface RegistrarCall_add_lock {
-    __kind: 'add_lock'
-    para: number
-}
-
-/**
- * Schedule a parachain upgrade.
- * 
- * Can be called by Root, the parachain, or the parachain manager if the parachain is unlocked.
- */
-export interface RegistrarCall_schedule_code_upgrade {
-    __kind: 'schedule_code_upgrade'
-    para: number
-    newCode: Uint8Array
-}
-
-/**
- * Set the parachain's current head.
- * 
- * Can be called by Root, the parachain, or the parachain manager if the parachain is unlocked.
- */
-export interface RegistrarCall_set_current_head {
-    __kind: 'set_current_head'
-    para: number
-    newHead: Uint8Array
 }
 
 /**
@@ -7040,8 +6308,8 @@ export interface XcmPalletCall_reserve_transfer_assets {
  */
 export interface XcmPalletCall_execute {
     __kind: 'execute'
-    message: Type_425
-    maxWeight: bigint
+    message: Type_556
+    maxWeight: Weight
 }
 
 /**
@@ -7223,48 +6491,48 @@ export interface ConfigOp_Remove {
     __kind: 'Remove'
 }
 
-export type Type_104 = Type_104_Noop | Type_104_Set | Type_104_Remove
+export type Type_257 = Type_257_Noop | Type_257_Set | Type_257_Remove
 
-export interface Type_104_Noop {
+export interface Type_257_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_104_Set {
+export interface Type_257_Set {
     __kind: 'Set'
     value: number
 }
 
-export interface Type_104_Remove {
+export interface Type_257_Remove {
     __kind: 'Remove'
 }
 
-export type Type_105 = Type_105_Noop | Type_105_Set | Type_105_Remove
+export type Type_258 = Type_258_Noop | Type_258_Set | Type_258_Remove
 
-export interface Type_105_Noop {
+export interface Type_258_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_105_Set {
+export interface Type_258_Set {
     __kind: 'Set'
     value: number
 }
 
-export interface Type_105_Remove {
+export interface Type_258_Remove {
     __kind: 'Remove'
 }
 
-export type Type_106 = Type_106_Noop | Type_106_Set | Type_106_Remove
+export type Type_259 = Type_259_Noop | Type_259_Set | Type_259_Remove
 
-export interface Type_106_Noop {
+export interface Type_259_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_106_Set {
+export interface Type_259_Set {
     __kind: 'Set'
     value: number
 }
 
-export interface Type_106_Remove {
+export interface Type_259_Remove {
     __kind: 'Remove'
 }
 
@@ -7277,7 +6545,7 @@ export interface SessionKeys {
     authorityDiscovery: Uint8Array
 }
 
-export interface Type_113 {
+export interface Type_278 {
     setId: bigint
     equivocation: Equivocation
 }
@@ -7288,24 +6556,6 @@ export interface Heartbeat {
     sessionIndex: number
     authorityIndex: number
     validatorsLen: number
-}
-
-export type Bounded = Bounded_Legacy | Bounded_Inline | Bounded_Lookup
-
-export interface Bounded_Legacy {
-    __kind: 'Legacy'
-    hash: Uint8Array
-}
-
-export interface Bounded_Inline {
-    __kind: 'Inline'
-    value: Uint8Array
-}
-
-export interface Bounded_Lookup {
-    __kind: 'Lookup'
-    hash: Uint8Array
-    len: number
 }
 
 export type AccountVote = AccountVote_Standard | AccountVote_Split
@@ -7367,76 +6617,6 @@ export interface Renouncing_Candidate {
     value: number
 }
 
-export type Type_145 = Type_145_Standard | Type_145_Split | Type_145_SplitAbstain
-
-export interface Type_145_Standard {
-    __kind: 'Standard'
-    vote: number
-    balance: bigint
-}
-
-export interface Type_145_Split {
-    __kind: 'Split'
-    aye: bigint
-    nay: bigint
-}
-
-export interface Type_145_SplitAbstain {
-    __kind: 'SplitAbstain'
-    aye: bigint
-    nay: bigint
-    abstain: bigint
-}
-
-export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_Origins | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
-
-export interface OriginCaller_Council {
-    __kind: 'Council'
-    value: Type_152
-}
-
-export interface OriginCaller_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: Type_153
-}
-
-export interface OriginCaller_Origins {
-    __kind: 'Origins'
-    value: Origin
-}
-
-export interface OriginCaller_ParachainsOrigin {
-    __kind: 'ParachainsOrigin'
-    value: Type_155
-}
-
-export interface OriginCaller_XcmPallet {
-    __kind: 'XcmPallet'
-    value: Type_157
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
-}
-
-export type DispatchTime = DispatchTime_At | DispatchTime_After
-
-export interface DispatchTime_At {
-    __kind: 'At'
-    value: number
-}
-
-export interface DispatchTime_After {
-    __kind: 'After'
-    value: number
-}
-
 export type StatementKind = StatementKind_Regular | StatementKind_Saft
 
 export interface StatementKind_Regular {
@@ -7445,6 +6625,38 @@ export interface StatementKind_Regular {
 
 export interface StatementKind_Saft {
     __kind: 'Saft'
+}
+
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_342
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_343
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_XcmPallet {
+    __kind: 'XcmPallet'
+    value: Type_345
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
 }
 
 export interface IdentityInfo {
@@ -7681,17 +6893,17 @@ export interface Judgement_Erroneous {
     __kind: 'Erroneous'
 }
 
-export type Type_222 = Type_222_Rebid | Type_222_Reject | Type_222_Approve
+export type Type_388 = Type_388_Rebid | Type_388_Reject | Type_388_Approve
 
-export interface Type_222_Rebid {
+export interface Type_388_Rebid {
     __kind: 'Rebid'
 }
 
-export interface Type_222_Reject {
+export interface Type_388_Reject {
     __kind: 'Reject'
 }
 
-export interface Type_222_Approve {
+export interface Type_388_Approve {
     __kind: 'Approve'
 }
 
@@ -7699,6 +6911,27 @@ export interface VestingInfo {
     locked: bigint
     perBlock: bigint
     startingBlock: number
+}
+
+export type MaybeHashed = MaybeHashed_Value | MaybeHashed_Hash
+
+export interface MaybeHashed_Value {
+    __kind: 'Value'
+    value: Call
+}
+
+export interface MaybeHashed_Hash {
+    __kind: 'Hash'
+    value: Uint8Array
+}
+
+export interface Timepoint {
+    height: number
+    index: number
+}
+
+export interface Weight {
+    refTime: bigint
 }
 
 export interface RawSolution {
@@ -7748,33 +6981,33 @@ export interface PoolState_Destroying {
     __kind: 'Destroying'
 }
 
-export type Type_330 = Type_330_Noop | Type_330_Set | Type_330_Remove
+export type Type_493 = Type_493_Noop | Type_493_Set | Type_493_Remove
 
-export interface Type_330_Noop {
+export interface Type_493_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_330_Set {
+export interface Type_493_Set {
     __kind: 'Set'
     value: number
 }
 
-export interface Type_330_Remove {
+export interface Type_493_Remove {
     __kind: 'Remove'
 }
 
-export type Type_331 = Type_331_Noop | Type_331_Set | Type_331_Remove
+export type Type_494 = Type_494_Noop | Type_494_Set | Type_494_Remove
 
-export interface Type_331_Noop {
+export interface Type_494_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_331_Set {
+export interface Type_494_Set {
     __kind: 'Set'
     value: Uint8Array
 }
 
-export interface Type_331_Remove {
+export interface Type_494_Remove {
     __kind: 'Remove'
 }
 
@@ -7872,21 +7105,21 @@ export interface VersionedMultiAssets_V1 {
     value: V1MultiAsset[]
 }
 
-export type Type_425 = Type_425_V0 | Type_425_V1 | Type_425_V2
+export type Type_556 = Type_556_V0 | Type_556_V1 | Type_556_V2
 
-export interface Type_425_V0 {
+export interface Type_556_V0 {
     __kind: 'V0'
-    value: Type_426
+    value: Type_557
 }
 
-export interface Type_425_V1 {
+export interface Type_556_V1 {
     __kind: 'V1'
-    value: Type_431
+    value: Type_562
 }
 
-export interface Type_425_V2 {
+export interface Type_556_V2 {
     __kind: 'V2'
-    value: Type_437[]
+    value: Type_568[]
 }
 
 export interface V1MultiLocation {
@@ -7927,12 +7160,12 @@ export type Equivocation = Equivocation_Prevote | Equivocation_Precommit
 
 export interface Equivocation_Prevote {
     __kind: 'Prevote'
-    value: Type_115
+    value: Type_280
 }
 
 export interface Equivocation_Precommit {
     __kind: 'Precommit'
-    value: Type_121
+    value: Type_285
 }
 
 export interface OpaqueNetworkState {
@@ -7955,163 +7188,53 @@ export interface RawOrigin_None {
     __kind: 'None'
 }
 
-export type Type_152 = Type_152_Members | Type_152_Member | Type_152__Phantom
+export type Type_342 = Type_342_Members | Type_342_Member | Type_342__Phantom
 
-export interface Type_152_Members {
+export interface Type_342_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_152_Member {
+export interface Type_342_Member {
     __kind: 'Member'
     value: Uint8Array
 }
 
-export interface Type_152__Phantom {
+export interface Type_342__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_153 = Type_153_Members | Type_153_Member | Type_153__Phantom
+export type Type_343 = Type_343_Members | Type_343_Member | Type_343__Phantom
 
-export interface Type_153_Members {
+export interface Type_343_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_153_Member {
+export interface Type_343_Member {
     __kind: 'Member'
     value: Uint8Array
 }
 
-export interface Type_153__Phantom {
+export interface Type_343__Phantom {
     __kind: '_Phantom'
 }
 
-export type Origin = Origin_StakingAdmin | Origin_Treasurer | Origin_FellowshipAdmin | Origin_GeneralAdmin | Origin_AuctionAdmin | Origin_LeaseAdmin | Origin_ReferendumCanceller | Origin_ReferendumKiller | Origin_SmallTipper | Origin_BigTipper | Origin_SmallSpender | Origin_MediumSpender | Origin_BigSpender | Origin_WhitelistedCaller | Origin_FellowshipInitiates | Origin_Fellows | Origin_FellowshipExperts | Origin_FellowshipMasters | Origin_Fellowship1Dan | Origin_Fellowship2Dan | Origin_Fellowship3Dan | Origin_Fellowship4Dan | Origin_Fellowship5Dan | Origin_Fellowship6Dan | Origin_Fellowship7Dan | Origin_Fellowship8Dan | Origin_Fellowship9Dan
+export type Origin = Origin_Parachain
 
-export interface Origin_StakingAdmin {
-    __kind: 'StakingAdmin'
-}
-
-export interface Origin_Treasurer {
-    __kind: 'Treasurer'
-}
-
-export interface Origin_FellowshipAdmin {
-    __kind: 'FellowshipAdmin'
-}
-
-export interface Origin_GeneralAdmin {
-    __kind: 'GeneralAdmin'
-}
-
-export interface Origin_AuctionAdmin {
-    __kind: 'AuctionAdmin'
-}
-
-export interface Origin_LeaseAdmin {
-    __kind: 'LeaseAdmin'
-}
-
-export interface Origin_ReferendumCanceller {
-    __kind: 'ReferendumCanceller'
-}
-
-export interface Origin_ReferendumKiller {
-    __kind: 'ReferendumKiller'
-}
-
-export interface Origin_SmallTipper {
-    __kind: 'SmallTipper'
-}
-
-export interface Origin_BigTipper {
-    __kind: 'BigTipper'
-}
-
-export interface Origin_SmallSpender {
-    __kind: 'SmallSpender'
-}
-
-export interface Origin_MediumSpender {
-    __kind: 'MediumSpender'
-}
-
-export interface Origin_BigSpender {
-    __kind: 'BigSpender'
-}
-
-export interface Origin_WhitelistedCaller {
-    __kind: 'WhitelistedCaller'
-}
-
-export interface Origin_FellowshipInitiates {
-    __kind: 'FellowshipInitiates'
-}
-
-export interface Origin_Fellows {
-    __kind: 'Fellows'
-}
-
-export interface Origin_FellowshipExperts {
-    __kind: 'FellowshipExperts'
-}
-
-export interface Origin_FellowshipMasters {
-    __kind: 'FellowshipMasters'
-}
-
-export interface Origin_Fellowship1Dan {
-    __kind: 'Fellowship1Dan'
-}
-
-export interface Origin_Fellowship2Dan {
-    __kind: 'Fellowship2Dan'
-}
-
-export interface Origin_Fellowship3Dan {
-    __kind: 'Fellowship3Dan'
-}
-
-export interface Origin_Fellowship4Dan {
-    __kind: 'Fellowship4Dan'
-}
-
-export interface Origin_Fellowship5Dan {
-    __kind: 'Fellowship5Dan'
-}
-
-export interface Origin_Fellowship6Dan {
-    __kind: 'Fellowship6Dan'
-}
-
-export interface Origin_Fellowship7Dan {
-    __kind: 'Fellowship7Dan'
-}
-
-export interface Origin_Fellowship8Dan {
-    __kind: 'Fellowship8Dan'
-}
-
-export interface Origin_Fellowship9Dan {
-    __kind: 'Fellowship9Dan'
-}
-
-export type Type_155 = Type_155_Parachain
-
-export interface Type_155_Parachain {
+export interface Origin_Parachain {
     __kind: 'Parachain'
     value: number
 }
 
-export type Type_157 = Type_157_Xcm | Type_157_Response
+export type Type_345 = Type_345_Xcm | Type_345_Response
 
-export interface Type_157_Xcm {
+export interface Type_345_Xcm {
     __kind: 'Xcm'
     value: V1MultiLocation
 }
 
-export interface Type_157_Response {
+export interface Type_345_Response {
     __kind: 'Response'
     value: V1MultiLocation
 }
@@ -8595,245 +7718,245 @@ export interface V1MultiAsset {
     fun: V1Fungibility
 }
 
-export type Type_426 = Type_426_WithdrawAsset | Type_426_ReserveAssetDeposit | Type_426_TeleportAsset | Type_426_QueryResponse | Type_426_TransferAsset | Type_426_TransferReserveAsset | Type_426_Transact | Type_426_HrmpNewChannelOpenRequest | Type_426_HrmpChannelAccepted | Type_426_HrmpChannelClosing | Type_426_RelayedFrom
+export type Type_557 = Type_557_WithdrawAsset | Type_557_ReserveAssetDeposit | Type_557_TeleportAsset | Type_557_QueryResponse | Type_557_TransferAsset | Type_557_TransferReserveAsset | Type_557_Transact | Type_557_HrmpNewChannelOpenRequest | Type_557_HrmpChannelAccepted | Type_557_HrmpChannelClosing | Type_557_RelayedFrom
 
-export interface Type_426_WithdrawAsset {
+export interface Type_557_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V0MultiAsset[]
-    effects: Type_428[]
+    effects: Type_559[]
 }
 
-export interface Type_426_ReserveAssetDeposit {
+export interface Type_557_ReserveAssetDeposit {
     __kind: 'ReserveAssetDeposit'
     assets: V0MultiAsset[]
-    effects: Type_428[]
+    effects: Type_559[]
 }
 
-export interface Type_426_TeleportAsset {
+export interface Type_557_TeleportAsset {
     __kind: 'TeleportAsset'
     assets: V0MultiAsset[]
-    effects: Type_428[]
+    effects: Type_559[]
 }
 
-export interface Type_426_QueryResponse {
+export interface Type_557_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V0Response
 }
 
-export interface Type_426_TransferAsset {
+export interface Type_557_TransferAsset {
     __kind: 'TransferAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_426_TransferReserveAsset {
+export interface Type_557_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_426_Transact {
+export interface Type_557_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_426_HrmpNewChannelOpenRequest {
+export interface Type_557_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_426_HrmpChannelAccepted {
+export interface Type_557_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_426_HrmpChannelClosing {
+export interface Type_557_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_426_RelayedFrom {
+export interface Type_557_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V0MultiLocation
-    message: Type_426
+    message: Type_557
 }
 
-export type Type_431 = Type_431_WithdrawAsset | Type_431_ReserveAssetDeposited | Type_431_ReceiveTeleportedAsset | Type_431_QueryResponse | Type_431_TransferAsset | Type_431_TransferReserveAsset | Type_431_Transact | Type_431_HrmpNewChannelOpenRequest | Type_431_HrmpChannelAccepted | Type_431_HrmpChannelClosing | Type_431_RelayedFrom | Type_431_SubscribeVersion | Type_431_UnsubscribeVersion
+export type Type_562 = Type_562_WithdrawAsset | Type_562_ReserveAssetDeposited | Type_562_ReceiveTeleportedAsset | Type_562_QueryResponse | Type_562_TransferAsset | Type_562_TransferReserveAsset | Type_562_Transact | Type_562_HrmpNewChannelOpenRequest | Type_562_HrmpChannelAccepted | Type_562_HrmpChannelClosing | Type_562_RelayedFrom | Type_562_SubscribeVersion | Type_562_UnsubscribeVersion
 
-export interface Type_431_WithdrawAsset {
+export interface Type_562_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V1MultiAsset[]
-    effects: Type_433[]
+    effects: Type_564[]
 }
 
-export interface Type_431_ReserveAssetDeposited {
+export interface Type_562_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     assets: V1MultiAsset[]
-    effects: Type_433[]
+    effects: Type_564[]
 }
 
-export interface Type_431_ReceiveTeleportedAsset {
+export interface Type_562_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     assets: V1MultiAsset[]
-    effects: Type_433[]
+    effects: Type_564[]
 }
 
-export interface Type_431_QueryResponse {
+export interface Type_562_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V1Response
 }
 
-export interface Type_431_TransferAsset {
+export interface Type_562_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_431_TransferReserveAsset {
+export interface Type_562_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_431_Transact {
+export interface Type_562_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_431_HrmpNewChannelOpenRequest {
+export interface Type_562_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_431_HrmpChannelAccepted {
+export interface Type_562_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_431_HrmpChannelClosing {
+export interface Type_562_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_431_RelayedFrom {
+export interface Type_562_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V1Junctions
-    message: Type_431
+    message: Type_562
 }
 
-export interface Type_431_SubscribeVersion {
+export interface Type_562_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_431_UnsubscribeVersion {
+export interface Type_562_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export type Type_437 = Type_437_WithdrawAsset | Type_437_ReserveAssetDeposited | Type_437_ReceiveTeleportedAsset | Type_437_QueryResponse | Type_437_TransferAsset | Type_437_TransferReserveAsset | Type_437_Transact | Type_437_HrmpNewChannelOpenRequest | Type_437_HrmpChannelAccepted | Type_437_HrmpChannelClosing | Type_437_ClearOrigin | Type_437_DescendOrigin | Type_437_ReportError | Type_437_DepositAsset | Type_437_DepositReserveAsset | Type_437_ExchangeAsset | Type_437_InitiateReserveWithdraw | Type_437_InitiateTeleport | Type_437_QueryHolding | Type_437_BuyExecution | Type_437_RefundSurplus | Type_437_SetErrorHandler | Type_437_SetAppendix | Type_437_ClearError | Type_437_ClaimAsset | Type_437_Trap | Type_437_SubscribeVersion | Type_437_UnsubscribeVersion
+export type Type_568 = Type_568_WithdrawAsset | Type_568_ReserveAssetDeposited | Type_568_ReceiveTeleportedAsset | Type_568_QueryResponse | Type_568_TransferAsset | Type_568_TransferReserveAsset | Type_568_Transact | Type_568_HrmpNewChannelOpenRequest | Type_568_HrmpChannelAccepted | Type_568_HrmpChannelClosing | Type_568_ClearOrigin | Type_568_DescendOrigin | Type_568_ReportError | Type_568_DepositAsset | Type_568_DepositReserveAsset | Type_568_ExchangeAsset | Type_568_InitiateReserveWithdraw | Type_568_InitiateTeleport | Type_568_QueryHolding | Type_568_BuyExecution | Type_568_RefundSurplus | Type_568_SetErrorHandler | Type_568_SetAppendix | Type_568_ClearError | Type_568_ClaimAsset | Type_568_Trap | Type_568_SubscribeVersion | Type_568_UnsubscribeVersion
 
-export interface Type_437_WithdrawAsset {
+export interface Type_568_WithdrawAsset {
     __kind: 'WithdrawAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_437_ReserveAssetDeposited {
+export interface Type_568_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     value: V1MultiAsset[]
 }
 
-export interface Type_437_ReceiveTeleportedAsset {
+export interface Type_568_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_437_QueryResponse {
+export interface Type_568_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V2Response
     maxWeight: bigint
 }
 
-export interface Type_437_TransferAsset {
+export interface Type_568_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_437_TransferReserveAsset {
+export interface Type_568_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_437_Transact {
+export interface Type_568_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_437_HrmpNewChannelOpenRequest {
+export interface Type_568_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_437_HrmpChannelAccepted {
+export interface Type_568_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_437_HrmpChannelClosing {
+export interface Type_568_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_437_ClearOrigin {
+export interface Type_568_ClearOrigin {
     __kind: 'ClearOrigin'
 }
 
-export interface Type_437_DescendOrigin {
+export interface Type_568_DescendOrigin {
     __kind: 'DescendOrigin'
     value: V1Junctions
 }
 
-export interface Type_437_ReportError {
+export interface Type_568_ReportError {
     __kind: 'ReportError'
     queryId: bigint
     dest: V1MultiLocation
     maxResponseWeight: bigint
 }
 
-export interface Type_437_DepositAsset {
+export interface Type_568_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_437_DepositReserveAsset {
+export interface Type_568_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -8841,27 +7964,27 @@ export interface Type_437_DepositReserveAsset {
     xcm: V2Instruction[]
 }
 
-export interface Type_437_ExchangeAsset {
+export interface Type_568_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_437_InitiateReserveWithdraw {
+export interface Type_568_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_437_InitiateTeleport {
+export interface Type_568_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_437_QueryHolding {
+export interface Type_568_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
@@ -8869,48 +7992,48 @@ export interface Type_437_QueryHolding {
     maxResponseWeight: bigint
 }
 
-export interface Type_437_BuyExecution {
+export interface Type_568_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weightLimit: V2WeightLimit
 }
 
-export interface Type_437_RefundSurplus {
+export interface Type_568_RefundSurplus {
     __kind: 'RefundSurplus'
 }
 
-export interface Type_437_SetErrorHandler {
+export interface Type_568_SetErrorHandler {
     __kind: 'SetErrorHandler'
-    value: Type_437[]
+    value: Type_568[]
 }
 
-export interface Type_437_SetAppendix {
+export interface Type_568_SetAppendix {
     __kind: 'SetAppendix'
-    value: Type_437[]
+    value: Type_568[]
 }
 
-export interface Type_437_ClearError {
+export interface Type_568_ClearError {
     __kind: 'ClearError'
 }
 
-export interface Type_437_ClaimAsset {
+export interface Type_568_ClaimAsset {
     __kind: 'ClaimAsset'
     assets: V1MultiAsset[]
     ticket: V1MultiLocation
 }
 
-export interface Type_437_Trap {
+export interface Type_568_Trap {
     __kind: 'Trap'
     value: bigint
 }
 
-export interface Type_437_SubscribeVersion {
+export interface Type_568_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_437_UnsubscribeVersion {
+export interface Type_568_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
@@ -8986,14 +8109,14 @@ export interface DigestItem_RuntimeEnvironmentUpdated {
     __kind: 'RuntimeEnvironmentUpdated'
 }
 
-export interface Type_115 {
+export interface Type_280 {
     roundNumber: bigint
     identity: Uint8Array
     first: [Prevote, Uint8Array]
     second: [Prevote, Uint8Array]
 }
 
-export interface Type_121 {
+export interface Type_285 {
     roundNumber: bigint
     identity: Uint8Array
     first: [Precommit, Uint8Array]
@@ -9329,75 +8452,75 @@ export interface V1Fungibility_NonFungible {
     value: V1AssetInstance
 }
 
-export type Type_428 = Type_428_Null | Type_428_DepositAsset | Type_428_DepositReserveAsset | Type_428_ExchangeAsset | Type_428_InitiateReserveWithdraw | Type_428_InitiateTeleport | Type_428_QueryHolding | Type_428_BuyExecution
+export type Type_559 = Type_559_Null | Type_559_DepositAsset | Type_559_DepositReserveAsset | Type_559_ExchangeAsset | Type_559_InitiateReserveWithdraw | Type_559_InitiateTeleport | Type_559_QueryHolding | Type_559_BuyExecution
 
-export interface Type_428_Null {
+export interface Type_559_Null {
     __kind: 'Null'
 }
 
-export interface Type_428_DepositAsset {
+export interface Type_559_DepositAsset {
     __kind: 'DepositAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_428_DepositReserveAsset {
+export interface Type_559_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_428_ExchangeAsset {
+export interface Type_559_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V0MultiAsset[]
     receive: V0MultiAsset[]
 }
 
-export interface Type_428_InitiateReserveWithdraw {
+export interface Type_559_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V0MultiAsset[]
     reserve: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_428_InitiateTeleport {
+export interface Type_559_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_428_QueryHolding {
+export interface Type_559_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V0MultiLocation
     assets: V0MultiAsset[]
 }
 
-export interface Type_428_BuyExecution {
+export interface Type_559_BuyExecution {
     __kind: 'BuyExecution'
     fees: V0MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    xcm: Type_426[]
+    xcm: Type_557[]
 }
 
-export type Type_433 = Type_433_Noop | Type_433_DepositAsset | Type_433_DepositReserveAsset | Type_433_ExchangeAsset | Type_433_InitiateReserveWithdraw | Type_433_InitiateTeleport | Type_433_QueryHolding | Type_433_BuyExecution
+export type Type_564 = Type_564_Noop | Type_564_DepositAsset | Type_564_DepositReserveAsset | Type_564_ExchangeAsset | Type_564_InitiateReserveWithdraw | Type_564_InitiateTeleport | Type_564_QueryHolding | Type_564_BuyExecution
 
-export interface Type_433_Noop {
+export interface Type_564_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_433_DepositAsset {
+export interface Type_564_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_433_DepositReserveAsset {
+export interface Type_564_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -9405,40 +8528,40 @@ export interface Type_433_DepositReserveAsset {
     effects: V1Order[]
 }
 
-export interface Type_433_ExchangeAsset {
+export interface Type_564_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_433_InitiateReserveWithdraw {
+export interface Type_564_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_433_InitiateTeleport {
+export interface Type_564_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_433_QueryHolding {
+export interface Type_564_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
     assets: V1MultiAssetFilter
 }
 
-export interface Type_433_BuyExecution {
+export interface Type_564_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    instructions: Type_431[]
+    instructions: Type_562[]
 }
 
 export type V1Junction = V1Junction_Parachain | V1Junction_AccountId32 | V1Junction_AccountIndex64 | V1Junction_AccountKey20 | V1Junction_PalletInstance | V1Junction_GeneralIndex | V1Junction_GeneralKey | V1Junction_OnlyChild | V1Junction_Plurality
@@ -9567,7 +8690,7 @@ export interface V0NetworkId_Kusama {
     __kind: 'Kusama'
 }
 
-export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial | V0BodyId_Defense | V0BodyId_Administration | V0BodyId_Treasury
+export type V0BodyId = V0BodyId_Unit | V0BodyId_Named | V0BodyId_Index | V0BodyId_Executive | V0BodyId_Technical | V0BodyId_Legislative | V0BodyId_Judicial
 
 export interface V0BodyId_Unit {
     __kind: 'Unit'
@@ -9597,18 +8720,6 @@ export interface V0BodyId_Legislative {
 
 export interface V0BodyId_Judicial {
     __kind: 'Judicial'
-}
-
-export interface V0BodyId_Defense {
-    __kind: 'Defense'
-}
-
-export interface V0BodyId_Administration {
-    __kind: 'Administration'
-}
-
-export interface V0BodyId_Treasury {
-    __kind: 'Treasury'
 }
 
 export type V0BodyPart = V0BodyPart_Voice | V0BodyPart_Members | V0BodyPart_Fraction | V0BodyPart_AtLeastProportion | V0BodyPart_MoreThanProportion

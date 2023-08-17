@@ -3,32 +3,35 @@ import { encodeAddress } from '@polkadot/util-crypto'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { getProxyAccountId } from './getProxyAccountId'
 import { Ctx, dataEvent, env } from '../main'
-import { ProxyProxyAddedEvent } from '../types/events'
-import { ProxyType } from '../types/v504'
+import { ProxyType } from '../types/v9111'
+import { JsonLog } from './JsonLog'
 
 interface Params {
   item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
   chainId: string
   ctx: Ctx
-  isAdded: boolean
 }
-export const getProxyInfoFromArgs = ({ item, chainId, ctx, isAdded }: Params) => {
-  let delegator: Uint8Array
-  let delegatee: Uint8Array
+export const getProxyInfoFromArgs = ({ item, chainId, ctx }: Params) => {
+  let delegator: Uint8Array | undefined
+  let delegatee: Uint8Array | undefined
   let proxyType: ProxyType
-  let delay: number
+  let delay: number = 0
 
-  const event = isAdded && new ProxyProxyAddedEvent(ctx, item.event)
-  if (event && event.isV504) {
-    ;[delegator, delegatee, proxyType, delay] = event.asV504
-  } else {
+  const args = item.event.args
+
+  if (Array.isArray(args)) {
+    ;[delegator, delegatee, proxyType, delay] = args
+  } else if (args.delegator){
     ;({ delegator, delegatee, proxyType, delay } = item.event.args)
-  }
+  } else {
+      ctx.log.error(`The proxy could not be determined ${JsonLog(item)}`)
+      return
+    }
 
-  const _delegator = encodeAddress(delegator, env.prefix)
-  const _delegatee = encodeAddress(delegatee, env.prefix)
+  const _delegator = delegator && encodeAddress(delegator, env.prefix) || ""
+  const _delegatee = delegatee && encodeAddress(delegatee, env.prefix) || ""
   const _type = getProxyTypeFromRaw(proxyType.__kind)
-  const _delay = Number(delay) || 0
+  const _delay = Number(delay)
   const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay, chainId)
 
   return {
