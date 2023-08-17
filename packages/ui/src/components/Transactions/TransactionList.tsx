@@ -160,11 +160,11 @@ const TransactionList = ({ className }: Props) => {
         const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
         const timestampObj: AggGroupedByDate = {}
 
-        // sort by date
+        // sort by date, the newest first
         const sorted = filtered.sort((a, b) => {
           if (!a.timestamp || !b.timestamp) return 0
 
-          return a.timestamp.valueOf() - b.timestamp.valueOf()
+          return b.timestamp.valueOf() - a.timestamp.valueOf()
         })
 
         // populate the object
