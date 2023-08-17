@@ -116,8 +116,8 @@ export const networkList = {
     chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v2/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v2/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-khala/v/v1/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-khala/v/v1/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   // pendulum: {
