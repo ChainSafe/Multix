@@ -29,6 +29,12 @@ export interface AggregatedData {
 
 type AggGroupedByDate = { [index: string]: AggregatedData[] }
 
+const sortByLatest = (a: AggregatedData, b: AggregatedData) => {
+  if (!a.timestamp || !b.timestamp) return 0
+
+  return b.timestamp.valueOf() - a.timestamp.valueOf()
+}
+
 interface Props {
   className?: string
 }
@@ -160,12 +166,8 @@ const TransactionList = ({ className }: Props) => {
         const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
         const timestampObj: AggGroupedByDate = {}
 
-        // sort by date
-        const sorted = filtered.sort((a, b) => {
-          if (!a.timestamp || !b.timestamp) return 0
-
-          return a.timestamp.valueOf() - b.timestamp.valueOf()
-        })
+        // sort by date, the newest first
+        const sorted = filtered.sort(sortByLatest)
 
         // populate the object
         sorted.forEach((data) => {
