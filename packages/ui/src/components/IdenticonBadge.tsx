@@ -39,12 +39,11 @@ export const IdenticonBadge = ({
   return (
     <BadgeStyled
       className={`${className} ${appliedClass}`}
-      badgeType={badge}
+      slotProps={{ badgeType: badge, sideBadge }}
       size={size}
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-      sideBadge={sideBadge}
     >
       <AccountIcon />
     </BadgeStyled>
@@ -53,12 +52,14 @@ export const IdenticonBadge = ({
 
 const BadgeStyled = styled(Badge)<{
   size: IconSizeVariant
-  badgeType: AccountBadge
-  sideBadge: boolean
+  slotProps: {
+    badgeType: AccountBadge
+    sideBadge: boolean
+  }
 }>`
   padding-left: 1rem;
 
-  ${({ sideBadge }) =>
+  ${({ slotProps: { sideBadge } }) =>
     sideBadge &&
     `
       padding-left: 0;
@@ -76,21 +77,21 @@ const BadgeStyled = styled(Badge)<{
     border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
 
-    ${({ theme, badgeType }) =>
+    ${({ theme, slotProps: { badgeType } }) =>
       badgeType === AccountBadge.PURE &&
       `
         color: ${theme.custom.gray[100]};
         background-color: ${theme.custom.proxyBadge.pure} !important;
       `};
 
-    ${({ theme, badgeType }) =>
+    ${({ theme, slotProps: { badgeType } }) =>
       badgeType === AccountBadge.MULTI &&
       `
         color: ${theme.custom.text.black};
         background-color: ${theme.custom.proxyBadge.multi} !important;
       `};
 
-    ${({ sideBadge }) =>
+    ${({ slotProps: { sideBadge } }) =>
       sideBadge &&
       `
         position: relative;
