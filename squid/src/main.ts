@@ -189,21 +189,21 @@ processor.run(
         }
 
         if (item.name === 'Proxy.ProxyAdded') {
-          const newProxy = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: true })
+          const newProxy = getProxyInfoFromArgs({ item, chainId, ctx })
           // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
           // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-          newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
+          newProxy && newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
         }
 
         if (item.name === 'Proxy.ProxyRemoved') {
-          const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: false })
+          const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx })
           // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
           // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
-          if (newProxies.has(proxyRemoval.id)) {
+          if (proxyRemoval && newProxies.has(proxyRemoval.id)) {
             newProxies.delete(proxyRemoval.id)
             // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
           } else {
-            proxyRemovalIds.add(proxyRemoval.id)
+            proxyRemoval && proxyRemovalIds.add(proxyRemoval.id)
             // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
           }
         }
