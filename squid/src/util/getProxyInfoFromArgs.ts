@@ -21,15 +21,15 @@ export const getProxyInfoFromArgs = ({ item, chainId, ctx }: Params) => {
 
   if (Array.isArray(args)) {
     ;[delegator, delegatee, proxyType, delay] = args
-  } else if (args.delegator){
+  } else if (args.delegator) {
     ;({ delegator, delegatee, proxyType, delay } = item.event.args)
   } else {
-      ctx.log.error(`The proxy could not be determined ${JsonLog(item)}`)
-      return
-    }
+    ctx.log.error(`The proxy could not be determined ${JsonLog(item)}`)
+    return
+  }
 
-  const _delegator = delegator && encodeAddress(delegator, env.prefix) || ""
-  const _delegatee = delegatee && encodeAddress(delegatee, env.prefix) || ""
+  const _delegator = (delegator && encodeAddress(delegator, env.prefix)) || ''
+  const _delegatee = (delegatee && encodeAddress(delegatee, env.prefix)) || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _delay = Number(delay)
   const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay, chainId)

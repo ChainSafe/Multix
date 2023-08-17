@@ -23,7 +23,7 @@ export const getPureProxyInfoFromArgs = ({ item, chainId, isAnonymous, ctx }: Pa
   if (isAnonymous && Array.isArray(args)) {
     ;[pure, who, proxyType, disambiguationIndex] = args
   } else if (isAnonymous && !!args?.anonymous) {
-    ;({ anonymous: pure, who, proxyType, disambiguationIndex } = args )
+    ;({ anonymous: pure, who, proxyType, disambiguationIndex } = args)
   } else if (!isAnonymous && !!args?.pure) {
     ;({ pure, who, proxyType, disambiguationIndex } = args)
   } else {
@@ -31,8 +31,8 @@ export const getPureProxyInfoFromArgs = ({ item, chainId, isAnonymous, ctx }: Pa
     return
   }
 
-  const _who = who && encodeAddress(who, env.prefix) || ""
-  const _pure = pure && encodeAddress(pure, env.prefix) || ""
+  const _who = (who && encodeAddress(who, env.prefix)) || ''
+  const _pure = (pure && encodeAddress(pure, env.prefix)) || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const id = getProxyAccountId(_who, _pure, _type, disambiguationIndex, chainId)
 
