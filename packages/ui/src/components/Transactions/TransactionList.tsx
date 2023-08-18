@@ -146,11 +146,11 @@ const TransactionList = ({ className }: Props) => {
     isLoading: isLoadingPendingTxs,
     refresh
   } = usePendingTx(selectedMultiProxy)
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const { ownAddressList } = useAccounts()
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -179,7 +179,7 @@ const TransactionList = ({ className }: Props) => {
         setAggregatedData(timestampObj)
       })
       .catch(console.error)
-  }, [api, pendingTxData, isApiReady, selectedMultiProxy])
+  }, [api, pendingTxData, selectedMultiProxy])
 
   return (
     <Box className={className}>

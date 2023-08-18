@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Box, CircularProgress, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -32,7 +32,7 @@ const Home = ({ className }: HomeProps) => {
     error: multisigQueryError
   } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
-  const { isApiReady } = useApi()
+  const { api } = useApi()
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const {
     isAllowedToConnectToExtension,
@@ -70,7 +70,7 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  if (!isApiReady || isAccountLoading) {
+  if (!api || isAccountLoading) {
     return (
       <Box
         className={className}

@@ -13,8 +13,7 @@ type ApiContextProps = {
 const registry = new TypeRegistry()
 
 export interface IApiContext {
-  api?: ApiPromise
-  isApiReady: boolean
+  api?: false | ApiPromise
   chainInfo?: ChainInfoHuman
 }
 
@@ -34,24 +33,27 @@ const ApiContext = createContext<IApiContext | undefined>(undefined)
 
 const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
+  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
+  const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
+  const [isApiReady, setIsApiReady] = useState(false)
   const provider = useMemo(
     () => !!selectedNetworkInfo?.rpcUrl && new WsProvider(selectedNetworkInfo?.rpcUrl),
     [selectedNetworkInfo]
   )
-  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
-  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     if (!provider) return
 
     // console.log('---> connecting to', provider.endpoint)
-    setApiPromise(new ApiPromise({ provider, types }))
+    setIsApiReady(false)
+    const api = new ApiPromise({ provider, types })
+    api.isReady.then((newApi) => setApiPromise(newApi)).catch(console.error)
 
     return () => {
-      setIsReady(false)
       // console.log('<---disconnecting')
-      !!apiPromise && apiPromise.disconnect()
+      setIsApiReady(false)
+      !!api && api.disconnect()
+      setApiPromise(undefined)
     }
 
     // prevent an infinite loop
@@ -59,15 +61,15 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   }, [provider, types])
 
   useEffect(() => {
-    if (!apiPromise || !provider || isReady) return
+    if (!apiPromise || !provider) return
 
     apiPromise.isReady
       .then((api) => {
+        setIsApiReady(true)
         if (types) {
           registry.register(types)
         }
 
-        setIsReady(true)
         const info = api.registry.getChainProperties()
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
 
@@ -78,14 +80,13 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
           tokenSymbol: raw?.tokenSymbol[0] || ''
         })
       })
-      .catch((e) => console.error(e))
-  }, [apiPromise, isReady, provider, types])
+      .catch(console.error)
+  }, [apiPromise, provider, types])
 
   return (
     <ApiContext.Provider
       value={{
-        api: apiPromise,
-        isApiReady: isReady,
+        api: isApiReady && apiPromise,
         chainInfo
       }}
     >
