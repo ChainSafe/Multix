@@ -3,7 +3,7 @@ import { useApi } from '../contexts/ApiContext'
 import BN from 'bn.js'
 
 export const useProxyAdditionNeededFunds = () => {
-  const {  api, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
 
   useEffect(() => {

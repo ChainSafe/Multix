@@ -103,15 +103,7 @@ const MultisigCreation = ({ className }: Props) => {
     )
 
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-  }, [
-    api,
-    
-    multiAddress,
-    pureProxyCreationNeededFunds,
-    selectedAccount,
-    signatories,
-    threshold
-  ])
+  }, [api, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
     threshold,

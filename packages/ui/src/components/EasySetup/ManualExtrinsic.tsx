@@ -271,7 +271,6 @@ const ManualExtrinsic = ({
     api,
     areAllParamsFilled,
     callable,
-
     extrinsicIndex,
     onSetErrorMessage,
     onSetExtrinsic,

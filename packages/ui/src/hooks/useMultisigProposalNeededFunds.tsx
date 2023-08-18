@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
-  const {  api, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
   const [reserved, setReserved] = useState(new BN(0))
 

@@ -116,7 +116,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [
     api,
     extrinsicToCall,
-    
     isProxySelected,
     selectedAccount,
     selectedMultisig,
@@ -254,7 +253,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       })
   }, [
     threshold,
-    
     api,
     selectedAccount,
     selectedOrigin,

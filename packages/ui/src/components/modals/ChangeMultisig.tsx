@@ -133,7 +133,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
-
     newMultisigAddress,
     newThreshold,
     oldThreshold,
@@ -180,7 +179,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
-
     newSignatories,
     newThreshold,
     selectedAccount,
@@ -276,7 +274,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       })
   }, [
     callError,
-
     api,
     selectedAccount,
     secondCall,

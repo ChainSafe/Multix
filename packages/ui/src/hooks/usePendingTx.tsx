@@ -13,7 +13,7 @@ export interface PendingTx {
 }
 export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(true)
-  const {  api } = useApi()
+  const { api } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
   const multisigs = useMemo(
     () => multiProxy?.multisigs.map(({ address }) => address) || [],

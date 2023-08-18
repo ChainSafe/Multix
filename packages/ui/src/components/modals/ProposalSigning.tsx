@@ -212,7 +212,6 @@ const ProposalSigning = ({
       signatories,
       threshold,
       proposalData,
-
       api,
       selectedAccount,
       multisig,
