@@ -22,7 +22,7 @@ interface Props {
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   const accountBase = useAccountBaseFromAccountList()
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<BN | undefined>()
   const [amountError, setAmountError] = useState('')
@@ -42,7 +42,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       onSetExtrinsic(undefined)
       return
     }
@@ -53,7 +53,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }
 
     onSetExtrinsic(api.tx.balances.transferKeepAlive(toAddress, amount.toString()))
-  }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
+  }, [amount, api, chainInfo, onSetExtrinsic, toAddress])
 
   const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
     setSelected(account)

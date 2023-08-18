@@ -3,11 +3,11 @@ import { useApi } from '../contexts/ApiContext'
 import BN from 'bn.js'
 
 export const usePureProxyCreationNeededFunds = () => {
-  const { isApiReady, api, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
 
   useEffect(() => {
-    if (!isApiReady || !api) return
+    if (!api) return
 
     if (!chainInfo?.tokenDecimals) return
 
@@ -29,7 +29,7 @@ export const usePureProxyCreationNeededFunds = () => {
 
     setMin(reserved.add(survive))
     // console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
-  }, [api, chainInfo, isApiReady])
+  }, [api, chainInfo])
 
   return { pureProxyCreationNeededFunds: min }
 }

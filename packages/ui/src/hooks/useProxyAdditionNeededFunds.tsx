@@ -3,11 +3,11 @@ import { useApi } from '../contexts/ApiContext'
 import BN from 'bn.js'
 
 export const useProxyAdditionNeededFunds = () => {
-  const { isApiReady, api, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
 
   useEffect(() => {
-    if (!isApiReady || !api) return
+    if (!api) return
 
     if (!chainInfo?.tokenDecimals) return
 
@@ -17,7 +17,7 @@ export const useProxyAdditionNeededFunds = () => {
     // that added the first proxy) we are only adding one account as proxy
     const reserved = api.consts.proxy.proxyDepositFactor as unknown as BN
     setMin(reserved)
-  }, [api, chainInfo, isApiReady])
+  }, [api, chainInfo])
 
   return { proxyAdditionNeededFunds: min }
 }

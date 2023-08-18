@@ -32,7 +32,7 @@ const AccountDisplay = ({
   const { balanceFormatted } = useGetBalance({ address })
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
   const [encodedAddress, setEncodedAddress] = useState('')
@@ -51,10 +51,6 @@ const AccountDisplay = ({
 
   useEffect(() => {
     if (!api) {
-      return
-    }
-
-    if (!isApiReady) {
       return
     }
 
@@ -83,7 +79,7 @@ const AccountDisplay = ({
       .catch((e) => console.error(e))
 
     return () => unsubscribe && unsubscribe()
-  }, [address, api, isApiReady])
+  }, [address, api])
 
   return (
     <div className={className}>
