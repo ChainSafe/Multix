@@ -28,7 +28,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -64,7 +64,7 @@ const MultisigCreation = ({ className }: Props) => {
     return res
   }, [chainInfo, signatories, threshold])
   const batchCall = useMemo(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       // console.error('api is not ready')
       return
     }
@@ -105,7 +105,7 @@ const MultisigCreation = ({ className }: Props) => {
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [
     api,
-    isApiReady,
+    
     multiAddress,
     pureProxyCreationNeededFunds,
     selectedAccount,

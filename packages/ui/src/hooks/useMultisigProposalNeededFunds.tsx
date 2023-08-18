@@ -11,12 +11,12 @@ interface Props {
 }
 
 export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
-  const { isApiReady, api, chainInfo } = useApi()
+  const {  api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
   const [reserved, setReserved] = useState(new BN(0))
 
   useEffect(() => {
-    if (!isApiReady || !api || !signatories || signatories.length < 2) return
+    if (!api || !signatories || signatories.length < 2) return
 
     if (!chainInfo?.tokenDecimals) return
 
@@ -48,7 +48,7 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
       console.error('Error in useMultisigProposalNeededFunds')
       console.error(e)
     }
-  }, [api, call, chainInfo, isApiReady, signatories, threshold])
+  }, [api, call, chainInfo, signatories, threshold])
 
   return { multisigProposalNeededFunds: min, reserved }
 }

@@ -34,7 +34,7 @@ type Step = 'selection' | 'summary' | 'call1' | 'call2'
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const modalRef = useRef<HTMLDivElement | null>(null)
-  const { isApiReady, api, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
   const signCallBack2 = useSigningCallback({
@@ -90,7 +90,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [callError, setCallError] = useState('')
 
   const firstCall = useMemo(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       // console.error('api is not ready')
       return
     }
@@ -133,7 +133,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
-    isApiReady,
+
     newMultisigAddress,
     newThreshold,
     oldThreshold,
@@ -143,7 +143,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   ])
 
   const secondCall = useMemo(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       // console.error('api is not ready')
       return
     }
@@ -180,7 +180,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
-    isApiReady,
+
     newSignatories,
     newThreshold,
     selectedAccount,
@@ -248,7 +248,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       console.error('api is not ready')
       return
     }
@@ -276,7 +276,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       })
   }, [
     callError,
-    isApiReady,
+
     api,
     selectedAccount,
     secondCall,
@@ -294,7 +294,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
   const onFirstCall = useCallback(async () => {
-    if (!isApiReady || !api) {
+    if (!api) {
       console.error('api is not ready')
       return
     }
@@ -321,7 +321,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         onErrorCallback(error.message)
       })
   }, [
-    isApiReady,
     api,
     selectedAccount,
     firstCall,

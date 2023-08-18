@@ -35,7 +35,7 @@ interface Props {
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
@@ -82,7 +82,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -116,7 +116,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [
     api,
     extrinsicToCall,
-    isApiReady,
+    
     isProxySelected,
     selectedAccount,
     selectedMultisig,
@@ -215,7 +215,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
@@ -254,7 +254,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       })
   }, [
     threshold,
-    isApiReady,
+    
     api,
     selectedAccount,
     selectedOrigin,
