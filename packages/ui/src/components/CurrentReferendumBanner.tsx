@@ -84,6 +84,7 @@ const InfoTextStyled = styled('div')`
 
 export default styled(CurrentReferendumBanner)`
   width: 100%;
+  margin-bottom: 1rem;
 
   .MuiAlert-message {
     display: flex;
