@@ -1,4 +1,12 @@
-import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid
+} from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -16,7 +24,6 @@ import { getIntersection } from '../../utils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import Warning from '../Warning'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
@@ -358,13 +365,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 xs={12}
               >
                 {!hasProxyEnoughFunds && (
-                  <Warning
-                    text={`The pure account doesn't have enough funds. It needs at least ${formatBnBalance(
-                      proxyAdditionNeededFunds,
-                      chainInfo?.tokenDecimals,
-                      { tokenSymbol: chainInfo?.tokenSymbol }
-                    )}`}
-                  />
+                  <Alert severity="warning">
+                    The pure account doesn't have enough funds. It needs at least $
+                    {formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
+                      tokenSymbol: chainInfo?.tokenSymbol
+                    })}
+                  </Alert>
                 )}
                 <h4>Pure proxy (unchanged)</h4>
                 <Box className="subSection">
@@ -455,12 +461,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             xs={12}
             className="buttonContainer"
           >
-            {!!errorMessage && (
-              <Warning
-                className="errorMessage"
-                text={errorMessage}
-              />
-            )}
+            {!!errorMessage && <AlertStyled severity="warning">{errorMessage}</AlertStyled>}
             {currentStep === 'summary' && (
               <BackButtonStyled onClick={onGoBack}>Back</BackButtonStyled>
             )}
@@ -489,6 +490,10 @@ const BackButtonStyled = styled(Button)`
   margin-right: 1rem;
 `
 
+const AlertStyled = styled(Alert)`
+  margin-bottom: 1rem;
+`
+
 export default styled(ChangeMultisig)`
   .buttonContainer {
     margin-top: 1rem;
@@ -502,10 +507,6 @@ export default styled(ChangeMultisig)`
 
   .subSection {
     padding: 0 1.5rem;
-  }
-
-  .errorMessage {
-    margin-bottom: 1rem;
   }
 
   .loader {

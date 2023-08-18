@@ -7,7 +7,6 @@ import { MultiProxy } from '../../contexts/MultiProxyContext'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { getIntersection } from '../../utils'
 import { AccountBadge } from '../../types'
-import BalanceWarning from '../../components/Warning'
 import BN from 'bn.js'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useApi } from '../../contexts/ApiContext'
@@ -114,13 +113,13 @@ const Summary = ({
         />
       </Box>
       {isBalanceError && balanceMin && (
-        <BalanceWarning
-          text={`The selected signer requires at least ${formatBnBalance(
-            balanceMin,
-            chainInfo?.tokenDecimals,
-            { tokenSymbol: chainInfo?.tokenSymbol }
-          )}`}
-        />
+        <Alert severity="warning">
+          The selected signer requires at least $
+          {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
+            tokenSymbol: chainInfo?.tokenSymbol
+          })}
+          `
+        </Alert>
       )}
     </Box>
   )
