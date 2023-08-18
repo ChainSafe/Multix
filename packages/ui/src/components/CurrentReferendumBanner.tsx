@@ -8,7 +8,7 @@ interface Props {
   className?: string
 }
 
-const REFERENDUM_NUMBER = 1
+const REFERENDUM_NUMBER = 120
 const DISMISSED_REFERENDUM_KEY = `multix.dismissedReferendumBanner${REFERENDUM_NUMBER}`
 
 export const CurrentReferendumBanner = ({ className = '' }: Props) => {
