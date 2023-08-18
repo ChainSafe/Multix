@@ -15,6 +15,7 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import PureProxyHeaderView from './PureProxyHeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
+import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
   className?: string
@@ -156,6 +157,7 @@ const Home = ({ className }: HomeProps) => {
       {showNewMultisigAlert && multiProxyList.length > 0 && showNewMultisigAlert && (
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
+      <CurrentReferendumBanner />
       <Grid
         item
         alignItems="center"
