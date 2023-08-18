@@ -20,7 +20,7 @@ interface Props {
 }
 
 const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMessage }: Props) => {
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const [pastedCallData, setPastedCallData] = useState<HexString | undefined>(undefined)
   const [callDataError, setCallDataError] = useState('')
   const [isProxyProxyRemoved, setIsProxyProxyRemoved] = useState(false)
@@ -28,7 +28,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
   const removeProxyProxyCall = useCallback(
     (call: HexString) => {
       setIsProxyProxyRemoved(false)
-      if (!api || !isApiReady) return call
+      if (!api) return call
 
       if (!isProxySelected) return call
 
@@ -46,7 +46,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
       setIsProxyProxyRemoved(true)
       return `0x${call.substring(74)}` as HexString
     },
-    [api, isApiReady, isProxySelected]
+    [api, isProxySelected]
   )
 
   // users may erroneously paste callData from the multisig calldata
@@ -61,7 +61,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
   const { extrinsicUrl } = usePjsLinks()
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -70,7 +70,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
     }
 
     onSetExtrinsic(api.tx(callInfo.call))
-  }, [api, pastedCallData, callInfo, isApiReady, onSetExtrinsic])
+  }, [api, pastedCallData, callInfo, onSetExtrinsic])
 
   const onCallDataChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCallDataError('')

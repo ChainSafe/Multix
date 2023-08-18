@@ -106,7 +106,7 @@ const ManualExtrinsic = ({
   extrinsicIndex,
   onSelectFromCallData
 }: Props) => {
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
   const [paramFields, setParamFields] = useState<ParamField[] | null>(null)
@@ -247,7 +247,7 @@ const ManualExtrinsic = ({
   )
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -271,7 +271,6 @@ const ManualExtrinsic = ({
     api,
     areAllParamsFilled,
     callable,
-    isApiReady,
     extrinsicIndex,
     onSetErrorMessage,
     onSetExtrinsic,
