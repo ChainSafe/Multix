@@ -164,12 +164,10 @@ const CallNameStyled = styled('h4')`
   align-items: center;
 `
 
-const Linkstyled = styled(Link)(
-  ({ theme }) => `
+const Linkstyled = styled(Link)`
   display: flex;
   padding-left: 0.5rem;
 `
-)
 
 export default styled(CallInfo)`
   flex: 1;
