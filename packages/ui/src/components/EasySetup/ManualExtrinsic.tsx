@@ -9,11 +9,12 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { ISubmittableResult } from '@polkadot/types/types'
+import { ISubmittableResult, TypeDef, TypeDefInfo } from '@polkadot/types/types'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getTypeDef } from '@polkadot/types/create'
+import { inputToBn } from '../../utils'
 
 interface Props {
   extrinsicIndex?: string
@@ -27,6 +28,7 @@ interface ParamField {
   name: string
   type: string
   optional: boolean
+  raw: TypeDef
 }
 
 interface FormState {
@@ -46,6 +48,7 @@ const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
 const transformParams = (
   paramFields: ParamField[],
   inputParams: any[],
+  chainInfo?: any,
   opts = { emptyAsNull: true }
 ) => {
   // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
@@ -69,7 +72,7 @@ const transformParams = (
     value: paramVal[ind] || null
   }))
 
-  return params.reduce((previousValue, { type = 'string', value }) => {
+  return params.reduce((previousValue, { type = 'string', value, raw }) => {
     if (value == null || value === '')
       return opts.emptyAsNull ? [...previousValue, null] : previousValue
 
@@ -85,6 +88,15 @@ const transformParams = (
             : Number.parseInt(single)
           : single
       )
+      return [...previousValue, converted]
+    }
+
+    if(raw.info === TypeDefInfo.Compact && raw.sub && ['i8', 'i16', 'i32', 'i64', 'i128', 'u8', 'u16', 'u32', 'u64', 'u128', 'u256'].includes((raw.sub as any)?.type)) {
+
+      const decimals = chainInfo?.tokenDecimals
+      if(!decimals) return [...previousValue, converted];
+      const bnResult = inputToBn(decimals, converted);
+      converted = bnResult.toString();
       return [...previousValue, converted]
     }
 
@@ -106,7 +118,7 @@ const ManualExtrinsic = ({
   extrinsicIndex,
   onSelectFromCallData
 }: Props) => {
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
   const [paramFields, setParamFields] = useState<ParamField[] | null>(null)
@@ -140,7 +152,7 @@ const ManualExtrinsic = ({
   useEffect(() => {
     !!paramFields?.length &&
       !!inputParams.length &&
-      setTransformedParams(transformParams(paramFields, inputParams))
+      setTransformedParams(transformParams(paramFields, inputParams, chainInfo))
   }, [inputParams, paramFields])
 
   const updatePalletRPCs = useCallback(() => {
@@ -190,6 +202,7 @@ const ManualExtrinsic = ({
         return {
           name: arg.name.toString(),
           type: arg.type.toString(),
+          raw,
           optional: argIsOptional(arg)
         }
       })
