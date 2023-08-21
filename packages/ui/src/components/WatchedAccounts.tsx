@@ -1,8 +1,8 @@
 import { styled } from '@mui/material/styles'
-import { Box, IconButton } from '@mui/material'
+import { Box, Grid, IconButton, Paper } from '@mui/material'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import AccountDisplay from './AccountDisplay'
-import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
+import { HiOutlineTrash } from 'react-icons/hi2'
 import AccountSelection from './select/AccountSelection'
 
 interface Props {
@@ -13,47 +13,85 @@ const WatchedAccounts = ({ className }: Props) => {
   const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
 
   return (
-    <Box className={className}>
-      <ListStyled>
-        {watchedAddresses.map((address) => {
-          const removeItem = () => removeWatchedAccount(address)
-          return (
-            <li key={address}>
-              <AccountDisplay
-                address={address}
-                withName
-              />
-              <IconButtontyled
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={removeItem}
-              >
-                <CloseIcon size={20} />
-              </IconButtontyled>
-            </li>
-          )
-        })}
-      </ListStyled>
-      <TitleStyled>Watch new account...</TitleStyled>
-      <AccountSelectionWrapperStyled>
-        <AccountSelection
-          className="accountDropdown"
-          currentSelection={watchedAddresses}
-          addAccount={addWatchedAccount}
-          withName
-          withAddButton
-          withPreselection={false}
-          //make sure the first state is empty
-          value=""
-        />
-      </AccountSelectionWrapperStyled>
-    </Box>
+    <Grid
+      className={className}
+      container
+      spacing={2}
+    >
+      {watchedAddresses.length > 0 && (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+        >
+          <PaperStyled>
+            {watchedAddresses.map((address) => {
+              const removeItem = () => removeWatchedAccount(address)
+              return (
+                <div
+                  key={address}
+                  className="selectedSignatory"
+                >
+                  <AccountDisplay address={address} />
+                  <IconButton
+                    className="deleteButton"
+                    aria-label="delete"
+                    onClick={removeItem}
+                  >
+                    <HiOutlineTrash />
+                  </IconButton>
+                </div>
+              )
+            })}
+          </PaperStyled>
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={12}
+      >
+        <TitleStyled>Watch new account...</TitleStyled>
+        <AccountSelectionWrapperStyled>
+          <AccountSelection
+            className="accountDropdown"
+            currentSelection={watchedAddresses}
+            addAccount={addWatchedAccount}
+            withName
+            withAddButton
+            withPreselection={false}
+            //make sure the first state is empty
+            value=""
+          />
+        </AccountSelectionWrapperStyled>
+      </Grid>
+    </Grid>
   )
 }
 
+const PaperStyled = styled(Paper)`
+  padding: 1rem;
+  max-height: 13.5rem;
+  overflow: scroll;
+
+  .selectedSignatory {
+    margin-bottom: 1rem;
+    display: flex;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .deleteButton {
+      margin-left: 1rem;
+      height: 2.5rem;
+      align-self: center;
+    }
+  }
+`
 const TitleStyled = styled(Box)`
-  margin-top: 2rem;
   margin-bottom: 0.5rem;
 `
 
@@ -64,20 +102,6 @@ const AccountSelectionWrapperStyled = styled(Box)`
   .accountDropdown {
     flex: 1;
   }
-`
-
-const ListStyled = styled('ul')`
-  list-style: none;
-
-  li {
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-  }
-`
-
-const IconButtontyled = styled(IconButton)`
-  margin-left: 1rem;
 `
 
 export default WatchedAccounts
