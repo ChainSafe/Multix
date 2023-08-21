@@ -8,8 +8,8 @@ import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
-import { useGetBalance } from '../hooks/useGetBalance'
 import { encodeAddress } from '@polkadot/util-crypto'
+import Balance from './library/Balance'
 
 interface Props {
   address: string
@@ -29,7 +29,6 @@ const AccountDisplay = ({
   iconSize = 'medium'
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
-  const { balanceFormatted } = useGetBalance({ address })
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
   const { api, chainInfo } = useApi()
@@ -108,7 +107,7 @@ const AccountDisplay = ({
         </AddressStyled>
         {withBalance && (
           <Box>
-            <BalanceStyled>{balanceFormatted}</BalanceStyled>
+            <Balance address={address} />
           </Box>
         )}
       </BoxStyled>
@@ -151,13 +150,6 @@ const NameStyled = styled('div')`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`
-
-const BalanceStyled = styled('div')`
-  display: flex;
-  color: ${({ theme }) => theme.custom.text.addressColorLightGray};
-  font-size: small;
-  margin-top: 4px;
 `
 
 export default styled(AccountDisplay)`
