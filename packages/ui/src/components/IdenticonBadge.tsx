@@ -39,56 +39,72 @@ export const IdenticonBadge = ({
   return (
     <BadgeStyled
       className={`${className} ${appliedClass}`}
-      badgeType={badge}
+      slotProps={{ badgeType: badge, sideBadge }}
+      size={size}
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-      sideBadge={sideBadge}
     >
       <AccountIcon />
     </BadgeStyled>
   )
 }
 
-const BadgeStyled = styled(Badge)<{ badgeType: AccountBadge; sideBadge: boolean }>`
+const BadgeStyled = styled(Badge)<{
+  size: IconSizeVariant
+  slotProps: {
+    badgeType: AccountBadge
+    sideBadge: boolean
+  }
+}>`
   padding-left: 1rem;
 
-  ${({ sideBadge }) =>
+  ${({ slotProps: { sideBadge } }) =>
     sideBadge &&
     `
       padding-left: 0;
       align-items: center;
-      `}
+    `}
 
   .MuiBadge-badge {
-    max-width: 2.625rem;
+    max-width: 3.285rem;
+    max-height: 1.69rem;
     padding: 0.25rem 0.5rem;
-    max-height: 1.3125rem;
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     font-weight: 500;
+    height: 1.3125rem;
     border-radius: ${({ theme }) => theme.custom.borderRadius};
     border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
 
-    ${({ theme, badgeType }) =>
+    ${({ theme, slotProps: { badgeType } }) =>
       badgeType === AccountBadge.PURE &&
       `
         color: ${theme.custom.gray[100]};
         background-color: ${theme.custom.proxyBadge.pure} !important;
       `};
 
-    ${({ theme, badgeType }) =>
+    ${({ theme, slotProps: { badgeType } }) =>
       badgeType === AccountBadge.MULTI &&
       `
         color: ${theme.custom.text.black};
         background-color: ${theme.custom.proxyBadge.multi} !important;
       `};
 
-    ${({ sideBadge }) =>
+    ${({ slotProps: { sideBadge } }) =>
       sideBadge &&
       `
         position: relative;
         transform: unset;
+      `}
+
+    ${({ size }) =>
+      size === 'large' &&
+      `
+          font-size: 0.96431rem;
+          padding: 0.16069rem 0.64288rem;
+          height: 1.7rem;
+          transform: scale(1) translate(0,15%);
       `}
   }
 `

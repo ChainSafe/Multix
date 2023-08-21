@@ -67,14 +67,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
   )
 }
 
-const MuiAppBarStyled = styled(MuiAppBar)(
-  ({ theme }) => `
-  margin-bottom: 1rem;
+const MuiAppBarStyled = styled(MuiAppBar)`
+  margin-bottom: 2rem;
   height: 4.8125rem;
-  background: ${theme.palette.primary.main};
+  background: ${({ theme }) => theme.palette.primary.main};
   justify-content: center;
 `
-)
 
 const RightButtonsWrapper = styled(Box)`
   flex: 1;
@@ -96,7 +94,7 @@ const RouterLinkStyled = styled(RouterLink)`
 const BoxStyled = styled(Box)`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     flex-grow: 1;
     display: flex;
     align-items: center;
@@ -119,7 +117,7 @@ const LogoStyled = styled('img')`
 const IconButtonStyled = styled(IconButton)`
   display: block;
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.values.sm}px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     display: none;
   }
 `

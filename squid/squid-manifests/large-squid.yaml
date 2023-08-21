@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-large
-version: 1
+version: 4
 description: |-
   Squid for Multix
 
@@ -22,8 +22,6 @@ deploy:
       cmd: ['sqd', 'start-polkadot']
     - name: phala-processor
       cmd: ['sqd', 'start-phala']
-    - name: khala-processor
-      cmd: ['sqd', 'start-khala']
     - name: rhala-processor
       cmd: ['sqd', 'start-rhala']
     - name: acala-processor

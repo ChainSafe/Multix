@@ -22,7 +22,7 @@ export const useGetMultisigTx = ({
   isProxy,
   extrinsicToCall
 }: Params) => {
-  const { isApiReady, api } = useApi()
+  const { api } = useApi()
 
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -38,7 +38,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -69,16 +69,7 @@ export const useGetMultisigTx = ({
       console.error('Error in multisigTx')
       console.error(e)
     }
-  }, [
-    selectedMultisig,
-    threshold,
-    isApiReady,
-    api,
-    senderAddress,
-    fromAddress,
-    extrinsicToCall,
-    isProxy
-  ])
+  }, [selectedMultisig, threshold, api, senderAddress, fromAddress, extrinsicToCall, isProxy])
 
   return multisigTx
 }

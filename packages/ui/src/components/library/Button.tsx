@@ -9,7 +9,8 @@ export const Button = styled('button')<ButtonProps>`
   display: inline-flex;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  line-height: 1.625rem;
+  height: 100%;
+  max-height: 2.25rem;
   font-weight: 500;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   border: none;
@@ -18,6 +19,7 @@ export const Button = styled('button')<ButtonProps>`
   color: ${({ theme }) => theme.custom.text.primary};
   box-shadow: ${({ theme }) => theme.custom.boxShadow};
   transition: background 0.2s ease-in-out;
+  white-space: nowrap;
 
   &:disabled {
     cursor: not-allowed;
@@ -91,6 +93,6 @@ export const ButtonWithIcon = styled(Button)`
   justify-content: center;
 
   svg {
-    margin-right: 4px;
+    margin: 0 4px;
   }
 `

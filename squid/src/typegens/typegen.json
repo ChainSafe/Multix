@@ -1,0 +1,19 @@
+{
+  "outDir": "../types",
+  "specVersions": "https://kusama.archive.subsquid.io/graphql",
+  "events": [
+    "Proxy.AnonymousCreated",
+    "Proxy.PureCreated",
+    "Proxy.ProxyAdded",
+    "Proxy.ProxyRemoved"
+  ],
+  "calls": [
+    "Proxy.proxy",
+    "Proxy.remove_proxies",
+    "Multisig.as_multi",
+    "Multisig.approve_as_multi",
+    "Multisig.cancel_as_multi",
+    "Multisig.as_multi_threshold_1"
+  ],
+  "storage": []
+}

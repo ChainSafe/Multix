@@ -10,7 +10,7 @@
     "db:migrate": "npx squid-typeorm-migration apply",
     "db:generate-migration": "npx squid-typeorm-migration generate",
     "codegen": "npx squid-typeorm-codegen",
-    "typegen": "npx squid-substrate-typegen typegen.json",
+    "typegen": "npx squid-substrate-typegen src/typegens/*.json",
     "start:indexer": "node -r dotenv/config lib/main.js",
     "start:indexer:rococo": "node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.rococo",
     "start:graphql-server": "npx squid-graphql-server --subscriptions --sql-statement-timeout 3000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",

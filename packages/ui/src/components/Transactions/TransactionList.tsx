@@ -29,6 +29,12 @@ export interface AggregatedData {
 
 type AggGroupedByDate = { [index: string]: AggregatedData[] }
 
+const sortByLatest = (a: AggregatedData, b: AggregatedData) => {
+  if (!a.timestamp || !b.timestamp) return 0
+
+  return b.timestamp.valueOf() - a.timestamp.valueOf()
+}
+
 interface Props {
   className?: string
 }
@@ -140,11 +146,11 @@ const TransactionList = ({ className }: Props) => {
     isLoading: isLoadingPendingTxs,
     refresh
   } = usePendingTx(selectedMultiProxy)
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const { ownAddressList } = useAccounts()
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
       return
     }
 
@@ -160,12 +166,8 @@ const TransactionList = ({ className }: Props) => {
         const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
         const timestampObj: AggGroupedByDate = {}
 
-        // sort by date
-        const sorted = filtered.sort((a, b) => {
-          if (!a.timestamp || !b.timestamp) return 0
-
-          return a.timestamp.valueOf() - b.timestamp.valueOf()
-        })
+        // sort by date, the newest first
+        const sorted = filtered.sort(sortByLatest)
 
         // populate the object
         sorted.forEach((data) => {
@@ -177,7 +179,7 @@ const TransactionList = ({ className }: Props) => {
         setAggregatedData(timestampObj)
       })
       .catch(console.error)
-  }, [api, pendingTxData, isApiReady, selectedMultiProxy])
+  }, [api, pendingTxData, selectedMultiProxy])
 
   return (
     <Box className={className}>
@@ -198,7 +200,7 @@ const TransactionList = ({ className }: Props) => {
       {!!pendingTxData.length &&
         Object.entries(aggregatedData).map(([date, aggregatedData]) => {
           return (
-            <Box key={date}>
+            <TransactionWrapper key={date}>
               <DateContainerStyled>{date}</DateContainerStyled>
               {aggregatedData.map((agg, index) => {
                 const { callData, info, from } = agg
@@ -234,12 +236,18 @@ const TransactionList = ({ className }: Props) => {
                   />
                 )
               })}
-            </Box>
+            </TransactionWrapper>
           )
         })}
     </Box>
   )
 }
+
+const TransactionWrapper = styled(Box)`
+  .MuiPaper-root {
+    padding: 0.5rem;
+  }
+`
 
 const DateContainerStyled = styled(Box)`
   margin-bottom: 0.3rem;

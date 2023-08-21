@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material'
+import { Alert, Box, Grid } from '@mui/material'
 import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -7,7 +7,7 @@ import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { Button, InputField } from '../library'
 import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
-import Warning from '../Warning'
+import { getOptionLabel } from '../../utils/getOptionLabel'
 
 interface Props {
   className?: string
@@ -20,12 +20,6 @@ interface Props {
   withName?: boolean
   withAddButton?: boolean
   withPreselection?: boolean
-}
-
-const getOptionLabel = (option: string | AccountBaseInfo | null) => {
-  if (!option) return ''
-
-  return typeof option === 'string' ? option : option.address
 }
 
 const AccountSelection = ({
@@ -126,7 +120,7 @@ const AccountSelection = ({
           item
           xs={12}
         >
-          <WarningStyled text={errorMessage} />
+          <AlertStyled severity="warning">{errorMessage}</AlertStyled>
         </Grid>
       )}
       <Grid
@@ -167,7 +161,7 @@ const AccountSelection = ({
   )
 }
 
-const WarningStyled = styled(Warning)`
+const AlertStyled = styled(Alert)`
   margin: 1rem 0 1rem 0;
 `
 

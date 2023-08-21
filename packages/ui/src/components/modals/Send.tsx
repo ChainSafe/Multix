@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid, SelectChangeEvent } from '@mui/material'
+import { Alert, Dialog, DialogContent, DialogTitle, Grid, SelectChangeEvent } from '@mui/material'
 import { Button, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -13,7 +13,6 @@ import { useSigningCallback } from '../../hooks/useSigningCallback'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
-import Warning from '../Warning'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
@@ -35,7 +34,7 @@ interface Props {
 
 const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
@@ -168,7 +167,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
@@ -207,7 +206,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       })
   }, [
     threshold,
-    isApiReady,
     api,
     selectedAccount,
     selectedOrigin,
@@ -352,7 +350,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                 md={10}
                 className="errorMessage"
               >
-                <Warning text={easyOptionErrorMessage || errorMessage} />
+                <Alert severity="warning">{easyOptionErrorMessage || errorMessage}</Alert>
               </Grid>
             </>
           )}

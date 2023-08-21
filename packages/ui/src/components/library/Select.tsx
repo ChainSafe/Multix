@@ -39,7 +39,7 @@ const Select = ({
   return (
     <SelectMuiStyled
       sx={sx}
-      inputSize={inputSize}
+      slotProps={{ minifiedVersion, inputSize }}
       value={value}
       fullWidth={fullWidth}
       IconComponent={HiOutlineChevronDown}
@@ -67,7 +67,6 @@ const Select = ({
         }
       }}
       onChange={(event) => onChange(event as SelectChangeEvent<string>)}
-      minifiedVersion={minifiedVersion}
     >
       {menuItems
         ? menuItems.map(({ value, logo }) => (
@@ -96,20 +95,21 @@ Select.defaultProps = {
 }
 
 const SelectMuiStyled = styled(SelectMui)<
-  SelectMuiProps & { minifiedVersion: boolean; inputSize?: string }
+  SelectMuiProps & { slotProps: { minifiedVersion: boolean; inputSize?: string } }
 >`
   display: inline-flex;
   width: 100%;
-  height: ${({ inputSize }) => (inputSize === 'large' ? '3.5rem' : '2.5rem')};
-  padding: ${({ minifiedVersion }) => (minifiedVersion ? '0.75rem' : '1rem')};
+  height: ${({ slotProps: { inputSize } }) => (inputSize === 'large' ? '3.5rem' : '2.5rem')};
+  padding: ${({ slotProps: { minifiedVersion } }) => (minifiedVersion ? '0.75rem' : '1rem')};
   background: ${({ theme }) => theme.palette.primary.white};
   outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
   text-transform: capitalize;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
 
   fieldset {
-    min-width: ${({ minifiedVersion }) => (minifiedVersion ? '3.75rem' : '9.875rem')};
-    max-width: ${({ minifiedVersion }) => (minifiedVersion ? '3.75rem' : '12rem')};
+    min-width: ${({ slotProps: { minifiedVersion } }) =>
+      minifiedVersion ? '3.75rem' : '9.875rem'};
+    max-width: ${({ slotProps: { minifiedVersion } }) => (minifiedVersion ? '3.75rem' : '12rem')};
   }
 
   svg {
@@ -126,10 +126,11 @@ const SelectMuiStyled = styled(SelectMui)<
   .MuiSelect-select {
     display: flex;
     padding: 0;
-    padding-right: ${({ minifiedVersion }) => (minifiedVersion ? '0.5rem' : '2rem')} !important;
+    padding-right: ${({ slotProps: { minifiedVersion } }) =>
+      minifiedVersion ? '0.5rem' : '2rem'} !important;
 
     div:last-child {
-      display: ${({ minifiedVersion }) => (minifiedVersion ? 'none' : 'block')};
+      display: ${({ slotProps: { minifiedVersion } }) => (minifiedVersion ? 'none' : 'block')};
     }
   }
 

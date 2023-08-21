@@ -13,7 +13,7 @@ export interface PendingTx {
 }
 export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(true)
-  const { isApiReady, api } = useApi()
+  const { api } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
   const multisigs = useMemo(
     () => multiProxy?.multisigs.map(({ address }) => address) || [],
@@ -21,7 +21,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
   )
 
   const refresh = useCallback(() => {
-    if (!isApiReady || !api) return
+    if (!api) return
 
     if (isEmptyArray(multisigs)) return
 
@@ -61,7 +61,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, isApiReady, multisigs])
+  }, [api, multisigs])
 
   useEffect(() => {
     refresh()

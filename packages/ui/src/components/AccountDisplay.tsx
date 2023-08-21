@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccountNames } from '../contexts/AccountNamesContext'
-import { AccountBadge } from '../types'
+import { AccountBadge, IconSizeVariant } from '../types'
 import { getDisplayAddress } from '../utils'
 import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
@@ -17,6 +17,7 @@ interface Props {
   badge?: AccountBadge
   withName?: boolean
   withBalance?: boolean
+  iconSize?: IconSizeVariant
 }
 
 const AccountDisplay = ({
@@ -24,13 +25,14 @@ const AccountDisplay = ({
   address,
   badge,
   withName = true,
-  withBalance = false
+  withBalance = false,
+  iconSize = 'medium'
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { balanceFormatted } = useGetBalance({ address })
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
-  const { api, isApiReady, chainInfo } = useApi()
+  const { api, chainInfo } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
   const [encodedAddress, setEncodedAddress] = useState('')
@@ -49,10 +51,6 @@ const AccountDisplay = ({
 
   useEffect(() => {
     if (!api) {
-      return
-    }
-
-    if (!isApiReady) {
       return
     }
 
@@ -81,28 +79,33 @@ const AccountDisplay = ({
       .catch((e) => console.error(e))
 
     return () => unsubscribe && unsubscribe()
-  }, [address, api, isApiReady])
+  }, [address, api])
 
   return (
     <div className={className}>
       <IdenticonBadge
         badge={badge}
         address={encodedAddress}
+        size={iconSize}
       />
       <BoxStyled>
         {withName && (
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
+              // Class name for external styling
               <IdentityIcon
                 className="identityBadge"
                 identity={identity}
               />
             )}
             {!!sub && <span>{sub}</span>}
-            <NameStyled>{localName || mainDisplay}</NameStyled>
+            {/*// Class name for external styling*/}
+            <NameStyled className="multisigName">{localName || mainDisplay}</NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled>{getDisplayAddress(encodedAddress)}</AddressStyled>
+        <AddressStyled className="multisigAddress">
+          {getDisplayAddress(encodedAddress)}
+        </AddressStyled>
         {withBalance && (
           <Box>
             <BalanceStyled>{balanceFormatted}</BalanceStyled>
@@ -150,14 +153,12 @@ const NameStyled = styled('div')`
   white-space: nowrap;
 `
 
-const BalanceStyled = styled('div')(
-  ({ theme }) => `
-  margin-top: 4px;  
+const BalanceStyled = styled('div')`
   display: flex;
-  color: ${theme.custom.text.addressColorLightGray};
+  color: ${({ theme }) => theme.custom.text.addressColorLightGray};
   font-size: small;
+  margin-top: 4px;
 `
-)
 
 export default styled(AccountDisplay)`
   display: flex;

@@ -34,7 +34,7 @@ const ProposalSigning = ({
   onSuccess
 }: SigningModalProps) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
@@ -112,7 +112,7 @@ const ProposalSigning = ({
         return
       }
 
-      if (!isApiReady || !api) {
+      if (!api) {
         const error = 'Api is not ready'
         console.error(error)
         setErrorMessage(error)
@@ -212,7 +212,6 @@ const ProposalSigning = ({
       signatories,
       threshold,
       proposalData,
-      isApiReady,
       api,
       selectedAccount,
       multisig,

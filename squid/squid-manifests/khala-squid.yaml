@@ -1,0 +1,28 @@
+manifestVersion: subsquid.io/v0.1
+name: multix-khala
+version: 1
+description: |-
+  Squid for Multix
+
+build:
+
+deploy:
+  addons:
+    postgres:
+  processor:
+    - name: khala-processor
+      cmd: ['sqd', 'start-khala']
+  api:
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
+scale:
+  dedicated: true
+  addons:
+    postgres:
+      # storage: 100Gi
+      profile: small
+  processor:
+    profile: small
+  api:
+    profile: small
+    # load-balance three replicas
+    # replicas: 3

@@ -5,7 +5,7 @@ import { GenericCall } from '@polkadot/types'
 import { PAYMENT_INFO_ACCOUNT } from '../constants'
 
 export const useCallInfoFromCallData = (callData?: HexString) => {
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
 
@@ -15,7 +15,7 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
       return
     }
 
-    if (!api || !isApiReady) {
+    if (!api) {
       setCallInfo(undefined)
       return
     }
@@ -43,7 +43,7 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
       })
       .catch(console.error)
       .finally(() => setIsGettingCallInfo(false))
-  }, [api, callData, isApiReady])
+  }, [api, callData])
 
   return { callInfo, isGettingCallInfo }
 }

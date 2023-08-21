@@ -4,25 +4,25 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import { TextFieldStyled } from '../library'
+import { getOptionLabel } from '../../utils/getOptionLabel'
+import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
+  onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const acountBase = useAccountBaseFromAccountList()
-  const [selected, setSelected] = useState<AccountBaseInfo | undefined>(acountBase[0])
-  const [toAddress, setToAddress] = useState(acountBase[0].address)
-  const { api, isApiReady, chainInfo } = useApi()
+  const accountBase = useAccountBaseFromAccountList()
+  const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
+  const { api, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<BN | undefined>()
   const [amountError, setAmountError] = useState('')
@@ -31,6 +31,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     address: from
   })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
+  const toAddress = useMemo(() => selected?.address || '', [selected?.address])
 
   useEffect(() => {
     if (!!amount && !hasEnoughFreeBalance) {
@@ -41,35 +42,21 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
   useEffect(() => {
-    if (!isApiReady || !api) {
+    if (!api) {
+      onSetExtrinsic(undefined)
       return
     }
 
-    if (!toAddress) {
-      return
-    }
-
-    if (!amount) {
+    if (!toAddress || !amount) {
+      onSetExtrinsic(undefined)
       return
     }
 
     onSetExtrinsic(api.tx.balances.transferKeepAlive(toAddress, amount.toString()))
-  }, [amount, api, chainInfo, isApiReady, onSetExtrinsic, toAddress])
+  }, [amount, api, chainInfo, onSetExtrinsic, toAddress])
 
-  const onAddressDestChange = useCallback((account?: AccountBaseInfo | string) => {
-    if (!account) {
-      return
-    }
-
-    if (typeof account === 'string') {
-      setToAddress(account)
-      setSelected({
-        address: account
-      })
-    } else {
-      setToAddress(account.address)
-      setSelected(account)
-    }
+  const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
+    setSelected(account)
   }, [])
 
   const onAmountChange = useCallback(
@@ -108,17 +95,32 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     [chainInfo, maxValue, onSetErrorMessage]
   )
 
-  if (!selected) return null
+  const onInputChange = useCallback(
+    (
+      _: React.SyntheticEvent<Element, Event>,
+      val: NonNullable<
+        string | AccountBaseInfo | (string | AccountBaseInfo | undefined)[] | undefined
+      >
+    ) => {
+      const value = getOptionLabel(val as string)
+
+      if (!value) {
+        setSelected(undefined)
+      }
+    },
+    []
+  )
 
   return (
     <Box className={className}>
       <GenericAccountSelection
         className="to"
-        accountList={acountBase}
         onChange={onAddressDestChange}
         value={selected}
         label="to"
         allowAnyAddressInput={true}
+        onInputChange={onInputChange}
+        accountList={accountBase}
       />
       <TextFieldStyled
         label={`Amount`}

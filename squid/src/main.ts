@@ -10,7 +10,7 @@ import { handleMultisigCall } from './multisigCalls'
 import {
   getMultisigAddress,
   getMultisigCallId,
-  getOriginAccountId,
+  getOriginAccount,
   getPureProxyInfoFromArgs,
   getProxyInfoFromArgs
 } from './util'
@@ -27,6 +27,7 @@ import {
 } from './processorHandlers'
 import { Env } from './util/Env'
 import { getAccountId } from './util/getAccountId'
+import { getProxyAccountIByDelegatorIds } from './util/getProxyAccountIByDelegatorIds'
 
 export const dataEvent = {
   data: {
@@ -69,15 +70,14 @@ const processor = new SubstrateBatchProcessor()
   .setBlockRange({
     from: Number(env.blockstart)
   })
-  // .addCall('Proxy.add_proxy', dataCall)
-  // .addCall('Proxy.remove_proxy', dataCall)
-  // .addCall('Proxy.remove_proxies', dataCall)
   .addCall('Proxy.proxy', dataCall)
+  .addCall('Proxy.remove_proxies', dataCall)
   .addCall('Multisig.as_multi', dataCall)
   .addCall('Multisig.approve_as_multi', dataCall)
   .addCall('Multisig.cancel_as_multi', dataCall)
   .addCall('Multisig.as_multi_threshold_1', dataCall)
   .addEvent('Proxy.PureCreated', dataEvent)
+  .addEvent('Proxy.AnonymousCreated', dataEvent)
   .addEvent('Proxy.ProxyAdded', dataEvent)
   .addEvent('Proxy.ProxyRemoved', dataEvent)
 
@@ -92,6 +92,7 @@ processor.run(
     const newMultisigCalls: MultisigCallInfo[] = []
     const newProxies: Map<string, NewProxy> = new Map()
     const proxyRemovalIds: Set<string> = new Set()
+    const delegatorToRemoveIds: Set<string> = new Set()
 
     for (const block of ctx.blocks) {
       const { items } = block
@@ -103,7 +104,7 @@ processor.run(
 
           if (!callItem.call.success || !callItem.call.origin) continue
 
-          const signer = getOriginAccountId(callItem.call.origin)
+          const signer = getOriginAccount(callItem.call.origin)
           const callArgs = callItem.call.args
 
           const { otherSignatories, threshold } = handleMultisigCall(callArgs)
@@ -138,160 +139,94 @@ processor.run(
           })
         }
 
-        if (item.name === 'Proxy.PureCreated') {
-          const newPureProxy = getPureProxyInfoFromArgs(item, chainId)
+        if (item.name === 'Proxy.remove_proxies') {
+          // we only care about the successful actions and the ones signed
+          if (!item.call.success || !item.call.origin) continue
+
+          const signer = getOriginAccount(item.call.origin)
+          const signerAccountId = getAccountId(signer, chainId)
+
+          // If a pure has just been created (in the queue, not persisted yet) and if the pure has called the removeProxies
+          // effectively deleting all its delegations, we should remove it from the queue.
+          const pureIdToRemove = Array.from(newPureProxies.values()).find(
+            ({ pure }) => pure === signer
+          )?.id
+          pureIdToRemove && newPureProxies.delete(pureIdToRemove)
+          // ctx.log.info(`toremove ${JsonLog(pureIdToRemove)}`)
+          // ctx.log.info(`new Pure ${JsonLog(Array.from(newPureProxies.entries()))}`)
+
+          // if a proxy has just been added and is in the queue (not persisted in the DB yet)
+          // and the delegator has called removeProxies, we should remove it from the queue
+          const proxyIdstoRemove = Array.from(newProxies.values())
+            .filter(({ delegator }) => delegator === signer)
+            .map(({ id }) => id)
+          // ctx.log.info(`proxyIdsToRemove ${JsonLog(proxyIdstoRemove)}`)
+
+          proxyIdstoRemove.forEach((id) => {
+            newProxies.delete(id)
+          })
+
+          // We will check in the DB if this account is the delegator
+          // for any other account, and remove the link
+          delegatorToRemoveIds.add(signerAccountId)
+        }
+
+        if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
+          const newPureProxy = getPureProxyInfoFromArgs({
+            item,
+            chainId,
+            ctx,
+            isAnonymous: item.name === 'Proxy.AnonymousCreated'
+          })
           // ctx.log.info(`pure ${newPureProxy.pure}`)
           // ctx.log.info(`who ${newPureProxy.who}`)
 
-          newPureProxies.set(newPureProxy.id, {
-            ...newPureProxy,
-            createdAt: timestamp
-          })
+          newPureProxy &&
+            newPureProxies.set(newPureProxy.id, {
+              ...newPureProxy,
+              createdAt: timestamp
+            })
         }
 
         if (item.name === 'Proxy.ProxyAdded') {
-          const newProxy = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: true })
+          const newProxy = getProxyInfoFromArgs({ item, chainId, ctx })
           // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
           // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
-          newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
+          newProxy && newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
         }
 
         if (item.name === 'Proxy.ProxyRemoved') {
-          const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx, isAdded: false })
+          const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx })
           // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
           // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
-          if (newProxies.has(proxyRemoval.id)) {
+          if (proxyRemoval && newProxies.has(proxyRemoval.id)) {
             newProxies.delete(proxyRemoval.id)
             // ctx.log.info(`<----- remove from set ${proxyRemoval.id}`)
           } else {
-            proxyRemovalIds.add(proxyRemoval.id)
+            proxyRemoval && proxyRemovalIds.add(proxyRemoval.id)
             // ctx.log.info(`<----- remove queue ${proxyRemoval.id}`)
           }
         }
       }
     }
 
+    // before adding any proxy we should remove the ones that were marked to be deleted
+    // because removeProxies was called
+    if (delegatorToRemoveIds.size) {
+      // check if there are some delegation linked to bulk removal (removeProxies)
+      const addToProxyRemoval = await getProxyAccountIByDelegatorIds(
+        ctx,
+        Array.from(delegatorToRemoveIds)
+      )
+      // ctx.log.info(`Removing: ${JsonLog(addToProxyRemoval)}`)
+      // and add them to the list to remove
+      addToProxyRemoval.forEach((id) => proxyRemovalIds.add(id))
+    }
+    proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
     newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
     newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
     newPureProxies.size &&
       (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
     newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values()), chainId))
-    proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
   }
 )
-
-/**
- * {
-    "kind": "call",
-    "name": "Multisig.as_multi",
-    "call": {
-        "args": {
-            "call": {
-                "__kind": "Proxy",
-                "value": {
-                    "__kind": "create_pure",
-                    "delay": 0,
-                    "index": 0,
-                    "proxyType": {
-                        "__kind": "Any"
-                    }
-                }
-            },
-            "maxWeight": {
-                "proofSize": "0",
-                "refTime": "182470554"
-            },
-            "maybeTimepoint": {
-                "height": 3152562,
-                "index": 2
-            },
-            "otherSignatories": [
-                "0x4e66461fed55e8de6988270d17e18f29a5c3fb0fc6ca39f9a9f41bff01510665",
-                "0x7c6bb0cfc976a5a68c6493c963ac05427423d37d4a21f3d5a589bbe0756b3b59"
-            ],
-            "threshold": 2
-        },
-        "error": null,
-        "id": "0003152630-000002-fbff3",
-        "name": "Multisig.as_multi",
-        "origin": {
-            "__kind": "system",
-            "value": {
-                "__kind": "Signed",
-                "value": "0xac7ca845f847034cc513751b2e1a95db412f85acfa607305bcaa017d09029e6e"
-            }
-        },
-        "pos": 42,
-        "success": true
-    },
-    "extrinsic": {
-        "error": null,
-        "hash": "0x2ccf3675713d39c4b0e49ec05609aea20e006c8123838b08c2e7f15d537f4397",
-        "id": "0003152630-000002-fbff3",
-        "indexInBlock": 2,
-        "pos": 43,
-        "signature": {
-            "address": {
-                "__kind": "Id",
-                "value": "0xac7ca845f847034cc513751b2e1a95db412f85acfa607305bcaa017d09029e6e"
-            },
-            "signature": {
-                "__kind": "Sr25519",
-                "value": "0x14b5ba1f127f1ad047199a483f6a17dcbb225008206bca1336c2b5bd4aa5797af6ffb2faabf04574a0d25c24ad2dd0f56418e59b6d551f3f8cec494b864feb8a"
-            },
-            "signedExtensions": {
-                "ChargeTransactionPayment": "0",
-                "CheckMortality": {
-                    "__kind": "Mortal37",
-                    "value": 3
-                },
-                "CheckNonce": 0
-            }
-        },
-        "success": true,
-        "version": 4,
-        "fee": "70756889",
-        "tip": "0",
-        "call": {
-            "args": {
-                "call": {
-                    "__kind": "Proxy",
-                    "value": {
-                        "__kind": "create_pure",
-                        "delay": 0,
-                        "index": 0,
-                        "proxyType": {
-                            "__kind": "Any"
-                        }
-                    }
-                },
-                "maxWeight": {
-                    "proofSize": "0",
-                    "refTime": "182470554"
-                },
-                "maybeTimepoint": {
-                    "height": 3152562,
-                    "index": 2
-                },
-                "otherSignatories": [
-                    "0x4e66461fed55e8de6988270d17e18f29a5c3fb0fc6ca39f9a9f41bff01510665",
-                    "0x7c6bb0cfc976a5a68c6493c963ac05427423d37d4a21f3d5a589bbe0756b3b59"
-                ],
-                "threshold": 2
-            },
-            "error": null,
-            "id": "0003152630-000002-fbff3",
-            "name": "Multisig.as_multi",
-            "origin": {
-                "__kind": "system",
-                "value": {
-                    "__kind": "Signed",
-                    "value": "0xac7ca845f847034cc513751b2e1a95db412f85acfa607305bcaa017d09029e6e"
-                }
-            },
-            "pos": 42,
-            "success": true
-        }
-    }
-}
- */
