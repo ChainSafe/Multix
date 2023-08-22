@@ -38,7 +38,7 @@ const MultisigView = () => {
                     )}
                   </BoxStyled>
                   <div>
-                    <SignatoriesHeadingStyled>Signatories List</SignatoriesHeadingStyled>
+                    <SignatoriesHeadingStyled>Signatories</SignatoriesHeadingStyled>
                     <AddressListStyled>
                       {multisig?.signatories?.map((signatory) => (
                         <li key={signatory}>
@@ -69,6 +69,10 @@ const MultisigWrapperStyled = styled('div')`
 
   .MuiPaper-root {
     box-shadow: none;
+
+    &:before {
+      display: none;
+    }
   }
 `
 

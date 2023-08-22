@@ -51,6 +51,7 @@ const PureProxyWrapper = styled('div')`
   min-width: 0;
   border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
+  margin-bottom: 1rem;
 `
 
 const OverviewWrapper = styled('div')`
