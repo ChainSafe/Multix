@@ -8,21 +8,19 @@ import { useGetWalletConnectNamespace } from './useWalletConnectNamespace'
 
 export default function useWalletConnectEventsManager() {
   const { web3wallet } = useWalletConnect()
-  const { openWCModal, onOpenWalletConnectSigning } = useModals()
+  const { openWalletConnectSessionModal, onOpenWalletConnectSigning } = useModals()
   const { currentNamespace } = useGetWalletConnectNamespace()
 
   // Open session proposal modal for confirmation / rejection
   const onSessionProposal = useCallback(
     (proposal: SignClientTypes.EventArguments['session_proposal']) => {
-      // ModalStore.open('SessionProposalModal', { proposal })
-      openWCModal({ sessionProposal: proposal })
+      openWalletConnectSessionModal({ sessionProposal: proposal })
     },
-    [openWCModal]
+    [openWalletConnectSessionModal]
   )
 
   const onAuthRequest = useCallback((request: Web3WalletTypes.AuthRequest) => {
-    // ModalStore.open('AuthRequestModal', { request })
-    console.log('---> AuthRequestModal', request)
+    console.log('---> WalletConnect AuthRequest not implemented', request)
   }, [])
 
   // Open request handling modal based on method that was used
@@ -35,20 +33,19 @@ export default function useWalletConnectEventsManager() {
       console.log('---> session_request', requestEvent)
       const { topic, params } = requestEvent
       const { request } = params
-      // const requestSession = signClient.session.get(topic)
       const requestSession = web3wallet.engine.signClient.session.get(topic)
 
       switch (request.method) {
         case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_MESSAGE:
         case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_TRANSACTION:
-          console.log(
-            'SessionSignPolkadotModal requestEvent, requestSession',
-            requestEvent,
-            requestSession
-          )
+          // console.log(
+          //   'SessionSignPolkadotModal requestEvent, requestSession',
+          //   requestEvent,
+          //   requestSession
+          // )
           if (requestEvent.params.chainId !== currentNamespace) {
             console.error(
-              "The chain from WC don't match with the current. Switch to the right network"
+              "The chain from WalletConnect doesn't match with the current. Switch to the right network"
             )
             return
           }
@@ -57,7 +54,6 @@ export default function useWalletConnectEventsManager() {
             onOpenWalletConnectSigning(requestEvent)
           }
           break
-        // ModalStore.open('SessionSignPolkadotModal', { requestEvent, requestSession })
 
         default:
           console.log('Session Unsuported Method Modal', requestEvent, requestSession)

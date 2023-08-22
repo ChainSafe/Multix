@@ -16,6 +16,8 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { SignClientTypes } from '@walletconnect/types'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
+import { Web3Wallet } from '@walletconnect/web3wallet'
+import { useWalletConnect } from '../../contexts/WalletConnectContext'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -28,6 +30,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { web3wallet } = useWalletConnect()
   const {
     getMultisigByAddress,
     selectedMultiProxy,
@@ -114,6 +117,20 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 
     multisigTx
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .then(() => {
+        const response = {
+          id: request.id,
+          jsonrpc: '2.0',
+          error: {
+            code: 5000,
+            message: 'Multix Multisig transaction ongoing...'
+          }
+        }
+        web3wallet?.respondSessionRequest({
+          topic: request.topic,
+          response
+        })
+      })
       .catch((error: Error) => {
         setIsSubmitting(false)
         addToast({
@@ -131,6 +148,8 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     multisigTx,
     selectedSigner,
     signCallback,
+    request,
+    web3wallet,
     addToast,
     getSubscanExtrinsicLink
   ])
@@ -142,6 +161,21 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     },
     [getMultisigByAddress]
   )
+
+  const onReject = useCallback(() => {
+    const response = {
+      id: request.id,
+      jsonrpc: '2.0',
+      error: {
+        code: 5000,
+        message: 'User rejected request on Multix'
+      }
+    }
+    web3wallet?.respondSessionRequest({
+      topic: request.topic,
+      response
+    })
+  }, [])
 
   return (
     <Dialog
@@ -264,7 +298,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               <>
                 <Button
                   variant="secondary"
-                  // onClick={() => onSign(false)}
+                  onClick={onReject}
                   disabled={isSubmitting}
                 >
                   Reject

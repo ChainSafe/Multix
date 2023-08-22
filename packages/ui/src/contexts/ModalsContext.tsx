@@ -12,7 +12,7 @@ interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
   setIsChangeMultiModalOpen: (isOpen: boolean) => void
   setIsSendModalOpen: (isOpen: boolean) => void
-  openWCModal: ({ sessionProposal }: OpenWCModalParams) => void
+  openWalletConnectSessionModal: ({ sessionProposal }: OpenWCModalParams) => void
   onOpenSigningModal: (info: SigningInfo) => void
   onOpenWalletConnectSigning: (request: SignClientTypes.EventArguments['session_request']) => void
 }
@@ -61,7 +61,7 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     refresh()
   }, [refresh])
 
-  const openWCModal = useCallback(({ sessionProposal }: OpenWCModalParams) => {
+  const openWalletConnectSessionModal = useCallback(({ sessionProposal }: OpenWCModalParams) => {
     setWCSessionProposal(sessionProposal)
     setIsWCModalOpen(true)
   }, [])
@@ -94,7 +94,7 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
         setIsEditModalOpen,
         setIsChangeMultiModalOpen,
         setIsSendModalOpen,
-        openWCModal,
+        openWalletConnectSessionModal,
         onOpenSigningModal,
         onOpenWalletConnectSigning
       }}
