@@ -7,12 +7,20 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import Accordion from '../../components/library/Accordion'
 import { Button } from '../../components/library'
 import Balance from '../../components/library/Balance'
+import { renderMultisigHeading } from '../multisigHelpers'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
+
   return (
     <MultisigWrapperStyled>
-      <h3>Controlled by</h3>
+      {selectedMultiProxy && (
+        <h3>
+          {selectedHasProxy
+            ? 'Controlled by'
+            : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
+        </h3>
+      )}
       {selectedMultiProxy &&
         selectedMultiProxy.multisigs.map((multisig) => {
           return (
