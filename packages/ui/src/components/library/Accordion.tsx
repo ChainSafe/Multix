@@ -55,7 +55,7 @@ const AccordionMuiStyled = styled(AccordionMui)`
   }
 
   .Mui-expanded {
-    max-height: none;
+    max-height: none !important;
   }
 `
 
