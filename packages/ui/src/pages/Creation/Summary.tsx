@@ -114,11 +114,10 @@ const Summary = ({
       </Box>
       {isBalanceError && balanceMin && (
         <Alert severity="warning">
-          The selected signer requires at least $
+          The selected signer requires at least
           {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
             tokenSymbol: chainInfo?.tokenSymbol
           })}
-          `
         </Alert>
       )}
     </Box>
