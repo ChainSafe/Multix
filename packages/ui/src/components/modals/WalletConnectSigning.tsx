@@ -1,6 +1,6 @@
 import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button } from '../library'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
@@ -26,11 +26,14 @@ export interface SigningModalProps {
 
 const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModalProps) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, isApiReady } = useApi()
+  const { api } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { getMultisigByAddress, selectedMultiProxy, getMultisigAsAccountBaseInfo } = useMultiProxy()
-  // FIXME
-  // need to check the multisig could be the "from" sent by WC
+  const {
+    getMultisigByAddress,
+    selectedMultiProxy,
+    getMultisigAsAccountBaseInfo,
+    selectMultiProxy
+  } = useMultiProxy()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const { selectedAccount, selectedSigner } = useAccounts()
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
@@ -41,16 +44,12 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     () => selectedMultiProxy?.proxy === originAddress,
     [selectedMultiProxy, originAddress]
   )
-  const multisig = useMemo(
-    () => getMultisigByAddress(request.params.request.params.address),
-    [getMultisigByAddress, request]
-  )
   const callData = useMemo(() => request.params.request.params.transactionPayload.method, [request])
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
-  console.log('threshold', threshold)
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(callData)
   const extrinsicToCall = useMemo(() => {
-    return callInfo?.call && api && api.tx(callInfo.call)
+    if (!callInfo?.call || !api) return
+    return api.tx(callInfo.call)
   }, [api, callInfo])
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
@@ -60,6 +59,16 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     fromAddress: originAddress,
     threshold
   })
+
+  useEffect(() => {
+    selectMultiProxy(request.params.request.params.address)
+  }, [request, selectMultiProxy])
+
+  useEffect(() => {
+    if (!selectedMultisig && !!selectedMultiProxy) {
+      setSelectedMultisig(selectedMultiProxy.multisigs[0])
+    }
+  }, [selectMultiProxy, selectedMultiProxy, selectedMultisig])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -76,7 +85,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       return
     }
 
-    if (!isApiReady || !api) {
+    if (!api) {
       const error = 'Api is not ready'
       console.error(error)
       setErrorMessage(error)
@@ -115,7 +124,6 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       })
   }, [
     threshold,
-    isApiReady,
     api,
     selectedAccount,
     originAddress,
@@ -145,7 +153,10 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       <ModalCloseButton onClose={onClose} />
       <DialogTitle>WalletConnect Transaction signing</DialogTitle>
       <DialogContent>
-        <Grid container>
+        <Grid
+          container
+          alignItems="center"
+        >
           {isProxySelected && multisigList.length > 1 && (
             <>
               <Grid
@@ -190,33 +201,35 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <>
-            <Grid
-              item
-              xs={0}
-              md={1}
-            />
-            <HashGridStyled
-              item
-              xs={12}
-              md={11}
-            >
-              <span className="title">Call hash</span>
-              <br />
-              <span className="hash">{callInfo?.call?.hash}</span>
-            </HashGridStyled>
-          </>
+          <Grid
+            item
+            xs={12}
+            md={2}
+          >
+            <h4>Call hash</h4>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={10}
+          >
+            <HashGridStyled>0x{callInfo?.call?.hash}</HashGridStyled>
+          </Grid>
+
           {!!callInfo?.call && !errorMessage && (
             <>
               <Grid
                 item
-                xs={0}
-                md={1}
-              />
+                xs={12}
+                md={2}
+                alignSelf="flex-start"
+              >
+                <CallTitleStyled>Call</CallTitleStyled>
+              </Grid>
               <Grid
                 item
                 xs={12}
-                md={11}
+                md={10}
                 className="callInfo"
               >
                 <CallInfo
@@ -243,34 +256,35 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
           >
             {!!errorMessage && errorMessage}
           </Grid>
-          <Grid
+          <ButtonContainerStyled
             item
             xs={12}
-            className="buttonContainer"
           >
-            <Button
-              variant="primary"
-              // onClick={() => onSign(false)}
-              disabled={isSubmitting}
-            >
-              Reject
-            </Button>
-
             {!isGettingCallInfo && (
-              <Button
-                variant="primary"
-                onClick={onSign}
-                disabled={!!errorMessage || isSubmitting || !callInfo?.call}
-              >
-                Approve
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  // onClick={() => onSign(false)}
+                  disabled={isSubmitting}
+                >
+                  Reject
+                </Button>
+
+                <Button
+                  variant="primary"
+                  onClick={onSign}
+                  disabled={!!errorMessage || isSubmitting || !callInfo?.call}
+                >
+                  Approve
+                </Button>
+              </>
             )}
             {isGettingCallInfo && (
               <Button disabled>
                 <CircularProgress />
               </Button>
             )}
-          </Grid>
+          </ButtonContainerStyled>
         </Grid>
       </DialogContent>
     </Dialog>
@@ -278,31 +292,25 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 }
 
 const HashGridStyled = styled(Grid)`
-  margin-top: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: small;
+`
 
-  .title {
-    color: ${({ theme }) => theme.custom.text.primary};
-    font-weight: 500;
-    font-size: large;
-  }
+const CallTitleStyled = styled('h4')`
+  margin-top: 0.5rem;
+`
 
-  .hash {
-    font-size: small;
+const ButtonContainerStyled = styled(Grid)`
+  text-align: right;
+  margin-top: 1rem;
+
+  button:first-of-type {
+    margin-right: 1rem;
   }
 `
 export default styled(ProposalSigning)(
   ({ theme }) => `
-  .buttonContainer {
-    text-align: right;
-    margin-top: 1rem;
-  }
-
-  .addedCallData {
-    margin-top: 1rem;
-  }
-
   .errorMessage {
     margin-top: 0.5rem;
     color: ${theme.custom.error};
