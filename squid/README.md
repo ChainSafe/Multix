@@ -3,6 +3,32 @@
 A [squid](https://subsquid.io) project to support the Multix UI.
 It accumulates the chain's accounts, multisigs and proxy relations.
 
+## to check the metrics
+
+```graphql
+query MyQuery {
+  accounts(where: { byMultix_eq: true }) {
+    id
+    isMultisig
+    threshold
+  }
+}
+```
+
+copy the results, and run them against
+
+```js
+const calc = (data) => {
+  const res = new Map()
+  data.data.accounts.forEach(({ id }) => {
+    const resId = id.substring(0, 5)
+    const prev = res.get(resId)
+    res.set(resId, prev ? prev + 1 : 1)
+  })
+  return res
+}
+```
+
 ## Prerequisites
 
 - node 16.x
