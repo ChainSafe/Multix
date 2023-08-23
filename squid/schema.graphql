@@ -19,6 +19,7 @@ type MultisigCall @entity {
   timestamp: DateTime!
   multisig: Account
   callIndex: Int!
+  callHash: String
 }
 
 # entity for linking accounts and multisigs

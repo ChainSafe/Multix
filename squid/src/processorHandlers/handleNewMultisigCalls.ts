@@ -19,14 +19,15 @@ export const handleNewMultisigCalls = async (
     .findBy(Account, { id: In([...multisigIds]) })
     .then((q) => new Map(q.map((i) => [i.address, i])))
 
-  for (const { blockHash, id, callIndex, multisigAddress, timestamp } of newMultisigCalls) {
+  for (const { blockHash, id, callIndex, multisigAddress, timestamp, callHash } of newMultisigCalls) {
     multisigCalls.push(
       new MultisigCall({
         id,
         blockHash,
         callIndex,
         multisig: multisigAccountsMap.get(multisigAddress),
-        timestamp
+        timestamp,
+        callHash
       })
     )
   }

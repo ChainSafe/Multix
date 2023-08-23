@@ -22,4 +22,7 @@ export class MultisigCall {
 
     @Column_("int4", {nullable: false})
     callIndex!: number
+
+    @Column_("text", {nullable: true})
+    callHash!: string | undefined | null
 }

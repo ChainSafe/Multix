@@ -12,7 +12,8 @@ import {
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs
+  getProxyInfoFromArgs,
+  JsonLog
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -28,6 +29,9 @@ import {
 import { Env } from './util/Env'
 import { getAccountId } from './util/getAccountId'
 import { getProxyAccountIByDelegatorIds } from './util/getProxyAccountIByDelegatorIds'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import { parseGenericCall } from './util/decode'
+import { GenericCall } from '@polkadot/types'
 
 export const dataEvent = {
   data: {
@@ -46,12 +50,12 @@ export const dataCall = {
   }
 } as const
 
-const supportedMultisigCalls = [
-  'Multisig.as_multi',
-  'Multisig.approve_as_multi',
-  'Multisig.cancel_as_multi',
-  'Multisig.as_multi_threshold_1'
-]
+// const supportedMultisigCalls = [
+//   'Multisig.as_multi',
+//   'Multisig.approve_as_multi',
+//   'Multisig.cancel_as_multi',
+//   'Multisig.as_multi_threshold_1'
+// ]
 export const env = new Env().getEnv()
 const archiveUrl =
   env.archiveUrl ||
@@ -84,9 +88,11 @@ const processor = new SubstrateBatchProcessor()
 export type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
 
+
 processor.run(
   new TypeormDatabase({ stateSchema: chainId, isolationLevel: 'READ COMMITTED' }),
   async (ctx) => {
+    const api = await ApiPromise.create({provider: new WsProvider(env.rpcWs)})
     const newMultisigsInfo: NewMultisigsInfo[] = []
     const newPureProxies: Map<string, NewPureProxy> = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
@@ -99,8 +105,9 @@ processor.run(
       const timestamp = new Date(block.header.timestamp)
 
       for (const item of items) {
-        if (supportedMultisigCalls.includes(item.name)) {
-          const callItem = item as CallItem<'*', true>
+          if (item.name === 'Multisig.as_multi'){
+            
+            const callItem = item as CallItem<'Multisig.as_multi', true>
 
           if (!callItem.call.success || !callItem.call.origin) continue
 
@@ -123,10 +130,19 @@ processor.run(
           newMultisigsInfo.push(newMulti)
           const blockNumber = block.header.height
           const blockHash = block.header.hash
+          
+          // ctx.log.info(`${blockNumber} \n ${JsonLog(item)}`)
+
+          const signedBlock = await api.rpc.chain.getBlock(blockHash)
+          const ext = signedBlock.block.extrinsics[callItem.extrinsic.indexInBlock]
+          const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+
+          // ctx.log.info(`${blockNumber} \n ${JsonLog(decoded.args.call?.hash)}`)
+          // const callhash = ext.args.call?.hash
 
           newMultisigCalls.push({
             id: getMultisigCallId(
-              newMulti.address,
+              multisigAddress,
               blockNumber,
               callItem.extrinsic.indexInBlock,
               callItem.call.pos,
@@ -134,8 +150,9 @@ processor.run(
             ),
             blockHash,
             callIndex: callItem.extrinsic.indexInBlock,
-            multisigAddress: newMulti.address,
-            timestamp
+            multisigAddress,
+            timestamp,
+            callHash: `${decoded.args.call?.hash || blockNumber.toString()}-${multisigAddress}`
           })
         }
 
