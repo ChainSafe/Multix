@@ -136,8 +136,8 @@ processor.run(
           const signedBlock = await api.rpc.chain.getBlock(blockHash)
           const ext = signedBlock.block.extrinsics[callItem.extrinsic.indexInBlock]
           const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
-
-          // ctx.log.info(`${blockNumber} \n ${JsonLog(decoded.args.call?.hash)}`)
+          const callData = decoded.args.callData
+          // ctx.log.info(`${blockNumber} \n ${JsonLog(callData)}`)
           // const callhash = ext.args.call?.hash
 
           newMultisigCalls.push({
@@ -152,7 +152,7 @@ processor.run(
             callIndex: callItem.extrinsic.indexInBlock,
             multisigAddress,
             timestamp,
-            callHash: `${decoded.args.call?.hash || blockNumber.toString()}-${multisigAddress}`
+            callHash: `${callData || blockNumber.toString()}-${multisigAddress}`
           })
         }
 

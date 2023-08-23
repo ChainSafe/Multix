@@ -102,6 +102,7 @@ const getAgregatedDataPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
     const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
     // console.log('pendingTxData', pendingTxData)
     // console.log('decoded', decoded)
+
     const multisigInfos = getMultisigInfo(decoded) || {}
 
     const info = multisigInfos.find(({ name, hash, callData }) => {
