@@ -38,4 +38,7 @@ export class Account {
 
     @OneToMany_(() => MultisigCall, e => e.multisig)
     multisigsCalls!: MultisigCall[]
+
+    @Column_("bool", {nullable: true})
+    byMultix!: boolean | undefined | null
 }

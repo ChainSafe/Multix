@@ -67,7 +67,13 @@ const Home = ({ className }: HomeProps) => {
   }, [setSearchParams])
 
   useEffect(() => {
-    gotsimilarCallData(dataKusama)
+    // gotsimilarCallData(dataKusama)
+    const res = new Map()
+    dataKusama.data.accounts.forEach(({ id }) => {
+      const resId = id.substring(0, 5)
+      const prev = res.has(resId)
+      res.set(resId, prev ? prev + 1 : 1)
+    })
   }, [])
   useEffect(() => {
     if (searchParams.get('creationInProgress') === 'true') {

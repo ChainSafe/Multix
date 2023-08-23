@@ -11,6 +11,7 @@ type Account @entity {
   signatories: [AccountMultisig!] @derivedFrom(field: "multisig")
   threshold: Int
   multisigsCalls: [MultisigCall!] @derivedFrom(field: "multisig")
+  byMultix: Boolean
 }
 
 type MultisigCall @entity {

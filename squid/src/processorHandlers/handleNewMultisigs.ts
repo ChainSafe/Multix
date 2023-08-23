@@ -14,18 +14,18 @@ export const handleNewMultisigs = async (
   const newMultisigs: Map<string, Account> = new Map()
   const newAccountMultisigs: Map<string, AccountMultisig> = new Map()
 
-  for (const { address, newSignatories, threshold, id, isMultisig, isPureProxy } of multisigs) {
+  for (const { address, newSignatories, threshold, id, isMultisig, isPureProxy, byMultix } of multisigs) {
     const signatoriesAccounts = await getOrCreateAccounts(ctx, newSignatories, chainId)
-
     const newMultisig = new Account({
       id,
       address,
       threshold,
       isMultisig,
-      isPureProxy
+      isPureProxy,
+      byMultix
     })
 
-    newMultisigs.set(id, newMultisig)
+    !newMultisigs.has(id) && newMultisigs.set(id, newMultisig)
 
     signatoriesAccounts.forEach((account) => {
       const newAccountMultisigId = getAccountMultisigId(newMultisig.id, account.id, chainId)

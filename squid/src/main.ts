@@ -13,7 +13,6 @@ import {
   getOriginAccount,
   getPureProxyInfoFromArgs,
   getProxyInfoFromArgs,
-  JsonLog
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -29,9 +28,6 @@ import {
 import { Env } from './util/Env'
 import { getAccountId } from './util/getAccountId'
 import { getProxyAccountIByDelegatorIds } from './util/getProxyAccountIByDelegatorIds'
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { parseGenericCall } from './util/decode'
-import { GenericCall } from '@polkadot/types'
 
 export const dataEvent = {
   data: {
@@ -92,7 +88,7 @@ export type Ctx = BatchContext<Store, Item>
 processor.run(
   new TypeormDatabase({ stateSchema: chainId, isolationLevel: 'READ COMMITTED' }),
   async (ctx) => {
-    const api = await ApiPromise.create({provider: new WsProvider(env.rpcWs)})
+    // const api = await ApiPromise.create({provider: new WsProvider(env.rpcWs)})
     const newMultisigsInfo: NewMultisigsInfo[] = []
     const newPureProxies: Map<string, NewPureProxy> = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
@@ -117,26 +113,60 @@ processor.run(
           const { otherSignatories, threshold } = handleMultisigCall(callArgs)
           const signatories = [signer, ...otherSignatories]
 
+          const blockNumber = block.header.height
+          const blockHash = block.header.hash
           const multisigAddress = getMultisigAddress(signatories, threshold)
+          const itemsInBlock = block.items.map(item => item.name)
+          let seemsToBeMultix = false
+          if((itemsInBlock as any).includes('Utility.batch_all')){
+            //this may be a multisig created by Multix
+            const toCheck = block.items.find(({name}) => name as any === 'Utility.batch_all') as any
+            seemsToBeMultix = !!toCheck && toCheck.call.args.calls[0].value.__kind === "transfer_keep_alive" && toCheck.call.args.calls[1].value.call.value.__kind === "create_pure"
+            // ctx.log.info(`${blockNumber} \n ${seemsToBeMultix} \n ${JsonLog(toCheck)}`)
+
+            // "args": {
+            //   "calls": [
+            //       {
+            //           "__kind": "Balances",
+            //           "value": {
+            //               "__kind": "transfer_keep_alive",
+            //               "dest": {
+            //                   "__kind": "Id",
+            //                   "value": "0x3ca9d9e3998a602e2e8609044bf1806d7f84a62165b2a3eef5f9b37f1e3b3051"
+            //               },
+            //               "value": "220410000000"
+            //           }
+            //       },
+            //       {
+            //           "__kind": "Multisig",
+            //           "value": {
+            //               "__kind": "as_multi",
+            //               "call": {
+            //                   "__kind": "Proxy",
+            //                   "value": {
+            //                       "__kind": "create_pure",
+
+          }
+          // ctx.log.info(`${blockNumber} \n ${JsonLog(itemsInBlock)}`)
+
+
           const newMulti = {
             id: getAccountId(multisigAddress, chainId),
             address: multisigAddress,
             threshold,
             newSignatories: signatories,
             isMultisig: true,
-            isPureProxy: false
+            isPureProxy: false,
+            byMultix: seemsToBeMultix
           } as NewMultisigsInfo
 
           newMultisigsInfo.push(newMulti)
-          const blockNumber = block.header.height
-          const blockHash = block.header.hash
           
-          // ctx.log.info(`${blockNumber} \n ${JsonLog(item)}`)
 
-          const signedBlock = await api.rpc.chain.getBlock(blockHash)
-          const ext = signedBlock.block.extrinsics[callItem.extrinsic.indexInBlock]
-          const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
-          const callData = decoded.args.callData
+          // const signedBlock = await api.rpc.chain.getBlock(blockHash)
+          // const ext = signedBlock.block.extrinsics[callItem.extrinsic.indexInBlock]
+          // const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+          // const callData = decoded.args.callData
           // ctx.log.info(`${blockNumber} \n ${JsonLog(callData)}`)
           // const callhash = ext.args.call?.hash
 
@@ -152,7 +182,8 @@ processor.run(
             callIndex: callItem.extrinsic.indexInBlock,
             multisigAddress,
             timestamp,
-            callHash: `${callData || blockNumber.toString()}-${multisigAddress}`
+            // callHash: `${callData || blockNumber.toString()}-${multisigAddress}`
+            callHash: ""
           })
         }
 
