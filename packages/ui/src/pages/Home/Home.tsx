@@ -16,27 +16,9 @@ import PureProxyHeaderView from './PureProxyHeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
-import { dataRococo } from './data-rococo'
-import { dataKusama } from './data-kusama'
 
 interface HomeProps {
   className?: string
-}
-
-const gotsimilarCallData = (data: typeof dataRococo) => {
-  const hashOccurence = new Map<string, number>()
-
-  data.data.multisigCalls.forEach(({ callHash }) => {
-    if (hashOccurence.has(callHash)) {
-      const prev = hashOccurence.get(callHash)
-      prev && hashOccurence.set(callHash, prev + 1)
-    } else {
-      hashOccurence.set(callHash, 1)
-    }
-  })
-
-  const res = Array.from(hashOccurence).filter(([hash, occurence]) => occurence > 1)
-  console.log('res', res)
 }
 
 const Home = ({ className }: HomeProps) => {
@@ -66,15 +48,6 @@ const Home = ({ className }: HomeProps) => {
     setSearchParams({ creationInProgress: 'false' })
   }, [setSearchParams])
 
-  useEffect(() => {
-    // gotsimilarCallData(dataKusama)
-    const res = new Map()
-    dataKusama.data.accounts.forEach(({ id }) => {
-      const resId = id.substring(0, 5)
-      const prev = res.has(resId)
-      res.set(resId, prev ? prev + 1 : 1)
-    })
-  }, [])
   useEffect(() => {
     if (searchParams.get('creationInProgress') === 'true') {
       setShowNewMultisigAlert(true)
