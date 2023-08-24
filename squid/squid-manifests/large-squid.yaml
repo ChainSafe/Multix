@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-large
-version: 4
+version: 5
 description: |-
   Squid for Multix
 
@@ -34,6 +34,10 @@ deploy:
       cmd: ['sqd', 'start-astar']
     - name: hydradx-processor
       cmd: ['sqd', 'start-hydradx']
+    - name: moonbeam-processor
+      cmd: ['sqd', 'start-moonbeam']
+    - name: moonriver-processor
+      cmd: ['sqd', 'start-moonriver']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
