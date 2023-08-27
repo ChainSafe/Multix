@@ -33,24 +33,28 @@ const Header = ({ handleDrawerOpen }: Props) => {
           />
         </LogoWrapperStyled>
         <BoxStyled>
-          {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
-            (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
-            (isAccountConnected || isDisplayWhenNoWallet) ? (
-              <RouterLinkStyled
-                key={name}
-                to={path}
-              >
-                {name}
-              </RouterLinkStyled>
-            ) : null
-          )}
-          <RightButtonsWrapper>
+          <Box>
+            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
+              (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
+              (isAccountConnected || isDisplayWhenNoWallet) ? (
+                <RouterLinkStyled
+                  key={name}
+                  to={path}
+                >
+                  {name}
+                </RouterLinkStyled>
+              ) : null
+            )}
+          </Box>
+          <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
-              <Button onClick={allowConnectionToExtension}>Connect</Button>
+              <ConnectButtonStyled onClick={allowConnectionToExtension}>
+                Connect
+              </ConnectButtonStyled>
             )}
             <MultiProxySelection />
             <NetworkSelectionStyled />
-          </RightButtonsWrapper>
+          </RightButtonsWrapperStyled>
         </BoxStyled>
         <IconButtonStyled
           color="inherit"
@@ -72,8 +76,12 @@ const MuiAppBarStyled = styled(MuiAppBar)`
   justify-content: center;
 `
 
-const RightButtonsWrapper = styled(Box)`
-  flex: 1;
+const ConnectButtonStyled = styled(Button)`
+  margin-right: 1rem;
+`
+
+const RightButtonsWrapperStyled = styled(Box)`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;

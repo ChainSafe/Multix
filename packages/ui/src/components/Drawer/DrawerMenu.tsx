@@ -1,9 +1,7 @@
 import IconButton from '@mui/material/IconButton'
 import { HiOutlineChevronRight as ChevronRightIcon } from 'react-icons/hi2'
-import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -13,7 +11,7 @@ import MultiProxySelection from '../select/MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import { useMemo } from 'react'
-import { RouterLink } from '../library'
+import { Button, RouterLink } from '../library'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -33,23 +31,27 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           <ChevronRightIcon size={20} />
         </IconButton>
       </DrawerHeader>
-      <Divider />
       <List>
         {!isAllowedToConnectToExtension && (
-          <ListItem disablePadding>
-            <ListItemButton onClick={allowConnectionToExtension}>Connect</ListItemButton>
-          </ListItem>
+          <ListItemStyled disablePadding>
+            <ButtonStyled
+              variant="secondary"
+              onClick={allowConnectionToExtension}
+            >
+              Connect
+            </ButtonStyled>
+          </ListItemStyled>
         )}
-        <ListItem>
+        <ListItemStyled>
           <MultiProxySelection />
-        </ListItem>
-        <ListItem>
+        </ListItemStyled>
+        <ListItemStyled>
           <NetworkSelection />
-        </ListItem>
+        </ListItemStyled>
         {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
           (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
           (isAccountConnected || isDisplayWhenNoWallet) ? (
-            <ListItem
+            <ListItemStyled
               key={name}
               disablePadding
             >
@@ -59,13 +61,20 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
               >
                 <ListItemText primary={name} />
               </RouterLink>
-            </ListItem>
+            </ListItemStyled>
           ) : null
         )}
       </List>
     </>
   )
 }
+const ListItemStyled = styled(ListItem)`
+  justify-content: flex-end;
+`
+
+const ButtonStyled = styled(Button)`
+  margin-right: 1rem;
+`
 
 const DrawerHeader = styled('div')`
   display: flex;

@@ -155,8 +155,12 @@ const BoxStyled = styled(Box)`
 `
 
 export default styled(MultiProxySelection)`
-  min-width: 180px;
-  flex: 1;
+  min-width: 200px;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+    min-width: 280px;
+  }
+
   text-align: right;
 
   .MuiTextField-root {
