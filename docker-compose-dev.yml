@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  ui:
+    container_name: ${NAME_UI}-dev
+    restart: always
+    build:
+      context: "."
+      dockerfile: ./docker/Dockerfile.dev
+      args:
+        - NAME_UI=${NAME_UI}
+        - NAME_SQUID=${NAME_SQUID}
+        - DB_PORT=${DB_PORT}
+        - GQL_PORT=${GQL_PORT}
+        - VITE_PORT=${VITE_PORT}
+        - GRAPHQL_ARCHIVE_PORT=${GRAPHQL_ARCHIVE_PORT}
+        - PROCESSOR_PROMETHEUS_PORT=${PROCESSOR_PROMETHEUS_PORT}
+        - DB_HOST=${DB_HOST}
+        - PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS}
+    # note: cannot interpolate `${NAME_UI}` here since `ui` is the multix-ui directory name
+    volumes:
+      - ./packages/ui:/multix/packages/ui:delegated
+      - ignore:/multix/packages/ui/node_modules
+      - ./squid:/multix/squid:delegated
+      - ignore:/multix/squid/node_modules
+    # https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
+    # use this to try to resolve error `Error: connect ECONNREFUSED 127.0.0.1:5432` when run `npm run db:migrate`
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${GQL_PORT}:${GQL_PORT}"
+      - "${VITE_PORT}:${VITE_PORT}"
+      - "${GRAPHQL_ARCHIVE_PORT}:${GRAPHQL_ARCHIVE_PORT}"
+      - "${PROCESSOR_PROMETHEUS_PORT}:${PROCESSOR_PROMETHEUS_PORT}"
+    env_file:
+      - ./packages/ui/.env
+  # https://github.com/subsquid-labs/squid-substrate-template/blob/main/docker-compose.yml
+  db:
+    container_name: subsquid_db
+    image: postgres:15
+    environment:
+      DB_HOST: ${DB_HOST}
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    shm_size: 1gb
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    env_file:
+      - ./squid/.env
+#    command: ["postgres", "-c", "log_statement=all"]
+#    volumes:
+#      - ./data/db:/var/lib/postgresql/data
+volumes:
+  ignore:

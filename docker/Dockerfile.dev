@@ -1,0 +1,52 @@
+FROM node:gallium-alpine
+
+ARG NAME_UI=${NAME_UI}
+ARG DB_HOST=${DB_HOST}
+ARG DB_PORT=${DB_PORT}
+ARG GQL_PORT=${GQL_PORT}
+ARG VITE_PORT=${VITE_PORT}
+ARG GRAPHQL_ARCHIVE_PORT=${GRAPHQL_ARCHIVE_PORT}
+ARG PROCESSOR_PROMETHEUS_PORT=${PROCESSOR_PROMETHEUS_PORT}
+ARG PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS}
+
+ARG PATH_PROJECT=/multix
+ARG PATH_UI=${PATH_PROJECT}/packages/ui
+ARG PATH_SQUID=${PATH_PROJECT}/squid
+
+ENV PATH=${PATH_UI}/node_modules/.bin:$PATH:${PATH_SQUID}/node_modules/.bin:$PATH \
+  DB_HOST=${DB_HOST} \
+  PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS} \
+  # https://github.com/docker/for-linux/issues/140#issuecomment-664211617
+  LANG=C.UTF-8
+
+WORKDIR ${PATH_PROJECT}
+
+# copy across required dependencies first
+COPY ./packages/ui/package.json ${PATH_UI}/package.json
+# improves time to install packages
+# COPY ./packages/ui/yarn.lock ${PATH_UI}/yarn.lock
+
+COPY ./squid/package.json ${PATH_SQUID}/package.json
+# improves time to install packages
+# COPY ./squid/package-lock.json ${PATH_SQUID}/package-lock.json
+
+RUN apk update && apk add --update git python3 make g++
+  # \ && rm -rf /var/cache/apk/*
+
+COPY . ${PATH_PROJECT}
+
+RUN cd ${PATH_UI} && \
+  echo -e "Installing Multix-UI dependencies..." && \
+  yarn install
+
+RUN cd ${PATH_SQUID} && \
+  echo -e "Installing Squid dependencies..." && \
+  npm install && \
+  echo -e "Building Squid..." && \
+  npm run codegen && \
+  npm run typegen && \
+  npm run build
+
+EXPOSE ${DB_PORT} ${GQL_PORT} ${VITE_PORT} ${GRAPHQL_ARCHIVE_PORT} ${PROCESSOR_PROMETHEUS_PORT}
+
+CMD tail -f /dev/null

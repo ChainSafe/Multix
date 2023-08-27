@@ -64,3 +64,108 @@ yarn;
 # install and launch the db in a docker
 yarn ui:start
 ```
+
+## Docker development
+
+* Install and run [Docker](https://www.docker.com/)
+* Configure .env files ./packages/ui and ./squid directories
+* Build and run Docker containers
+```bash
+time ./docker/docker.sh
+```
+* Enter Docker container
+```bash
+docker exec -it multix-ui-dev /bin/sh
+```
+* Exit Docker container with CTRL+C
+
+### Terminal #1
+
+```bash
+docker exec -w /multix/squid -it multix-ui-dev npm run db:migrate
+# this will start the indexer using the environment variables set in your .env
+docker exec -w /multix/squid -it multix-ui-dev npm run start:indexer
+```
+
+> Alternatively use predefined values
+```bash
+docker exec -w /multix/squid -it multix-ui-dev npm run db:migrate
+# alternatively, you can run with predefined values, see in /squid/assets/envs/, e.g here with polkadot
+docker exec -w /multix/squid -it multix-ui-dev node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.polkadot
+```
+
+### Terminal #2
+
+```bash
+docker exec -w /multix/squid -it multix-ui-dev npm run start:graphql-server
+```
+
+### Terminal #3
+
+```bash
+docker exec -w /multix/packages/ui -it multix-ui-dev yarn start \
+  --host 0.0.0.0 \
+  --port 3333 \
+  --cors true \
+  --logLevel info \
+  --debug true
+```
+> Note: Replace `start` with `build` if you change to `NODE_ENV=production`
+
+Go to http://localhost:3333/?network=kusama
+
+> Note: Replace `local` with the value used for `VITE_NETWORK_NAME`
+
+View database logs
+```bash
+docker logs -f subsquid_db
+```
+
+### Docker Troubleshooting
+
+* Kill a port `PORT` (e.g. `33045`)
+```bash
+PORT=33045
+kill -9 $(lsof -ti tcp:$PORT)
+```
+
+* Restart a Docker container name (e.g. `subsquid_db`) that is shown as `Exited` when you run `docker ps -a`
+```bash
+CONTAINER_NAME=subsquid_db
+docker restart CONTAINER_NAME
+```
+
+* If you get error `error from daemon in stream: Error grabbing logs: invalid character '\x00' looking for beginning of value` when viewing Docker logs with `docker logs -f subsquid_db` then:
+  * Add `ENV LANG=C.UTF-8` to the Dockerfile. See https://github.com/docker/for-linux/issues/140#issuecomment-571519609
+  * **TODO** - check this actually works
+
+* List Docker containers
+```bash
+docker ps -a
+```
+
+* List Docker images
+```bash
+docker images -a
+```
+
+* Enter Docker container shell
+```bash
+CONTAINER_NAME=multix-ui-dev
+docker exec -it $CONTAINER_NAME /bin/sh
+```
+
+* View Docker container logs
+```bash
+docker logs -f $CONTAINER_ID
+```
+
+* Remove Docker container
+```bash
+docker stop $CONTAINER_NAME; docker rm $CONTAINER_NAME;
+```
+
+* Remove Docker image
+```bash
+docker rmi $IMAGE_ID
+```
