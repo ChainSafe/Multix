@@ -6,7 +6,6 @@ import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
-import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
@@ -18,9 +17,7 @@ interface Props {
 
 const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
-  const { multiProxyList } = useMultiProxy()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
-  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
@@ -34,9 +31,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
         </LogoWrapperStyled>
         <BoxStyled>
           <Box>
-            {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
-              (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
-              (isAccountConnected || isDisplayWhenNoWallet) ? (
+            {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
+              isAccountConnected || isDisplayWhenNoWallet ? (
                 <RouterLinkStyled
                   key={name}
                   to={path}

@@ -4,7 +4,6 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { styled } from '@mui/material/styles'
 import NetworkSelection from '../select/NetworkSelection'
 import MultiProxySelection from '../select/MultiProxySelection'
@@ -19,9 +18,7 @@ interface DrawerMenuProps {
 
 function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   const { ownAccountList } = useAccounts()
-  const { multiProxyList } = useMultiProxy()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
-  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
@@ -48,9 +45,8 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItemStyled>
           <NetworkSelection />
         </ListItemStyled>
-        {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
-          (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
-          (isAccountConnected || isDisplayWhenNoWallet) ? (
+        {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
+          isAccountConnected || isDisplayWhenNoWallet ? (
             <ListItemStyled
               key={name}
               disablePadding
