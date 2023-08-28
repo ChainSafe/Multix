@@ -106,7 +106,7 @@ yarn ui:start
 * Terminal #4
   * Run Multix UI
     ```bash
-    docker exec -w /multix/packages/ui -it multix-ui-dev yarn start --host 0.0.0.0
+    docker exec -w /multix -it multix-ui-dev yarn ui:start --host 0.0.0.0
     ```
     * Note: Replace `start` with `build` if you change to `NODE_ENV=production`
     * Note: Additional options are available (e.g. `--port 3333 --cors true --logLevel info --debug true`)
