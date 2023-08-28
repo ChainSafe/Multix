@@ -29,8 +29,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
             src={multixlogo}
           />
         </LogoWrapperStyled>
-        <BoxStyled>
-          <Box>
+        <DesktopMenuStyled>
+          <MenyuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
                 <RouterLinkStyled
@@ -41,7 +41,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 </RouterLinkStyled>
               ) : null
             )}
-          </Box>
+          </MenyuWrapperStyled>
           <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
               <ConnectButtonStyled onClick={allowConnectionToExtension}>
@@ -51,7 +51,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
             <MultiProxySelection />
             <NetworkSelectionStyled />
           </RightButtonsWrapperStyled>
-        </BoxStyled>
+        </DesktopMenuStyled>
         <IconButtonStyled
           color="inherit"
           aria-label="open drawer"
@@ -84,6 +84,7 @@ const RightButtonsWrapperStyled = styled(Box)`
 `
 
 const RouterLinkStyled = styled(RouterLink)`
+  display: inline-block;
   color: ${({ theme }) => theme.palette.primary.white};
 
   &:hover,
@@ -93,7 +94,11 @@ const RouterLinkStyled = styled(RouterLink)`
   }
 `
 
-const BoxStyled = styled(Box)`
+const MenyuWrapperStyled = styled(Box)`
+  width: 100%;
+`
+
+const DesktopMenuStyled = styled(Box)`
   display: none;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
