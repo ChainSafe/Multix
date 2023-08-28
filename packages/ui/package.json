@@ -48,7 +48,7 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "start": "source .env && export VITE_PORT && vite --port $VITE_PORT",
+    "start": "vite --port $VITE_PORT",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "lint": "eslint --color 'src/**/*.{js,ts,tsx}'",

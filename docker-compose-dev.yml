@@ -17,6 +17,7 @@ services:
         - PROCESSOR_PROMETHEUS_PORT=${PROCESSOR_PROMETHEUS_PORT}
         - DB_HOST=${DB_HOST}
         - PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS}
+        - NODE_ENV=${NODE_ENV}
     # note: cannot interpolate `${NAME_UI}` here since `ui` is the multix-ui directory name
     volumes:
       - ./packages/ui:/multix/packages/ui:delegated
@@ -44,6 +45,10 @@ services:
       POSTGRES_PASSWORD: postgres
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # https://github.com/docker/for-mac/issues/1996#issuecomment-408336035
+    volumes:
+      - /var/lib/docker/containers:/mnt/log/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     shm_size: 1gb
     ports:
       - "${DB_PORT}:${DB_PORT}"

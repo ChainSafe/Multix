@@ -8,6 +8,7 @@ ARG VITE_PORT=${VITE_PORT}
 ARG GRAPHQL_ARCHIVE_PORT=${GRAPHQL_ARCHIVE_PORT}
 ARG PROCESSOR_PROMETHEUS_PORT=${PROCESSOR_PROMETHEUS_PORT}
 ARG PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS}
+ARG NODE_ENV=${NODE_ENV}
 
 ARG PATH_PROJECT=/multix
 ARG PATH_UI=${PATH_PROJECT}/packages/ui
@@ -17,36 +18,62 @@ ENV PATH=${PATH_UI}/node_modules/.bin:$PATH:${PATH_SQUID}/node_modules/.bin:$PAT
   DB_HOST=${DB_HOST} \
   PUBLIC_IP_ADDRESS=${PUBLIC_IP_ADDRESS} \
   # https://github.com/docker/for-linux/issues/140#issuecomment-664211617
-  LANG=C.UTF-8
+  # possible solution incase encounter this issue again
+  LANG=C.UTF-8 \
+  NODE_ENV=${NODE_ENV}
 
 WORKDIR ${PATH_PROJECT}
 
-# copy across required dependencies first
-COPY ./packages/ui/package.json ${PATH_UI}/package.json
+# Copy as a non-root user. `node` user is built in the Node image. see `cat /etc/passwd`
+RUN chgrp node $HOME && \
+  chgrp -R node $HOME && \
+  chmod 770 $HOME && \
+  chmod -R 770 $HOME
+
+# copy required dependencies first as they change less often in code
+COPY --chown=node:node ./packages/ui/package.json ${PATH_UI}/package.json
 # improves time to install packages
-# COPY ./packages/ui/yarn.lock ${PATH_UI}/yarn.lock
+# COPY --chown=node:node ./packages/ui/yarn.lock ${PATH_UI}/yarn.lock
 
-COPY ./squid/package.json ${PATH_SQUID}/package.json
-# improves time to install packages
-# COPY ./squid/package-lock.json ${PATH_SQUID}/package-lock.json
+COPY --chown=node:node ./squid/package.json ${PATH_SQUID}/package.json
+# COPY --chown=node:node ./squid/package-lock.json ${PATH_SQUID}/package-lock.json*
 
-RUN apk update && apk add --update git python3 make g++
-  # \ && rm -rf /var/cache/apk/*
+RUN apk update && apk add --update git vim sudo python3 make g++ && \
+  rm -rf /var/cache/apk/*
 
-COPY . ${PATH_PROJECT}
+COPY --chown=node:node . ${PATH_PROJECT}
 
-RUN cd ${PATH_UI} && \
+RUN cd ${PATH_PROJECT} && \
   echo -e "Installing Multix-UI dependencies..." && \
-  yarn install
+  corepack enable && \
+  corepack prepare yarn@stable --activate && \
+  yarn set version 3.5.1 && \
+  yarn plugin import @yarnpkg/plugin-workspace-tools && \
+  yarn plugin import @yarnpkg/plugin-interactive-tools && \
+  yarn install && \
+  chgrp node ${PATH_PROJECT}/node_modules && \
+  chgrp -R node ${PATH_PROJECT}/node_modules && \
+  chmod 770 ${PATH_PROJECT}/node_modules && \
+  chmod -R 770 ${PATH_PROJECT}/node_modules
 
 RUN cd ${PATH_SQUID} && \
   echo -e "Installing Squid dependencies..." && \
-  npm install && \
+  mkdir -p /tmp/.node-gyp ${HOME}/.cache/node-gyp && \
+  chgrp node ${HOME}/.cache /tmp/.node-gyp && \
+  chgrp -R node ${HOME}/.cache /tmp/.node-gyp && \
+  chmod 770 ${HOME}/.cache /tmp/.node-gyp && \
+  chmod -R 770 ${HOME}/.cache /tmp/.node-gyp && \
+  npm install && npm cache clean --force && \
   echo -e "Building Squid..." && \
   npm run codegen && \
   npm run typegen && \
-  npm run build
+  npm run build && \
+  chgrp node ${PATH_SQUID}/node_modules && \
+  chgrp -R node ${PATH_SQUID}/node_modules && \
+  chmod 770 ${PATH_SQUID}/node_modules && \
+  chmod -R 770 ${PATH_SQUID}/node_modules
 
 EXPOSE ${DB_PORT} ${GQL_PORT} ${VITE_PORT} ${GRAPHQL_ARCHIVE_PORT} ${PROCESSOR_PROMETHEUS_PORT}
 
+USER node
 CMD tail -f /dev/null

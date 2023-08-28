@@ -98,7 +98,7 @@ if [ "$NODE_ENV" != "development" ]; then
     printf "\nError: NODE_ENV should be set to development in .env\n";
     kill "$PPID"; exit 1;
 fi
-export PUBLIC_IP_ADDRESS
+export PUBLIC_IP_ADDRESS NODE_ENV
 NAME_UI_FALLBACK=multix-ui
 NAME_SQUID_FALLBACK=multix-squid
 
