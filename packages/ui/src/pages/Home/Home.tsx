@@ -16,6 +16,7 @@ import PureProxyHeaderView from './PureProxyHeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
+import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 
 interface HomeProps {
   className?: string
@@ -131,20 +132,7 @@ const Home = ({ className }: HomeProps) => {
   if (multiProxyList.length === 0) {
     return (
       <MessageWrapper>
-        {showNewMultisigAlert ? (
-          <SuccessCreation />
-        ) : (
-          <ConnectButtonWrapperStyled>
-            No multisig found for your accounts or watched accounts.{' '}
-            {isAllowedToConnectToExtension ? (
-              <Button onClick={() => navigate('/create')}>Create one</Button>
-            ) : (
-              <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
-            )}
-            or
-            <Button onClick={() => navigate('/settings')}>Watch one</Button>
-          </ConnectButtonWrapperStyled>
-        )}
+        {showNewMultisigAlert ? <SuccessCreation /> : <ConnectOrWatch />}
       </MessageWrapper>
     )
   }

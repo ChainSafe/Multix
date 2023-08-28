@@ -8,6 +8,7 @@ import MultisigCompactDisplay from '../../components/MultisigCompactDisplay'
 import 'reactflow/dist/style.css'
 import OverviewHeaderView from './OverviewHeaderView'
 import { renderMultisigHeading } from '../multisigHelpers'
+import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 interface Props {
   className?: string
 }
@@ -34,12 +35,16 @@ const getMultisigInfo = (multisig: MultiProxy['multisigs'][0]) => {
 }
 
 const Overview = ({ className }: Props) => {
-  const { selectedMultiProxy } = useMultiProxy()
+  const { selectedMultiProxy, multiProxyList } = useMultiProxy()
   const hasPureProxy = useMemo(() => selectedMultiProxy?.proxy, [selectedMultiProxy?.proxy])
   const hasSeveralMultisigs = useMemo(
     () => selectedMultiProxy?.multisigs && selectedMultiProxy?.multisigs.length > 1,
     [selectedMultiProxy]
   )
+
+  if (multiProxyList.length === 0) {
+    return <ConnectOrWatch />
+  }
 
   return (
     <Box className={className}>
