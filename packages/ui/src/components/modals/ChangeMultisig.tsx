@@ -45,6 +45,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
+  const getEncodedAddress = useGetEncodedAddress()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
     onError: onClose
@@ -66,16 +67,14 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       ).length > 0,
     [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
-  const multisigPubKey = useMemo(() => {
+  const newMultisigPubKey = useMemo(() => {
     if (!newThreshold) return
     return createKeyMulti(newSignatories, newThreshold)
   }, [newSignatories, newThreshold])
-  const getEncodedAddress = useGetEncodedAddress()
   const newMultisigAddress = useMemo(
-    () => getEncodedAddress(multisigPubKey),
-    [getEncodedAddress, multisigPubKey]
+    () => getEncodedAddress(newMultisigPubKey),
+    [getEncodedAddress, newMultisigPubKey]
   )
-
   const canGoNext = useMemo(
     () => newMultisigAddress !== selectedMultisig?.address,
     [newMultisigAddress, selectedMultisig]
