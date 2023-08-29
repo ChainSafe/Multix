@@ -60,7 +60,7 @@ const nodeFactory = ({ id, position, data }: NodeParams) => {
 const HORIZONTAL_GAP_BETWEEN_NODES = 70
 const VERTICAL_GAP_BETWEEN_NODES = 300
 
-const Overview = ({ className }: Props) => {
+const OverviewHeaderView = ({ className }: Props) => {
   const { selectedMultiProxy } = useMultiProxy()
   const [nodes, setNodes] = useState<Node[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
@@ -189,7 +189,7 @@ const Overview = ({ className }: Props) => {
   )
 }
 
-export default styled(Overview)`
+export default styled(OverviewHeaderView)`
   width: 100%;
   height: 500px;
 `

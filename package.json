@@ -17,7 +17,7 @@
     "polkadot",
     "multisig"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "docker:db": "docker compose up -d db",
     "docker:down": "docker compose down",

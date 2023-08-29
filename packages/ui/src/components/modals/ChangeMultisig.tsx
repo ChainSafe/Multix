@@ -366,7 +366,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               >
                 {!hasProxyEnoughFunds && (
                   <Alert severity="warning">
-                    The pure account doesn't have enough funds. It needs at least $
+                    The pure account doesn't have enough funds. It needs at least
                     {formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
                       tokenSymbol: chainInfo?.tokenSymbol
                     })}
