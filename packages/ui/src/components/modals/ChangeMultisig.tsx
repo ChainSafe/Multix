@@ -16,7 +16,7 @@ import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
 import { useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { useToasts } from '../../contexts/ToastContext'
 import { AccountBadge } from '../../types'
@@ -30,6 +30,7 @@ import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
+import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 
 interface Props {
   onClose: () => void
@@ -65,20 +66,15 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       ).length > 0,
     [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
-  const newMultisigAddress = useMemo(() => {
-    if (!newThreshold || !chainInfo) return
-
-    const multisigPubKey = createKeyMulti(newSignatories, newThreshold)
-    let newMultiAddress: string | undefined
-    try {
-      newMultiAddress = encodeAddress(multisigPubKey, chainInfo.ss58Format)
-    } catch (e) {
-      console.error(`Error encoding the address ${multisigPubKey}`, e)
-      return
-    }
-
-    return newMultiAddress
-  }, [chainInfo, newSignatories, newThreshold])
+  const multisigPubKey = useMemo(() => {
+    if (!newThreshold) return
+    return createKeyMulti(newSignatories, newThreshold)
+  }, [newSignatories, newThreshold])
+  const getEncodedAddress = useGetEncodedAddress()
+  const newMultisigAddress = useMemo(
+    () => getEncodedAddress(multisigPubKey),
+    [getEncodedAddress, multisigPubKey]
+  )
 
   const canGoNext = useMemo(
     () => newMultisigAddress !== selectedMultisig?.address,

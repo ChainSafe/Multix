@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
-import { u8aToHex } from '@polkadot/util'
+import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
+import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
@@ -22,6 +22,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   const [watchedAddresses, setWatchedAddresses] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const { chainInfo } = useApi()
+  const getEncodedAddress = useGetEncodedAddress()
 
   // update the current account list with the right network prefix
   // this will run for every network change
@@ -35,14 +36,10 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
 
   const addWatchedAccount = useCallback(
     (address: string) => {
-      try {
-        const encodedAddress = encodeAddress(address, chainInfo?.ss58Format)
-        setWatchedAddresses((prev) => [...prev, encodedAddress])
-      } catch (e) {
-        console.error(`Error encoding the address ${address}, skipping`, e)
-      }
+      const encodedAddress = getEncodedAddress(address)
+      encodedAddress && setWatchedAddresses((prev) => [...prev, encodedAddress])
     },
-    [chainInfo]
+    [getEncodedAddress]
   )
 
   const removeWatchedAccount = useCallback(
@@ -77,16 +74,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (!isInitialized) return
 
-    const pubKeyArray = watchedAddresses
-      .map((address) => {
-        try {
-          return u8aToHex(decodeAddress(address))
-        } catch (e) {
-          console.error(`Error decoding the address ${address}, skipping`, e)
-          return undefined
-        }
-      })
-      .filter((address) => !!address)
+    const pubKeyArray = getPubKeyFromAddress(watchedAddresses)
 
     localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(pubKeyArray))
   }, [isInitialized, watchedAddresses])
