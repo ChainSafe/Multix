@@ -1,5 +1,5 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
-import { encodeAddress } from '@polkadot/util-crypto'
+import { encodesubstrateAddress } from './encodeSubstrateAddress'
 
 export const encodeAccounts = (
   accounts: InjectedAccountWithMeta[] | string[],
@@ -7,14 +7,9 @@ export const encodeAccounts = (
 ) => {
   return accounts
     .map((account) => {
-      let encodedAddress: string | undefined
       const addressToEncode = typeof account === 'string' ? account : account.address
 
-      try {
-        encodedAddress = encodeAddress(addressToEncode, ss58Format)
-      } catch (e) {
-        console.error(`Error encoding the address ${addressToEncode}, skipping`, e)
-      }
+      const encodedAddress = encodesubstrateAddress(addressToEncode, ss58Format)
 
       if (typeof account === 'string') {
         return encodedAddress

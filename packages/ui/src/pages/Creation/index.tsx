@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/select/SignatorySelection'
-import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
@@ -17,6 +17,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 
 interface Props {
   className?: string
@@ -28,7 +29,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, chainInfo } = useApi()
+  const { api } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -45,24 +46,15 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
-  const multiAddress = useMemo(() => {
-    if (!threshold) {
-      return
-    }
-
-    if (!chainInfo) {
-      return
-    }
-
-    const multiPubKey = createKeyMulti(signatories, threshold)
-    let res: string | undefined
-    try {
-      res = encodeAddress(multiPubKey, chainInfo.ss58Format)
-    } catch (e) {
-      console.error(`Error encoding the address ${multiPubKey}, skipping`, e)
-    }
-    return res
-  }, [chainInfo, signatories, threshold])
+  const multisigPubKey = useMemo(() => {
+    if (!threshold) return
+    return createKeyMulti(signatories, threshold)
+  }, [signatories, threshold])
+  const getEncodedAddress = useGetEncodedAddress()
+  const multiAddress = useMemo(
+    () => getEncodedAddress(multisigPubKey),
+    [getEncodedAddress, multisigPubKey]
+  )
   const batchCall = useMemo(() => {
     if (!api) {
       // console.error('api is not ready')

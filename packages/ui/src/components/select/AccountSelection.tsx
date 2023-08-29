@@ -8,6 +8,7 @@ import { Button, InputField } from '../library'
 import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { getOptionLabel } from '../../utils/getOptionLabel'
+import { getPubKeyFromAddress } from '../../utils/getPubKeyFromAddress'
 
 interface Props {
   className?: string
@@ -43,6 +44,10 @@ const AccountSelection = ({
   const dedupedSignatories = useMemo(() => {
     return accountBase.filter((account) => !currentSelection.includes(account.address))
   }, [accountBase, currentSelection])
+  const currentSelectionPubKeys = useMemo(
+    () => getPubKeyFromAddress(currentSelection),
+    [currentSelection]
+  )
   const extensionName = useMemo(() => {
     if (!selected) return ''
     return getAccountByAddress(selected.address)?.meta.name
@@ -69,8 +74,9 @@ const AccountSelection = ({
       return
     }
 
-    if (currentSelection.includes(selected.address)) {
-      setErrorMessage('Signatory already added')
+    const pubkey = getPubKeyFromAddress(selected.address)
+    if (pubkey && (currentSelectionPubKeys as string[]).includes(pubkey)) {
+      setErrorMessage('Account already added')
       return
     }
 
@@ -80,7 +86,7 @@ const AccountSelection = ({
       setSelected(undefined)
       setName('')
     }
-  }, [addName, addAccount, currentSelection, name, selected])
+  }, [selected, currentSelectionPubKeys, addAccount, name, addName])
 
   const handleSpecialKeys = useCallback(
     (e: any) => {
