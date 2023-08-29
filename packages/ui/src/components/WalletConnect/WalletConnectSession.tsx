@@ -1,7 +1,7 @@
-import { Box, CircularProgress } from '@mui/material'
-import { Button, TextFieldStyled } from './library'
+import { Box, CircularProgress, styled } from '@mui/material'
+import { Button, TextFieldStyled } from '../library'
 import { useCallback, useState } from 'react'
-import { useWalletConnect } from '../contexts/WalletConnectContext'
+import { useWalletConnect } from '../../contexts/WalletConnectContext'
 
 export const WalletConnectSession = () => {
   const { pair } = useWalletConnect()
@@ -25,12 +25,24 @@ export const WalletConnectSession = () => {
   }, [])
 
   return (
-    <Box>
+    <BoxStyled>
       <TextFieldStyled
         onChange={onUriChange}
         value={uri}
+        placeholder="WalletConnect key..."
       />
-      <Button onClick={onConnect}>{loading ? <CircularProgress size={25} /> : 'Connect'}</Button>
-    </Box>
+      <ButtonStyled onClick={onConnect}>
+        {loading ? <CircularProgress size={25} /> : 'Connect'}
+      </ButtonStyled>
+    </BoxStyled>
   )
 }
+
+const BoxStyled = styled(Box)`
+  display: flex;
+  align-items: center;
+`
+
+const ButtonStyled = styled(Button)`
+  margin-left: 1rem;
+`

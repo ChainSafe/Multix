@@ -13,6 +13,7 @@ export interface IWalletConnectContext {
   web3wallet: IWeb3Wallet | undefined
   core: ICore
   pair: (params: { uri: string }) => Promise<PairingTypes.Struct>
+  refresh: () => void
 }
 
 const WalletConnectContext = createContext<IWalletConnectContext | undefined>(undefined)
@@ -31,7 +32,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
   )
   const createWeb3Wallet = useCallback(
     (relayerRegionURL?: string) => {
-      Web3Wallet.init({
+      return Web3Wallet.init({
         core,
         metadata: {
           name: 'Multix',
@@ -56,6 +57,10 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
     [core]
   )
 
+  const refresh = useCallback(() => {
+    createWeb3Wallet()
+  }, [createWeb3Wallet])
+
   useEffect(() => {
     if (!isInitialized) {
       createWeb3Wallet()
@@ -63,7 +68,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
   }, [createWeb3Wallet, isInitialized])
 
   return (
-    <WalletConnectContext.Provider value={{ web3wallet, core, pair }}>
+    <WalletConnectContext.Provider value={{ web3wallet, core, pair, refresh }}>
       {children}
     </WalletConnectContext.Provider>
   )

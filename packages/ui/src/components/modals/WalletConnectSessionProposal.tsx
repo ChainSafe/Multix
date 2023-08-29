@@ -19,7 +19,7 @@ interface Props {
 
 const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: Props) => {
   const { selectedMultiProxy } = useMultiProxy()
-  const { web3wallet } = useWalletConnect()
+  const { web3wallet, refresh } = useWalletConnect()
   const { currentNamespace, getAccountsWithNamespace } = useGetWalletConnectNamespace()
   const [errorMessage, setErrorMessage] = useState('')
   const accountsToShare = useMemo(() => {
@@ -59,8 +59,11 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         }
       })
       .catch(console.error)
-      .finally(onClose)
-  }, [accountsToShare, onClose, sessionProposal, web3wallet])
+      .finally(() => {
+        onClose()
+        refresh()
+      })
+  }, [accountsToShare, onClose, refresh, sessionProposal, web3wallet])
 
   const onReject = useCallback(() => {
     if (!web3wallet || !sessionProposal) return
