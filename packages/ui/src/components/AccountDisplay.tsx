@@ -9,7 +9,7 @@ import { useApi } from '../contexts/ApiContext'
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
 import { useGetBalance } from '../hooks/useGetBalance'
-import { encodeAddress } from '@polkadot/util-crypto'
+import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 
 interface Props {
   address: string
@@ -32,22 +32,11 @@ const AccountDisplay = ({
   const { balanceFormatted } = useGetBalance({ address })
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
-  const { api, chainInfo } = useApi()
+  const { api } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
-  const [encodedAddress, setEncodedAddress] = useState('')
-
-  useEffect(() => {
-    if (!chainInfo) {
-      return
-    }
-
-    try {
-      setEncodedAddress(encodeAddress(address, chainInfo.ss58Format))
-    } catch (e) {
-      console.error(`Error encoding the address ${address}, skipping`, e)
-    }
-  }, [address, chainInfo, encodedAddress])
+  const getEncodedAddress = useGetEncodedAddress()
+  const encodedAddress = useMemo(() => getEncodedAddress(address), [address, getEncodedAddress])
 
   useEffect(() => {
     if (!api) {

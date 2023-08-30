@@ -15,9 +15,13 @@ interface Args {
 
 export const useMultisigCallSubscription = ({ onUpdate, multisigIds }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
+  const hasSomethingToQuery = useMemo(() => multisigIds.length > 0, [multisigIds])
   const client = useMemo(
-    () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
-    [selectedNetworkInfo]
+    () =>
+      selectedNetworkInfo &&
+      hasSomethingToQuery &&
+      createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+    [hasSomethingToQuery, selectedNetworkInfo]
   )
 
   /**
