@@ -283,6 +283,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                     multisigList[0]
                   }
                   label=""
+                  withBadge
                 />
               </Grid>
             </>

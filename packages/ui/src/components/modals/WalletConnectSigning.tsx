@@ -18,6 +18,7 @@ import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
+import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -118,14 +119,10 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     multisigTx
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
       .then(() => {
-        const response = {
-          id: request.id,
-          jsonrpc: '2.0',
-          error: {
-            code: 5000,
-            message: 'Multix Multisig transaction ongoing...'
-          }
-        }
+        const response = getWalletConnectErrorResponse(
+          request.id,
+          'Multix multisig transaction ongoing...'
+        )
         web3wallet?.respondSessionRequest({
           topic: request.topic,
           response
@@ -175,7 +172,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       topic: request.topic,
       response
     })
-  }, [])
+  }, [request.id, request.topic, web3wallet])
 
   return (
     <Dialog
@@ -214,6 +211,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
                     multisigList[0]
                   }
                   label=""
+                  withBadge
                 />
               </Grid>
             </>

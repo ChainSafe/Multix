@@ -20,7 +20,7 @@ export default function useWalletConnectEventsManager() {
   )
 
   const onAuthRequest = useCallback((request: Web3WalletTypes.AuthRequest) => {
-    console.log('---> WalletConnect AuthRequest not implemented', request)
+    console.error('---> WalletConnect AuthRequest not implemented', request)
   }, [])
 
   // Open request handling modal based on method that was used
@@ -38,14 +38,9 @@ export default function useWalletConnectEventsManager() {
       switch (request.method) {
         case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_MESSAGE:
         case POLKADOT_SIGNING_METHODS.POLKADOT_SIGN_TRANSACTION:
-          // console.log(
-          //   'SessionSignPolkadotModal requestEvent, requestSession',
-          //   requestEvent,
-          //   requestSession
-          // )
           if (requestEvent.params.chainId !== currentNamespace) {
             console.error(
-              "The chain from WalletConnect doesn't match with the current. Switch to the right network"
+              "The chain from WalletConnect doesn't match with the current. Switch to the right network."
             )
             return
           }
