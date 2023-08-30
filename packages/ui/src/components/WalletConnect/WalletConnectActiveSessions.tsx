@@ -13,7 +13,6 @@ export const WalletConnectActiveSessions = () => {
     () => Object.values(web3wallet?.getActiveSessions() || {}),
     [web3wallet]
   )
-  console.log('active sessions  ', web3wallet?.getActiveSessions())
 
   const onDeleteSession = useCallback(
     async (topic: string) => {

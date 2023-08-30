@@ -16,7 +16,6 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { SignClientTypes } from '@walletconnect/types'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
-import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
 
