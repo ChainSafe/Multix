@@ -58,7 +58,51 @@ const MultisigCreation = ({ className }: Props) => {
     [getEncodedAddress, multisigPubKey]
   )
   const [withProxy, setWithProxy] = useState(false)
+  const remarkCall = useMemo(() => {
+    if (withProxy) {
+      // this call is only useful if the user does not want a proxy.
+      return
+    }
+
+    if (!api) {
+      // console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      // console.error('no selected address')
+      return
+    }
+
+    if (!signatories.includes(selectedAccount.address)) {
+      // console.error('selected account not part of signatories')
+      return
+    }
+
+    if (!threshold) {
+      // console.error("Threshold is invalid", threshold)
+      return
+    }
+
+    if (!multiAddress) {
+      return
+    }
+
+    const otherSignatories = sortAddresses(
+      signatories.filter((sig) => sig !== selectedAccount.address)
+    )
+    const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
+    return api.tx.multisig.asMulti(threshold, otherSignatories, null, remarkTx, {
+      refTime: 0,
+      proofSize: 0
+    })
+  }, [api, multiAddress, selectedAccount, signatories, threshold, withProxy])
+
   const batchCall = useMemo(() => {
+    if (!withProxy) {
+      // this batchCall is only useful if the user wants a proxy.
+      return
+    }
     if (!api) {
       // console.error('api is not ready')
       return
@@ -98,12 +142,20 @@ const MultisigCreation = ({ className }: Props) => {
     )
 
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-  }, [api, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
+  }, [
+    api,
+    multiAddress,
+    pureProxyCreationNeededFunds,
+    selectedAccount,
+    signatories,
+    threshold,
+    withProxy
+  ])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
     threshold,
     signatories,
-    call: batchCall
+    call: withProxy ? batchCall : remarkCall
   })
   const neededBalance = useMemo(
     () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
@@ -151,7 +203,44 @@ const MultisigCreation = ({ className }: Props) => {
     }
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
-  const handleCreate = useCallback(async () => {
+  const handleCreateRemark = useCallback(async () => {
+    if (!remarkCall) {
+      console.error('remark call undefined')
+      return
+    }
+
+    if (!selectedAccount) {
+      console.error('no selected address')
+      return
+    }
+
+    multiAddress && addName(name, multiAddress)
+    setIsSubmitted(true)
+
+    remarkCall
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .catch((error: Error) => {
+        setIsSubmitted(false)
+
+        addToast({
+          title: error.message,
+          type: 'error',
+          link: getSubscanExtrinsicLink(remarkCall.hash.toHex())
+        })
+      })
+  }, [
+    addName,
+    addToast,
+    getSubscanExtrinsicLink,
+    multiAddress,
+    name,
+    remarkCall,
+    selectedAccount,
+    selectedSigner,
+    signCallBack
+  ])
+
+  const handleCreateWithPure = useCallback(async () => {
     if (!selectedAccount || !batchCall) {
       console.error('no selected address')
       return
@@ -185,8 +274,14 @@ const MultisigCreation = ({ className }: Props) => {
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
-    isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)
-  }, [currentStep, handleCreate, isLastStep])
+
+    if (!isLastStep) {
+      setCurrentStep(currentStep + 1)
+      return
+    }
+
+    withProxy ? handleCreateWithPure() : handleCreateRemark()
+  }, [currentStep, handleCreateRemark, handleCreateWithPure, isLastStep, withProxy])
 
   const goBack = useCallback(() => {
     window.scrollTo(0, 0)
@@ -300,6 +395,7 @@ const MultisigCreation = ({ className }: Props) => {
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
               balanceMin={neededBalance}
+              withProxy={withProxy}
             />
           </Grid>
         )}

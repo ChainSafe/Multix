@@ -21,6 +21,7 @@ interface Props {
   balanceMin?: BN
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
+  withProxy?: boolean
 }
 
 const Summary = ({
@@ -32,7 +33,8 @@ const Summary = ({
   isCreationSummary = true,
   balanceMin,
   isBalanceError,
-  selectedMultisig
+  selectedMultisig,
+  withProxy = true
 }: Props) => {
   const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
@@ -44,7 +46,7 @@ const Summary = ({
       : getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
   }, [ownAddressList, isCreationSummary, selectedMultisig, signatories])
 
-  if (isCreationSummary && !proxyAddress) {
+  if (!isCreationSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')
     return null
   }
@@ -86,14 +88,18 @@ const Summary = ({
       <Box className="explainer">
         <Alert severity="info">
           {isCreationSummary ? (
-            <>
-              In the next step you will send 1 batch transaction to:
-              <ul>
-                <li>send funds to the new Multisig (required to create a Pure proxy)</li>
-                <li>create the Pure proxy</li>
-              </ul>
-              Other signatories will need to approve this transaction.
-            </>
+            withProxy ? (
+              <>
+                In the next step you will send 1 batch transaction to:
+                <ul>
+                  <li>send funds to the new Multisig (required to create a Pure proxy)</li>
+                  <li>create the Pure proxy</li>
+                </ul>
+                Other signatories will need to approve this transaction.
+              </>
+            ) : (
+              <>In the next step you will sign a remark transaction for the multisig creation</>
+            )
           ) : (
             <>
               In the next step you will sign 2 transactions to:
@@ -114,7 +120,7 @@ const Summary = ({
       </Box>
       {isBalanceError && balanceMin && (
         <Alert severity="warning">
-          The selected signer requires at least
+          The selected signer requires at least{' '}
           {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
             tokenSymbol: chainInfo?.tokenSymbol
           })}
