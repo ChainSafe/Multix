@@ -31,8 +31,11 @@ export const WalletConnectSession = () => {
         value={uri}
         placeholder="WalletConnect key..."
       />
-      <ButtonStyled onClick={onConnect}>
-        {loading ? <CircularProgress size={25} /> : 'Connect'}
+      <ButtonStyled
+        disabled={!uri}
+        onClick={onConnect}
+      >
+        {loading ? <CircularProgress size={25} /> : 'Connect Dapp'}
       </ButtonStyled>
     </BoxStyled>
   )

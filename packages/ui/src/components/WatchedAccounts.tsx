@@ -74,7 +74,7 @@ const WatchedAccounts = ({ className }: Props) => {
 const PaperStyled = styled(Paper)`
   padding: 1rem;
   max-height: 13.5rem;
-  overflow: scroll;
+  overflow: auto;
 
   .selectedSignatory {
     margin-bottom: 1rem;
