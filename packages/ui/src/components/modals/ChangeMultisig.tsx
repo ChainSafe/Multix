@@ -422,7 +422,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               signatories={newSignatories}
               threshold={newThreshold}
               proxyAddress={selectedMultiProxy?.proxy}
-              isSwapSummary
+              isCreationSummary={false}
               balanceMin={neededBalance}
               isBalanceError={!hasSignerEnoughFunds}
               selectedMultisig={selectedMultisig}

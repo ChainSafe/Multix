@@ -17,7 +17,7 @@ interface Props {
   signatories: string[]
   name?: string
   proxyAddress?: string
-  isSwapSummary?: boolean
+  isCreationSummary?: boolean
   balanceMin?: BN
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
@@ -29,7 +29,7 @@ const Summary = ({
   signatories,
   name,
   proxyAddress,
-  isSwapSummary = false,
+  isCreationSummary = true,
   balanceMin,
   isBalanceError,
   selectedMultisig
@@ -38,29 +38,29 @@ const Summary = ({
   const { chainInfo } = useApi()
 
   const possibleSigners = useMemo(() => {
-    return isSwapSummary
+    return isCreationSummary
       ? // for a swap we can only select the account that are part of both the old and the new multisig
-        getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
-      : getIntersection(ownAddressList, signatories)
-  }, [ownAddressList, isSwapSummary, selectedMultisig, signatories])
+        getIntersection(ownAddressList, signatories)
+      : getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
+  }, [ownAddressList, isCreationSummary, selectedMultisig, signatories])
 
-  if (isSwapSummary && !proxyAddress) {
+  if (isCreationSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')
     return null
   }
 
   return (
     <Box className={className}>
-      {isSwapSummary && proxyAddress ? (
+      {isCreationSummary ? (
+        <h3>You are about to create a Multisig:</h3>
+      ) : (
         <>
           <h3>You are about to change the Multisig controlling:</h3>
           <AccoutDisplayProxyStyled
-            address={proxyAddress}
+            address={proxyAddress || ''}
             badge={AccountBadge.PURE}
           />
         </>
-      ) : (
-        <h3>You are about to create a Multisig:</h3>
       )}
       <Paper
         elevation={2}
@@ -85,16 +85,7 @@ const Summary = ({
       </Paper>
       <Box className="explainer">
         <Alert severity="info">
-          {isSwapSummary ? (
-            <>
-              In the next step you will sign 2 transactions to:
-              <ul>
-                <li>add the new Multisig to the current Pure proxy</li>
-                <li>remove the old Multisig</li>
-              </ul>
-              Other signatories will need to approve these transactions.
-            </>
-          ) : (
+          {isCreationSummary ? (
             <>
               In the next step you will send 1 batch transaction to:
               <ul>
@@ -102,6 +93,15 @@ const Summary = ({
                 <li>create the Pure proxy</li>
               </ul>
               Other signatories will need to approve this transaction.
+            </>
+          ) : (
+            <>
+              In the next step you will sign 2 transactions to:
+              <ul>
+                <li>add the new Multisig to the current Pure proxy</li>
+                <li>remove the old Multisig</li>
+              </ul>
+              Other signatories will need to approve these transactions.
             </>
           )}
         </Alert>

@@ -18,6 +18,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
+import WithProxySelection from './WitProxySelection'
 
 interface Props {
   className?: string
@@ -46,6 +47,7 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
+  const supportsProxy = useMemo(() => !!api && !!api.tx.proxy, [api])
   const multisigPubKey = useMemo(() => {
     if (!threshold) return
     return createKeyMulti(signatories, threshold)
@@ -55,6 +57,7 @@ const MultisigCreation = ({ className }: Props) => {
     () => getEncodedAddress(multisigPubKey),
     [getEncodedAddress, multisigPubKey]
   )
+  const [withProxy, setWithProxy] = useState(false)
   const batchCall = useMemo(() => {
     if (!api) {
       // console.error('api is not ready')
@@ -135,10 +138,16 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
+    // default to using a proxy
+    if (supportsProxy) {
+      setWithProxy(true)
+    }
+  }, [supportsProxy])
+  useEffect(() => {
     setErrorMessage('')
 
     if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
-      setErrorMessage('At least one of your account must be a signatory')
+      setErrorMessage('At least one of your own accounts must be a signatory.')
     }
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
@@ -254,13 +263,6 @@ const MultisigCreation = ({ className }: Props) => {
             xs={12}
             md={6}
           >
-            <Alert
-              className="infoBox"
-              severity="info"
-            >
-              The threshold determines the minimum amount of signatory approvals needed for a
-              multisig transaction to be executed.
-            </Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
@@ -270,6 +272,20 @@ const MultisigCreation = ({ className }: Props) => {
               setName={setName}
               name={name}
             />
+            {supportsProxy && (
+              <WithProxySelection
+                setWithProxy={setWithProxy}
+                withProxy={withProxy}
+              />
+            )}
+            {!supportsProxy && (
+              <Alert
+                className="infoBox"
+                severity="info"
+              >
+                This network doesn't support proxies.
+              </Alert>
+            )}
           </Grid>
         )}
         {currentStep === 2 && (
