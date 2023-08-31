@@ -68,11 +68,16 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
   const onReject = useCallback(() => {
     if (!web3wallet || !sessionProposal) return
 
-    web3wallet.rejectSession({
-      id: sessionProposal.id,
-      reason: getSdkError('USER_REJECTED_METHODS')
-    })
-  }, [sessionProposal, web3wallet])
+    web3wallet
+      .rejectSession({
+        id: sessionProposal.id,
+        reason: getSdkError('USER_REJECTED_METHODS')
+      })
+      .catch(console.error)
+      .finally(() => {
+        onClose()
+      })
+  }, [onClose, sessionProposal, web3wallet])
 
   return (
     <Dialog
