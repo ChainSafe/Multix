@@ -93,7 +93,9 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  if (isExtensionError && !watchedAddresses)
+  console.log('isExtensionError && !watchedAddresses', isExtensionError, !watchedAddresses)
+
+  if (isExtensionError && watchedAddresses.length === 0)
     return (
       <CenterStyled>
         <h3>
