@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Grid, styled } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 
@@ -8,8 +8,11 @@ export const WalletConnectSession = () => {
   const { pair } = useWalletConnect()
   const [uri, setUri] = useState('')
   const [loading, setLoading] = useState(false)
-  const { selectedIsWatched } = useMultiProxy()
-
+  const { selectedMultiProxy, selectedIsWatched } = useMultiProxy()
+  const canUseWalletConnect = useMemo(
+    () => !!selectedMultiProxy && !selectedIsWatched,
+    [selectedIsWatched, selectedMultiProxy]
+  )
   const onConnect = useCallback(async () => {
     try {
       setLoading(true)
@@ -38,7 +41,7 @@ export const WalletConnectSession = () => {
         md={12}
         alignItems="center"
       >
-        {selectedIsWatched && (
+        {!canUseWalletConnect && (
           <AlertStyled
             severity="warning"
             variant="outlined"
@@ -59,10 +62,10 @@ export const WalletConnectSession = () => {
           onChange={onUriChange}
           value={uri}
           placeholder="WalletConnect key..."
-          disabled={selectedIsWatched}
+          disabled={!canUseWalletConnect}
         />
         <ButtonStyled
-          disabled={!uri || selectedIsWatched}
+          disabled={!uri || !canUseWalletConnect}
           onClick={onConnect}
         >
           {loading ? <CircularProgress size={25} /> : 'Connect Dapp'}
