@@ -17,6 +17,7 @@ import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
+import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 
 interface HomeProps {
   className?: string
@@ -93,20 +94,22 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  console.log('isExtensionError && !watchedAddresses', isExtensionError, !watchedAddresses)
-
   if (isExtensionError && watchedAddresses.length === 0)
     return (
       <CenterStyled>
         <h3>
           No account found. Please connect at least one in a wallet extension. More info at{' '}
-          <Link
+          <Linkstyled
             href="https://wiki.polkadot.network/docs/wallets"
             target="_blank"
             rel="noreferrer"
           >
             wiki.polkadot.network
-          </Link>
+            <LaunchIcon
+              className="launchIcon"
+              size={20}
+            />
+          </Linkstyled>
         </h3>
       </CenterStyled>
     )
@@ -222,6 +225,16 @@ const CenterStyled = styled(Center)`
 const ErrorMessageStyled = styled('div')`
   text-align: center;
   margin-top: 1rem;
+`
+
+const Linkstyled = styled(Link)`
+  display: inline-flex;
+  padding-left: 0.2rem;
+  align-items: center;
+
+  .launchIcon {
+    margin-left: 0.5rem;
+  }
 `
 
 export default Home
