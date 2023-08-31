@@ -5,7 +5,7 @@ import { PendingTx, usePendingTx } from '../../hooks/usePendingTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ApiPromise } from '@polkadot/api'
 import { useApi } from '../../contexts/ApiContext'
-import { getDifference, getDisplayArgs, getIntersection } from '../../utils'
+import { getDifference, getDisplayArgs, getIntersection, isProxyCall } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { ISanitizedCall, parseGenericCall } from '../../utils'
 import { GenericCall } from '@polkadot/types'
@@ -163,11 +163,20 @@ const TransactionList = ({ className }: Props) => {
 
     Promise.all(agregatedDataPromise)
       .then((res) => {
-        const filtered = res.filter((agg) => agg !== undefined) as AggregatedData[]
+        const definedTxs = res.filter((agg) => agg !== undefined) as AggregatedData[]
         const timestampObj: AggGroupedByDate = {}
 
+        // remove the proxy transaction that aren't for the selected proxy
+        const relevantTxs = definedTxs.filter((agg) => {
+          if (!isProxyCall(agg.name) || !agg?.args || !(agg.args as any).real.Id) {
+            return true
+          }
+
+          return (agg.args as any).real.Id === selectedMultiProxy?.proxy
+        })
+
         // sort by date, the newest first
-        const sorted = filtered.sort(sortByLatest)
+        const sorted = relevantTxs.sort(sortByLatest)
 
         // populate the object
         sorted.forEach((data) => {
@@ -179,7 +188,7 @@ const TransactionList = ({ className }: Props) => {
         setAggregatedData(timestampObj)
       })
       .catch(console.error)
-  }, [api, pendingTxData, selectedMultiProxy])
+  }, [aggregatedData.args, api, pendingTxData, selectedMultiProxy])
 
   return (
     <Box className={className}>
