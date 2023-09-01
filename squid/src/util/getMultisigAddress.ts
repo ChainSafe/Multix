@@ -1,6 +1,6 @@
-import { createKeyMulti, encodeAddress } from '@polkadot/util-crypto'
-import { env } from '../main'
+import { createKeyMulti } from '@polkadot/util-crypto'
+import { encodeId } from './accountEncoding'
 
 export const getMultisigAddress = (signatories: (string | Uint8Array)[], threshold: number) => {
-  return encodeAddress(createKeyMulti(signatories, threshold), env.prefix)
+  return encodeId(createKeyMulti(signatories, threshold))
 }

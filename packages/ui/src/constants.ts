@@ -36,128 +36,128 @@ export const networkList = {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: chainsPolkadotCircleSVG
   } as NetworkInfo,
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://kusama-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
   'assethub-dot': {
     chainId: 'assethub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   'assethub-ksm': {
     chainId: 'assethub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
   acala: {
     chainId: 'acala',
     explorerNetworkName: 'acala',
     rpcUrl: 'wss://acala-rpc-3.aca-api.network/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: chainsAcalaSVG
   } as NetworkInfo,
   // amplitude: {
   //   chainId: 'amplitude',
   //   explorerNetworkName: 'amplitude',
   //   rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
-  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
   //   logo: chainsAmplitudeSVG
   // } as NetworkInfo,
   astar: {
     chainId: 'astar',
     explorerNetworkName: 'astar',
     rpcUrl: 'wss://rpc.astar.network',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesAstarPNG
   } as NetworkInfo,
   'bifrost-dot': {
     chainId: 'bifrost-polkadot',
     explorerNetworkName: 'bifrost',
     rpcUrl: 'wss://bifrost-polkadot.api.onfinality.io/public-ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesBifrostSVG
   } as NetworkInfo,
   hydradx: {
     chainId: 'hydradx',
     explorerNetworkName: 'hydradx',
     rpcUrl: 'wss://hydradx-rpc.dwellir.com',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: hydradxSVG
   } as NetworkInfo,
   interlay: {
     chainId: 'interlay',
     explorerNetworkName: 'interlay',
     rpcUrl: 'wss://interlay.api.onfinality.io/public-ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesInterlaySVG
   } as NetworkInfo,
   khala: {
     chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
-    wsGraphqlUrl: 'wss:///squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https:///squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss:///squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https:///squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   // pendulum: {
   //   chainId: 'pendulum',
   //   explorerNetworkName: 'pendulum',
   //   rpcUrl: 'wss://rpc-pendulum.prd.pendulumchain.tech',
-  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
   //   logo: chainsPendulumSVG
   // } as NetworkInfo,
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
     rpcUrl: 'wss://api.phala.network/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: phalaSVG
   } as NetworkInfo,
   'rhala testnet': {
     chainId: 'rhala',
     explorerNetworkName: '',
     rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: nodesKhalaSVG
   } as NetworkInfo,
   rococo: {
     chainId: 'rococo',
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
     logo: chainsRococoSVG
   } as NetworkInfo,
   // westend: {
   //   chainId: 'westend',
   //   explorerNetworkName: 'westend',
   //   rpcUrl: 'wss://westend-rpc.polkadot.io',
-  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v5/graphql',
-  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v5/graphql',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
   //   logo: nodesWestendColourSVG
   // } as NetworkInfo,
   local: {
