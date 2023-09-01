@@ -1,7 +1,8 @@
-import { Box, InputAdornment } from '@mui/material'
+import { Box, InputAdornment, Tooltip } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { TextFieldStyled } from '../../components/library'
+import { HiOutlineInformationCircle } from 'react-icons/hi2'
 
 interface Props {
   className?: string
@@ -54,11 +55,14 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
 
   return (
     <Box className={className}>
+      <TitleBoxStyled>
+        Threshold <InfoBox />
+      </TitleBoxStyled>
       <TextFieldStyled
         fullWidth
         error={!!error}
         helperText={error}
-        label="Threshold"
+        label=""
         InputProps={{
           endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
         }}
@@ -68,6 +72,24 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
     </Box>
   )
 }
+
+const InfoBox = ({ className = '' }: { className?: string }) => (
+  <Tooltip
+    className={className}
+    title="The threshold determines the minimum amount of signatory approvals needed for a
+    multisig transaction to be executed."
+  >
+    <span>
+      <HiOutlineInformationCircle />
+    </span>
+  </Tooltip>
+)
+
+const TitleBoxStyled = styled(Box)`
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.custom.text.primary};
+`
 
 export default styled(ThresholdSelection)`
   margin-bottom: 1rem;

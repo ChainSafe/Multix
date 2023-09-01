@@ -17,10 +17,11 @@ interface Props {
   signatories: string[]
   name?: string
   proxyAddress?: string
-  isSwapSummary?: boolean
+  isCreationSummary?: boolean
   balanceMin?: BN
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
+  withProxy?: boolean
 }
 
 const Summary = ({
@@ -29,38 +30,39 @@ const Summary = ({
   signatories,
   name,
   proxyAddress,
-  isSwapSummary = false,
+  isCreationSummary = true,
   balanceMin,
   isBalanceError,
-  selectedMultisig
+  selectedMultisig,
+  withProxy = true
 }: Props) => {
   const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
 
   const possibleSigners = useMemo(() => {
-    return isSwapSummary
+    return isCreationSummary
       ? // for a swap we can only select the account that are part of both the old and the new multisig
-        getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
-      : getIntersection(ownAddressList, signatories)
-  }, [ownAddressList, isSwapSummary, selectedMultisig, signatories])
+        getIntersection(ownAddressList, signatories)
+      : getIntersection(ownAddressList, getIntersection(selectedMultisig?.signatories, signatories))
+  }, [ownAddressList, isCreationSummary, selectedMultisig, signatories])
 
-  if (isSwapSummary && !proxyAddress) {
+  if (!isCreationSummary && !proxyAddress) {
     console.log('ProxyAddress undefined while being a swap summary')
     return null
   }
 
   return (
     <Box className={className}>
-      {isSwapSummary && proxyAddress ? (
+      {isCreationSummary ? (
+        <h3>You are about to create a Multisig:</h3>
+      ) : (
         <>
           <h3>You are about to change the Multisig controlling:</h3>
           <AccoutDisplayProxyStyled
-            address={proxyAddress}
+            address={proxyAddress || ''}
             badge={AccountBadge.PURE}
           />
         </>
-      ) : (
-        <h3>You are about to create a Multisig:</h3>
       )}
       <Paper
         elevation={2}
@@ -85,7 +87,20 @@ const Summary = ({
       </Paper>
       <Box className="explainer">
         <Alert severity="info">
-          {isSwapSummary ? (
+          {isCreationSummary ? (
+            withProxy ? (
+              <>
+                In the next step you will send 1 batch transaction to:
+                <ul>
+                  <li>send funds to the new Multisig (required to create a Pure proxy)</li>
+                  <li>create the Pure proxy</li>
+                </ul>
+                Other signatories will need to approve this transaction.
+              </>
+            ) : (
+              <>In the next step you will sign a remark transaction for the multisig creation</>
+            )
+          ) : (
             <>
               In the next step you will sign 2 transactions to:
               <ul>
@@ -93,15 +108,6 @@ const Summary = ({
                 <li>remove the old Multisig</li>
               </ul>
               Other signatories will need to approve these transactions.
-            </>
-          ) : (
-            <>
-              In the next step you will send 1 batch transaction to:
-              <ul>
-                <li>send funds to the new Multisig (required to create a Pure proxy)</li>
-                <li>create the Pure proxy</li>
-              </ul>
-              Other signatories will need to approve this transaction.
             </>
           )}
         </Alert>
@@ -114,7 +120,7 @@ const Summary = ({
       </Box>
       {isBalanceError && balanceMin && (
         <Alert severity="warning">
-          The selected signer requires at least
+          The selected signer requires at least{' '}
           {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
             tokenSymbol: chainInfo?.tokenSymbol
           })}
