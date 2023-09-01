@@ -32,7 +32,6 @@ const MultiProxySelection = ({ className }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
   const { multiProxyList, selectedMultiProxy, selectMultiProxy, isLoading } = useMultiProxy()
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
-  const { api } = useApi()
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
     () => selectedMultiProxy?.proxy || selectedMultiProxy?.multisigs[0].address,
