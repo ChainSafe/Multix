@@ -79,7 +79,11 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
           return
         }
 
-        setOwnAccountList([...accountList])
+        const filteredByNetworkType = accountList.filter(({ address, type }) => {
+          return chainInfo?.isEthereum ? type === 'ethereum' : type !== 'ethereum'
+        })
+
+        setOwnAccountList([...filteredByNetworkType])
 
         if (accountList.length > 0) {
           const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
