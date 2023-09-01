@@ -6,7 +6,6 @@ import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
-import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
@@ -18,9 +17,7 @@ interface Props {
 
 const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
-  const { multiProxyList } = useMultiProxy()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
-  const isAtLeastOneMultiProxy = useMemo(() => !isEmptyArray(multiProxyList), [multiProxyList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
 
   return (
@@ -32,26 +29,29 @@ const Header = ({ handleDrawerOpen }: Props) => {
             src={multixlogo}
           />
         </LogoWrapperStyled>
-        <BoxStyled>
-          {ROUTES.map(({ path, name, isDisplayWhenNoMultiProxy, isDisplayWhenNoWallet }) =>
-            (isAtLeastOneMultiProxy || isDisplayWhenNoMultiProxy) &&
-            (isAccountConnected || isDisplayWhenNoWallet) ? (
-              <RouterLinkStyled
-                key={name}
-                to={path}
-              >
-                {name}
-              </RouterLinkStyled>
-            ) : null
-          )}
-          <RightButtonsWrapper>
+        <DesktopMenuStyled>
+          <MenyuWrapperStyled>
+            {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
+              isAccountConnected || isDisplayWhenNoWallet ? (
+                <RouterLinkStyled
+                  key={name}
+                  to={path}
+                >
+                  {name}
+                </RouterLinkStyled>
+              ) : null
+            )}
+          </MenyuWrapperStyled>
+          <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
-              <Button onClick={allowConnectionToExtension}>Connect</Button>
+              <ConnectButtonStyled onClick={allowConnectionToExtension}>
+                Connect
+              </ConnectButtonStyled>
             )}
             <MultiProxySelection />
             <NetworkSelectionStyled />
-          </RightButtonsWrapper>
-        </BoxStyled>
+          </RightButtonsWrapperStyled>
+        </DesktopMenuStyled>
         <IconButtonStyled
           color="inherit"
           aria-label="open drawer"
@@ -72,14 +72,19 @@ const MuiAppBarStyled = styled(MuiAppBar)`
   justify-content: center;
 `
 
-const RightButtonsWrapper = styled(Box)`
-  flex: 1;
+const ConnectButtonStyled = styled(Button)`
+  margin-right: 1rem;
+`
+
+const RightButtonsWrapperStyled = styled(Box)`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 `
 
 const RouterLinkStyled = styled(RouterLink)`
+  display: inline-block;
   color: ${({ theme }) => theme.palette.primary.white};
 
   &:hover,
@@ -89,7 +94,11 @@ const RouterLinkStyled = styled(RouterLink)`
   }
 `
 
-const BoxStyled = styled(Box)`
+const MenyuWrapperStyled = styled(Box)`
+  width: 100%;
+`
+
+const DesktopMenuStyled = styled(Box)`
   display: none;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {

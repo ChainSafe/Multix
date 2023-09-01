@@ -63,7 +63,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
   }, [provider, types])
 
   useEffect(() => {
-    if (!apiPromise || !provider) return
+    if (!apiPromise) return
 
     apiPromise.isReady
       .then((api) => {
@@ -85,7 +85,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         })
       })
       .catch(console.error)
-  }, [apiPromise, provider, types])
+  }, [apiPromise, types])
 
   return (
     <ApiContext.Provider

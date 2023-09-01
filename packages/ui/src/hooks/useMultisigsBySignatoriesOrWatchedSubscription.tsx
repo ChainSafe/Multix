@@ -20,9 +20,16 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   watchedAccountIds
 }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
+  const hasSomethingToQuery = useMemo(
+    () => accountIds.length > 0 || watchedAccountIds.length > 0,
+    [accountIds, watchedAccountIds]
+  )
   const client = useMemo(
-    () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
-    [selectedNetworkInfo]
+    () =>
+      selectedNetworkInfo &&
+      hasSomethingToQuery &&
+      createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+    [selectedNetworkInfo, hasSomethingToQuery]
   )
 
   /**
@@ -98,5 +105,5 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading, error }
+  return { data, isLoading: hasSomethingToQuery && isLoading, error }
 }

@@ -38,6 +38,8 @@ deploy:
       cmd: ['sqd', 'start-moonbeam']
     - name: moonriver-processor
       cmd: ['sqd', 'start-moonriver']
+    - name: khala-processor
+      cmd: ['sqd', 'start-khala']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
@@ -50,7 +52,6 @@ scale:
   dedicated: true
   addons:
     postgres:
-      # storage: 100Gi
       profile: small
   processor:
     profile: small
