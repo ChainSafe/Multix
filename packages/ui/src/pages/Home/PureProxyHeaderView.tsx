@@ -21,7 +21,7 @@ const PureProxyHeaderView = () => {
     <PureProxyWrapper>
       <OverviewWrapper>
         <ButtonWithIcon
-          onClick={() => navigate('/help')}
+          onClick={() => navigate('/overview')}
           variant="link"
         >
           See overview

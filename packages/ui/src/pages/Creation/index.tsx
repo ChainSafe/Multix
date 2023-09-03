@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/select/SignatorySelection'
-import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
@@ -17,6 +17,8 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
+import WithProxySelection from './WitProxySelection'
 
 interface Props {
   className?: string
@@ -28,7 +30,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, chainInfo } = useApi()
+  const { api } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -45,25 +47,62 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
-  const multiAddress = useMemo(() => {
+  const supportsProxy = useMemo(() => !!api && !!api.tx.proxy, [api])
+  const multisigPubKey = useMemo(() => {
+    if (!threshold) return
+    return createKeyMulti(signatories, threshold)
+  }, [signatories, threshold])
+  const getEncodedAddress = useGetEncodedAddress()
+  const multiAddress = useMemo(
+    () => getEncodedAddress(multisigPubKey),
+    [getEncodedAddress, multisigPubKey]
+  )
+  const [withProxy, setWithProxy] = useState(false)
+  const remarkCall = useMemo(() => {
+    if (withProxy) {
+      // this call is only useful if the user does not want a proxy.
+      return
+    }
+
+    if (!api) {
+      // console.error('api is not ready')
+      return
+    }
+
+    if (!selectedAccount) {
+      // console.error('no selected address')
+      return
+    }
+
+    if (!signatories.includes(selectedAccount.address)) {
+      // console.error('selected account not part of signatories')
+      return
+    }
+
     if (!threshold) {
+      // console.error("Threshold is invalid", threshold)
       return
     }
 
-    if (!chainInfo) {
+    if (!multiAddress) {
       return
     }
 
-    const multiPubKey = createKeyMulti(signatories, threshold)
-    let res: string | undefined
-    try {
-      res = encodeAddress(multiPubKey, chainInfo.ss58Format)
-    } catch (e) {
-      console.error(`Error encoding the address ${multiPubKey}, skipping`, e)
-    }
-    return res
-  }, [chainInfo, signatories, threshold])
+    const otherSignatories = sortAddresses(
+      signatories.filter((sig) => sig !== selectedAccount.address)
+    )
+    const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
+    return api.tx.multisig.asMulti(threshold, otherSignatories, null, remarkTx, {
+      refTime: 0,
+      proofSize: 0
+    })
+  }, [api, multiAddress, selectedAccount, signatories, threshold, withProxy])
+
   const batchCall = useMemo(() => {
+    if (!withProxy) {
+      // this batchCall is only useful if the user wants a proxy.
+      return
+    }
     if (!api) {
       // console.error('api is not ready')
       return
@@ -103,12 +142,20 @@ const MultisigCreation = ({ className }: Props) => {
     )
 
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
-  }, [api, multiAddress, pureProxyCreationNeededFunds, selectedAccount, signatories, threshold])
+  }, [
+    api,
+    multiAddress,
+    pureProxyCreationNeededFunds,
+    selectedAccount,
+    signatories,
+    threshold,
+    withProxy
+  ])
 
   const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
     threshold,
     signatories,
-    call: batchCall
+    call: withProxy ? batchCall : remarkCall
   })
   const neededBalance = useMemo(
     () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
@@ -143,14 +190,57 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
 
   useEffect(() => {
+    // default to using a proxy
+    if (supportsProxy) {
+      setWithProxy(true)
+    }
+  }, [supportsProxy])
+  useEffect(() => {
     setErrorMessage('')
 
     if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {
-      setErrorMessage('At least one of your account must be a signatory')
+      setErrorMessage('At least one of your own accounts must be a signatory.')
     }
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
-  const handleCreate = useCallback(async () => {
+  const handleCreateRemark = useCallback(async () => {
+    if (!remarkCall) {
+      console.error('remark call undefined')
+      return
+    }
+
+    if (!selectedAccount) {
+      console.error('no selected address')
+      return
+    }
+
+    multiAddress && addName(name, multiAddress)
+    setIsSubmitted(true)
+
+    remarkCall
+      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .catch((error: Error) => {
+        setIsSubmitted(false)
+
+        addToast({
+          title: error.message,
+          type: 'error',
+          link: getSubscanExtrinsicLink(remarkCall.hash.toHex())
+        })
+      })
+  }, [
+    addName,
+    addToast,
+    getSubscanExtrinsicLink,
+    multiAddress,
+    name,
+    remarkCall,
+    selectedAccount,
+    selectedSigner,
+    signCallBack
+  ])
+
+  const handleCreateWithPure = useCallback(async () => {
     if (!selectedAccount || !batchCall) {
       console.error('no selected address')
       return
@@ -184,8 +274,14 @@ const MultisigCreation = ({ className }: Props) => {
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
-    isLastStep ? handleCreate() : setCurrentStep(currentStep + 1)
-  }, [currentStep, handleCreate, isLastStep])
+
+    if (!isLastStep) {
+      setCurrentStep(currentStep + 1)
+      return
+    }
+
+    withProxy ? handleCreateWithPure() : handleCreateRemark()
+  }, [currentStep, handleCreateRemark, handleCreateWithPure, isLastStep, withProxy])
 
   const goBack = useCallback(() => {
     window.scrollTo(0, 0)
@@ -262,13 +358,6 @@ const MultisigCreation = ({ className }: Props) => {
             xs={12}
             md={6}
           >
-            <Alert
-              className="infoBox"
-              severity="info"
-            >
-              The threshold determines the minimum amount of signatory approvals needed for a
-              multisig transaction to be executed.
-            </Alert>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
@@ -278,6 +367,20 @@ const MultisigCreation = ({ className }: Props) => {
               setName={setName}
               name={name}
             />
+            {supportsProxy && (
+              <WithProxySelection
+                setWithProxy={setWithProxy}
+                withProxy={withProxy}
+              />
+            )}
+            {!supportsProxy && (
+              <Alert
+                className="infoBox"
+                severity="info"
+              >
+                This network doesn't support proxies.
+              </Alert>
+            )}
           </Grid>
         )}
         {currentStep === 2 && (
@@ -292,6 +395,7 @@ const MultisigCreation = ({ className }: Props) => {
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
               balanceMin={neededBalance}
+              withProxy={withProxy}
             />
           </Grid>
         )}

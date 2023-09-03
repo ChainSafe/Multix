@@ -12,9 +12,13 @@ interface Args {
 
 export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
   const { selectedNetworkInfo, selectedNetwork } = useNetwork()
+  const hasSomethingToQuery = useMemo(() => pureIds.length > 0, [pureIds])
   const client = useMemo(
-    () => selectedNetworkInfo && createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
-    [selectedNetworkInfo]
+    () =>
+      selectedNetworkInfo &&
+      hasSomethingToQuery &&
+      createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+    [hasSomethingToQuery, selectedNetworkInfo]
   )
 
   /**
@@ -89,5 +93,5 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading, error }
+  return { data, isLoading: hasSomethingToQuery && isLoading, error }
 }

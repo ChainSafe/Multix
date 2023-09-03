@@ -1,4 +1,4 @@
-import { Box, InputAdornment } from '@mui/material'
+import { Box, CircularProgress, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -10,6 +10,7 @@ import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
+import { useApi } from '../../contexts/ApiContext'
 
 interface Props {
   className?: string
@@ -29,7 +30,7 @@ const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
 
 const MultiProxySelection = ({ className }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
-  const { multiProxyList, selectedMultiProxy, selectMultiProxy } = useMultiProxy()
+  const { multiProxyList, selectedMultiProxy, selectMultiProxy, isLoading } = useMultiProxy()
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
@@ -117,6 +118,14 @@ const MultiProxySelection = ({ className }: Props) => {
     />
   )
 
+  if (isLoading) {
+    return (
+      <BoxStyled>
+        <CircularProgress size={24} />
+      </BoxStyled>
+    )
+  }
+
   if (multiProxyList.length === 0) {
     return null
   }
@@ -137,9 +146,24 @@ const MultiProxySelection = ({ className }: Props) => {
   )
 }
 
+const BoxStyled = styled(Box)`
+  display: flex;
+  .MuiCircularProgress-root {
+    color: ${({ theme }) => theme.palette.primary.main};
+
+    @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+      color: ${({ theme }) => theme.palette.primary.white};
+    }
+  }
+`
+
 export default styled(MultiProxySelection)`
-  min-width: 180px;
-  flex: 1;
+  min-width: 200px;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+    min-width: 280px;
+  }
+
   text-align: right;
 
   .MuiTextField-root {

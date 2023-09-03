@@ -6,8 +6,9 @@ import { useMemo } from 'react'
 import { AccountBadge } from '../../types'
 import MultisigCompactDisplay from '../../components/MultisigCompactDisplay'
 import 'reactflow/dist/style.css'
-import Overview from './Overview'
+import OverviewHeaderView from './OverviewHeaderView'
 import { renderMultisigHeading } from '../multisigHelpers'
+import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 interface Props {
   className?: string
 }
@@ -33,16 +34,24 @@ const getMultisigInfo = (multisig: MultiProxy['multisigs'][0]) => {
   )
 }
 
-const Help = ({ className }: Props) => {
-  const { selectedMultiProxy } = useMultiProxy()
+const Overview = ({ className }: Props) => {
+  const { selectedMultiProxy, multiProxyList } = useMultiProxy()
   const hasPureProxy = useMemo(() => selectedMultiProxy?.proxy, [selectedMultiProxy?.proxy])
   const hasSeveralMultisigs = useMemo(
     () => selectedMultiProxy?.multisigs && selectedMultiProxy?.multisigs.length > 1,
     [selectedMultiProxy]
   )
 
+  if (multiProxyList.length === 0) {
+    return <ConnectOrWatch />
+  }
+
   return (
     <Box className={className}>
+      <Box className="sectionWrapper">
+        <h1>Overview</h1>
+        <OverviewHeaderView />
+      </Box>
       {hasPureProxy && (
         <>
           <Box className="sectionWrapper">
@@ -112,15 +121,11 @@ const Help = ({ className }: Props) => {
           </Alert>
         </Box>
       )}
-      <Box className="sectionWrapper">
-        <h1>Overview</h1>
-        <Overview />
-      </Box>
     </Box>
   )
 }
 
-export default styled(Help)`
+export default styled(Overview)`
   .accountList {
     list-style-type: none;
 
