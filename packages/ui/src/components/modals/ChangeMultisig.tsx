@@ -32,6 +32,7 @@ import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 
 interface Props {
   onClose: () => void
@@ -69,14 +70,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       ).length > 0,
     [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
-  const newMultisigPubKey = useMemo(() => {
-    if (!newThreshold) return
-    return createKeyMulti(newSignatories, newThreshold)
-  }, [newSignatories, newThreshold])
-  const newMultisigAddress = useMemo(
-    () => getEncodedAddress(newMultisigPubKey),
-    [getEncodedAddress, newMultisigPubKey]
-  )
+  const newMultisigAddress = useGetMultisigAddress(newSignatories, newThreshold)
   const canGoNext = useMemo(
     () => newMultisigAddress !== selectedMultisig?.address,
     [newMultisigAddress, selectedMultisig]

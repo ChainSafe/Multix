@@ -20,6 +20,7 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import WithProxySelection from './WitProxySelection'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 
 interface Props {
   className?: string
@@ -50,15 +51,8 @@ const MultisigCreation = ({ className }: Props) => {
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
   const supportsProxy = useMemo(() => !!api && !!api.tx.proxy, [api])
-  const multisigPubKey = useMemo(() => {
-    if (!threshold) return
-    return createKeyMulti(signatories, threshold)
-  }, [signatories, threshold])
-  const getEncodedAddress = useGetEncodedAddress()
-  const multiAddress = useMemo(
-    () => getEncodedAddress(multisigPubKey),
-    [getEncodedAddress, multisigPubKey]
-  )
+  const multiAddress = useGetMultisigAddress(signatories, threshold)
+  console.log('multiAddress', multiAddress)
   const [withProxy, setWithProxy] = useState(false)
   const remarkCall = useMemo(() => {
     if (withProxy) {
