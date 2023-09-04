@@ -1,6 +1,4 @@
-import { decodeHex } from '@subsquid/substrate-processor'
 import { encodeId } from './util/accountEncoding'
-import { Ctx } from './main'
 
 // "args": {
 //     "call": {
@@ -29,10 +27,8 @@ import { Ctx } from './main'
 //     "threshold": 2
 // },
 
-export const handleMultisigCall = (multisigArgs: any, ctx: Ctx) => {
+export const handleMultisigCall = (multisigArgs: any) => {
   const encodedOtherSignatories = multisigArgs['otherSignatories'].map((signatory: string) => {
-    // const decodedHex = decodeHex(signatory)
-    ctx.log.info(`sig hex ${signatory}`)
     return encodeId(signatory)}
   )
 

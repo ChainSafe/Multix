@@ -13,7 +13,6 @@ import {
   getOriginAccount,
   getPureProxyInfoFromArgs,
   getProxyInfoFromArgs,
-  JsonLog
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -108,10 +107,10 @@ processor.run(
           const signer = getOriginAccount(callItem.call.origin)
           const callArgs = callItem.call.args
 
-          const { otherSignatories, threshold } = handleMultisigCall(callArgs, ctx)
+          const { otherSignatories, threshold } = handleMultisigCall(callArgs)
           const signatories = [signer, ...otherSignatories]
 
-          const multisigAddress = getMultisigAddress(signatories, threshold, ctx)
+          const multisigAddress = getMultisigAddress(signatories, threshold)
           const newMulti = {
             id: getAccountId(multisigAddress, chainId),
             address: multisigAddress,
