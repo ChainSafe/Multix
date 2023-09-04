@@ -32,7 +32,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -50,9 +50,12 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
-  const supportsProxy = useMemo(() => !!api && !!api.tx.proxy, [api])
+  const supportsProxy = useMemo(() => {
+    const hasProxyPallet = !!api && !!api.tx.proxy
+    // Moonbeam and moonriver have the pallet, but it's deactivated
+    return hasProxyPallet && !chainInfo?.isEthereum
+  }, [api, chainInfo])
   const multiAddress = useGetMultisigAddress(signatories, threshold)
-  console.log('multiAddress', multiAddress)
   const [withProxy, setWithProxy] = useState(false)
   const remarkCall = useMemo(() => {
     if (withProxy) {
@@ -454,7 +457,7 @@ export default styled(MultisigCreation)(
   padding-bottom: 2rem;
 
   .infoBox {
-    margin-bottom: 1rem;
+    margin-top: 1rem;
   }
 
   .stepItem {
