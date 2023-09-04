@@ -16,7 +16,7 @@ import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
 import { useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti } from '@polkadot/util-crypto'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { useToasts } from '../../contexts/ToastContext'
 import { AccountBadge } from '../../types'
@@ -31,6 +31,7 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 
 interface Props {
   onClose: () => void
@@ -50,6 +51,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     onSuccess: onClose,
     onError: onClose
   })
+  const { getSortAddress } = useGetSortAddress()
   const { selectedAccount, selectedSigner, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
@@ -121,7 +123,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    const otherOldSignatories = sortAddresses(
+    const otherOldSignatories = getSortAddress(
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
 
@@ -135,6 +137,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
+    getSortAddress,
     newMultisigAddress,
     newThreshold,
     oldThreshold,
@@ -169,7 +172,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    const otherNewSignatories = sortAddresses(
+    const otherNewSignatories = getSortAddress(
       newSignatories.filter((sig) => sig !== selectedAccount.address)
     )
     const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, 'Any', 0)

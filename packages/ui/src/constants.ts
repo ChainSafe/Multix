@@ -18,7 +18,7 @@ export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
 export const ICON_SIZE_MEDIUM = 40
 export const ICON_SIZE_SMALL = 30
-export const ICON_THEME = 'polkadot'
+export const DEFAULT_ICON_THEME = 'polkadot'
 
 export interface NetworkInfo {
   chainId: string

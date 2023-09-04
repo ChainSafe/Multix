@@ -10,7 +10,6 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { sortAddresses } from '@polkadot/util-crypto'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
@@ -20,6 +19,7 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -66,6 +66,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [extrinsicToCall, setExtrinsicToCall] = useState<
     SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   >()
+  const { getSortAddress } = useGetSortAddress()
   const [selectedEasyOption, setSelectedEasyOption] = useState(SEND_TOKEN_MENU)
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -73,7 +74,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       return
     }
 
-    const otherSigners = sortAddresses(
+    const otherSigners = getSortAddress(
       selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address)
     )
 
@@ -115,6 +116,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   }, [
     api,
     extrinsicToCall,
+    getSortAddress,
     isProxySelected,
     selectedAccount,
     selectedMultisig,

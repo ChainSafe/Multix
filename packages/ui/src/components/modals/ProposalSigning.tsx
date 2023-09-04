@@ -11,12 +11,12 @@ import SignerSelection from '../select/SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { sortAddresses } from '@polkadot/util-crypto'
 import { HexString, MultisigStorageInfo } from '../../types'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 
 interface Props {
   onClose: () => void
@@ -70,7 +70,7 @@ const ProposalSigning = ({
   }, [onClose])
 
   const signCallback = useSigningCallback({ onSuccess, onSubmitting })
-
+  const { getSortAddress } = useGetSortAddress()
   useEffect(() => {
     if (isProposerSelected) {
       setAddedCallData(undefined)
@@ -87,7 +87,7 @@ const ProposalSigning = ({
 
   const onSign = useCallback(
     async (isApproving: boolean) => {
-      const otherSigners = sortAddresses(
+      const otherSigners = getSortAddress(
         signatories.filter((signer) => signer !== selectedAccount?.address)
       )
 

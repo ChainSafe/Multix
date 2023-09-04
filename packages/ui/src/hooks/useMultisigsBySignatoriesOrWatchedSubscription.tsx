@@ -39,6 +39,7 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     client: Client,
     payload: SubscribePayload
   ) {
+    console.log('payload', payload)
     return new Observable<TData | null>((observer) =>
       client.subscribe<TData>(payload, {
         next: (data) => {

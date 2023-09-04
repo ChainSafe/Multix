@@ -75,7 +75,6 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         const info = api.registry.getChainProperties()
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
         const isEthereum = ethereumChains.includes(api.runtimeVersion.specName.toString())
-
         setChainInfo({
           // some parachains such as interlay have a comma in the format, e.g: "2,042"
           ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,

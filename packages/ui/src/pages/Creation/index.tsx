@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/select/SignatorySelection'
-import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti } from '@polkadot/util-crypto'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
@@ -19,6 +19,7 @@ import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreatio
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import WithProxySelection from './WitProxySelection'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 
 interface Props {
   className?: string
@@ -37,6 +38,7 @@ const MultisigCreation = ({ className }: Props) => {
   const signCallBack = useSigningCallback({
     onSuccess: () => navigate('/?creationInProgress=true')
   })
+  const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()
   const [name, setName] = useState('')
   const { addName } = useAccountNames()
@@ -88,7 +90,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(
+    const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
@@ -96,7 +98,7 @@ const MultisigCreation = ({ className }: Props) => {
       refTime: 0,
       proofSize: 0
     })
-  }, [api, multiAddress, selectedAccount, signatories, threshold, withProxy])
+  }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
 
   const batchCall = useMemo(() => {
     if (!withProxy) {
@@ -127,7 +129,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(
+    const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
@@ -144,6 +146,7 @@ const MultisigCreation = ({ className }: Props) => {
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [
     api,
+    getSortAddress,
     multiAddress,
     pureProxyCreationNeededFunds,
     selectedAccount,
