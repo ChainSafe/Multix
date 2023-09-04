@@ -40,7 +40,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
   const { chainInfo } = useApi()
 
-  console.log('ownAccountList', ownAccountList)
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
@@ -70,7 +69,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   const getaccountList = useCallback(
     async (isEthereum: boolean): Promise<void> => {
-      console.log('---> isEthereum', isEthereum)
       setIsAccountLoading(true)
       const extensions = await web3Enable(DAPP_NAME)
       setExtensions(extensions)
@@ -116,7 +114,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
     if (isAccountLoading || !chainInfo) return
 
-    console.log('chainInfo', chainInfo)
     if (extensions?.length === 0 && !ownAccountList.length) {
       if (!timeoutElapsed && isAllowedToConnectToExtension) {
         // give it another chance #ugly hack
@@ -144,7 +141,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     if (ownAccountList.length > 0) return
 
     // don't request before explicitely asking
-    if (isAllowedToConnectToExtension && !!chainInfo?.isEthereum) {
+    if (isAllowedToConnectToExtension && !!chainInfo) {
       getaccountList(chainInfo.isEthereum)
     }
   }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, chainInfo])

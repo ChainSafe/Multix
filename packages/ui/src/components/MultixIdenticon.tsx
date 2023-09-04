@@ -44,6 +44,10 @@ const MultixIdenticon = ({ value, size = ICON_SIZE_MEDIUM, className }: Props) =
 const TooltipIconStyled = styled('div')`
   display: inherit;
   line-height: 0;
+
+  img {
+    border-radius: 50%;
+  }
 `
 
 export default MultixIdenticon
