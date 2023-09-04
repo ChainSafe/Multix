@@ -112,8 +112,6 @@ processor.run(
           const signatories = [signer, ...otherSignatories]
 
           const multisigAddress = getMultisigAddress(signatories, threshold, ctx)
-          ctx.log.info(`multi address ${JsonLog(multisigAddress)}`)
-          ctx.log.info(`if: ${getAccountId(multisigAddress, chainId)}`)
           const newMulti = {
             id: getAccountId(multisigAddress, chainId),
             address: multisigAddress,

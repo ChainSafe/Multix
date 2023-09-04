@@ -40,6 +40,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
   const { chainInfo } = useApi()
 
+  console.log('ownAccountList', ownAccountList)
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
@@ -68,7 +69,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [])
 
   const getaccountList = useCallback(
-    async (isEthereum = false): Promise<void> => {
+    async (isEthereum: boolean): Promise<void> => {
+      console.log('---> isEthereum', isEthereum)
       setIsAccountLoading(true)
       const extensions = await web3Enable(DAPP_NAME)
       setExtensions(extensions)
@@ -80,13 +82,22 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
             return
           }
 
-          setOwnAccountList([...accountList])
+          let listToPersist = accountList
+          //lower case ethereum addresses
+          if (isEthereum) {
+            listToPersist = accountList.map((account) => ({
+              ...account,
+              address: account.address.toLowerCase()
+            }))
+          }
 
-          if (accountList.length > 0) {
+          setOwnAccountList([...listToPersist])
+
+          if (listToPersist.length > 0) {
             const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
             const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
 
-            selectAccount(account || accountList[0])
+            selectAccount(account || listToPersist[0])
           }
         },
         {
@@ -100,31 +111,18 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     [chainInfo, getAccountByAddress, selectAccount]
   )
 
-  // useEffect(() => {
-  //   // filter accountList based on the network
-  //   if (!isAccountLoading && ownAccountList.length > 0) {
-  //     const filteredByNetworkType = ownAccountList.filter(({ address, type }) => {
-  //       return chainInfo?.isEthereum ? type === 'ethereum' : type !== 'ethereum'
-  //     })
-  //     console.log('filteredByNetworkType', filteredByNetworkType)
-  //     // console.log('accountlist', ownAccountList)
-  //     console.log('chainInfo?.isEthereum', chainInfo?.isEthereum)
-  //     console.log('filteredByNetworkType', filteredByNetworkType)
-  //     setOwnAccountList([...filteredByNetworkType])
-  //   }
-  // }, [chainInfo, isAccountLoading])
-
   useEffect(() => {
     if (!isAllowedToConnectToExtension) return
 
-    if (isAccountLoading) return
+    if (isAccountLoading || !chainInfo) return
 
+    console.log('chainInfo', chainInfo)
     if (extensions?.length === 0 && !ownAccountList.length) {
       if (!timeoutElapsed && isAllowedToConnectToExtension) {
         // give it another chance #ugly hack
         // race condition see https://github.com/polkadot-js/extension/issues/938
         setTimeout(() => {
-          getaccountList(chainInfo?.isEthereum)
+          getaccountList(chainInfo.isEthereum)
           setTimoutElapsed(true)
         }, 500)
       } else {
@@ -146,10 +144,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     if (ownAccountList.length > 0) return
 
     // don't request before explicitely asking
-    if (isAllowedToConnectToExtension) {
-      getaccountList()
+    if (isAllowedToConnectToExtension && !!chainInfo?.isEthereum) {
+      getaccountList(chainInfo.isEthereum)
     }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, chainInfo])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
