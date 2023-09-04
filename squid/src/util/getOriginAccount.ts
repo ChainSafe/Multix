@@ -5,7 +5,7 @@ export function getOriginAccount(origin: any): string {
     const id = origin.value.value
     if (id.__kind === 'Id') {
       return encodeId(id.value)
-      } else {
+    } else {
       return encodeId(id)
     }
   } else {

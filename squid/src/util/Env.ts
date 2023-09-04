@@ -23,7 +23,7 @@ export class Env {
       archiveUrl: process.env.ARCHIVE_URL || '',
       chainId: process.env.CHAIN_ID || '',
       genesis: process.env.GENESIS || undefined,
-      isEthereum: process.env.IS_ETHEREUM === "true" || false 
+      isEthereum: process.env.IS_ETHEREUM === 'true' || false
     }
 
     this.checkForUndefined()

@@ -29,8 +29,8 @@ import { encodeId } from './util/accountEncoding'
 
 export const handleMultisigCall = (multisigArgs: any) => {
   const encodedOtherSignatories = multisigArgs['otherSignatories'].map((signatory: string) => {
-    return encodeId(signatory)}
-  )
+    return encodeId(signatory)
+  })
 
   return {
     otherSignatories: encodedOtherSignatories,

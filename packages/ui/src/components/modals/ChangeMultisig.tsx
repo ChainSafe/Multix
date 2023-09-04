@@ -16,7 +16,6 @@ import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
 import { useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { createKeyMulti } from '@polkadot/util-crypto'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { useToasts } from '../../contexts/ToastContext'
 import { AccountBadge } from '../../types'
@@ -30,7 +29,6 @@ import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
-import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 
@@ -47,7 +45,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
-  const getEncodedAddress = useGetEncodedAddress()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
     onError: onClose
@@ -178,6 +175,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
+    getSortAddress,
     newSignatories,
     newThreshold,
     selectedAccount,

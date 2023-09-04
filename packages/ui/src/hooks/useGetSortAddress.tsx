@@ -1,4 +1,3 @@
-import { u8aSorted } from '@polkadot/util'
 import { useApi } from '../contexts/ApiContext'
 import { useCallback } from 'react'
 import { sortAddresses } from '@polkadot/util-crypto'

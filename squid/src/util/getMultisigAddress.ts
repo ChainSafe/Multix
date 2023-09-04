@@ -7,8 +7,8 @@ export const getMultisigAddress = (signatories: (string | Uint8Array)[], thresho
   const res = encodeId(key)
 
   // truncate the address at 42 chars for Ethereum addresses
-  if(env.isEthereum && res.startsWith('0x')){
-    return res.slice(0,42)
+  if (env.isEthereum && res.startsWith('0x')) {
+    return res.slice(0, 42)
   }
 
   return res

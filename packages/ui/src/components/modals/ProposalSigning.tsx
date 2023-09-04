@@ -209,6 +209,7 @@ const ProposalSigning = ({
       )
     },
     [
+      getSortAddress,
       signatories,
       threshold,
       proposalData,
@@ -216,10 +217,10 @@ const ProposalSigning = ({
       selectedAccount,
       multisig,
       mustSubmitCallData,
-      addedCallData,
       callInfo,
       selectedSigner,
       signCallback,
+      addedCallData,
       addToast,
       getSubscanExtrinsicLink
     ]
