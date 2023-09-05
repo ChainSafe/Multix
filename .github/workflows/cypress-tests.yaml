@@ -32,7 +32,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          install-command: 'corepack enable && yarn install --immutable'
+          command: 'corepack enable'
           start: 'yarn start'
           # wait for 10min for the server to be ready
           wait-on: 'npx wait-on --timeout 600000 http://localhost:3333'
