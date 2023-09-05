@@ -86,7 +86,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
       open
       className={className}
     >
-      <ModalCloseButton onClose={onClose} />
+      <ModalCloseButton onClose={onReject} />
       <DialogTitle>WalletConnect Connection Request</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
