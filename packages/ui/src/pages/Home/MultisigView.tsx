@@ -2,18 +2,17 @@ import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { Chip, Paper } from '@mui/material'
+import { Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import Accordion from '../../components/library/Accordion'
-import { Button } from '../../components/library'
 import Balance from '../../components/library/Balance'
 import { renderMultisigHeading } from '../multisigHelpers'
+import MultisigAccordion from './MultisigAccordion'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
 
   return (
-    <MultisigWrapperStyled>
+    <MultisigViewWrapperStyled>
       {selectedMultiProxy && (
         <h3>
           {selectedHasProxy
@@ -24,54 +23,43 @@ const MultisigView = () => {
       {selectedMultiProxy &&
         selectedMultiProxy.multisigs.map((multisig) => {
           return (
-            <Accordion
-              header={
-                <AccountDisplayWrapperStyled>
-                  <AccountDisplay
-                    address={multisig.address || ''}
-                    badge={AccountBadge.MULTI}
-                    withBalance={false}
-                  />
+            <MultisigWrapperStyled>
+              <AccountDisplayWrapperStyled>
+                <AccountDisplay
+                  address={multisig.address || ''}
+                  badge={AccountBadge.MULTI}
+                  withBalance={false}
+                />
+                {!selectedIsWatched && !selectedHasProxy && (
+                  <MultisigActionMenu withSettingsButton={false} />
+                )}
+              </AccountDisplayWrapperStyled>
+              <List>
+                <ListElement>
+                  <ListFieldText>Threshold</ListFieldText>
                   <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
-                </AccountDisplayWrapperStyled>
-              }
-              content={
-                <MultisigPaperStyled key={multisig.address}>
-                  <BoxStyled>
-                    <Button variant="secondary">
-                      <Balance address={multisig.address} />
-                    </Button>
-                    {!selectedIsWatched && !selectedHasProxy && (
-                      <MultisigActionMenu withSettingsButton={false} />
-                    )}
-                  </BoxStyled>
-                  <div>
-                    <SignatoriesHeadingStyled>Signatories</SignatoriesHeadingStyled>
-                    <AddressListStyled>
-                      {multisig?.signatories?.map((signatory) => (
-                        <li key={signatory}>
-                          <AccountDisplay address={signatory} />
-                        </li>
-                      ))}
-                    </AddressListStyled>
-                  </div>
-                </MultisigPaperStyled>
-              }
-            />
+                </ListElement>
+                <ListElement>
+                  <ListFieldText>Balance</ListFieldText>
+                  <Balance address={multisig.address} />
+                </ListElement>
+              </List>
+              <MultisigAccordion multisig={multisig} />
+            </MultisigWrapperStyled>
           )
         })}
-    </MultisigWrapperStyled>
+    </MultisigViewWrapperStyled>
   )
 }
 
-const MultisigWrapperStyled = styled('div')`
+const MultisigViewWrapperStyled = styled('div')`
   padding: 1rem;
   border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
 
   h3 {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 1.125rem;
+    font-weight: 400;
     margin-bottom: 0.75rem;
   }
 
@@ -84,49 +72,47 @@ const MultisigWrapperStyled = styled('div')`
   }
 `
 
+const MultisigWrapperStyled = styled('div')`
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  padding: 1rem 0.75rem;
+`
+const List = styled('div')``
+
+const ListElement = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  max-height: 2.4375rem;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+  background: ${({ theme }) => theme.custom.gray[200]};
+`
+
+const ListFieldText = styled('div')`
+  font-size: 1rem;
+  font-weight: 400;
+  color: ${({ theme }) => theme.custom.gray[800]};
+`
+
 const AccountDisplayWrapperStyled = styled('div')`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 1rem;
 `
 
 const ChipStyled = styled(Chip)`
-  color: ${({ theme }) => theme.custom.gray[700]};
-  font-size: 1rem;
-  font-weight: 500;
   background: none;
-`
 
-const MultisigPaperStyled = styled(Paper)`
-  padding: 0.5rem 0;
-  margin-bottom: 0.5rem;
-  box-shadow: none;
-  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
-  border-radius: ${({ theme }) => theme.custom.borderRadius};
-`
-
-const BoxStyled = styled('div')`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  align-self: center;
-`
-
-const SignatoriesHeadingStyled = styled('h4')`
-  color: ${({ theme }) => theme.custom.gray[700]};
-  font-size: 1rem;
-  font-weight: 400;
-  margin: 0.75rem 0;
-`
-
-const AddressListStyled = styled('ul')`
-  padding-inline-start: 0;
-  margin-block-end: 0;
-  list-style-type: none;
-
-  > li {
-    margin-bottom: 1rem;
+  .MuiChip-label {
+    color: ${({ theme }) => theme.custom.gray[700]};
+    font-size: 1rem;
+    font-weight: 400;
+    padding-right: 0;
   }
 `
 

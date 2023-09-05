@@ -162,7 +162,7 @@ const Home = ({ className }: HomeProps) => {
         item
         alignItems="center"
         xs={12}
-        md={6}
+        md={5}
       >
         <MultisigView />
       </Grid>
@@ -170,7 +170,7 @@ const Home = ({ className }: HomeProps) => {
         <Grid
           item
           xs={12}
-          md={6}
+          md={7}
         >
           <TransactionsWrapperStyled>
             <h3>Transactions</h3>
