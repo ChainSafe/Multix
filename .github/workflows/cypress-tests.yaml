@@ -32,8 +32,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: corepack enable && yarn install --immutable
-          start: yarn start
+          install-command: 'corepack enable && yarn install --immutable'
+          start: 'yarn start'
           # wait for 10min for the server to be ready
           wait-on: 'npx wait-on --timeout 600000 http://localhost:3333'
           # custom test command to run
@@ -44,11 +44,11 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: packages/ui/cypress/screenshots
       # store the videos if the tests fail
       # - name: Store videos
       #   uses: actions/upload-artifact@v1
       #   if: failure()
       #   with:
       #     name: cypress-videos
-      #     path: cypress/videos
+      #     path: packages/ui/cypress/videos
