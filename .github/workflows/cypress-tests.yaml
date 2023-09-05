@@ -6,9 +6,6 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/ui
     container: cypress/browsers:node-20.5.0-chrome-114.0.5735.133-1-ff-114.0.2-edge-114.0.1823.51-1
     steps:
       - name: Checkout
@@ -36,8 +33,6 @@ jobs:
           install-command: yarn install
           start: 'yarn start'
           wait-on: 'http://localhost:3333'
-          # wait for 10min for the server to be ready
-          # wait-on: 'npx wait-on --timeout 600000 http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
       # store the screenshots if the tests fail
