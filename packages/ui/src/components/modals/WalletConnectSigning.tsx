@@ -159,19 +159,16 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   )
 
   const onReject = useCallback(() => {
-    const response = {
-      id: request.id,
-      jsonrpc: '2.0',
-      error: {
-        code: 5000,
-        message: 'User rejected request on Multix'
-      }
-    }
-    web3wallet?.respondSessionRequest({
-      topic: request.topic,
-      response
-    })
-  }, [request.id, request.topic, web3wallet])
+    const response = getWalletConnectErrorResponse(request.id, 'User rejected request on Multix')
+
+    web3wallet
+      ?.respondSessionRequest({
+        topic: request.topic,
+        response
+      })
+      .catch(console.error)
+      .finally(() => onClose())
+  }, [onClose, request, web3wallet])
 
   return (
     <Dialog
@@ -306,7 +303,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
                   onClick={onSign}
                   disabled={!!errorMessage || isSubmitting || !callInfo?.call}
                 >
-                  Approve
+                  Sign
                 </Button>
               </>
             )}
