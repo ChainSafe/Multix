@@ -168,6 +168,7 @@ const GenericAccountSelection = ({
       {...params}
       inputRef={inputRef}
       label={label}
+      data-cy="generic-account-selection-input"
       InputProps={{
         ...params.InputProps,
         startAdornment: valueAddress ? (

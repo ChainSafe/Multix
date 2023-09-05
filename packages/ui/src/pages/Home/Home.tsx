@@ -67,7 +67,12 @@ const Home = ({ className }: HomeProps) => {
         <ConnectButtonWrapperStyled>
           <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
           or
-          <Button onClick={() => navigate('/settings')}>Watch an address</Button>
+          <Button
+            data-cy="button-watch-an-address"
+            onClick={() => navigate('/settings')}
+          >
+            Watch an address
+          </Button>
         </ConnectButtonWrapperStyled>
       </CenterStyled>
     )

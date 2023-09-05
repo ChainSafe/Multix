@@ -42,9 +42,11 @@
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "@vitejs/plugin-react": "^4.0.1",
+    "cypress": "^13.1.0",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-cypress": "^2.14.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "ts-node": "^10.9.1"
   },
@@ -57,7 +59,9 @@
     "lint:fix": "yarn run lint --fix",
     "codegen": "graphql-codegen --config graphql.config.json",
     "generate:type-from-defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --endpoint ./node-metadata.json --package src/interfaces --input ./src/interfaces",
-    "generate:types-from-chain": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --endpoint wss://rococo-rpc.polkadot.io --output ./src/interfaces"
+    "generate:types-from-chain": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --endpoint wss://rococo-rpc.polkadot.io --output ./src/interfaces",
+    "test": "cypress open",
+    "test:ci": "cypress run --browser chrome --headless"
   },
   "browserslist": {
     "production": [
