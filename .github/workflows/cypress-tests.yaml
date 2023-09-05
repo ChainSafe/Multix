@@ -32,6 +32,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
+          working-directory: packages/ui
           install-command: yarn install
           start: 'yarn start'
           wait-on: 'http://localhost:3333'
