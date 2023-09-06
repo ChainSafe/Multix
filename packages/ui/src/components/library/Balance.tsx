@@ -13,8 +13,8 @@ const Balance = ({ address }: BalanceProps) => {
 
 const BalanceStyled = styled('div')`
   display: flex;
-  color: ${({ theme }) => theme.custom.text.addressColorLightGray};
-  font-size: small;
+  color: ${({ theme }) => theme.custom.gray[700]};
+  font-size: 1rem;
   margin-top: 4px;
 `
 

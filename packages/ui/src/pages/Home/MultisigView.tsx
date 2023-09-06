@@ -20,37 +20,45 @@ const MultisigView = () => {
             : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
         </h3>
       )}
-      {selectedMultiProxy &&
-        selectedMultiProxy.multisigs.map((multisig) => {
-          return (
-            <MultisigWrapperStyled>
-              <AccountDisplayWrapperStyled>
-                <AccountDisplay
-                  address={multisig.address || ''}
-                  badge={AccountBadge.MULTI}
-                  withBalance={false}
-                />
-                {!selectedIsWatched && !selectedHasProxy && (
-                  <MultisigActionMenu withSettingsButton={false} />
-                )}
-              </AccountDisplayWrapperStyled>
-              <List>
-                <ListElement>
-                  <ListFieldText>Threshold</ListFieldText>
-                  <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
-                </ListElement>
-                <ListElement>
-                  <ListFieldText>Balance</ListFieldText>
-                  <Balance address={multisig.address} />
-                </ListElement>
-              </List>
-              <MultisigAccordion multisig={multisig} />
-            </MultisigWrapperStyled>
-          )
-        })}
+      <MultisigList>
+        {selectedMultiProxy &&
+          selectedMultiProxy.multisigs.map((multisig) => {
+            return (
+              <MultisigWrapperStyled>
+                <AccountDisplayWrapperStyled>
+                  <AccountDisplay
+                    address={multisig.address || ''}
+                    badge={AccountBadge.MULTI}
+                    withBalance={false}
+                  />
+                  {!selectedIsWatched && !selectedHasProxy && (
+                    <MultisigActionMenu withSettingsButton={false} />
+                  )}
+                </AccountDisplayWrapperStyled>
+                <List>
+                  <ListElement>
+                    <ListFieldText>Threshold</ListFieldText>
+                    <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
+                  </ListElement>
+                  <ListElement>
+                    <ListFieldText>Balance</ListFieldText>
+                    <Balance address={multisig.address} />
+                  </ListElement>
+                </List>
+                <MultisigAccordion multisig={multisig} />
+              </MultisigWrapperStyled>
+            )
+          })}
+      </MultisigList>
     </MultisigViewWrapperStyled>
   )
 }
+
+const MultisigList = styled('div')`
+  & > :not(:first-child) {
+    margin-top: 1rem;
+  }
+`
 
 const MultisigViewWrapperStyled = styled('div')`
   padding: 1rem;
@@ -76,6 +84,10 @@ const MultisigWrapperStyled = styled('div')`
   border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   padding: 1rem 0.75rem;
+
+  &:not(:first-child) {
+    margin-bottom: 0.5rem;
+  }
 `
 const List = styled('div')``
 
