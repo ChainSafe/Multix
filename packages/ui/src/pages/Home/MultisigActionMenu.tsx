@@ -43,11 +43,11 @@ const MultisigActionMenu = ({
     <>
       {withSendButton && (
         <Button
-          variant="secondary"
+          variant="primary"
           aria-label="send"
           onClick={() => setIsSendModalOpen(true)}
         >
-          New
+          New Transaction
         </Button>
       )}
       {withSettingsButton && <OptionsMenu options={options} />}

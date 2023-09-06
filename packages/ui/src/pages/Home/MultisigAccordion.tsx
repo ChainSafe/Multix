@@ -11,7 +11,7 @@ interface AccordionProps {
 
 const MultisigAccordion = ({ multisig }: AccordionProps) => {
   return (
-    <AccordionMuiStyled>
+    <AccordionMuiStyled TransitionProps={{ timeout: { appear: 300, enter: 300, exit: 200 } }}>
       <AccordionSummary
         expandIcon={
           <HiOutlineChevronDown

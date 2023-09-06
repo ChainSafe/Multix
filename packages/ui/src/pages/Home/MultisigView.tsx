@@ -2,7 +2,7 @@ import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { Chip } from '@mui/material'
+import { Box, Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import Balance from '../../components/library/Balance'
 import { renderMultisigHeading } from '../multisigHelpers'
@@ -13,27 +13,31 @@ const MultisigView = () => {
 
   return (
     <MultisigViewWrapperStyled>
-      {selectedMultiProxy && (
-        <h3>
-          {selectedHasProxy
-            ? 'Controlled by'
-            : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
-        </h3>
-      )}
+      <HeaderStyled>
+        {selectedMultiProxy && (
+          <h3>
+            {selectedHasProxy
+              ? 'Controlled by'
+              : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
+          </h3>
+        )}
+        <BoxStyled>{!selectedIsWatched && !selectedHasProxy && <MultisigActionMenu />}</BoxStyled>
+      </HeaderStyled>
       <MultisigList>
         {selectedMultiProxy &&
           selectedMultiProxy.multisigs.map((multisig) => {
             return (
-              <MultisigWrapperStyled>
+              <MultisigWrapperStyled key={multisig.address}>
                 <AccountDisplayWrapperStyled>
                   <AccountDisplay
                     address={multisig.address || ''}
                     badge={AccountBadge.MULTI}
                     withBalance={false}
                   />
-                  {!selectedIsWatched && !selectedHasProxy && (
-                    <MultisigActionMenu withSettingsButton={false} />
-                  )}
+                  {/*{ TODO: implement multisig transactions  */}
+                  {/*{!selectedIsWatched && !selectedHasProxy && (*/}
+                  {/*  <MultisigActionMenu withSettingsButton={false} />*/}
+                  {/*)}*/}
                 </AccountDisplayWrapperStyled>
                 <List>
                   <ListElement>
@@ -54,8 +58,18 @@ const MultisigView = () => {
   )
 }
 
+const HeaderStyled = styled('header')`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const BoxStyled = styled(Box)`
+  display: flex;
+`
+
 const MultisigList = styled('div')`
-  & > :not(:first-child) {
+  & > :not(:first-of-type) {
     margin-top: 1rem;
   }
 `
@@ -85,7 +99,7 @@ const MultisigWrapperStyled = styled('div')`
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   padding: 1rem 0.75rem;
 
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-bottom: 0.5rem;
   }
 `
