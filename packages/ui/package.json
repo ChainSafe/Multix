@@ -36,6 +36,7 @@
     "@graphql-codegen/typescript-react-query": "^4.1.0",
     "@graphql-eslint/eslint-plugin": "^3.19.3",
     "@polkadot/typegen": "^10.9.1",
+    "@testing-library/cypress": "^9.0.0",
     "@types/node": "^20.3.3",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",

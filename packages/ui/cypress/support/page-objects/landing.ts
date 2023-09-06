@@ -1,3 +1,3 @@
 export const landingPage = {
-  watchAccountButton: () => cy.get('[data-cy=button-watch-an-address]')
+  watchAccountButton: () => cy.findByRole('button', { name: /Watch an address/i })
 }

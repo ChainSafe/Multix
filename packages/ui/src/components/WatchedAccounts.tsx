@@ -36,7 +36,7 @@ const WatchedAccounts = ({ className }: Props) => {
         })}
       </ListStyled>
       <TitleStyled>Watch new account...</TitleStyled>
-      <AccountSelectionWrapperStyled data-cy="watched-account-wrapper">
+      <AccountSelectionWrapperStyled>
         <AccountSelection
           className="accountDropdown"
           currentSelection={watchedAddresses}
