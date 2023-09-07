@@ -1,4 +1,4 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button } from '../library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -18,6 +18,9 @@ import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
+import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { formatBnBalance } from '../../utils/formatBnBalance'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -28,7 +31,7 @@ export interface SigningModalProps {
 
 const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModalProps) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { web3wallet } = useWalletConnect()
   const {
@@ -62,6 +65,32 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     fromAddress: originAddress,
     threshold
   })
+  const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
+    threshold,
+    signatories: selectedMultisig?.signatories,
+    call: multisigTx
+  })
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
+    min: multisigProposalNeededFunds,
+    address: selectedAccount?.address
+  })
+
+  useEffect(() => {
+    if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBnBalance(
+        multisigProposalNeededFunds,
+        chainInfo?.tokenDecimals,
+        { tokenSymbol: chainInfo?.tokenSymbol }
+      )
+
+      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
+      setErrorMessage(
+        `The "Signing with" account doesn't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
+      )
+    }
+  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
 
   useEffect(() => {
     selectMultiProxy(request.params.request.params.address)
@@ -244,7 +273,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
             <HashGridStyled>0x{callInfo?.call?.hash}</HashGridStyled>
           </Grid>
 
-          {!!callInfo?.call && !errorMessage && (
+          {!!callInfo?.call && (
             <>
               <Grid
                 item
@@ -271,19 +300,23 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               </Grid>
             </>
           )}
-          <Grid
-            item
-            xs={0}
-            md={1}
-          />
-          <Grid
-            item
-            xs={12}
-            md={11}
-            className="errorMessage"
-          >
-            {!!errorMessage && errorMessage}
-          </Grid>
+          {!!errorMessage && (
+            <>
+              <Grid
+                item
+                xs={0}
+                md={2}
+              />
+              <Grid
+                item
+                xs={12}
+                md={10}
+                className="errorMessage"
+              >
+                <Alert severity="error">{errorMessage}</Alert>
+              </Grid>
+            </>
+          )}
           <ButtonContainerStyled
             item
             xs={12}

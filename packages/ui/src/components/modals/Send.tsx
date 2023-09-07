@@ -351,7 +351,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                 md={10}
                 className="errorMessage"
               >
-                <Alert severity="warning">{easyOptionErrorMessage || errorMessage}</Alert>
+                <Alert severity="error">{easyOptionErrorMessage || errorMessage}</Alert>
               </Grid>
             </>
           )}
