@@ -5,9 +5,11 @@ import TextFieldStyled from './TextFieldStyled'
 import TextFieldLargeStyled from './TextFieldLargeStyled'
 import Select from './Select'
 import Autocomplete from './Autocomplete'
+import Balance from './Balance'
 
 export {
   Autocomplete,
+  Balance,
   Button,
   ButtonWithIcon,
   Link,
