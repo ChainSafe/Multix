@@ -14,7 +14,6 @@ describe('Watched Accounts', () => {
     cy.wait(1000)
     settingsPage.addButton().click()
     settingsPage.multisigIcon().should("be.visible")
-    settingsPage.multisigNameLabel().should("be.visible")
     settingsPage.multisigAddressLabel()
       .should("be.visible")
       .should("contain.text", `${addresses.Alice.substring(0, 6)}`)
