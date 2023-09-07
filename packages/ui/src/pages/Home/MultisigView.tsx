@@ -21,9 +21,13 @@ const MultisigView = () => {
               : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
           </h3>
         )}
-        <BoxStyled>
-          <MultisigActionMenu withSendButton={!selectedIsWatched} />
-        </BoxStyled>
+        {!selectedHasProxy && (
+          // only show the 3 dots button if we have a solo multisig
+          // and only show the send button if we are part of it
+          <BoxStyled>
+            <MultisigActionMenu withSendButton={!selectedIsWatched} />
+          </BoxStyled>
+        )}
       </HeaderStyled>
       <MultisigList>
         {selectedMultiProxy &&
