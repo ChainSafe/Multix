@@ -8,7 +8,6 @@ import { useModals } from '../../contexts/ModalsContext'
 
 interface MultisigActionMenuProps {
   withSendButton?: boolean
-  withSettingsButton?: boolean
 }
 
 const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {

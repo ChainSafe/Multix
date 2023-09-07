@@ -22,8 +22,8 @@ const MultisigView = () => {
           </h3>
         )}
         {!selectedHasProxy && (
-          // only show the 3 dots button if we have a solo multisig
-          // and only show the send button if we are part of it
+          // only show the buttons if we have a solo multisig
+          // and only show the send button if we are part of the multisig
           <BoxStyled>
             <MultisigActionMenu withSendButton={!selectedIsWatched} />
           </BoxStyled>
