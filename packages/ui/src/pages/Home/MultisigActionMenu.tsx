@@ -11,10 +11,7 @@ interface MultisigActionMenuProps {
   withSettingsButton?: boolean
 }
 
-const MultisigActionMenu = ({
-  withSendButton = true,
-  withSettingsButton = true
-}: MultisigActionMenuProps) => {
+const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched } = useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useModals()
 
@@ -50,7 +47,7 @@ const MultisigActionMenu = ({
           New Transaction
         </Button>
       )}
-      {withSettingsButton && <OptionsMenu options={options} />}
+      <OptionsMenu options={options} />
     </>
   )
 }

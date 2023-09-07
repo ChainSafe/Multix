@@ -21,7 +21,9 @@ const MultisigView = () => {
               : renderMultisigHeading(selectedMultiProxy.multisigs.length > 1)}
           </h3>
         )}
-        <BoxStyled>{!selectedIsWatched && !selectedHasProxy && <MultisigActionMenu />}</BoxStyled>
+        <BoxStyled>
+          <MultisigActionMenu withSendButton={!selectedIsWatched} />
+        </BoxStyled>
       </HeaderStyled>
       <MultisigList>
         {selectedMultiProxy &&
@@ -34,10 +36,6 @@ const MultisigView = () => {
                     badge={AccountBadge.MULTI}
                     withBalance={false}
                   />
-                  {/*{ TODO: implement multisig transactions  */}
-                  {/*{!selectedIsWatched && !selectedHasProxy && (*/}
-                  {/*  <MultisigActionMenu withSettingsButton={false} />*/}
-                  {/*)}*/}
                 </AccountDisplayWrapperStyled>
                 <List>
                   <ListElement>
