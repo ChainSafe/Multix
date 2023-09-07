@@ -234,9 +234,17 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     ) || []
 
   const selectMultiProxy = useCallback(
-    (newMulti: typeof selectedMultiProxy) => {
+    (newMulti: typeof selectedMultiProxy | string) => {
+      let _multi: MultiProxy | undefined
+
+      if (typeof newMulti === 'string') {
+        _multi = getMultiProxyByAddress(newMulti)
+      } else {
+        _multi = newMulti
+      }
+
       // for MultiProxy without a pure, we only support one multisig
-      const addressToUse = newMulti?.proxy || newMulti?.multisigs[0].address
+      const addressToUse = _multi?.proxy || _multi?.multisigs[0].address
 
       if (!addressToUse) {
         return

@@ -28,7 +28,8 @@
     "**/*.config.ts",
     "**/types-and-hooks.tsx",
     "**/codegen.ts",
-    "graphql.config.js"
+    "graphql.config.js",
+    "cypress"
   ],
   "exclude": ["src/interfaces/**/*"]
 }

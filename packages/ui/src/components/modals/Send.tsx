@@ -10,7 +10,6 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { sortAddresses } from '@polkadot/util-crypto'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
@@ -20,6 +19,7 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
+import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -67,60 +67,14 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   >()
   const [selectedEasyOption, setSelectedEasyOption] = useState(SEND_TOKEN_MENU)
-  const multisigTx = useMemo(() => {
-    if (!selectedMultisig?.signatories) {
-      console.error('selected multisig is undefined')
-      return
-    }
-
-    const otherSigners = sortAddresses(
-      selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address)
-    )
-
-    if (!threshold) {
-      return
-    }
-
-    if (!api) {
-      return
-    }
-
-    if (!selectedAccount || !selectedOrigin) {
-      return
-    }
-
-    if (!extrinsicToCall) {
-      return
-    }
-
-    let tx: SubmittableExtrinsic<'promise'>
-
-    try {
-      // the proxy is selected
-      if (isProxySelected) {
-        tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
-        // a multisig is selected
-      } else {
-        tx = extrinsicToCall
-      }
-
-      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, {
-        refTime: 0,
-        proofSize: 0
-      })
-    } catch (e) {
-      console.error('Error in multisigTx')
-      console.error(e)
-    }
-  }, [
-    api,
-    extrinsicToCall,
-    isProxySelected,
-    selectedAccount,
+  const multisigTx = useGetMultisigTx({
     selectedMultisig,
-    selectedOrigin,
+    extrinsicToCall,
+    senderAddress: selectedAccount?.address,
+    isProxy: isProxySelected,
+    fromAddress: selectedOrigin.address,
     threshold
-  ])
+  })
 
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,
@@ -329,6 +283,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                     multisigList[0]
                   }
                   label=""
+                  withBadge
                 />
               </Grid>
             </>
@@ -396,7 +351,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                 md={10}
                 className="errorMessage"
               >
-                <Alert severity="warning">{easyOptionErrorMessage || errorMessage}</Alert>
+                <Alert severity="error">{easyOptionErrorMessage || errorMessage}</Alert>
               </Grid>
             </>
           )}
