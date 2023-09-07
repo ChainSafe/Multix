@@ -8,12 +8,14 @@ describe('Watched Accounts', () => {
     cy.visit(localHost)
   })
 
-  it('can add an account to watch', () => {
+  it('can add an account to the watch list', () => {
     landingPage.watchAccountButton().click()
     settingsPage.watchAccountAccountInput().type(`${addresses.Alice}{enter}`)
-    //cy.wait(1000)
+    cy.wait(1000)
     settingsPage.addButton().click()
-    settingsPage.accountContainer()
+    settingsPage.multisigIcon().should("be.visible")
+    settingsPage.multisigNameLabel().should("be.visible")
+    settingsPage.multisigAddressLabel()
     .should("be.visible")
     .should("contain.text", `${addresses.Alice.substring(0,6)}`)
     })
