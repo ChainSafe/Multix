@@ -41,8 +41,7 @@ const SuccessCreation = ({ className }: Props) => {
   )
 }
 
-export default styled(SuccessCreation)(
-  ({ theme }) => `
+export default styled(SuccessCreation)`
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -51,12 +50,16 @@ export default styled(SuccessCreation)(
   .icon {
     animation: spin 10s linear infinite;
     @keyframes spin {
-                 0% { transform: rotate(-360deg); }
-                 100% { transform: rotate(0deg); }
-            }
-            
+      0% {
+        transform: rotate(-360deg);
+      }
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
     font-size: 10rem;
-    color: ${theme.custom.text.addressColorLightGray};
+    color: ${({ theme }) => theme.custom.text.addressColorLightGray};
     text-align: center;
   }
 
@@ -64,4 +67,3 @@ export default styled(SuccessCreation)(
     margin-left: 1rem;
   }
 `
-)

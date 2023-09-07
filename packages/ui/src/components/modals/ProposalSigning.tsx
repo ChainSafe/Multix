@@ -18,12 +18,12 @@ import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 
-interface Props {
+export interface SigningModalProps {
   onClose: () => void
   className?: string
   possibleSigners: string[]
   proposalData: AggregatedData
-  onSuccess: () => void
+  onSuccess?: () => void
 }
 
 const ProposalSigning = ({
@@ -32,7 +32,7 @@ const ProposalSigning = ({
   possibleSigners,
   proposalData,
   onSuccess
-}: Props) => {
+}: SigningModalProps) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)

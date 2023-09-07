@@ -20,6 +20,7 @@ import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 
 const SEND_TOKEN_MENU = 'Send tokens'
 const FROM_CALL_DATA_MENU = 'From call data'
@@ -66,63 +67,15 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [extrinsicToCall, setExtrinsicToCall] = useState<
     SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   >()
-  const { getSortAddress } = useGetSortAddress()
   const [selectedEasyOption, setSelectedEasyOption] = useState(SEND_TOKEN_MENU)
-  const multisigTx = useMemo(() => {
-    if (!selectedMultisig?.signatories) {
-      console.error('selected multisig is undefined')
-      return
-    }
-
-    const otherSigners = getSortAddress(
-      selectedMultisig.signatories.filter((signer) => signer !== selectedAccount?.address)
-    )
-
-    if (!threshold) {
-      return
-    }
-
-    if (!api) {
-      return
-    }
-
-    if (!selectedAccount || !selectedOrigin) {
-      return
-    }
-
-    if (!extrinsicToCall) {
-      return
-    }
-
-    let tx: SubmittableExtrinsic<'promise'>
-
-    try {
-      // the proxy is selected
-      if (isProxySelected) {
-        tx = api.tx.proxy.proxy(selectedOrigin.address, null, extrinsicToCall)
-        // a multisig is selected
-      } else {
-        tx = extrinsicToCall
-      }
-
-      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, {
-        refTime: 0,
-        proofSize: 0
-      })
-    } catch (e) {
-      console.error('Error in multisigTx')
-      console.error(e)
-    }
-  }, [
-    api,
-    extrinsicToCall,
-    getSortAddress,
-    isProxySelected,
-    selectedAccount,
+  const multisigTx = useGetMultisigTx({
     selectedMultisig,
-    selectedOrigin,
+    extrinsicToCall,
+    senderAddress: selectedAccount?.address,
+    isProxy: isProxySelected,
+    fromAddress: selectedOrigin.address,
     threshold
-  ])
+  })
 
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,
@@ -331,6 +284,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                     multisigList[0]
                   }
                   label=""
+                  withBadge
                 />
               </Grid>
             </>
@@ -398,7 +352,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
                 md={10}
                 className="errorMessage"
               >
-                <Alert severity="warning">{easyOptionErrorMessage || errorMessage}</Alert>
+                <Alert severity="error">{easyOptionErrorMessage || errorMessage}</Alert>
               </Grid>
             </>
           )}

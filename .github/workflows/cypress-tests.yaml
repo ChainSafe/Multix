@@ -1,0 +1,52 @@
+name: Cypress tests
+on:
+  pull_request:
+    paths:
+      - 'packages/ui/**/*'
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v3
+        id: yarn-build-cache
+        with:
+          path: |
+            **/node_modules
+            ~/.cache/Cypress
+            **/build
+          key: ${{ runner.os }}-node_modules-files-build-${{ hashFiles('./yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+      - name: Install and show git version
+        run: apt-get -y install git && git --version
+        id: git-install
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: packages/ui
+          install-command: yarn install
+          start: 'yarn start'
+          wait-on: 'http://localhost:3333'
+          # custom test command to run
+          command: yarn test:ci
+      # store the screenshots if the tests fail
+      - name: Store screenshots
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: packages/ui/cypress/screenshots
+      # store the videos if the tests fail
+      # - name: Store videos
+      #   uses: actions/upload-artifact@v1
+      #   if: failure()
+      #   with:
+      #     name: cypress-videos
+      #     path: packages/ui/cypress/videos
