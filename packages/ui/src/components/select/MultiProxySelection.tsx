@@ -10,7 +10,6 @@ import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
-import { useApi } from '../../contexts/ApiContext'
 
 interface Props {
   className?: string

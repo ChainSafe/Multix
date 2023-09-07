@@ -149,8 +149,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
             <Button
               variant="primary"
               onClick={onApprove}
-              // FIXME add this back
-              // disabled={!!errorMessage}
+              disabled={!!errorMessage}
             >
               Approve
             </Button>
