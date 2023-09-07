@@ -19,7 +19,6 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
-import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 
 const SEND_TOKEN_MENU = 'Send tokens'

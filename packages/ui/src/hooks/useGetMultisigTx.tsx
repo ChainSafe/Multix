@@ -70,7 +70,16 @@ export const useGetMultisigTx = ({
       console.error('Error in multisigTx')
       console.error(e)
     }
-  }, [selectedMultisig, threshold, api, senderAddress, fromAddress, extrinsicToCall, isProxy])
+  }, [
+    selectedMultisig,
+    getSortAddress,
+    threshold,
+    api,
+    senderAddress,
+    fromAddress,
+    extrinsicToCall,
+    isProxy
+  ])
 
   return multisigTx
 }
