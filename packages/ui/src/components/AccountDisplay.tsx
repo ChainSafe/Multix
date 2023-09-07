@@ -8,7 +8,6 @@ import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
-import { encodeAddress } from '@polkadot/util-crypto'
 import Balance from './library/Balance'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 
