@@ -5,11 +5,11 @@ import CallInfo from '../CallInfo'
 import { MdOutlineGesture as GestureIcon } from 'react-icons/md'
 import { HiOutlineQuestionMarkCircle as QuestionMarkIcon } from 'react-icons/hi2'
 import { AggregatedData } from './TransactionList'
-import { useCallback, useMemo, useState } from 'react'
-import ProposalSigningModal from '../modals/ProposalSigning'
+import { useCallback, useMemo } from 'react'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
 import TransactionProgress from './TransactionProgress'
+import { useModals } from '../../contexts/ModalsContext'
 
 interface Props {
   className?: string
@@ -30,18 +30,18 @@ const Transaction = ({
   onSuccess,
   threshold
 }: Props) => {
-  const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
+  const { onOpenSigningModal } = useModals()
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
   // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
 
-  const onClose = useCallback(() => {
-    setIsSigningModalOpen(false)
-  }, [])
-
   const onOpenModal = useCallback(() => {
-    setIsSigningModalOpen(true)
-  }, [])
+    onOpenSigningModal({
+      onSuccess,
+      possibleSigners,
+      proposalData: aggregatedData
+    })
+  }, [aggregatedData, onOpenSigningModal, onSuccess, possibleSigners])
 
   return (
     <Paper className={className}>
@@ -82,14 +82,6 @@ const Transaction = ({
           threshold={threshold}
         />
       </TransactionCallInfoBoxStyled>
-      {isSigningModalOpen && (
-        <ProposalSigningModal
-          possibleSigners={possibleSigners}
-          onClose={onClose}
-          proposalData={aggregatedData}
-          onSuccess={onSuccess}
-        />
-      )}
     </Paper>
   )
 }
