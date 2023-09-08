@@ -1,9 +1,9 @@
 export const settingsPage = {
   watchAccountAccountInput: () => cy.findByLabelText('Address'),
   addButton: () => cy.findByRole('button', { name: /add/i }),
-  multisigContainer: () => cy.findByRole('list'),
-  multisigIcon: () => cy.get('.identicon'),
-  multisigNameLabel: () => cy.findByText('.multisigName'),
-  multisigAddressLabel: () => cy.findByText('.multisigAddress'),
-  multisigRemoveButton: () => cy.findByRole('button', { name: /close/i })
+  accountContainer: () => cy.findByTestId("container-account-details"),
+  accountIcon: () => cy.findByText("identityIcon"),
+  accountgNameLabel: () => cy.findByText("multisigName"),
+  accountAddressLabel: () => cy.findByText("multisigAddress"),
+  accountRemoveButton: () => cy.findByRole("button", { name: /delete/i })
 }

@@ -39,6 +39,7 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
               <div
                 key={address}
                 className="selectedSignatory"
+                data-testid="container-account-details"
               >
                 <AccountDisplay address={address} />
                 <IconButton
