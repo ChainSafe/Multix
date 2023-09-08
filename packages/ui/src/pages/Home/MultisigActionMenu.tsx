@@ -46,7 +46,14 @@ const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) 
       })
 
     return opts
-  }, [selectedHasProxy, selectedIsWatched, setIsChangeMultiModalOpen, setIsEditModalOpen])
+  }, [
+    getSubscanAccountLink,
+    selectedHasProxy,
+    selectedIsWatched,
+    selectedMultiProxy,
+    setIsChangeMultiModalOpen,
+    setIsEditModalOpen
+  ])
 
   return (
     <>
