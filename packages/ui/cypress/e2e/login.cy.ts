@@ -15,13 +15,8 @@ describe('login-accounts', () => {
       cy.wrap(requests.length).should('eq', 1)
       // this request should be from the application Multix
       cy.wrap(requests[0].origin).should('eq', 'Multix')
-
-      // let's allow it
-      cy.enableAuth(
-        requests[0].id,
-        injectedAccounts.map(({ address }) => address)
-      )
-
+      // let's allow it for Alice
+      cy.enableAuth(requests[0].id, [Object.values(injectedAccounts)[0].address])
       // the ui should then move on to connecting to the rpcs
       cy.get('[data-cy="loader-rpc-connection"]').should('contain', 'Connecting to the node at')
     })
