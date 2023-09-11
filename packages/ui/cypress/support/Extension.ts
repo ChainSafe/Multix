@@ -33,7 +33,7 @@ export class Extension {
               resolve({
                 accounts: {
                   get: () => selectedAccounts,
-                  subscribe: (cb) => cb(selectedAccounts)
+                  subscribe: (cb: (accounts: InjectedAccount[]) => void) => cb(selectedAccounts)
                 } as unknown as InjectedAccounts,
                 signer: {
                   signPayload: (payload: any) => {
@@ -55,7 +55,7 @@ export class Extension {
     return this.authRequests
   }
 
-  enableAuth = (timestamp: number, accountAddresses?: string[]) => {
+  enableAuth = (timestamp: number, accountAddresses: string[]) => {
     this.authRequests[timestamp].resolve(accountAddresses)
   }
 
