@@ -2,6 +2,10 @@
 /// <reference types="cypress" />
 
 import '@testing-library/cypress/add-commands'
+import { AuthRequests, Extension } from './Extension'
+import { Injected } from '@polkadot/extension-inject/types'
+import { injectedAccounts } from '../fixtures/injectedAccounts'
+// import { enable, handleResponse, redirectIfPhishing } from '@polkadot/extension-base/page'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -39,3 +43,53 @@ import '@testing-library/cypress/add-commands'
 //     }
 //   }
 // }
+
+const extension = new Extension(injectedAccounts)
+
+Cypress.Commands.add('initExtension', () => {
+  cy.log('initExtension called')
+  cy.window().then((win) => {
+    // const extension = new Extension(injectedAccounts)
+    Object.defineProperty(win, 'injectedWeb3', {
+      get: () => extension.get()
+    })
+
+    console.log('win', win)
+  })
+  //   cy.on('window:before:load', (win) => {
+  //     const extension = new Extension()
+  //     // inject polkadot object in the global window
+  //     // Object.defineProperty(win, 'injectedWeb3', {
+  //     //   get: () => extension.get()
+  //     // })
+
+  //     Object.defineProperty(win, 'bla', {
+  //       get: () => {
+  //         return console.log('bla')
+  //       }
+  //     })
+  //   })
+})
+
+Cypress.Commands.add('getAuthRequests', () => {
+  return extension.getAuthRequests()
+})
+
+Cypress.Commands.add('enableAuth', (timestamp: number) => {
+  return extension.enableAuth(timestamp)
+})
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Login using Metamask to an instance of Files.
+       * @param {String} options.url - (default: "http://localhost:3000") - what url to visit.
+       * @example cy.web3Login()
+       */
+      initExtension: () => void
+      getAuthRequests: () => AuthRequests
+      enableAuth: (timestamp: number) => void
+    }
+  }
+}

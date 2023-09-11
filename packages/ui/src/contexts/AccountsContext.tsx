@@ -68,12 +68,15 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [])
 
   const getaccountList = useCallback(async (): Promise<void> => {
+    if (isAccountLoading) return
+
     setIsAccountLoading(true)
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
     web3AccountsSubscribe(
       (accountList) => {
+        console.log('Accountlist', accountList)
         if (accountList.length === 0) {
           setIsExtensionError(true)
           return

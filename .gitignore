@@ -122,3 +122,6 @@ builds
 !.yarn/sdks
 !.yarn/versions
 
+# cypress
+cypress/screenshots/*
+cypress/videos/*

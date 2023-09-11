@@ -46,7 +46,10 @@ const Header = ({ handleDrawerOpen }: Props) => {
           </MenyuWrapperStyled>
           <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
-              <ConnectButtonStyled onClick={allowConnectionToExtension}>
+              <ConnectButtonStyled
+                data-cy="button-menu-connect"
+                onClick={allowConnectionToExtension}
+              >
                 Connect
               </ConnectButtonStyled>
             )}
