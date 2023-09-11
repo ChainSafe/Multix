@@ -125,6 +125,7 @@ const AccountSelection = ({
         <Grid
           item
           xs={12}
+          data-cy="label-watch-account-error"
         >
           <AlertStyled severity="warning">{errorMessage}</AlertStyled>
         </Grid>
@@ -134,15 +135,17 @@ const AccountSelection = ({
         xs={12}
       >
         <BoxStyled className={className}>
-          <GenericAccountSelection
-            allowAnyAddressInput={true}
-            disabled={addressDisabled}
-            accountList={withPreselection ? dedupedSignatories : []}
-            onChange={onChange}
-            onInputChange={onInputChange}
-            value={selected}
-            label={label}
-          />
+          <span data-cy="input-account-address">
+            <GenericAccountSelection
+              allowAnyAddressInput={true}
+              disabled={addressDisabled}
+              accountList={withPreselection ? dedupedSignatories : []}
+              onChange={onChange}
+              onInputChange={onInputChange}
+              value={selected}
+              label={label}
+            />
+          </span>
           {withName && (
             <InputField
               label="Name"
@@ -150,6 +153,7 @@ const AccountSelection = ({
               disabled={!!extensionName || nameDisabled}
               value={extensionName || name || ''}
               onKeyDown={handleSpecialKeys}
+              data-cy="input-account-name"
             />
           )}
           {withAddButton && (
