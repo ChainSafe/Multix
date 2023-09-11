@@ -52,7 +52,6 @@ export class Extension {
   }
 
   getAuthRequests = () => {
-    console.log('ext', this.authRequests)
     return this.authRequests
   }
 
