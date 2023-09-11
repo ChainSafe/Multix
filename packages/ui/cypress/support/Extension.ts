@@ -19,12 +19,28 @@ export class Extension {
   getRequest = () => this.authRequests
 
   get = () => {
-    const timestamp = Date.now()
-
     return {
       'polkadot-js': {
         enable: new Promise<Injected>((resolve, reject) => {
-          this.authRequests[timestamp] = { resolve, reject }
+          const timestamp = Date.now()
+          console.log('got a request', timestamp)
+          const res = () => {
+            console.log('--> called REsolve')
+
+            resolve({
+              accounts: {
+                get: () => this.accounts,
+                subscribe: (cb) => cb(this.accounts)
+              } as unknown as InjectedAccounts,
+              signer: {
+                signPayload: (payload: any) => {
+                  return new Promise(() => {})
+                }
+              }
+            })
+          }
+
+          this.authRequests[timestamp] = { resolve: res, reject }
         }),
         version: '1'
       }
@@ -37,17 +53,20 @@ export class Extension {
   }
 
   enableAuth = (timestamp: number) => {
-    this.authRequests[timestamp].resolve({
-      accounts: {
-        get: () => this.accounts,
-        subscribe: (cb) => cb(this.accounts)
-      } as unknown as InjectedAccounts,
-      signer: {
-        signPayload: (payload: any) => {
-          return new Promise(() => {})
+    this.authRequests[timestamp].resolve = () => {
+      console.log('--> called REsolve')
+      return {
+        accounts: {
+          get: () => this.accounts,
+          subscribe: (cb) => cb(this.accounts)
+        } as unknown as InjectedAccounts,
+        signer: {
+          signPayload: (payload: any) => {
+            return new Promise(() => {})
+          }
         }
       }
-    })
+    }
   }
 
   rejectAuth = (timestamp: number, reason: string) => {

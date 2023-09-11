@@ -38,6 +38,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
+  const [isRequestedAccounts, setIsRequestedAccounts] = useState(false)
   const { chainInfo } = useApi()
 
   // update the current account list with the right network prefix
@@ -68,9 +69,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   }, [])
 
   const getaccountList = useCallback(async (): Promise<void> => {
-    if (isAccountLoading) return
-
     setIsAccountLoading(true)
+    setIsRequestedAccounts(true)
+
+    console.log('getting extensions')
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
@@ -95,43 +97,49 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     )
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
-  }, [chainInfo, getAccountByAddress, selectAccount])
+  }, [chainInfo?.ss58Format, getAccountByAddress, selectAccount])
 
-  useEffect(() => {
-    if (!isAllowedToConnectToExtension) return
+  // useEffect(() => {
+  //   if (!isAllowedToConnectToExtension) return
 
-    if (isAccountLoading) return
+  //   if (isAccountLoading) return
 
-    if (extensions?.length === 0 && !ownAccountList.length) {
-      if (!timeoutElapsed && isAllowedToConnectToExtension) {
-        // give it another chance #ugly hack
-        // race condition see https://github.com/polkadot-js/extension/issues/938
-        setTimeout(() => {
-          getaccountList()
-          setTimoutElapsed(true)
-        }, 500)
-      } else {
-        setIsExtensionError(true)
-      }
-    }
-  }, [
-    ownAccountList,
-    extensions,
-    getaccountList,
-    isAccountLoading,
-    isAllowedToConnectToExtension,
-    timeoutElapsed
-  ])
+  //   if (extensions?.length === 0 && !ownAccountList.length) {
+  //     if (!timeoutElapsed && isAllowedToConnectToExtension) {
+  //       // give it another chance #ugly hack
+  //       // race condition see https://github.com/polkadot-js/extension/issues/938
+  //       setTimeout(() => {
+  //         getaccountList()
+  //         setTimoutElapsed(true)
+  //       }, 500)
+  //     } else {
+  //       setIsExtensionError(true)
+  //     }
+  //   }
+  // }, [
+  //   ownAccountList,
+  //   extensions,
+  //   getaccountList,
+  //   isAccountLoading,
+  //   isAllowedToConnectToExtension,
+  //   timeoutElapsed
+  // ])
 
   useEffect(() => {
     // don't request if we have accounts
-    if (ownAccountList.length > 0) return
+    if (ownAccountList.length > 0 || isAccountLoading || isRequestedAccounts) return
 
     // don't request before explicitely asking
     if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension])
+  }, [
+    ownAccountList,
+    getaccountList,
+    isAllowedToConnectToExtension,
+    isAccountLoading,
+    isRequestedAccounts
+  ])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {

@@ -1,7 +1,7 @@
 import { Box, IconButton, Toolbar } from '@mui/material'
 import { Button, RouterLink } from '../library'
 import { styled } from '@mui/material/styles'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -20,7 +20,13 @@ const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const [isConnectClicked, setIsConnectClicked] = useState(false)
   useWalletConnectEventsManager()
+
+  const onAllowConnectionToExtension = useCallback(() => {
+    setIsConnectClicked(true)
+    allowConnectionToExtension()
+  }, [allowConnectionToExtension])
 
   return (
     <MuiAppBarStyled position="sticky">
@@ -48,7 +54,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
             {!isAllowedToConnectToExtension && (
               <ConnectButtonStyled
                 data-cy="button-menu-connect"
-                onClick={allowConnectionToExtension}
+                onClick={onAllowConnectionToExtension}
+                disabled={isConnectClicked}
               >
                 Connect
               </ConnectButtonStyled>
