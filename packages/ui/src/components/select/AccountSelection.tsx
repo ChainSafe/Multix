@@ -157,6 +157,7 @@ const AccountSelection = ({
               onClick={onAdd}
               variant="secondary"
               disabled={!selected || !!errorMessage}
+              data-cy="button-add-watched-account"
             >
               Add
             </ButtonStyled>

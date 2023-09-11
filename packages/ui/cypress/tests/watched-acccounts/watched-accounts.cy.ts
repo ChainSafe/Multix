@@ -5,7 +5,7 @@ import { settingsPage } from '../../support/page-objects/settingsPage'
 
 describe('Watched Accounts', () => {
 
-  it.only('can add an account to the watch list', () => {
+  it('can add an account to the watch list', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
     settingsPage.watchAccountAccountInput().type(`${addresses.Alice}{enter}`)
@@ -15,7 +15,7 @@ describe('Watched Accounts', () => {
     settingsPage.accountContainer().within(() => {
       settingsPage.accountIcon().should("be.visible")
       settingsPage.accountAddressLabel().should("be.visible")
-      settingsPage.accountRemoveButton().should("be.visible")
+      settingsPage.accountDeleteButton().should("be.visible")
     })
   })
 
@@ -27,7 +27,7 @@ describe('Watched Accounts', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
     settingsPage.accountContainer().within(() => {
-      settingsPage.accountRemoveButton().click()
+      settingsPage.accountDeleteButton().click()
       settingsPage.accountIcon().should("not.exist")
       settingsPage.accountAddressLabel().should("not.exist")
     })

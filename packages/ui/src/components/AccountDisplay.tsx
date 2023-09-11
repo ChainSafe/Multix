@@ -71,11 +71,13 @@ const AccountDisplay = ({
 
   return (
     <div className={className}>
-      <IdenticonBadge
-        badge={badge}
-        address={encodedAddress}
-        size={iconSize}
-      />
+      <span data-cy="icon-identity">
+        <IdenticonBadge
+          badge={badge}
+          address={encodedAddress}
+          size={iconSize}
+        />
+      </span>
       <BoxStyled>
         {withName && (
           <NameWrapperStyled>
@@ -88,10 +90,18 @@ const AccountDisplay = ({
             )}
             {!!sub && <span>{sub}</span>}
             {/*// Class name for external styling*/}
-            <NameStyled className="multisigName">{localName || mainDisplay}</NameStyled>
+            <NameStyled
+              className="multisigName"
+              data-cy="label-account-name"
+            >
+              {localName || mainDisplay}
+            </NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled className="multisigAddress">
+        <AddressStyled
+          className="multisigAddress"
+          data-cy="label-account-address"
+        >
           {getDisplayAddress(encodedAddress)}
         </AddressStyled>
         {withBalance && (
