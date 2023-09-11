@@ -23,8 +23,7 @@ describe('Watched Accounts', () => {
 
   it('can remove an account from the watch list', () => {
     cy.window().then((win) => {
-      win.localStorage.setItem('multix.watchedAccount',
-        '["0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"]')
+      win.localStorage.setItem('multix.watchedAccount', `["${addresses.AliceSS58}"]`)
     })
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
@@ -33,13 +32,13 @@ describe('Watched Accounts', () => {
       settingsPage.accountIcon().should("not.exist")
       settingsPage.accountAddressLabel().should("not.exist")
     })
+    settingsPage.accountContainer().should("have.length", 0)
   })
 
   it('can see error when attemping to add same address more than once', () => {
     // stub existing watched account
     cy.window().then((win) => {
-      win.localStorage.setItem('multix.watchedAccount',
-        '["0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"]')
+      win.localStorage.setItem('multix.watchedAccount', `["${addresses.AliceSS58}"]`)
     })
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
@@ -49,6 +48,7 @@ describe('Watched Accounts', () => {
     settingsPage.accountNameInput().type("{selectall}{del}Alice")
     settingsPage.addButton().click()
     settingsPage.errorLabel().should("be.visible")
+    settingsPage.accountContainer().should("have.length", 1)
   })
 
   it('can see error when attempting to add an invalid address', () => {
@@ -58,5 +58,6 @@ describe('Watched Accounts', () => {
     cy.wait(1000)
     settingsPage.addButton().click()
     settingsPage.errorLabel().should("be.visible")
+    settingsPage.accountContainer().should("have.length", 0)
   })
 })
