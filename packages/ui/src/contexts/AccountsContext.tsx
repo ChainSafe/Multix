@@ -38,7 +38,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
-  const [isRequestedAccounts, setIsRequestedAccounts] = useState(false)
   const { chainInfo } = useApi()
 
   // update the current account list with the right network prefix
@@ -70,14 +69,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   const getaccountList = useCallback(async (): Promise<void> => {
     setIsAccountLoading(true)
-    setIsRequestedAccounts(true)
 
     const extensions = await web3Enable(DAPP_NAME)
     setExtensions(extensions)
 
     web3AccountsSubscribe(
       (accountList) => {
-        console.log('Accountlist', accountList)
         if (accountList.length === 0) {
           setIsExtensionError(true)
           return
@@ -96,7 +93,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     )
       .finally(() => setIsAccountLoading(false))
       .catch(console.error)
-  }, [chainInfo?.ss58Format, getAccountByAddress, selectAccount])
+  }, [chainInfo, getAccountByAddress, selectAccount])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) return
@@ -126,19 +123,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (ownAccountList.length > 0 || isAccountLoading || isRequestedAccounts) return
+    if (ownAccountList.length > 0 || isAccountLoading) return
 
     // don't request before explicitely asking
     if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-  }, [
-    ownAccountList,
-    getaccountList,
-    isAllowedToConnectToExtension,
-    isAccountLoading,
-    isRequestedAccounts
-  ])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, isAccountLoading])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
