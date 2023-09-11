@@ -13,16 +13,10 @@ describe('watched-accounts', () => {
   })
 
   it('Allows watching accounts', () => {
-    cy.initExtension()
     // We use the `cy.get()` command to get all elements that match the selector.
     // Then, we use `should` to assert that there are two matched items,
     // which are the two default items.
-    // landingPage.watchAccountButton().click()
-    cy.get('[data-cy="button-menu-connect"]').click()
-    cy.getAuthRequests().then((re) => {
-      const request = Object.values(re)[0]
-      cy.wrap(request.origin).should('eq', 'Multix')
-      console.log('reqqq', origin)
-    })
+    landingPage.watchAccountButton().click()
+    settingsPage.watchAccountAccountInput().type(`${addresses.Alice}{enter}`)
   })
 })

@@ -85,6 +85,7 @@ const Home = ({ className }: HomeProps) => {
             marginBottom: '1rem'
           }
         }}
+        data-cy="loader-rpc-connection"
       >
         <CircularProgress />
         {isAccountLoading

@@ -3,9 +3,7 @@
 
 import '@testing-library/cypress/add-commands'
 import { AuthRequests, Extension } from './Extension'
-import { Injected } from '@polkadot/extension-inject/types'
-import { injectedAccounts } from '../fixtures/injectedAccounts'
-// import { enable, handleResponse, redirectIfPhishing } from '@polkadot/extension-base/page'
+import { InjectedAccount } from '@polkadot/extension-inject/types'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -44,52 +42,46 @@ import { injectedAccounts } from '../fixtures/injectedAccounts'
 //   }
 // }
 
-const extension = new Extension(injectedAccounts)
+const extension = new Extension()
 
-Cypress.Commands.add('initExtension', () => {
-  cy.log('initExtension called')
+Cypress.Commands.add('initExtension', (accounts: InjectedAccount[]) => {
+  cy.log('Initializing extension')
   cy.window().then((win) => {
-    // const extension = new Extension(injectedAccounts)
     Object.defineProperty(win, 'injectedWeb3', {
-      get: () => extension.get()
+      get: () => extension.init(accounts)
     })
-
-    console.log('win', win)
   })
-  //   cy.on('window:before:load', (win) => {
-  //     const extension = new Extension()
-  //     // inject polkadot object in the global window
-  //     // Object.defineProperty(win, 'injectedWeb3', {
-  //     //   get: () => extension.get()
-  //     // })
-
-  //     Object.defineProperty(win, 'bla', {
-  //       get: () => {
-  //         return console.log('bla')
-  //       }
-  //     })
-  //   })
 })
 
 Cypress.Commands.add('getAuthRequests', () => {
   return cy.wrap(extension.getAuthRequests())
 })
 
-Cypress.Commands.add('enableAuth', (timestamp: number) => {
-  return cy.wrap(extension.enableAuth(timestamp))
+Cypress.Commands.add('enableAuth', (id: number, accountAddresses: string[]) => {
+  return extension.enableAuth(id, accountAddresses)
 })
 
 declare global {
   namespace Cypress {
     interface Chainable {
       /**
-       * Login using Metamask to an instance of Files.
-       * @param {String} options.url - (default: "http://localhost:3000") - what url to visit.
-       * @example cy.web3Login()
+       * Initialized the Polkadot extension.
+       * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
+       * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
-      initExtension: () => void
+      initExtension: (accounts: InjectedAccount[]) => void
+      /**
+       * Read the authentication request queue.
+       * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
+       */
       getAuthRequests: () => Chainable<AuthRequests>
-      enableAuth: (timestamp: number) => void
+      /**
+       * Authorize a specific request
+       * @param {number} timestamp - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {string[]} accountAddresses - the account addresses to share with the applications. These addresses must be part of the ones shared in the `initExtension`
+       * @example cy.enableAuth(1694443839903, ["7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"])
+       */
+      enableAuth: (id: number, accountAddresses: string[]) => void
     }
   }
 }

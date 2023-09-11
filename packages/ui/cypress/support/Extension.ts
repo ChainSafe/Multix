@@ -1,10 +1,10 @@
 import { Injected, InjectedAccount, InjectedAccounts } from '@polkadot/extension-inject/types'
-import { timestamp } from 'rxjs'
 
 export interface AuthRequests {
-  [idex: number]: {
+  [index: number]: {
+    id: number
     origin: string
-    resolve: (value: Injected) => void
+    resolve: (accountAddresses: string[]) => void
     reject: (reason?: any) => void
   }
 }
@@ -14,29 +14,26 @@ export type EnableRequest = number
 export class Extension {
   authRequests: AuthRequests = {}
   accounts: InjectedAccount[] = []
-  enableRequests: EnableRequest[] = []
-
-  constructor(accounts: InjectedAccount[]) {
-    this.accounts = accounts
-  }
 
   getRequest = () => this.authRequests
 
-  get = () => {
+  init = (accounts: InjectedAccount[]) => {
+    this.accounts = accounts
+
     return {
       'polkadot-js': {
         enable: (origin: string) => {
-          console.log('got a request from', origin, timestamp)
-
           return new Promise<Injected>((resolve, reject) => {
             const timestamp = Date.now()
-            const res = () => {
-              console.log('--> called REsolve')
+            const res = (accountAddresses: string[]) => {
+              const selectedAccounts = this.accounts.filter(({ address }) =>
+                accountAddresses.includes(address)
+              )
 
               resolve({
                 accounts: {
-                  get: () => this.accounts,
-                  subscribe: (cb) => cb(this.accounts)
+                  get: () => selectedAccounts,
+                  subscribe: (cb) => cb(selectedAccounts)
                 } as unknown as InjectedAccounts,
                 signer: {
                   signPayload: (payload: any) => {
@@ -46,7 +43,7 @@ export class Extension {
               })
             }
 
-            this.authRequests[timestamp] = { origin, resolve: res, reject }
+            this.authRequests[timestamp] = { id: timestamp, origin, resolve: res, reject }
           })
         },
         version: '1'
@@ -59,21 +56,8 @@ export class Extension {
     return this.authRequests
   }
 
-  enableAuth = (timestamp: number) => {
-    this.authRequests[timestamp].resolve = () => {
-      console.log('--> called REsolve')
-      return {
-        accounts: {
-          get: () => this.accounts,
-          subscribe: (cb) => cb(this.accounts)
-        } as unknown as InjectedAccounts,
-        signer: {
-          signPayload: (payload: any) => {
-            return new Promise(() => {})
-          }
-        }
-      }
-    }
+  enableAuth = (timestamp: number, accountAddresses?: string[]) => {
+    this.authRequests[timestamp].resolve(accountAddresses)
   }
 
   rejectAuth = (timestamp: number, reason: string) => {
