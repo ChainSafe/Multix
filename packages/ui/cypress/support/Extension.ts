@@ -2,7 +2,11 @@ import { Injected, InjectedAccount, InjectedAccounts } from '@polkadot/extension
 import { timestamp } from 'rxjs'
 
 export interface AuthRequests {
-  [idex: number]: { resolve: (value: Injected) => void; reject: (reason?: any) => void }
+  [idex: number]: {
+    origin: string
+    resolve: (value: Injected) => void
+    reject: (reason?: any) => void
+  }
 }
 
 export type EnableRequest = number
@@ -21,27 +25,30 @@ export class Extension {
   get = () => {
     return {
       'polkadot-js': {
-        enable: new Promise<Injected>((resolve, reject) => {
-          const timestamp = Date.now()
-          console.log('got a request', timestamp)
-          const res = () => {
-            console.log('--> called REsolve')
+        enable: (origin: string) => {
+          console.log('got a request from', origin, timestamp)
 
-            resolve({
-              accounts: {
-                get: () => this.accounts,
-                subscribe: (cb) => cb(this.accounts)
-              } as unknown as InjectedAccounts,
-              signer: {
-                signPayload: (payload: any) => {
-                  return new Promise(() => {})
+          return new Promise<Injected>((resolve, reject) => {
+            const timestamp = Date.now()
+            const res = () => {
+              console.log('--> called REsolve')
+
+              resolve({
+                accounts: {
+                  get: () => this.accounts,
+                  subscribe: (cb) => cb(this.accounts)
+                } as unknown as InjectedAccounts,
+                signer: {
+                  signPayload: (payload: any) => {
+                    return new Promise(() => {})
+                  }
                 }
-              }
-            })
-          }
+              })
+            }
 
-          this.authRequests[timestamp] = { resolve: res, reject }
-        }),
+            this.authRequests[timestamp] = { origin, resolve: res, reject }
+          })
+        },
         version: '1'
       }
     }

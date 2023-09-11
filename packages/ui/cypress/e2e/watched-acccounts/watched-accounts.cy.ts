@@ -19,8 +19,10 @@ describe('watched-accounts', () => {
     // which are the two default items.
     // landingPage.watchAccountButton().click()
     cy.get('[data-cy="button-menu-connect"]').click()
-    // settingsPage.watchAccountAccountInput().type(`${addresses.Alice}{enter}`)
-    const reqs = cy.getAuthRequests()
-    console.log('reqqq', reqs)
+    cy.getAuthRequests().then((re) => {
+      const request = Object.values(re)[0]
+      cy.wrap(request.origin).should('eq', 'Multix')
+      console.log('reqqq', origin)
+    })
   })
 })

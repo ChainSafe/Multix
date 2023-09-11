@@ -72,11 +72,11 @@ Cypress.Commands.add('initExtension', () => {
 })
 
 Cypress.Commands.add('getAuthRequests', () => {
-  return extension.getAuthRequests()
+  return cy.wrap(extension.getAuthRequests())
 })
 
 Cypress.Commands.add('enableAuth', (timestamp: number) => {
-  return extension.enableAuth(timestamp)
+  return cy.wrap(extension.enableAuth(timestamp))
 })
 
 declare global {
@@ -88,7 +88,7 @@ declare global {
        * @example cy.web3Login()
        */
       initExtension: () => void
-      getAuthRequests: () => AuthRequests
+      getAuthRequests: () => Chainable<AuthRequests>
       enableAuth: (timestamp: number) => void
     }
   }
