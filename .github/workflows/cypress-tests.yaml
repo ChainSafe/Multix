@@ -43,7 +43,7 @@ jobs:
         with:
           name: cypress-screenshots
           path: packages/ui/cypress/screenshots
-      store the videos if the tests fail
+      # store the videos if the tests fail
       - name: Store videos
         uses: actions/upload-artifact@v1
         if: failure()
