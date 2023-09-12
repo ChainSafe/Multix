@@ -73,6 +73,26 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
+  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading)
+    return (
+      <CenterStyled>
+        <h3 data-cy="text-no-account-found">
+          No account found. Please connect at least one in a wallet extension. More info at{' '}
+          <Linkstyled
+            href="https://wiki.polkadot.network/docs/wallets"
+            target="_blank"
+            rel="noreferrer"
+          >
+            wiki.polkadot.network
+            <LaunchIcon
+              className="launchIcon"
+              size={20}
+            />
+          </Linkstyled>
+        </h3>
+      </CenterStyled>
+    )
+
   if (!api || isAccountLoading) {
     return (
       <Box
@@ -94,26 +114,6 @@ const Home = ({ className }: HomeProps) => {
       </Box>
     )
   }
-
-  if (isExtensionError && watchedAddresses.length === 0)
-    return (
-      <CenterStyled>
-        <h3 data-cy="text-no-account-found">
-          No account found. Please connect at least one in a wallet extension. More info at{' '}
-          <Linkstyled
-            href="https://wiki.polkadot.network/docs/wallets"
-            target="_blank"
-            rel="noreferrer"
-          >
-            wiki.polkadot.network
-            <LaunchIcon
-              className="launchIcon"
-              size={20}
-            />
-          </Linkstyled>
-        </h3>
-      </CenterStyled>
-    )
 
   if (isLoading) {
     return (
