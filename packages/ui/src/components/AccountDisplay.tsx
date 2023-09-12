@@ -71,13 +71,11 @@ const AccountDisplay = ({
 
   return (
     <div className={className}>
-      <span data-cy="icon-identity">
-        <IdenticonBadge
-          badge={badge}
-          address={encodedAddress}
-          size={iconSize}
-        />
-      </span>
+      <IdenticonBadge
+        badge={badge}
+        address={encodedAddress}
+        size={iconSize}
+      />
       <BoxStyled>
         {withName && (
           <NameWrapperStyled>

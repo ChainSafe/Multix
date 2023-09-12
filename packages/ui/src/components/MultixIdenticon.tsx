@@ -33,7 +33,7 @@ const MultixIdenticon = ({
       placement={DEFAULT_PLACEMENT}
       leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
     >
-      <TooltipIconStyled>
+      <TooltipIconStyled data-cy="icon-identicon">
         <Identicon
           onCopy={handleTooltipOpen}
           value={value}

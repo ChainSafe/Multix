@@ -135,17 +135,15 @@ const AccountSelection = ({
         xs={12}
       >
         <BoxStyled className={className}>
-          <span data-cy="input-account-address">
-            <GenericAccountSelection
-              allowAnyAddressInput={true}
-              disabled={addressDisabled}
-              accountList={withPreselection ? dedupedSignatories : []}
-              onChange={onChange}
-              onInputChange={onInputChange}
-              value={selected}
-              label={label}
-            />
-          </span>
+          <GenericAccountSelection
+            allowAnyAddressInput={true}
+            disabled={addressDisabled}
+            accountList={withPreselection ? dedupedSignatories : []}
+            onChange={onChange}
+            onInputChange={onInputChange}
+            value={selected}
+            label={label}
+          />
           {withName && (
             <InputField
               label="Name"
