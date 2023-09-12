@@ -7,9 +7,6 @@ describe('Watched Accounts', () => {
   it('can add an account to the watch list', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
-    settingsPage.accountAddressInput().click()
-    // autocomplete on the input seems to affect reliability so we wait a bit
-    cy.wait(1000)
     settingsPage.accountAddressInput().type(`${addresses.Alice}{enter}`)
     settingsPage.accountNameInput().type('Alice')
     settingsPage.addButton().click()
@@ -42,7 +39,6 @@ describe('Watched Accounts', () => {
     })
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
-    cy.wait(500)
     // attempt to add the same account again
     settingsPage.accountAddressInput().type(`${addresses.Alice}{enter}`)
     settingsPage.accountNameInput().type('{selectall}{del}Alice')
@@ -54,7 +50,6 @@ describe('Watched Accounts', () => {
   it('can see error when attempting to add an invalid address', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
-    cy.wait(500)
     settingsPage.accountAddressInput().type('123{enter}')
     settingsPage.addButton().click()
     settingsPage.errorLabel().should('be.visible')

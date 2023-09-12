@@ -111,10 +111,8 @@ const AccountSelection = ({
     ) => {
       setErrorMessage('')
       setName('')
-
       const value = getOptionLabel(val as string)
-      isValidAddress(value)
-      setSelected(value && isValidAddress(value) ? { address: value } : undefined)
+      setSelected(value ? { address: value } : undefined)
     },
     []
   )
