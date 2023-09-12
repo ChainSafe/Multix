@@ -8,10 +8,10 @@ describe('Watched Accounts', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
     settingsPage.accountAddressInput().click()
-    cy.wait(200)
-    settingsPage.accountAddressInput().type(`${addresses.Alice}{enter}`)
     // autocomplete on the input seems to affect reliability so we wait a bit
-    settingsPage.accountNameInput().type('{selectall}{del}Alice')
+    cy.wait(1000)
+    settingsPage.accountAddressInput().type(`${addresses.Alice}{enter}`)
+    settingsPage.accountNameInput().type('Alice')
     settingsPage.addButton().click()
     settingsPage.accountContainer().within(() => {
       settingsPage.accountIcon().should('be.visible')
