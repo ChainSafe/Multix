@@ -7,7 +7,8 @@ describe('Watched Accounts', () => {
   it('can add an account to the watch list', () => {
     cy.visit(localHost)
     landingPage.watchAccountButton().click()
-    cy.wait(500)
+    settingsPage.accountAddressInput().click()
+    cy.wait(200)
     settingsPage.accountAddressInput().type(`${addresses.Alice}{enter}`)
     // autocomplete on the input seems to affect reliability so we wait a bit
     settingsPage.accountNameInput().type('{selectall}{del}Alice')
