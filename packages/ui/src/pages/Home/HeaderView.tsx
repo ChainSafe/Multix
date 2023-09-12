@@ -2,20 +2,21 @@ import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { useGetBalance } from '../../hooks/useGetBalance'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { ButtonWithIcon } from '../../components/library'
+import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
 import { useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 
-const PureProxyHeaderView = () => {
+const HeaderView = () => {
   const navigate = useNavigate()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
-  const { balanceFormatted: pureProxyBalance } = useGetBalance({
-    address: selectedMultiProxy?.proxy || ''
-  })
 
-  if (!selectedHasProxy) return null
+  const selectedAddress = useMemo((): string => {
+    return String(
+      selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
+    )
+  }, [selectedHasProxy, selectedMultiProxy])
 
   return (
     <PureProxyWrapper>
@@ -31,12 +32,14 @@ const PureProxyHeaderView = () => {
       <PureHeaderStyled>
         <AccountDisplayStyled
           iconSize={'large'}
-          address={selectedMultiProxy?.proxy || ''}
-          badge={AccountBadge.PURE}
+          address={selectedAddress}
+          badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
         />
         <BalanceStyled>
           <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-          <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
+          <BalanceAmountStyled>
+            <Balance address={selectedAddress} />
+          </BalanceAmountStyled>
         </BalanceStyled>
         <BoxStyled>
           <MultisigActionMenu withSendButton={!selectedIsWatched} />
@@ -162,4 +165,4 @@ const BoxStyled = styled('div')`
   padding-left: 1rem;
 `
 
-export default PureProxyHeaderView
+export default HeaderView

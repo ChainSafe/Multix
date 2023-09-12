@@ -12,7 +12,7 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
-import PureProxyHeaderView from './PureProxyHeaderView'
+import HeaderView from './HeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
@@ -156,7 +156,7 @@ const Home = ({ className }: HomeProps) => {
         alignItems="center"
         xs={12}
       >
-        {selectedMultiProxy && <PureProxyHeaderView />}
+        <HeaderView />
       </Grid>
       <Grid
         item
