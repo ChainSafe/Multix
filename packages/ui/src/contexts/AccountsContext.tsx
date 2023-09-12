@@ -91,8 +91,11 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       },
       { ss58Format: chainInfo?.ss58Format }
     )
+      .catch((error) => {
+        setIsExtensionError(true)
+        console.error(error)
+      })
       .finally(() => setIsAccountLoading(false))
-      .catch(console.error)
   }, [chainInfo, getAccountByAddress, selectAccount])
 
   useEffect(() => {

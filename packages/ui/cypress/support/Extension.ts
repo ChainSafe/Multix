@@ -5,7 +5,7 @@ export interface AuthRequests {
     id: number
     origin: string
     resolve: (accountAddresses: string[]) => void
-    reject: (reason?: any) => void
+    reject: (reason: string) => void
   }
 }
 
@@ -43,7 +43,9 @@ export class Extension {
               })
             }
 
-            this.authRequests[timestamp] = { id: timestamp, origin, resolve: res, reject }
+            const rej = (reason: string) => reject(new Error(reason))
+
+            this.authRequests[timestamp] = { id: timestamp, origin, resolve: res, reject: rej }
           })
         },
         version: '1'
@@ -55,11 +57,11 @@ export class Extension {
     return this.authRequests
   }
 
-  enableAuth = (timestamp: number, accountAddresses: string[]) => {
-    this.authRequests[timestamp].resolve(accountAddresses)
+  enableAuth = (id: number, accountAddresses: string[]) => {
+    this.authRequests[id].resolve(accountAddresses)
   }
 
-  rejectAuth = (timestamp: number, reason: string) => {
-    this.authRequests[timestamp].reject(reason)
+  rejectAuth = (id: number, reason: string) => {
+    this.authRequests[id].reject(reason)
   }
 }
