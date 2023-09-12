@@ -1,7 +1,7 @@
 import { injectedAccounts } from '../fixtures/injectedAccounts'
 import { localHost } from '../fixtures/landingData'
 
-describe('login-accounts', () => {
+describe('Connect Account', () => {
   beforeEach(() => {
     cy.visit(localHost)
   })
@@ -18,7 +18,7 @@ describe('login-accounts', () => {
       // let's allow it for Alice
       cy.rejectAuth(requests[0].id, 'Cancelled')
       // the ui should then move on to connecting to the rpcs
-      cy.get('[data-cy="loader-rpc-connection"]').should('contain', 'Connecting to the node at')
+      cy.get('[data-cy="text-no-account-found"]').should('contain', 'No account found')
     })
   })
 

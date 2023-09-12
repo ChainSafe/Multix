@@ -39,6 +39,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
   const { chainInfo } = useApi()
+  console.log('isAccountLoading', isAccountLoading)
+  console.log('isExtensionError', isExtensionError)
 
   // update the current account list with the right network prefix
   // this will run for every network change
@@ -70,8 +72,11 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const getaccountList = useCallback(async (): Promise<void> => {
     setIsAccountLoading(true)
 
-    const extensions = await web3Enable(DAPP_NAME)
-    setExtensions(extensions)
+    web3Enable(DAPP_NAME)
+      .then((ext) => {
+        setExtensions(ext)
+      })
+      .catch(console.error)
 
     web3AccountsSubscribe(
       (accountList) => {
@@ -90,12 +95,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         }
       },
       { ss58Format: chainInfo?.ss58Format }
-    )
-      .catch((error) => {
-        setIsExtensionError(true)
-        console.error(error)
-      })
-      .finally(() => setIsAccountLoading(false))
+    ).catch((error) => {
+      setIsExtensionError(true)
+      console.error(error)
+    })
+
+    setIsAccountLoading(false)
   }, [chainInfo, getAccountByAddress, selectAccount])
 
   useEffect(() => {

@@ -98,7 +98,7 @@ const Home = ({ className }: HomeProps) => {
   if (isExtensionError && watchedAddresses.length === 0)
     return (
       <CenterStyled>
-        <h3>
+        <h3 data-cy="text-no-account-found">
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Linkstyled
             href="https://wiki.polkadot.network/docs/wallets"

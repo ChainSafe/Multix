@@ -17,7 +17,13 @@ export class Extension {
 
   getRequest = () => this.authRequests
 
+  reset = () => {
+    this.authRequests = {}
+    this.accounts = []
+  }
+
   init = (accounts: InjectedAccount[]) => {
+    this.reset()
     this.accounts = accounts
 
     return {
