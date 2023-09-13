@@ -15,7 +15,7 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import PureProxyHeaderView from './PureProxyHeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
-import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
+// import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 
@@ -67,7 +67,12 @@ const Home = ({ className }: HomeProps) => {
         <ConnectButtonWrapperStyled>
           <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
           or
-          <Button onClick={() => navigate('/settings')}>Watch an address</Button>
+          <Button
+            onClick={() => navigate('/settings')}
+            data-cy="button-watch-address"
+          >
+            Watch an address
+          </Button>
         </ConnectButtonWrapperStyled>
       </CenterStyled>
     )
@@ -150,7 +155,7 @@ const Home = ({ className }: HomeProps) => {
       {showNewMultisigAlert && multiProxyList.length > 0 && showNewMultisigAlert && (
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
-      <CurrentReferendumBanner />
+      {/* <CurrentReferendumBanner /> */}
       <Grid
         item
         alignItems="center"

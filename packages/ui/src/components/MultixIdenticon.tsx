@@ -28,7 +28,7 @@ const MultixIdenticon = ({ value, size = ICON_SIZE_MEDIUM, className }: Props) =
       placement={DEFAULT_PLACEMENT}
       leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
     >
-      <TooltipIconStyled>
+      <TooltipIconStyled data-cy="icon-identicon">
         <Identicon
           onCopy={handleTooltipOpen}
           value={value}
