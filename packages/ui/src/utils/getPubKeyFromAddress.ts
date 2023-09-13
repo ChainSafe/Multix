@@ -5,7 +5,7 @@ import { HexString } from '../types'
 const decode = (address: string) => {
   // if it's an ethereum address pass just return it
   if (address.startsWith('0x') && address.length === 42) {
-    return address
+    return address.toLowerCase()
   }
 
   try {
