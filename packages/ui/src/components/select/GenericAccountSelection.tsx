@@ -165,6 +165,7 @@ const GenericAccountSelection = ({
 
   const getRenderInput = (params: AutocompleteRenderInputParams) => (
     <TextFieldStyled
+      data-cy="input-account-address"
       {...params}
       inputRef={inputRef}
       label={label}
