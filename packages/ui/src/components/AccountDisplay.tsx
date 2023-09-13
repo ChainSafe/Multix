@@ -88,10 +88,18 @@ const AccountDisplay = ({
             )}
             {!!sub && <span>{sub}</span>}
             {/*// Class name for external styling*/}
-            <NameStyled className="multisigName">{localName || mainDisplay}</NameStyled>
+            <NameStyled
+              className="multisigName"
+              data-cy="label-account-name"
+            >
+              {localName || mainDisplay}
+            </NameStyled>
           </NameWrapperStyled>
         )}
-        <AddressStyled className="multisigAddress">
+        <AddressStyled
+          className="multisigAddress"
+          data-cy="label-account-address"
+        >
           {getDisplayAddress(encodedAddress)}
         </AddressStyled>
         {withBalance && (
