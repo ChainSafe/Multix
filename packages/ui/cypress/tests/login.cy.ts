@@ -1,14 +1,15 @@
 import { injectedAccounts } from '../fixtures/injectedAccounts'
-import { localHost } from '../fixtures/landingData'
+import { landingPageUrl } from '../fixtures/landingData'
+import { landingPage } from '../support/page-objects/landingPage'
 
 describe('Connect Account', () => {
   beforeEach(() => {
-    cy.visit(localHost)
+    cy.visit(landingPageUrl)
   })
 
   it('Reject connection', () => {
     cy.initExtension(injectedAccounts)
-    cy.get('[data-cy="button-menu-connect"]').click()
+    landingPage.connectButton().click()
     cy.getAuthRequests().then((re) => {
       const requests = Object.values(re)
       // we should have 1 connection request to the extension
@@ -24,7 +25,7 @@ describe('Connect Account', () => {
 
   it('Connects with Alice', () => {
     cy.initExtension(injectedAccounts)
-    cy.get('[data-cy="button-menu-connect"]').click()
+    landingPage.connectButton().click()
     cy.getAuthRequests().then((re) => {
       const requests = Object.values(re)
       // we should have 1 connection request to the extension
