@@ -156,8 +156,11 @@ const MultisigCreation = ({ className }: Props) => {
     call: withProxy ? batchCall : remarkCall
   })
   const neededBalance = useMemo(
-    () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
-    [multisigProposalNeededFunds, pureProxyCreationNeededFunds]
+    () =>
+      withProxy
+        ? pureProxyCreationNeededFunds.add(multisigProposalNeededFunds)
+        : multisigProposalNeededFunds,
+    [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
