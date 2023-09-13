@@ -111,10 +111,8 @@ const AccountSelection = ({
     ) => {
       setErrorMessage('')
       setName('')
-
       const value = getOptionLabel(val as string)
-      isValidAddress(value)
-      setSelected(value && isValidAddress(value) ? { address: value } : undefined)
+      setSelected(value ? { address: value } : undefined)
     },
     []
   )
@@ -125,6 +123,7 @@ const AccountSelection = ({
         <Grid
           item
           xs={12}
+          data-cy="label-watch-account-error"
         >
           <AlertStyled severity="warning">{errorMessage}</AlertStyled>
         </Grid>
@@ -150,6 +149,7 @@ const AccountSelection = ({
               disabled={!!extensionName || nameDisabled}
               value={extensionName || name || ''}
               onKeyDown={handleSpecialKeys}
+              data-cy="input-account-name"
             />
           )}
           {withAddButton && (
@@ -157,6 +157,7 @@ const AccountSelection = ({
               onClick={onAdd}
               variant="secondary"
               disabled={!selected || !!errorMessage}
+              data-cy="button-add-watched-account"
             >
               Add
             </ButtonStyled>

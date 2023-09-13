@@ -32,12 +32,14 @@ const WatchedAccounts = ({ className }: Props) => {
                 <div
                   key={address}
                   className="selectedSignatory"
+                  data-cy="container-account-details"
                 >
                   <AccountDisplay address={address} />
                   <IconButton
                     className="deleteButton"
                     aria-label="delete"
                     onClick={removeItem}
+                    data-cy="button-delete-watched-account"
                   >
                     <HiOutlineTrash />
                   </IconButton>
