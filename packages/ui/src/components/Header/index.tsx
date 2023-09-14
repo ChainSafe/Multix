@@ -19,7 +19,8 @@ interface Props {
 const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
-  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { isAllowedToConnectToExtension, allowConnectionToExtension, isAccountLoading } =
+    useAccounts()
   useWalletConnectEventsManager()
 
   return (
@@ -46,7 +47,11 @@ const Header = ({ handleDrawerOpen }: Props) => {
           </MenyuWrapperStyled>
           <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
-              <ConnectButtonStyled onClick={allowConnectionToExtension}>
+              <ConnectButtonStyled
+                data-cy="button-menu-connect"
+                onClick={allowConnectionToExtension}
+                disabled={isAccountLoading}
+              >
                 Connect
               </ConnectButtonStyled>
             )}

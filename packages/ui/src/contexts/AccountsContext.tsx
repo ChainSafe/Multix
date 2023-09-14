@@ -70,8 +70,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const getaccountList = useCallback(
     async (isEthereum: boolean): Promise<void> => {
       setIsAccountLoading(true)
-      const extensions = await web3Enable(DAPP_NAME)
-      setExtensions(extensions)
+
+      web3Enable(DAPP_NAME)
+        .then((ext) => {
+          setExtensions(ext)
+        })
+        .catch(console.error)
 
       web3AccountsSubscribe(
         (accountList) => {
@@ -102,9 +106,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
           ss58Format: chainInfo?.ss58Format,
           accountType: isEthereum ? ['ethereum'] : undefined
         }
-      )
-        .finally(() => setIsAccountLoading(false))
-        .catch(console.error)
+      ).catch((error) => {
+        setIsExtensionError(true)
+        console.error(error)
+      })
+
+      setIsAccountLoading(false)
     },
     [chainInfo, getAccountByAddress, selectAccount]
   )
@@ -138,13 +145,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (ownAccountList.length > 0) return
+    if (ownAccountList.length > 0 || isAccountLoading) return
 
     // don't request before explicitely asking
     if (isAllowedToConnectToExtension && !!chainInfo) {
       getaccountList(chainInfo.isEthereum)
     }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, chainInfo])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, isAccountLoading, chainInfo])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
