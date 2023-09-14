@@ -39,8 +39,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
   const [timeoutElapsed, setTimoutElapsed] = useState(false)
   const { chainInfo } = useApi()
-  console.log('isAccountLoading', isAccountLoading)
-  console.log('isExtensionError', isExtensionError)
 
   // update the current account list with the right network prefix
   // this will run for every network change
