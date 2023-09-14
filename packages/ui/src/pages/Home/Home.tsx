@@ -78,31 +78,10 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  if (!api || isAccountLoading) {
-    return (
-      <Box
-        className={className}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          '&:first-of-type': {
-            marginBottom: '1rem'
-          }
-        }}
-      >
-        <CircularProgress />
-        {isAccountLoading
-          ? 'Loading accounts...'
-          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
-      </Box>
-    )
-  }
-
-  if (isExtensionError && watchedAddresses.length === 0)
+  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading)
     return (
       <CenterStyled>
-        <h3>
+        <h3 data-cy="text-no-account-found">
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Linkstyled
             href="https://wiki.polkadot.network/docs/wallets"
@@ -118,6 +97,28 @@ const Home = ({ className }: HomeProps) => {
         </h3>
       </CenterStyled>
     )
+
+  if (!api || isAccountLoading) {
+    return (
+      <Box
+        className={className}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          '&:first-of-type': {
+            marginBottom: '1rem'
+          }
+        }}
+        data-cy="loader-rpc-connection"
+      >
+        <CircularProgress />
+        {isAccountLoading
+          ? 'Loading accounts...'
+          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
+      </Box>
+    )
+  }
 
   if (isLoading) {
     return (

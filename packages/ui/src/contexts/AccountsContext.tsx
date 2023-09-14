@@ -69,8 +69,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   const getaccountList = useCallback(async (): Promise<void> => {
     setIsAccountLoading(true)
-    const extensions = await web3Enable(DAPP_NAME)
-    setExtensions(extensions)
+
+    web3Enable(DAPP_NAME)
+      .then((ext) => {
+        setExtensions(ext)
+      })
+      .catch(console.error)
 
     web3AccountsSubscribe(
       (accountList) => {
@@ -89,9 +93,12 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         }
       },
       { ss58Format: chainInfo?.ss58Format }
-    )
-      .finally(() => setIsAccountLoading(false))
-      .catch(console.error)
+    ).catch((error) => {
+      setIsExtensionError(true)
+      console.error(error)
+    })
+
+    setIsAccountLoading(false)
   }, [chainInfo, getAccountByAddress, selectAccount])
 
   useEffect(() => {
@@ -122,13 +129,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   useEffect(() => {
     // don't request if we have accounts
-    if (ownAccountList.length > 0) return
+    if (ownAccountList.length > 0 || isAccountLoading) return
 
     // don't request before explicitely asking
     if (isAllowedToConnectToExtension) {
       getaccountList()
     }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, isAccountLoading])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {
