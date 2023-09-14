@@ -141,6 +141,7 @@ const MultiProxySelection = ({ className }: Props) => {
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={selectedMultiProxy || multiProxyList[0]}
+      data-cy="select-multiproxy"
     />
   )
 }
