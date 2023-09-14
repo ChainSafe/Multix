@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/select/SignatorySelection'
-import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
@@ -17,8 +16,10 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
-import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import WithProxySelection from './WitProxySelection'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
+import { isEthereumAddress } from '@polkadot/util-crypto'
 
 interface Props {
   className?: string
@@ -30,13 +31,14 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
   const signCallBack = useSigningCallback({
     onSuccess: () => navigate('/?creationInProgress=true')
   })
+  const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()
   const [name, setName] = useState('')
   const { addName } = useAccountNames()
@@ -47,16 +49,12 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const [errorMessage, setErrorMessage] = useState('')
   const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
-  const supportsProxy = useMemo(() => !!api && !!api.tx.proxy, [api])
-  const multisigPubKey = useMemo(() => {
-    if (!threshold) return
-    return createKeyMulti(signatories, threshold)
-  }, [signatories, threshold])
-  const getEncodedAddress = useGetEncodedAddress()
-  const multiAddress = useMemo(
-    () => getEncodedAddress(multisigPubKey),
-    [getEncodedAddress, multisigPubKey]
-  )
+  const supportsProxy = useMemo(() => {
+    const hasProxyPallet = !!api && !!api.tx.proxy
+    // Moonbeam and moonriver have the pallet, but it's deactivated
+    return hasProxyPallet && !chainInfo?.isEthereum
+  }, [api, chainInfo])
+  const multiAddress = useGetMultisigAddress(signatories, threshold)
   const [withProxy, setWithProxy] = useState(false)
   const remarkCall = useMemo(() => {
     if (withProxy) {
@@ -88,7 +86,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(
+    const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
@@ -96,7 +94,7 @@ const MultisigCreation = ({ className }: Props) => {
       refTime: 0,
       proofSize: 0
     })
-  }, [api, multiAddress, selectedAccount, signatories, threshold, withProxy])
+  }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
 
   const batchCall = useMemo(() => {
     if (!withProxy) {
@@ -127,7 +125,7 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    const otherSignatories = sortAddresses(
+    const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
@@ -144,6 +142,7 @@ const MultisigCreation = ({ className }: Props) => {
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [
     api,
+    getSortAddress,
     multiAddress,
     pureProxyCreationNeededFunds,
     selectedAccount,
@@ -158,8 +157,11 @@ const MultisigCreation = ({ className }: Props) => {
     call: withProxy ? batchCall : remarkCall
   })
   const neededBalance = useMemo(
-    () => pureProxyCreationNeededFunds.add(multisigProposalNeededFunds),
-    [multisigProposalNeededFunds, pureProxyCreationNeededFunds]
+    () =>
+      withProxy
+        ? pureProxyCreationNeededFunds.add(multisigProposalNeededFunds)
+        : multisigProposalNeededFunds,
+    [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
@@ -186,8 +188,25 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // we are on an ethereum network, all addresses must be eth addresses
+    if (chainInfo?.isEthereum) {
+      return signatories.every((signatory) => isEthereumAddress(signatory))
+    }
+
+    // we are on a non ethereum network, no address should be an ethereum one
+    if (!chainInfo?.isEthereum) {
+      return signatories.every((signatory) => !isEthereumAddress(signatory))
+    }
+
     return true
-  }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
+  }, [
+    chainInfo?.isEthereum,
+    currentStep,
+    hasSignerEnoughFunds,
+    ownAccountPartOfSignatories,
+    signatories,
+    threshold
+  ])
 
   useEffect(() => {
     // default to using a proxy
@@ -457,7 +476,7 @@ export default styled(MultisigCreation)(
   padding-bottom: 2rem;
 
   .infoBox {
-    margin-bottom: 1rem;
+    margin-top: 1rem;
   }
 
   .stepItem {

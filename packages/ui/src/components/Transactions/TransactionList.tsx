@@ -197,7 +197,7 @@ const TransactionList = ({ className }: Props) => {
           <CircularProgress />
         </Box>
       )}
-      {!pendingTxData.length && !isLoadingPendingTxs && (
+      {Object.entries(aggregatedData).length === 0 && !isLoadingPendingTxs && (
         <Paper className="noCall">
           <FlareIcon
             size={24}
@@ -206,7 +206,7 @@ const TransactionList = ({ className }: Props) => {
           <div className="noCallText">You're all set!</div>
         </Paper>
       )}
-      {!!pendingTxData.length &&
+      {Object.entries(aggregatedData).length !== 0 &&
         Object.entries(aggregatedData).map(([date, aggregatedData]) => {
           return (
             <TransactionWrapper key={date}>

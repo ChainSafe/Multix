@@ -160,6 +160,26 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.interlay"
       ]
+    },
+    "start-moonriver": {
+      "description": "starts the indexer with moonriver",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.moonriver"
+      ]
+    },
+    "start-moonbeam": {
+      "description": "starts the indexer with moonbeam",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.moonbeam"
+      ]
     }
   }
 }

@@ -41,10 +41,16 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
             const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            info.approvals = info.approvals.map((approval) => approval.toLowerCase())
 
             // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
             // These 2 should be the same
-            if (multisigFromChain !== multisigs[index]) {
+            if (multisigFromChain.toLowerCase() !== multisigs[index].toLowerCase()) {
+              console.error(
+                'The onchain call and the one found in the block donot correstpond',
+                multisigFromChain,
+                multisigs[index]
+              )
               return
             }
 
