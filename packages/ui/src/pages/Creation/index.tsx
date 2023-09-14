@@ -19,6 +19,7 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import WithProxySelection from './WitProxySelection'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
+import { isEthereumAddress } from '@polkadot/util-crypto'
 
 interface Props {
   className?: string
@@ -187,8 +188,25 @@ const MultisigCreation = ({ className }: Props) => {
       return false
     }
 
+    // we are on an ethereum network, all addresses must be eth addresses
+    if (chainInfo?.isEthereum) {
+      return signatories.every((signatory) => isEthereumAddress(signatory))
+    }
+
+    // we are on a non ethereum network, no address should be an ethereum one
+    if (!chainInfo?.isEthereum) {
+      return signatories.every((signatory) => !isEthereumAddress(signatory))
+    }
+
     return true
-  }, [currentStep, hasSignerEnoughFunds, ownAccountPartOfSignatories, signatories, threshold])
+  }, [
+    chainInfo?.isEthereum,
+    currentStep,
+    hasSignerEnoughFunds,
+    ownAccountPartOfSignatories,
+    signatories,
+    threshold
+  ])
 
   useEffect(() => {
     // default to using a proxy

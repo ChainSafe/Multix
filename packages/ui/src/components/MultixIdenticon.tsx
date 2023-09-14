@@ -32,7 +32,7 @@ const MultixIdenticon = ({ value, size = ICON_SIZE_MEDIUM, className }: Props) =
         <Identicon
           onCopy={handleTooltipOpen}
           value={value}
-          theme={chainInfo?.isEthereum ? 'ethereum' : DEFAULT_ICON_THEME}
+          theme={chainInfo?.isEthereum || value?.length === 42 ? 'ethereum' : DEFAULT_ICON_THEME}
           size={size}
           className={className}
         />
