@@ -15,7 +15,6 @@ const BalanceStyled = styled('div')`
   display: flex;
   color: ${({ theme }) => theme.custom.gray[700]};
   font-size: 1rem;
-  margin-top: 4px;
 `
 
 export default Balance

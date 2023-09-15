@@ -1,7 +1,7 @@
 import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
 import { useMemo } from 'react'
-import { HiOutlinePencil } from 'react-icons/hi2'
+import { HiOutlinePaperAirplane, HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useModals } from '../../contexts/ModalsContext'
@@ -10,9 +10,13 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 
 interface MultisigActionMenuProps {
   withSendButton?: boolean
+  menuButtonBorder?: CSSStyleDeclaration['border']
 }
 
-const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {
+const MultisigActionMenu = ({
+  withSendButton = true,
+  menuButtonBorder
+}: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
@@ -45,14 +49,25 @@ const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) 
         onClick: () => setIsChangeMultiModalOpen(true)
       })
 
+    // If we are NOT rendering "new transaction button", the functionality will appear in the list
+    if (!withSendButton) {
+      opts.unshift({
+        text: 'Send transaction',
+        icon: <HiOutlinePaperAirplane size={20} />,
+        onClick: () => setIsSendModalOpen(true)
+      })
+    }
+
     return opts
   }, [
-    getSubscanAccountLink,
+    withSendButton,
     selectedHasProxy,
     selectedIsWatched,
+    getSubscanAccountLink,
     selectedMultiProxy,
     setIsChangeMultiModalOpen,
-    setIsEditModalOpen
+    setIsEditModalOpen,
+    setIsSendModalOpen
   ])
 
   return (
@@ -66,7 +81,10 @@ const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) 
           New Transaction
         </Button>
       )}
-      <OptionsMenu options={options} />
+      <OptionsMenu
+        menuButtonBorder={menuButtonBorder}
+        options={options}
+      />
     </>
   )
 }

@@ -18,9 +18,10 @@ const ITEM_HEIGHT = 48
 interface Props {
   className?: string
   options: MenuOption[]
+  menuButtonBorder?: CSSStyleDeclaration['border']
 }
 
-const OptionsMenu = ({ className, options }: Props) => {
+const OptionsMenu = ({ className, options, menuButtonBorder }: Props) => {
   const matchesMediumScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -43,6 +44,7 @@ const OptionsMenu = ({ className, options }: Props) => {
   return (
     <div className={className}>
       <ButtonWithIconStyled
+        border={menuButtonBorder}
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}

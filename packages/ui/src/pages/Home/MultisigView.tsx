@@ -25,7 +25,10 @@ const MultisigView = () => {
           // only show the buttons if we have a solo multisig
           // and only show the send button if we are part of the multisig
           <BoxStyled>
-            <MultisigActionMenu withSendButton={!selectedIsWatched} />
+            <MultisigActionMenu
+              menuButtonBorder={'none'}
+              withSendButton={false}
+            />
           </BoxStyled>
         )}
       </HeaderStyled>
