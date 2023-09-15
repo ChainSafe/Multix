@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
-import { sortAddresses } from '@polkadot/util-crypto'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
+import { useGetSortAddress } from './useGetSortAddress'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -23,6 +23,7 @@ export const useGetMultisigTx = ({
   extrinsicToCall
 }: Params) => {
   const { api } = useApi()
+  const { getSortAddress } = useGetSortAddress()
 
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -30,7 +31,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    const otherSigners = sortAddresses(
+    const otherSigners = getSortAddress(
       selectedMultisig.signatories.filter((signer) => signer !== senderAddress)
     )
 
@@ -69,7 +70,16 @@ export const useGetMultisigTx = ({
       console.error('Error in multisigTx')
       console.error(e)
     }
-  }, [selectedMultisig, threshold, api, senderAddress, fromAddress, extrinsicToCall, isProxy])
+  }, [
+    selectedMultisig,
+    getSortAddress,
+    threshold,
+    api,
+    senderAddress,
+    fromAddress,
+    extrinsicToCall,
+    isProxy
+  ])
 
   return multisigTx
 }

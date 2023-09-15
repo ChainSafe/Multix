@@ -4,6 +4,7 @@ import { ApiOptions } from '@polkadot/api/types'
 import { TypeRegistry } from '@polkadot/types'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
+import { ethereumChains } from '../utils/ethereumChains'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -21,6 +22,7 @@ interface ChainInfoHuman {
   ss58Format: number
   tokenDecimals: number
   tokenSymbol: string
+  isEthereum: boolean
 }
 
 interface RawChainInfoHuman {
@@ -72,12 +74,13 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 
         const info = api.registry.getChainProperties()
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
-
+        const isEthereum = ethereumChains.includes(api.runtimeVersion.specName.toString())
         setChainInfo({
           // some parachains such as interlay have a comma in the format, e.g: "2,042"
           ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,
           tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
-          tokenSymbol: raw?.tokenSymbol[0] || ''
+          tokenSymbol: raw?.tokenSymbol[0] || '',
+          isEthereum
         })
       })
       .catch(console.error)

@@ -9,6 +9,7 @@ import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelect
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { getPubKeyFromAddress } from '../../utils/getPubKeyFromAddress'
+import { useApi } from '../../contexts/ApiContext'
 
 interface Props {
   className?: string
@@ -36,6 +37,7 @@ const AccountSelection = ({
   withPreselection = true
 }: Props) => {
   const { getAccountByAddress } = useAccounts()
+  const { chainInfo } = useApi()
   const [errorMessage, setErrorMessage] = useState('')
   const { accountNames, addName } = useAccountNames()
   const [name, setName] = useState('')
@@ -74,6 +76,28 @@ const AccountSelection = ({
       return
     }
 
+    // if we are connected to a non eth network
+    // and adding eth accounts
+    if (
+      !chainInfo?.isEthereum &&
+      selected.address.length === 42 &&
+      selected.address.startsWith('0x')
+    ) {
+      setErrorMessage('Ethereum addresses are not compatible with this network')
+      return
+    }
+
+    // if we are connected to an eth network
+    // all addresses must be compatible
+    if (
+      chainInfo?.isEthereum &&
+      selected.address.length !== 42 &&
+      !selected.address.startsWith('0x')
+    ) {
+      setErrorMessage('Non Ethereum address detected')
+      return
+    }
+
     const pubkey = getPubKeyFromAddress(selected.address)
     if (pubkey && (currentSelectionPubKeys as string[]).includes(pubkey)) {
       setErrorMessage('Account already added')
@@ -86,7 +110,7 @@ const AccountSelection = ({
       setSelected(undefined)
       setName('')
     }
-  }, [selected, currentSelectionPubKeys, addAccount, name, addName])
+  }, [selected, chainInfo, currentSelectionPubKeys, addAccount, name, addName])
 
   const handleSpecialKeys = useCallback(
     (e: any) => {

@@ -2,6 +2,8 @@
 /// <reference types="cypress" />
 
 import '@testing-library/cypress/add-commands'
+import { AuthRequests, Extension } from './Extension'
+import { InjectedAccount } from '@polkadot/extension-inject/types'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -39,3 +41,58 @@ import '@testing-library/cypress/add-commands'
 //     }
 //   }
 // }
+
+const extension = new Extension()
+
+Cypress.Commands.add('initExtension', (accounts: InjectedAccount[]) => {
+  cy.log('Initializing extension')
+  cy.window().then((win) => {
+    Object.defineProperty(win, 'injectedWeb3', {
+      get: () => extension.init(accounts)
+    })
+  })
+})
+
+Cypress.Commands.add('getAuthRequests', () => {
+  return cy.wrap(extension.getAuthRequests())
+})
+
+Cypress.Commands.add('enableAuth', (id: number, accountAddresses: string[]) => {
+  return extension.enableAuth(id, accountAddresses)
+})
+
+Cypress.Commands.add('rejectAuth', (id: number, reason: string) => {
+  return extension.rejectAuth(id, reason)
+})
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Initialized the Polkadot extension.
+       * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
+       * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
+       */
+      initExtension: (accounts: InjectedAccount[]) => void
+      /**
+       * Read the authentication request queue.
+       * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
+       */
+      getAuthRequests: () => Chainable<AuthRequests>
+      /**
+       * Authorize a specific request
+       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {string[]} accountAddresses - the account addresses to share with the applications. These addresses must be part of the ones shared in the `initExtension`
+       * @example cy.enableAuth(1694443839903, ["7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"])
+       */
+      enableAuth: (id: number, accountAddresses: string[]) => void
+      /**
+       * Reject a specific request
+       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {reason} reason - the reason for the rejection
+       * @example cy.rejectAuth(1694443839903, "Cancelled")
+       */
+      rejectAuth: (id: number, reason: string) => void
+    }
+  }
+}

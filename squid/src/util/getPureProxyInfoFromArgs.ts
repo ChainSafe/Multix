@@ -1,10 +1,10 @@
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { encodeAddress } from '@polkadot/util-crypto'
 import { getProxyAccountId } from './getProxyAccountId'
-import { Ctx, dataEvent, env } from '../main'
+import { Ctx, dataEvent } from '../main'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { ProxyType as ProxyTypeV2005 } from '../types/v2005'
 import { JsonLog } from './JsonLog'
+import { encodeId } from './accountEncoding'
 
 interface Params {
   item: EventItem<'Proxy.PureCreated' | 'Proxy.AnonymousCreated', (typeof dataEvent)['data']>
@@ -31,8 +31,8 @@ export const getPureProxyInfoFromArgs = ({ item, chainId, isAnonymous, ctx }: Pa
     return
   }
 
-  const _who = (who && encodeAddress(who, env.prefix)) || ''
-  const _pure = (pure && encodeAddress(pure, env.prefix)) || ''
+  const _who = (who && encodeId(who)) || ''
+  const _pure = (pure && encodeId(pure)) || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const id = getProxyAccountId(_who, _pure, _type, disambiguationIndex, chainId)
 

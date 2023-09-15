@@ -1,4 +1,3 @@
-import { decodeHex } from '@subsquid/substrate-processor'
 import { encodeId } from './util/accountEncoding'
 
 // "args": {
@@ -29,9 +28,9 @@ import { encodeId } from './util/accountEncoding'
 // },
 
 export const handleMultisigCall = (multisigArgs: any) => {
-  const encodedOtherSignatories = multisigArgs['otherSignatories'].map((signatory: string) =>
-    encodeId(decodeHex(signatory))
-  )
+  const encodedOtherSignatories = multisigArgs['otherSignatories'].map((signatory: string) => {
+    return encodeId(signatory)
+  })
 
   return {
     otherSignatories: encodedOtherSignatories,

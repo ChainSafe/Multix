@@ -3879,7 +3879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-inject@npm:0.46.5":
+"@polkadot/extension-inject@npm:0.46.5, @polkadot/extension-inject@npm:^0.46.5":
   version: 0.46.5
   resolution: "@polkadot/extension-inject@npm:0.46.5"
   dependencies:
@@ -10354,6 +10354,7 @@ __metadata:
     "@mui/styled-engine": ^5.13.2
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
+    "@polkadot/extension-inject": ^0.46.5
     "@polkadot/react-identicon": ^3.5.1
     "@polkadot/typegen": ^10.9.1
     "@polkadot/util-crypto": ^12.3.2

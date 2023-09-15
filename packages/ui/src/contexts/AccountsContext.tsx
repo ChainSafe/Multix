@@ -67,44 +67,66 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     setSelected(account)
   }, [])
 
-  const getaccountList = useCallback(async (): Promise<void> => {
-    setIsAccountLoading(true)
-    const extensions = await web3Enable(DAPP_NAME)
-    setExtensions(extensions)
+  const getaccountList = useCallback(
+    async (isEthereum: boolean): Promise<void> => {
+      setIsAccountLoading(true)
 
-    web3AccountsSubscribe(
-      (accountList) => {
-        if (accountList.length === 0) {
-          setIsExtensionError(true)
-          return
+      web3Enable(DAPP_NAME)
+        .then((ext) => {
+          setExtensions(ext)
+        })
+        .catch(console.error)
+
+      web3AccountsSubscribe(
+        (accountList) => {
+          if (accountList.length === 0) {
+            setIsExtensionError(true)
+            return
+          }
+
+          let listToPersist = accountList
+          //lower case ethereum addresses
+          if (isEthereum) {
+            listToPersist = accountList.map((account) => ({
+              ...account,
+              address: account.address.toLowerCase()
+            }))
+          }
+
+          setOwnAccountList([...listToPersist])
+
+          if (listToPersist.length > 0) {
+            const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
+            const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
+
+            selectAccount(account || listToPersist[0])
+          }
+        },
+        {
+          ss58Format: chainInfo?.ss58Format,
+          accountType: isEthereum ? ['ethereum'] : undefined
         }
+      ).catch((error) => {
+        setIsExtensionError(true)
+        console.error(error)
+      })
 
-        setOwnAccountList([...accountList])
-
-        if (accountList.length > 0) {
-          const previousAccountAddress = localStorage.getItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY)
-          const account = previousAccountAddress && getAccountByAddress(previousAccountAddress)
-
-          selectAccount(account || accountList[0])
-        }
-      },
-      { ss58Format: chainInfo?.ss58Format }
-    )
-      .finally(() => setIsAccountLoading(false))
-      .catch(console.error)
-  }, [chainInfo, getAccountByAddress, selectAccount])
+      setIsAccountLoading(false)
+    },
+    [chainInfo, getAccountByAddress, selectAccount]
+  )
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) return
 
-    if (isAccountLoading) return
+    if (isAccountLoading || !chainInfo) return
 
     if (extensions?.length === 0 && !ownAccountList.length) {
       if (!timeoutElapsed && isAllowedToConnectToExtension) {
         // give it another chance #ugly hack
         // race condition see https://github.com/polkadot-js/extension/issues/938
         setTimeout(() => {
-          getaccountList()
+          getaccountList(chainInfo.isEthereum)
           setTimoutElapsed(true)
         }, 500)
       } else {
@@ -117,18 +139,19 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     getaccountList,
     isAccountLoading,
     isAllowedToConnectToExtension,
-    timeoutElapsed
+    timeoutElapsed,
+    chainInfo
   ])
 
   useEffect(() => {
     // don't request if we have accounts
-    if (ownAccountList.length > 0) return
+    if (ownAccountList.length > 0 || isAccountLoading) return
 
     // don't request before explicitely asking
-    if (isAllowedToConnectToExtension) {
-      getaccountList()
+    if (isAllowedToConnectToExtension && !!chainInfo) {
+      getaccountList(chainInfo.isEthereum)
     }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension])
+  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, isAccountLoading, chainInfo])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {

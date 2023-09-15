@@ -8,6 +8,7 @@ interface EnvValues {
   archiveUrl?: string
   chainId: string
   genesis?: string
+  isEthereum?: boolean
 }
 
 export class Env {
@@ -21,7 +22,8 @@ export class Env {
       archiveName: process.env.ARCHIVE_NAME || '',
       archiveUrl: process.env.ARCHIVE_URL || '',
       chainId: process.env.CHAIN_ID || '',
-      genesis: process.env.GENESIS || undefined
+      genesis: process.env.GENESIS || undefined,
+      isEthereum: process.env.IS_ETHEREUM === 'true' || false
     }
 
     this.checkForUndefined()

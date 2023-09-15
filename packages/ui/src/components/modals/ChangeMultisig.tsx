@@ -16,7 +16,6 @@ import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
 import { useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { useToasts } from '../../contexts/ToastContext'
 import { AccountBadge } from '../../types'
@@ -30,7 +29,8 @@ import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
-import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
+import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 
 interface Props {
   onClose: () => void
@@ -45,11 +45,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { api, chainInfo } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { addToast } = useToasts()
-  const getEncodedAddress = useGetEncodedAddress()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
     onError: onClose
   })
+  const { getSortAddress } = useGetSortAddress()
   const { selectedAccount, selectedSigner, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
@@ -67,14 +67,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       ).length > 0,
     [ownAddressList, newSignatories, selectedMultisig?.signatories]
   )
-  const newMultisigPubKey = useMemo(() => {
-    if (!newThreshold) return
-    return createKeyMulti(newSignatories, newThreshold)
-  }, [newSignatories, newThreshold])
-  const newMultisigAddress = useMemo(
-    () => getEncodedAddress(newMultisigPubKey),
-    [getEncodedAddress, newMultisigPubKey]
-  )
+  const newMultisigAddress = useGetMultisigAddress(newSignatories, newThreshold)
   const canGoNext = useMemo(
     () => newMultisigAddress !== selectedMultisig?.address,
     [newMultisigAddress, selectedMultisig]
@@ -121,7 +114,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    const otherOldSignatories = sortAddresses(
+    const otherOldSignatories = getSortAddress(
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
 
@@ -135,6 +128,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
+    getSortAddress,
     newMultisigAddress,
     newThreshold,
     oldThreshold,
@@ -169,7 +163,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    const otherNewSignatories = sortAddresses(
+    const otherNewSignatories = getSortAddress(
       newSignatories.filter((sig) => sig !== selectedAccount.address)
     )
     const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, 'Any', 0)
@@ -181,6 +175,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   }, [
     api,
     chainInfo,
+    getSortAddress,
     newSignatories,
     newThreshold,
     selectedAccount,

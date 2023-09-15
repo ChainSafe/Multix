@@ -1,10 +1,10 @@
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { encodeAddress } from '@polkadot/util-crypto'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { getProxyAccountId } from './getProxyAccountId'
-import { Ctx, dataEvent, env } from '../main'
+import { Ctx, dataEvent } from '../main'
 import { ProxyType } from '../types/v9111'
 import { JsonLog } from './JsonLog'
+import { encodeId } from './accountEncoding'
 
 interface Params {
   item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
@@ -27,9 +27,8 @@ export const getProxyInfoFromArgs = ({ item, chainId, ctx }: Params) => {
     ctx.log.error(`The proxy could not be determined ${JsonLog(item)}`)
     return
   }
-
-  const _delegator = (delegator && encodeAddress(delegator, env.prefix)) || ''
-  const _delegatee = (delegatee && encodeAddress(delegatee, env.prefix)) || ''
+  const _delegator = (delegator && encodeId(delegator)) || ''
+  const _delegatee = (delegatee && encodeId(delegatee)) || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _delay = Number(delay)
   const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay, chainId)
