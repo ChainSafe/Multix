@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react'
 import { web3Enable, web3FromSource, web3AccountsSubscribe } from '@polkadot/extension-dapp'
-import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
 import { useApi } from './ApiContext'
@@ -36,10 +36,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
   const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
-  const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>()
-  const [timeoutElapsed, setTimoutElapsed] = useState(false)
+  const [accountGotRequested, setAccountGotRequested] = useState(false)
   const { chainInfo } = useApi()
-
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
@@ -72,10 +70,24 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       setIsAccountLoading(true)
 
       web3Enable(DAPP_NAME)
-        .then((ext) => {
-          setExtensions(ext)
+        .then(
+          (ext) => {
+            if (ext.length === 0) {
+              setIsExtensionError(true)
+            }
+          },
+          (reason) => {
+            console.error('ooops', reason)
+            setIsExtensionError(true)
+          }
+        )
+        .catch((e) => {
+          console.error(e)
+          setIsExtensionError(true)
         })
-        .catch(console.error)
+        .finally(() => {
+          setIsAccountLoading(false)
+        })
 
       web3AccountsSubscribe(
         (accountList) => {
@@ -110,48 +122,30 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         setIsExtensionError(true)
         console.error(error)
       })
-
-      setIsAccountLoading(false)
     },
-    [chainInfo, getAccountByAddress, selectAccount]
+    [chainInfo?.ss58Format, getAccountByAddress, selectAccount]
   )
 
   useEffect(() => {
-    if (!isAllowedToConnectToExtension) return
+    if (isExtensionError || ownAccountList.length > 0 || isAccountLoading || !chainInfo) return
 
-    if (isAccountLoading || !chainInfo) return
-
-    if (extensions?.length === 0 && !ownAccountList.length) {
-      if (!timeoutElapsed && isAllowedToConnectToExtension) {
-        // give it another chance #ugly hack
-        // race condition see https://github.com/polkadot-js/extension/issues/938
-        setTimeout(() => {
-          getaccountList(chainInfo.isEthereum)
-          setTimoutElapsed(true)
-        }, 500)
-      } else {
-        setIsExtensionError(true)
-      }
+    if (!accountGotRequested && isAllowedToConnectToExtension) {
+      setAccountGotRequested(true)
+      // delay the request by 500ms
+      // race condition see https://github.com/polkadot-js/extension/issues/938
+      setTimeout(() => {
+        getaccountList(chainInfo.isEthereum)
+      }, 500)
     }
   }, [
     ownAccountList,
-    extensions,
     getaccountList,
     isAccountLoading,
     isAllowedToConnectToExtension,
-    timeoutElapsed,
-    chainInfo
+    accountGotRequested,
+    chainInfo,
+    isExtensionError
   ])
-
-  useEffect(() => {
-    // don't request if we have accounts
-    if (ownAccountList.length > 0 || isAccountLoading) return
-
-    // don't request before explicitely asking
-    if (isAllowedToConnectToExtension && !!chainInfo) {
-      getaccountList(chainInfo.isEthereum)
-    }
-  }, [ownAccountList, getaccountList, isAllowedToConnectToExtension, isAccountLoading, chainInfo])
 
   useEffect(() => {
     if (!isAllowedToConnectToExtension) {

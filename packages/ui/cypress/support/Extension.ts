@@ -15,8 +15,6 @@ export class Extension {
   authRequests: AuthRequests = {}
   accounts: InjectedAccount[] = []
 
-  getRequest = () => this.authRequests
-
   reset = () => {
     this.authRequests = {}
     this.accounts = []
@@ -25,7 +23,9 @@ export class Extension {
   init = (accounts: InjectedAccount[]) => {
     this.reset()
     this.accounts = accounts
+  }
 
+  getInjectedEnable = () => {
     return {
       'polkadot-js': {
         enable: (origin: string) => {
