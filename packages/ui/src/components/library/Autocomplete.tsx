@@ -67,7 +67,8 @@ const Autocomplete = <
   renderInput,
   selectOnFocus,
   clearOnBlur,
-  handleHomeEndKeys
+  handleHomeEndKeys,
+  ...props
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) => {
   return (
     <AutocompleteWrapper className={className}>
@@ -89,6 +90,7 @@ const Autocomplete = <
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
         PopperComponent={PopperStyled}
+        {...props}
       />
     </AutocompleteWrapper>
   )

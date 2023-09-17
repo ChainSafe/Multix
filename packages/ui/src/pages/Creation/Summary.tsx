@@ -58,7 +58,7 @@ const Summary = ({
       ) : (
         <>
           <h3>You are about to change the Multisig controlling:</h3>
-          <AccoutDisplayProxyStyled
+          <AccountDisplayProxyStyled
             address={proxyAddress || ''}
             badge={AccountBadge.PURE}
           />
@@ -130,7 +130,7 @@ const Summary = ({
   )
 }
 
-const AccoutDisplayProxyStyled = styled(AccountDisplay)`
+const AccountDisplayProxyStyled = styled(AccountDisplay)`
   padding-left: 1.5rem;
   margin-bottom: 1.5rem;
 `

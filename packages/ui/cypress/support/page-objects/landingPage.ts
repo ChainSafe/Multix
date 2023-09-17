@@ -1,4 +1,5 @@
 export const landingPage = {
   watchAccountButton: () => cy.get('[data-cy=button-watch-address]'),
-  connectButton: () => cy.get('[data-cy="button-menu-connect"]')
+  accountsOrRpcLoader: () => cy.get('[data-cy="loader-accounts-rpc-connection"]'),
+  noAccountFoundError: () => cy.get('[data-cy="text-no-account-found"]')
 }

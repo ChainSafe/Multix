@@ -123,5 +123,5 @@ builds
 !.yarn/versions
 
 # cypress
-cypress/screenshots/*
-cypress/videos/*
+cypress/screenshots
+cypress/videos

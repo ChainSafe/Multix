@@ -46,9 +46,11 @@ const extension = new Extension()
 
 Cypress.Commands.add('initExtension', (accounts: InjectedAccount[]) => {
   cy.log('Initializing extension')
-  cy.window().then((win) => {
+  cy.wrap(extension.init(accounts))
+
+  return cy.window().then((win) => {
     Object.defineProperty(win, 'injectedWeb3', {
-      get: () => extension.init(accounts)
+      get: () => extension.getInjectedEnable()
     })
   })
 })
@@ -73,7 +75,7 @@ declare global {
        * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
        * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
-      initExtension: (accounts: InjectedAccount[]) => void
+      initExtension: (accounts: InjectedAccount[]) => Chainable<AUTWindow>
       /**
        * Read the authentication request queue.
        * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
