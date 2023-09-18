@@ -17,6 +17,7 @@ const MultisigAccordion = ({ multisig }: AccordionProps) => {
           <HiOutlineChevronDown
             color="black"
             size="1rem"
+            strokeWidth="2"
           />
         }
       >
@@ -78,6 +79,7 @@ const AccordionMuiStyled = styled(AccordionMui)`
   }
 
   .MuiButtonBase-root {
+    background-color: ${({ theme }) => theme.custom.gray[200]};
     min-height: auto !important;
     padding: 0.75rem 0.75rem 0.75rem 0;
     margin: 0;
@@ -101,8 +103,8 @@ const AccordionMuiStyled = styled(AccordionMui)`
   }
 
   .Mui-expanded {
-    min-height: auto !important;
     margin: 0 !important;
+    background-color: ${({ theme }) => theme.custom.gray[200]};
   }
 
   ul {

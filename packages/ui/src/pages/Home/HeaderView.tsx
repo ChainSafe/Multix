@@ -44,7 +44,7 @@ const HeaderView = () => {
           </BalanceStyled>
         </BalanceStyledWrapper>
         <BoxStyled>
-          <MultisigActionMenu withSendButton={!selectedIsWatched} />
+          <MultisigActionMenu />
         </BoxStyled>
       </PureHeaderStyled>
     </PureProxyWrapper>
@@ -180,7 +180,10 @@ const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
   align-self: flex-end;
-  padding-left: 1rem;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    padding-left: 1rem;
+  }
 
   & > :last-child {
     margin-left: 0.25rem;

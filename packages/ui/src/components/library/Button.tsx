@@ -93,7 +93,8 @@ export const ButtonWithIcon = styled(Button)<ButtonProps>`
   align-items: center;
   justify-content: center;
   box-shadow: none;
-  border: ${({ border, theme }) => border || `1px solid ${theme.custom.gray[400]}`};
+  border: none;
+  color: ${({ theme }) => theme.custom.text.primary};
 
   svg {
     margin: 0 4px;

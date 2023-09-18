@@ -9,12 +9,12 @@ import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 
 interface MultisigActionMenuProps {
-  withSendButton?: boolean
+  withNewTransactionButton?: boolean
   menuButtonBorder?: CSSStyleDeclaration['border']
 }
 
 const MultisigActionMenu = ({
-  withSendButton = true,
+  withNewTransactionButton,
   menuButtonBorder
 }: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
@@ -50,7 +50,7 @@ const MultisigActionMenu = ({
       })
 
     // If we are NOT rendering "new transaction button", the functionality will appear in the list
-    if (!withSendButton) {
+    if (!withNewTransactionButton) {
       opts.unshift({
         text: 'Send transaction',
         icon: <HiOutlinePaperAirplane size={20} />,
@@ -60,7 +60,7 @@ const MultisigActionMenu = ({
 
     return opts
   }, [
-    withSendButton,
+    withNewTransactionButton,
     selectedHasProxy,
     selectedIsWatched,
     getSubscanAccountLink,
@@ -72,13 +72,13 @@ const MultisigActionMenu = ({
 
   return (
     <>
-      {withSendButton && (
+      {withNewTransactionButton && (
         <Button
           variant="primary"
           aria-label="send"
           onClick={() => setIsSendModalOpen(true)}
         >
-          New Transaction
+          New transaction
         </Button>
       )}
       <OptionsMenu
@@ -87,6 +87,10 @@ const MultisigActionMenu = ({
       />
     </>
   )
+}
+
+MultisigActionMenu.defaultProps = {
+  withNewTransactionButton: true
 }
 
 export default MultisigActionMenu

@@ -15,9 +15,9 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import HeaderView from './HeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
-// import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
+// import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
   className?: string
