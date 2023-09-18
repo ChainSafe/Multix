@@ -14,6 +14,8 @@ import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
 import { nodesInterlaySVG } from './logos/interlaySVG'
 import { nodesWestendColourSVG } from './logos/westend_colourSVG'
+import { nodesMoonriverSVG } from './logos/moonriverSVG'
+import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -129,6 +131,22 @@ export const networkList = {
   //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
   //   logo: chainsPendulumSVG
   // } as NetworkInfo,
+  moonbeam: {
+    chainId: 'moonbeam',
+    explorerNetworkName: 'moonbeam',
+    rpcUrl: 'wss://moonbeam.api.onfinality.io/public-ws',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
+    logo: nodesMoonbeamSVG
+  } as NetworkInfo,
+  moonriver: {
+    chainId: 'moonriver',
+    explorerNetworkName: 'moonriver',
+    rpcUrl: 'wss://moonriver.api.onfinality.io/public-ws',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
+    logo: nodesMoonriverSVG
+  } as NetworkInfo,
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
