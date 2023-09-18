@@ -1,7 +1,7 @@
 import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
 import { useMemo } from 'react'
-import { HiOutlinePaperAirplane, HiOutlinePencil } from 'react-icons/hi2'
+import { HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useModals } from '../../contexts/ModalsContext'
@@ -14,7 +14,7 @@ interface MultisigActionMenuProps {
 }
 
 const MultisigActionMenu = ({
-  withNewTransactionButton,
+  withNewTransactionButton = true,
   menuButtonBorder
 }: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
@@ -51,24 +51,23 @@ const MultisigActionMenu = ({
 
     // If we are NOT rendering "new transaction button" and is it's NOT a Watched account,
     // the "Send transaction" item will appear in the list menu
-    if (!withNewTransactionButton && !selectedIsWatched) {
-      opts.unshift({
-        text: 'Send transaction',
-        icon: <HiOutlinePaperAirplane size={20} />,
-        onClick: () => setIsSendModalOpen(true)
-      })
-    }
+    // TODO: Individual transaction button for each mulisig
+    // if (!withNewTransactionButton && !selectedIsWatched) {
+    //   opts.unshift({
+    //     text: 'Send transaction',
+    //     icon: <HiOutlinePaperAirplane size={20} />,
+    //     onClick: () => setIsSendModalOpen(true)
+    //   })
+    // }
 
     return opts
   }, [
-    withNewTransactionButton,
     selectedHasProxy,
     selectedIsWatched,
     getSubscanAccountLink,
     selectedMultiProxy,
     setIsChangeMultiModalOpen,
-    setIsEditModalOpen,
-    setIsSendModalOpen
+    setIsEditModalOpen
   ])
 
   return (
@@ -88,10 +87,6 @@ const MultisigActionMenu = ({
       />
     </>
   )
-}
-
-MultisigActionMenu.defaultProps = {
-  withNewTransactionButton: true
 }
 
 export default MultisigActionMenu

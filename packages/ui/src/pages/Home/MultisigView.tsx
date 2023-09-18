@@ -14,23 +14,21 @@ const MultisigView = () => {
     <MultisigViewWrapperStyled>
       <HeaderStyled>
         {selectedMultiProxy && <h3>{selectedHasProxy ? 'Controlled by' : 'Account Details'}</h3>}
-        {selectedHasProxy && (
-          // only show the buttons if we have a solo multisig
-          // and only show the send button if we are part of the multisig
-          <BoxStyled>
-            <MultisigActionMenu
-              menuButtonBorder={'none'}
-              withNewTransactionButton={false}
-            />
-          </BoxStyled>
-        )}
+        {/*{selectedHasProxy && (*/}
+        {/*  <BoxStyled>*/}
+        {/*    <MultisigActionMenu*/}
+        {/*      menuButtonBorder={'none'}*/}
+        {/*      withNewTransactionButton={false}*/}
+        {/*    />*/}
+        {/*  </BoxStyled>*/}
+        {/*)}*/}
       </HeaderStyled>
       <MultisigList>
         {selectedMultiProxy &&
           selectedMultiProxy.multisigs.map((multisig) => {
             return (
               <MultisigWrapperStyled
-                isPureMultisig={selectedHasProxy}
+                selectedHasProxy={selectedHasProxy}
                 key={multisig.address}
               >
                 {selectedHasProxy && (
@@ -100,12 +98,12 @@ const MultisigViewWrapperStyled = styled('div')`
   }
 `
 
-const MultisigWrapperStyled = styled('div')<{ isPureMultisig: boolean }>`
+const MultisigWrapperStyled = styled('div')<{ selectedHasProxy: boolean }>`
   border: 1px solid
-    ${({ theme, isPureMultisig }) => (isPureMultisig ? theme.custom.text.borderColor : 'none')};
-  border-radius: ${({ theme, isPureMultisig }) =>
-    isPureMultisig ? theme.custom.borderRadius : '0'};
-  padding: ${({ theme, isPureMultisig }) => (isPureMultisig ? '1rem 0.75rem' : '0')};
+    ${({ theme, selectedHasProxy }) => (selectedHasProxy ? theme.custom.text.borderColor : 'none')};
+  border-radius: ${({ theme, selectedHasProxy }) =>
+    selectedHasProxy ? theme.custom.borderRadius : '0'};
+  padding: ${({ theme, selectedHasProxy }) => (selectedHasProxy ? '1rem 0.75rem' : '0')};
 
   &:not(:first-of-type) {
     margin-bottom: 0.5rem;
