@@ -152,7 +152,7 @@ const NameStyled = styled('div')`
 export default styled(AccountDisplay)`
   display: flex;
   align-items: center;
-  margin-left: 8px;
+  margin-left: 0.5rem;
 
   .identityBadge {
     margin-right: 0.3rem;
