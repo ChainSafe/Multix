@@ -44,7 +44,7 @@ const HeaderView = () => {
           </BalanceStyled>
         </BalanceStyledWrapper>
         <BoxStyled>
-          <MultisigActionMenu />
+          <MultisigActionMenu withNewTransactionButton={!selectedIsWatched} />
         </BoxStyled>
       </PureHeaderStyled>
     </PureProxyWrapper>

@@ -49,8 +49,9 @@ const MultisigActionMenu = ({
         onClick: () => setIsChangeMultiModalOpen(true)
       })
 
-    // If we are NOT rendering "new transaction button", the functionality will appear in the list
-    if (!withNewTransactionButton) {
+    // If we are NOT rendering "new transaction button" and is it's NOT a Watched account,
+    // the "Send transaction" item will appear in the list menu
+    if (!withNewTransactionButton && !selectedIsWatched) {
       opts.unshift({
         text: 'Send transaction',
         icon: <HiOutlinePaperAirplane size={20} />,
