@@ -85,7 +85,6 @@ const PureHeaderStyled = styled('div')`
 
   & > div:first-of-type {
     margin: auto auto 1rem auto;
-    flex: 0;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       margin: initial;
