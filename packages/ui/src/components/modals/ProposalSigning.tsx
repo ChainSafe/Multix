@@ -375,7 +375,7 @@ const ProposalSigning = ({
             )}
             {isGettingCallInfo && (
               <Button disabled>
-                <CircularProgress />
+                <CircularProgress size="1rem" />
               </Button>
             )}
           </Grid>
