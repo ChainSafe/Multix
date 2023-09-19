@@ -2,20 +2,21 @@ import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { useGetBalance } from '../../hooks/useGetBalance'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { ButtonWithIcon } from '../../components/library'
+import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
 import { useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 
-const PureProxyHeaderView = () => {
+const HeaderView = () => {
   const navigate = useNavigate()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
-  const { balanceFormatted: pureProxyBalance } = useGetBalance({
-    address: selectedMultiProxy?.proxy || ''
-  })
 
-  if (!selectedHasProxy) return null
+  const selectedAddress = useMemo((): string => {
+    return String(
+      selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
+    )
+  }, [selectedHasProxy, selectedMultiProxy])
 
   return (
     <PureProxyWrapper>
@@ -31,15 +32,19 @@ const PureProxyHeaderView = () => {
       <PureHeaderStyled>
         <AccountDisplayStyled
           iconSize={'large'}
-          address={selectedMultiProxy?.proxy || ''}
-          badge={AccountBadge.PURE}
+          address={selectedAddress}
+          badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
         />
-        <BalanceStyled>
-          <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-          <BalanceAmountStyled>{pureProxyBalance}</BalanceAmountStyled>
-        </BalanceStyled>
+        <BalanceStyledWrapper>
+          <BalanceStyled>
+            <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+            <BalanceAmountStyled>
+              <Balance address={selectedAddress} />
+            </BalanceAmountStyled>
+          </BalanceStyled>
+        </BalanceStyledWrapper>
         <BoxStyled>
-          <MultisigActionMenu withSendButton={!selectedIsWatched} />
+          <MultisigActionMenu withNewTransactionButton={!selectedIsWatched} />
         </BoxStyled>
       </PureHeaderStyled>
     </PureProxyWrapper>
@@ -66,16 +71,20 @@ const OverviewWrapper = styled('div')`
 
 const PureHeaderStyled = styled('div')`
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
+  justify-content: center;
   margin: 0 0 1rem 0.5rem;
-  padding: 1rem 1.3rem 1rem 0.625rem;
+  padding: 1rem 1.3rem 0 1rem;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
   & > div:first-of-type {
-    margin: auto;
+    margin: auto auto 1rem auto;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       margin: initial;
@@ -84,30 +93,33 @@ const PureHeaderStyled = styled('div')`
 
   & > div:nth-of-type(2) {
     display: flex;
-    justify-content: center;
+    flex-direction: row-reverse;
+    justify-self: flex-end;
+    justify-content: space-between !important;
+    align-items: center;
     align-self: center;
-    flex-direction: column;
     flex: 1;
-    margin-top: 1rem;
     text-align: center;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       text-align: initial;
       justify-content: initial;
       align-self: flex-end;
-      flex: 0;
+      flex: 1;
       margin: 0;
     }
   }
 
   & > div:last-of-type {
-    flex: 1;
+    flex: 0;
     justify-content: center;
-    align-self: flex-end;
-    margin-top: 16px;
+    align-self: center;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       justify-content: flex-end;
+      align-self: flex-end;
       margin-top: 0;
     }
   }
@@ -131,22 +143,30 @@ const AccountDisplayStyled = styled(AccountDisplay)`
   }
 
   & > div:last-child {
-    margin: 1.44rem 1.37rem 0.75rem 0.87rem;
+    margin: 1.44rem 1.37rem 0.75rem 0.5rem;
   }
 `
 
+const BalanceStyledWrapper = styled('div')`
+  align-self: flex-end;
+  flex-direction: row;
+`
+
 const BalanceStyled = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  max-width: 19rem;
+  width: 100%;
   padding: 0.5rem 1rem;
-  background: ${({ theme }) => theme.custom.gray[100]};
+  background: ${({ theme }) => theme.custom.gray[200]};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   border: 1px solid ${({ theme }) => theme.custom.gray[400]};
-  align-self: flex-end;
 `
 
 const BalanceHeaderStyled = styled('div')`
   font-size: 1rem;
   color: ${({ theme }) => theme.custom.gray[700]};
-  margin-right: 0.25rem;
+  margin-right: 1rem;
 `
 
 const BalanceAmountStyled = styled('div')`
@@ -159,7 +179,14 @@ const BoxStyled = styled('div')`
   display: flex;
   align-items: center;
   align-self: flex-end;
-  padding-left: 1rem;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    padding-left: 1rem;
+  }
+
+  & > :last-child {
+    margin-left: 0.25rem;
+  }
 `
 
-export default PureProxyHeaderView
+export default HeaderView

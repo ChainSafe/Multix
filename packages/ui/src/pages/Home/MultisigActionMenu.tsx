@@ -9,10 +9,14 @@ import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 
 interface MultisigActionMenuProps {
-  withSendButton?: boolean
+  withNewTransactionButton?: boolean
+  menuButtonBorder?: CSSStyleDeclaration['border']
 }
 
-const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) => {
+const MultisigActionMenu = ({
+  withNewTransactionButton = true,
+  menuButtonBorder
+}: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
@@ -45,11 +49,22 @@ const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) 
         onClick: () => setIsChangeMultiModalOpen(true)
       })
 
+    // If we are NOT rendering "new transaction button" and is it's NOT a Watched account,
+    // the "Send transaction" item will appear in the list menu
+    // TODO: Individual transaction button for each mulisig
+    // if (!withNewTransactionButton && !selectedIsWatched) {
+    //   opts.unshift({
+    //     text: 'Send transaction',
+    //     icon: <HiOutlinePaperAirplane size={20} />,
+    //     onClick: () => setIsSendModalOpen(true)
+    //   })
+    // }
+
     return opts
   }, [
-    getSubscanAccountLink,
     selectedHasProxy,
     selectedIsWatched,
+    getSubscanAccountLink,
     selectedMultiProxy,
     setIsChangeMultiModalOpen,
     setIsEditModalOpen
@@ -57,16 +72,19 @@ const MultisigActionMenu = ({ withSendButton = true }: MultisigActionMenuProps) 
 
   return (
     <>
-      {withSendButton && (
+      {withNewTransactionButton && (
         <Button
           variant="primary"
           aria-label="send"
           onClick={() => setIsSendModalOpen(true)}
         >
-          New Transaction
+          New transaction
         </Button>
       )}
-      <OptionsMenu options={options} />
+      <OptionsMenu
+        menuButtonBorder={menuButtonBorder}
+        options={options}
+      />
     </>
   )
 }

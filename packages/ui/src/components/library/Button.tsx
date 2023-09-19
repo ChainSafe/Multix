@@ -3,6 +3,7 @@ import React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'link'
+  border?: CSSStyleDeclaration['border']
 }
 
 export const Button = styled('button')<ButtonProps>`
@@ -87,10 +88,13 @@ Button.defaultProps = {
   variant: 'secondary'
 }
 
-export const ButtonWithIcon = styled(Button)`
+export const ButtonWithIcon = styled(Button)<ButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: none;
+  border: none;
+  color: ${({ theme }) => theme.custom.text.primary};
 
   svg {
     margin: 0 4px;

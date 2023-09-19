@@ -12,12 +12,12 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useNetwork } from '../../contexts/NetworkContext'
-import PureProxyHeaderView from './PureProxyHeaderView'
+import HeaderView from './HeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
-// import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
+// import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
   className?: string
@@ -28,12 +28,7 @@ const Home = ({ className }: HomeProps) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const {
-    isLoading,
-    multiProxyList,
-    selectedMultiProxy,
-    error: multisigQueryError
-  } = useMultiProxy()
+  const { isLoading, multiProxyList, error: multisigQueryError } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { api } = useApi()
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
@@ -162,7 +157,7 @@ const Home = ({ className }: HomeProps) => {
         alignItems="center"
         xs={12}
       >
-        {selectedMultiProxy && <PureProxyHeaderView />}
+        <HeaderView />
       </Grid>
       <Grid
         item
