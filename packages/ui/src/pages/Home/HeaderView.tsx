@@ -75,7 +75,7 @@ const PureHeaderStyled = styled('div')`
   flex-wrap: wrap;
   justify-content: center;
   margin: 0 0 1rem 0.5rem;
-  padding: 1rem 1.3rem 1rem 0.625rem;
+  padding: 1rem 1.3rem 0 1rem;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     flex-wrap: nowrap;
