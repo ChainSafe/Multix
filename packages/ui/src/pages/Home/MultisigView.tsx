@@ -1,8 +1,8 @@
 import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
-import MultisigActionMenu from './MultisigActionMenu'
+// import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { Box, Chip } from '@mui/material'
+import { Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
@@ -65,11 +65,15 @@ const HeaderStyled = styled('header')`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  h3 {
+    margin-top: 0;
+  }
 `
 
-const BoxStyled = styled(Box)`
-  display: flex;
-`
+// const BoxStyled = styled(Box)`
+//   display: flex;
+// `
 
 const MultisigList = styled('div')`
   & > :not(:first-of-type) {

@@ -28,12 +28,7 @@ const Home = ({ className }: HomeProps) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const {
-    isLoading,
-    multiProxyList,
-    selectedMultiProxy,
-    error: multisigQueryError
-  } = useMultiProxy()
+  const { isLoading, multiProxyList, error: multisigQueryError } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { api } = useApi()
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
