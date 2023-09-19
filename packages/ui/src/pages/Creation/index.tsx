@@ -415,6 +415,7 @@ const MultisigCreation = ({ className }: Props) => {
               isBalanceError={!hasSignerEnoughFunds}
               balanceMin={neededBalance}
               withProxy={withProxy}
+              isSubmittingExtrinsic={isSubmitted}
             />
           </Grid>
         )}
