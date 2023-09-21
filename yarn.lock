@@ -11572,7 +11572,7 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     react-icons: ^4.11.0
-    react-query-subscription: 1.8.1
+    react-query-subscription: 2.0.0-beta.1
     react-router-dom: ^6.16.0
     reactflow: ^11.8.3
     rxjs: ^7.8.1
@@ -12478,16 +12478,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-query-subscription@npm:1.8.1":
-  version: 1.8.1
-  resolution: "react-query-subscription@npm:1.8.1"
+"react-query-subscription@npm:2.0.0-beta.1":
+  version: 2.0.0-beta.1
+  resolution: "react-query-subscription@npm:2.0.0-beta.1"
   dependencies:
     "@babel/runtime": 7.14.6
   peerDependencies:
+    "@tanstack/react-query": ^4.0.0
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-query: ^3.0.0
     rxjs: ^7.1.0
-  checksum: 9dca3d8b979aa5a70d1ded0ae86ec663c348618989a3d7bc885c7b14f74a07355b4a7deb610ebf0b9bf84f576f13959b16d14eb66b85a3be10940a9eba264be7
+  checksum: 47cb449e14072d237d30de9b31bc936f446ca4ed16b9d385ebcafce45d9d77b2468a018c746882aa21275fceac2399e214c1efc32835ac44484614c6c5d091d0
   languageName: node
   linkType: hard
 
