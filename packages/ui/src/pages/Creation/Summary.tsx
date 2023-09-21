@@ -22,6 +22,7 @@ interface Props {
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
   withProxy?: boolean
+  isSubmittingExtrinsic?: boolean
 }
 
 const Summary = ({
@@ -34,7 +35,8 @@ const Summary = ({
   balanceMin,
   isBalanceError,
   selectedMultisig,
-  withProxy = true
+  withProxy = true,
+  isSubmittingExtrinsic = false
 }: Props) => {
   const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
@@ -118,8 +120,8 @@ const Summary = ({
           possibleSigners={possibleSigners}
         />
       </Box>
-      {isBalanceError && balanceMin && (
-        <Alert severity="warning">
+      {isBalanceError && balanceMin && !isSubmittingExtrinsic && (
+        <Alert severity="error">
           The selected signer requires at least{' '}
           {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
             tokenSymbol: chainInfo?.tokenSymbol
