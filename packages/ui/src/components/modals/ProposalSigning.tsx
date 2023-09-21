@@ -1,4 +1,4 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -17,6 +17,8 @@ import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import BN from 'bn.js'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -54,6 +56,10 @@ const ProposalSigning = ({
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
     proposalData.callData || addedCallData
   )
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
+    min: new BN(0),
+    address: selectedAccount?.address
+  })
   const mustSubmitCallData = useMemo(() => {
     // the proposer can only reject, and the calldata isn't needed for this
     if (isProposerSelected) return false
@@ -84,6 +90,17 @@ const ProposalSigning = ({
       return
     }
   }, [callInfo, proposalData])
+
+  useEffect(() => {
+    if (hasSignerEnoughFunds) {
+      setErrorMessage('')
+      return
+    }
+
+    setErrorMessage(
+      "The selected signer doesn't have enough funds to pay for the transaction fees."
+    )
+  }, [hasSignerEnoughFunds])
 
   const onSign = useCallback(
     async (isApproving: boolean) => {
@@ -141,9 +158,9 @@ const ProposalSigning = ({
         return
       }
 
-      // In case the tx has been approved between the last couple block
+      // In case the tx has been approved between the last couple blocks
       // and the tx in the indexer hasn't been updated we should query the latest state
-      // right before sending the tx.
+      // right before sending the tx to have the right amount of signers.
       const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
 
       let amountOfSigner = 0
@@ -309,7 +326,7 @@ const ProposalSigning = ({
               />
             </>
           )}
-          {!!callInfo?.call && !errorMessage && (
+          {!!callInfo?.call && (
             <>
               <Grid
                 item
@@ -337,19 +354,23 @@ const ProposalSigning = ({
               </Grid>
             </>
           )}
-          <Grid
-            item
-            xs={0}
-            md={1}
-          />
-          <Grid
-            item
-            xs={12}
-            md={11}
-            className="errorMessage"
-          >
-            {!!errorMessage && errorMessage}
-          </Grid>
+          {!!errorMessage && (
+            <>
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <Grid
+                item
+                xs={12}
+                md={11}
+                className="errorMessage"
+              >
+                <Alert severity="error">{errorMessage}</Alert>
+              </Grid>
+            </>
+          )}
           <Grid
             item
             xs={12}

@@ -1,5 +1,5 @@
 import { Alert, Box, Chip, Paper } from '@mui/material'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import AccountDisplay from '../../components/AccountDisplay'
 import SignerSelection from '../../components/select/SignerSelection'
@@ -19,6 +19,7 @@ interface Props {
   proxyAddress?: string
   isCreationSummary?: boolean
   balanceMin?: BN
+  reservedBalance: BN
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
   withProxy?: boolean
@@ -36,10 +37,40 @@ const Summary = ({
   isBalanceError,
   selectedMultisig,
   withProxy = true,
-  isSubmittingExtrinsic = false
+  isSubmittingExtrinsic = false,
+  reservedBalance
 }: Props) => {
   const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    if (!isBalanceError) {
+      setErrorMessage('')
+      return
+    }
+
+    const requiredBalanceString =
+      balanceMin &&
+      formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
+
+    const reservedString = reservedBalance.isZero()
+      ? ''
+      : formatBnBalance(reservedBalance, chainInfo?.tokenDecimals, {
+          tokenSymbol: chainInfo?.tokenSymbol
+        })
+
+    const reservedMessage = reservedString
+      ? `Note that it includes ${reservedString} that will be reserved. ${
+          !isCreationSummary ? 'It will be returned upon transaction approval/rejection' : ''
+        }`
+      : ''
+    setErrorMessage(
+      `The selected signer doesn't have the required ${requiredBalanceString} to submit this transaction. ${reservedMessage}`
+    )
+  }, [balanceMin, chainInfo, isBalanceError, isCreationSummary, reservedBalance])
 
   const possibleSigners = useMemo(() => {
     return isCreationSummary
@@ -120,14 +151,7 @@ const Summary = ({
           possibleSigners={possibleSigners}
         />
       </Box>
-      {isBalanceError && balanceMin && !isSubmittingExtrinsic && (
-        <Alert severity="error">
-          The selected signer requires at least{' '}
-          {formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
-            tokenSymbol: chainInfo?.tokenSymbol
-          })}
-        </Alert>
-      )}
+      {!!errorMessage && !isSubmittingExtrinsic && <Alert severity="error">{errorMessage}</Alert>}
     </Box>
   )
 }

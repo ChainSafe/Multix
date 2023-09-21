@@ -5,6 +5,7 @@ import BN from 'bn.js'
 export const usePureProxyCreationNeededFunds = () => {
   const { api, chainInfo } = useApi()
   const [min, setMin] = useState(new BN(0))
+  const [reserved, setReserved] = useState(new BN(0))
 
   useEffect(() => {
     if (!api) return
@@ -27,9 +28,10 @@ export const usePureProxyCreationNeededFunds = () => {
     // play safe and add the existential deposit twice which should suffice
     const survive = (api.consts.balances.existentialDeposit as unknown as BN).muln(2)
 
+    setReserved(reserved)
     setMin(reserved.add(survive))
     // console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
   }, [api, chainInfo])
 
-  return { pureProxyCreationNeededFunds: min }
+  return { pureProxyCreationNeededFunds: min, reserved }
 }
