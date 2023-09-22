@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { css, styled } from '@mui/material/styles'
 import WatchedAccounts from './WatchedAccounts'
 import { WalletConnectSession } from '../../components/WalletConnect/WalletConnectSession'
 import { WalletConnectActiveSessions } from '../../components/WalletConnect/WalletConnectActiveSessions'
@@ -7,6 +7,7 @@ import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icon
 import { theme } from '../../styles/theme'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import walletConnectSVG from '../../logos/walletConnectSVG.svg'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
@@ -56,7 +57,10 @@ const Settings = () => {
         onChange={() => onToggle(ACCORDION_WALLET_CONNECT)}
       >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
-          <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
+          <ImgWalletConnectLogoStyled
+            src={walletConnectSVG}
+            alt="walletconnect logo"
+          />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
         </AccordionSummaryStyled>
         <AccordionDetails>
@@ -105,7 +109,7 @@ const AccordionSummaryStyled = styled(AccordionSummary)`
   }
 `
 
-const HiOutlineEyeStyled = styled(HiOutlineEye)`
+const commonCssImgs = css`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,8 +118,12 @@ const HiOutlineEyeStyled = styled(HiOutlineEye)`
   padding: 0.35rem;
   border-radius: 0.25rem;
   margin: 0 0.75rem 0 0;
-  background: ${({ theme }) => theme.custom.gray[400]};
+  background: ${theme.custom.gray[400]};
 `
+
+const ImgWalletConnectLogoStyled = styled('img')(commonCssImgs)
+
+const HiOutlineEyeStyled = styled(HiOutlineEye)(commonCssImgs)
 
 const SummaryLabelStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[900]};
