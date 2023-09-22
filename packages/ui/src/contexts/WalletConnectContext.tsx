@@ -13,7 +13,7 @@ export interface IWalletConnectContext {
   web3wallet: IWeb3Wallet | undefined
   core: ICore
   pair: (params: { uri: string }) => Promise<PairingTypes.Struct>
-  refresh: () => void
+  refresh: () => Promise<void>
 }
 
 const WalletConnectContext = createContext<IWalletConnectContext | undefined>(undefined)
@@ -58,7 +58,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
   )
 
   const refresh = useCallback(() => {
-    createWeb3Wallet()
+    return createWeb3Wallet()
   }, [createWeb3Wallet])
 
   useEffect(() => {
