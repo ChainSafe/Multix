@@ -18,6 +18,8 @@ interface Props {
   addAccount?: (address: string) => void
   value?: string
   label?: string
+  actionButtonLabel?: string
+  actionButtonVariant?: 'primary' | 'secondary'
   currentSelection?: string[]
   withName?: boolean
   withAddButton?: boolean
@@ -31,6 +33,8 @@ const AccountSelection = ({
   nameDisabled = false,
   value,
   label = 'Address',
+  actionButtonLabel = 'Add',
+  actionButtonVariant = 'secondary',
   currentSelection = [],
   withName = false,
   withAddButton = false,
@@ -179,11 +183,11 @@ const AccountSelection = ({
           {withAddButton && (
             <ButtonStyled
               onClick={onAdd}
-              variant="primary"
+              variant={actionButtonVariant}
               disabled={!selected || !!errorMessage}
               data-cy="button-add-watched-account"
             >
-              Watch
+              {actionButtonLabel}
             </ButtonStyled>
           )}
         </BoxStyled>

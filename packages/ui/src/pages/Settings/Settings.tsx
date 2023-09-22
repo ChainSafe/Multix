@@ -5,24 +5,32 @@ import { WalletConnectSession } from '../../components/WalletConnect/WalletConne
 import { WalletConnectActiveSessions } from '../../components/WalletConnect/WalletConnectActiveSessions'
 import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icons/hi2'
 import { theme } from '../../styles/theme'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
+const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
+
+type AccordionNames = typeof ACCORDION_WATCHED_ACCOUNTS | typeof ACCORDION_WALLET_CONNECT
+
 const Settings = () => {
-  const location = useLocation()
-  const [expanded, setExpanded] = useState<string | false>(false)
-  const handleChange = (panel: string) => (event: SyntheticEvent | null, isExpanded: boolean) => {
-    console.log('handleChange', panel)
-    setExpanded(isExpanded ? panel : false)
-  }
+  const { hash } = useLocation()
+  const [expanded, setExpanded] = useState<AccordionNames | false>(false)
+
+  const handleChange = useCallback(
+    (panel: AccordionNames) => (_event: SyntheticEvent | null, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false)
+    },
+    []
+  )
 
   useEffect(() => {
-    if (location.hash === '#watched-acccounts') {
+    if (hash === '#watched-acccounts') {
       handleChange('panel-watched-accounts')(null, true)
-    } else if (location.hash === '#wallet-connect') {
+    } else if (hash === '#wallet-connect') {
       handleChange('panel-wallet-connect')(null, true)
     }
-  }, [location.hash])
+  }, [handleChange, hash])
 
   return (
     <>
@@ -66,11 +74,11 @@ const SettingsHeaderStyled = styled('h1')`
 const AccordionStyled = styled(Accordion)`
   max-width: 42.5625rem;
   box-shadow: none;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid ${({ theme }) => theme.custom.neutral[200]};
 
   &.Mui-expanded {
     margin: 0;
-    background: #fafafa;
+    background: ${({ theme }) => theme.custom.neutral[50]};
 
     .MuiAccordionSummary-root {
       margin: 0;

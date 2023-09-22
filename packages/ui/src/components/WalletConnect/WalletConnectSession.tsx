@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Grid, styled } from '@mui/material'
 import { Button, TextFieldStyled } from '../library'
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 

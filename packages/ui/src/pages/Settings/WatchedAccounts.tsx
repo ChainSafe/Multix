@@ -4,36 +4,34 @@ import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import AccountDisplay from '../../components/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
+import { useCallback } from 'react'
 
-interface Props {
-  className?: string
-}
-
-const WatchedAccounts = ({ className }: Props) => {
+const WatchedAccounts = () => {
   const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
+  const hasWatchedAddresses = useCallback(() => watchedAddresses.length > 0, [watchedAddresses])
 
   return (
     <>
-      <WatchAccountsHeaderStyled>Currently watched accounts:</WatchAccountsHeaderStyled>
+      {hasWatchedAddresses() && (
+        <WatchAccountsHeaderStyled>Currently watched accounts:</WatchAccountsHeaderStyled>
+      )}
       <Grid
-        className={className}
         container
         spacing={2}
       >
-        {watchedAddresses.length > 0 && (
+        {hasWatchedAddresses() && (
           <Grid
             item
             xs={12}
             md={8}
           >
             <PaperStyled>
-              {watchedAddresses.map((address, index) => {
+              {watchedAddresses.map((address) => {
                 return (
                   <AccountItemWrapperStyled
                     key={address}
                     data-cy="container-account-details"
                   >
-                    <AccountCountStyled>{index + 1}</AccountCountStyled>
                     <AccountDisplayStyled address={address} />
                     <IconButtonDeleteStyled
                       aria-label="delete"
@@ -53,12 +51,13 @@ const WatchedAccounts = ({ className }: Props) => {
           xs={12}
           md={8}
         >
-          <WatchAccountsHeaderStyled>Watch an account</WatchAccountsHeaderStyled>
           <AccountSelectionWrapperStyled>
             <AccountSelection
               className="accountDropdown"
               currentSelection={watchedAddresses}
               addAccount={addWatchedAccount}
+              actionButtonLabel="Watch"
+              actionButtonVariant="primary"
               withName
               withAddButton
               withPreselection={false}
@@ -93,10 +92,6 @@ const IconButtonDeleteStyled = styled(IconButton)`
   margin-left: 1rem;
   height: 2.5rem;
   align-self: center;
-`
-
-const AccountCountStyled = styled(Box)`
-  margin-right: 1rem;
 `
 
 const AccountDisplayStyled = styled(AccountDisplay)`
