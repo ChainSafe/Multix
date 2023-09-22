@@ -7,7 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = styled('button')<ButtonProps>`
-  display: inline-flex;
+  display: inline-block;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   height: 100%;
@@ -21,6 +21,7 @@ export const Button = styled('button')<ButtonProps>`
   box-shadow: ${({ theme }) => theme.custom.boxShadow};
   transition: background 0.2s ease-in-out;
   white-space: nowrap;
+  text-align: center;
 
   &:disabled {
     cursor: not-allowed;

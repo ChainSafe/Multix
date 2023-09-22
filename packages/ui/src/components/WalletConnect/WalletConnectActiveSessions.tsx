@@ -20,7 +20,7 @@ export const WalletConnectActiveSessions = () => {
 
       setIsLoading(true)
       await web3wallet.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
-      await refresh()
+      refresh()
       setIsLoading(false)
     },
     [web3wallet, refresh]

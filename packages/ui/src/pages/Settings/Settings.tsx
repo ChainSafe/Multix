@@ -1,20 +1,36 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import WatchedAccounts from './WatchedAccounts'
 import { WalletConnectSession } from '../../components/WalletConnect/WalletConnectSession'
 import { WalletConnectActiveSessions } from '../../components/WalletConnect/WalletConnectActiveSessions'
 import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icons/hi2'
 import { theme } from '../../styles/theme'
+import { SyntheticEvent, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
-interface Props {
-  className?: string
-}
+const Settings = () => {
+  const location = useLocation()
+  const [expanded, setExpanded] = useState<string | false>(false)
+  const handleChange = (panel: string) => (event: SyntheticEvent | null, isExpanded: boolean) => {
+    console.log('handleChange', panel)
+    setExpanded(isExpanded ? panel : false)
+  }
 
-const Settings = ({ className }: Props) => {
+  useEffect(() => {
+    if (location.hash === '#watched-acccounts') {
+      handleChange('panel-watched-accounts')(null, true)
+    } else if (location.hash === '#wallet-connect') {
+      handleChange('panel-wallet-connect')(null, true)
+    }
+  }, [location.hash])
+
   return (
     <>
       <SettingsHeaderStyled>Settings</SettingsHeaderStyled>
-      <AccordionStyled>
+      <AccordionStyled
+        expanded={expanded === 'panel-watched-accounts'}
+        onChange={handleChange('panel-watched-accounts')}
+      >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
           <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>Watch an account</SummaryLabelStyled>
@@ -23,11 +39,19 @@ const Settings = ({ className }: Props) => {
           <WatchedAccounts />
         </AccordionDetails>
       </AccordionStyled>
-      <BoxStyled className={className}>
-        <h3>WalletConnect</h3>
-        <WalletConnectSession />
-        <WalletConnectActiveSessions />
-      </BoxStyled>
+      <AccordionStyled
+        expanded={expanded === 'panel-wallet-connect'}
+        onChange={handleChange('panel-wallet-connect')}
+      >
+        <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
+          <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
+          <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
+        </AccordionSummaryStyled>
+        <AccordionDetails>
+          <WalletConnectSession />
+          <WalletConnectActiveSessions />
+        </AccordionDetails>
+      </AccordionStyled>
     </>
   )
 }
@@ -45,7 +69,13 @@ const AccordionStyled = styled(Accordion)`
   border-bottom: 1px solid #e5e5e5;
 
   &.Mui-expanded {
+    margin: 0;
     background: #fafafa;
+
+    .MuiAccordionSummary-root {
+      margin: 0;
+      min-height: auto;
+    }
   }
 `
 
@@ -75,10 +105,6 @@ const SummaryLabelStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[900]};
   font-size: 1.25rem;
   font-weight: 500;
-`
-
-const BoxStyled = styled(Box)`
-  margin-bottom: 2rem;
 `
 
 export default Settings

@@ -36,9 +36,6 @@ export const WalletConnectSession = () => {
     >
       <Grid
         item
-        xs={12}
-        sm={12}
-        md={12}
         alignItems="center"
       >
         {!canUseWalletConnect && (
@@ -52,24 +49,28 @@ export const WalletConnectSession = () => {
         )}
       </Grid>
       <Grid
-        item
         xs={12}
-        sm={12}
-        md={12}
-        alignItems="center"
+        md={8}
+        item
       >
-        <TextFieldStyled
-          onChange={onUriChange}
-          value={uri}
-          placeholder="WalletConnect key..."
-          disabled={!canUseWalletConnect}
-        />
-        <ButtonStyled
-          disabled={!uri || !canUseWalletConnect}
-          onClick={onConnect}
+        <Grid
+          container
+          direction="column"
         >
-          {loading ? <CircularProgress size={25} /> : 'Connect Dapp'}
-        </ButtonStyled>
+          <TextFieldStyled
+            onChange={onUriChange}
+            value={uri}
+            placeholder="WalletConnect key..."
+            disabled={!canUseWalletConnect}
+          />
+          <ButtonStyled
+            variant="primary"
+            disabled={!uri || !canUseWalletConnect}
+            onClick={onConnect}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Connect Dapp'}
+          </ButtonStyled>
+        </Grid>
       </Grid>
     </Grid>
   )
@@ -81,5 +82,5 @@ const AlertStyled = styled(Alert)`
 `
 
 const ButtonStyled = styled(Button)`
-  margin-left: 1rem;
+  margin-top: 0.5rem;
 `

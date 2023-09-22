@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Grid, IconButton, Paper } from '@mui/material'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import AccountDisplay from '../../components/AccountDisplay'
-import { HiOutlineTrash } from 'react-icons/hi2'
+import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
 
 interface Props {
@@ -24,7 +24,6 @@ const WatchedAccounts = ({ className }: Props) => {
           <Grid
             item
             xs={12}
-            sm={8}
             md={8}
           >
             <PaperStyled>
@@ -32,18 +31,16 @@ const WatchedAccounts = ({ className }: Props) => {
                 return (
                   <AccountItemWrapperStyled
                     key={address}
-                    className="selectedSignatory"
                     data-cy="container-account-details"
                   >
                     <AccountCountStyled>{index + 1}</AccountCountStyled>
                     <AccountDisplayStyled address={address} />
                     <IconButtonDeleteStyled
-                      className="deleteButton"
                       aria-label="delete"
                       onClick={() => removeWatchedAccount(address)}
                       data-cy="button-delete-watched-account"
                     >
-                      <HiOutlineTrash />
+                      <HiOutlineXMark />
                     </IconButtonDeleteStyled>
                   </AccountItemWrapperStyled>
                 )
@@ -54,8 +51,7 @@ const WatchedAccounts = ({ className }: Props) => {
         <Grid
           item
           xs={12}
-          sm={12}
-          md={12}
+          md={8}
         >
           <WatchAccountsHeaderStyled>Watch an account</WatchAccountsHeaderStyled>
           <AccountSelectionWrapperStyled>
@@ -80,15 +76,16 @@ const WatchAccountsHeaderStyled = styled('h3')`
   color: ${({ theme }) => theme.custom.gray[800]};
   font-size: 1rem;
   font-weight: 400;
+  margin: 0 0 0.5rem 0;
 `
 
 const PaperStyled = styled(Paper)`
-  .selectedSignatory {
-    display: flex;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  box-shadow: none;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+  & > :last-of-type {
+    border-bottom: none;
   }
 `
 
@@ -110,18 +107,28 @@ const AccountItemWrapperStyled = styled(Box)`
   display: flex;
   align-items: center;
   padding: 0.75rem 1.5rem;
-`
-
-const TitleStyled = styled(Box)`
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
 `
 
 const AccountSelectionWrapperStyled = styled(Box)`
   display: flex;
   margin-bottom: 2rem;
 
+  .MuiAutocomplete-root {
+    margin-right: 0 !important;
+  }
+
   .accountDropdown {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      width: 100%;
+    }
+
+    & > :last-child {
+      margin-top: 0.5rem;
+    }
   }
 `
 

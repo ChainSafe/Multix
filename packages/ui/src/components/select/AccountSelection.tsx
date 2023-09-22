@@ -179,11 +179,11 @@ const AccountSelection = ({
           {withAddButton && (
             <ButtonStyled
               onClick={onAdd}
-              variant="secondary"
+              variant="primary"
               disabled={!selected || !!errorMessage}
               data-cy="button-add-watched-account"
             >
-              Add
+              Watch
             </ButtonStyled>
           )}
         </BoxStyled>
@@ -203,6 +203,7 @@ const BoxStyled = styled(Box)`
 const ButtonStyled = styled(Button)`
   margin-left: 1rem;
   align-self: end;
+  text-align: center;
 `
 
 export default styled(AccountSelection)`
