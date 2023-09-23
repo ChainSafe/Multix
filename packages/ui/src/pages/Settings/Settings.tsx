@@ -25,7 +25,7 @@ const Settings = () => {
   )
 
   useEffect(() => {
-    if (hash === '#watched-acccounts') {
+    if (hash === '#watched-accounts') {
       handleChange('panel-watched-accounts')(null, true)
     } else if (hash === '#wallet-connect') {
       handleChange('panel-wallet-connect')(null, true)
