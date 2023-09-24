@@ -17,6 +17,7 @@ import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
+import { WATCH_ACCOUNT_ANCHOR } from '../Settings/Settings'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
@@ -63,7 +64,7 @@ const Home = ({ className }: HomeProps) => {
           <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
           or
           <Button
-            onClick={() => navigate('/settings#watched-accounts')}
+            onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}
             data-cy="button-watch-address"
           >
             Watch an address

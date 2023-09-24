@@ -11,6 +11,7 @@ import walletConnectSVG from '../../logos/walletConnectSVG.svg'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
+export const WATCH_ACCOUNT_ANCHOR = '#watched-accounts'
 
 type AccordionNames = typeof ACCORDION_WATCHED_ACCOUNTS | typeof ACCORDION_WALLET_CONNECT
 
@@ -18,24 +19,17 @@ const Settings = () => {
   const { hash } = useLocation()
   const [expanded, setExpanded] = useState<AccordionNames | undefined>(undefined)
 
-  const onToggle = useCallback(
-    (panel: AccordionNames) => {
-      if (expanded === panel) {
-        setExpanded(undefined)
-      } else {
-        setExpanded(panel)
-      }
-    },
-    [expanded]
-  )
+  const onToggle = useCallback((panel: AccordionNames, forceOpen = false) => {
+    setExpanded((prev) => {
+      return prev === panel && !forceOpen ? undefined : panel
+    })
+  }, [])
 
   useEffect(() => {
-    if (hash === '#watched-acccounts') {
-      onToggle(ACCORDION_WATCHED_ACCOUNTS)
-    } else if (hash === '#wallet-connect') {
-      onToggle(ACCORDION_WALLET_CONNECT)
+    if (hash === WATCH_ACCOUNT_ANCHOR) {
+      onToggle(ACCORDION_WATCHED_ACCOUNTS, true)
     }
-  }, [onToggle, hash])
+  }, [hash, onToggle])
 
   return (
     <>
