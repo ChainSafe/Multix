@@ -63,7 +63,7 @@ const Home = ({ className }: HomeProps) => {
           <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
           or
           <Button
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/settings#watched-accounts')}
             data-cy="button-watch-address"
           >
             Watch an address
