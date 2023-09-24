@@ -29,5 +29,5 @@ export default styled(Snackbar)`
   position: fixed;
   bottom: 1rem;
   left: 1rem;
-  z-index: 2;
+  z-index: 9999;
 `

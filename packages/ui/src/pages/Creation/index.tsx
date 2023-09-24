@@ -48,7 +48,8 @@ const MultisigCreation = ({ className }: Props) => {
     [ownAddressList, signatories]
   )
   const [errorMessage, setErrorMessage] = useState('')
-  const { pureProxyCreationNeededFunds } = usePureProxyCreationNeededFunds()
+  const { pureProxyCreationNeededFunds, reserved: proxyReserved } =
+    usePureProxyCreationNeededFunds()
   const supportsProxy = useMemo(() => {
     const hasProxyPallet = !!api && !!api.tx.proxy
     // Moonbeam and moonriver have the pallet, but it's deactivated
@@ -151,11 +152,12 @@ const MultisigCreation = ({ className }: Props) => {
     withProxy
   ])
 
-  const { multisigProposalNeededFunds } = useMultisigProposalNeededFunds({
-    threshold,
-    signatories,
-    call: withProxy ? batchCall : remarkCall
-  })
+  const { multisigProposalNeededFunds, reserved: multisigReserved } =
+    useMultisigProposalNeededFunds({
+      threshold,
+      signatories,
+      call: withProxy ? batchCall : remarkCall
+    })
   const neededBalance = useMemo(
     () =>
       withProxy
@@ -413,6 +415,7 @@ const MultisigCreation = ({ className }: Props) => {
               threshold={threshold}
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
+              reservedBalance={withProxy ? multisigReserved.add(proxyReserved) : multisigReserved}
               balanceMin={neededBalance}
               withProxy={withProxy}
               isSubmittingExtrinsic={isSubmitted}
