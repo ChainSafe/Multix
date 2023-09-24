@@ -31,6 +31,7 @@ import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
+import BN from 'bn.js'
 
 interface Props {
   onClose: () => void
@@ -183,16 +184,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     selectedMultisig
   ])
 
-  const { multisigProposalNeededFunds: firstCallNeededFunds } = useMultisigProposalNeededFunds({
-    call: firstCall,
-    signatories: selectedMultisig?.signatories,
-    threshold: oldThreshold
-  })
-  const { multisigProposalNeededFunds: secondCallNeededFunds } = useMultisigProposalNeededFunds({
-    call: secondCall,
-    signatories: newSignatories,
-    threshold: newThreshold
-  })
+  const { multisigProposalNeededFunds: firstCallNeededFunds, reserved: firstCallReserved } =
+    useMultisigProposalNeededFunds({
+      call: firstCall,
+      signatories: selectedMultisig?.signatories,
+      threshold: oldThreshold
+    })
+  const { multisigProposalNeededFunds: secondCallNeededFunds, reserved: secondCallReserved } =
+    useMultisigProposalNeededFunds({
+      call: secondCall,
+      signatories: newSignatories,
+      threshold: newThreshold
+    })
   const neededBalance = useMemo(
     () => firstCallNeededFunds.add(secondCallNeededFunds),
     [firstCallNeededFunds, secondCallNeededFunds]
@@ -355,7 +358,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 xs={12}
               >
                 {!hasProxyEnoughFunds && (
-                  <Alert severity="warning">
+                  <Alert severity="error">
                     The pure account doesn't have enough funds. It needs at least{' '}
                     {formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
                       tokenSymbol: chainInfo?.tokenSymbol
@@ -421,6 +424,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               balanceMin={neededBalance}
               isBalanceError={!hasSignerEnoughFunds}
               selectedMultisig={selectedMultisig}
+              reservedBalance={firstCallReserved.add(secondCallReserved)}
             />
           )}
           {(currentStep === 'call1' || currentStep === 'call2') && (
