@@ -7,7 +7,7 @@ import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icon
 import { theme } from '../../styles/theme'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import walletConnectSVG from '../../logos/walletConnectSVG.svg'
+import { ReactComponent as WalletConnectSVG } from '../../logos/walletConnectSVG.svg'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
@@ -51,10 +51,7 @@ const Settings = () => {
         onChange={() => onToggle(ACCORDION_WALLET_CONNECT)}
       >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
-          <ImgWalletConnectLogoStyled
-            src={walletConnectSVG}
-            alt="walletconnect logo"
-          />
+          <WalletConnectSVGStyled />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
         </AccordionSummaryStyled>
         <AccordionDetails>
@@ -115,7 +112,7 @@ const commonCssImgs = css`
   background: ${theme.custom.gray[400]};
 `
 
-const ImgWalletConnectLogoStyled = styled('img')(commonCssImgs)
+const WalletConnectSVGStyled = styled(WalletConnectSVG)(commonCssImgs)
 
 const HiOutlineEyeStyled = styled(HiOutlineEye)(commonCssImgs)
 
