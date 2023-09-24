@@ -51,7 +51,7 @@ const Settings = () => {
         onChange={() => onToggle(ACCORDION_WALLET_CONNECT)}
       >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
-          <WalletConnectSVGStyled />
+          <WalletConnectSVGStyled fill={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
         </AccordionSummaryStyled>
         <AccordionDetails>
