@@ -20,7 +20,7 @@ export const WalletConnectActiveSessions = () => {
 
       setIsLoading(true)
       await web3wallet.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
-      refresh()
+      await refresh()
       setIsLoading(false)
     },
     [web3wallet, refresh]
@@ -32,48 +32,46 @@ export const WalletConnectActiveSessions = () => {
 
   return (
     <WrapperBox>
-      <>
-        Active sessions:
-        {activeSessions.map((session) => {
-          const { name, url } = session.peer.metadata
-          const expiryDate = new Date(session.expiry * 1000)
+      Active sessions:
+      {activeSessions.map((session) => {
+        const { name, url } = session.peer.metadata
+        const expiryDate = new Date(session.expiry * 1000)
 
-          const content = (
-            <ContentBoxStyled>
-              <div className="info">
-                <ul>
-                  <li>Namespace: {session.requiredNamespaces.polkadot.chains?.join(', ')}</li>
-                  <li>Methods: {session.requiredNamespaces.polkadot.methods?.join(', ')}</li>
-                  <li>Expiring: {expiryDate.toDateString()}</li>
-                </ul>
-              </div>
-              <div className="buttonWrapper">
-                <Button
-                  variant="primary"
-                  onClick={() => onDeleteSession(session.topic)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <CircularProgress size={24} /> : 'Delete session'}
-                </Button>
-              </div>
-            </ContentBoxStyled>
-          )
+        const content = (
+          <ContentBoxStyled>
+            <div className="info">
+              <ul>
+                <li>Namespace: {session.requiredNamespaces.polkadot.chains?.join(', ')}</li>
+                <li>Methods: {session.requiredNamespaces.polkadot.methods?.join(', ')}</li>
+                <li>Expiring: {expiryDate.toDateString()}</li>
+              </ul>
+            </div>
+            <div className="buttonWrapper">
+              <Button
+                variant="primary"
+                onClick={() => onDeleteSession(session.topic)}
+                disabled={isLoading}
+              >
+                {isLoading ? <CircularProgress size={24} /> : 'Delete session'}
+              </Button>
+            </div>
+          </ContentBoxStyled>
+        )
 
-          return (
-            <ExpanderStyled
-              key={session.topic}
-              expanded={false}
-              title={
-                <TitleBoxStyled>
-                  <div className="name">{name}</div>
-                  <div className="url">{url}</div>
-                </TitleBoxStyled>
-              }
-              content={content}
-            />
-          )
-        })}
-      </>
+        return (
+          <ExpanderStyled
+            key={session.topic}
+            expanded={false}
+            title={
+              <TitleBoxStyled>
+                <div className="name">{name}</div>
+                <div className="url">{url}</div>
+              </TitleBoxStyled>
+            }
+            content={content}
+          />
+        )
+      })}
     </WrapperBox>
   )
 }

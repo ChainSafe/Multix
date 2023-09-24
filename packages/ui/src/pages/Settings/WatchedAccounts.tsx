@@ -101,7 +101,7 @@ const AccountDisplayStyled = styled(AccountDisplay)`
 const AccountItemWrapperStyled = styled(Box)`
   display: flex;
   align-items: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
 `
 

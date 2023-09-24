@@ -1,12 +1,13 @@
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { css, styled } from '@mui/material/styles'
 import WatchedAccounts from './WatchedAccounts'
 import { WalletConnectSession } from '../../components/WalletConnect/WalletConnectSession'
 import { WalletConnectActiveSessions } from '../../components/WalletConnect/WalletConnectActiveSessions'
 import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icons/hi2'
 import { theme } from '../../styles/theme'
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import walletConnectSVG from '../../logos/walletConnectSVG.svg'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
@@ -15,44 +16,51 @@ type AccordionNames = typeof ACCORDION_WATCHED_ACCOUNTS | typeof ACCORDION_WALLE
 
 const Settings = () => {
   const { hash } = useLocation()
-  const [expanded, setExpanded] = useState<AccordionNames | false>(false)
+  const [expanded, setExpanded] = useState<AccordionNames | undefined>(undefined)
 
-  const handleChange = useCallback(
-    (panel: AccordionNames) => (_event: SyntheticEvent | null, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false)
+  const onToggle = useCallback(
+    (panel: AccordionNames) => {
+      if (expanded === panel) {
+        setExpanded(undefined)
+      } else {
+        setExpanded(panel)
+      }
     },
-    []
+    [expanded]
   )
 
   useEffect(() => {
-    if (hash === '#watched-accounts') {
-      handleChange('panel-watched-accounts')(null, true)
+    if (hash === '#watched-acccounts') {
+      onToggle(ACCORDION_WATCHED_ACCOUNTS)
     } else if (hash === '#wallet-connect') {
-      handleChange('panel-wallet-connect')(null, true)
+      onToggle(ACCORDION_WALLET_CONNECT)
     }
-  }, [handleChange, hash])
+  }, [onToggle, hash])
 
   return (
     <>
       <SettingsHeaderStyled>Settings</SettingsHeaderStyled>
       <AccordionStyled
-        expanded={expanded === 'panel-watched-accounts'}
-        onChange={handleChange('panel-watched-accounts')}
+        expanded={expanded === ACCORDION_WATCHED_ACCOUNTS}
+        onChange={() => onToggle(ACCORDION_WATCHED_ACCOUNTS)}
       >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
           <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
-          <SummaryLabelStyled>Watch an account</SummaryLabelStyled>
+          <SummaryLabelStyled>Watched accounts</SummaryLabelStyled>
         </AccordionSummaryStyled>
         <AccordionDetails>
           <WatchedAccounts />
         </AccordionDetails>
       </AccordionStyled>
       <AccordionStyled
-        expanded={expanded === 'panel-wallet-connect'}
-        onChange={handleChange('panel-wallet-connect')}
+        expanded={expanded === ACCORDION_WALLET_CONNECT}
+        onChange={() => onToggle(ACCORDION_WALLET_CONNECT)}
       >
         <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
-          <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
+          <ImgWalletConnectLogoStyled
+            src={walletConnectSVG}
+            alt="walletconnect logo"
+          />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
         </AccordionSummaryStyled>
         <AccordionDetails>
@@ -95,9 +103,13 @@ const AccordionSummaryStyled = styled(AccordionSummary)`
     display: flex;
     align-items: center;
   }
+
+  .MuiAccordionSummary-content.Mui-expanded {
+    margin-top: 0;
+  }
 `
 
-const HiOutlineEyeStyled = styled(HiOutlineEye)`
+const commonCssImgs = css`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,8 +118,12 @@ const HiOutlineEyeStyled = styled(HiOutlineEye)`
   padding: 0.35rem;
   border-radius: 0.25rem;
   margin: 0 0.75rem 0 0;
-  background: ${({ theme }) => theme.custom.gray[400]};
+  background: ${theme.custom.gray[400]};
 `
+
+const ImgWalletConnectLogoStyled = styled('img')(commonCssImgs)
+
+const HiOutlineEyeStyled = styled(HiOutlineEye)(commonCssImgs)
 
 const SummaryLabelStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[900]};

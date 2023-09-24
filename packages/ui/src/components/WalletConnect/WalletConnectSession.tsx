@@ -1,5 +1,5 @@
 import { Alert, CircularProgress, Grid, styled } from '@mui/material'
-import { Button, TextFieldStyled } from '../library'
+import { Button, InputField } from '../library'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -57,10 +57,10 @@ export const WalletConnectSession = () => {
           container
           direction="column"
         >
-          <TextFieldStyled
+          <InputField
+            label="WalletConnect key"
             onChange={onUriChange}
             value={uri}
-            placeholder="WalletConnect key..."
             disabled={!canUseWalletConnect}
           />
           <ButtonStyled
