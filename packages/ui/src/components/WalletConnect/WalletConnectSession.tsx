@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Grid, styled } from '@mui/material'
 import { Button, InputField } from '../library'
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, ChangeEvent } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 
@@ -25,7 +25,7 @@ export const WalletConnectSession = () => {
     }
   }, [pair, uri])
 
-  const onUriChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onUriChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setUri(event.target.value.trim())
   }, [])
 

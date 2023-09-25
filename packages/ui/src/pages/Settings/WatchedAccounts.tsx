@@ -4,22 +4,22 @@ import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import AccountDisplay from '../../components/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
-import { useCallback } from 'react'
+import { useMemo } from 'react'
 
 const WatchedAccounts = () => {
   const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
-  const hasWatchedAddresses = useCallback(() => watchedAddresses.length > 0, [watchedAddresses])
+  const hasWatchedAddresses = useMemo(() => watchedAddresses.length > 0, [watchedAddresses])
 
   return (
     <>
-      {hasWatchedAddresses() && (
+      {hasWatchedAddresses && (
         <WatchAccountsHeaderStyled>Currently watched accounts:</WatchAccountsHeaderStyled>
       )}
       <Grid
         container
         spacing={2}
       >
-        {hasWatchedAddresses() && (
+        {hasWatchedAddresses && (
           <Grid
             item
             xs={12}
