@@ -35,6 +35,10 @@ declare module '@mui/material/styles' {
         800: string
         900: string
       }
+      neutral: {
+        50: string
+        200: string
+      }
       button: {
         primaryDisabledColor: string
         primaryDisabledBackground: string
@@ -78,6 +82,10 @@ declare module '@mui/material/styles' {
         700: string
         800: string
         900: string
+      }
+      neutral: {
+        50: string
+        200: string
       }
       button: {
         primaryDisabledColor: string
@@ -139,6 +147,10 @@ export const theme = createTheme({
       700: '#64748B',
       800: '#485568',
       900: '#020617'
+    },
+    neutral: {
+      50: '#FAFAFA',
+      200: '#e5e5e5'
     },
     button: {
       primaryDisabledColor: '#A8B3DC',

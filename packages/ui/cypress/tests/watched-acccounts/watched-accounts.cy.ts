@@ -1,5 +1,5 @@
 import { addresses } from '../../fixtures/accounts'
-import { landingPageUrl, settingsPageUrl } from '../../fixtures/landingData'
+import { landingPageUrl, settingsPageWatchAccountUrl } from '../../fixtures/landingData'
 import { landingPage } from '../../support/page-objects/landingPage'
 import { settingsPage } from '../../support/page-objects/settingsPage'
 
@@ -28,7 +28,7 @@ describe('Watched Accounts', () => {
 
   it('can remove an account from the watch list', () => {
     // add an account first
-    cy.visit(settingsPageUrl)
+    cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(addresses.Alice, 'Alice')
     // now remove it
     settingsPage.accountContainer().within(() => {
@@ -41,7 +41,7 @@ describe('Watched Accounts', () => {
 
   it('can see error when attemping to add same address more than once', () => {
     // add an account first
-    cy.visit(settingsPageUrl)
+    cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(addresses.Alice, 'Alice')
     settingsPage.accountContainer().should('have.length', 1)
     // attempt to add the same account again
@@ -52,7 +52,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see error when attempting to add an invalid address', () => {
-    cy.visit(settingsPageUrl)
+    cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount('123')
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Invalid address')
     settingsPage.accountContainer().should('have.length', 0)

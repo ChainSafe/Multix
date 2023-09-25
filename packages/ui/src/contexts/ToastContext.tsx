@@ -47,7 +47,7 @@ const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 export const useToasts = () => {
   const context = useContext(ToastContext)
   if (context === undefined) {
-    throw new Error('useToasst must be used within a ToastContextProvider')
+    throw new Error('useToast must be used within a ToastContextProvider')
   }
   return context
 }

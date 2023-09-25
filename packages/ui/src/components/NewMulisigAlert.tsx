@@ -15,7 +15,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
       severity="info"
     >
       <div className="infoText">
-        Your new multisig is being created. It will be available in ~30s from the dropdown.
+        Your new multisig is being created. It will be available in ~1min from the dropdown.
       </div>
       <IconButton
         className="closeButton"
