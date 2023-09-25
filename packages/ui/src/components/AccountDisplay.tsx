@@ -34,8 +34,7 @@ const AccountDisplay = ({
   const { api } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
-  const getEncodedAddress = useGetEncodedAddress()
-  const encodedAddress = useMemo(() => getEncodedAddress(address), [address, getEncodedAddress])
+  const { encodedAddress } = useGetEncodedAddress(address)
 
   useEffect(() => {
     if (!api) {
