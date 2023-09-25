@@ -50,7 +50,7 @@
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "ts-node": "^10.9.1",
-    "vite-plugin-svgr": "3.3.0"
+    "vite-plugin-svgr": "^4.0.0"
   },
   "scripts": {
     "start": "vite --port 3333",
