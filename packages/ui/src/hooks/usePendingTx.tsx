@@ -13,7 +13,7 @@ export interface PendingTx {
 }
 export const usePendingTx = (multiProxy?: MultiProxy) => {
   const [isLoading, setIsLoading] = useState(true)
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [data, setData] = useState<PendingTx[]>([])
   const multisigs = useMemo(
     () => multiProxy?.multisigs.map(({ address }) => address) || [],
@@ -41,7 +41,9 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
             const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
             const hash = (storage[0].toHuman() as Array<string>)[1]
             const info = storage[1].toJSON() as unknown as MultisigStorageInfo
-            info.approvals = info.approvals.map((approval) => approval.toLowerCase())
+            if (chainInfo?.isEthereum) {
+              info.approvals = info.approvals.map((approval) => approval.toLowerCase())
+            }
 
             // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
             // These 2 should be the same
