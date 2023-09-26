@@ -70,8 +70,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const pureToQueryIds = useAccountId(pureToQuery)
   const selectedIsWatched = useMemo(
     () =>
-      !selectedMultiProxy?.multisigs.some((multisig) =>
-        multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
+      !selectedMultiProxy?.multisigs.some(
+        (multisig) => multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
       ),
     [selectedMultiProxy, ownAddressList]
   )
@@ -170,7 +170,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         ({
           proxy,
           multisigs: agg.multisigs
-        } as MultiProxy)
+        }) as MultiProxy
     )
 
     setPureProxyList(pureProxyArray)
@@ -230,7 +230,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
           meta: {
             isMulti: true
           }
-        } as AccountBaseInfo)
+        }) as AccountBaseInfo
     ) || []
 
   const selectMultiProxy = useCallback(

@@ -7,7 +7,7 @@ import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icon
 import { theme } from '../../styles/theme'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ReactComponent as WalletConnectSVG } from '../../logos/walletConnectSVG.svg'
+import WalletConnectSVG from '../../logos/walletConnectSVG.svg?react'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
