@@ -1,4 +1,9 @@
-import { Injected, InjectedAccount, InjectedAccounts } from '@polkadot/extension-inject/types'
+import { Injected, InjectedAccounts } from '@polkadot/extension-inject/types'
+import { Keyring } from '@polkadot/keyring'
+import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { TypeRegistry } from '@polkadot/types'
+import { SignerPayloadJSON } from '@polkadot/types/types'
+import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 export interface AuthRequests {
   [index: number]: {
@@ -9,20 +14,37 @@ export interface AuthRequests {
   }
 }
 
+export interface TxRequests {
+  [index: number]: {
+    id: number
+    resolve: (accountAddresses: string[]) => void
+    reject: (reason: string) => void
+  }
+}
+
 export type EnableRequest = number
 
 export class Extension {
   authRequests: AuthRequests = {}
-  accounts: InjectedAccount[] = []
+  accounts: InjectedAccountWitMnemonic[] = []
+  txRequests: TxRequests = {}
+  keyring: Keyring | undefined
 
   reset = () => {
     this.authRequests = {}
     this.accounts = []
+    this.txRequests = {}
+    this.keyring = undefined
   }
 
-  init = (accounts: InjectedAccount[]) => {
+  init = async (accounts: InjectedAccountWitMnemonic[]) => {
     this.reset()
     this.accounts = accounts
+    await cryptoWaitReady()
+    this.keyring = new Keyring({ type: 'sr25519' })
+    accounts.forEach(({ mnemonic }) => {
+      this.keyring.addFromMnemonic(mnemonic)
+    })
   }
 
   getInjectedEnable = () => {
@@ -39,11 +61,24 @@ export class Extension {
               resolve({
                 accounts: {
                   get: () => selectedAccounts,
-                  subscribe: (cb: (accounts: InjectedAccount[]) => void) => cb(selectedAccounts)
+                  subscribe: (cb: (accounts: InjectedAccountWitMnemonic[]) => void) =>
+                    cb(selectedAccounts)
                 } as unknown as InjectedAccounts,
                 signer: {
-                  signPayload: (payload: any) => {
-                    return new Promise(() => {})
+                  signPayload: (payload: SignerPayloadJSON) => {
+                    console.log('payload', payload)
+                    const registry = new TypeRegistry()
+                    registry.setSignedExtensions(payload.signedExtensions)
+                    const pair = this.keyring.getPair(this.accounts[0].address)
+                    const signature = registry
+                      .createType('ExtrinsicPayload', payload, {
+                        version: payload.version
+                      })
+                      .sign(pair)
+
+                    return new Promise((resolve, reject) =>
+                      resolve({ signature: signature.signature, id: 1 })
+                    )
                   }
                 }
               })

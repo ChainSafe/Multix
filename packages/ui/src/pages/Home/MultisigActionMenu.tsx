@@ -77,6 +77,7 @@ const MultisigActionMenu = ({
           variant="primary"
           aria-label="send"
           onClick={() => setIsSendModalOpen(true)}
+          data-cy="button-new-transaction"
         >
           New transaction
         </Button>

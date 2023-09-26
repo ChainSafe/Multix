@@ -4,6 +4,7 @@
 import '@testing-library/cypress/add-commands'
 import { AuthRequests, Extension } from './Extension'
 import { InjectedAccount } from '@polkadot/extension-inject/types'
+import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -44,7 +45,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types'
 
 const extension = new Extension()
 
-Cypress.Commands.add('initExtension', (accounts: InjectedAccount[]) => {
+Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
   cy.wrap(extension.init(accounts))
 
