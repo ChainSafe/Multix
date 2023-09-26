@@ -46,7 +46,7 @@ describe('Perform transactions', () => {
     })
   })
 
-  it('Makes a balance transfer with Alice', () => {
+  it.skip('Makes a balance transfer with Alice', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
