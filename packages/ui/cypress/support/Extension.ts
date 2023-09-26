@@ -5,22 +5,22 @@ import { TypeRegistry } from '@polkadot/types'
 import { SignerPayloadJSON } from '@polkadot/types/types'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 
-export interface AuthRequests {
-  [index: number]: {
-    id: number
-    origin: string
-    resolve: (accountAddresses: string[]) => void
-    reject: (reason: string) => void
-  }
+export interface AuthRequest {
+  id: number
+  origin: string
+  resolve: (accountAddresses: string[]) => void
+  reject: (reason: string) => void
 }
 
-export interface TxRequests {
-  [index: number]: {
-    id: number
-    resolve: (accountAddresses: string[]) => void
-    reject: (reason: string) => void
-  }
+export interface TxRequest {
+  id: number
+  payload: SignerPayloadJSON
+  resolve: () => void
+  reject: (reason: string) => void
 }
+
+export type TxRequests = Record<number, TxRequest>
+export type AuthRequests = Record<number, AuthRequest>
 
 export type EnableRequest = number
 
@@ -66,19 +66,25 @@ export class Extension {
                 } as unknown as InjectedAccounts,
                 signer: {
                   signPayload: (payload: SignerPayloadJSON) => {
-                    console.log('payload', payload)
-                    const registry = new TypeRegistry()
-                    registry.setSignedExtensions(payload.signedExtensions)
-                    const pair = this.keyring.getPair(this.accounts[0].address)
-                    const signature = registry
-                      .createType('ExtrinsicPayload', payload, {
-                        version: payload.version
-                      })
-                      .sign(pair)
+                    return new Promise((resolve, reject) => {
+                      const id = Date.now()
+                      const res = () => {
+                        console.log('payload', payload)
+                        const registry = new TypeRegistry()
+                        registry.setSignedExtensions(payload.signedExtensions)
+                        const pair = this.keyring.getPair(this.accounts[0].address)
+                        const signature = registry
+                          .createType('ExtrinsicPayload', payload, {
+                            version: payload.version
+                          })
+                          .sign(pair)
+                        resolve({ id, signature: signature.signature })
+                      }
 
-                    return new Promise((resolve, reject) =>
-                      resolve({ signature: signature.signature, id: 1 })
-                    )
+                      const rej = (reason: string) => reject(new Error(reason))
+
+                      this.txRequests[id] = { id, payload, resolve: res, reject: rej }
+                    })
                   }
                 }
               })
@@ -104,5 +110,17 @@ export class Extension {
 
   rejectAuth = (id: number, reason: string) => {
     this.authRequests[id].reject(reason)
+  }
+
+  getTxRequests = () => {
+    return this.txRequests
+  }
+
+  approveTx = (id: number) => {
+    this.txRequests[id].resolve()
+  }
+
+  rejectTx = (id: number, reason: string) => {
+    this.txRequests[id].reject(reason)
   }
 }

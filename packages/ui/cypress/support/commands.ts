@@ -2,7 +2,7 @@
 /// <reference types="cypress" />
 
 import '@testing-library/cypress/add-commands'
-import { AuthRequests, Extension } from './Extension'
+import { AuthRequests, Extension, TxRequests } from './Extension'
 import { InjectedAccount } from '@polkadot/extension-inject/types'
 import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
 
@@ -68,6 +68,19 @@ Cypress.Commands.add('rejectAuth', (id: number, reason: string) => {
   return extension.rejectAuth(id, reason)
 })
 
+Cypress.Commands.add('getTxRequests', () => {
+  cy.wait(100)
+  return cy.wrap(extension.getTxRequests())
+})
+
+Cypress.Commands.add('approveTx', (id: number) => {
+  return extension.approveTx(id)
+})
+
+Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
+  return extension.rejectTx(id, reason)
+})
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -84,18 +97,36 @@ declare global {
       getAuthRequests: () => Chainable<AuthRequests>
       /**
        * Authorize a specific request
-       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {number} id - the id of the request to authorize. This id is part of the getAuthRequests object response.
        * @param {string[]} accountAddresses - the account addresses to share with the applications. These addresses must be part of the ones shared in the `initExtension`
        * @example cy.enableAuth(1694443839903, ["7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"])
        */
       enableAuth: (id: number, accountAddresses: string[]) => void
       /**
        * Reject a specific request
-       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {number} id - the id of the request to reject. This id is part of the getAuthRequests object response.
        * @param {reason} reason - the reason for the rejection
        * @example cy.rejectAuth(1694443839903, "Cancelled")
        */
       rejectAuth: (id: number, reason: string) => void
+      /**
+       * Read the tx request queue.
+       * @example cy.getTxRequests().then((txQueue) => { cy.wrap(Object.values(txQueue).length).should("eq", 1) })
+       */
+      getTxRequests: () => Chainable<TxRequests>
+      /**
+       * Authorize a specific request
+       * @param {number} id - the id of the request to approve. This id is part of the getTxRequests object response.
+       * @example cy.approveTx(1694443839903)
+       */
+      approveTx: (id: number) => void
+      /**
+       * Reject a specific request
+       * @param {number} id - the id of the tx request to reject. This id is part of the getTxRequests object response.
+       * @param {reason} reason - the reason for the rejection
+       * @example cy.rejectAuth(1694443839903, "Cancelled")
+       */
+      rejectTx: (id: number, reason: string) => void
     }
   }
 }
