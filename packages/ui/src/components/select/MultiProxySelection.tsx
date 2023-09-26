@@ -161,7 +161,7 @@ export default styled(MultiProxySelection)`
   min-width: 200px;
 
   @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
-    min-width: 280px;
+    min-width: 260px;
   }
 
   text-align: right;

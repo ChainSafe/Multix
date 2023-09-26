@@ -45,6 +45,9 @@ declare module '@mui/material/styles' {
         secondaryDisabledColor: string
         secondaryDisabledBackground: string
       }
+      header: {
+        background: string
+      }
       background: {
         primary: string
         secondary: string
@@ -92,6 +95,9 @@ declare module '@mui/material/styles' {
         primaryDisabledBackground: string
         secondaryDisabledColor: string
         secondaryDisabledBackground: string
+      }
+      header: {
+        background: string
       }
       background: {
         primary: string
@@ -157,6 +163,9 @@ export const theme = createTheme({
       primaryDisabledBackground: '#E3E9FF',
       secondaryDisabledColor: '#D7D7D7',
       secondaryDisabledBackground: '#F1F5F9'
+    },
+    header: {
+      background: '#fff'
     },
     background: {
       primary: '#F1F5F9',

@@ -9,7 +9,7 @@ import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
-import { multixlogo } from '../../logos/multixLogo'
+import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 
 interface Props {
@@ -29,11 +29,11 @@ const Header = ({ handleDrawerOpen }: Props) => {
         <LogoWrapperStyled>
           <LogoStyled
             alt={`multix logo`}
-            src={multixlogo}
+            src={multixLogo}
           />
         </LogoWrapperStyled>
         <DesktopMenuStyled>
-          <MenyuWrapperStyled>
+          <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
                 <RouterLinkStyled
@@ -44,7 +44,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 </RouterLinkStyled>
               ) : null
             )}
-          </MenyuWrapperStyled>
+          </MenuWrapperStyled>
           <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
               <ConnectButtonStyled
@@ -75,8 +75,10 @@ const Header = ({ handleDrawerOpen }: Props) => {
 const MuiAppBarStyled = styled(MuiAppBar)`
   margin-bottom: 2rem;
   height: 4.8125rem;
-  background: ${({ theme }) => theme.palette.primary.main};
+  background: ${({ theme }) => theme.custom.header.background};
   justify-content: center;
+  box-shadow: none;
+  border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
 `
 
 const ConnectButtonStyled = styled(Button)`
@@ -92,17 +94,22 @@ const RightButtonsWrapperStyled = styled(Box)`
 
 const RouterLinkStyled = styled(RouterLink)`
   display: inline-block;
-  color: ${({ theme }) => theme.palette.primary.white};
+  color: ${({ theme }) => theme.custom.gray[900]};
+  transition: all 0.2s ease-in-out;
 
   &:hover,
   &:focus,
   &:active {
-    color: #c7d0e7;
+    background: ${({ theme }) => theme.custom.gray[300]};
+    border-radius: ${({ theme }) => theme.custom.borderRadius};
+    color: ${({ theme }) => theme.custom.gray[900]};
   }
 `
 
-const MenyuWrapperStyled = styled(Box)`
+const MenuWrapperStyled = styled(Box)`
   width: 100%;
+  display: flex;
+  align-items: center;
 `
 
 const DesktopMenuStyled = styled(Box)`
@@ -117,7 +124,11 @@ const DesktopMenuStyled = styled(Box)`
 
 const LogoWrapperStyled = styled(Box)`
   display: flex;
-  flex: 1;
+  flex: 0;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    margin-right: 1rem;
+  }
 `
 
 const NetworkSelectionStyled = styled(NetworkSelection)`
@@ -130,6 +141,7 @@ const LogoStyled = styled('img')`
 
 const IconButtonStyled = styled(IconButton)`
   display: block;
+  color: black;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     display: none;
