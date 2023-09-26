@@ -11,9 +11,7 @@ const container = document.getElementById('root')
 const root = createRoot(container!)
 
 root.render(
-  (
-    <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>
-  ) as any
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
 )
