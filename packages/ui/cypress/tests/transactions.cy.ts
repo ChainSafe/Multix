@@ -45,4 +45,22 @@ describe('Perform transactions', () => {
       notifications.notificationWrapper().should('contain', errorMessage)
     })
   })
+
+  it('Makes a balance transfer with Alice', () => {
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
+    sendTxModal.fieldAmount().click().type('0.001')
+    sendTxModal.buttonSend().should('be.enabled').click()
+    cy.getTxRequests().then((req) => {
+      const txRequests = Object.values(req)
+      cy.wrap(txRequests.length).should('eq', 1)
+      cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
+      sendTxModal.buttonSend().should('be.disabled')
+      cy.approveTx(txRequests[0].id)
+      notifications.loadingNotificationIcon().should('be.visible')
+      notifications.notificationWrapper().should('have.length', 1)
+      notifications.notificationWrapper().should('contain', 'broadcast')
+    })
+  })
 })
