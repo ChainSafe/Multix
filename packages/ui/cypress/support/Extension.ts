@@ -43,7 +43,7 @@ export class Extension {
     await cryptoWaitReady()
     this.keyring = new Keyring({ type: 'sr25519' })
     accounts.forEach(({ mnemonic }) => {
-      this.keyring.addFromMnemonic(mnemonic)
+      this.keyring?.addFromMnemonic(mnemonic)
     })
   }
 
@@ -69,10 +69,13 @@ export class Extension {
                     return new Promise((resolve, reject) => {
                       const id = Date.now()
                       const res = () => {
-                        console.log('payload', payload)
                         const registry = new TypeRegistry()
                         registry.setSignedExtensions(payload.signedExtensions)
-                        const pair = this.keyring.getPair(this.accounts[0].address)
+                        const pair = this.keyring?.getPair(this.accounts[0].address)
+                        if (!pair) {
+                          console.error('Pair not found')
+                          return
+                        }
                         const signature = registry
                           .createType('ExtrinsicPayload', payload, {
                             version: payload.version

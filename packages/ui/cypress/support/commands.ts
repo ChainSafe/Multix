@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
 import { AuthRequests, Extension, TxRequests } from './Extension'
-import { InjectedAccount } from '@polkadot/extension-inject/types'
 import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
 
 // ***********************************************
@@ -87,7 +86,7 @@ declare global {
        * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
        * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
-      initExtension: (accounts: InjectedAccount[]) => Chainable<AUTWindow>
+      initExtension: (accounts: InjectedAccountWitMnemonic[]) => Chainable<AUTWindow>
       /**
        * Read the authentication request queue.
        * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
