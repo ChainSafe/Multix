@@ -1,7 +1,7 @@
-import { addresses } from '../../fixtures/accounts'
-import { landingPageUrl, settingsPageWatchAccountUrl } from '../../fixtures/landingData'
-import { landingPage } from '../../support/page-objects/landingPage'
-import { settingsPage } from '../../support/page-objects/settingsPage'
+import { addresses } from '../fixtures/accounts'
+import { landingPageUrl, settingsPageWatchAccountUrl } from '../fixtures/landingData'
+import { landingPage } from '../support/page-objects/landingPage'
+import { settingsPage } from '../support/page-objects/settingsPage'
 
 const addWatchAccount = (address: string, name?: string) => {
   settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
