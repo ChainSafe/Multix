@@ -2,6 +2,7 @@ import { styled } from '@mui/material'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useNavigate } from 'react-router-dom'
 import { Button } from './library'
+import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
 
 export const ConnectOrWatch = () => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
@@ -16,7 +17,7 @@ export const ConnectOrWatch = () => {
         <Button onClick={allowConnectionToExtension}>Connect Wallet</Button>
       )}
       or
-      <Button onClick={() => navigate('/settings')}>Watch one</Button>
+      <Button onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}>Watch one</Button>
     </ConnectButtonWrapperStyled>
   )
 }
