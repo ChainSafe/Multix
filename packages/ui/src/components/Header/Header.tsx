@@ -108,8 +108,6 @@ const RouterLinkStyled = styled(RouterLink)`
 
 const MenuWrapperStyled = styled(Box)`
   width: 100%;
-  display: flex;
-  align-items: center;
 `
 
 const DesktopMenuStyled = styled(Box)`
@@ -124,10 +122,11 @@ const DesktopMenuStyled = styled(Box)`
 
 const LogoWrapperStyled = styled(Box)`
   display: flex;
-  flex: 0;
+  flex: 1;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     margin-right: 1rem;
+    flex: 0;
   }
 `
 

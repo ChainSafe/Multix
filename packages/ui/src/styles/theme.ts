@@ -11,6 +11,9 @@ declare module '@mui/material/styles' {
       error: {
         main: string
       }
+      background: {
+        default: string
+      }
     }
     custom: {
       borderRadius: string
@@ -125,6 +128,9 @@ export const theme = createTheme({
     },
     error: {
       main: '#ff8a65'
+    },
+    background: {
+      default: '#FAFCFD'
     }
   },
   typography: {

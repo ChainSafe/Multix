@@ -148,12 +148,9 @@ const MultiProxySelection = ({ className }: Props) => {
 
 const BoxStyled = styled(Box)`
   display: flex;
+
   .MuiCircularProgress-root {
     color: ${({ theme }) => theme.palette.primary.main};
-
-    @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
-      color: ${({ theme }) => theme.palette.primary.white};
-    }
   }
 `
 
