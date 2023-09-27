@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   FormControl,
+  InputAdornment,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -14,6 +15,7 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'r
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getTypeDef } from '@polkadot/types/create'
+import { getGlobalMaxValue, inputToBn } from '../../utils'
 
 interface Props {
   extrinsicIndex?: string
@@ -26,6 +28,7 @@ interface Props {
 interface ParamField {
   name: string
   type: string
+  typeName: string
   optional: boolean
 }
 
@@ -43,9 +46,12 @@ const initFormState = {
 
 const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
 
+const isTypeBalance = (typeName: string) => ['Balance', 'BalanceOf', 'Amount'].includes(typeName)
+
 const transformParams = (
   paramFields: ParamField[],
   inputParams: any[],
+  tokenDecimals: number | undefined,
   opts = { emptyAsNull: true }
 ) => {
   // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
@@ -69,7 +75,7 @@ const transformParams = (
     value: paramVal[ind] || null
   }))
 
-  return params.reduce((previousValue, { type = 'string', value }) => {
+  return params.reduce((previousValue, { type = 'string', value, typeName }) => {
     if (value == null || value === '')
       return opts.emptyAsNull ? [...previousValue, null] : previousValue
 
@@ -86,6 +92,26 @@ const transformParams = (
           : single
       )
       return [...previousValue, converted]
+    }
+
+    // Deal with balance like types where the param need to
+    // be multiplied by the decimals
+    if (isTypeBalance(typeName)) {
+      if (!tokenDecimals) return previousValue
+
+      if (!converted.match('^[0-9]+([.][0-9]+)?$')) {
+        console.error('Only numbers and "." are accepted.')
+        return previousValue
+      }
+
+      const bnResult = inputToBn(tokenDecimals, value)
+
+      if (bnResult.gte(getGlobalMaxValue(128))) {
+        console.error('Amount too large')
+        return previousValue
+      }
+
+      return [...previousValue, bnResult.toString()]
     }
 
     // Deal with a single value
@@ -106,7 +132,7 @@ const ManualExtrinsic = ({
   extrinsicIndex,
   onSelectFromCallData
 }: Props) => {
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
   const [callables, setCallables] = useState<any[]>([])
   const [paramFields, setParamFields] = useState<ParamField[] | null>(null)
@@ -140,8 +166,12 @@ const ManualExtrinsic = ({
   useEffect(() => {
     !!paramFields?.length &&
       !!inputParams.length &&
-      setTransformedParams(transformParams(paramFields, inputParams))
-  }, [inputParams, paramFields])
+      setTransformedParams(transformParams(paramFields, inputParams, chainInfo?.tokenDecimals))
+  }, [inputParams, paramFields, chainInfo])
+
+  console.log('paramFields', paramFields)
+  console.log('inputParams', inputParams)
+  console.log('transformedParams', transformedParams)
 
   const updatePalletRPCs = useCallback(() => {
     if (!api) {
@@ -190,6 +220,7 @@ const ManualExtrinsic = ({
         return {
           name: arg.name.toString(),
           type: arg.type.toString(),
+          typeName: arg.typeName.unwrap().toString(),
           optional: argIsOptional(arg)
         }
       })
@@ -209,6 +240,7 @@ const ManualExtrinsic = ({
   const onPalletCallableParamChange = useCallback(
     (event: SelectChangeEvent<string>, state: string) => {
       // reset the params
+      setTransformedParams(undefined)
       setParamFields(null)
       onSetErrorMessage('')
 
@@ -336,17 +368,24 @@ const ManualExtrinsic = ({
         </Select>
       </FormControl>
       <ul className="paramInputs">
-        {paramFields?.map((paramField, ind) => (
-          <li key={`${paramField.name}-${paramField.type}`}>
-            <TextField
-              placeholder={paramField.type}
-              type="text"
-              label={`${paramField.name}${paramField.optional ? ' (optional)' : ''}`}
-              value={inputParams[ind] ? inputParams[ind].value : ''}
-              onChange={(event) => onParamChange(event, { ind, paramField })}
-            />
-          </li>
-        ))}
+        {paramFields?.map((paramField, ind) => {
+          return (
+            <li key={`${paramField.name}-${paramField.type}`}>
+              <TextField
+                placeholder={paramField.type}
+                type="text"
+                label={`${paramField.name}${paramField.optional ? ' (optional)' : ''}`}
+                value={inputParams[ind] ? inputParams[ind].value : ''}
+                onChange={(event) => onParamChange(event, { ind, paramField })}
+                InputProps={{
+                  endAdornment: isTypeBalance(paramField.typeName) && (
+                    <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
+                  )
+                }}
+              />
+            </li>
+          )
+        })}
       </ul>
     </Box>
   )
