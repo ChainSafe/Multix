@@ -25,14 +25,17 @@ function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
   )
 }
 
-const DrawerStyledMobile = styled(Drawer)(
-  () => `
+const DrawerStyledMobile = styled(Drawer)`
+  width: ${DRAWER_WIDTH}px;
+  flex-shrink: 0;
+
+  & .MuiDrawer-paper {
     width: ${DRAWER_WIDTH}px;
-    flex-shrink: 0;
-    & .MuiDrawer-paper {
-        width: ${DRAWER_WIDTH}px;
-    }
+  }
+
+  .MuiIconButton-root {
+    color: black;
+  }
 `
-)
 
 export default DrawerComponent

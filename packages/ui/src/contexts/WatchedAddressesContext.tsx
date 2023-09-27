@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
@@ -7,7 +7,7 @@ import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
 type WatchedAddressesProps = {
-  children: React.ReactNode | React.ReactNode[]
+  children: ReactNode | ReactNode[]
 }
 
 export interface IWatchedAddressesContext {
