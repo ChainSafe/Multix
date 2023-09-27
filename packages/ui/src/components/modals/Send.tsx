@@ -133,6 +133,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
           onSelectFromCallData={() => setSelectedEasyOption(FROM_CALL_DATA_MENU)}
+          hasErrorMessage={!!easyOptionErrorMessage}
         />
       ),
       [FROM_CALL_DATA_MENU]: (
@@ -143,7 +144,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         />
       )
     }
-  }, [selectedOrigin, isProxySelected])
+  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected])
 
   const signCallback = useSigningCallback({
     onSuccess,

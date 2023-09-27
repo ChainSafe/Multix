@@ -14,7 +14,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
-import { getTypeDef } from '@polkadot/types/create'
+// import { getTypeDef } from '@polkadot/types/create'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 
 interface Props {
@@ -23,6 +23,7 @@ interface Props {
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>, key?: string) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
   onSelectFromCallData: () => void
+  hasErrorMessage: boolean
 }
 
 interface ParamField {
@@ -48,81 +49,6 @@ const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
 
 const isTypeBalance = (typeName: string) => ['Balance', 'BalanceOf', 'Amount'].includes(typeName)
 
-const transformParams = (
-  paramFields: ParamField[],
-  inputParams: any[],
-  tokenDecimals: number | undefined,
-  opts = { emptyAsNull: true }
-) => {
-  // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
-  // otherwise, it will not be added
-  const paramVal = inputParams.map((inputParam) => {
-    // to cater the js quirk that `null` is a type of `object`.
-    if (
-      typeof inputParam === 'object' &&
-      inputParam !== null &&
-      typeof inputParam.value === 'string'
-    ) {
-      return inputParam.value.trim()
-    } else if (typeof inputParam === 'string') {
-      return inputParam.trim()
-    }
-    return inputParam
-  })
-
-  const params = paramFields.map((field, ind) => ({
-    ...field,
-    value: paramVal[ind] || null
-  }))
-
-  return params.reduce((previousValue, { type = 'string', value, typeName }) => {
-    if (value == null || value === '')
-      return opts.emptyAsNull ? [...previousValue, null] : previousValue
-
-    let converted = value
-
-    // Deal with a vector
-    if (type.indexOf('Vec<') >= 0) {
-      converted = converted.split(',').map((e: string) => e.trim())
-      converted = converted.map((single: any) =>
-        isNumType(type)
-          ? single.indexOf('.') >= 0
-            ? Number.parseFloat(single)
-            : Number.parseInt(single)
-          : single
-      )
-      return [...previousValue, converted]
-    }
-
-    // Deal with balance like types where the param need to
-    // be multiplied by the decimals
-    if (isTypeBalance(typeName)) {
-      if (!tokenDecimals) return previousValue
-
-      if (!converted.match('^[0-9]+([.][0-9]+)?$')) {
-        console.error('Only numbers and "." are accepted.')
-        return previousValue
-      }
-
-      const bnResult = inputToBn(tokenDecimals, value)
-
-      if (bnResult.gte(getGlobalMaxValue(128))) {
-        console.error('Amount too large')
-        return previousValue
-      }
-
-      return [...previousValue, bnResult.toString()]
-    }
-
-    // Deal with a single value
-    if (isNumType(type)) {
-      converted =
-        converted.indexOf('.') >= 0 ? Number.parseFloat(converted) : Number.parseInt(converted)
-    }
-    return [...previousValue, converted]
-  }, [] as any[])
-}
-
 const isNumType = (type: string) => paramConversion.num.includes(type)
 
 const ManualExtrinsic = ({
@@ -130,7 +56,8 @@ const ManualExtrinsic = ({
   onSetExtrinsic,
   onSetErrorMessage,
   extrinsicIndex,
-  onSelectFromCallData
+  onSelectFromCallData,
+  hasErrorMessage
 }: Props) => {
   const { api, chainInfo } = useApi()
   const [palletRPCs, setPalletRPCs] = useState<any[]>([])
@@ -163,15 +90,84 @@ const ManualExtrinsic = ({
     })
   }, [inputParams, paramFields])
 
+  const transformParams = useCallback(
+    (paramFields: ParamField[], inputParams: any[], opts = { emptyAsNull: true }) => {
+      // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
+      // otherwise, it will not be added
+      const paramVal = inputParams.map((inputParam) => {
+        // to cater the js quirk that `null` is a type of `object`.
+        if (
+          typeof inputParam === 'object' &&
+          inputParam !== null &&
+          typeof inputParam.value === 'string'
+        ) {
+          return inputParam.value.trim()
+        } else if (typeof inputParam === 'string') {
+          return inputParam.trim()
+        }
+        return inputParam
+      })
+
+      const params = paramFields.map((field, ind) => ({
+        ...field,
+        value: paramVal[ind] || null
+      }))
+
+      return params.reduce((previousValue, { type = 'string', value, typeName }) => {
+        if (value == null || value === '')
+          return opts.emptyAsNull ? [...previousValue, null] : previousValue
+
+        let converted = value
+
+        // Deal with a vector
+        if (type.indexOf('Vec<') >= 0) {
+          converted = converted.split(',').map((e: string) => e.trim())
+          converted = converted.map((single: any) =>
+            isNumType(type)
+              ? single.indexOf('.') >= 0
+                ? Number.parseFloat(single)
+                : Number.parseInt(single)
+              : single
+          )
+          return [...previousValue, converted]
+        }
+
+        // Deal with balance like types where the param need to
+        // be multiplied by the decimals
+        if (isTypeBalance(typeName)) {
+          if (!chainInfo?.tokenDecimals) return previousValue
+
+          if (!converted.match('^[0-9]+([.][0-9]+)?$')) {
+            onSetErrorMessage('Only numbers and "." are accepted.')
+            return previousValue
+          }
+
+          const bnResult = inputToBn(chainInfo.tokenDecimals, value)
+
+          if (bnResult.gte(getGlobalMaxValue(128))) {
+            onSetErrorMessage('Amount too large')
+            return previousValue
+          }
+
+          return [...previousValue, bnResult.toString()]
+        }
+
+        // Deal with a single value
+        if (isNumType(type)) {
+          converted =
+            converted.indexOf('.') >= 0 ? Number.parseFloat(converted) : Number.parseInt(converted)
+        }
+        return [...previousValue, converted]
+      }, [] as any[])
+    },
+    [chainInfo, onSetErrorMessage]
+  )
+
   useEffect(() => {
     !!paramFields?.length &&
       !!inputParams.length &&
-      setTransformedParams(transformParams(paramFields, inputParams, chainInfo?.tokenDecimals))
-  }, [inputParams, paramFields, chainInfo])
-
-  console.log('paramFields', paramFields)
-  console.log('inputParams', inputParams)
-  console.log('transformedParams', transformedParams)
+      setTransformedParams(transformParams(paramFields, inputParams))
+  }, [inputParams, paramFields, transformParams])
 
   const updatePalletRPCs = useCallback(() => {
     if (!api) {
@@ -205,17 +201,14 @@ const ManualExtrinsic = ({
     let paramFields: ParamField[] = []
     const metaArgs = api.tx[palletRpc][callable].meta.args
 
-    console.log('metaArgs', metaArgs)
+    // console.log('metaArgs', metaArgs)
     if (metaArgs && metaArgs.length > 0) {
       paramFields = metaArgs.map((arg) => {
-        console.log('getTypeDef', getTypeDef(arg.type.toString()))
-        const instance = api.registry.createType(arg.type as unknown as 'u32')
-        console.log('instance', instance)
-        const raw = getTypeDef(instance.toRawType())
-        console.log('raw', raw)
-
-        arg.typeName.isSome &&
-          console.log('typeName.unwrap().toString()', arg.typeName.unwrap().toString())
+        // console.log('getTypeDef', getTypeDef(arg.type.toString()))
+        // const instance = api.registry.createType(arg.type as unknown as 'u32')
+        // console.log('instance', instance)
+        // const raw = getTypeDef(instance.toRawType())
+        // console.log('raw', raw)
 
         return {
           name: arg.name.toString(),
@@ -283,7 +276,7 @@ const ManualExtrinsic = ({
       return
     }
 
-    if (!callable || !palletRpc || !areAllParamsFilled) {
+    if (!callable || !palletRpc || !areAllParamsFilled || hasErrorMessage) {
       return
     }
 
@@ -304,6 +297,7 @@ const ManualExtrinsic = ({
     areAllParamsFilled,
     callable,
     extrinsicIndex,
+    hasErrorMessage,
     onSetErrorMessage,
     onSetExtrinsic,
     palletRpc,
