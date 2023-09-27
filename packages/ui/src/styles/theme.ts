@@ -11,6 +11,9 @@ declare module '@mui/material/styles' {
       error: {
         main: string
       }
+      background: {
+        default: string
+      }
     }
     custom: {
       borderRadius: string
@@ -44,6 +47,9 @@ declare module '@mui/material/styles' {
         primaryDisabledBackground: string
         secondaryDisabledColor: string
         secondaryDisabledBackground: string
+      }
+      header: {
+        background: string
       }
       background: {
         primary: string
@@ -93,6 +99,9 @@ declare module '@mui/material/styles' {
         secondaryDisabledColor: string
         secondaryDisabledBackground: string
       }
+      header: {
+        background: string
+      }
       background: {
         primary: string
         secondary: string
@@ -119,6 +128,9 @@ export const theme = createTheme({
     },
     error: {
       main: '#ff8a65'
+    },
+    background: {
+      default: '#FAFCFD'
     }
   },
   typography: {
@@ -157,6 +169,9 @@ export const theme = createTheme({
       primaryDisabledBackground: '#E3E9FF',
       secondaryDisabledColor: '#D7D7D7',
       secondaryDisabledBackground: '#F1F5F9'
+    },
+    header: {
+      background: '#fff'
     },
     background: {
       primary: '#F1F5F9',
