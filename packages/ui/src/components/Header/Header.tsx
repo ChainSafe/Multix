@@ -11,6 +11,7 @@ import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
+import { Link } from 'react-router-dom'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -27,10 +28,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
     <MuiAppBarStyled position="sticky">
       <Toolbar>
         <LogoWrapperStyled>
-          <LogoStyled
-            alt={`multix logo`}
-            src={multixLogo}
-          />
+          <HomeLinkStyled to="/">
+            <LogoStyled
+              src={multixLogo}
+              alt={`Multix logo`}
+            />
+          </HomeLinkStyled>
         </LogoWrapperStyled>
         <DesktopMenuStyled>
           <MenuWrapperStyled>
@@ -81,6 +84,10 @@ const MuiAppBarStyled = styled(MuiAppBar)`
   border-bottom: 1px solid ${({ theme }) => theme.custom.text.borderColor};
 `
 
+const HomeLinkStyled = styled(Link)`
+  display: flex;
+`
+
 const ConnectButtonStyled = styled(Button)`
   margin-right: 1rem;
 `
@@ -122,6 +129,7 @@ const DesktopMenuStyled = styled(Box)`
 
 const LogoWrapperStyled = styled(Box)`
   display: flex;
+  align-items: center;
   flex: 1;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
