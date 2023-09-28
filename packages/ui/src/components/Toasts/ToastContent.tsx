@@ -28,17 +28,17 @@ const ToastContent = ({ className, toast }: ToastContentProps) => {
         {type === 'success' ? (
           <HiOutlineCheckCircle
             data-cy="notification-icon-success"
-            size={25}
+            size={24}
           />
         ) : type === 'loading' ? (
           <CircularProgress
             data-cy="notification-icon-loading"
-            size={25}
+            size={24}
           />
         ) : (
           <ErrorOutlineIconStyled
             data-cy="notification-icon-error"
-            size={25}
+            size={24}
           />
         )}
       </div>
