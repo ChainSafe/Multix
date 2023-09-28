@@ -8,6 +8,12 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 
 const AliceAddress = Object.values(injectedAccounts)[0].address
 
+const fillAndSubmitTransactionForm = () => {
+  sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
+  sendTxModal.fieldAmount().click().type('0.001')
+  sendTxModal.buttonSend().should('be.enabled').click()
+}
+
 describe('Perform transactions', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
@@ -30,9 +36,7 @@ describe('Perform transactions', () => {
   it('Abort a tx with Alice', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
-    sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
-    sendTxModal.fieldAmount().click().type('0.001')
-    sendTxModal.buttonSend().should('be.enabled').click()
+    fillAndSubmitTransactionForm()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
@@ -49,9 +53,7 @@ describe('Perform transactions', () => {
   it.skip('Makes a balance transfer with Alice', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
-    sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
-    sendTxModal.fieldAmount().click().type('0.001')
-    sendTxModal.buttonSend().should('be.enabled').click()
+    fillAndSubmitTransactionForm()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
