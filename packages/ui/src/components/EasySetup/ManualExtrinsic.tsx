@@ -15,6 +15,7 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'r
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
+import BN from 'bn.js'
 
 interface Props {
   extrinsicIndex?: string
@@ -49,6 +50,32 @@ const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
 const isTypeBalance = (typeName: string) => ['Balance', 'BalanceOf', 'Amount'].includes(typeName)
 
 const isNumType = (type: string) => paramConversion.num.includes(type)
+
+const parseFloatOrInt = (value: any) => {
+  return value.indexOf('.') >= 0 ? Number.parseFloat(value) : Number.parseInt(value)
+}
+
+const handleVector = (val: any, type: string) => {
+  return val
+    .split(',')
+    .map((e: string) => e.trim())
+    .map((single: any) => (isNumType(type) ? parseFloatOrInt(single) : single))
+}
+
+// create an array of all the params with their type
+const processParamValue = (inputParam: any) => {
+  // to cater the js quirk that `null` is a type of `object`.
+  if (
+    typeof inputParam === 'object' &&
+    inputParam !== null &&
+    typeof inputParam.value === 'string'
+  ) {
+    return inputParam.value.trim()
+  } else if (typeof inputParam === 'string') {
+    return inputParam.trim()
+  }
+  return inputParam
+}
 
 const ManualExtrinsic = ({
   className,
@@ -89,77 +116,74 @@ const ManualExtrinsic = ({
     })
   }, [inputParams, paramFields])
 
+  const isValidAmountString = useCallback(
+    (value: any) => {
+      if (!value.match(/^[0-9]+([.][0-9]+)?$/)) {
+        console.log('wrong boom')
+        onSetErrorMessage('Only numbers and "." are accepted.')
+        return false
+      }
+
+      return true
+    },
+    [onSetErrorMessage]
+  )
+
+  const isAmountOverflow = useCallback(
+    (bnResult: BN) => {
+      if (bnResult.gte(getGlobalMaxValue(128))) {
+        onSetErrorMessage('Amount too large')
+        return true
+      }
+
+      return false
+    },
+    [onSetErrorMessage]
+  )
+
   const transformParams = useCallback(
     (paramFields: ParamField[], inputParams: any[], opts = { emptyAsNull: true }) => {
-      // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
-      // otherwise, it will not be added
-      const paramVal = inputParams.map((inputParam) => {
-        // to cater the js quirk that `null` is a type of `object`.
-        if (
-          typeof inputParam === 'object' &&
-          inputParam !== null &&
-          typeof inputParam.value === 'string'
-        ) {
-          return inputParam.value.trim()
-        } else if (typeof inputParam === 'string') {
-          return inputParam.trim()
-        }
-        return inputParam
-      })
-
       const params = paramFields.map((field, ind) => ({
         ...field,
-        value: paramVal[ind] || null
+        value: processParamValue(inputParams[ind])
       }))
 
       return params.reduce((previousValue, { type = 'string', value, typeName }) => {
-        if (value == null || value === '')
+        if (value == null || value === '') {
+          // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
+          // otherwise, it will not be added
           return opts.emptyAsNull ? [...previousValue, null] : previousValue
-
-        let converted = value
+        }
 
         // Deal with a vector
         if (type.indexOf('Vec<') >= 0) {
-          converted = converted.split(',').map((e: string) => e.trim())
-          converted = converted.map((single: any) =>
-            isNumType(type)
-              ? single.indexOf('.') >= 0
-                ? Number.parseFloat(single)
-                : Number.parseInt(single)
-              : single
-          )
-          return [...previousValue, converted]
+          return [...previousValue, handleVector(value, type)]
         }
 
-        // Deal with balance like types where the param need to
-        // be multiplied by the decimals
+        // Deal with balance like types where the param needs to
+        // be multiplied by the token decimals
         if (isTypeBalance(typeName)) {
-          if (!chainInfo?.tokenDecimals) return previousValue
-
-          if (!converted.match('^[0-9]+([.][0-9]+)?$')) {
-            onSetErrorMessage('Only numbers and "." are accepted.')
+          if (!isValidAmountString(value) || !chainInfo?.tokenDecimals) {
             return previousValue
           }
 
           const bnResult = inputToBn(chainInfo.tokenDecimals, value)
 
-          if (bnResult.gte(getGlobalMaxValue(128))) {
-            onSetErrorMessage('Amount too large')
+          if (isAmountOverflow(bnResult)) {
             return previousValue
           }
 
           return [...previousValue, bnResult.toString()]
         }
 
-        // Deal with a single value
         if (isNumType(type)) {
-          converted =
-            converted.indexOf('.') >= 0 ? Number.parseFloat(converted) : Number.parseInt(converted)
+          return [...previousValue, parseFloatOrInt(value)]
         }
-        return [...previousValue, converted]
+
+        return [...previousValue, value]
       }, [] as any[])
     },
-    [chainInfo, onSetErrorMessage]
+    [chainInfo, isAmountOverflow, isValidAmountString]
   )
 
   useEffect(() => {
@@ -286,9 +310,7 @@ const ManualExtrinsic = ({
 
       !!extrinsic && onSetExtrinsic(extrinsic, extrinsicIndex)
     } catch (e) {
-      console.error('Error in ManualExtrinsic')
-      console.error(e)
-      onSetErrorMessage('An error occured')
+      onSetErrorMessage('Some parameters are invalid.')
       console.error(e)
     }
   }, [
