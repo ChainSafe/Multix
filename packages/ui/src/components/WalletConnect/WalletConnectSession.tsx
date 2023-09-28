@@ -1,8 +1,9 @@
-import { Alert, CircularProgress, Grid, styled } from '@mui/material'
+import { Alert, Box, CircularProgress, Grid, Tooltip, styled } from '@mui/material'
 import { Button, InputField } from '../library'
 import { useCallback, useMemo, useState, ChangeEvent } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { HiOutlineInformationCircle } from 'react-icons/hi2'
 
 export const WalletConnectSession = () => {
   const { pair } = useWalletConnect()
@@ -57,8 +58,10 @@ export const WalletConnectSession = () => {
           container
           direction="column"
         >
+          <TitleBoxStyled>
+            WalletConnect key <InfoBox />
+          </TitleBoxStyled>
           <InputField
-            label="WalletConnect key"
             onChange={onUriChange}
             value={uri}
             disabled={!canUseWalletConnect}
@@ -76,9 +79,38 @@ export const WalletConnectSession = () => {
   )
 }
 
+const InfoBox = () => (
+  <Tooltip
+    title={
+      <span>
+        Connect a Dapp to Multix using WalletConnect v2. More info{' '}
+        <a
+          href="https://github.com/ChainSafe/Multix/wiki/Connect-Dapps-to-Multix-using-WalletConnect-v2"
+          target="_blank"
+          rel="noreferrer"
+        >
+          in this wiki article
+        </a>
+        .
+      </span>
+    }
+  >
+    <span>
+      <HiOutlineInformationCircle />
+    </span>
+  </Tooltip>
+)
+
+const TitleBoxStyled = styled(Box)`
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.custom.text.primary};
+`
+
 const AlertStyled = styled(Alert)`
   margin-right: 0.5rem;
   border: 0;
+  padding-top: 0;
 `
 
 const ButtonStyled = styled(Button)`
