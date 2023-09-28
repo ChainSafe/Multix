@@ -39,6 +39,7 @@ describe('Perform transactions', () => {
     fillAndSubmitTransactionForm()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
+      console.log('txRequests', JSON.stringify(txRequests))
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
       sendTxModal.buttonSend().should('be.disabled')

@@ -66,8 +66,7 @@ Cypress.Commands.add('rejectAuth', (id: number, reason: string) => {
 })
 
 Cypress.Commands.add('getTxRequests', () => {
-  cy.wait(200)
-  return cy.wrap(extension.getTxRequests())
+  return cy.wait(200).then(() => cy.wrap(extension.getTxRequests()))
 })
 
 Cypress.Commands.add('approveTx', (id: number) => {
