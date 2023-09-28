@@ -14,7 +14,6 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
-// import { getTypeDef } from '@polkadot/types/create'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 
 interface Props {
