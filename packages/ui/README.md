@@ -2,6 +2,11 @@
 
 This UI is meant to be run either alongside an indexer as presented in `../squid`, or pointing at a live instance (see below)
 
+## Wiki articles
+
+- [Connect Dapps to Multix using WalletConnect v2](https://github.com/ChainSafe/Multix/wiki/Connect-Dapps-to-Multix-using-WalletConnect-v2)
+- [How to integrate with Multix - no api required!](https://github.com/ChainSafe/Multix/wiki/Multix-integration)
+
 ## Available scripts
 
 In the project directory, you can run:
