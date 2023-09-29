@@ -1,5 +1,5 @@
 import { Box, IconButton, Toolbar } from '@mui/material'
-import { Button, RouterLink } from '../library'
+import { Button, NavLink } from '../library'
 import { styled } from '@mui/material/styles'
 import { useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
@@ -39,12 +39,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
-                <RouterLinkStyled
+                <NavLink
                   key={name}
                   to={path}
                 >
                   {name}
-                </RouterLinkStyled>
+                </NavLink>
               ) : null
             )}
           </MenuWrapperStyled>
@@ -97,20 +97,6 @@ const RightButtonsWrapperStyled = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-`
-
-const RouterLinkStyled = styled(RouterLink)`
-  display: inline-block;
-  color: ${({ theme }) => theme.custom.gray[900]};
-  transition: all 0.2s ease-in-out;
-
-  &:hover,
-  &:focus,
-  &:active {
-    background: ${({ theme }) => theme.custom.gray[300]};
-    border-radius: ${({ theme }) => theme.custom.borderRadius};
-    color: ${({ theme }) => theme.custom.gray[900]};
-  }
 `
 
 const MenuWrapperStyled = styled(Box)`

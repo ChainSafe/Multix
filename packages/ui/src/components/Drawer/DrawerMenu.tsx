@@ -10,7 +10,7 @@ import MultiProxySelection from '../select/MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils'
 import { useMemo } from 'react'
-import { Button, RouterLink } from '../library'
+import { Button, NavLink } from '../library'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -51,12 +51,12 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
               key={name}
               disablePadding
             >
-              <RouterLink
+              <NavLink
                 onClick={handleDrawerClose}
                 to={path}
               >
                 <ListItemText primary={name} />
-              </RouterLink>
+              </NavLink>
             </ListItemStyled>
           ) : null
         )}
