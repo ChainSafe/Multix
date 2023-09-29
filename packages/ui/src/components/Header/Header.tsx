@@ -12,6 +12,7 @@ import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 import { Link } from 'react-router-dom'
+import { NavLink } from '../library'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -39,12 +40,12 @@ const Header = ({ handleDrawerOpen }: Props) => {
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
-                <RouterLinkStyled
+                <NavLink
                   key={name}
                   to={path}
                 >
                   {name}
-                </RouterLinkStyled>
+                </NavLink>
               ) : null
             )}
           </MenuWrapperStyled>
@@ -97,20 +98,6 @@ const RightButtonsWrapperStyled = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-`
-
-const RouterLinkStyled = styled(RouterLink)`
-  display: inline-block;
-  color: ${({ theme }) => theme.custom.gray[900]};
-  transition: all 0.2s ease-in-out;
-
-  &:hover,
-  &:focus,
-  &:active {
-    background: ${({ theme }) => theme.custom.gray[300]};
-    border-radius: ${({ theme }) => theme.custom.borderRadius};
-    color: ${({ theme }) => theme.custom.gray[900]};
-  }
 `
 
 const MenuWrapperStyled = styled(Box)`

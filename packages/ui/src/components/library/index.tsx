@@ -1,5 +1,5 @@
 import { Button, ButtonWithIcon } from './Button'
-import { Link, RouterLink } from './Link'
+import { Link, RouterLink, NavLink } from './Link'
 import { InputField } from './InputField'
 import TextFieldStyled from './TextFieldStyled'
 import TextFieldLargeStyled from './TextFieldLargeStyled'
@@ -13,6 +13,7 @@ export {
   Button,
   ButtonWithIcon,
   Link,
+  NavLink,
   RouterLink,
   InputField,
   TextFieldStyled,
