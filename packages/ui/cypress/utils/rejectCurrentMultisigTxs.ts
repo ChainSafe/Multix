@@ -98,30 +98,38 @@ export const rejectCurrentMultisigTxs = ({
   multisigInfo: MultisigInfo
   WSendpoint: string
 }) => {
-  return new Cypress.Promise(async (resolve) => {
-    await cryptoWaitReady()
+  // this function takes some time waiting for a finalized block
+  // with the removal of all pending tx. We set a max timout of 30s
+  return cy.then(
+    { timeout: 30000 },
+    () =>
+      new Cypress.Promise(async (resolve) => {
+        await cryptoWaitReady()
 
-    const keyring = new Keyring({ type: 'sr25519' })
-    keyring.addFromMnemonic(account.mnemonic)
+        const keyring = new Keyring({ type: 'sr25519' })
+        keyring.addFromMnemonic(account.mnemonic)
 
-    const wsProvider = new WsProvider(WSendpoint)
-    const api = await ApiPromise.create({ provider: wsProvider })
+        const wsProvider = new WsProvider(WSendpoint)
+        const api = await ApiPromise.create({ provider: wsProvider })
 
-    const multisigTxs = await api.query.multisig.multisigs.entries(multisigInfo.address)
-    const pendingMultisigTxs = getPendingMultisixTx(multisigTxs, multisigInfo)
+        const multisigTxs = await api.query.multisig.multisigs.entries(multisigInfo.address)
+        const pendingMultisigTxs = getPendingMultisixTx(multisigTxs, multisigInfo)
 
-    if (!pendingMultisigTxs.length) {
-      console.log('no pending multisig tx for', multisigInfo.address)
-      resolve()
-      return
-    }
+        if (!pendingMultisigTxs.length) {
+          console.log('no pending multisig tx for', multisigInfo.address)
+          resolve()
+          return
+        }
 
-    console.log('pendingMultisigTxs', pendingMultisigTxs)
+        console.log('pendingMultisigTxs', pendingMultisigTxs)
 
-    const allTxs = getRejectionsTxs(pendingMultisigTxs, account, multisigInfo, api)
+        const allTxs = getRejectionsTxs(pendingMultisigTxs, account, multisigInfo, api)
 
-    console.log(`The multisig has ${allTxs.length} pending txs. Rejecting them now`)
+        console.log(`The multisig has ${allTxs.length} pending txs. Rejecting them now`)
 
-    api.tx.utility.batchAll(allTxs).signAndSend(keyring.getPair(account.address), callBack(resolve))
-  })
+        api.tx.utility
+          .batchAll(allTxs)
+          .signAndSend(keyring.getPair(account.address), callBack(resolve))
+      })
+  )
 }
