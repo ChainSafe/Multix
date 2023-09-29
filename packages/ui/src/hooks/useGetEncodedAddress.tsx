@@ -8,7 +8,10 @@ export const useGetEncodedAddress = () => {
 
   const getEncodedAddress = useCallback(
     (address: string | Uint8Array | undefined) => {
-      if (!chainInfo || !address) {
+      console.log('address', address)
+
+      if (!chainInfo || !address || address === 'undefined') {
+        console.log('address return', address)
         return
       }
 
