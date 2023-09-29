@@ -26,6 +26,7 @@ describe('Connect Account', () => {
   })
 
   it('Connects with Alice', () => {
+    const AliceAddress = Object.values(injectedAccounts)[0].address
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the extension
@@ -33,7 +34,7 @@ describe('Connect Account', () => {
       // this request should be from the application Multix
       cy.wrap(requests[0].origin).should('eq', 'Multix')
       // let's allow it for Alice
-      cy.enableAuth(requests[0].id, [Object.values(injectedAccounts)[0].address])
+      cy.enableAuth(requests[0].id, [AliceAddress])
       // the ui should then move on to connecting to the rpcs
       topMenuItems.multiproxySelector().should('be.visible')
     })

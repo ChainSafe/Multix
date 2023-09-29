@@ -121,8 +121,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         allowAnyAddressInput={true}
         onInputChange={onInputChange}
         accountList={accountBase}
+        testId="field-to"
       />
       <TextFieldStyled
+        data-cy="field-amount"
         label={`Amount`}
         onChange={onAmountChange}
         value={amountString}

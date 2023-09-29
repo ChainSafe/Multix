@@ -20,14 +20,26 @@ const ToastContent = ({ className, toast }: ToastContentProps) => {
   }, [link])
 
   return (
-    <div className={className}>
+    <div
+      className={className}
+      data-cy="notification-wrapper"
+    >
       <div className="iconContainer">
         {type === 'success' ? (
-          <HiOutlineCheckCircle size={25} />
+          <HiOutlineCheckCircle
+            data-cy="notification-icon-success"
+            size={24}
+          />
         ) : type === 'loading' ? (
-          <CircularProgress size={25} />
+          <CircularProgress
+            data-cy="notification-icon-loading"
+            size={24}
+          />
         ) : (
-          <ErrorOutlineIconStyled size={25} />
+          <ErrorOutlineIconStyled
+            data-cy="notification-icon-error"
+            size={24}
+          />
         )}
       </div>
       <Box
