@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { About, Creation, Overview, Home, Settings } from './index'
+import { About, Creation, Home, Overview, Settings } from './index'
 import React from 'react'
 import App from '../App'
 
@@ -24,12 +24,6 @@ export const ROUTES: Route[] = [
     isDisplayWhenNoWallet: false
   },
   {
-    path: 'about',
-    element: <About />,
-    name: 'About',
-    isDisplayWhenNoWallet: true
-  },
-  {
     path: 'settings',
     element: <Settings />,
     name: 'Settings',
@@ -39,6 +33,12 @@ export const ROUTES: Route[] = [
     path: 'overview',
     element: <Overview />,
     name: 'Overview',
+    isDisplayWhenNoWallet: true
+  },
+  {
+    path: 'about',
+    element: <About />,
+    name: 'About',
     isDisplayWhenNoWallet: true
   }
 ]
