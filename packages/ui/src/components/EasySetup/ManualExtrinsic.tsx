@@ -224,7 +224,6 @@ const ManualExtrinsic = ({
     let paramFields: ParamField[] = []
     const metaArgs = api.tx[palletRpc][callable].meta.args
 
-    // console.log('metaArgs', metaArgs)
     if (metaArgs && metaArgs.length > 0) {
       paramFields = metaArgs.map((arg) => {
         // console.log('getTypeDef', getTypeDef(arg.type.toString()))
