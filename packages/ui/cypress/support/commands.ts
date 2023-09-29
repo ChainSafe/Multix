@@ -135,9 +135,9 @@ declare global {
 
       /**
        * Reject all pending multisig requests with a specific account
-       * @param {number} id -
-       * @param {reason} reason -
-       * @example
+       * @param {InjectedAccountWitMnemonic} opt.account - The account to reject pending transactions with. It should be the proposer
+       * @param {multisigInfo} opt.multisigInfo - The information about the multisig to remove pending transactions from
+       * @param {WSendpoint} opt.WSendpoint - The RPC endpoint to connect to to submit the rejection batch transaction
        */
       rejectCurrentMultisigTx: (opt: {
         account: InjectedAccountWitMnemonic
