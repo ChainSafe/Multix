@@ -1,5 +1,5 @@
 import { Box, IconButton, Toolbar } from '@mui/material'
-import { Button, RouterLink } from '../library'
+import { Button, NavLink } from '../library'
 import { styled } from '@mui/material/styles'
 import { useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
@@ -12,7 +12,6 @@ import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 import { Link } from 'react-router-dom'
-import { NavLink } from '../library'
 
 interface Props {
   handleDrawerOpen: () => void
