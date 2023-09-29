@@ -133,6 +133,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
           onSelectFromCallData={() => setSelectedEasyOption(FROM_CALL_DATA_MENU)}
+          hasErrorMessage={!!easyOptionErrorMessage}
         />
       ),
       [FROM_CALL_DATA_MENU]: (
@@ -143,7 +144,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
         />
       )
     }
-  }, [selectedOrigin, isProxySelected])
+  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected])
 
   const signCallback = useSigningCallback({
     onSuccess,
@@ -235,7 +236,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
       className={className}
     >
       <ModalCloseButton onClose={onClose} />
-      <DialogTitle>Send tx</DialogTitle>
+      <DialogTitle data-cy="title-send-tx">Send tx</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid
           alignItems="center"
@@ -361,6 +362,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
             className="buttonContainer"
           >
             <Button
+              data-cy="button-send"
               variant="primary"
               onClick={onSign}
               disabled={

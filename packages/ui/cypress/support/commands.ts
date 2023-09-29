@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
-import { AuthRequests, Extension } from './Extension'
-import { InjectedAccount } from '@polkadot/extension-inject/types'
+import { AuthRequests, Extension, TxRequests } from './Extension'
+import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -42,7 +42,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types'
 
 const extension = new Extension()
 
-Cypress.Commands.add('initExtension', (accounts: InjectedAccount[]) => {
+Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
   cy.wrap(extension.init(accounts))
 
@@ -65,6 +65,18 @@ Cypress.Commands.add('rejectAuth', (id: number, reason: string) => {
   return extension.rejectAuth(id, reason)
 })
 
+Cypress.Commands.add('getTxRequests', () => {
+  return cy.wait(500).then(() => cy.wrap(extension.getTxRequests()))
+})
+
+Cypress.Commands.add('approveTx', (id: number) => {
+  return extension.approveTx(id)
+})
+
+Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
+  return extension.rejectTx(id, reason)
+})
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -73,7 +85,7 @@ declare global {
        * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
        * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
-      initExtension: (accounts: InjectedAccount[]) => Chainable<AUTWindow>
+      initExtension: (accounts: InjectedAccountWitMnemonic[]) => Chainable<AUTWindow>
       /**
        * Read the authentication request queue.
        * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
@@ -81,18 +93,36 @@ declare global {
       getAuthRequests: () => Chainable<AuthRequests>
       /**
        * Authorize a specific request
-       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {number} id - the id of the request to authorize. This id is part of the getAuthRequests object response.
        * @param {string[]} accountAddresses - the account addresses to share with the applications. These addresses must be part of the ones shared in the `initExtension`
        * @example cy.enableAuth(1694443839903, ["7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"])
        */
       enableAuth: (id: number, accountAddresses: string[]) => void
       /**
        * Reject a specific request
-       * @param {number} id - the id of the request to authorize. This is part of the getAuthRequests object response.
+       * @param {number} id - the id of the request to reject. This id is part of the getAuthRequests object response.
        * @param {reason} reason - the reason for the rejection
        * @example cy.rejectAuth(1694443839903, "Cancelled")
        */
       rejectAuth: (id: number, reason: string) => void
+      /**
+       * Read the tx request queue.
+       * @example cy.getTxRequests().then((txQueue) => { cy.wrap(Object.values(txQueue).length).should("eq", 1) })
+       */
+      getTxRequests: () => Chainable<TxRequests>
+      /**
+       * Authorize a specific request
+       * @param {number} id - the id of the request to approve. This id is part of the getTxRequests object response.
+       * @example cy.approveTx(1694443839903)
+       */
+      approveTx: (id: number) => void
+      /**
+       * Reject a specific request
+       * @param {number} id - the id of the tx request to reject. This id is part of the getTxRequests object response.
+       * @param {reason} reason - the reason for the rejection
+       * @example cy.rejectAuth(1694443839903, "Cancelled")
+       */
+      rejectTx: (id: number, reason: string) => void
     }
   }
 }

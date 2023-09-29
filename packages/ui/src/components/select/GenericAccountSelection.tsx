@@ -33,6 +33,7 @@ interface Props {
       AccountBaseInfo | string | undefined | (string | AccountBaseInfo | undefined)[]
     >
   ) => void
+  testId?: string
 }
 
 const getBadge = (account?: AccountBaseInfo | string) => {
@@ -62,7 +63,8 @@ const GenericAccountSelection = ({
   allowAnyAddressInput = false,
   withBadge = false,
   disabled = false,
-  onInputChange
+  onInputChange,
+  testId
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { getNamesWithExtension } = useAccountNames()
@@ -189,6 +191,7 @@ const GenericAccountSelection = ({
 
   return (
     <Autocomplete
+      data-cy={testId}
       className={className}
       isOptionEqualToValue={isOptionEqualToValue}
       freeSolo={allowAnyAddressInput}
