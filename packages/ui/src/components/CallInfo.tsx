@@ -11,6 +11,8 @@ import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
+import { ApiPromise } from '@polkadot/api'
+import { isTypeBalance } from '../utils/isTypeBalance'
 
 interface Props {
   aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
@@ -26,9 +28,10 @@ interface CreateTreeParams {
   decimals: number
   unit: string
   name?: string
+  api: ApiPromise
 }
 
-const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
+const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
@@ -37,8 +40,63 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
 
   return (
     <ul className="params">
-      {Object.entries(args).map(([key, value]) => {
-        // in case the call was a WrapperOpaque<Call> the destination is the value and has no Id
+      {Object.entries(args).map(([key, value], index) => {
+        const [palletFromName, methodFromName] = name.split('.')
+        const pallet = value.section || palletFromName
+        const method = value.method || methodFromName
+
+        console.log(pallet, method)
+        console.log('key', key)
+        console.log('value', value)
+        const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
+        console.log(
+          'index',
+          index,
+          !!metaArgs && !!metaArgs[index] && metaArgs[index].toHuman().typeName
+        )
+
+        // handle batch calls
+        if (
+          !!metaArgs &&
+          metaArgs[index] &&
+          metaArgs[index].toHuman().typeName === 'Vec<RuntimeCall>'
+        ) {
+          return value.map((call: any, index: number) => {
+            const name = `${call.section}.${call.method}`
+            return (
+              <>
+                <li key={`${key}-batch-${index}`}>{name}</li>
+                {createUlTree({
+                  name: `${call.section}.${call.method}`,
+                  args: call.args,
+                  decimals,
+                  unit,
+                  api
+                })}
+              </>
+            )
+          })
+        }
+
+        // generically show nice value for Balance type
+        const isBalance =
+          !!metaArgs &&
+          metaArgs[index] &&
+          isTypeBalance(metaArgs[index].toHuman().typeName as string)
+        if (isBalance) {
+          const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
+            withThousandDelimiter: true,
+            tokenSymbol: unit,
+            numberAfterComma: 4
+          })
+
+          return (
+            <li key={key}>
+              {key}: {balance}
+            </li>
+          )
+        }
+
         const destAddress = value?.Id || value
         // show nice dest
         if (
@@ -53,25 +111,11 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
           )
         }
 
-        // show nice value
-        if (isBalancesTransferAlike && key === 'value') {
-          const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-            withThousandDelimiter: true,
-            tokenSymbol: unit,
-            numberAfterComma: 4
-          })
-          return (
-            <li key={key}>
-              {key}: {balance}
-            </li>
-          )
-        }
-
         return (
           <li key={key}>
             {key}:{' '}
             {typeof value === 'object'
-              ? createUlTree({ name, args: value, decimals, unit })
+              ? createUlTree({ name, args: value, decimals, unit, api })
               : value}
           </li>
         )
@@ -108,7 +152,7 @@ const CallInfo = ({
   withProxyFiltered = true
 }: Props) => {
   const { args, name } = withProxyFiltered ? filterProxyProxy(aggregatedData) : aggregatedData
-  const { chainInfo } = useApi()
+  const { chainInfo, api } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
   const { getDecodeUrl } = usePjsLinks()
@@ -140,11 +184,11 @@ const CallInfo = ({
           annoyance.
         </AlertStyled>
       )}
-      {args && Object.keys(args).length > 0 && (
+      {args && !!api && Object.keys(args).length > 0 && (
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, args, decimals, unit })}
+          content={createUlTree({ name, args, decimals, unit, api })}
         />
       )}
       {children}
