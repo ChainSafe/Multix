@@ -31,6 +31,59 @@ interface CreateTreeParams {
   api: ApiPromise
 }
 
+const handleBatchDisplay = ({
+  value,
+  decimals,
+  unit,
+  api,
+  key
+}: {
+  value: any[]
+  decimals: number
+  unit: string
+  key: string
+  api: ApiPromise
+}) =>
+  value.map((call: any, index: number) => {
+    const name = `${call.section}.${call.method}`
+    return (
+      <>
+        <li key={`${key}-${index}`}>{name}</li>
+        {createUlTree({
+          name: `${call.section}.${call.method}`,
+          args: call.args,
+          decimals,
+          unit,
+          api
+        })}
+      </>
+    )
+  })
+
+const handleBalanceDisplay = ({
+  value,
+  decimals,
+  unit,
+  key
+}: {
+  value: any
+  decimals: number
+  unit: string
+  key: string
+}) => {
+  const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
+    withThousandDelimiter: true,
+    tokenSymbol: unit,
+    numberAfterComma: 4
+  })
+
+  return (
+    <li key={key}>
+      {key}: {balance}
+    </li>
+  )
+}
+
 const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
@@ -44,57 +97,17 @@ const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => 
         const [palletFromName, methodFromName] = name.split('.')
         const pallet = value.section || palletFromName
         const method = value.method || methodFromName
-
-        console.log(pallet, method)
-        console.log('key', key)
-        console.log('value', value)
         const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
-        console.log(
-          'index',
-          index,
-          !!metaArgs && !!metaArgs[index] && metaArgs[index].toHuman().typeName
-        )
+        const typeName =
+          !!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)
 
-        // handle batch calls
-        if (
-          !!metaArgs &&
-          metaArgs[index] &&
-          metaArgs[index].toHuman().typeName === 'Vec<RuntimeCall>'
-        ) {
-          return value.map((call: any, index: number) => {
-            const name = `${call.section}.${call.method}`
-            return (
-              <>
-                <li key={`${key}-batch-${index}`}>{name}</li>
-                {createUlTree({
-                  name: `${call.section}.${call.method}`,
-                  args: call.args,
-                  decimals,
-                  unit,
-                  api
-                })}
-              </>
-            )
-          })
+        if (typeName === 'Vec<RuntimeCall>') {
+          return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
         }
 
         // generically show nice value for Balance type
-        const isBalance =
-          !!metaArgs &&
-          metaArgs[index] &&
-          isTypeBalance(metaArgs[index].toHuman().typeName as string)
-        if (isBalance) {
-          const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-            withThousandDelimiter: true,
-            tokenSymbol: unit,
-            numberAfterComma: 4
-          })
-
-          return (
-            <li key={key}>
-              {key}: {balance}
-            </li>
-          )
+        if (!!typeName && isTypeBalance(typeName)) {
+          return handleBalanceDisplay({ value, decimals, unit, key })
         }
 
         const destAddress = value?.Id || value
