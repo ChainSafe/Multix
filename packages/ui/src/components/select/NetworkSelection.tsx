@@ -1,7 +1,8 @@
-import { ListSubheader, MenuItem, Select as SelectMui, SelectChangeEvent } from '@mui/material'
-import { useNetwork } from '../../contexts/NetworkContext'
-import { styled } from '@mui/material/styles'
 import React, { useCallback, useMemo } from 'react'
+import { ListSubheader, MenuItem, Select as SelectMui, SelectChangeEvent } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { HiOutlineChevronDown } from 'react-icons/hi2'
+import { useNetwork } from '../../contexts/NetworkContext'
 import {
   kusamaNetworksAndParachains,
   networkList,
@@ -9,7 +10,6 @@ import {
   testChains
 } from '../../constants'
 import { theme } from '../../styles/theme'
-import { HiOutlineChevronDown } from 'react-icons/hi2'
 
 const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
@@ -21,10 +21,29 @@ const NetworkSelection = () => {
   }, [])
 
   const handleNetworkSelection = useCallback(
-    (event: SelectChangeEvent, children: React.ReactNode | React.ReactNode[]) => {
-      selectNetwork(event.target.value)
+    ({ target: { value } }: SelectChangeEvent<string>) => {
+      selectNetwork(value)
     },
     [selectNetwork]
+  )
+
+  const renderNetworks = useCallback(
+    (allowedNetworks: string[]) =>
+      networksToShow
+        .filter(([networkName]) => allowedNetworks.includes(networkName))
+        .map(([networkName, { logo }]) => (
+          <MenuItemStyled
+            key={networkName}
+            value={networkName}
+          >
+            <ImgStyled
+              alt={`network-logo-${networkName}`}
+              src={logo}
+            />
+            <ItemNameStyled>{networkName}</ItemNameStyled>
+          </MenuItemStyled>
+        )),
+    [networksToShow]
   )
 
   if (!selectedNetwork) {
@@ -36,81 +55,42 @@ const NetworkSelection = () => {
       IconComponent={HiOutlineChevronDown}
       value={selectedNetwork}
       autoWidth={true}
-      onChange={(event, children) =>
-        handleNetworkSelection(event as SelectChangeEvent<string>, children)
-      }
-      MenuProps={{
-        sx: {
-          marginTop: '.75rem',
-          '.MuiPaper-root': {
-            boxShadow: 'none'
-          },
-
-          '.MuiMenuItem-root': {
-            maxWidth: '100%',
-            padding: '0.75rem'
-          },
-
-          '.MuiList-root': {
-            columns: '150px 2',
-            padding: 0,
-            border: `1px solid ${theme.custom.text.borderColor}`,
-            borderRadius: '0.5rem'
-          },
-
-          '.MuiListSubheader-root': {
-            columnSpan: 'all'
-          }
-        }
-      }}
+      onChange={(event) => handleNetworkSelection(event as SelectChangeEvent<string>)}
+      MenuProps={MenuPropsStyles}
     >
       <ListSubheader>Polkadot & Parachains</ListSubheader>
-      {networksToShow
-        .filter(([networkName]) => polkadotNetworksAndParachains.includes(networkName))
-        .map(([networkName, { logo }]) => (
-          <MenuItemStyled
-            key={networkName}
-            value={networkName}
-          >
-            <ImgStyled
-              alt={`network-logo-${networkName}`}
-              src={logo}
-            />
-            <ItemNameStyled>{networkName}</ItemNameStyled>
-          </MenuItemStyled>
-        ))}
-      <ListSubheader>Kusama & Parachains</ListSubheader>
-      {networksToShow
-        .filter(([networkName]) => kusamaNetworksAndParachains.includes(networkName))
-        .map(([networkName, { logo }]) => (
-          <MenuItemStyled
-            key={networkName}
-            value={networkName}
-          >
-            <ImgStyled
-              alt={`network-logo-${networkName}`}
-              src={logo}
-            />
-            <ItemNameStyled>{networkName}</ItemNameStyled>
-          </MenuItemStyled>
-        ))}
+      {renderNetworks(polkadotNetworksAndParachains)}
+      <ListSubheader>Kusama & Parachainss</ListSubheader>
+      {renderNetworks(kusamaNetworksAndParachains)}
       <ListSubheader>Testnets</ListSubheader>
-      {networksToShow
-        .filter(([networkName]) => testChains.includes(networkName))
-        .map(([networkName, { logo }]) => (
-          <MenuItemStyled
-            key={networkName}
-            value={networkName}
-          >
-            <ImgStyled
-              alt={`network-logo-${networkName}`}
-              src={logo}
-            />
-            <ItemNameStyled>{networkName}</ItemNameStyled>
-          </MenuItemStyled>
-        ))}
+      {renderNetworks(testChains)}
     </SelectStyled>
   )
+}
+
+const MenuPropsStyles = {
+  sx: {
+    marginTop: '.75rem',
+    '.MuiPaper-root': {
+      boxShadow: 'none'
+    },
+
+    '.MuiMenuItem-root': {
+      maxWidth: '100%',
+      padding: '0.75rem'
+    },
+
+    '.MuiList-root': {
+      columns: '150px 2',
+      padding: 0,
+      border: `1px solid ${theme.custom.text.borderColor}`,
+      borderRadius: '0.5rem'
+    },
+
+    '.MuiListSubheader-root': {
+      columnSpan: 'all'
+    }
+  }
 }
 
 const SelectStyled = styled(SelectMui)`
