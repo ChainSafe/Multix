@@ -1,4 +1,5 @@
 import { injectedAccounts } from '../fixtures/injectedAccounts'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
@@ -51,7 +52,18 @@ describe('Perform transactions', () => {
     })
   })
 
-  it.skip('Makes a balance transfer with Alice', () => {
+  it('Makes a balance transfer with Alice', () => {
+    cy.rejectCurrentMultisigTx({
+      account: injectedAccounts[0],
+      multisigInfo: {
+        address: knownMultisigs['test-multisig-1'].address,
+        threshold: knownMultisigs['test-multisig-1'].threshold,
+        otherSignatories: knownMultisigs['test-multisig-1'].signatories.filter(
+          (address) => address !== injectedAccounts[0].address
+        )
+      },
+      WSendpoint: 'wss://rococo-rpc.polkadot.io'
+    })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
