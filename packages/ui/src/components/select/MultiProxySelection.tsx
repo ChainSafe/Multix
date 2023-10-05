@@ -117,16 +117,16 @@ const MultiProxySelection = ({ className }: Props) => {
     />
   )
 
+  if (multiProxyList.length === 0) {
+    return null
+  }
+
   if (isLoading) {
     return (
       <BoxStyled>
         <CircularProgress size={24} />
       </BoxStyled>
     )
-  }
-
-  if (multiProxyList.length === 0) {
-    return null
   }
 
   return (
@@ -155,16 +155,18 @@ const BoxStyled = styled(Box)`
 `
 
 export default styled(MultiProxySelection)`
-  min-width: 200px;
-
-  @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
-    min-width: 260px;
-  }
-
+  min-width: 12.5rem;
   text-align: right;
+  width: 100%;
 
   .MuiTextField-root {
-    max-width: 18.875rem;
+    @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
+      min-width: 13.6875rem;
+    }
+
+    @media (min-width: ${(props) => props.theme.breakpoints.values.lg}px) {
+      min-width: 18.6875rem;
+    }
   }
 
   .MuiAutocomplete-endAdornment {

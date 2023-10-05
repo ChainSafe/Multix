@@ -97,19 +97,27 @@ const RightButtonsWrapperStyled = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex: 1;
 `
 
 const MenuWrapperStyled = styled(Box)`
   width: 100%;
+  display: flex;
+  align-items: center;
 `
 
 const DesktopMenuStyled = styled(Box)`
   display: none;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
-    flex-grow: 1;
+    width: 100%;
+    flex-grow: 0;
     display: flex;
     align-items: center;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.lg}px) {
+    flex-grow: 1;
   }
 `
 
@@ -119,8 +127,12 @@ const LogoWrapperStyled = styled(Box)`
   flex: 1;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
-    margin-right: 1rem;
     flex: 0;
+    margin-right: 0.5rem;
+  }
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.lg}px) {
+    margin-right: 1rem;
   }
 `
 

@@ -189,6 +189,19 @@ export const networkList = {
   }
 }
 
+export const polkadotNetworksAndParachains = [
+  'polkadot',
+  'hydradx',
+  'astar',
+  'moonbeam',
+  'assethub-dot',
+  'bifrost-dot',
+  'interlay',
+  'phala'
+]
+export const kusamaNetworksAndParachains = ['kusama', 'khala', 'assethub-ksm', 'moonriver']
+export const testChains = ['rococo', 'acala', 'rhala testnet', 'local']
+
 export type SupportedNetworks = keyof typeof networkList
 
 /**

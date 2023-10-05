@@ -19,7 +19,7 @@ interface SelectProps {
   minified?: boolean
   inputSize?: 'medium' | 'large'
   fullWidth?: boolean
-  children?: React.ReactNode[]
+  children?: React.ReactNode[] | React.ReactNode
   sx?: SxProps<Theme>
 }
 
@@ -81,7 +81,7 @@ const Select = ({
                   src={logo}
                 />
               )}
-              {<ItemNameStyled>{value}</ItemNameStyled>}
+              <ItemNameStyled>{value}</ItemNameStyled>
             </MenuItemStyled>
           ))
         : children}
