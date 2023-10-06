@@ -10,7 +10,7 @@ Submission checklist:
 - [ ] Change inspected in the mobile web ui
 
 #### Compatibility
-- [ ] Functionality of change validated with a connected multisig
+- [ ] Functionality of change validated with a connected account with multisig
 - [ ] Applicable elements hidden / disabled for watched accounts
 
 #### Maintenance
