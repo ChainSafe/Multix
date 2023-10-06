@@ -15,7 +15,7 @@ import { theme } from '../../styles/theme'
 interface SelectProps {
   value: string
   menuItems?: { value: string; logo?: string }[]
-  onChange: (event: SelectChangeEvent<string>) => void
+  onChange: (event: SelectChangeEvent<unknown>) => void
   minified?: boolean
   inputSize?: 'medium' | 'large'
   fullWidth?: boolean
@@ -44,7 +44,7 @@ const Select = ({
       fullWidth={fullWidth}
       IconComponent={HiOutlineChevronDown}
       MenuProps={MenuPropsStyles}
-      onChange={(event) => onChange(event as SelectChangeEvent<string>)}
+      onChange={onChange}
     >
       {menuItems
         ? menuItems.map(({ value, logo }) => (
