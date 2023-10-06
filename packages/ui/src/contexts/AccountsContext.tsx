@@ -24,6 +24,7 @@ export interface IAccountContext {
   selectedSigner?: Signer
   allowConnectionToExtension: () => void
   isAllowedToConnectToExtension: boolean
+  accountGotRequested: boolean
 }
 
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
@@ -181,7 +182,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
-        isAllowedToConnectToExtension
+        isAllowedToConnectToExtension,
+        accountGotRequested
       }}
     >
       {children}

@@ -29,7 +29,11 @@ const Home = ({ className }: HomeProps) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const { isLoading, multiProxyList, error: multisigQueryError } = useMultiProxy()
+  const {
+    isLoading: isLoadingMultisigs,
+    multiProxyList,
+    error: multisigQueryError
+  } = useMultiProxy()
   const { selectedNetworkInfo } = useNetwork()
   const { api } = useApi()
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
@@ -37,7 +41,8 @@ const Home = ({ className }: HomeProps) => {
     isAllowedToConnectToExtension,
     isExtensionError,
     isAccountLoading,
-    allowConnectionToExtension
+    allowConnectionToExtension,
+    accountGotRequested
   } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
 
@@ -80,7 +85,7 @@ const Home = ({ className }: HomeProps) => {
         <h3 data-cy="text-no-account-found">
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Linkstyled
-            href="https://wiki.polkadot.network/docs/wallets"
+            href="https://wiki.polkadot.network/docs/wallets-and-extensions"
             target="_blank"
             rel="noreferrer"
           >
@@ -94,29 +99,25 @@ const Home = ({ className }: HomeProps) => {
       </CenterStyled>
     )
 
-  if (!api || isAccountLoading) {
+  if (!api) {
     return (
-      <Box
-        className={className}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          '&:first-of-type': {
-            marginBottom: '1rem'
-          }
-        }}
-        data-cy="loader-accounts-rpc-connection"
-      >
+      <LoaderBoxStyled data-cy="loader-rpc-connection">
         <CircularProgress />
-        {isAccountLoading
-          ? 'Loading accounts...'
-          : `Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
-      </Box>
+        {`Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
+      </LoaderBoxStyled>
     )
   }
 
-  if (isLoading) {
+  if (isAccountLoading || !accountGotRequested) {
+    return (
+      <LoaderBoxStyled data-cy="loader-accounts-connection">
+        <CircularProgress />
+        Loading accounts...
+      </LoaderBoxStyled>
+    )
+  }
+
+  if (isLoadingMultisigs) {
     return (
       <MessageWrapper>
         <CircularProgress />

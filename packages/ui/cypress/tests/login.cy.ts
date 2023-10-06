@@ -8,7 +8,7 @@ describe('Connect Account', () => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
     topMenuItems.connectButton().click()
-    landingPage.accountsOrRpcLoader().should('contain', 'Loading accounts')
+    landingPage.accountsLoader().should('contain', 'Loading accounts')
   })
 
   it('Reject connection', () => {

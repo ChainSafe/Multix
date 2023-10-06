@@ -20,7 +20,7 @@ describe('Perform transactions', () => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
     topMenuItems.connectButton().click()
-    landingPage.accountsOrRpcLoader().should('contain', 'Loading accounts')
+    landingPage.accountsLoader().should('contain', 'Loading accounts')
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the extension
@@ -40,7 +40,6 @@ describe('Perform transactions', () => {
     fillAndSubmitTransactionForm()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
-      console.log('txRequests', JSON.stringify(txRequests))
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
       sendTxModal.buttonSend().should('be.disabled')
