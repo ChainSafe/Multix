@@ -88,6 +88,7 @@ const MultiProxySelection = ({ className }: Props) => {
         key={displayAddress}
         component="li"
         {...props}
+        data-cy="select-multiproxy-option"
       >
         <AccountDisplay
           address={displayAddress || ''}
