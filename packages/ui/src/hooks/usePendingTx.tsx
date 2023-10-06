@@ -49,7 +49,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
             // These 2 should be the same
             if (multisigFromChain.toLowerCase() !== multisigs[index].toLowerCase()) {
               console.error(
-                'The onchain call and the one found in the block donot correstpond',
+                'The onchain call and the one found in the block donot correspond',
                 multisigFromChain,
                 multisigs[index]
               )

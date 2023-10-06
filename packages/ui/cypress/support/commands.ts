@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import { AuthRequests, Extension, TxRequests } from './Extension'
+import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
 
 // ***********************************************
@@ -77,6 +78,8 @@ Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
   return extension.rejectTx(id, reason)
 })
 
+Cypress.Commands.add('rejectCurrentMultisigTx', rejectCurrentMultisigTxs)
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -86,11 +89,13 @@ declare global {
        * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
       initExtension: (accounts: InjectedAccountWitMnemonic[]) => Chainable<AUTWindow>
+
       /**
        * Read the authentication request queue.
        * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
        */
       getAuthRequests: () => Chainable<AuthRequests>
+
       /**
        * Authorize a specific request
        * @param {number} id - the id of the request to authorize. This id is part of the getAuthRequests object response.
@@ -98,6 +103,7 @@ declare global {
        * @example cy.enableAuth(1694443839903, ["7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"])
        */
       enableAuth: (id: number, accountAddresses: string[]) => void
+
       /**
        * Reject a specific request
        * @param {number} id - the id of the request to reject. This id is part of the getAuthRequests object response.
@@ -105,17 +111,20 @@ declare global {
        * @example cy.rejectAuth(1694443839903, "Cancelled")
        */
       rejectAuth: (id: number, reason: string) => void
+
       /**
        * Read the tx request queue.
        * @example cy.getTxRequests().then((txQueue) => { cy.wrap(Object.values(txQueue).length).should("eq", 1) })
        */
       getTxRequests: () => Chainable<TxRequests>
+
       /**
        * Authorize a specific request
        * @param {number} id - the id of the request to approve. This id is part of the getTxRequests object response.
        * @example cy.approveTx(1694443839903)
        */
       approveTx: (id: number) => void
+
       /**
        * Reject a specific request
        * @param {number} id - the id of the tx request to reject. This id is part of the getTxRequests object response.
@@ -123,6 +132,18 @@ declare global {
        * @example cy.rejectAuth(1694443839903, "Cancelled")
        */
       rejectTx: (id: number, reason: string) => void
+
+      /**
+       * Reject all pending multisig requests with a specific account
+       * @param {InjectedAccountWitMnemonic} opt.account - The account to reject pending transactions with. It should be the proposer
+       * @param {multisigInfo} opt.multisigInfo - The information about the multisig to remove pending transactions from
+       * @param {WSendpoint} opt.WSendpoint - The RPC endpoint to connect to to submit the rejection batch transaction
+       */
+      rejectCurrentMultisigTx: (opt: {
+        account: InjectedAccountWitMnemonic
+        multisigInfo: MultisigInfo
+        WSendpoint: string
+      }) => void
     }
   }
 }
