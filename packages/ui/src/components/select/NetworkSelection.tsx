@@ -21,7 +21,12 @@ const NetworkSelection = () => {
   }, [])
 
   const handleNetworkSelection = useCallback(
-    ({ target: { value } }: SelectChangeEvent<string>) => {
+    ({ target: { value } }: SelectChangeEvent<unknown>) => {
+      if (typeof value !== 'string') {
+        console.error('Unexpected network value, expect string but received', value)
+        return
+      }
+
       selectNetwork(value)
     },
     [selectNetwork]
@@ -55,7 +60,7 @@ const NetworkSelection = () => {
       IconComponent={HiOutlineChevronDown}
       value={selectedNetwork}
       autoWidth={true}
-      onChange={(event) => handleNetworkSelection(event as SelectChangeEvent<string>)}
+      onChange={handleNetworkSelection}
       MenuProps={MenuPropsStyles}
     >
       <ListSubheader>Polkadot & Parachains</ListSubheader>
