@@ -11,7 +11,7 @@ Submission checklist:
 
 #### Compatibility
 - [ ] Functionality of change validated with a connected account with multisig
-- [ ] Applicable elements hidden / disabled for watched accounts
+- [ ] Applicable elements hidden / disabled for watched multisigs / pure
 
 #### Maintenance
 - [ ] Tests added 
