@@ -117,16 +117,16 @@ const MultiProxySelection = ({ className }: Props) => {
     />
   )
 
-  if (multiProxyList.length === 0) {
-    return null
-  }
-
   if (isLoading) {
     return (
       <BoxStyled>
         <CircularProgress size={24} />
       </BoxStyled>
     )
+  }
+
+  if (multiProxyList.length === 0) {
+    return null
   }
 
   return (
