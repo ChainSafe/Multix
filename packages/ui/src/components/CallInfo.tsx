@@ -29,6 +29,7 @@ interface CreateTreeParams {
   unit: string
   name?: string
   api: ApiPromise
+  typeName?: string
 }
 
 const handleBatchDisplay = ({
@@ -84,7 +85,18 @@ const handleBalanceDisplay = ({
   )
 }
 
-const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => {
+const getTypeName = (index: number, name: string, value: any, api: ApiPromise) => {
+  const [palletFromName, methodFromName] = name.split('.')
+  const pallet = value.section || palletFromName
+  const method = value.method || methodFromName
+  const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
+
+  return (
+    (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
+  )
+}
+
+const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
@@ -94,19 +106,14 @@ const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => 
   return (
     <ul className="params">
       {Object.entries(args).map(([key, value], index) => {
-        const [palletFromName, methodFromName] = name.split('.')
-        const pallet = value.section || palletFromName
-        const method = value.method || methodFromName
-        const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
-        const typeName =
-          !!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)
+        const _typeName = typeName || getTypeName(index, name, value, api)
 
-        if (typeName === 'Vec<RuntimeCall>') {
+        if (_typeName === 'Vec<RuntimeCall>') {
           return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
         }
 
         // generically show nice value for Balance type
-        if (!!typeName && isTypeBalance(typeName)) {
+        if (!!_typeName && isTypeBalance(_typeName)) {
           return handleBalanceDisplay({ value, decimals, unit, key })
         }
 
@@ -128,7 +135,14 @@ const createUlTree = ({ name, args, decimals, unit, api }: CreateTreeParams) => 
           <li key={key}>
             {key}:{' '}
             {typeof value === 'object'
-              ? createUlTree({ name, args: value, decimals, unit, api })
+              ? createUlTree({
+                  name,
+                  args: value,
+                  decimals,
+                  unit,
+                  api,
+                  typeName: _typeName
+                })
               : value}
           </li>
         )
