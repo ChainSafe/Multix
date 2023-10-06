@@ -136,6 +136,8 @@ const SelectStyled = styled(SelectMui)`
   .MuiSelect-select {
     display: flex;
     padding-right: 2.5rem !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 
     @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
       padding-right: 2rem !important;
@@ -182,11 +184,10 @@ const MenuItemStyled = styled(MenuItem)`
 `
 
 const ImgStyled = styled('img')`
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
   margin-right: 0.5rem;
   border-radius: 50%;
-  max-height: 2rem;
 `
 
 const ItemNameStyled = styled('div')`
