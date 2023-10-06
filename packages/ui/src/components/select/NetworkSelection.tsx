@@ -60,7 +60,7 @@ const NetworkSelection = () => {
     >
       <ListSubheader>Polkadot & Parachains</ListSubheader>
       {renderNetworks(polkadotNetworksAndParachains)}
-      <ListSubheader>Kusama & Parachainss</ListSubheader>
+      <ListSubheader>Kusama & Parachains</ListSubheader>
       {renderNetworks(kusamaNetworksAndParachains)}
       <ListSubheader>Testnets</ListSubheader>
       {renderNetworks(testChains)}
@@ -71,8 +71,16 @@ const NetworkSelection = () => {
 const MenuPropsStyles = {
   sx: {
     marginTop: '.75rem',
+
     '.MuiPaper-root': {
-      boxShadow: 'none'
+      marginTop: '2px',
+      boxShadow: 'none',
+      border: 'none',
+      outline: `1px solid ${theme.custom.text.borderColor}`,
+
+      ul: {
+        border: 'none'
+      }
     },
 
     '.MuiMenuItem-root': {
@@ -81,7 +89,7 @@ const MenuPropsStyles = {
     },
 
     '.MuiList-root': {
-      columns: '150px 2',
+      columnFill: 'balance',
       padding: 0,
       border: `1px solid ${theme.custom.text.borderColor}`,
       borderRadius: '0.5rem'
@@ -89,6 +97,24 @@ const MenuPropsStyles = {
 
     '.MuiListSubheader-root': {
       columnSpan: 'all'
+    },
+
+    [theme.breakpoints.up('xs')]: {
+      '.MuiList-root': {
+        columns: '160px 2'
+      }
+    },
+
+    [theme.breakpoints.up('sm')]: {
+      '.MuiList-root': {
+        columns: '180px 2'
+      }
+    },
+
+    [theme.breakpoints.up('md')]: {
+      '.MuiList-root': {
+        columns: '200px 2'
+      }
     }
   }
 }
@@ -100,6 +126,7 @@ const SelectStyled = styled(SelectMui)`
   outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
   text-transform: capitalize;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
+  cursor: pointer;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
     margin-left: 1rem;

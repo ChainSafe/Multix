@@ -43,29 +43,7 @@ const Select = ({
       value={value}
       fullWidth={fullWidth}
       IconComponent={HiOutlineChevronDown}
-      MenuProps={{
-        sx: {
-          marginTop: '.75rem',
-          '.MuiPaper-root': {
-            boxShadow: 'none'
-          },
-
-          '.MuiList-root': {
-            padding: 0,
-            border: `1px solid ${theme.custom.text.borderColor}`,
-            borderRadius: '0.5rem'
-          },
-
-          '.MuiMenuItem-root': {
-            maxWidth: '100%',
-            padding: '0.75rem',
-            borderBottom: `1px solid ${theme.custom.text.borderColor}`,
-            '&:last-child': {
-              borderBottom: 'none'
-            }
-          }
-        }
-      }}
+      MenuProps={MenuPropsStyles}
       onChange={(event) => onChange(event as SelectChangeEvent<string>)}
     >
       {menuItems
@@ -92,6 +70,30 @@ const Select = ({
 Select.defaultProps = {
   minified: false,
   inputSize: 'medium'
+}
+
+const MenuPropsStyles = {
+  sx: {
+    marginTop: '.75rem',
+    '.MuiPaper-root': {
+      boxShadow: 'none'
+    },
+
+    '.MuiList-root': {
+      padding: 0,
+      border: `1px solid ${theme.custom.text.borderColor}`,
+      borderRadius: '0.5rem'
+    },
+
+    '.MuiMenuItem-root': {
+      maxWidth: '100%',
+      padding: '0.75rem',
+      borderBottom: `1px solid ${theme.custom.text.borderColor}`,
+      '&:last-child': {
+        borderBottom: 'none'
+      }
+    }
+  }
 }
 
 const SelectMuiStyled = styled(SelectMui)<
