@@ -42,6 +42,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 <NavLink
                   key={name}
                   to={path}
+                  data-cy={`button-navigate-${name}`}
                 >
                   {name}
                 </NavLink>

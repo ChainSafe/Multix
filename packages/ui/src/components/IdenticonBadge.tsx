@@ -44,6 +44,7 @@ export const IdenticonBadge = ({
       color="primary"
       badgeContent={badge}
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+      data-cy={badge === AccountBadge.PURE ? 'badge-pure' : 'badge-multisig'}
     >
       <AccountIcon />
     </BadgeStyled>
