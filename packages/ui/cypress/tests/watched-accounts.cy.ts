@@ -1,4 +1,5 @@
 import { addresses } from '../fixtures/accounts'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPageUrl, settingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { settingsPage } from '../support/page-objects/settingsPage'
@@ -21,9 +22,9 @@ describe('Watched Accounts', () => {
     landingPage.watchAccountButton().click()
     addWatchAccount(addresses.Alice, 'Alice')
     settingsPage.accountContainer().within(() => {
-      settingsPage.accountIcon().should('be.visible')
-      settingsPage.accountAddressLabel().should('be.visible')
-      settingsPage.accountNameLabel().should('be.visible')
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.addressLabel().should('be.visible')
+      accountDisplay.nameLabel().should('be.visible')
       settingsPage.accountDeleteButton().should('be.visible')
     })
   })
@@ -35,8 +36,8 @@ describe('Watched Accounts', () => {
     // now remove it
     settingsPage.accountContainer().within(() => {
       settingsPage.accountDeleteButton().click()
-      settingsPage.accountIcon().should('not.exist')
-      settingsPage.accountAddressLabel().should('not.exist')
+      accountDisplay.identicon().should('not.exist')
+      accountDisplay.addressLabel().should('not.exist')
     })
     settingsPage.accountContainer().should('have.length', 0)
   })
@@ -63,41 +64,49 @@ describe('Watched Accounts', () => {
 
   it.only('can see the provided multisig name displayed', () => {
     cy.visit(settingsPageWatchAccountUrl)
-    // watch a multisig that has no pure
     addWatchAccount(
       watchMultisigs['watch-multisig-without-pure'].address,
       watchMultisigs['watch-multisig-without-pure'].name)
-    // ensure the name is displayed in the account container
+    // ensure the multisig name is displayed in the account container
     settingsPage.accountContainer().within(() => {
-      settingsPage.accountNameLabel()
+      accountDisplay.nameLabel()
         .should('be.visible')
         .should('have.text', watchMultisigs['watch-multisig-without-pure'].name)
     })
-    // ensure the name is included in the selectable option
+    // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelector()
       .should('be.visible')
       .first().click()
-    topMenuItems.multiproxySelectorOption()
-      .should('contain.text', watchMultisigs['watch-multisig-without-pure'].name)
+    topMenuItems.multiproxySelectorOption().within(() => {
+      accountDisplay.nameLabel()
+        .should('contain.text', watchMultisigs['watch-multisig-without-pure'].name);
+    })
+    topMenuItems.homeButton().click()
   })
 
   it.only('can see the provided pure name displayed', () => {
     cy.visit(settingsPageWatchAccountUrl)
-    // watch a multisig by it's pure address
     addWatchAccount(
       watchMultisigs['watch-multisig-with-pure'].pureAddress,
       watchMultisigs['watch-multisig-with-pure'].name)
     // ensure the name is displayed in the account container
     settingsPage.accountContainer().within(() => {
-      settingsPage.accountNameLabel()
+      accountDisplay.nameLabel()
         .should('be.visible')
         .should('have.text', watchMultisigs['watch-multisig-with-pure'].name)
     })
-    // ensure the name is included in the selectable option
+    // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelector()
       .should('be.visible')
       .first().click()
-    topMenuItems.multiproxySelectorOption()
-      .should('contain.text', watchMultisigs['watch-multisig-with-pure'].name)
+    topMenuItems.multiproxySelectorOption().within(() => {
+      accountDisplay.nameLabel()
+        .should('contain.text', watchMultisigs['watch-multisig-with-pure'].name)
+    })
+    // navigate to the multisig page and ensure the name is included
+    topMenuItems.homeButton().click()
   })
 })
+
+// two new tests to check the right type of badge
+// expand the two tests above to check the name on home screen
