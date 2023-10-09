@@ -55,7 +55,7 @@ Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) =
 })
 
 Cypress.Commands.add('getAuthRequests', () => {
-  return cy.wrap(extension.getAuthRequests())
+  return cy.wait(500).then(() => cy.wrap(extension.getAuthRequests()))
 })
 
 Cypress.Commands.add('enableAuth', (id: number, accountAddresses: string[]) => {
