@@ -1,8 +1,15 @@
-import { SelectChangeEvent } from '@mui/material'
+import React, { useCallback, useMemo } from 'react'
+import { ListSubheader, MenuItem, Select as SelectMui, SelectChangeEvent } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { HiOutlineChevronDown } from 'react-icons/hi2'
 import { useNetwork } from '../../contexts/NetworkContext'
-import { useCallback, useMemo } from 'react'
-import { networkList } from '../../constants'
-import { Select } from '../library'
+import {
+  kusamaNetworksAndParachains,
+  networkList,
+  polkadotNetworksAndParachains,
+  testChains
+} from '../../constants'
+import { theme } from '../../styles/theme'
 
 const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
@@ -14,10 +21,34 @@ const NetworkSelection = () => {
   }, [])
 
   const handleNetworkSelection = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      selectNetwork(event.target.value)
+    ({ target: { value } }: SelectChangeEvent<unknown>) => {
+      if (typeof value !== 'string') {
+        console.error('Unexpected network value, expect string but received', value)
+        return
+      }
+
+      selectNetwork(value)
     },
     [selectNetwork]
+  )
+
+  const renderNetworks = useCallback(
+    (allowedNetworks: string[]) =>
+      networksToShow
+        .filter(([networkName]) => allowedNetworks.includes(networkName))
+        .map(([networkName, { logo }]) => (
+          <MenuItemStyled
+            key={networkName}
+            value={networkName}
+          >
+            <ImgStyled
+              alt={`network-logo-${networkName}`}
+              src={logo}
+            />
+            <ItemNameStyled>{networkName}</ItemNameStyled>
+          </MenuItemStyled>
+        )),
+    [networksToShow]
   )
 
   if (!selectedNetwork) {
@@ -25,20 +56,150 @@ const NetworkSelection = () => {
   }
 
   return (
-    <Select
-      sx={{
-        maxWidth: '9.875rem',
-        marginLeft: '1rem'
-      }}
-      inputSize="large"
+    <SelectStyled
+      IconComponent={HiOutlineChevronDown}
       value={selectedNetwork}
+      autoWidth={true}
       onChange={handleNetworkSelection}
-      menuItems={networksToShow.map(([name, { logo }]) => ({
-        value: name,
-        logo
-      }))}
-    />
+      MenuProps={MenuPropsStyles}
+    >
+      <ListSubheader>Polkadot & Parachains</ListSubheader>
+      {renderNetworks(polkadotNetworksAndParachains)}
+      <ListSubheader>Kusama & Parachains</ListSubheader>
+      {renderNetworks(kusamaNetworksAndParachains)}
+      <ListSubheader>Testnets</ListSubheader>
+      {renderNetworks(testChains)}
+    </SelectStyled>
   )
 }
+
+const MenuPropsStyles = {
+  sx: {
+    marginTop: '.75rem',
+
+    '.MuiPaper-root': {
+      marginTop: '2px',
+      boxShadow: 'none',
+      border: 'none',
+      outline: `1px solid ${theme.custom.text.borderColor}`,
+
+      ul: {
+        border: 'none'
+      }
+    },
+
+    '.MuiMenuItem-root': {
+      maxWidth: '100%',
+      padding: '0.75rem'
+    },
+
+    '.MuiList-root': {
+      columnFill: 'balance',
+      padding: 0,
+      border: `1px solid ${theme.custom.text.borderColor}`,
+      borderRadius: '0.5rem'
+    },
+
+    '.MuiListSubheader-root': {
+      columnSpan: 'all'
+    },
+
+    [theme.breakpoints.up('xs')]: {
+      '.MuiList-root': {
+        columns: '160px 2'
+      }
+    },
+
+    [theme.breakpoints.up('sm')]: {
+      '.MuiList-root': {
+        columns: '180px 2'
+      }
+    },
+
+    [theme.breakpoints.up('md')]: {
+      '.MuiList-root': {
+        columns: '200px 2'
+      }
+    }
+  }
+}
+
+const SelectStyled = styled(SelectMui)`
+  display: inline-flex;
+  width: 100%;
+  background: ${({ theme }) => theme.palette.primary.white};
+  outline: 1.5px solid ${({ theme }) => theme.custom.text.borderColor};
+  text-transform: capitalize;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  cursor: pointer;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    margin-left: 1rem;
+    max-width: fit-content;
+  }
+
+  .MuiSelect-select {
+    display: flex;
+    padding-right: 2.5rem !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      padding-right: 2rem !important;
+    }
+
+    div:last-child {
+      @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+        display: none;
+      }
+    }
+  }
+
+  .MuiList-root {
+    columns: 100vw 3;
+    column-fill: balance;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      columns: 100px 2;
+      column-fill: auto;
+    }
+  }
+
+  svg {
+    color: ${({ theme }) => theme.custom.text.black};
+    width: 1.25rem;
+    height: 1.25rem;
+    top: calc(50% - 0.65em);
+  }
+
+  .MuiSelect-icon {
+    right: 9px;
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border: none;
+  }
+`
+
+const MenuItemStyled = styled(MenuItem)`
+  text-transform: capitalize;
+  padding: 0.75rem;
+  max-width: 9.1875rem;
+  box-sizing: content-box;
+`
+
+const ImgStyled = styled('img')`
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+`
+
+const ItemNameStyled = styled('div')`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.custom.text.black};
+`
 
 export default NetworkSelection
