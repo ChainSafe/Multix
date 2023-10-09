@@ -1,2 +1,2 @@
-export const isTypeBalance = (typeName: string) =>
-  ['Balance', 'BalanceOf', 'Amount'].includes(typeName)
+export const isTypeBalance = (typeName?: string) =>
+  !!typeName && ['Balance', 'BalanceOf', 'Amount'].includes(typeName)

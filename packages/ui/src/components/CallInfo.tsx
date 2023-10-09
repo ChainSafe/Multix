@@ -13,6 +13,7 @@ import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
 import { ApiPromise } from '@polkadot/api'
 import { isTypeBalance } from '../utils/isTypeBalance'
+import { isTypeAccount } from '../utils/isTypeAccount'
 
 interface Props {
   aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
@@ -100,9 +101,6 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
   if (!args) return
   if (!name) return
 
-  const isBalancesTransferAlike = ['balances.transfer', 'balances.transferKeepAlive'].includes(name)
-  const isProxyCreationDeletion = ['proxy.addProxy', 'proxy.removeProxy'].includes(name)
-
   return (
     <ul className="params">
       {Object.entries(args).map(([key, value], index) => {
@@ -113,17 +111,12 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
         }
 
         // generically show nice value for Balance type
-        if (!!_typeName && isTypeBalance(_typeName)) {
+        if (isTypeBalance(_typeName)) {
           return handleBalanceDisplay({ value, decimals, unit, key })
         }
 
         const destAddress = value?.Id || value
-        // show nice dest
-        if (
-          ((isBalancesTransferAlike && key === 'dest') ||
-            (isProxyCreationDeletion && key === 'delegate')) &&
-          typeof destAddress === 'string'
-        ) {
+        if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
           return (
             <li key={key}>
               {key}: {<MultisigCompactDisplay address={destAddress} />}
