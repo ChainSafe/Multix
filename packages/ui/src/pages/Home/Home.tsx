@@ -42,9 +42,9 @@ const Home = ({ className }: HomeProps) => {
     isExtensionError,
     isAccountLoading,
     allowConnectionToExtension,
-    accountGotRequested
+    isLocalStorageSetupDone
   } = useAccounts()
-  const { watchedAddresses } = useWatchedAddresses()
+  const { watchedAddresses, isInitialized: isWatchAddressInitialized } = useWatchedAddresses()
 
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
@@ -59,6 +59,15 @@ const Home = ({ className }: HomeProps) => {
       }, 20000)
     }
   }, [onClosenewMultisigAlert, searchParams])
+
+  if (!isWatchAddressInitialized || !isLocalStorageSetupDone) {
+    return (
+      <LoaderBoxStyled data-cy="loader-initialization">
+        <CircularProgress />
+        Initialization...
+      </LoaderBoxStyled>
+    )
+  }
 
   if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
     return (
@@ -79,7 +88,7 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading)
+  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
     return (
       <CenterStyled>
         <h3 data-cy="text-no-account-found">
@@ -98,6 +107,7 @@ const Home = ({ className }: HomeProps) => {
         </h3>
       </CenterStyled>
     )
+  }
 
   if (!api) {
     return (
@@ -108,7 +118,7 @@ const Home = ({ className }: HomeProps) => {
     )
   }
 
-  if (isAccountLoading || !accountGotRequested) {
+  if (isAccountLoading) {
     return (
       <LoaderBoxStyled data-cy="loader-accounts-connection">
         <CircularProgress />
