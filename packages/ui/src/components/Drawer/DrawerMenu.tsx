@@ -28,7 +28,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           <ChevronRightIcon size={20} />
         </IconButton>
       </DrawerHeader>
-      <List>
+      <List disablePadding={true}>
         {!isAllowedToConnectToExtension && (
           <ListItemStyled disablePadding>
             <ButtonStyled
@@ -65,7 +65,21 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   )
 }
 const ListItemStyled = styled(ListItem)`
-  justify-content: flex-end;
+  justify-content: center;
+  width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    justify-content: flex-end;
+  }
+
+  a {
+    width: 100%;
+    text-align: center;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      width: auto;
+    }
+  }
 `
 
 const ButtonStyled = styled(Button)`
