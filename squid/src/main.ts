@@ -35,7 +35,9 @@ const archiveUrl =
   env.archiveUrl ||
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
     release: 'ArrowSquid',
-    genesis: env.genesis
+    genesis: env.genesis,
+    // this is needed until this is merged https://github.com/subsquid/archive-registry/pull/119
+    type: 'Substrate' as 'EVM'
   })
 const chainId = env.chainId
 
