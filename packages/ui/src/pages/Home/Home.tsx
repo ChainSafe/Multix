@@ -2,8 +2,7 @@ import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Box, CircularProgress, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Button, Link } from '../../components/library'
-import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
+import { Button } from '../../components/library'
 import SuccessCreation from '../../components/SuccessCreation'
 import NewMulisigAlert from '../../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'
@@ -16,8 +15,9 @@ import HeaderView from './HeaderView'
 import MultisigView from './MultisigView'
 import TransactionList from '../../components/Transactions/TransactionList'
 import { ConnectOrWatch } from '../../components/ConnectOrWatch'
-import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { WATCH_ACCOUNT_ANCHOR } from '../Settings/Settings'
+import { useDisplayLoader } from '../../hooks/useDisplayLoader'
+import { useDisplayError } from '../../hooks/useDisplayError'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
@@ -29,22 +29,12 @@ const Home = ({ className }: HomeProps) => {
   const [searchParams, setSearchParams] = useSearchParams({
     creationInProgress: 'false'
   })
-  const {
-    isLoading: isLoadingMultisigs,
-    multiProxyList,
-    error: multisigQueryError
-  } = useMultiProxy()
-  const { selectedNetworkInfo } = useNetwork()
-  const { api } = useApi()
+  const { multiProxyList } = useMultiProxy()
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
-  const {
-    isAllowedToConnectToExtension,
-    isExtensionError,
-    isAccountLoading,
-    allowConnectionToExtension,
-    isLocalStorageSetupDone
-  } = useAccounts()
-  const { watchedAddresses, isInitialized: isWatchAddressInitialized } = useWatchedAddresses()
+  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { watchedAddresses } = useWatchedAddresses()
+  const DisplayError = useDisplayError()
+  const DisplayLoader = useDisplayLoader()
 
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
@@ -60,13 +50,12 @@ const Home = ({ className }: HomeProps) => {
     }
   }, [onClosenewMultisigAlert, searchParams])
 
-  if (!isWatchAddressInitialized || !isLocalStorageSetupDone) {
-    return (
-      <LoaderBoxStyled data-cy="loader-initialization">
-        <CircularProgress />
-        Initialization...
-      </LoaderBoxStyled>
-    )
+  if (DisplayLoader) {
+    return DisplayLoader
+  }
+
+  if (DisplayError) {
+    return DisplayError
   }
 
   if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
@@ -85,65 +74,6 @@ const Home = ({ className }: HomeProps) => {
           </Button>
         </ConnectButtonWrapperStyled>
       </CenterStyled>
-    )
-  }
-
-  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
-    return (
-      <CenterStyled>
-        <h3 data-cy="text-no-account-found">
-          No account found. Please connect at least one in a wallet extension. More info at{' '}
-          <Linkstyled
-            href="https://wiki.polkadot.network/docs/wallets-and-extensions"
-            target="_blank"
-            rel="noreferrer"
-          >
-            wiki.polkadot.network
-            <LaunchIcon
-              className="launchIcon"
-              size={20}
-            />
-          </Linkstyled>
-        </h3>
-      </CenterStyled>
-    )
-  }
-
-  if (!api) {
-    return (
-      <LoaderBoxStyled data-cy="loader-rpc-connection">
-        <CircularProgress />
-        {`Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
-      </LoaderBoxStyled>
-    )
-  }
-
-  if (isAccountLoading) {
-    return (
-      <LoaderBoxStyled data-cy="loader-accounts-connection">
-        <CircularProgress />
-        Loading accounts...
-      </LoaderBoxStyled>
-    )
-  }
-
-  if (isLoadingMultisigs) {
-    return (
-      <MessageWrapper>
-        <CircularProgress />
-        <div>Loading your multisigs...</div>
-      </MessageWrapper>
-    )
-  }
-
-  if (multisigQueryError) {
-    return (
-      <MessageWrapper>
-        <ErrorMessageStyled>
-          <ErrorOutlineIcon size={64} />
-          <div>An error occurred.</div>
-        </ErrorMessageStyled>
-      </MessageWrapper>
     )
   }
 
@@ -235,21 +165,6 @@ const ConnectButtonWrapperStyled = styled('div')`
 
 const CenterStyled = styled(Center)`
   text-align: center;
-`
-
-const ErrorMessageStyled = styled('div')`
-  text-align: center;
-  margin-top: 1rem;
-`
-
-const Linkstyled = styled(Link)`
-  display: inline-flex;
-  padding-left: 0.2rem;
-  align-items: center;
-
-  .launchIcon {
-    margin-left: 0.5rem;
-  }
 `
 
 export default Home
