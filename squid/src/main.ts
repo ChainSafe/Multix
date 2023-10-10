@@ -1,9 +1,5 @@
 import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
-import {
-  DataHandlerContext,
-  FieldSelection,
-  SubstrateBatchProcessor
-} from '@subsquid/substrate-processor'
+import { DataHandlerContext, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
 import {
@@ -43,6 +39,18 @@ const archiveUrl =
   })
 const chainId = env.chainId
 
+export const fields = {
+  call: {
+    args: true,
+    origin: true,
+    success: true
+  },
+  event: {
+    args: true
+  },
+  block: { timestamp: true }
+}
+
 const processor = new SubstrateBatchProcessor()
   .setDataSource({
     archive: archiveUrl,
@@ -51,16 +59,7 @@ const processor = new SubstrateBatchProcessor()
   .setBlockRange({
     from: Number(env.blockstart)
   })
-  .setFields({
-    call: {
-      args: true,
-      origin: true,
-      success: true
-    },
-    event: {
-      args: true
-    }
-  })
+  .setFields({ ...fields })
   .addCall({
     name: [
       'Proxy.proxy',
@@ -75,7 +74,7 @@ const processor = new SubstrateBatchProcessor()
     name: ['Proxy.PureCreated', 'Proxy.AnonymousCreated', 'Proxy.ProxyAdded', 'Proxy.ProxyRemoved']
   })
 
-export type Ctx = DataHandlerContext<Store, F extends FieldSelection = {}>
+export type Ctx = DataHandlerContext<Store, typeof fields>
 
 processor.run(
   new TypeormDatabase({ stateSchema: chainId, isolationLevel: 'READ COMMITTED' }),
@@ -89,10 +88,10 @@ processor.run(
 
     for (const block of ctx.blocks) {
       const { calls, events, header } = block
-      const timestamp = new Date(header.height)
-      for (const call of calls){
-        if(supportedMultisigCalls.includes(call.name)){
 
+      const timestamp = new Date(header.timestamp || 0)
+      for (const call of calls) {
+        if (supportedMultisigCalls.includes(call.name)) {
           if (!call.success || !call.origin) continue
 
           const signer = getOriginAccount(call.origin)
@@ -119,64 +118,22 @@ processor.run(
             id: getMultisigCallId(
               newMulti.address,
               blockNumber,
-              call.extrinsic?.index || 0,
-              0,
+              call.extrinsicIndex,
+              call.id,
               chainId
             ),
             blockHash,
-            callIndex: call.extrinsic?.index || 0,
+            callIndex: call.extrinsicIndex,
             multisigAddress: newMulti.address,
             timestamp
           })
         }
-      }
 
-      for (const item of items) {
-        // if (supportedMultisigCalls.includes(item.name)) {
-        //   const callItem = item as CallItem<'*', true>
-
-        //   if (!callItem.call.success || !callItem.call.origin) continue
-
-        //   const signer = getOriginAccount(callItem.call.origin)
-        //   const callArgs = callItem.call.args
-
-        //   const { otherSignatories, threshold } = handleMultisigCall(callArgs)
-        //   const signatories = [signer, ...otherSignatories]
-
-        //   const multisigAddress = getMultisigAddress(signatories, threshold)
-        //   const newMulti = {
-        //     id: getAccountId(multisigAddress, chainId),
-        //     address: multisigAddress,
-        //     threshold,
-        //     newSignatories: signatories,
-        //     isMultisig: true,
-        //     isPureProxy: false
-        //   } as NewMultisigsInfo
-
-        //   newMultisigsInfo.push(newMulti)
-        //   const blockNumber = block.header.height
-        //   const blockHash = block.header.hash
-
-        //   newMultisigCalls.push({
-        //     id: getMultisigCallId(
-        //       newMulti.address,
-        //       blockNumber,
-        //       callItem.extrinsic.indexInBlock,
-        //       callItem.call.pos,
-        //       chainId
-        //     ),
-        //     blockHash,
-        //     callIndex: callItem.extrinsic.indexInBlock,
-        //     multisigAddress: newMulti.address,
-        //     timestamp: blockNumber
-        //   })
-        // }
-
-        if (item.name === 'Proxy.remove_proxies') {
+        if (call.name === 'Proxy.remove_proxies') {
           // we only care about the successful actions and the ones signed
-          if (!item.call.success || !item.call.origin) continue
+          if (!call.success || !call.origin) continue
 
-          const signer = getOriginAccount(item.call.origin)
+          const signer = getOriginAccount(call.origin)
           const signerAccountId = getAccountId(signer, chainId)
 
           // If a pure has just been created (in the queue, not persisted yet) and if the pure has called the removeProxies
@@ -203,13 +160,15 @@ processor.run(
           // for any other account, and remove the link
           delegatorToRemoveIds.add(signerAccountId)
         }
+      }
 
-        if (item.name === 'Proxy.PureCreated' || item.name === 'Proxy.AnonymousCreated') {
+      for (const event of events) {
+        if (event.name === 'Proxy.PureCreated' || event.name === 'Proxy.AnonymousCreated') {
           const newPureProxy = getPureProxyInfoFromArgs({
-            item,
+            event,
             chainId,
             ctx,
-            isAnonymous: item.name === 'Proxy.AnonymousCreated'
+            isAnonymous: event.name === 'Proxy.AnonymousCreated'
           })
           // ctx.log.info(`pure ${newPureProxy.pure}`)
           // ctx.log.info(`who ${newPureProxy.who}`)
@@ -221,15 +180,15 @@ processor.run(
             })
         }
 
-        if (item.name === 'Proxy.ProxyAdded') {
-          const newProxy = getProxyInfoFromArgs({ item, chainId, ctx })
+        if (event.name === 'Proxy.ProxyAdded') {
+          const newProxy = getProxyInfoFromArgs({ event, chainId, ctx })
           // ctx.log.info(`-----> delegator ${newProxy.delegator}`)
           // ctx.log.info(`-----> delegatee ${newProxy.delegatee}`)
           newProxy && newProxies.set(newProxy.id, { ...newProxy, createdAt: timestamp })
         }
 
-        if (item.name === 'Proxy.ProxyRemoved') {
-          const proxyRemoval = getProxyInfoFromArgs({ item, chainId, ctx })
+        if (event.name === 'Proxy.ProxyRemoved') {
+          const proxyRemoval = getProxyInfoFromArgs({ event, chainId, ctx })
           // ctx.log.info(`-----> to remove delegator ${proxyRemoval.delegator}`)
           // ctx.log.info(`-----> to remove delegatee ${proxyRemoval.delegatee}`)
           if (proxyRemoval && newProxies.has(proxyRemoval.id)) {
