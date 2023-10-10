@@ -180,6 +180,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
+  const hasArgs = useMemo(() => args && Object.keys(args).length > 0, [args])
 
   return (
     <div className={className}>
@@ -204,7 +205,7 @@ const CallInfo = ({
           annoyance.
         </AlertStyled>
       )}
-      {args && !!api && Object.keys(args).length > 0 && (
+      {!!api && hasArgs && (
         <Expander
           expanded={expanded}
           title="Params"

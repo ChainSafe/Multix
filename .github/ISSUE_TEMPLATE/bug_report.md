@@ -31,7 +31,7 @@ If possible, please copy/paste or provide a screenshot of the browser console. T
 **Screenshots / Video**
 If applicable, please add screenshots or video to help explain or demonstrate the problem you are experiencing.
 
-**Test Host Specifics: **
+**Test Host Specifics**
 
 - OS: [e.g. Linux Mint 21.1, macOS 13, Windows 11]
 - Browser [e.g. Chrome, Safari]
