@@ -218,11 +218,19 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     getSubscanExtrinsicLink
   ])
 
-  const onChangeEasySetupOption = useCallback((event: SelectChangeEvent<string>) => {
-    setErrorMessage('')
-    setEasyOptionErrorMessage('')
-    setSelectedEasyOption(event.target.value)
-  }, [])
+  const onChangeEasySetupOption = useCallback(
+    ({ target: { value } }: SelectChangeEvent<unknown>) => {
+      if (typeof value !== 'string') {
+        console.error('Unexpected network value, expect string but received', value)
+        return
+      }
+
+      setErrorMessage('')
+      setEasyOptionErrorMessage('')
+      setSelectedEasyOption(value)
+    },
+    []
+  )
 
   if (!possibleOrigin) {
     return null
