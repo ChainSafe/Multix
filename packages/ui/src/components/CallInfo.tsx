@@ -11,6 +11,8 @@ import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
+import { ApiPromise } from '@polkadot/api'
+import { isTypeBalance } from '../utils/isTypeBalance'
 
 interface Props {
   aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
@@ -26,9 +28,75 @@ interface CreateTreeParams {
   decimals: number
   unit: string
   name?: string
+  api: ApiPromise
+  typeName?: string
 }
 
-const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
+const handleBatchDisplay = ({
+  value,
+  decimals,
+  unit,
+  api,
+  key
+}: {
+  value: any[]
+  decimals: number
+  unit: string
+  key: string
+  api: ApiPromise
+}) =>
+  value.map((call: any, index: number) => {
+    const name = `${call.section}.${call.method}`
+    return (
+      <>
+        <li key={`${key}-${index}`}>{name}</li>
+        {createUlTree({
+          name: `${call.section}.${call.method}`,
+          args: call.args,
+          decimals,
+          unit,
+          api
+        })}
+      </>
+    )
+  })
+
+const handleBalanceDisplay = ({
+  value,
+  decimals,
+  unit,
+  key
+}: {
+  value: any
+  decimals: number
+  unit: string
+  key: string
+}) => {
+  const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
+    withThousandDelimiter: true,
+    tokenSymbol: unit,
+    numberAfterComma: 4
+  })
+
+  return (
+    <li key={key}>
+      {key}: {balance}
+    </li>
+  )
+}
+
+const getTypeName = (index: number, name: string, value: any, api: ApiPromise) => {
+  const [palletFromName, methodFromName] = name.split('.')
+  const pallet = value.section || palletFromName
+  const method = value.method || methodFromName
+  const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
+
+  return (
+    (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
+  )
+}
+
+const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
@@ -37,8 +105,18 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
 
   return (
     <ul className="params">
-      {Object.entries(args).map(([key, value]) => {
-        // in case the call was a WrapperOpaque<Call> the destination is the value and has no Id
+      {Object.entries(args).map(([key, value], index) => {
+        const _typeName = typeName || getTypeName(index, name, value, api)
+
+        if (_typeName === 'Vec<RuntimeCall>') {
+          return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
+        }
+
+        // generically show nice value for Balance type
+        if (!!_typeName && isTypeBalance(_typeName)) {
+          return handleBalanceDisplay({ value, decimals, unit, key })
+        }
+
         const destAddress = value?.Id || value
         // show nice dest
         if (
@@ -53,25 +131,18 @@ const createUlTree = ({ name, args, decimals, unit }: CreateTreeParams) => {
           )
         }
 
-        // show nice value
-        if (isBalancesTransferAlike && key === 'value') {
-          const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-            withThousandDelimiter: true,
-            tokenSymbol: unit,
-            numberAfterComma: 4
-          })
-          return (
-            <li key={key}>
-              {key}: {balance}
-            </li>
-          )
-        }
-
         return (
           <li key={key}>
             {key}:{' '}
             {typeof value === 'object'
-              ? createUlTree({ name, args: value, decimals, unit })
+              ? createUlTree({
+                  name,
+                  args: value,
+                  decimals,
+                  unit,
+                  api,
+                  typeName: _typeName
+                })
               : value}
           </li>
         )
@@ -108,7 +179,7 @@ const CallInfo = ({
   withProxyFiltered = true
 }: Props) => {
   const { args, name } = withProxyFiltered ? filterProxyProxy(aggregatedData) : aggregatedData
-  const { chainInfo } = useApi()
+  const { chainInfo, api } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
   const { getDecodeUrl } = usePjsLinks()
@@ -116,6 +187,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
+  const hasArgs = useMemo(() => args && Object.keys(args).length > 0, [args])
 
   return (
     <div className={className}>
@@ -140,11 +212,11 @@ const CallInfo = ({
           annoyance.
         </AlertStyled>
       )}
-      {args && Object.keys(args).length > 0 && (
+      {!!api && hasArgs && (
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, args, decimals, unit })}
+          content={createUlTree({ name, args, decimals, unit, api })}
         />
       )}
       {children}
