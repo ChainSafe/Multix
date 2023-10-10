@@ -1,10 +1,9 @@
 import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
 import {
-  BatchContext,
-  BatchProcessorItem,
+  DataHandlerContext,
+  FieldSelection,
   SubstrateBatchProcessor
 } from '@subsquid/substrate-processor'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
 import {
@@ -29,23 +28,6 @@ import { Env } from './util/Env'
 import { getAccountId } from './util/getAccountId'
 import { getProxyAccountIByDelegatorIds } from './util/getProxyAccountIByDelegatorIds'
 
-export const dataEvent = {
-  data: {
-    event: {
-      args: true
-    }
-  }
-} as const
-
-export const dataCall = {
-  data: {
-    call: {
-      args: true,
-      origin: true
-    }
-  }
-} as const
-
 const supportedMultisigCalls = [
   'Multisig.as_multi',
   'Multisig.approve_as_multi',
@@ -56,9 +38,8 @@ export const env = new Env().getEnv()
 const archiveUrl =
   env.archiveUrl ||
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-    release: 'FireSquid',
-    genesis: env.genesis,
-    type: 'Substrate'
+    release: 'ArrowSquid',
+    genesis: env.genesis
   })
 const chainId = env.chainId
 
@@ -70,19 +51,31 @@ const processor = new SubstrateBatchProcessor()
   .setBlockRange({
     from: Number(env.blockstart)
   })
-  .addCall('Proxy.proxy', dataCall)
-  .addCall('Proxy.remove_proxies', dataCall)
-  .addCall('Multisig.as_multi', dataCall)
-  .addCall('Multisig.approve_as_multi', dataCall)
-  .addCall('Multisig.cancel_as_multi', dataCall)
-  .addCall('Multisig.as_multi_threshold_1', dataCall)
-  .addEvent('Proxy.PureCreated', dataEvent)
-  .addEvent('Proxy.AnonymousCreated', dataEvent)
-  .addEvent('Proxy.ProxyAdded', dataEvent)
-  .addEvent('Proxy.ProxyRemoved', dataEvent)
+  .setFields({
+    call: {
+      args: true,
+      origin: true,
+      success: true
+    },
+    event: {
+      args: true
+    }
+  })
+  .addCall({
+    name: [
+      'Proxy.proxy',
+      'Proxy.remove_proxies',
+      'Multisig.as_multi',
+      'Multisig.approve_as_multi',
+      'Multisig.cancel_as_multi',
+      'Multisig.as_multi_threshold_1'
+    ]
+  })
+  .addEvent({
+    name: ['Proxy.PureCreated', 'Proxy.AnonymousCreated', 'Proxy.ProxyAdded', 'Proxy.ProxyRemoved']
+  })
 
-export type Item = BatchProcessorItem<typeof processor>
-export type Ctx = BatchContext<Store, Item>
+export type Ctx = DataHandlerContext<Store, F extends FieldSelection = {}>
 
 processor.run(
   new TypeormDatabase({ stateSchema: chainId, isolationLevel: 'READ COMMITTED' }),
@@ -95,17 +88,15 @@ processor.run(
     const delegatorToRemoveIds: Set<string> = new Set()
 
     for (const block of ctx.blocks) {
-      const { items } = block
-      const timestamp = new Date(block.header.timestamp)
+      const { calls, events, header } = block
+      const timestamp = new Date(header.height)
+      for (const call of calls){
+        if(supportedMultisigCalls.includes(call.name)){
 
-      for (const item of items) {
-        if (supportedMultisigCalls.includes(item.name)) {
-          const callItem = item as CallItem<'*', true>
+          if (!call.success || !call.origin) continue
 
-          if (!callItem.call.success || !callItem.call.origin) continue
-
-          const signer = getOriginAccount(callItem.call.origin)
-          const callArgs = callItem.call.args
+          const signer = getOriginAccount(call.origin)
+          const callArgs = call.args
 
           const { otherSignatories, threshold } = handleMultisigCall(callArgs)
           const signatories = [signer, ...otherSignatories]
@@ -128,16 +119,58 @@ processor.run(
             id: getMultisigCallId(
               newMulti.address,
               blockNumber,
-              callItem.extrinsic.indexInBlock,
-              callItem.call.pos,
+              call.extrinsic?.index || 0,
+              0,
               chainId
             ),
             blockHash,
-            callIndex: callItem.extrinsic.indexInBlock,
+            callIndex: call.extrinsic?.index || 0,
             multisigAddress: newMulti.address,
             timestamp
           })
         }
+      }
+
+      for (const item of items) {
+        // if (supportedMultisigCalls.includes(item.name)) {
+        //   const callItem = item as CallItem<'*', true>
+
+        //   if (!callItem.call.success || !callItem.call.origin) continue
+
+        //   const signer = getOriginAccount(callItem.call.origin)
+        //   const callArgs = callItem.call.args
+
+        //   const { otherSignatories, threshold } = handleMultisigCall(callArgs)
+        //   const signatories = [signer, ...otherSignatories]
+
+        //   const multisigAddress = getMultisigAddress(signatories, threshold)
+        //   const newMulti = {
+        //     id: getAccountId(multisigAddress, chainId),
+        //     address: multisigAddress,
+        //     threshold,
+        //     newSignatories: signatories,
+        //     isMultisig: true,
+        //     isPureProxy: false
+        //   } as NewMultisigsInfo
+
+        //   newMultisigsInfo.push(newMulti)
+        //   const blockNumber = block.header.height
+        //   const blockHash = block.header.hash
+
+        //   newMultisigCalls.push({
+        //     id: getMultisigCallId(
+        //       newMulti.address,
+        //       blockNumber,
+        //       callItem.extrinsic.indexInBlock,
+        //       callItem.call.pos,
+        //       chainId
+        //     ),
+        //     blockHash,
+        //     callIndex: callItem.extrinsic.indexInBlock,
+        //     multisigAddress: newMulti.address,
+        //     timestamp: blockNumber
+        //   })
+        // }
 
         if (item.name === 'Proxy.remove_proxies') {
           // we only care about the successful actions and the ones signed
