@@ -68,26 +68,24 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-without-pure'].address,
-      watchMultisigs['multisig-without-pure'].name)
+      watchMultisigs['multisig-without-pure'].name
+    )
     // ensure the multisig name is displayed in the settings account container
     settingsPage.accountContainer().within(() => {
-      accountDisplay.nameLabel()
+      accountDisplay
+        .nameLabel()
         .should('be.visible')
         .should('have.text', watchMultisigs['multisig-without-pure'].name)
     })
     // ensure the name is included in the selectable drop-down option
-    topMenuItems.multiproxySelector()
-      .should('be.visible')
-      .first().click()
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', watchMultisigs['multisig-without-pure'].name)
+      accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-without-pure'].name)
     })
     // ensure the name is displayed in the home page header
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', watchMultisigs['multisig-without-pure'].name)
+      accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-without-pure'].name)
     })
   })
 
@@ -95,26 +93,24 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name)
+      watchMultisigs['multisig-with-pure'].name
+    )
     // ensure the multisig name is displayed in the settings account container
     settingsPage.accountContainer().within(() => {
-      accountDisplay.nameLabel()
+      accountDisplay
+        .nameLabel()
         .should('be.visible')
         .should('have.text', watchMultisigs['multisig-with-pure'].name)
     })
     // ensure the name is included in the selectable drop-down option
-    topMenuItems.multiproxySelector()
-      .should('be.visible')
-      .first().click()
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', watchMultisigs['multisig-with-pure'].name)
+      accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-with-pure'].name)
     })
     // navigate to the multisig page and ensure the name is included in the home page header
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', watchMultisigs['multisig-with-pure'].name)
+      accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-with-pure'].name)
     })
   })
 
@@ -122,11 +118,10 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-without-pure'].address,
-      watchMultisigs['multisig-without-pure'].name)
+      watchMultisigs['multisig-without-pure'].name
+    )
     // ensure the multisig badge is displayed in the selectable drop-down option
-    topMenuItems.multiproxySelector()
-      .should('be.visible')
-      .first().click()
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.multisigBadge().should('be.visible')
@@ -145,11 +140,10 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name)
+      watchMultisigs['multisig-with-pure'].name
+    )
     // ensure the pure badge is displayed in the selectable drop-down option
-    topMenuItems.multiproxySelector()
-      .should('be.visible')
-      .first().click()
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.pureBadge().should('be.visible')
@@ -168,7 +162,8 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name)
+      watchMultisigs['multisig-with-pure'].name
+    )
     // navigate to the home page and edit the name
     topMenuItems.homeButton().click()
     multisigPage.optionsMenuButton().click()
@@ -176,19 +171,15 @@ describe('Watched Accounts', () => {
     editNamesModal.body().should('be.visible')
     editNamesModal.inputEditPureName().type(`{selectall}{del}${`Edited Name Test`}`)
     cy.wait(500)
-    editNamesModal.saveButton()
-      .should('be.enabled')
-      .click()
+    editNamesModal.saveButton().should('be.enabled').click()
     // ensure the edited name is now displayed in the home page header
     multisigPage.accountHeader().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', 'Edited Name Test')
+      accountDisplay.nameLabel().should('have.text', 'Edited Name Test')
     })
     // navigate to settings and ensure the edited name is displayed
     cy.visit(settingsPageWatchAccountUrl)
     settingsPage.accountContainer().within(() => {
-      accountDisplay.nameLabel()
-        .should('have.text', 'Edited Name Test')
+      accountDisplay.nameLabel().should('have.text', 'Edited Name Test')
     })
   })
 
@@ -196,7 +187,8 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name)
+      watchMultisigs['multisig-with-pure'].name
+    )
     // navigate to the home page and edit the name
     topMenuItems.homeButton().click()
     multisigPage.optionsMenuButton().click()
@@ -207,7 +199,8 @@ describe('Watched Accounts', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name)
+      watchMultisigs['multisig-with-pure'].name
+    )
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().should('be.visible')
     multisigPage.newTransactionButton().should('not.exist')
