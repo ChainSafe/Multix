@@ -3,6 +3,7 @@
 import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import 'cypress-wait-until'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -67,7 +68,7 @@ Cypress.Commands.add('rejectAuth', (id: number, reason: string) => {
 })
 
 Cypress.Commands.add('getTxRequests', () => {
-  return cy.wait(500).then(() => cy.wrap(extension.getTxRequests()))
+  return cy.wrap(extension.getTxRequests())
 })
 
 Cypress.Commands.add('approveTx', (id: number) => {

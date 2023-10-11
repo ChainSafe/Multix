@@ -75,9 +75,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       ),
     [selectedMultiProxy, ownAddressList]
   )
+  const [isRefreshingMultiProxyList, setIsRefreshingMultiProxyList] = useState(false)
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedSubscription | null) => {
+      setIsRefreshingMultiProxyList(true)
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureToQuery([])
@@ -123,11 +125,14 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         // add the selection to the pure to query
         setPureToQuery(Array.from(pureToQuerySet))
       }
+
+      setIsRefreshingMultiProxyList(false)
     },
     []
   )
 
   const refreshWatchedPureList = useCallback((data: PureByIdsSubscription | null) => {
+    setIsRefreshingMultiProxyList(true)
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
     // we do have an answer, but there is nothing
     if (!!data?.accounts && data.accounts.length === 0) {
@@ -174,6 +179,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     )
 
     setPureProxyList(pureProxyArray)
+    setIsRefreshingMultiProxyList(false)
   }, [])
 
   const ownAddressIds = useAccountId(ownAddressList)
@@ -277,7 +283,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedMultiProxy,
         multiProxyList,
         selectMultiProxy,
-        isLoading: isMultisigsubLoading || isPureSubLoading,
+        isLoading: isMultisigsubLoading || isPureSubLoading || isRefreshingMultiProxyList,
         selectedHasProxy,
         error: isMultisigSubError || isPureSubError,
         getMultisigByAddress,

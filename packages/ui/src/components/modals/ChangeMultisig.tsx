@@ -31,7 +31,6 @@ import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
-import BN from 'bn.js'
 
 interface Props {
   onClose: () => void

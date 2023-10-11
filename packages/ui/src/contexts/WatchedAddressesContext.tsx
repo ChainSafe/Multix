@@ -14,6 +14,7 @@ export interface IWatchedAddressesContext {
   addWatchedAccount: (address: string) => void
   removeWatchedAccount: (address: string) => void
   watchedAddresses: string[]
+  isInitialized: boolean
 }
 
 const WatchedAddressesContext = createContext<IWatchedAddressesContext | undefined>(undefined)
@@ -84,7 +85,8 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       value={{
         addWatchedAccount,
         removeWatchedAccount,
-        watchedAddresses
+        watchedAddresses,
+        isInitialized
       }}
     >
       {children}
