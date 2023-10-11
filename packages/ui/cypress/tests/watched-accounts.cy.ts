@@ -208,7 +208,6 @@ describe('Watched Accounts', () => {
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
       watchMultisigs['multisig-with-pure'].name)
-    // navigate to the home page and edit the name
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().should('be.visible')
     multisigPage.newTransactionButton().should('not.exist')
