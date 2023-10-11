@@ -42,7 +42,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 <NavLink
                   key={name}
                   to={path}
-                  data-cy={`button-navigate-${name}`}
+                  data-cy={`button-navigate-${name.toLowerCase().replace(/ /g, '-')}`}
                 >
                   {name}
                 </NavLink>

@@ -15,9 +15,10 @@ interface Props {
   className?: string
   address: string
   onNameChange: (args: OnChangeArgs) => void
+  testId?: string
 }
 
-const AccountEditName = ({ address, onNameChange, className }: Props) => {
+const AccountEditName = ({ address, onNameChange, className, testId }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const { ownAddressList } = useAccounts()
   const [name, setName] = useState(getNamesWithExtension(address) || '')
@@ -66,6 +67,7 @@ const AccountEditName = ({ address, onNameChange, className }: Props) => {
           onChange={onChange}
           disabled={isExtensionAccount}
           value={name}
+          data-cy={`input-edit-${testId}-name`}
           // onKeyDown={handleSpecialKeys}
         />
       </Grid>
