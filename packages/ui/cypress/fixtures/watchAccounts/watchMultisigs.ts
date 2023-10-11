@@ -1,8 +1,8 @@
 import { watchSignatories } from './watchSignatories'
 
-export const watchAccounts = {
+export const watchMultisigs = {
   'multisig-with-pure': {
-    name: 'Multisig with Pure',
+    name: 'Multisig With Pure',
     address: '5Fa3UUF3S6SVdXZtPrCw2tGUqxJiRJLxEGfujozfZ4xFeAKn',
     pureAddress: '5EfdqwwuyjjtEa4UhdjbZJu3UxHEHbzh8LMRvE13xTD7z6Wd',
     threshold: 2,
