@@ -64,7 +64,7 @@ describe('Watched Accounts', () => {
     settingsPage.addButton().should('be.disabled')
   })
 
-  it('can see the provided name displayed for a watched multisig', () => {
+  it('can see the expected account details displayed for a watched multisig', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-without-pure'].address,
@@ -72,6 +72,7 @@ describe('Watched Accounts', () => {
     )
     // ensure the multisig name is displayed in the settings account container
     settingsPage.accountContainer().within(() => {
+      accountDisplay.identicon().should('be.visible')
       accountDisplay
         .nameLabel()
         .should('be.visible')
@@ -80,16 +81,22 @@ describe('Watched Accounts', () => {
     // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.multisigBadge().should('be.visible')
+      accountDisplay.pureBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-without-pure'].name)
     })
     // ensure the name is displayed in the home page header
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.multisigBadge().should('be.visible')
+      accountDisplay.pureBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-without-pure'].name)
     })
   })
 
-  it('can see the provided name displayed for a watched pure', () => {
+  it('can see the expected account details displayed for a watched pure', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
@@ -97,6 +104,7 @@ describe('Watched Accounts', () => {
     )
     // ensure the multisig name is displayed in the settings account container
     settingsPage.accountContainer().within(() => {
+      accountDisplay.identicon().should('be.visible')
       accountDisplay
         .nameLabel()
         .should('be.visible')
@@ -105,56 +113,18 @@ describe('Watched Accounts', () => {
     // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelector().should('be.visible').first().click()
     topMenuItems.multiproxySelectorOption().within(() => {
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.pureBadge().should('be.visible')
+      accountDisplay.multisigBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-with-pure'].name)
     })
     // navigate to the multisig page and ensure the name is included in the home page header
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.pureBadge().should('be.visible')
+      accountDisplay.multisigBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', watchMultisigs['multisig-with-pure'].name)
-    })
-  })
-
-  it('can see the identicon and badge displayed for a watched multisig', () => {
-    cy.visit(settingsPageWatchAccountUrl)
-    addWatchAccount(
-      watchMultisigs['multisig-without-pure'].address,
-      watchMultisigs['multisig-without-pure'].name
-    )
-    // ensure the multisig badge is displayed in the selectable drop-down option
-    topMenuItems.multiproxySelector().should('be.visible').first().click()
-    topMenuItems.multiproxySelectorOption().within(() => {
-      accountDisplay.identicon().should('be.visible')
-      accountDisplay.multisigBadge().should('be.visible')
-      accountDisplay.pureBadge().should('not.exist')
-    })
-    // navigate to the home page and ensure the multisig badge is included in the header
-    topMenuItems.homeButton().click()
-    multisigPage.accountHeader().within(() => {
-      accountDisplay.identicon().should('be.visible')
-      accountDisplay.multisigBadge().should('be.visible')
-      accountDisplay.pureBadge().should('not.exist')
-    })
-  })
-
-  it('can see the identicon and badge displayed for a watched pure proxy', () => {
-    cy.visit(settingsPageWatchAccountUrl)
-    addWatchAccount(
-      watchMultisigs['multisig-with-pure'].pureAddress,
-      watchMultisigs['multisig-with-pure'].name
-    )
-    // ensure the pure badge is displayed in the selectable drop-down option
-    topMenuItems.multiproxySelector().should('be.visible').first().click()
-    topMenuItems.multiproxySelectorOption().within(() => {
-      accountDisplay.identicon().should('be.visible')
-      accountDisplay.pureBadge().should('be.visible')
-      accountDisplay.multisigBadge().should('not.exist')
-    })
-    // navigate to the home page and ensure the pure badge is included in the header
-    topMenuItems.homeButton().click()
-    multisigPage.accountHeader().within(() => {
-      accountDisplay.identicon().should('be.visible')
-      accountDisplay.pureBadge().should('be.visible')
-      accountDisplay.multisigBadge().should('not.exist')
     })
   })
 
