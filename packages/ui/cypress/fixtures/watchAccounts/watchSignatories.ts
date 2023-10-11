@@ -1,5 +1,5 @@
 export const watchSignatories = [
-  // signatories of watch-multisig-with-pure
+  // signatories of multisig-with-pure
   {
     address: '5GGjPYsz8B8mxAzNScFNDPkZ1g97VWFCPCMexPSkPnibPBez',
     name: 'Pure Signatory 1',
@@ -13,7 +13,7 @@ export const watchSignatories = [
     mnemonic: 'script spoon elder spawn kite burst theme property hip fatal flight amount'
   },
 
-  // signatories of watch-multisig-without-pure
+  // signatories of multisig-without-pure
   {
     address: '5HfzjVSWj6mxBnqgJhPfUTpkAJKro9BKToxXB3nozbu2MTpV',
     name: 'No Pure Signatory 1',
