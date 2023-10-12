@@ -155,16 +155,25 @@ describe('Watched Accounts', () => {
     })
   })
 
-  it('can see a subscan link for a watched pure', () => {
+  it('can open the correct subscan link for a watched pure', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
       watchMultisigs['multisig-with-pure'].name
     )
-    // navigate to the home page and edit the name
     topMenuItems.homeButton().click()
     multisigPage.optionsMenuButton().click()
     multisigPage.subscanMenuOption().should('be.visible')
+    // stub window.open to prevent opening a new tab
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('open')
+    })
+    multisigPage.subscanMenuOption().click()
+    // ensure the correct subscan url is opened
+    cy.get('@open').should(
+      'have.been.calledOnceWith',
+      `https://rococo.subscan.io/account/${watchMultisigs['multisig-with-pure'].pureAddress}`
+    )
   })
 
   it('can not see the "New Transaction" button when only a watched account', () => {
