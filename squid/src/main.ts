@@ -31,14 +31,14 @@ const supportedMultisigCalls = [
   'Multisig.as_multi_threshold_1'
 ]
 export const env = new Env().getEnv()
-const archiveUrl =
-  env.archiveUrl ||
-  lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-    release: 'ArrowSquid',
-    genesis: env.genesis,
-    // this is needed until this is merged https://github.com/subsquid/archive-registry/pull/119
-    type: 'Substrate' as 'EVM'
-  })
+const archiveUrl = env.archiveName
+  ? lookupArchive(env.archiveName as KnownArchivesSubstrate, {
+      release: 'ArrowSquid',
+      genesis: env.genesis,
+      // this is needed until this is merged https://github.com/subsquid/archive-registry/pull/119
+      type: 'Substrate' as 'EVM'
+    })
+  : env.archiveUrl
 const chainId = env.chainId
 
 export const fields = {
@@ -63,14 +63,7 @@ const processor = new SubstrateBatchProcessor()
   })
   .setFields({ ...fields })
   .addCall({
-    name: [
-      'Proxy.proxy',
-      'Proxy.remove_proxies',
-      'Multisig.as_multi',
-      'Multisig.approve_as_multi',
-      'Multisig.cancel_as_multi',
-      'Multisig.as_multi_threshold_1'
-    ]
+    name: supportedMultisigCalls
   })
   .addEvent({
     name: ['Proxy.PureCreated', 'Proxy.AnonymousCreated', 'Proxy.ProxyAdded', 'Proxy.ProxyRemoved']

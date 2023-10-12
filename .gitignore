@@ -125,3 +125,5 @@ builds
 # cypress
 packages/ui/cypress/screenshots/*
 packages/ui/cypress/videos/*
+
+db.sqlite
