@@ -128,7 +128,7 @@ describe('Watched Accounts', () => {
     })
   })
 
-  it.only('can edit the name of a watched pure', () => {
+  it('can edit the name of a watched pure', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
