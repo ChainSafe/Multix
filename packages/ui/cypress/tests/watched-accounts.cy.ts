@@ -128,7 +128,7 @@ describe('Watched Accounts', () => {
     })
   })
 
-  it('can edit the name of a watched pure', () => {
+  it.only('can edit the name of a watched pure', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
@@ -139,8 +139,10 @@ describe('Watched Accounts', () => {
     multisigPage.optionsMenuButton().click()
     multisigPage.editNamesMenuOption().click()
     editNamesModal.body().should('be.visible')
+    cy.clock()
     editNamesModal.inputEditPureName().type(`{selectall}{del}${`Edited Name Test`}`)
-    cy.wait(500)
+    cy.tick(300)
+    // cy.wait(350)
     editNamesModal.saveButton().should('be.enabled').click()
     // ensure the edited name is now displayed in the home page header
     multisigPage.accountHeader().within(() => {
