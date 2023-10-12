@@ -2,17 +2,13 @@ import { injectedAccounts } from '../fixtures/injectedAccounts'
 import { landingPageUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
+import { clickOnConnect } from '../utils/clickOnConnect'
 
 describe('Connect Account', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
-    cy.clock()
-    topMenuItems.connectButton().click()
-    landingPage.accountsLoader().should('contain', 'Loading accounts')
-    cy.tick(500)
-    // restore the clock to prevent WS errors
-    cy.clock().invoke('restore')
+    clickOnConnect()
   })
 
   it('Reject connection', () => {
