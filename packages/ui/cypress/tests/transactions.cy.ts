@@ -6,7 +6,6 @@ import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { waitForAuthRequest } from '../utils/waitForAuthRequests'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 const AliceAddress = Object.values(injectedAccounts)[0].address
@@ -21,9 +20,12 @@ describe('Perform transactions', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
+    cy.clock()
     topMenuItems.connectButton().click()
     landingPage.accountsLoader().should('contain', 'Loading accounts')
-    waitForAuthRequest()
+    cy.tick(500)
+    // restore the clock to prevent WS errors
+    cy.clock().invoke('restore')
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the extension

@@ -2,18 +2,20 @@ import { injectedAccounts } from '../fixtures/injectedAccounts'
 import { landingPageUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { waitForAuthRequest } from '../utils/waitForAuthRequests'
 
 describe('Connect Account', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
+    cy.clock()
     topMenuItems.connectButton().click()
     landingPage.accountsLoader().should('contain', 'Loading accounts')
+    cy.tick(500)
+    // restore the clock to prevent WS errors
+    cy.clock().invoke('restore')
   })
 
   it('Reject connection', () => {
-    waitForAuthRequest()
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the extension
@@ -28,7 +30,6 @@ describe('Connect Account', () => {
   })
 
   it('Connects with Alice', () => {
-    waitForAuthRequest()
     const AliceAddress = Object.values(injectedAccounts)[0].address
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
