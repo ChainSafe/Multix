@@ -141,8 +141,8 @@ describe('Watched Accounts', () => {
     editNamesModal.body().should('be.visible')
     cy.clock()
     editNamesModal.inputEditPureName().type(`{selectall}{del}${`Edited Name Test`}`)
+    // name edition is debounced by 300ms
     cy.tick(300)
-    // cy.wait(350)
     editNamesModal.saveButton().should('be.enabled').click()
     // ensure the edited name is now displayed in the home page header
     multisigPage.accountHeader().within(() => {
