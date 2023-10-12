@@ -69,7 +69,7 @@ export const usePendingTx = (multiProxy?: MultiProxy) => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, multisigs])
+  }, [api, chainInfo, multisigs])
 
   useEffect(() => {
     refresh()

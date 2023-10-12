@@ -15,11 +15,11 @@ import { theme } from '../../styles/theme'
 interface SelectProps {
   value: string
   menuItems?: { value: string; logo?: string }[]
-  onChange: (event: SelectChangeEvent<string>) => void
+  onChange: (event: SelectChangeEvent<unknown>) => void
   minified?: boolean
   inputSize?: 'medium' | 'large'
   fullWidth?: boolean
-  children?: React.ReactNode[]
+  children?: React.ReactNode[] | React.ReactNode
   sx?: SxProps<Theme>
 }
 
@@ -43,30 +43,8 @@ const Select = ({
       value={value}
       fullWidth={fullWidth}
       IconComponent={HiOutlineChevronDown}
-      MenuProps={{
-        sx: {
-          marginTop: '.75rem',
-          '.MuiPaper-root': {
-            boxShadow: 'none'
-          },
-
-          '.MuiList-root': {
-            padding: 0,
-            border: `1px solid ${theme.custom.text.borderColor}`,
-            borderRadius: '0.5rem'
-          },
-
-          '.MuiMenuItem-root': {
-            maxWidth: '100%',
-            padding: '0.75rem',
-            borderBottom: `1px solid ${theme.custom.text.borderColor}`,
-            '&:last-child': {
-              borderBottom: 'none'
-            }
-          }
-        }
-      }}
-      onChange={(event) => onChange(event as SelectChangeEvent<string>)}
+      MenuProps={MenuPropsStyles}
+      onChange={onChange}
     >
       {menuItems
         ? menuItems.map(({ value, logo }) => (
@@ -81,7 +59,7 @@ const Select = ({
                   src={logo}
                 />
               )}
-              {<ItemNameStyled>{value}</ItemNameStyled>}
+              <ItemNameStyled>{value}</ItemNameStyled>
             </MenuItemStyled>
           ))
         : children}
@@ -92,6 +70,30 @@ const Select = ({
 Select.defaultProps = {
   minified: false,
   inputSize: 'medium'
+}
+
+const MenuPropsStyles = {
+  sx: {
+    marginTop: '.75rem',
+    '.MuiPaper-root': {
+      boxShadow: 'none'
+    },
+
+    '.MuiList-root': {
+      padding: 0,
+      border: `1px solid ${theme.custom.text.borderColor}`,
+      borderRadius: '0.5rem'
+    },
+
+    '.MuiMenuItem-root': {
+      maxWidth: '100%',
+      padding: '0.75rem',
+      borderBottom: `1px solid ${theme.custom.text.borderColor}`,
+      '&:last-child': {
+        borderBottom: 'none'
+      }
+    }
+  }
 }
 
 const SelectMuiStyled = styled(SelectMui)<
