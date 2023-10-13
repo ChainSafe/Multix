@@ -33,6 +33,34 @@ interface CreateTreeParams {
   typeName?: string
 }
 
+const handleCallDisplay = ({
+  call,
+  decimals,
+  unit,
+  api,
+  key
+}: {
+  call: any
+  decimals: number
+  unit: string
+  key: string
+  api: ApiPromise
+}) => {
+  const name = `${call.section}.${call.method}`
+  return (
+    <>
+      <li key={key}>{name}</li>
+      {createUlTree({
+        name: `${call.section}.${call.method}`,
+        args: call.args,
+        decimals,
+        unit,
+        api
+      })}
+    </>
+  )
+}
+
 const handleBatchDisplay = ({
   value,
   decimals,
@@ -46,21 +74,9 @@ const handleBatchDisplay = ({
   key: string
   api: ApiPromise
 }) =>
-  value.map((call: any, index: number) => {
-    const name = `${call.section}.${call.method}`
-    return (
-      <>
-        <li key={`${key}-${index}`}>{name}</li>
-        {createUlTree({
-          name: `${call.section}.${call.method}`,
-          args: call.args,
-          decimals,
-          unit,
-          api
-        })}
-      </>
-    )
-  })
+  value.map((call: any, index: number) =>
+    handleCallDisplay({ call, decimals, unit, api, key: `${key}-${index}` })
+  )
 
 const handleBalanceDisplay = ({
   value,
@@ -86,10 +102,8 @@ const handleBalanceDisplay = ({
   )
 }
 
-const getTypeName = (index: number, name: string, value: any, api: ApiPromise) => {
-  const [palletFromName, methodFromName] = name.split('.')
-  const pallet = value?.section || palletFromName
-  const method = value?.method || methodFromName
+const getTypeName = (index: number, name: string, api: ApiPromise) => {
+  const [pallet, method] = name.split('.')
   const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
 
   return (
@@ -104,10 +118,14 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
   return (
     <ul className="params">
       {Object.entries(args).map(([key, value], index) => {
-        const _typeName = typeName || getTypeName(index, name, value, api)
+        const _typeName = typeName || getTypeName(index, name, api)
 
         if (_typeName === 'Vec<RuntimeCall>') {
           return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
+        }
+
+        if (_typeName === 'RuntimeCall') {
+          return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}` })
         }
 
         // generically show nice value for Balance type
@@ -125,7 +143,7 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
         }
 
         return (
-          <li key={key}>
+          <li key={`${key}-root-${index}`}>
             {key}:{' '}
             {typeof value === 'object'
               ? createUlTree({

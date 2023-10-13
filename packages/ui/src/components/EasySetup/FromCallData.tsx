@@ -99,7 +99,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
       <TextFieldStyled
         label={`Call data`}
         onChange={onCallDataChange}
-        value={pastedCallData}
+        value={pastedCallData || ''}
         helperText={callDataError}
         error={!!callDataError}
         fullWidth
