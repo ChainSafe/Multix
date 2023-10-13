@@ -142,7 +142,6 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
           )
         }
 
-        typeof value === 'object' && console.log('calling with typename, args', _typeName, value)
         return (
           <li key={`${key}-root-${index}`}>
             {key}:{' '}
