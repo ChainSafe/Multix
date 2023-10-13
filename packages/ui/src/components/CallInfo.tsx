@@ -88,8 +88,8 @@ const handleBalanceDisplay = ({
 
 const getTypeName = (index: number, name: string, value: any, api: ApiPromise) => {
   const [palletFromName, methodFromName] = name.split('.')
-  const pallet = value.section || palletFromName
-  const method = value.method || methodFromName
+  const pallet = value?.section || palletFromName
+  const method = value?.method || methodFromName
   const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
 
   return (
