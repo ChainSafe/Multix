@@ -1,12 +1,11 @@
 import { injectedAccounts } from '../fixtures/injectedAccounts'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageUrl } from '../fixtures/landingData'
-import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { waitForAuthRequest } from '../utils/waitForAuthRequests'
+import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 const AliceAddress = Object.values(injectedAccounts)[0].address
@@ -21,9 +20,7 @@ describe('Perform transactions', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
-    topMenuItems.connectButton().click()
-    landingPage.accountsLoader().should('contain', 'Loading accounts')
-    waitForAuthRequest()
+    clickOnConnect()
     cy.getAuthRequests().then((authRequests) => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the extension
