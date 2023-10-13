@@ -2,7 +2,8 @@
 
 import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
-import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { injectedAccounts, InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { topMenuItems } from './page-objects/topMenuItems'
 import 'cypress-wait-until'
 
 // ***********************************************
@@ -43,6 +44,7 @@ import 'cypress-wait-until'
 // }
 
 const extension = new Extension()
+const Account1 = Object.values(injectedAccounts)[0].address
 
 Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
@@ -57,6 +59,20 @@ Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) =
 
 Cypress.Commands.add('getAuthRequests', () => {
   return cy.wrap(extension.getAuthRequests())
+})
+
+Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[]) => {
+  cy.getAuthRequests().then((authRequests) => {
+    const requests = Object.values(authRequests)
+    // we should have 1 connection request to the extension
+    cy.wrap(requests.length).should('eq', 1)
+    // this request should be from the application Multix
+    cy.wrap(requests[0].origin).should('eq', 'Multix')
+    // let's allow Accounts to connect
+    cy.enableAuth(requests[0].id, accountAddresses)
+    // the ui should then move on to connecting to the rpcs
+    topMenuItems.multiproxySelector().should('be.visible')
+  })
 })
 
 Cypress.Commands.add('enableAuth', (id: number, accountAddresses: string[]) => {
@@ -96,6 +112,12 @@ declare global {
        * @example cy.getAuthRequests().then((authQueue) => { cy.wrap(Object.values(authQueue).length).should("eq", 1) })
        */
       getAuthRequests: () => Chainable<AuthRequests>
+
+      /**
+       * Connect an accounts to the extension
+       * @param accountAddress
+       */
+      connectAccounts: (accountAddresses: string[]) => void
 
       /**
        * Authorize a specific request
