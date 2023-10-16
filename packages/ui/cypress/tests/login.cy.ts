@@ -39,7 +39,7 @@ describe('Connect Account', () => {
     cy.connectAccounts([address1, address2])
 
     topMenuItems.newMultisigButton().click()
-    // Click on the account address selector
+    // Click on the account address selector to show the list of accounts
     newMultisigPage.addressSelector().click()
 
     accountDisplay.nameLabel().each((el, index) => {
