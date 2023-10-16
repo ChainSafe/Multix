@@ -115,9 +115,9 @@ declare global {
 
       /**
        * Connect an accounts to the extension
-       * @param accountAddress
+       * @param accountAddresses
        */
-      connectAccounts: (accountAddresses: string[]) => void
+      connectAccounts: (accountAddresses?: string[]) => void
 
       /**
        * Authorize a specific request

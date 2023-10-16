@@ -37,10 +37,7 @@ describe('Connect Account', () => {
 
     cy.connectAccounts([account1, account2])
 
-    topMenuItems.headerNavbar().within(() => {
-      cy.get('[href="/create"]').click()
-    })
-
+    topMenuItems.newMultisigButton().click()
     // Click on the account address selector
     newMultisigPage.addressSelector().click()
 
