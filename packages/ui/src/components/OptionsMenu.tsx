@@ -49,6 +49,7 @@ const OptionsMenu = ({ className, options, menuButtonBorder }: Props) => {
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
         onClick={handleMenuClick}
+        data-cy="button-options-menu"
       >
         <MoreVertIcon />
       </ButtonWithIconStyled>
@@ -74,6 +75,7 @@ const OptionsMenu = ({ className, options, menuButtonBorder }: Props) => {
             className="menuEntry"
             key={option.text}
             onClick={() => handleClick(option.onClick)}
+            data-cy={`menu-option-${option.text.toLowerCase().replace(/ /g, '-')}`}
           >
             <ListItemIcon>{option.icon}</ListItemIcon>
             <ListItemText>{option.text}</ListItemText>

@@ -30,8 +30,6 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
       setIsProxyProxyRemoved(false)
       if (!api) return call
 
-      if (!isProxySelected) return call
-
       const proxyProxyString = u8aToHex(api?.tx.proxy?.proxy.callIndex).toString()
 
       // check if this call is a proxy.proxy
@@ -46,7 +44,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
       setIsProxyProxyRemoved(true)
       return `0x${call.substring(74)}` as HexString
     },
-    [api, isProxySelected]
+    [api]
   )
 
   // users may erroneously paste callData from the multisig calldata
@@ -101,17 +99,17 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
       <TextFieldStyled
         label={`Call data`}
         onChange={onCallDataChange}
-        value={pastedCallData}
+        value={pastedCallData || ''}
         helperText={callDataError}
         error={!!callDataError}
         fullWidth
       />
-      {!!pastedCallData && !!pastedCallInfo && !callDataError && (
+      {!!callInfo && !!pastedCallInfo && !callDataError && (
         <CallInfo
           aggregatedData={{
-            args: getDisplayArgs(pastedCallInfo.call),
-            callData: pastedCallData,
-            name: getExtrinsicName(pastedCallInfo.section, pastedCallInfo.method)
+            args: getDisplayArgs(callInfo.call),
+            callData: callDataToUse,
+            name: getExtrinsicName(callInfo.section, callInfo.method)
           }}
           expanded
           withProxyFiltered={false}

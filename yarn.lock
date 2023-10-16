@@ -8089,6 +8089,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cypress-wait-until@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "cypress-wait-until@npm:2.0.1"
+  checksum: 5ddbd46dff94efbd19ea8fcf35cb6b2488d96df74d662023a620338a8e6d9d8964aa22425d817f86ab6d5cf48ef177a4ccf4c5d1bc901797a8d667272d358dec
+  languageName: node
+  linkType: hard
+
 "cypress@npm:^13.2.0":
   version: 13.2.0
   resolution: "cypress@npm:13.2.0"
@@ -11492,6 +11499,7 @@ __metadata:
     "@vitejs/plugin-react": ^4.0.4
     "@walletconnect/web3wallet": ^1.9.1
     cypress: ^13.2.0
+    cypress-wait-until: ^2.0.1
     dayjs: ^1.11.10
     eslint: ^8.49.0
     eslint-config-prettier: ^9.0.0

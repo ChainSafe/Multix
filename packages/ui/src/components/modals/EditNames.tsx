@@ -52,6 +52,7 @@ const EditNames = ({ onClose, className }: Props) => {
       maxWidth={'sm'}
       open
       className={className}
+      data-cy="modal-edit-names"
     >
       <ModalCloseButton onClose={onClose} />
       <DialogTitle>Edit names</DialogTitle>
@@ -68,6 +69,7 @@ const EditNames = ({ onClose, className }: Props) => {
                   className="accountEdition"
                   address={selectedMultiProxy.proxy || ''}
                   onNameChange={onNameChange}
+                  testId="pure"
                 />
               </>
             )}
@@ -87,6 +89,7 @@ const EditNames = ({ onClose, className }: Props) => {
                 className="accountEdition"
                 address={address}
                 onNameChange={onNameChange}
+                testId="multisig"
               />
             ))}
           </Grid>
@@ -101,6 +104,7 @@ const EditNames = ({ onClose, className }: Props) => {
                 className="accountEdition"
                 address={signatory}
                 onNameChange={onNameChange}
+                testId="signatory"
               />
             ))}
           </Grid>
@@ -112,6 +116,7 @@ const EditNames = ({ onClose, className }: Props) => {
             <Button
               variant="primary"
               onClick={onSave}
+              data-cy="button-save-edited-names"
             >
               Save
             </Button>
