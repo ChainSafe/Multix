@@ -25,10 +25,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
   useWalletConnectEventsManager()
 
   return (
-    <MuiAppBarStyled
-      position="sticky"
-      data-cy="header-navbar"
-    >
+    <MuiAppBarStyled position="sticky">
       <Toolbar>
         <LogoWrapperStyled>
           <HomeLinkStyled to="/">
