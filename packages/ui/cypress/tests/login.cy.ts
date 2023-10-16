@@ -33,10 +33,10 @@ describe('Connect Account', () => {
   })
 
   it('Connect Accounts', () => {
-    const { address: account1 } = Object.values(injectedAccounts)[0]
-    const { address: account2 } = Object.values(injectedAccounts)[1]
+    const { address: address1 } = Object.values(injectedAccounts)[0]
+    const { address: address2 } = Object.values(injectedAccounts)[1]
 
-    cy.connectAccounts([account1, account2])
+    cy.connectAccounts([address1, address2])
 
     topMenuItems.newMultisigButton().click()
     // Click on the account address selector
