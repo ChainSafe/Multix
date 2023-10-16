@@ -27,7 +27,7 @@ describe('Connect Account', () => {
         .noAccountFoundError()
         .should(
           'contain.text',
-          'No account found. Please connect at least one in a wallet extension. More info at wiki.polkadot.network'
+          'No account found. Please connect at least one in a wallet extension.'
         )
     })
   })
