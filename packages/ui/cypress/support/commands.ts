@@ -114,7 +114,7 @@ declare global {
       getAuthRequests: () => Chainable<AuthRequests>
 
       /**
-       * Connect an accounts to the extension
+       * Connect an accounts to the dApp
        * @param accountAddresses
        */
       connectAccounts: (accountAddresses?: string[]) => void

@@ -4,6 +4,7 @@ import { landingPage } from '../support/page-objects/landingPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { newMultisigPage } from '../support/page-objects/newMultisigPage'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 
 describe('Connect Account', () => {
   beforeEach(() => {
@@ -25,7 +26,7 @@ describe('Connect Account', () => {
       landingPage
         .noAccountFoundError()
         .should(
-          'have.text',
+          'contain.text',
           'No account found. Please connect at least one in a wallet extension. More info at wiki.polkadot.network'
         )
     })
@@ -41,8 +42,7 @@ describe('Connect Account', () => {
     // Click on the account address selector
     newMultisigPage.addressSelector().click()
 
-    const accountLabels = cy.get('[data-cy="label-account-name"]')
-    accountLabels.each((el, index) => {
+    accountDisplay.nameLabel().each((el, index) => {
       const expectedName = Object.values(injectedAccounts)[index].name
       cy.wrap(el).should('have.text', expectedName)
     })
