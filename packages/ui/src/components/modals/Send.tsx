@@ -29,7 +29,6 @@ export enum EasyTransferTitle {
   SetIdentity = 'Set identity'
 }
 
-// export type EasyTransferTitle = (typeof easyTransferTitle)[number]
 export const DEFAULT_EASY_SETUP_SELECTION: EasyTransferTitle = EasyTransferTitle.SendTokens
 
 interface Props {
