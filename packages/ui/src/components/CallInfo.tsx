@@ -104,7 +104,7 @@ const handleBalanceDisplay = ({
 
 const getTypeName = (index: number, name: string, api: ApiPromise) => {
   const [pallet, method] = name.split('.')
-  const metaArgs = !!pallet && !!method && api.tx[pallet][method].meta.args
+  const metaArgs = !!pallet && !!method && api.tx[pallet][method]?.meta?.args
 
   return (
     (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
@@ -125,7 +125,7 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
         }
 
         if (_typeName === 'RuntimeCall') {
-          return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}` })
+          return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
         }
 
         // generically show nice value for Balance type
