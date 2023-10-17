@@ -20,7 +20,7 @@ import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
-import IdentitySetIdentity from '../EasySetup/IdentitySetIdentity'
+import IdentitySetIdentity from '../EasySetup/SetIdentity'
 
 export const easyTransferTitle = [
   'Send tokens',
