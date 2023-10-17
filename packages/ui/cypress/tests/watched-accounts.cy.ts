@@ -44,7 +44,7 @@ describe('Watched Accounts', () => {
     settingsPage.accountContainer().should('have.length', 0)
   })
 
-  it('can see error when attemping to add same address more than once', () => {
+  it('can see error when attempting to add same address more than once', () => {
     // add an account first
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(addresses.Alice, 'Alice')
