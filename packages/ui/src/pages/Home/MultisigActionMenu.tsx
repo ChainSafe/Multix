@@ -10,6 +10,7 @@ import {
   HiOutlineUserPlus as IdentityIcon
 } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { EasyTransferTitle } from '../../components/modals/Send'
 
 interface MultisigActionMenuProps {
   withNewTransactionButton?: boolean
@@ -47,7 +48,7 @@ const MultisigActionMenu = ({
       opts.push({
         text: 'Set identity',
         icon: <IdentityIcon size={20} />,
-        onClick: () => onOpenSendModal('Set identity')
+        onClick: () => onOpenSendModal(EasyTransferTitle.SetIdentity)
       })
     // allow rotation only for the multisigs with a proxy
     selectedHasProxy &&

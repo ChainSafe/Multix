@@ -22,15 +22,15 @@ import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import SetIdentity from '../EasySetup/SetIdentity'
 
-export const easyTransferTitle = [
-  'Send tokens',
-  'From call data',
-  'Manual extrinsic',
-  'Set identity'
-] as const
+export enum EasyTransferTitle {
+  SendTokens = 'Send tokens',
+  FromCallData = 'From call data',
+  ManualExtrinsic = 'Manual extrinsic',
+  SetIdentity = 'Set identity'
+}
 
-export type EasyTransferTitle = (typeof easyTransferTitle)[number]
-export const DEFAULT_EASY_SETUP_SELECTION: EasyTransferTitle = 'Send tokens'
+// export type EasyTransferTitle = (typeof easyTransferTitle)[number]
+export const DEFAULT_EASY_SETUP_SELECTION: EasyTransferTitle = EasyTransferTitle.SendTokens
 
 interface Props {
   preselected: EasyTransferTitle
@@ -131,29 +131,29 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
   const easySetupOptions: Record<EasyTransferTitle, ReactNode> = useMemo(() => {
     return {
-      'Send tokens': (
+      [EasyTransferTitle.SendTokens]: (
         <BalancesTransfer
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
-      'Set identity': (
+      [EasyTransferTitle.SetIdentity]: (
         <SetIdentity
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
-      'Manual extrinsic': (
+      [EasyTransferTitle.ManualExtrinsic]: (
         <ManualExtrinsic
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
-          onSelectFromCallData={() => setSelectedEasyOption('From call data')}
+          onSelectFromCallData={() => setSelectedEasyOption(EasyTransferTitle.FromCallData)}
           hasErrorMessage={!!easyOptionErrorMessage}
         />
       ),
-      'From call data': (
+      [EasyTransferTitle.FromCallData]: (
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
@@ -237,10 +237,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
   const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(
     ({ target: { value } }) => {
-      if (typeof value !== 'string' && !easyTransferTitle.includes(value as EasyTransferTitle)) {
+      const acceptabledValues = Object.values(EasyTransferTitle)
+      if (typeof value !== 'string' && !acceptabledValues.includes(value as EasyTransferTitle)) {
         console.error(
           'Unexpected selection, expect one of',
-          easyTransferTitle,
+          JSON.stringify(acceptabledValues),
           'but received',
           value
         )
