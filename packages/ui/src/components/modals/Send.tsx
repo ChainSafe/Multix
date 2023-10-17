@@ -20,7 +20,7 @@ import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
-import IdentitySetIdentity from '../EasySetup/SetIdentity'
+import SetIdentity from '../EasySetup/SetIdentity'
 
 export const easyTransferTitle = [
   'Send tokens',
@@ -139,9 +139,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
         />
       ),
       'Set identity': (
-        <IdentitySetIdentity
+        <SetIdentity
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
       'Manual extrinsic': (

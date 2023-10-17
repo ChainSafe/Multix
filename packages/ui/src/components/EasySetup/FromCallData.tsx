@@ -4,7 +4,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
-import { TextFieldStyled } from '../library'
+import { TextField } from '../library'
 import CallInfo from '../CallInfo'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { HexString } from '../../types'
@@ -96,7 +96,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
           Multix will override the proxy.proxy call with the proxy you have selected
         </AlertStyled>
       )}
-      <TextFieldStyled
+      <TextField
         label={`Call data`}
         onChange={onCallDataChange}
         value={pastedCallData || ''}

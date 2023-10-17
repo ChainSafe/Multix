@@ -2,18 +2,19 @@ import { Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
-import { TextFieldStyled } from '../library'
+import { TextField } from '../library'
 import { useIdentity } from '../../hooks/useIdentity'
 
 interface Props {
   className?: string
   from: string
   onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
+  onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
-interface IdentityFields {
+type IdentityFields = {
   display: string | undefined
   legal: string | undefined
   web: string | undefined
@@ -46,52 +47,86 @@ const fieldNameAndPlaceholder = (fieldName: keyof IdentityFields) => {
   switch (fieldName) {
     case 'display':
       return {
-        field: 'display name',
-        placeholder: 'Luke'
+        field: 'Display name',
+        placeholder: 'Luke',
+        required: true
       }
 
     case 'legal':
       return {
-        field: 'legal name',
-        placeholder: 'Luke Skylwalker'
+        field: 'Legal name',
+        placeholder: 'Luke Skylwalker',
+        required: false
       }
 
     case 'riot':
       return {
-        field: 'element handle',
-        placeholder: '@luke:matrix.org'
+        field: 'Element handle',
+        placeholder: '@luke:matrix.org',
+        required: false
       }
 
     case 'web':
       return {
-        field: 'website',
-        placeholder: 'https://luke.sky'
+        field: 'Website',
+        placeholder: 'https://luke.sky',
+        required: false
       }
 
     case 'twitter':
       return {
-        field: 'twitter/X handle',
-        placeholder: '@luke'
+        field: 'Twitter/X handle',
+        placeholder: '@luke',
+        required: false
       }
 
     case 'email':
       return {
-        field: 'email',
-        placeholder: 'hello@luke.sky'
+        field: 'Email',
+        placeholder: 'hello@luke.sky',
+        required: false
       }
 
     default:
       return {
         field: fieldName,
-        placeholder: ''
+        placeholder: '',
+        required: false
       }
   }
 }
 
-const SetIdentity = ({ className, onSetExtrinsic, from }: Props) => {
+const MAX_ALLOWED_VAL_LENGTH = 32
+
+const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Props) => {
   const { api, chainInfo } = useApi()
   const [identityFields, setIdentityFields] = useState<IdentityFields | undefined>()
   const chainIdentity = useIdentity(from)
+  const fieldtooLongError = useMemo(() => {
+    const res: (keyof IdentityFields)[] = []
+    identityFields &&
+      Object.entries(identityFields).forEach(([field, value]) => {
+        if (typeof value === 'string' && value.length >= MAX_ALLOWED_VAL_LENGTH) {
+          res.push(field as keyof IdentityFields)
+        }
+      })
+
+    return res
+  }, [identityFields])
+
+  useEffect(() => {
+    if (fieldtooLongError.length > 0) {
+      onSetErrorMessage(`A field exceeds the ${MAX_ALLOWED_VAL_LENGTH} character limit`)
+      return
+    }
+
+    if (!identityFields?.display) {
+      onSetErrorMessage('Display name is required')
+      return
+    }
+
+    onSetErrorMessage('')
+  }, [fieldtooLongError, identityFields?.display, onSetErrorMessage])
 
   useEffect(() => {
     if (chainIdentity) {
@@ -127,9 +162,14 @@ const SetIdentity = ({ className, onSetExtrinsic, from }: Props) => {
       return
     }
 
+    if (fieldtooLongError.length > 0) {
+      onSetExtrinsic(undefined)
+      return
+    }
+
     const extrinsicsArgs = getExtrinsicsArgs(identityFields)
     onSetExtrinsic(api.tx.identity.setIdentity(extrinsicsArgs))
-  }, [api, chainInfo, identityFields, onSetExtrinsic])
+  }, [api, chainInfo, fieldtooLongError, identityFields, onSetErrorMessage, onSetExtrinsic])
 
   const onChangeField = useCallback((field: keyof IdentityFields, value: string) => {
     setIdentityFields((prev) => (prev ? { ...prev, [field]: value } : undefined))
@@ -143,7 +183,11 @@ const SetIdentity = ({ className, onSetExtrinsic, from }: Props) => {
     >
       {identityFields &&
         Object.entries(identityFields).map(([fieldName, value]) => {
-          const { field, placeholder } = fieldNameAndPlaceholder(fieldName as keyof IdentityFields)
+          const { field, placeholder, required } = fieldNameAndPlaceholder(
+            fieldName as keyof IdentityFields
+          )
+          const isFieldError = fieldtooLongError.includes(fieldName as keyof IdentityFields)
+          const isDiplayAndEmpty = fieldName === 'display' && !value
           return (
             <Grid
               item
@@ -160,6 +204,9 @@ const SetIdentity = ({ className, onSetExtrinsic, from }: Props) => {
                   onChangeField(fieldName as keyof IdentityFields, val.target.value)
                 }
                 value={value || ''}
+                required={required}
+                helperText={isFieldError && `Field has more than ${MAX_ALLOWED_VAL_LENGTH} chars`}
+                error={isFieldError || isDiplayAndEmpty}
               />
             </Grid>
           )
@@ -167,6 +214,12 @@ const SetIdentity = ({ className, onSetExtrinsic, from }: Props) => {
     </Grid>
   )
 }
+
+const TextFieldStyled = styled(TextField)`
+  .MuiFormHelperText-root.Mui-error {
+    position: initial;
+  }
+`
 
 export default styled(SetIdentity)`
   margin-top: 0.5rem;

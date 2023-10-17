@@ -8,7 +8,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
-import { TextFieldStyled } from '../library'
+import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 
@@ -123,7 +123,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         accountList={accountBase}
         testId="field-to"
       />
-      <TextFieldStyled
+      <TextField
         data-cy="field-amount"
         label={`Amount`}
         onChange={onAmountChange}
