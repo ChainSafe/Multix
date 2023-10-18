@@ -102,6 +102,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   const { api, chainInfo } = useApi()
   const [identityFields, setIdentityFields] = useState<IdentityFields | undefined>()
   const chainIdentity = useIdentity(from)
+  const [hasChangedAtLeastAField, setHasChangedAtLeastAField] = useState(false)
   const fieldtooLongError = useMemo(() => {
     const res: (keyof IdentityFields)[] = []
     identityFields &&
@@ -120,13 +121,13 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       return
     }
 
-    if (!identityFields?.display) {
+    if (!identityFields?.display && hasChangedAtLeastAField) {
       onSetErrorMessage('Display name is required')
       return
     }
 
     onSetErrorMessage('')
-  }, [fieldtooLongError, identityFields?.display, onSetErrorMessage])
+  }, [fieldtooLongError, hasChangedAtLeastAField, identityFields, onSetErrorMessage])
 
   useEffect(() => {
     if (chainIdentity) {
@@ -172,6 +173,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   }, [api, chainInfo, fieldtooLongError, identityFields, onSetErrorMessage, onSetExtrinsic])
 
   const onChangeField = useCallback((field: keyof IdentityFields, value: string) => {
+    setHasChangedAtLeastAField(true)
     setIdentityFields((prev) => (prev ? { ...prev, [field]: value } : undefined))
   }, [])
 
@@ -187,7 +189,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
             fieldName as keyof IdentityFields
           )
           const isFieldError = fieldtooLongError.includes(fieldName as keyof IdentityFields)
-          const isDiplayAndEmpty = fieldName === 'display' && !value
+          const isDiplayNameError = fieldName === 'display' && !value && hasChangedAtLeastAField
           return (
             <Grid
               item
@@ -206,7 +208,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
                 value={value || ''}
                 required={required}
                 helperText={isFieldError && `Field has more than ${MAX_ALLOWED_VAL_LENGTH} chars`}
-                error={isFieldError || isDiplayAndEmpty}
+                error={isFieldError || isDiplayNameError}
               />
             </Grid>
           )
