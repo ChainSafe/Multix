@@ -1,7 +1,7 @@
 import { useState, useContext, createContext, useCallback } from 'react'
 import ChangeMultisig from '../components/modals/ChangeMultisig'
 import EditNames from '../components/modals/EditNames'
-import Send from '../components/modals/Send'
+import Send, { DEFAULT_EASY_SETUP_SELECTION, EasyTransferTitle } from '../components/modals/Send'
 import { usePendingTx } from '../hooks/usePendingTx'
 import { SignClientTypes } from '@walletconnect/types'
 import WCSessionProposal from '../components/modals/WalletConnectSessionProposal'
@@ -11,7 +11,8 @@ import WalletConnectSigning from '../components/modals/WalletConnectSigning'
 interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
   setIsChangeMultiModalOpen: (isOpen: boolean) => void
-  setIsSendModalOpen: (isOpen: boolean) => void
+  onOpenSendModal: (preselected?: EasyTransferTitle) => void
+  onCloseSendModal: () => void
   openWalletConnectSessionModal: ({ sessionProposal }: OpenWCModalParams) => void
   onOpenSigningModal: (info: SigningInfo) => void
   onOpenWalletConnectSigning: (request: SignClientTypes.EventArguments['session_request']) => void
@@ -33,6 +34,9 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
   const [signingModalInfo, setSigningModalInfo] = useState<SigningInfo | undefined>()
   const [isOpenWalletConnectSigning, setIsOpenWalletConnectSigning] = useState(false)
+  const [sendModalPreselection, setSendModalPreselection] = useState<EasyTransferTitle>(
+    DEFAULT_EASY_SETUP_SELECTION
+  )
   const [walletConnectRequest, setWalletConnectRequest] = useState<
     SignClientTypes.EventArguments['session_request'] | undefined
   >()
@@ -41,7 +45,6 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     OpenWCModalParams['sessionProposal'] | undefined
   >()
   const { refresh } = usePendingTx()
-  const onCloseSendModal = useCallback(() => setIsSendModalOpen(false), [setIsSendModalOpen])
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [setIsEditModalOpen])
   const onCloseChangeMultiModal = useCallback(
     () => setIsChangeMultiModalOpen(false),
@@ -50,6 +53,16 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const onCloseSigningModal = useCallback(() => {
     setIsSigningModalOpen(false)
     setSigningModalInfo(undefined)
+  }, [])
+
+  const onOpenSendModal = useCallback((preselection?: EasyTransferTitle) => {
+    preselection && setSendModalPreselection(preselection)
+    setIsSendModalOpen(true)
+  }, [])
+
+  const onCloseSendModal = useCallback(() => {
+    setIsSendModalOpen(false)
+    setSendModalPreselection(DEFAULT_EASY_SETUP_SELECTION)
   }, [])
 
   const onSuccessSendModal = useCallback(() => {
@@ -93,7 +106,8 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       value={{
         setIsEditModalOpen,
         setIsChangeMultiModalOpen,
-        setIsSendModalOpen,
+        onOpenSendModal,
+        onCloseSendModal,
         openWalletConnectSessionModal,
         onOpenSigningModal,
         onOpenWalletConnectSigning
@@ -102,6 +116,7 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       {children}
       {isSendModalOpen && (
         <Send
+          preselected={sendModalPreselection}
           onClose={onCloseSendModal}
           onSuccess={onSuccessSendModal}
           onFinalized={onFinalizedSendModal}

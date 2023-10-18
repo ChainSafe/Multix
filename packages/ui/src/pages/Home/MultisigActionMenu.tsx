@@ -5,8 +5,12 @@ import { HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useModals } from '../../contexts/ModalsContext'
-import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
+import {
+  HiOutlineArrowTopRightOnSquare as LaunchIcon,
+  HiOutlineUserPlus as IdentityIcon
+} from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
+import { EasyTransferTitle } from '../../components/modals/Send'
 
 interface MultisigActionMenuProps {
   withNewTransactionButton?: boolean
@@ -18,7 +22,7 @@ const MultisigActionMenu = ({
   menuButtonBorder
 }: MultisigActionMenuProps) => {
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
-  const { setIsEditModalOpen, setIsChangeMultiModalOpen, setIsSendModalOpen } = useModals()
+  const { setIsEditModalOpen, setIsChangeMultiModalOpen, onOpenSendModal } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
 
   const options: MenuOption[] = useMemo(() => {
@@ -40,6 +44,12 @@ const MultisigActionMenu = ({
       }
     ]
 
+    !selectedIsWatched &&
+      opts.push({
+        text: 'Set identity',
+        icon: <IdentityIcon size={20} />,
+        onClick: () => onOpenSendModal(EasyTransferTitle.SetIdentity)
+      })
     // allow rotation only for the multisigs with a proxy
     selectedHasProxy &&
       !selectedIsWatched &&
@@ -62,12 +72,13 @@ const MultisigActionMenu = ({
 
     return opts
   }, [
-    selectedHasProxy,
     selectedIsWatched,
-    getSubscanAccountLink,
+    selectedHasProxy,
+    setIsEditModalOpen,
     selectedMultiProxy,
-    setIsChangeMultiModalOpen,
-    setIsEditModalOpen
+    getSubscanAccountLink,
+    onOpenSendModal,
+    setIsChangeMultiModalOpen
   ])
 
   return (
@@ -76,7 +87,7 @@ const MultisigActionMenu = ({
         <Button
           variant="primary"
           aria-label="send"
-          onClick={() => setIsSendModalOpen(true)}
+          onClick={() => onOpenSendModal()}
           data-cy="button-new-transaction"
         >
           New transaction

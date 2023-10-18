@@ -20,19 +20,26 @@ import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
+import SetIdentity from '../EasySetup/SetIdentity'
 
-const SEND_TOKEN_MENU = 'Send tokens'
-const FROM_CALL_DATA_MENU = 'From call data'
-const MANUEL_EXTRINSIC_MENU = 'Manual extrinsic'
+export enum EasyTransferTitle {
+  SendTokens = 'Send tokens',
+  FromCallData = 'From call data',
+  ManualExtrinsic = 'Manual extrinsic',
+  SetIdentity = 'Set identity'
+}
+
+export const DEFAULT_EASY_SETUP_SELECTION: EasyTransferTitle = EasyTransferTitle.SendTokens
 
 interface Props {
+  preselected: EasyTransferTitle
   onClose: () => void
   className?: string
   onSuccess?: () => void
   onFinalized?: () => void
 }
 
-const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
+const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -66,7 +73,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
   const [extrinsicToCall, setExtrinsicToCall] = useState<
     SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   >()
-  const [selectedEasyOption, setSelectedEasyOption] = useState(SEND_TOKEN_MENU)
+  const [selectedEasyOption, setSelectedEasyOption] = useState<EasyTransferTitle>(
+    preselected || DEFAULT_EASY_SETUP_SELECTION
+  )
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
     extrinsicToCall,
@@ -119,24 +128,31 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     [getMultisigByAddress, selectedMultiProxy]
   )
 
-  const easySetupOptions: { [index: string]: ReactNode } = useMemo(() => {
+  const easySetupOptions: Record<EasyTransferTitle, ReactNode> = useMemo(() => {
     return {
-      [SEND_TOKEN_MENU]: (
+      [EasyTransferTitle.SendTokens]: (
         <BalancesTransfer
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
-      [MANUEL_EXTRINSIC_MENU]: (
+      [EasyTransferTitle.SetIdentity]: (
+        <SetIdentity
+          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessage}
+        />
+      ),
+      [EasyTransferTitle.ManualExtrinsic]: (
         <ManualExtrinsic
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
-          onSelectFromCallData={() => setSelectedEasyOption(FROM_CALL_DATA_MENU)}
+          onSelectFromCallData={() => setSelectedEasyOption(EasyTransferTitle.FromCallData)}
           hasErrorMessage={!!easyOptionErrorMessage}
         />
       ),
-      [FROM_CALL_DATA_MENU]: (
+      [EasyTransferTitle.FromCallData]: (
         <FromCallData
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
@@ -218,16 +234,22 @@ const Send = ({ onClose, className, onSuccess, onFinalized }: Props) => {
     getSubscanExtrinsicLink
   ])
 
-  const onChangeEasySetupOption = useCallback(
-    ({ target: { value } }: SelectChangeEvent<unknown>) => {
-      if (typeof value !== 'string') {
-        console.error('Unexpected network value, expect string but received', value)
+  const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(
+    ({ target: { value } }) => {
+      const acceptabledValues = Object.values(EasyTransferTitle)
+      if (typeof value !== 'string' && !acceptabledValues.includes(value as EasyTransferTitle)) {
+        console.error(
+          'Unexpected selection, expect one of',
+          JSON.stringify(acceptabledValues),
+          'but received',
+          value
+        )
         return
       }
 
       setErrorMessage('')
       setEasyOptionErrorMessage('')
-      setSelectedEasyOption(value)
+      setSelectedEasyOption(value as EasyTransferTitle)
     },
     []
   )
