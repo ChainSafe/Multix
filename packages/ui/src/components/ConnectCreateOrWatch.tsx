@@ -35,7 +35,12 @@ export const ConnectOrWatch = () => {
           </Button>
         )}
         or
-        <Button onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}>Watch account</Button>
+        <Button
+          data-cy="button-watch-account"
+          onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}
+        >
+          Watch account
+        </Button>
       </ButtonWrapperStyled>
     </WrapperStyled>
   )
