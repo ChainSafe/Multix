@@ -1,7 +1,7 @@
 import { Box, InputAdornment, Tooltip } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { TextFieldStyled } from '../../components/library'
+import { TextField } from '../../components/library'
 import { HiOutlineInformationCircle } from 'react-icons/hi2'
 
 interface Props {
@@ -58,7 +58,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
       <TitleBoxStyled>
         Threshold <InfoBox />
       </TitleBoxStyled>
-      <TextFieldStyled
+      <TextField
         fullWidth
         error={!!error}
         helperText={error}

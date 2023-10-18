@@ -7,7 +7,7 @@ export const watchSignatories = [
     mnemonic: 'citizen heavy warrior cattle enter chef label split differ seek turtle gorilla'
   },
   {
-    address: '5EkbU3anZKYP98aXF5MvmCUxvwvM4kxp7osc2Xhj1wHYL6ym',
+    address: '5E9XHcUfeDCL2HEvH8c8rcfroNDSzbLwhV5A1fq7J7RUwAkd',
     name: 'Pure Signatory 2',
     type: 'sr25519',
     mnemonic: 'script spoon elder spawn kite burst theme property hip fatal flight amount'

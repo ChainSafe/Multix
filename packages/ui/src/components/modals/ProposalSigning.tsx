@@ -1,5 +1,5 @@
 import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
-import { Button, TextFieldStyled } from '../library'
+import { Button, TextField } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -311,7 +311,7 @@ const ProposalSigning = ({
                 xs={12}
                 md={6}
               >
-                <TextFieldStyled
+                <TextField
                   className="addedCallData"
                   label={`Call data ${mustSubmitCallData ? '' : '(optional)'}`}
                   onChange={onAddedCallDataChange}
