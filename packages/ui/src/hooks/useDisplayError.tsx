@@ -18,7 +18,7 @@ export const useDisplayError = () => {
   if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
     return (
       <CenterStyled>
-        <h3 data-cy="text-no-account-found">
+        <div data-cy="text-no-account-found">
           No account found. Please connect at least one in a wallet extension. More info at{' '}
           <Linkstyled
             href="https://wiki.polkadot.network/docs/wallets-and-extensions"
@@ -31,7 +31,7 @@ export const useDisplayError = () => {
               size={20}
             />
           </Linkstyled>
-        </h3>
+        </div>
       </CenterStyled>
     )
   }
