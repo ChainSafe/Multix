@@ -20,7 +20,7 @@ interface Props {
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const accountBase = useAccountBaseFromAccountList()
+  const accountBase = useAccountBaseFromAccountList({ withAccountsFromAddressBook: true })
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
   const { api, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')

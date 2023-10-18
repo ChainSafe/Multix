@@ -4,7 +4,6 @@ import { landingPageUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
-import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
