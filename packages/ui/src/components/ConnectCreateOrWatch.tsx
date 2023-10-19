@@ -15,7 +15,7 @@ export const ConnectOrWatch = () => {
       ) : (
         <>
           <h1>Multix is an interface to easily manage complex multisigs.</h1>
-          <div>Connect a wallet to interact with Multix or watch an address.</div>
+          <div>Connect a wallet to interact with Multix or watch an account.</div>
         </>
       )}
       <ButtonWrapperStyled>
