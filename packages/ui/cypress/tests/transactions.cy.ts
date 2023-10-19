@@ -11,8 +11,8 @@ import { waitForTxRequest } from '../utils/waitForTxRequests'
 const AliceAddress = Object.values(injectedAccounts)[0].address
 
 const fillAndSubmitTransactionForm = () => {
-  sendTxModal.fieldTo().click().type(`${AliceAddress}{enter}`)
-  sendTxModal.fieldAmount().click().type('0.001')
+  sendTxModal.sendTokensFieldTo().click().type(`${AliceAddress}{enter}`)
+  sendTxModal.sendTokensFieldAmount().click().type('0.001')
   sendTxModal.buttonSend().should('be.enabled').click()
 }
 

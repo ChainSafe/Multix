@@ -35,7 +35,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
             />
           </HomeLinkStyled>
         </LogoWrapperStyled>
-        <DesktopMenuStyled>
+        <DesktopMenuStyled data-cy="menu-desktop">
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
