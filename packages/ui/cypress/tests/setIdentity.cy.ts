@@ -69,7 +69,7 @@ describe('Set an identity', () => {
     })
   })
 
-  it.only('Can edit an identity from the new tx button', () => {
+  it('Can edit an identity from the new tx button', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[0]
     initAndConnect(multisigSignatoryWithoutIdentity)
     // select the right multisig (Alice has a lot)
