@@ -55,6 +55,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 data-cy="button-menu-connect"
                 onClick={allowConnectionToExtension}
                 disabled={isAccountLoading}
+                variant="primary"
               >
                 Connect
               </ConnectButtonStyled>

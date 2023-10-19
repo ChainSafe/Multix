@@ -32,7 +32,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         {!isAllowedToConnectToExtension && (
           <ListItemStyled disablePadding>
             <ButtonStyled
-              variant="secondary"
+              variant="primary"
               onClick={allowConnectionToExtension}
             >
               Connect
