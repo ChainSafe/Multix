@@ -165,7 +165,7 @@ declare global {
       }) => void
 
       /**
-       * Connect accounts to the Multix and wait until it's ready
+       * Connect accounts to Multix and wait until it's ready
        * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initExtension before
        * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
        */
