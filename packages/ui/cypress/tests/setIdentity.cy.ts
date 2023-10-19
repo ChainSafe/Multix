@@ -16,7 +16,7 @@ const initAndConnect = (account: InjectedAccountWitMnemonic) => {
 }
 
 describe('Set an identity', () => {
-  it('Can set an identity from the dropdown', () => {
+  it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
     initAndConnect(multisigSignatoryWithoutIdentity)
     multisigPage.optionsMenuButton().click()
