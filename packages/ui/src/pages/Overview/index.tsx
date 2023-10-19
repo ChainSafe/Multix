@@ -8,7 +8,7 @@ import MultisigCompactDisplay from '../../components/MultisigCompactDisplay'
 import 'reactflow/dist/style.css'
 import OverviewHeaderView from './OverviewHeaderView'
 import { renderMultisigHeading } from '../multisigHelpers'
-import { ConnectOrWatch } from '../../components/ConnectOrWatch'
+import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
 interface Props {
   className?: string
 }
