@@ -88,10 +88,12 @@ const MultiProxySelection = ({ className }: Props) => {
         key={displayAddress}
         component="li"
         {...props}
+        data-cy="select-multiproxy-option"
       >
         <AccountDisplay
           address={displayAddress || ''}
           badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
+          data-cy="select-multiproxy-option-details"
         />
       </Box>
     )

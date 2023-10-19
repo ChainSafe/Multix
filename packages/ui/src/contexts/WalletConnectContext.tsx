@@ -24,7 +24,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
   const core = useMemo(
     () =>
       new Core({
-        logger: 'info',
+        logger: undefined, // use 'debug' to get more insight
         projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
         // relayUrl: relayerRegionURL ?? import.meta.env.VITE_WALLETCONNECT_PUBLIC_RELAY_URL
       }),

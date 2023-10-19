@@ -24,6 +24,7 @@ export interface IAccountContext {
   selectedSigner?: Signer
   allowConnectionToExtension: () => void
   isAllowedToConnectToExtension: boolean
+  isLocalStorageSetupDone: boolean
 }
 
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
@@ -38,6 +39,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
   const [accountGotRequested, setAccountGotRequested] = useState(false)
   const { chainInfo } = useApi()
+  const [isLocalStorageSetupDone, setIsLocalStorageSetupDone] = useState(false)
   // update the current account list with the right network prefix
   // this will run for every network change
   useEffect(() => {
@@ -67,8 +69,6 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   const getaccountList = useCallback(
     async (isEthereum: boolean): Promise<void> => {
-      setIsAccountLoading(true)
-
       web3Enable(DAPP_NAME)
         .then(
           (ext) => {
@@ -131,6 +131,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
     if (!accountGotRequested && isAllowedToConnectToExtension) {
       setAccountGotRequested(true)
+      setIsAccountLoading(true)
       // delay the request by 500ms
       // race condition see https://github.com/polkadot-js/extension/issues/938
       setTimeout(() => {
@@ -142,9 +143,9 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     getaccountList,
     isAccountLoading,
     isAllowedToConnectToExtension,
-    accountGotRequested,
     chainInfo,
-    isExtensionError
+    isExtensionError,
+    accountGotRequested
   ])
 
   useEffect(() => {
@@ -153,6 +154,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       if (previouslyAllowed === 'true') {
         setIsAllowedToConnectToExtension(true)
       }
+      setIsLocalStorageSetupDone(true)
     }
   }, [isAllowedToConnectToExtension])
 
@@ -181,7 +183,8 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         getAccountByAddress,
         selectedSigner,
         allowConnectionToExtension,
-        isAllowedToConnectToExtension
+        isAllowedToConnectToExtension,
+        isLocalStorageSetupDone
       }}
     >
       {children}

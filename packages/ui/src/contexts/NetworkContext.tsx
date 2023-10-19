@@ -8,13 +8,13 @@ type NetworkContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
-export interface IToastContext {
+export interface INetworkContext {
   selectNetwork: (network: string) => void
   selectedNetworkInfo?: NetworkInfo
   selectedNetwork?: SupportedNetworks
 }
 
-const NetworkContext = React.createContext<IToastContext | undefined>(undefined)
+const NetworkContext = React.createContext<INetworkContext | undefined>(undefined)
 const isSupportedNetwork = (network: string): network is SupportedNetworks =>
   !!networkList[network as SupportedNetworks]
 

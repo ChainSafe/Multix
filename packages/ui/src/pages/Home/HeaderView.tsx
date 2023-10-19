@@ -19,11 +19,12 @@ const HeaderView = () => {
   }, [selectedHasProxy, selectedMultiProxy])
 
   return (
-    <PureProxyWrapper>
+    <PureProxyWrapper data-cy="header-account">
       <OverviewWrapper>
         <ButtonWithIcon
           onClick={() => navigate('/overview')}
           variant="link"
+          data-cy="button-see-overview"
         >
           See overview
           <HiOutlineArrowLongRight size={24} />
@@ -38,7 +39,7 @@ const HeaderView = () => {
         <BalanceStyledWrapper>
           <BalanceStyled>
             <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-            <BalanceAmountStyled>
+            <BalanceAmountStyled data-cy="label-account-balance">
               <Balance address={selectedAddress} />
             </BalanceAmountStyled>
           </BalanceStyled>

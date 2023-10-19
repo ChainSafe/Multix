@@ -1,11 +1,11 @@
 import { injectedAccounts } from '../fixtures/injectedAccounts'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageUrl } from '../fixtures/landingData'
-import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
-import { topMenuItems } from '../support/page-objects/topMenuItems'
+import { clickOnConnect } from '../utils/clickOnConnect'
+import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 const AliceAddress = Object.values(injectedAccounts)[0].address
 
@@ -19,28 +19,17 @@ describe('Perform transactions', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
     cy.initExtension(injectedAccounts)
-    topMenuItems.connectButton().click()
-    landingPage.accountsOrRpcLoader().should('contain', 'Loading accounts')
-    cy.getAuthRequests().then((authRequests) => {
-      const requests = Object.values(authRequests)
-      // we should have 1 connection request to the extension
-      cy.wrap(requests.length).should('eq', 1)
-      // this request should be from the application Multix
-      cy.wrap(requests[0].origin).should('eq', 'Multix')
-      // let's allow it for Alice
-      cy.enableAuth(requests[0].id, [AliceAddress])
-      // the ui should then move on to connecting to the rpcs
-      topMenuItems.multiproxySelector().should('be.visible')
-    })
+    clickOnConnect()
+    cy.connectAccounts([AliceAddress])
   })
 
   it('Abort a tx with Alice', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
+    waitForTxRequest()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
-      console.log('txRequests', JSON.stringify(txRequests))
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
       sendTxModal.buttonSend().should('be.disabled')
@@ -67,6 +56,7 @@ describe('Perform transactions', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
+    waitForTxRequest()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
