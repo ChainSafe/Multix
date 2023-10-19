@@ -31,8 +31,8 @@ describe('Set an identity', () => {
     // typing into legal with empty display should show an error
     sendTxModal.setIdentityField('legal').type('le')
     sendTxModal.sendTxError().should('contain', 'Display name is required')
-    sendTxModal.setIdentityFieldElement('display', 'label').should('havInpute.class', 'Mui-error')
-    sendTxModal.setIdentityFieldElement('display', 'div').should('havInpute.class', 'Mui-error')
+    sendTxModal.setIdentityFieldElement('display', 'label').should('have.class', 'Mui-error')
+    sendTxModal.setIdentityFieldElement('display', 'div').should('have.class', 'Mui-error')
     sendTxModal.buttonSend().should('be.disabled')
 
     // typing into display should remove the error
