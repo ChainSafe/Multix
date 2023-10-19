@@ -98,6 +98,7 @@ const ButtonWithIconStyled = styled(ButtonWithIcon)`
 
   svg {
     margin: 0;
+    transform: scale(1.5);
   }
 `
 
