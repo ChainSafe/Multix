@@ -193,7 +193,9 @@ describe('Watched Accounts', () => {
       watchMultisigs['multisig-with-pure'].pureAddress,
       watchMultisigs['multisig-with-pure'].name
     )
-    settingsPage.wallectConnectAccordion().should('be.visible').click()
+    settingsPage.wallectConnectAccordion()
+      .should('be.visible')
+      .click()
     settingsPage
       .walletConnectAlert()
       .should('be.visible')
