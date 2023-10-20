@@ -176,7 +176,7 @@ describe('Watched Accounts', () => {
     )
   })
 
-  it('can not see the "New Transaction" button when only a watched account', () => {
+  it('can not see the "New Transaction" button when in watched account mode', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
@@ -187,13 +187,13 @@ describe('Watched Accounts', () => {
     multisigPage.newTransactionButton().should('not.exist')
   })
 
-  it('can not utilize wallet connect when only a watched account', () => {
+  it('can not utilize wallet connect when in watched account mode', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
       watchMultisigs['multisig-with-pure'].name
     )
-    settingsPage.expandWalletConnectButton().click()
+    settingsPage.wallectConnectAccordion().should('be.visible').click()
     settingsPage
       .walletConnectAlert()
       .should('be.visible')
@@ -205,7 +205,7 @@ describe('Watched Accounts', () => {
     settingsPage.connectDappButton().should('be.disabled')
   })
 
-  it('can see but not interact with txs when only a watched account', () => {
+  it('can see but not interact with txs when in watched account mode', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,

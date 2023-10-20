@@ -40,11 +40,7 @@ const Settings = () => {
       >
         <AccordionSummaryStyled
           expandIcon={<ExpandMoreIcon size={20} />}
-          data-cy={
-            expanded === ACCORDION_WATCHED_ACCOUNTS
-              ? 'button-collapse-watched-accounts'
-              : 'button-expand-watched-accounts'
-          }
+          data-cy="accordion-title-watched-accounts"
         >
           <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>Watched accounts</SummaryLabelStyled>
@@ -59,11 +55,7 @@ const Settings = () => {
       >
         <AccordionSummaryStyled
           expandIcon={<ExpandMoreIcon size={20} />}
-          data-cy={
-            expanded === ACCORDION_WALLET_CONNECT
-              ? 'button-collapse-wallet-connect'
-              : 'button-expand-wallet-connect'
-          }
+          data-cy="accordion-title-wallet-connect"
         >
           <WalletConnectSVGStyled fill={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
