@@ -349,7 +349,6 @@ const ManualExtrinsic = ({
             <MenuItem
               key={text}
               value={text}
-              sx={{}}
             >
               <div className="pallet">{text}</div>
             </MenuItem>

@@ -114,12 +114,6 @@ declare global {
       getAuthRequests: () => Chainable<AuthRequests>
 
       /**
-       * Connect an accounts to the dApp
-       * @param accountAddresses
-       */
-      connectAccounts: (accountAddresses?: string[]) => void
-
-      /**
        * Authorize a specific request
        * @param {number} id - the id of the request to authorize. This id is part of the getAuthRequests object response.
        * @param {string[]} accountAddresses - the account addresses to share with the applications. These addresses must be part of the ones shared in the `initExtension`
@@ -156,6 +150,8 @@ declare global {
        */
       rejectTx: (id: number, reason: string) => void
 
+      // =============== Multix specific commands ===============
+
       /**
        * Reject all pending multisig requests with a specific account
        * @param {InjectedAccountWitMnemonic} opt.account - The account to reject pending transactions with. It should be the proposer
@@ -167,6 +163,13 @@ declare global {
         multisigInfo: MultisigInfo
         WSendpoint: string
       }) => void
+
+      /**
+       * Connect accounts to Multix and wait until it's ready
+       * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initExtension before
+       * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
+       */
+      connectAccounts: (accountAddresses?: string[]) => void
     }
   }
 }
