@@ -186,4 +186,39 @@ describe('Watched Accounts', () => {
     multisigPage.accountHeader().should('be.visible')
     multisigPage.newTransactionButton().should('not.exist')
   })
+
+  it('can not utilize wallet connect when only a watched account', () => {
+    cy.visit(settingsPageWatchAccountUrl)
+    addWatchAccount(
+      watchMultisigs['multisig-with-pure'].pureAddress,
+      watchMultisigs['multisig-with-pure'].name
+    )
+    settingsPage.expandWalletConnectButton().click()
+    settingsPage
+      .walletConnectAlert()
+      .should('be.visible')
+      .should(
+        'contain.text',
+        'Please first select a Pure or Multisig that you are part of, to be able to use it with WalletConnect'
+      )
+    settingsPage.walletConnectKeyInput().should('be.disabled')
+    settingsPage.connectDappButton().should('be.disabled')
+  })
+
+  it('can see but not interact with txs when only a watched account', () => {
+    cy.visit(settingsPageWatchAccountUrl)
+    addWatchAccount(
+      watchMultisigs['multisig-with-pure'].pureAddress,
+      watchMultisigs['multisig-with-pure'].name
+    )
+    topMenuItems.homeButton().click()
+    multisigPage.accountHeader().should('be.visible')
+    multisigPage
+      .transactionList()
+      .should('be.visible')
+      .within(() => {
+        multisigPage.pendingTransactionItem().should('have.length', 1)
+        multisigPage.reviewButton().should('not.exist')
+      })
+  })
 })
