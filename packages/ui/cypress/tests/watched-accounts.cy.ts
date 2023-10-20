@@ -106,7 +106,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see the expected account details displayed for a watched pure', () => {
-    const { name: pureName, purePublickKey: purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: settingsPageWatchAccountUrl,
@@ -139,7 +139,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can edit the name of a watched pure', () => {
-    const { name: pureName, purePublickKey: purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: settingsPageWatchAccountUrl,
@@ -171,11 +171,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can open the correct subscan link for a watched pure', () => {
-    const {
-      purePublickKey: purePublicKey,
-      name: pureName,
-      pureAddress
-    } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey, name: pureName, pureAddress } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: landingPageUrl,
@@ -199,7 +195,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can not see the "New Transaction" button when only a watched account', () => {
-    const { purePublickKey: purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: landingPageUrl,
@@ -210,7 +206,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can not utilize wallet connect when only a watched account', () => {
-    const { purePublickKey: purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: settingsPageUrl,
@@ -229,7 +225,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see but not interact with txs when only a watched account', () => {
-    const { purePublickKey: purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: landingPageUrl,
