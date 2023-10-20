@@ -355,6 +355,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
               menuItems={Object.keys(easySetupOptions).map((key) => ({
                 value: key
               }))}
+              testId="easy-setup"
             />
           </Grid>
           <Grid
@@ -382,7 +383,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
                 md={10}
                 className="errorMessage"
               >
-                <Alert severity="error">{easyOptionErrorMessage || errorMessage}</Alert>
+                <Alert
+                  data-cy="error-send-tx"
+                  severity="error"
+                >
+                  {easyOptionErrorMessage || errorMessage}
+                </Alert>
               </Grid>
             </>
           )}
