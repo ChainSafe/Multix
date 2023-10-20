@@ -5,12 +5,9 @@ import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMu
 import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { topMenuItems } from './page-objects/topMenuItems'
 import 'cypress-wait-until'
-import { LOCALSTORAGE_WATCHED_ACCOUNTS_KEY } from '../../src/contexts/WatchedAddressesContext'
-import {
-  AccountNames,
-  LOCALSTORAGE_ACCOUNT_NAMES_KEY
-} from '../../src/contexts/AccountNamesContext'
 
+const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
+const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -49,7 +46,7 @@ import {
 // }
 
 const extension = new Extension()
-const Account1 = testAccounts['TestAccount 1'].address
+const Account1 = testAccounts['Test Account 1'].address
 
 Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
@@ -105,7 +102,7 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
 interface IVisitWithLocalStorage {
   url: string
   watchedAccounts?: string[]
-  accountNames?: AccountNames
+  accountNames?: Record<string, string>
 }
 
 Cypress.Commands.add(
@@ -118,7 +115,8 @@ Cypress.Commands.add(
             LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
             JSON.stringify(watchedAccounts)
           )
-        !!accountNames?.length &&
+
+        !!accountNames &&
           win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
       }
     })

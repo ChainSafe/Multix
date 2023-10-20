@@ -4,7 +4,7 @@ import { useApi } from './ApiContext'
 import { decodeNames, encodeNames } from '../utils/namesUtil'
 
 export type AccountNames = { [address: string]: string }
-export const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
+const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 
 type AccountNamesContextProps = {
   children: React.ReactNode | React.ReactNode[]

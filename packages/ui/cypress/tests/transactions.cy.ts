@@ -7,7 +7,7 @@ import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
-const testAccount1Address = testAccounts['Test Account1'].address
+const testAccount1Address = testAccounts['Test Account 1'].address
 
 const fillAndSubmitTransactionForm = () => {
   sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
