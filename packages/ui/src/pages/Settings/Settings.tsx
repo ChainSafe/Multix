@@ -34,7 +34,6 @@ const Settings = () => {
   return (
     <>
       <SettingsHeaderStyled>Settings</SettingsHeaderStyled>
-
       <AccordionStyled
         expanded={expanded === ACCORDION_WATCHED_ACCOUNTS}
         onChange={() => onToggle(ACCORDION_WATCHED_ACCOUNTS)}

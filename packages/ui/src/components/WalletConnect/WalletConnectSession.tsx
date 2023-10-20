@@ -43,7 +43,7 @@ export const WalletConnectSession = () => {
           <AlertStyled
             severity="warning"
             variant="outlined"
-            data-cy="alert-wallet-connect-warning"  
+            data-cy="alert-wallet-connect-warning"
           >
             Please first select a Pure or Multisig that you are part of, to be able to use it with
             WalletConnect.
