@@ -2,9 +2,14 @@
 
 import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
-import { injectedAccounts, InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { topMenuItems } from './page-objects/topMenuItems'
 import 'cypress-wait-until'
+import { LOCALSTORAGE_WATCHED_ACCOUNTS_KEY } from '../../src/contexts/WatchedAddressesContext'
+import {
+  AccountNames,
+  LOCALSTORAGE_ACCOUNT_NAMES_KEY
+} from '../../src/contexts/AccountNamesContext'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -44,7 +49,7 @@ import 'cypress-wait-until'
 // }
 
 const extension = new Extension()
-const Account1 = Object.values(injectedAccounts)[0].address
+const Account1 = testAccounts['TestAccount 1'].address
 
 Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
@@ -59,20 +64,6 @@ Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) =
 
 Cypress.Commands.add('getAuthRequests', () => {
   return cy.wrap(extension.getAuthRequests())
-})
-
-Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[]) => {
-  cy.getAuthRequests().then((authRequests) => {
-    const requests = Object.values(authRequests)
-    // we should have 1 connection request to the extension
-    cy.wrap(requests.length).should('eq', 1)
-    // this request should be from the application Multix
-    cy.wrap(requests[0].origin).should('eq', 'Multix')
-    // let's allow Accounts to connect
-    cy.enableAuth(requests[0].id, accountAddresses)
-    // the ui should then move on to connecting to the rpcs
-    topMenuItems.multiproxySelector().should('be.visible')
-  })
 })
 
 Cypress.Commands.add('enableAuth', (id: number, accountAddresses: string[]) => {
@@ -96,6 +87,43 @@ Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
 })
 
 Cypress.Commands.add('rejectCurrentMultisigTx', rejectCurrentMultisigTxs)
+
+Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[]) => {
+  cy.getAuthRequests().then((authRequests) => {
+    const requests = Object.values(authRequests)
+    // we should have 1 connection request to the extension
+    cy.wrap(requests.length).should('eq', 1)
+    // this request should be from the application Multix
+    cy.wrap(requests[0].origin).should('eq', 'Multix')
+    // let's allow Accounts to connect
+    cy.enableAuth(requests[0].id, accountAddresses)
+    // the ui should then move on to connecting to the rpcs
+    topMenuItems.multiproxySelector().should('be.visible')
+  })
+})
+
+interface IVisitWithLocalStorage {
+  url: string
+  watchedAccounts?: string[]
+  accountNames?: AccountNames
+}
+
+Cypress.Commands.add(
+  'visitWithLocalStorage',
+  ({ url, watchedAccounts, accountNames }: IVisitWithLocalStorage) => {
+    return cy.visit(url, {
+      onBeforeLoad(win) {
+        !!watchedAccounts?.length &&
+          win.localStorage.setItem(
+            LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
+            JSON.stringify(watchedAccounts)
+          )
+        !!accountNames?.length &&
+          win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
+      }
+    })
+  }
+)
 
 declare global {
   namespace Cypress {
@@ -170,6 +198,16 @@ declare global {
        * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
        */
       connectAccounts: (accountAddresses?: string[]) => void
+
+      /**
+       * Visit a websit by setting certain localStorage item
+       * @param {Object} params - The parameters to pass
+       * @param {string} params.url - Url to visit
+       * @param {string[]} params.watchedAccounts - List of public keys of accounts to watch
+       * @param {{[publicKey: string]: string}} params.accountNames - Object of addresses associated to names
+       * @example cy.visitWithLocalStorage({url: http://localhost:3333, watchedAccounts: ['0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e'], watchedAccounts: {"0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e":"my custom name"}})
+       */
+      visitWithLocalStorage: (params: IVisitWithLocalStorage) => void
     }
   }
 }

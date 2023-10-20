@@ -1,6 +1,6 @@
 import { Injected, InjectedAccounts } from '@polkadot/extension-inject/types'
 import { Keyring } from '@polkadot/keyring'
-import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { TypeRegistry } from '@polkadot/types'
 import { SignerPayloadJSON } from '@polkadot/types/types'
 import { cryptoWaitReady } from '@polkadot/util-crypto'

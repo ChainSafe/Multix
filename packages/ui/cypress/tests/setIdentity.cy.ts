@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { landingPageUrl } from '../fixtures/landingData'
 import { setIdentityMultisigs } from '../fixtures/setIdentity/setIdentityMultisigs'
 import { setIdentitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'

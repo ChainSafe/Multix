@@ -1,4 +1,3 @@
-import { addresses } from '../fixtures/accounts'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPageUrl, settingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
@@ -7,6 +6,7 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
+import { testAccounts } from '../fixtures/testAccounts'
 
 const addWatchAccount = (address: string, name?: string) => {
   settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
@@ -22,7 +22,7 @@ describe('Watched Accounts', () => {
   it('can add an account to the watch list', () => {
     cy.visit(landingPageUrl)
     landingPage.watchAccountButton().click()
-    addWatchAccount(addresses.Alice, 'Alice')
+    addWatchAccount(testAccounts['Test Account 1'].address, 'Alice')
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.addressLabel().should('be.visible')
@@ -34,7 +34,7 @@ describe('Watched Accounts', () => {
   it('can remove an account from the watch list', () => {
     // add an account first
     cy.visit(settingsPageWatchAccountUrl)
-    addWatchAccount(addresses.Alice, 'Alice')
+    addWatchAccount(testAccounts['Test Account 1'].address, 'Alice')
     // now remove it
     settingsPage.accountContainer().within(() => {
       settingsPage.accountDeleteButton().click()
@@ -47,10 +47,10 @@ describe('Watched Accounts', () => {
   it('can see error when attempting to add same address more than once', () => {
     // add an account first
     cy.visit(settingsPageWatchAccountUrl)
-    addWatchAccount(addresses.Alice, 'Alice')
+    addWatchAccount(testAccounts['Test Account 1'].address, 'Alice')
     settingsPage.accountContainer().should('have.length', 1)
     // attempt to add the same account again
-    addWatchAccount(addresses.Alice)
+    addWatchAccount(testAccounts['Test Account 1'].address)
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Account already added')
     settingsPage.accountContainer().should('have.length', 1)
     settingsPage.addButton().should('be.disabled')

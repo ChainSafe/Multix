@@ -4,7 +4,7 @@ import { encodeAccounts } from '../utils/encodeAccounts'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 
-const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
+export const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
 type WatchedAddressesProps = {
   children: ReactNode | ReactNode[]
