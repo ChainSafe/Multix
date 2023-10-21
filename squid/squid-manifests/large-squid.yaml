@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-large
-version: 6
+version: 7
 description: |-
   Squid for Multix
 
@@ -40,6 +40,8 @@ deploy:
       cmd: ['sqd', 'start-moonriver']
     - name: khala-processor
       cmd: ['sqd', 'start-khala']
+    - name: joystream-processor
+      cmd: ['sqd', 'start-joystream']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor

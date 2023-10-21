@@ -16,6 +16,7 @@ import { nodesInterlaySVG } from './logos/interlaySVG'
 import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { nodesMoonriverSVG } from './logos/moonriverSVG'
 import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
+import { nodesJoystreamSVG } from './logos/joystreamSVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -179,6 +180,14 @@ export const networkList = {
   //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
   //   logo: nodesWestendColourSVG
   // } as NetworkInfo,
+  joystream: {
+    chainId: 'joystream',
+    explorerNetworkName: 'joystream',
+    rpcUrl: 'wss://rpc.joystream.org',
+    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v6/graphql',
+    httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v6/graphql',
+    logo: nodesJoystreamSVG
+  },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
@@ -201,37 +210,10 @@ export const polkadotNetworksAndParachains = [
   'phala'
 ]
 export const kusamaNetworksAndParachains = ['kusama', 'assethub-ksm', 'khala', 'moonriver']
+export const soloChains = ['joystream']
 export const testChains = ['rococo', 'rhala testnet', 'local']
 
 export type SupportedNetworks = keyof typeof networkList
-
-/**
- * Types
- */
-export type TPolkadotChain = keyof typeof POLKADOT_MAINNET_CHAINS
-
-/**
- * Chains
- */
-export const POLKADOT_MAINNET_CHAINS = {
-  'polkadot:91b171bb158e2d3848fa23a9f1c25182': {
-    chainId: '91b171bb158e2d3848fa23a9f1c25182',
-    name: 'Polkadot',
-    logo: chainsPolkadotCircleSVG,
-    rgb: '230, 1, 122',
-    rpc: ''
-  }
-}
-
-export const POLKADOT_TEST_CHAINS = {
-  'polkadot:e143f23803ac50e8f6f8e62695d1ce9e': {
-    chainId: 'e143f23803ac50e8f6f8e62695d1ce9e',
-    name: 'Polkadot Westend',
-    logo: nodesWestendColourSVG,
-    rgb: '218, 104, 167',
-    rpc: ''
-  }
-}
 
 /**
  * Methods
