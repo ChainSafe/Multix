@@ -164,7 +164,7 @@ describe('Watched Accounts', () => {
     })
     // navigate to settings and ensure the edited name is displayed
     topMenuItems.settingsButton().click()
-    settingsPage.expandWatchedAccountsButton().click()
+    settingsPage.watchedAccountsAccordion().click()
     settingsPage.accountContainer().within(() => {
       accountDisplay.nameLabel().should('have.text', 'Edited Name Test')
     })
@@ -194,7 +194,7 @@ describe('Watched Accounts', () => {
     )
   })
 
-  it('can not see the "New Transaction" button when only a watched account', () => {
+  it('can not see the "New Transaction" button when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
@@ -205,14 +205,14 @@ describe('Watched Accounts', () => {
     multisigPage.newTransactionButton().should('not.exist')
   })
 
-  it('can not utilize wallet connect when only a watched account', () => {
+  it('can not utilize wallet connect when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
       url: settingsPageUrl,
       watchedAccounts: [purePublicKey]
     })
-    settingsPage.expandWalletConnectButton().click()
+    settingsPage.wallectConnectAccordion().click()
     settingsPage
       .walletConnectAlert()
       .should('be.visible')
@@ -224,7 +224,7 @@ describe('Watched Accounts', () => {
     settingsPage.connectDappButton().should('be.disabled')
   })
 
-  it('can see but not interact with txs when only a watched account', () => {
+  it('can see but not interact with txs when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
