@@ -176,7 +176,7 @@ describe('Watched Accounts', () => {
     )
   })
 
-  it('can not see the "New Transaction" button when only a watched account', () => {
+  it('can not see the "New Transaction" button when in watched account mode', () => {
     cy.visit(settingsPageWatchAccountUrl)
     addWatchAccount(
       watchMultisigs['multisig-with-pure'].pureAddress,
@@ -185,5 +185,40 @@ describe('Watched Accounts', () => {
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().should('be.visible')
     multisigPage.newTransactionButton().should('not.exist')
+  })
+
+  it('can not utilize wallet connect when in watched account mode', () => {
+    cy.visit(settingsPageWatchAccountUrl)
+    addWatchAccount(
+      watchMultisigs['multisig-with-pure'].pureAddress,
+      watchMultisigs['multisig-with-pure'].name
+    )
+    settingsPage.wallectConnectAccordion().should('be.visible').click()
+    settingsPage
+      .walletConnectAlert()
+      .should('be.visible')
+      .should(
+        'contain.text',
+        'Please first select a Pure or Multisig that you are part of, to be able to use it with WalletConnect'
+      )
+    settingsPage.walletConnectKeyInput().should('be.disabled')
+    settingsPage.connectDappButton().should('be.disabled')
+  })
+
+  it('can see but not interact with txs when in watched account mode', () => {
+    cy.visit(settingsPageWatchAccountUrl)
+    addWatchAccount(
+      watchMultisigs['multisig-with-pure'].pureAddress,
+      watchMultisigs['multisig-with-pure'].name
+    )
+    topMenuItems.homeButton().click()
+    multisigPage.accountHeader().should('be.visible')
+    multisigPage
+      .transactionList()
+      .should('be.visible')
+      .within(() => {
+        multisigPage.pendingTransactionItem().should('have.length', 1)
+        multisigPage.reviewButton().should('not.exist')
+      })
   })
 })
