@@ -1,4 +1,4 @@
-import { injectedAccounts } from '../fixtures/injectedAccounts'
+import { testAccounts } from '../fixtures/testAccounts'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
@@ -7,10 +7,10 @@ import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
-const AliceAddress = Object.values(injectedAccounts)[0].address
+const testAccount1Address = testAccounts['Test Account 1'].address
 
 const fillAndSubmitTransactionForm = () => {
-  sendTxModal.sendTokensFieldTo().click().type(`${AliceAddress}{enter}`)
+  sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
   sendTxModal.sendTokensFieldAmount().click().type('0.001')
   sendTxModal.buttonSend().should('be.enabled').click()
 }
@@ -18,9 +18,9 @@ const fillAndSubmitTransactionForm = () => {
 describe('Perform transactions', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
-    cy.initExtension(injectedAccounts)
+    cy.initExtension(Object.values(testAccounts))
     clickOnConnect()
-    cy.connectAccounts([AliceAddress])
+    cy.connectAccounts([testAccount1Address])
   })
 
   it('Abort a tx with Alice', () => {
@@ -31,7 +31,7 @@ describe('Perform transactions', () => {
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
-      cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
+      cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
       sendTxModal.buttonSend().should('be.disabled')
       const errorMessage = 'Whuuuut'
       cy.rejectTx(txRequests[0].id, errorMessage)
@@ -43,12 +43,12 @@ describe('Perform transactions', () => {
 
   it('Makes a balance transfer with Alice', () => {
     cy.rejectCurrentMultisigTx({
-      account: injectedAccounts[0],
+      account: testAccounts['Test Account 1'],
       multisigInfo: {
         address: knownMultisigs['test-multisig-1'].address,
         threshold: knownMultisigs['test-multisig-1'].threshold,
         otherSignatories: knownMultisigs['test-multisig-1'].signatories.filter(
-          (address) => address !== injectedAccounts[0].address
+          (address) => address !== testAccount1Address
         )
       },
       WSendpoint: 'wss://rococo-rpc.polkadot.io'
@@ -60,7 +60,7 @@ describe('Perform transactions', () => {
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
-      cy.wrap(txRequests[0].payload.address).should('eq', AliceAddress)
+      cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
       sendTxModal.buttonSend().should('be.disabled')
       cy.approveTx(txRequests[0].id)
       notifications.loadingNotificationIcon().should('be.visible')

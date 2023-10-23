@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '../injectedAccounts'
+import { InjectedAccountWitMnemonic } from '../testAccounts'
 
 export const setIdentitySignatories = [
   // signatories of multisig-with-identity
