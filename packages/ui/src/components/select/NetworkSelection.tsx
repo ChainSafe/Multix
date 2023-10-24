@@ -7,6 +7,7 @@ import {
   kusamaNetworksAndParachains,
   networkList,
   polkadotNetworksAndParachains,
+  soloChains,
   testChains
 } from '../../constants'
 import { theme } from '../../styles/theme'
@@ -67,6 +68,8 @@ const NetworkSelection = () => {
       {renderNetworks(polkadotNetworksAndParachains)}
       <ListSubheader>Kusama & Parachains</ListSubheader>
       {renderNetworks(kusamaNetworksAndParachains)}
+      <ListSubheader>Solo chains</ListSubheader>
+      {renderNetworks(soloChains)}
       <ListSubheader>Testnets</ListSubheader>
       {renderNetworks(testChains)}
     </SelectStyled>
