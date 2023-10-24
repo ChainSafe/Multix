@@ -85,7 +85,7 @@ Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
 
 Cypress.Commands.add('rejectCurrentMultisigTx', rejectCurrentMultisigTxs)
 
-Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[]) => {
+Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[], checkMultiProxyVisible: boolean = true) => {
   cy.getAuthRequests().then((authRequests) => {
     const requests = Object.values(authRequests)
     // we should have 1 connection request to the extension
@@ -94,8 +94,10 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
     cy.wrap(requests[0].origin).should('eq', 'Multix')
     // let's allow Accounts to connect
     cy.enableAuth(requests[0].id, accountAddresses)
-    // the ui should then move on to connecting to the rpcs
-    topMenuItems.multiproxySelector().should('be.visible')
+    if (checkMultiProxyVisible) {
+      // verify that the multiproxy selector is visible after account auth
+      topMenuItems.multiproxySelector().should('be.visible')
+    }
   })
 })
 
@@ -193,7 +195,8 @@ declare global {
       /**
        * Connect accounts to Multix and wait until it's ready
        * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initExtension before
-       * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
+       * @param {boolean} checkMultiProxyVisible - Whether to check for the visibility of the multiproxy selector. Default is true.
+       * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba], false)
        */
       connectAccounts: (accountAddresses?: string[]) => void
 
