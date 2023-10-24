@@ -5,7 +5,7 @@ import {
 
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../contexts/AccountsContext'
-import { Link } from '../components/library'
+import { Button, Link } from '../components/library'
 import { Center } from '../components/layout/Center'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
@@ -13,7 +13,7 @@ import { useMultiProxy } from '../contexts/MultiProxyContext'
 export const useDisplayError = () => {
   const { isExtensionError, isAccountLoading } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
-  const { error: multisigQueryError } = useMultiProxy()
+  const { error: multisigQueryError, refetch } = useMultiProxy()
 
   if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
     return (
@@ -41,7 +41,8 @@ export const useDisplayError = () => {
       <CenterStyled>
         <ErrorMessageStyled>
           <ErrorOutlineIcon size={64} />
-          <div>An error occurred.</div>
+          <div>Connection timed out.</div>
+          <Button onClick={refetch}>Reconnect</Button>
         </ErrorMessageStyled>
       </CenterStyled>
     )
@@ -67,4 +68,8 @@ const CenterStyled = styled(Center)`
 const ErrorMessageStyled = styled('div')`
   text-align: center;
   margin-top: 1rem;
+
+  button {
+    margin-top: 1rem;
+  }
 `

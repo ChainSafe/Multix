@@ -43,7 +43,7 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
     )
   }
 
-  const { isError, error, data, isLoading, refetch } = useSubscription(
+  const { error, data, isLoading, refetch } = useSubscription(
     [`KeyWatchedPureById-${pureIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
@@ -60,10 +60,10 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
     {
       onData(data) {
         !!data && onUpdate(data)
+      },
+      onError(error) {
+        console.error('WatchedPureById subscription error', error)
       }
-      // onError(error) {
-      //   console.error('WatchedPureById subscription error', error)
-      // },
       // retry: (failureCount: number, error: Error) => {
       //   console.error(
       //     'Subscription WatchedPureById failed',
@@ -77,10 +77,10 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
     }
   )
 
-  if (isError) {
-    console.error('Subscription WatchedPureById error, refetching', error)
-    refetch()
-  }
+  // if (isError) {
+  //   console.error('Subscription WatchedPureById error, refetching', error)
+  //   refetch()
+  // }
 
   // if (isSubsriptionLoading) {
   //     console.log('subscription loading', multisigs);
@@ -93,5 +93,5 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading: hasSomethingToQuery && isLoading, error }
+  return { data, isLoading: hasSomethingToQuery && isLoading, error, refetch }
 }
