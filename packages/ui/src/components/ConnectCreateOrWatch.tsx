@@ -11,11 +11,17 @@ export const ConnectOrWatch = () => {
   return (
     <WrapperStyled>
       {isAllowedToConnectToExtension ? (
-        <div>No multisig found for your accounts or watched accounts.</div>
+        <div data-cy="label-no-multisig-found">
+          No multisig found for your accounts or watched accounts.
+        </div>
       ) : (
         <>
-          <h1>Multix is an interface to easily manage complex multisigs.</h1>
-          <div>Connect a wallet to interact with Multix or watch an account.</div>
+          <h1 data-cy="header-multix-introduction">
+            Multix is an interface to easily manage complex multisigs.
+          </h1>
+          <div data-cy="label-interaction-prompt">
+            Connect a wallet to interact with Multix or watch an account.
+          </div>
         </>
       )}
       <ButtonWrapperStyled>
@@ -30,14 +36,15 @@ export const ConnectOrWatch = () => {
           <Button
             variant="primary"
             onClick={allowConnectionToExtension}
+            data-cy="button-connect-wallet"
           >
             Connect Wallet
           </Button>
         )}
         or
         <Button
-          data-cy="button-watch-account"
           onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}
+          data-cy="button-watch-account"
         >
           Watch account
         </Button>
