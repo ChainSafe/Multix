@@ -201,7 +201,7 @@ declare global {
        * @param {boolean} checkMultiProxyVisible - Whether to check for the visibility of the multiproxy selector. Default is true.
        * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba], false)
        */
-      connectAccounts: (accountAddresses?: string[]) => void
+      connectAccounts: (accountAddresses?: string[], checkMultiProxyVisible?: boolean) => void
 
       /**
        * Visit a websit by setting certain localStorage item
