@@ -19,5 +19,12 @@ export const testAccounts = {
     name: 'Test Account 2',
     type: 'sr25519',
     mnemonic: 'divorce lottery slender again adapt process slow pigeon suit chase news begin'
+  } as InjectedAccountWitMnemonic,
+  'Non Multisig Member': {
+    address: '5EnfL3AjWckttY6xuUqfFsfjcbxr1KqdzUKHTmh7cWrDKjGd',
+    publicKey: '0x78784374dbeba13ff9789fca0e46c4960e219a1fff11ea69d6f0b57a7f3bfb61',
+    name: 'Non Multisig Member',
+    type: 'sr25519',
+    mnemonic: 'consider hockey practice evolve stool jaguar follow sponsor party trial view entry'
   } as InjectedAccountWitMnemonic
 }
