@@ -53,11 +53,13 @@ describe('Landing Page Messaging', () => {
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+    landingPage.createOneButton().should('be.visible').should('be.enabled')
+    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 
   it('can see error message if watching an account that is not part of a multisig', () => {
     // stub watched account
-    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey
+    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey!
     cy.visitWithLocalStorage({
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey]
@@ -66,11 +68,13 @@ describe('Landing Page Messaging', () => {
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+    landingPage.createOneButton().should('be.visible').should('be.enabled')
+    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 
   it('can see an error when account is shared and watched but not part of a multisig', () => {
     // stub watched account
-    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey
+    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey!
     cy.visitWithLocalStorage({
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey]
@@ -83,5 +87,7 @@ describe('Landing Page Messaging', () => {
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+    landingPage.createOneButton().should('be.visible').should('be.enabled')
+    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 })

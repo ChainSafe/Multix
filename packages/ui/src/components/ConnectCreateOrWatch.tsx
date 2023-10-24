@@ -29,6 +29,7 @@ export const ConnectOrWatch = () => {
           <Button
             variant="primary"
             onClick={() => navigate('/create')}
+            data-cy="button-create-one"
           >
             Create one
           </Button>
