@@ -49,16 +49,7 @@ deploy:
     # - name: westend-processor
     #   cmd: ['sqd', 'start-westend']
   api:
-    cmd:
-      [
-        'npx',
-        'squid-graphql-server',
-        '--max-root-fields',
-        '10',
-        '--max-response-size',
-        '1000',
-        '--subscriptions'
-      ]
+    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
 scale:
   dedicated: true
   addons:
