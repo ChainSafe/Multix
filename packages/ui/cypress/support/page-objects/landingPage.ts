@@ -6,6 +6,9 @@ export const landingPage = {
   connectWalletButton: () => cy.get('[data-cy=button-connect-wallet]'),
   watchAccountButton: () => cy.get('[data-cy=button-watch-account]'),
   accountsLoader: () => cy.get('[data-cy=loader-accounts-connection]'),
+  multisigLoader: () => cy.get('[data-cy=loader-multisig]'),
+  initializationLoader: () => cy.get('[data-cy=loader-initialization]'),
+  rpcLoader: () => cy.get('[data-cy=loader-rpc-connection]'),
   polkadotWikiLink: () => cy.get('[data-cy=link-polkadot-wiki]'),
   noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
 
