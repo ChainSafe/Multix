@@ -54,7 +54,7 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     )
   }
 
-  const { isError, error, data, isLoading, refetch } = useSubscription(
+  const { error, data, isLoading, refetch } = useSubscription(
     [`KeyMultisigsBySignatoriesOrWatched-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
     () => {
       if (!client) return new Observable<null>()
@@ -72,10 +72,10 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     {
       onData(data) {
         !!data && onUpdate(data)
+      },
+      onError(error) {
+        console.error('MultisigsBySignatoriesOrWatched subscription error', error)
       }
-      // onError(error) {
-      //   console.error('MultisigsBySignatoriesOrWatched subscription error', error)
-      // },
       // retry: (failureCount: number, error: Error) => {
       //   console.error(
       //     'Subscription MultisigsBySignatoriesOrWatched failed',
@@ -89,10 +89,10 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     }
   )
 
-  if (isError) {
-    console.error('Subscription MultisigsBySignatoriesOrWatched error, refetching', error)
-    refetch()
-  }
+  // if (isError) {
+  //   console.error('Subscription MultisigsBySignatoriesOrWatched error, refetching', error)
+  //   refetch()
+  // }
 
   // if (isSubsriptionLoading) {
   //     console.log('subscription loading', multisigs);
@@ -105,5 +105,5 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading: hasSomethingToQuery && isLoading, error }
+  return { data, isLoading: hasSomethingToQuery && isLoading, error, refetch }
 }
