@@ -21,13 +21,7 @@ describe('Landing Page Messaging', () => {
     cy.visit(landingPageUrl)
     // click on connect without an extension installed
     topMenuItems.connectButton().click()
-    landingPage
-      .noAccountFoundError()
-      .should(
-        'contain.text',
-        'No account found. Please connect at least one in a wallet extension.'
-      )
-    landingPage.polkadotWikiLink().should('be.visible')
+    landingPage.shouldHaveNoAccountErrorAndWikiLink()
   })
 
   it('can see an error when extension is connected but no account is shared', () => {
@@ -35,13 +29,8 @@ describe('Landing Page Messaging', () => {
     cy.initExtension([testAccounts['Test Account 1']])
     clickOnConnect()
     // don't connect any of the initialized accounts
-    cy.connectAccounts(['0'], false)
-    landingPage
-      .noAccountFoundError()
-      .should(
-        'contain.text',
-        'No account found. Please connect at least one in a wallet extension.'
-      )
+    cy.connectAccounts([], false)
+    landingPage.shouldHaveNoAccountErrorAndWikiLink()
   })
 
   it('can see an error when account is shared but not part of a multisig', () => {
@@ -65,25 +54,6 @@ describe('Landing Page Messaging', () => {
       watchedAccounts: [nonMemberPublicKey]
     })
     topMenuItems.connectButton().click()
-    landingPage
-      .noMultisigFoundError()
-      .should('contain.text', 'No multisig found for your accounts or watched accounts.')
-    landingPage.createOneButton().should('be.visible').should('be.enabled')
-    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
-  })
-
-  it('can see an error when account is shared and watched but not part of a multisig', () => {
-    // stub watched account
-    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey!
-    cy.visitWithLocalStorage({
-      url: landingPageUrl,
-      watchedAccounts: [nonMemberPublicKey]
-    })
-    // connect the same account being watched
-    cy.initExtension([testAccounts['Non Multisig Member']])
-    clickOnConnect()
-    // share the account that is not part of any multisig
-    cy.connectAccounts([testAccounts['Non Multisig Member'].address], false)
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')

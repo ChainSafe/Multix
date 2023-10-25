@@ -7,5 +7,14 @@ export const landingPage = {
   watchAccountButton: () => cy.get('[data-cy=button-watch-account]'),
   accountsLoader: () => cy.get('[data-cy=loader-accounts-connection]'),
   polkadotWikiLink: () => cy.get('[data-cy=link-polkadot-wiki]'),
-  noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 })
+  noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
+
+  // page specific assertion
+  shouldHaveNoAccountErrorAndWikiLink() {
+    this.noAccountFoundError().should(
+      'contain.text',
+      'No account found. Please connect at least one in a wallet extension. More info at'
+    )
+    this.polkadotWikiLink().should('be.visible')
+  }
 }
