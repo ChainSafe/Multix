@@ -85,20 +85,17 @@ Cypress.Commands.add('rejectTx', (id: number, reason: string) => {
 
 Cypress.Commands.add('rejectCurrentMultisigTx', rejectCurrentMultisigTxs)
 
-Cypress.Commands.add(
-  'connectAccounts',
-  (accountAddresses = [Account1] as string[]) => {
-    cy.getAuthRequests().then((authRequests) => {
-      const requests = Object.values(authRequests)
-      // we should have 1 connection request to the extension
-      cy.wrap(requests.length).should('eq', 1)
-      // this request should be from the application Multix
-      cy.wrap(requests[0].origin).should('eq', 'Multix')
-      // let's allow Accounts to connect
-      cy.enableAuth(requests[0].id, accountAddresses)
-    })
-  }
-)
+Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string[]) => {
+  cy.getAuthRequests().then((authRequests) => {
+    const requests = Object.values(authRequests)
+    // we should have 1 connection request to the extension
+    cy.wrap(requests.length).should('eq', 1)
+    // this request should be from the application Multix
+    cy.wrap(requests[0].origin).should('eq', 'Multix')
+    // let's allow Accounts to connect
+    cy.enableAuth(requests[0].id, accountAddresses)
+  })
+})
 
 interface IVisitWithLocalStorage {
   url: string
