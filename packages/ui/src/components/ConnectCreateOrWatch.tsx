@@ -3,14 +3,16 @@ import { useAccounts } from '../contexts/AccountsContext'
 import { useNavigate } from 'react-router-dom'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
+import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 
 export const ConnectOrWatch = () => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
 
   return (
     <WrapperStyled>
-      {isAllowedToConnectToExtension ? (
+      {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
         <div data-cy="label-no-multisig-found">
           No multisig found for your accounts or watched accounts.
         </div>

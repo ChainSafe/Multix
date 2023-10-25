@@ -64,11 +64,10 @@ describe('Landing Page Messaging', () => {
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey]
     })
-    topMenuItems.connectButton().click()
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
-    landingPage.createOneButton().should('be.visible').should('be.enabled')
+    landingPage.connectWalletButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 
