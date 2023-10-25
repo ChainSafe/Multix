@@ -29,7 +29,7 @@ describe('Landing Page Messaging', () => {
     cy.initExtension([testAccounts['Test Account 1']])
     clickOnConnect()
     // don't connect any of the initialized accounts
-    cy.connectAccounts([], false)
+    cy.connectAccounts([])
     landingPage.shouldHaveNoAccountErrorAndWikiLink()
   })
 
@@ -38,7 +38,7 @@ describe('Landing Page Messaging', () => {
     cy.initExtension([testAccounts['Non Multisig Member']])
     clickOnConnect()
     // share the account that is not part of any multisig
-    cy.connectAccounts([testAccounts['Non Multisig Member'].address], false)
+    cy.connectAccounts([testAccounts['Non Multisig Member'].address])
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
