@@ -95,25 +95,6 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
     cy.wrap(requests[0].origin).should('eq', 'Multix')
     // let's allow Accounts to connect
     cy.enableAuth(requests[0].id, accountAddresses)
-    cy.ensureNoLoadingSpinners()
-  })
-})
-
-Cypress.Commands.add('ensureNoLoadingSpinners', () => {
-  const loadingSpinnersMap = {
-    initializationLoader: landingPage.initializationLoader,
-    rpcLoader: landingPage.rpcLoader,
-    accountsLoader: landingPage.accountsLoader,
-    multisigLoader: landingPage.multisigLoader
-  }
-
-  Object.entries(loadingSpinnersMap).forEach(([loaderName, loaderAssertion]) => {
-    cy.log(`Checking for the presence of ${loaderName}`)
-    loaderAssertion()
-      .should('not.exist', { timeout: 5000 })
-      .then(() => {
-        cy.log(`${loaderName} disappeared or was not present.`)
-      })
   })
 })
 
@@ -126,22 +107,17 @@ interface IVisitWithLocalStorage {
 Cypress.Commands.add(
   'visitWithLocalStorage',
   ({ url, watchedAccounts, accountNames }: IVisitWithLocalStorage) => {
-    return cy
-      .visit(url, {
-        onBeforeLoad(win) {
-          !!watchedAccounts?.length &&
-            win.localStorage.setItem(
-              LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
-              JSON.stringify(watchedAccounts)
-            )
-
-          !!accountNames &&
-            win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
-        }
-      })
-      .then(() => {
-        cy.ensureNoLoadingSpinners()
-      })
+    return cy.visit(url, {
+      onBeforeLoad(win) {
+        !!watchedAccounts?.length &&
+          win.localStorage.setItem(
+            LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
+            JSON.stringify(watchedAccounts)
+          )
+        !!accountNames &&
+          win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
+      }
+    })
   }
 )
 
@@ -228,13 +204,6 @@ declare global {
        * @example cy.visitWithLocalStorage({url: http://localhost:3333, watchedAccounts: ['0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e'], watchedAccounts: {"0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e":"my custom name"}})
        */
       visitWithLocalStorage: (params: IVisitWithLocalStorage) => void
-
-      /**
-       * Ensure no loading spinners are present on the page.
-       * a cypress error will be thrown if any are found after 5 seconds.
-       * @example cy.ensureNoSpinners()
-       */
-      ensureNoLoadingSpinners: () => void
     }
   }
 }

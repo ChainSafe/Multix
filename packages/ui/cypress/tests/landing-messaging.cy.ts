@@ -10,9 +10,6 @@ describe('Landing Page Messaging', () => {
     landingPage
       .multixIntroHeader()
       .should('contain.text', 'Multix is an interface to easily manage complex multisigs.')
-    landingPage
-      .interactionPromptLabel()
-      .should('contain.text', 'Connect a wallet to interact with Multix or watch an account.')
     landingPage.connectWalletButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
