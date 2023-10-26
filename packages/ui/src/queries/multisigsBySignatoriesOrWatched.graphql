@@ -10,16 +10,17 @@ subscription MultisigsBySignatoriesOrWatched(
         { signatory: { id_in: $watchedAccountIds } }
       ]
     }
+    limit: 500
   ) {
     multisig {
       address
       threshold
-      signatories {
+      signatories(limit: 100) {
         signatory {
           address
         }
       }
-      delegateeFor {
+      delegateeFor(limit: 100) {
         type
         delegator {
           address
