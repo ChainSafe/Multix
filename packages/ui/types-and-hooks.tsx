@@ -700,7 +700,7 @@ export type PureByIdsSubscription = { __typename?: 'Subscription', accounts: Arr
 export const MultisigByIdDocument = `
     query MultisigById($id: String!) {
   accounts(where: {id_eq: $id, isMultisig_eq: true}) {
-    signatories {
+    signatories(limit: 50) {
       signatory {
         id
         address
@@ -741,16 +741,17 @@ export const MultisigsBySignatoriesOrWatchedDocument = `
     subscription MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds: [String!]) {
   accountMultisigs(
     where: {OR: [{multisig: {id_in: $watchedAccountIds}}, {signatory: {id_in: $accountIds}}, {signatory: {id_in: $watchedAccountIds}}]}
+    limit: 500
   ) {
     multisig {
       address
       threshold
-      signatories {
+      signatories(limit: 100) {
         signatory {
           address
         }
       }
-      delegateeFor {
+      delegateeFor(limit: 100) {
         type
         delegator {
           address
@@ -763,16 +764,16 @@ export const MultisigsBySignatoriesOrWatchedDocument = `
     `;
 export const PureByIdsDocument = `
     subscription PureByIds($pureIds: [String!]) {
-  accounts(where: {AND: [{id_in: $pureIds}, {isPureProxy_eq: true}]}) {
+  accounts(where: {AND: [{id_in: $pureIds}, {isPureProxy_eq: true}]}, limit: 50) {
     address
-    delegatorFor {
+    delegatorFor(limit: 50) {
       id
       type
       delegatee {
         address
         isMultisig
         threshold
-        signatories {
+        signatories(limit: 50) {
           signatory {
             address
           }

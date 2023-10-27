@@ -3,19 +3,27 @@ import { useAccounts } from '../contexts/AccountsContext'
 import { useNavigate } from 'react-router-dom'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
+import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 
 export const ConnectOrWatch = () => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
 
   return (
     <WrapperStyled>
-      {isAllowedToConnectToExtension ? (
-        <div>No multisig found for your accounts or watched accounts.</div>
+      {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
+        <div data-cy="label-no-multisig-found">
+          No multisig found for your accounts or watched accounts.
+        </div>
       ) : (
         <>
-          <h1>Multix is an interface to easily manage complex multisigs.</h1>
-          <div>Connect a wallet to interact with Multix or watch an account.</div>
+          <h1 data-cy="header-multix-introduction">
+            Multix is an interface to easily manage complex multisigs.
+          </h1>
+          <div data-cy="label-interaction-prompt">
+            Connect a wallet to interact with Multix or watch an account.
+          </div>
         </>
       )}
       <ButtonWrapperStyled>
@@ -23,6 +31,7 @@ export const ConnectOrWatch = () => {
           <Button
             variant="primary"
             onClick={() => navigate('/create')}
+            data-cy="button-create-one"
           >
             Create one
           </Button>
@@ -30,14 +39,15 @@ export const ConnectOrWatch = () => {
           <Button
             variant="primary"
             onClick={allowConnectionToExtension}
+            data-cy="button-connect-wallet"
           >
             Connect Wallet
           </Button>
         )}
         or
         <Button
-          data-cy="button-watch-account"
           onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}
+          data-cy="button-watch-account"
         >
           Watch account
         </Button>

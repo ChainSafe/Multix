@@ -42,7 +42,7 @@ export const useDisplayLoader = () => {
 
   if (isLoadingMultisigs) {
     return (
-      <LoaderBoxStyled data-cy="loader-accounts-connection">
+      <LoaderBoxStyled data-cy="loader-multisigs">
         <CircularProgress />
         <div>Loading your multisigs...</div>
       </LoaderBoxStyled>
