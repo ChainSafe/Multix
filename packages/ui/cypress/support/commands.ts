@@ -3,8 +3,6 @@
 import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { topMenuItems } from './page-objects/topMenuItems'
-import { landingPage } from './page-objects/landingPage'
 import 'cypress-wait-until'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
@@ -191,7 +189,7 @@ declare global {
       /**
        * Connect accounts to Multix and wait until it's ready
        * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initExtension before
-       * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba], false)
+       * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
        */
       connectAccounts: (accountAddresses?: string[]) => void
 
