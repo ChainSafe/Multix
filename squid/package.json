@@ -14,7 +14,7 @@
     "typegen": "npx squid-substrate-typegen src/typegens/*.json",
     "start:indexer": "node -r dotenv/config lib/main.js",
     "start:indexer:rococo": "node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.rococo",
-    "start:graphql-server": "npx squid-graphql-server --subscriptions --sql-statement-timeout 3000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
+    "start:graphql-server": "npx squid-graphql-server --subscriptions --sql-statement-timeout 3000 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000 --subscription-max-response-size 500000 --max-response-size 1000",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,ts,tsx}' --fix",
     "format": " npx prettier --write ."
