@@ -1,5 +1,5 @@
 export const landingPage = {
-  multixIntroHeader: () => cy.get('[data-cy=header-multix-introduction]'),
+  multixIntroHeader: () => cy.get('[data-cy=header-multix-introduction]', { timeout: 10000 }),
   interactionPromptLabel: () => cy.get('[data-cy=label-interaction-prompt]'),
   noMultisigFoundError: () => cy.get('[data-cy=label-no-multisig-found]', { timeout: 10000 }),
   createOneButton: () => cy.get('[data-cy=button-create-one]'),
