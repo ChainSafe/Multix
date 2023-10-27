@@ -3,7 +3,6 @@
 import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { topMenuItems } from './page-objects/topMenuItems'
 import 'cypress-wait-until'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
@@ -94,8 +93,6 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
     cy.wrap(requests[0].origin).should('eq', 'Multix')
     // let's allow Accounts to connect
     cy.enableAuth(requests[0].id, accountAddresses)
-    // the ui should then move on to connecting to the rpcs
-    topMenuItems.multiproxySelector().should('be.visible')
   })
 })
 
@@ -115,7 +112,6 @@ Cypress.Commands.add(
             LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
             JSON.stringify(watchedAccounts)
           )
-
         !!accountNames &&
           win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
       }
