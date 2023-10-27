@@ -32,10 +32,10 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when account is shared but not part of a multisig', () => {
     cy.visit(landingPageUrl)
-    cy.initExtension([testAccounts['Non Multisig Member']])
+    cy.initExtension([testAccounts['Non Multisig Member 1']])
     clickOnConnect()
     // share the account that is not part of any multisig
-    cy.connectAccounts([testAccounts['Non Multisig Member'].address])
+    cy.connectAccounts([testAccounts['Non Multisig Member 1'].address])
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
@@ -44,8 +44,7 @@ describe('Landing Page Messaging', () => {
   })
 
   it('can see error message if watching an account that is not part of a multisig', () => {
-    // stub watched account
-    const nonMemberPublicKey = testAccounts['Non Multisig Member'].publicKey!
+    const nonMemberPublicKey = testAccounts['Non Multisig Member 1'].publicKey!
     cy.visitWithLocalStorage({
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey]
@@ -54,6 +53,23 @@ describe('Landing Page Messaging', () => {
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')
     landingPage.connectWalletButton().should('be.visible').should('be.enabled')
+    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
+  })
+
+  it('can see an error when connected to an account and watched but not part of a multisig', () => {
+    const nonMemberPublicKey = testAccounts['Non Multisig Member 1'].publicKey!
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      watchedAccounts: [nonMemberPublicKey]
+    })
+    cy.initExtension([testAccounts['Non Multisig Member 1']])
+    clickOnConnect()
+    // connect another account that is not part of any multisig
+    cy.connectAccounts([testAccounts['Non Multisig Member 2'].address])
+    landingPage
+      .noMultisigFoundError()
+      .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+    landingPage.createOneButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 })

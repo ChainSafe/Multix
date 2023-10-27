@@ -20,11 +20,18 @@ export const testAccounts = {
     type: 'sr25519',
     mnemonic: 'divorce lottery slender again adapt process slow pigeon suit chase news begin'
   } as InjectedAccountWitMnemonic,
-  'Non Multisig Member': {
+  'Non Multisig Member 1': {
     address: '5EnfL3AjWckttY6xuUqfFsfjcbxr1KqdzUKHTmh7cWrDKjGd',
     publicKey: '0x78784374dbeba13ff9789fca0e46c4960e219a1fff11ea69d6f0b57a7f3bfb61',
-    name: 'Non Multisig Member',
+    name: 'Non Multisig Member 1',
     type: 'sr25519',
     mnemonic: 'consider hockey practice evolve stool jaguar follow sponsor party trial view entry'
+  } as InjectedAccountWitMnemonic,
+  'Non Multisig Member 2': {
+    address: '5G9et86FAJ48fPgkHytVwdpHi9mCLKPpyT5fo1HGtRN9ZwKP',
+    publicKey: '0xb4b72576a091c5d691c2fd37f6eaa3d51c7480c2baaeab48737e5a209db4a431',
+    name: 'Non Multisig Member 2',
+    type: 'sr25519',
+    mnemonic: 'erosion never fee pill vocal fetch enforce soap betray zero answer hollow'
   } as InjectedAccountWitMnemonic
 }
