@@ -88,7 +88,7 @@ const Home = ({ className }: HomeProps) => {
           md={7}
           lg={8}
         >
-          <TransactionsWrapperStyled>
+          <TransactionsWrapperStyled data-cy="container-transaction-list">
             <h3>Transactions</h3>
             <TransactionList />
           </TransactionsWrapperStyled>

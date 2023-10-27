@@ -38,7 +38,10 @@ const Settings = () => {
         expanded={expanded === ACCORDION_WATCHED_ACCOUNTS}
         onChange={() => onToggle(ACCORDION_WATCHED_ACCOUNTS)}
       >
-        <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
+        <AccordionSummaryStyled
+          expandIcon={<ExpandMoreIcon size={20} />}
+          data-cy="accordion-title-watched-accounts"
+        >
           <HiOutlineEyeStyled color={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>Watched accounts</SummaryLabelStyled>
         </AccordionSummaryStyled>
@@ -50,7 +53,10 @@ const Settings = () => {
         expanded={expanded === ACCORDION_WALLET_CONNECT}
         onChange={() => onToggle(ACCORDION_WALLET_CONNECT)}
       >
-        <AccordionSummaryStyled expandIcon={<ExpandMoreIcon size={20} />}>
+        <AccordionSummaryStyled
+          expandIcon={<ExpandMoreIcon size={20} />}
+          data-cy="accordion-title-wallet-connect"
+        >
           <WalletConnectSVGStyled fill={theme.custom.proxyBadge.pure} />
           <SummaryLabelStyled>WalletConnect</SummaryLabelStyled>
         </AccordionSummaryStyled>

@@ -43,6 +43,7 @@ export const WalletConnectSession = () => {
           <AlertStyled
             severity="warning"
             variant="outlined"
+            data-cy="alert-wallet-connect-warning"
           >
             Please first select a Pure or Multisig that you are part of, to be able to use it with
             WalletConnect.
@@ -65,11 +66,13 @@ export const WalletConnectSession = () => {
             onChange={onUriChange}
             value={uri}
             disabled={!canUseWalletConnect}
+            data-cy="input-wallet-connect-key"
           />
           <ButtonStyled
             variant="primary"
             disabled={!uri || !canUseWalletConnect}
             onClick={onConnect}
+            data-cy="button-connect-dapp"
           >
             {loading ? <CircularProgress size={24} /> : 'Connect Dapp'}
           </ButtonStyled>
@@ -95,7 +98,7 @@ const InfoBox = () => (
       </span>
     }
   >
-    <span>
+    <span data-cy="tooltip-wallet-connect-info">
       <HiOutlineInformationCircle />
     </span>
   </Tooltip>

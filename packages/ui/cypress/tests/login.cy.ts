@@ -1,4 +1,4 @@
-import { injectedAccounts } from '../fixtures/injectedAccounts'
+import { testAccounts } from '../fixtures/testAccounts'
 import { landingPageUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
@@ -9,7 +9,7 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 describe('Connect Account', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
-    cy.initExtension(injectedAccounts)
+    cy.initExtension(Object.values(testAccounts))
     clickOnConnect()
   })
 
@@ -33,8 +33,8 @@ describe('Connect Account', () => {
   })
 
   it('Connect Accounts', () => {
-    const { address: address1 } = Object.values(injectedAccounts)[0]
-    const { address: address2 } = Object.values(injectedAccounts)[1]
+    const address1 = testAccounts['Test Account 1'].address
+    const address2 = testAccounts['Test Account 2'].address
 
     cy.connectAccounts([address1, address2])
 
@@ -43,7 +43,7 @@ describe('Connect Account', () => {
     newMultisigPage.addressSelector().click()
 
     accountDisplay.nameLabel().each((el, index) => {
-      const expectedName = Object.values(injectedAccounts)[index].name
+      const expectedName = Object.values(testAccounts)[index].name
       cy.wrap(el).should('have.text', expectedName)
     })
   })

@@ -4,8 +4,7 @@ import { useApi } from './ApiContext'
 import { decodeNames, encodeNames } from '../utils/namesUtil'
 
 export type AccountNames = { [address: string]: string }
-
-const LOCALSTORAGE_ACCOUNT_KEY = 'multix.accountNames'
+const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 
 type AccountNamesContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -40,7 +39,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
   )
 
   const loadNames = useCallback(() => {
-    const namesHexString = localStorage.getItem(LOCALSTORAGE_ACCOUNT_KEY)
+    const namesHexString = localStorage.getItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY)
 
     if (!chainInfo) {
       return
@@ -60,7 +59,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     if (!Object.entries(accountNames).length) return
 
     const decodedNames = decodeNames(accountNames)
-    localStorage.setItem(LOCALSTORAGE_ACCOUNT_KEY, JSON.stringify(decodedNames))
+    localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(decodedNames))
   }, [accountNames])
 
   const addName = useCallback(

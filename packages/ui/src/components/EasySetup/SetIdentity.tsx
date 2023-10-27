@@ -182,6 +182,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       className={className}
       container
       spacing={1}
+      data-cy="section-set-identity"
     >
       {identityFields &&
         Object.entries(identityFields).map(([fieldName, value]) => {
@@ -199,7 +200,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
               alignItems="center"
             >
               <TextFieldStyled
-                data-cy={`${fieldName}-identity`}
+                data-cy={`set-identity-field-${fieldName}`}
                 label={field}
                 placeholder={placeholder}
                 onChange={(val) =>
@@ -209,6 +210,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
                 required={required}
                 helperText={isFieldError && `Field has more than ${MAX_ALLOWED_VAL_LENGTH} chars`}
                 error={isFieldError || isDiplayNameError}
+                inputProps={{ 'data-cy': `input-set-identity-field-${fieldName}` }}
               />
             </Grid>
           )

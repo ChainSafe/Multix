@@ -42,6 +42,7 @@ export interface IMultisigContext {
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
   selectedIsWatched: boolean
+  refetch: () => void
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -184,13 +185,20 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const ownAddressIds = useAccountId(ownAddressList)
   const watchedAddressesIds = useAccountId(watchedAddresses)
-  const { isLoading: isMultisigsubLoading, error: isMultisigSubError } =
-    useMultisigsBySignatoriesOrWatchedSubscription({
-      accountIds: ownAddressIds,
-      watchedAccountIds: watchedAddressesIds,
-      onUpdate: refreshPureToQueryAndMultisigList
-    })
-  const { isLoading: isPureSubLoading, error: isPureSubError } = usePureByIdsSubscription({
+  const {
+    isLoading: isMultisigsubLoading,
+    error: isMultisigSubError,
+    refetch: refetchMultisigSub
+  } = useMultisigsBySignatoriesOrWatchedSubscription({
+    accountIds: ownAddressIds,
+    watchedAccountIds: watchedAddressesIds,
+    onUpdate: refreshPureToQueryAndMultisigList
+  })
+  const {
+    isLoading: isPureSubLoading,
+    error: isPureSubError,
+    refetch: refetchPureSub
+  } = usePureByIdsSubscription({
     pureIds: [...watchedAddressesIds, ...pureToQueryIds],
     onUpdate: refreshWatchedPureList
   })
@@ -277,6 +285,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
+  const refetch = useCallback(() => {
+    refetchMultisigSub()
+    refetchPureSub()
+  }, [refetchMultisigSub, refetchPureSub])
+
   return (
     <MultisigContext.Provider
       value={{
@@ -288,7 +301,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         error: isMultisigSubError || isPureSubError,
         getMultisigByAddress,
         getMultisigAsAccountBaseInfo,
-        selectedIsWatched
+        selectedIsWatched,
+        refetch
       }}
     >
       {children}

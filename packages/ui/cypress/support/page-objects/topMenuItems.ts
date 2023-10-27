@@ -1,4 +1,5 @@
 export const topMenuItems = {
+  desktopMenu: () => cy.get('[data-cy=menu-desktop]'),
   homeButton: () => cy.get('[data-cy=button-navigate-home]'),
   newMultisigButton: () => cy.get('[data-cy=button-navigate-new-multisig]'),
   settingsButton: () => cy.get('[data-cy=button-navigate-settings]'),
