@@ -8,10 +8,10 @@ import { styled } from '@mui/material/styles'
 import NetworkSelection from '../select/NetworkSelection'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
-import { isEmptyArray, getQuertStringFromSearchParams } from '../../utils'
+import { isEmptyArray } from '../../utils'
 import { useMemo } from 'react'
 import { Button, NavLink } from '../library'
-import { useSearchParams } from 'react-router-dom'
+import { createSearchParams, useSearchParams } from 'react-router-dom'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -48,7 +48,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           <NetworkSelection />
         </ListItemStyled>
         {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
-          const paramsString = getQuertStringFromSearchParams(params)
+          const paramsString = createSearchParams(params).toString()
 
           return isAccountConnected || isDisplayWhenNoWallet ? (
             <ListItemStyled

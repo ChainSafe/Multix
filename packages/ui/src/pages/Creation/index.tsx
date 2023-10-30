@@ -47,6 +47,13 @@ const MultisigCreation = ({ className }: Props) => {
       })
     }
   })
+  console.log(
+    'createSearchParam',
+    createSearchParams({
+      ...searchParams,
+      creationInProgress: 'true'
+    }).toString()
+  )
   const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()
   const [name, setName] = useState('')

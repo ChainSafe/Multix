@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import {
   MultisigsBySignatoriesOrWatchedSubscription,
   ProxyType,
@@ -242,17 +242,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [multiProxyList]
   )
 
-  // effect to update selectedMultiproxy when the multiproxyList is updated
-  // useEffect(() => {
-  //   if (!!multiProxyList.length && !!selectedMultiProxy) {
-  //     const newlySelected = selectedMultiProxy.proxy
-  //       ? getMultiProxyByAddress(selectedMultiProxy.proxy) // select the new proxy by pure proxy address
-  //       : getMultiProxyByAddress(selectedMultiProxy.multisigs[0].address)
-
-  //     setSelectedMultiProxy(newlySelected)
-  //   }
-  // }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
-
   const getMultisigByAddress = useCallback(
     (address: string) => {
       return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
@@ -285,12 +274,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         return
       }
 
-      // // for MultiProxy without a pure, we only support one multisig
-      // const addressToUse = multi.proxy || multi.multisigs[0]?.address
-
-      // if (!addressToUse) {
-      //   return
-      // }
       const addressInUrl = getMultiProxyAddress(multi)
       setAddress(addressInUrl)
       setSelectedMultiProxy(multi)

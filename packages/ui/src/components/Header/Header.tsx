@@ -7,11 +7,11 @@ import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
 import { ROUTES } from '../../pages/routes'
-import { isEmptyArray, getQuertStringFromSearchParams } from '../../utils'
+import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
 import { useSwtichAddress } from '../../hooks/useSwitchAddress'
 
 interface Props {
@@ -41,7 +41,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
         <DesktopMenuStyled data-cy="menu-desktop">
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
-              const paramsString = getQuertStringFromSearchParams(params)
+              const paramsString = createSearchParams(params).toString()
 
               return isAccountConnected || isDisplayWhenNoWallet ? (
                 <NavLink

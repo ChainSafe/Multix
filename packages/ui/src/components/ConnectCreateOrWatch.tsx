@@ -34,10 +34,7 @@ export const ConnectOrWatch = () => {
             onClick={() => {
               navigate({
                 pathname: '/create',
-                search: createSearchParams({
-                  ...searchParams,
-                  creationInProgress: 'true'
-                }).toString()
+                search: createSearchParams(searchParams).toString()
               })
             }}
             data-cy="button-create-one"
@@ -58,10 +55,7 @@ export const ConnectOrWatch = () => {
           onClick={() => {
             navigate({
               pathname: `/settings${WATCH_ACCOUNT_ANCHOR}`,
-              search: createSearchParams({
-                ...searchParams,
-                creationInProgress: 'true'
-              }).toString()
+              search: createSearchParams(searchParams).toString()
             })
           }}
           data-cy="button-watch-account"

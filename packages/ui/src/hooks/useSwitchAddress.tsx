@@ -18,8 +18,6 @@ export const useSwtichAddress = () => {
     selectedMultiProxyAddress
   } = useMultiProxy()
 
-  console.log('urlAddress && multiProxyList.length > 0', urlAddress, multiProxyList.length > 0)
-
   const setAddress = useCallback(
     (address: string) => {
       setSearchParams((prev) => {
@@ -38,7 +36,6 @@ export const useSwtichAddress = () => {
 
     // no address in the url, init with the first multiProxy from the list
     if (!urlAddress && !!defaultAddress) {
-      console.log('selecting multi', defaultAddress)
       setAddress(defaultAddress)
     }
   }, [defaultAddress, isMultiproxyLoading, multiProxyList.length, setAddress, urlAddress])

@@ -26,10 +26,7 @@ const HeaderView = () => {
           onClick={() => {
             navigate({
               pathname: '/overview',
-              search: createSearchParams({
-                ...searchParams,
-                creationInProgress: 'true'
-              }).toString()
+              search: createSearchParams(searchParams).toString()
             })
           }}
           variant="link"
