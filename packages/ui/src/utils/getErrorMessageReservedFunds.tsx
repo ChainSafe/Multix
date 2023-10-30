@@ -8,23 +8,27 @@ export const getErrorMessageReservedFunds = (
 ) => {
   if (!requiredBalanceString) return ''
 
-  const reservedMessage = reservedString ? (
-    <span>
-      Note that it includes ${reservedString} that will be reserved.{' '}
-      <a
-        href={wikiLinkReservedFunds}
-        about="_blank"
-      >
-        More info.
-      </a>
-    </span>
-  ) : (
-    ''
-  )
   return (
     <span>
       The {identifier} doesn't have the required {requiredBalanceString} to submit this transaction.{' '}
-      {reservedMessage}
+      <ReservedMessage reservedAmount={reservedString} />
+    </span>
+  )
+}
+
+const ReservedMessage = ({ reservedAmount }: { reservedAmount?: string }) => {
+  if (!reservedAmount) return null
+
+  return (
+    <span>
+      Note that it includes ${reservedAmount} that will be reserved.{' '}
+      <a
+        href={wikiLinkReservedFunds}
+        target="_blank"
+        rel="noreferrer"
+      >
+        More info.
+      </a>
     </span>
   )
 }
