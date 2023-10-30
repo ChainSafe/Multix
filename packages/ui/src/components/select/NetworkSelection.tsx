@@ -28,7 +28,7 @@ const NetworkSelection = () => {
         return
       }
 
-      selectNetwork(value)
+      selectNetwork(value, true)
     },
     [selectNetwork]
   )

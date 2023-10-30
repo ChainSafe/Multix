@@ -9,7 +9,7 @@ type NetworkContextProps = {
 }
 
 export interface INetworkContext {
-  selectNetwork: (network: string) => void
+  selectNetwork: (network: string, shouldResetAddress: boolean) => void
   selectedNetworkInfo?: NetworkInfo
   selectedNetwork?: SupportedNetworks
 }
@@ -24,10 +24,10 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const [searchParams, setSearchParams] = useSearchParams({ network: '' })
 
   const selectNetwork = useCallback(
-    (network: string) => {
-      const newSelectedNetwork = isSupportedNetwork(network)
+    (network: string, shouldResetAddress = false) => {
+      const isNewSelectedNetworkSupported = isSupportedNetwork(network)
 
-      if (!newSelectedNetwork) {
+      if (!isNewSelectedNetworkSupported) {
         console.error('This network is not supported', network)
         return
       }
@@ -35,6 +35,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
       setSelectedNetworkInfo(networkList[network])
       setSelectedNetwork(network)
       setSearchParams((prev) => {
+        shouldResetAddress && prev.delete('address')
         prev.set('network', network)
         return prev
       })

@@ -8,9 +8,10 @@ import { styled } from '@mui/material/styles'
 import NetworkSelection from '../select/NetworkSelection'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
-import { isEmptyArray } from '../../utils'
+import { isEmptyArray, getQuertStringFromSearchParams } from '../../utils'
 import { useMemo } from 'react'
 import { Button, NavLink } from '../library'
+import { useSearchParams } from 'react-router-dom'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void
@@ -20,6 +21,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
   const { ownAccountList } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const [params] = useSearchParams()
 
   return (
     <>
@@ -45,21 +47,23 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItemStyled>
           <NetworkSelection />
         </ListItemStyled>
-        {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
-          isAccountConnected || isDisplayWhenNoWallet ? (
+        {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
+          const paramsString = getQuertStringFromSearchParams(params)
+
+          return isAccountConnected || isDisplayWhenNoWallet ? (
             <ListItemStyled
               key={name}
               disablePadding
             >
               <NavLink
                 onClick={handleDrawerClose}
-                to={path}
+                to={`${path}?${paramsString}`}
               >
                 <ListItemText primary={name} />
               </NavLink>
             </ListItemStyled>
           ) : null
-        )}
+        })}
       </List>
     </>
   )
