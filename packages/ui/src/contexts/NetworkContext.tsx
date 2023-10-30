@@ -34,7 +34,10 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
 
       setSelectedNetworkInfo(networkList[network])
       setSelectedNetwork(network)
-      setSearchParams({ network })
+      setSearchParams((prev) => {
+        prev.set('network', network)
+        return prev
+      })
       localStorage.setItem(LOCALSTORAGE_SELECTED_NETWORK, network)
     },
     [setSearchParams]

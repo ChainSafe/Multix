@@ -10,8 +10,8 @@ import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { usePureByIdsSubscription } from '../hooks/usePureByIdSubscription'
-
-const LOCALSTORAGE_KEY = 'multix.selectedMultiProxy'
+import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
+import { useSearchParams } from 'react-router-dom'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
@@ -36,13 +36,15 @@ export interface IMultisigContext {
   selectedMultiProxy?: MultiProxy
   multiProxyList: MultiProxy[]
   isLoading: boolean
-  selectMultiProxy: (multi: MultiProxy) => void
+  selectMultiProxy: (multi: MultiProxy | string) => void
   selectedHasProxy: boolean
   error: Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
   selectedIsWatched: boolean
   refetch: () => void
+  defaultAddress?: string
+  selectedMultiProxyAddress?: string
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -63,6 +65,15 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     () => [...pureProxyList, ...multisigList],
     [multisigList, pureProxyList]
   )
+  const defaultAddress = useMemo(() => {
+    if (multiProxyList.length === 0) return
+
+    return multiProxyList[0].proxy || multiProxyList[0].multisigs[0].address
+  }, [multiProxyList])
+  const selectedMultiProxyAddress = useMemo(
+    () => getMultiProxyAddress(selectedMultiProxy),
+    [selectedMultiProxy]
+  )
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
@@ -77,6 +88,19 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [selectedMultiProxy, ownAddressList]
   )
   const [isRefreshingMultiProxyList, setIsRefreshingMultiProxyList] = useState(false)
+  const [, setSearchParams] = useSearchParams({
+    address: ''
+  })
+
+  const setAddress = useCallback(
+    (address: string) => {
+      setSearchParams((prev) => {
+        prev.set('address', address)
+        return prev
+      })
+    },
+    [setSearchParams]
+  )
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedSubscription | null) => {
@@ -219,15 +243,15 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   )
 
   // effect to update selectedMultiproxy when the multiproxyList is updated
-  useEffect(() => {
-    if (!!multiProxyList.length && !!selectedMultiProxy) {
-      const newlySelected = selectedMultiProxy.proxy
-        ? getMultiProxyByAddress(selectedMultiProxy.proxy) // select the new proxy by pure proxy address
-        : getMultiProxyByAddress(selectedMultiProxy.multisigs[0].address)
+  // useEffect(() => {
+  //   if (!!multiProxyList.length && !!selectedMultiProxy) {
+  //     const newlySelected = selectedMultiProxy.proxy
+  //       ? getMultiProxyByAddress(selectedMultiProxy.proxy) // select the new proxy by pure proxy address
+  //       : getMultiProxyByAddress(selectedMultiProxy.multisigs[0].address)
 
-      setSelectedMultiProxy(newlySelected)
-    }
-  }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
+  //     setSelectedMultiProxy(newlySelected)
+  //   }
+  // }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
   const getMultisigByAddress = useCallback(
     (address: string) => {
@@ -249,41 +273,39 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const selectMultiProxy = useCallback(
     (newMulti: typeof selectedMultiProxy | string) => {
-      let _multi: MultiProxy | undefined
+      let multi: MultiProxy | undefined
 
       if (typeof newMulti === 'string') {
-        _multi = getMultiProxyByAddress(newMulti)
+        multi = getMultiProxyByAddress(newMulti)
       } else {
-        _multi = newMulti
+        multi = newMulti
       }
-
-      // for MultiProxy without a pure, we only support one multisig
-      const addressToUse = _multi?.proxy || _multi?.multisigs[0].address
-
-      if (!addressToUse) {
-        return
-      }
-
-      localStorage.setItem(LOCALSTORAGE_KEY, addressToUse)
-      const multi = getMultiProxyByAddress(addressToUse)
 
       if (!multi) {
         return
       }
 
+      // // for MultiProxy without a pure, we only support one multisig
+      // const addressToUse = multi.proxy || multi.multisigs[0]?.address
+
+      // if (!addressToUse) {
+      //   return
+      // }
+      const addressInUrl = getMultiProxyAddress(multi)
+      setAddress(addressInUrl)
       setSelectedMultiProxy(multi)
     },
-    [getMultiProxyByAddress]
+    [getMultiProxyByAddress, setAddress]
   )
 
-  useEffect(() => {
-    if (multiProxyList.length > 0 && !selectedMultiProxy) {
-      const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
-      const previouslySelected = multiAddress && getMultiProxyByAddress(multiAddress)
+  // useEffect(() => {
+  //   if (multiProxyList.length > 0 && !selectedMultiProxy) {
+  //     const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
+  //     const previouslySelected = multiAddress && getMultiProxyByAddress(multiAddress)
 
-      setSelectedMultiProxy(previouslySelected || multiProxyList[0])
-    }
-  }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
+  //     setSelectedMultiProxy(previouslySelected || multiProxyList[0])
+  //   }
+  // }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
   const refetch = useCallback(() => {
     refetchMultisigSub()
@@ -293,6 +315,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   return (
     <MultisigContext.Provider
       value={{
+        selectedMultiProxyAddress,
+        defaultAddress,
         selectedMultiProxy,
         multiProxyList,
         selectMultiProxy,
@@ -313,7 +337,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 const useMultiProxy = () => {
   const context = useContext(MultisigContext)
   if (context === undefined) {
-    throw new Error('useMultisigList must be used within a MultisigContextProvider')
+    throw new Error('useMultiProxy must be used within a MultiProxyContextProvider')
   }
   return context
 }
