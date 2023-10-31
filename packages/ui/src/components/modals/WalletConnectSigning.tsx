@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button } from '../library'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
@@ -21,6 +21,7 @@ import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectError
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { formatBnBalance } from '../../utils/formatBnBalance'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -43,7 +44,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const { selectedAccount, selectedSigner } = useAccounts()
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { addToast } = useToasts()
   const originAddress = request.params.request.params.address
   const isProxySelected = useMemo(
@@ -86,9 +87,12 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      setErrorMessage(
-        `The "Signing with" account doesn't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
+      const errorWithReservedFunds = getErrorMessageReservedFunds(
+        '"Signing with" account',
+        requiredBalanceString,
+        reservedString
       )
+      setErrorMessage(errorWithReservedFunds)
     }
   }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
 
