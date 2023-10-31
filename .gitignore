@@ -127,4 +127,4 @@ packages/ui/cypress/screenshots/*
 packages/ui/cypress/videos/*
 packages/ui/cypress/downloads/*
 
-db.sqlite
+squid/db.sqlite*

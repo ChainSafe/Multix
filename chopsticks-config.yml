@@ -1,6 +1,6 @@
 endpoint: wss://rococo-rpc.polkadot.io
 mock-signature-host: true
-block: 7437969
+block: 7717608
 db: ./db.sqlite
 
 import-storage:
