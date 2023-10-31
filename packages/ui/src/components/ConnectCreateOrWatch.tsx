@@ -54,8 +54,9 @@ export const ConnectOrWatch = () => {
         <Button
           onClick={() => {
             navigate({
-              pathname: `/settings${WATCH_ACCOUNT_ANCHOR}`,
-              search: createSearchParams(searchParams).toString()
+              pathname: '/settings',
+              search: createSearchParams(searchParams).toString(),
+              hash: WATCH_ACCOUNT_ANCHOR
             })
           }}
           data-cy="button-watch-account"

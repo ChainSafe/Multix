@@ -11,7 +11,7 @@ import WalletConnectSVG from '../../logos/walletConnectSVG.svg?react'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
-export const WATCH_ACCOUNT_ANCHOR = '#watched-accounts'
+export const WATCH_ACCOUNT_ANCHOR = 'watched-accounts'
 
 type AccordionNames = typeof ACCORDION_WATCHED_ACCOUNTS | typeof ACCORDION_WALLET_CONNECT
 
@@ -26,7 +26,7 @@ const Settings = () => {
   }, [])
 
   useEffect(() => {
-    if (hash === WATCH_ACCOUNT_ANCHOR) {
+    if (hash === `#${WATCH_ACCOUNT_ANCHOR}`) {
       onToggle(ACCORDION_WATCHED_ACCOUNTS, true)
     }
   }, [hash, onToggle])
