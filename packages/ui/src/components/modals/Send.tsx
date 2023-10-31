@@ -21,6 +21,7 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import SetIdentity from '../EasySetup/SetIdentity'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -46,7 +47,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { addToast } = useToasts()
   const possibleOrigin = useMemo(() => {
     const proxyBaseInfo = {
@@ -106,9 +107,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      setErrorMessage(
-        `The "Signing with" account doesn't have the required ${requiredBalanceString} to submit this transaction. Note that it includes ${reservedString} that will be reserved and returned upon tx approval/cancellation`
+      const errorWithReservedFunds = getErrorMessageReservedFunds(
+        '"Signing with" account',
+        requiredBalanceString,
+        reservedString
       )
+      setErrorMessage(errorWithReservedFunds)
     }
   }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
 
@@ -430,7 +434,7 @@ export default styled(Send)(
   }
 
   .errorMessage {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     color: ${theme.custom.error};
   }
 `
