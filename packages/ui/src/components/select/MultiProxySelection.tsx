@@ -29,7 +29,13 @@ const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
 
 const MultiProxySelection = ({ className }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
-  const { multiProxyList, selectedMultiProxy, selectMultiProxy, isLoading } = useMultiProxy()
+  const {
+    multiProxyList,
+    selectedMultiProxy,
+    selectMultiProxy,
+    isLoading,
+    canFindMultiProxyFromUrl
+  } = useMultiProxy()
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
   // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
@@ -106,7 +112,7 @@ const MultiProxySelection = ({ className }: Props) => {
       label=""
       InputProps={{
         ...params.InputProps,
-        startAdornment: (
+        startAdornment: addressToShow && (
           <InputAdornment position="start">
             <IdenticonBadge
               address={addressToShow}
@@ -142,7 +148,7 @@ const MultiProxySelection = ({ className }: Props) => {
       renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
-      value={selectedMultiProxy || multiProxyList[0]}
+      value={canFindMultiProxyFromUrl ? selectedMultiProxy || multiProxyList[0] : ''}
       data-cy="select-multiproxy"
     />
   )

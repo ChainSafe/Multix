@@ -36,7 +36,7 @@ export interface IMultisigContext {
   selectedMultiProxy?: MultiProxy
   multiProxyList: MultiProxy[]
   isLoading: boolean
-  selectMultiProxy: (multi: MultiProxy | string) => void
+  selectMultiProxy: (multi: MultiProxy | string) => boolean
   selectedHasProxy: boolean
   error: Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
@@ -45,6 +45,8 @@ export interface IMultisigContext {
   refetch: () => void
   defaultAddress?: string
   selectedMultiProxyAddress?: string
+  setCanFindMultiProxyFromUrl: React.Dispatch<React.SetStateAction<boolean>>
+  canFindMultiProxyFromUrl: boolean
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -56,20 +58,18 @@ const getSignatoriesFromAccount = (
 }
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
+  const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
-  const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList']>([])
-  const [multisigList, setMultisigList] = useState<IMultisigContext['multiProxyList']>([])
-  const [pureToQuery, setPureToQuery] = useState<string[]>([])
-  const multiProxyList = useMemo(
-    () => [...pureProxyList, ...multisigList],
-    [multisigList, pureProxyList]
+  const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList'] | null>(
+    null
   )
-  const defaultAddress = useMemo(() => {
-    if (multiProxyList.length === 0) return
+  const [multisigList, setMultisigList] = useState<IMultisigContext['multiProxyList'] | null>(null)
+  const [pureToQuery, setPureToQuery] = useState<string[]>([])
+  const multiProxyList = useMemo(() => {
+    return [...(pureProxyList || []), ...(multisigList || [])]
+  }, [multisigList, pureProxyList])
 
-    return multiProxyList[0].proxy || multiProxyList[0].multisigs[0].address
-  }, [multiProxyList])
   const selectedMultiProxyAddress = useMemo(
     () => getMultiProxyAddress(selectedMultiProxy),
     [selectedMultiProxy]
@@ -105,6 +105,12 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedSubscription | null) => {
       setIsRefreshingMultiProxyList(true)
+      // Data is only null when it is fetching
+      if (!data) {
+        setPureToQuery([])
+        setMultisigList(null)
+        setPureProxyList(null)
+      }
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureToQuery([])
@@ -234,7 +240,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       return multiProxyList.find(
         (multiProxy) =>
           // either by proxy address
-          multiProxy?.proxy === address ||
+          multiProxy.proxy === address ||
           // or by multisig address
           multiProxy.multisigs.some((multisig) => multisig.address === address)
       )
@@ -271,12 +277,13 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       }
 
       if (!multi) {
-        return
+        return false
       }
 
       const addressInUrl = getMultiProxyAddress(multi)
       setAddress(addressInUrl)
       setSelectedMultiProxy(multi)
+      return true
     },
     [getMultiProxyByAddress, setAddress]
   )
@@ -295,6 +302,37 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     refetchPureSub()
   }, [refetchMultisigSub, refetchPureSub])
 
+  const isDoneFetchingIndexerInfo = useMemo(() => {
+    if (ownAddressList.length === 0 && watchedAddresses.length === 0) {
+      // nothing to fetch
+      return true
+    }
+
+    if (!multisigList || !pureProxyList) {
+      // if any is null, we're still fetching
+      return false
+    }
+
+    return true
+  }, [multisigList, ownAddressList.length, pureProxyList, watchedAddresses.length])
+
+  const isLoading = useMemo(
+    () =>
+      isMultisigsubLoading ||
+      isPureSubLoading ||
+      isRefreshingMultiProxyList ||
+      !isDoneFetchingIndexerInfo,
+    [isDoneFetchingIndexerInfo, isMultisigsubLoading, isPureSubLoading, isRefreshingMultiProxyList]
+  )
+
+  const defaultAddress = useMemo(() => {
+    if (multiProxyList?.length === 0 || isLoading) {
+      return undefined
+    }
+
+    return multiProxyList?.[0].proxy || multiProxyList?.[0].multisigs[0].address
+  }, [isLoading, multiProxyList])
+
   return (
     <MultisigContext.Provider
       value={{
@@ -303,13 +341,15 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedMultiProxy,
         multiProxyList,
         selectMultiProxy,
-        isLoading: isMultisigsubLoading || isPureSubLoading || isRefreshingMultiProxyList,
+        isLoading,
         selectedHasProxy,
         error: isMultisigSubError || isPureSubError,
         getMultisigByAddress,
         getMultisigAsAccountBaseInfo,
         selectedIsWatched,
-        refetch
+        refetch,
+        canFindMultiProxyFromUrl,
+        setCanFindMultiProxyFromUrl
       }}
     >
       {children}

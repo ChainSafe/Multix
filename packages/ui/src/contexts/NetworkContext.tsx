@@ -24,7 +24,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
   const [searchParams, setSearchParams] = useSearchParams({ network: '' })
 
   const selectNetwork = useCallback(
-    (network: string, shouldResetAddress = false) => {
+    (network: string, shouldResetAccountAddress = false) => {
       const isNewSelectedNetworkSupported = isSupportedNetwork(network)
 
       if (!isNewSelectedNetworkSupported) {
@@ -35,7 +35,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
       setSelectedNetworkInfo(networkList[network])
       setSelectedNetwork(network)
       setSearchParams((prev) => {
-        shouldResetAddress && prev.delete('address')
+        shouldResetAccountAddress && prev.delete('address')
         prev.set('network', network)
         return prev
       })

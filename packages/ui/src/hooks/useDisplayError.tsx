@@ -9,11 +9,13 @@ import { Button, Link } from '../components/library'
 import { Center } from '../components/layout/Center'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
+import { useSearchParams } from 'react-router-dom'
 
 export const useDisplayError = () => {
   const { isExtensionError, isAccountLoading } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
-  const { error: multisigQueryError, refetch } = useMultiProxy()
+  const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
+  const [, setSearchParams] = useSearchParams()
 
   if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
     return (
@@ -44,6 +46,29 @@ export const useDisplayError = () => {
           <ErrorOutlineIcon size={64} />
           <div>Connection timed out.</div>
           <Button onClick={refetch}>Reconnect</Button>
+        </ErrorMessageStyled>
+      </CenterStyled>
+    )
+  }
+
+  if (!canFindMultiProxyFromUrl) {
+    return (
+      <CenterStyled>
+        <ErrorMessageStyled>
+          <ErrorOutlineIcon size={64} />
+          <div data-cy="label-linked-address-not-found">
+            The linked address can't be found in your accounts or watched accounts.
+          </div>
+          <Button
+            onClick={() =>
+              setSearchParams((prev) => {
+                prev.delete('address')
+                return prev
+              })
+            }
+          >
+            Reset
+          </Button>
         </ErrorMessageStyled>
       </CenterStyled>
     )

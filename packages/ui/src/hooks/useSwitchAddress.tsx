@@ -15,7 +15,8 @@ export const useSwtichAddress = () => {
     isLoading: isMultiproxyLoading,
     selectMultiProxy,
     defaultAddress,
-    selectedMultiProxyAddress
+    selectedMultiProxyAddress,
+    setCanFindMultiProxyFromUrl
   } = useMultiProxy()
 
   const setAddress = useCallback(
@@ -29,25 +30,48 @@ export const useSwtichAddress = () => {
   )
 
   useEffect(() => {
-    if (isMultiproxyLoading || multiProxyList.length === 0) {
+    if (isMultiproxyLoading) {
       // we're not yet initialized
       return
     }
 
-    // no address in the url, init with the first multiProxy from the list
     if (!urlAddress && !!defaultAddress) {
+      // no address in the url, init with the first multiProxy from the list
       setAddress(defaultAddress)
+      return
     }
-  }, [defaultAddress, isMultiproxyLoading, multiProxyList.length, setAddress, urlAddress])
+  }, [
+    defaultAddress,
+    isMultiproxyLoading,
+    multiProxyList,
+    setAddress,
+    setCanFindMultiProxyFromUrl,
+    urlAddress
+  ])
 
   // the url address is driving the UI if there's a mismatch
   // force the url address to match
   useEffect(() => {
-    if (!!urlAddress && urlAddress !== selectedMultiProxyAddress) {
-      console.log('missmatch use last', selectedMultiProxyAddress, urlAddress)
-      selectMultiProxy(urlAddress)
+    if (isMultiproxyLoading) {
+      // we're not yet initialized
+      return
     }
-  }, [urlAddress, multiProxyList, selectMultiProxy, defaultAddress, selectedMultiProxyAddress])
 
-  return { currentAddress: urlAddress, setAddress }
+    if (!urlAddress || urlAddress === selectedMultiProxyAddress) {
+      setCanFindMultiProxyFromUrl(true)
+    }
+
+    if (!!urlAddress && urlAddress !== selectedMultiProxyAddress) {
+      const isSuccess = selectMultiProxy(urlAddress)
+      setCanFindMultiProxyFromUrl(isSuccess)
+    }
+  }, [
+    urlAddress,
+    multiProxyList,
+    selectMultiProxy,
+    defaultAddress,
+    selectedMultiProxyAddress,
+    isMultiproxyLoading,
+    setCanFindMultiProxyFromUrl
+  ])
 }
