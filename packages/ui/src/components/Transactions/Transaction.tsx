@@ -44,7 +44,10 @@ const Transaction = ({
   }, [aggregatedData, onOpenSigningModal, onSuccess, possibleSigners])
 
   return (
-    <Paper className={className}>
+    <Paper
+      className={className}
+      data-cy="container-pending-tx-item"
+    >
       <Badge
         className={`badge ${appliedClass}`}
         color="primary"
@@ -70,7 +73,12 @@ const Transaction = ({
           children={
             (isProposer || possibleSigners.length > 0) && (
               <TransactionFooterStyled>
-                <ButtonStyled onClick={onOpenModal}>Review</ButtonStyled>
+                <ButtonStyled
+                  onClick={onOpenModal}
+                  data-cy="button-review-tx"
+                >
+                  Review
+                </ButtonStyled>
               </TransactionFooterStyled>
             )
           }

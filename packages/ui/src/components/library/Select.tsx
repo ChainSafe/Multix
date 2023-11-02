@@ -21,6 +21,7 @@ interface SelectProps {
   fullWidth?: boolean
   children?: React.ReactNode[] | React.ReactNode
   sx?: SxProps<Theme>
+  testId?: string
 }
 
 const Select = ({
@@ -31,7 +32,8 @@ const Select = ({
   fullWidth,
   inputSize,
   children,
-  sx
+  sx,
+  testId
 }: SelectProps) => {
   const matchesMediumScreen = !useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const minifiedVersion = minified ?? matchesMediumScreen
@@ -45,12 +47,14 @@ const Select = ({
       IconComponent={HiOutlineChevronDown}
       MenuProps={MenuPropsStyles}
       onChange={onChange}
+      data-cy={`select-${testId}`}
     >
       {menuItems
         ? menuItems.map(({ value, logo }) => (
             <MenuItemStyled
               key={value}
               value={value}
+              data-cy={`select-option-${testId}-${value.toLocaleLowerCase().replace(/ /g, '-')}`}
             >
               {logo && (
                 <ImgStyled

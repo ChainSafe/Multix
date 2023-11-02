@@ -6,10 +6,10 @@ import { AccountBadge, IconSizeVariant } from '../types'
 import { getDisplayAddress } from '../utils'
 import IdenticonBadge from './IdenticonBadge'
 import { useApi } from '../contexts/ApiContext'
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import IdentityIcon from './IdentityIcon'
 import Balance from './library/Balance'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
+import { useIdentity } from '../hooks/useIdentity'
 
 interface Props {
   address: string
@@ -30,44 +30,27 @@ const AccountDisplay = ({
 }: Props) => {
   const { getNamesWithExtension } = useAccountNames()
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
-  const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
   const { api } = useApi()
   const [mainDisplay, setMainDisplay] = useState<string>('')
   const [sub, setSub] = useState<string | null>(null)
   const getEncodedAddress = useGetEncodedAddress()
   const encodedAddress = useMemo(() => getEncodedAddress(address), [address, getEncodedAddress])
+  const identity = useIdentity(address)
 
   useEffect(() => {
-    if (!api) {
-      return
+    if (!identity) return
+
+    if (identity.displayParent && identity.display) {
+      // when an identity is a sub identity `displayParent` is set
+      // and `display` get the sub identity
+      setMainDisplay(identity.displayParent)
+      setSub(identity.display)
+    } else {
+      // There should not be a `displayParent` without a `display`
+      // but we can't be too sure.
+      setMainDisplay(identity.displayParent || identity.display || '')
     }
-
-    let unsubscribe: () => void
-
-    api.derive.accounts
-      .info(address, (info: DeriveAccountInfo) => {
-        setIdentity(info.identity)
-
-        if (info.identity.displayParent && info.identity.display) {
-          // when an identity is a sub identity `displayParent` is set
-          // and `display` get the sub identity
-          setMainDisplay(info.identity.displayParent)
-          setSub(info.identity.display)
-        } else {
-          // There should not be a `displayParent` without a `display`
-          // but we can't be too sure.
-          setMainDisplay(
-            info.identity.displayParent || info.identity.display || info.nickname || ''
-          )
-        }
-      })
-      .then((unsub) => {
-        unsubscribe = unsub
-      })
-      .catch((e) => console.error(e))
-
-    return () => unsubscribe && unsubscribe()
-  }, [address, api])
+  }, [address, api, identity])
 
   return (
     <div className={className}>

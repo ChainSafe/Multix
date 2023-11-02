@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-large
-version: 6
+version: 7
 description: |-
   Squid for Multix
 
@@ -40,6 +40,8 @@ deploy:
       cmd: ['sqd', 'start-moonriver']
     - name: khala-processor
       cmd: ['sqd', 'start-khala']
+    - name: joystream-processor
+      cmd: ['sqd', 'start-joystream']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
@@ -47,7 +49,26 @@ deploy:
     # - name: westend-processor
     #   cmd: ['sqd', 'start-westend']
   api:
-    cmd: ['npx', 'squid-graphql-server', '--subscriptions']
+    cmd:
+      [
+        'npx',
+        'squid-graphql-server',
+        '--subscriptions',
+        '--sql-statement-timeout',
+        3000,
+        '--dumb-cache',
+        'in-memory',
+        '--dumb-cache-ttl',
+        1000,
+        '--dumb-cache-size',
+        100,
+        '--dumb-cache-max-age',
+        1000,
+        '--subscription-max-response-size',
+        500000,
+        '--max-response-size',
+        1000
+      ]
 scale:
   dedicated: true
   addons:

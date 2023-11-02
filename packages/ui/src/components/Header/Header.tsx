@@ -35,7 +35,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
             />
           </HomeLinkStyled>
         </LogoWrapperStyled>
-        <DesktopMenuStyled>
+        <DesktopMenuStyled data-cy="menu-desktop">
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
@@ -55,6 +55,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 data-cy="button-menu-connect"
                 onClick={allowConnectionToExtension}
                 disabled={isAccountLoading}
+                variant="primary"
               >
                 Connect
               </ConnectButtonStyled>

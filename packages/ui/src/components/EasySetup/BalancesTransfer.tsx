@@ -3,12 +3,12 @@ import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
-import { TextFieldStyled } from '../library'
+import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const accountBase = useAccountBaseFromAccountList()
+  const accountBase = useAccountBaseFromAccountList({ withAccountsFromAddressBook: true })
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
   const { api, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
@@ -121,10 +121,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         allowAnyAddressInput={true}
         onInputChange={onInputChange}
         accountList={accountBase}
-        testId="field-to"
+        testId="send-tokens-field-to"
       />
-      <TextFieldStyled
-        data-cy="field-amount"
+      <TextField
+        data-cy="send-tokens-field-amount"
         label={`Amount`}
         onChange={onAmountChange}
         value={amountString}

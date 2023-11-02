@@ -1,5 +1,5 @@
 import { cryptoWaitReady } from '@polkadot/util-crypto'
-import { InjectedAccountWitMnemonic } from '../fixtures/injectedAccounts'
+import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { Keyring, WsProvider, ApiPromise } from '@polkadot/api'
 import { MultisigStorageInfo } from '../../src/types'
 import { PendingTx } from '../../src/hooks/usePendingTx'

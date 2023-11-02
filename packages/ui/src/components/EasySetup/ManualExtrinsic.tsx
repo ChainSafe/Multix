@@ -118,7 +118,6 @@ const ManualExtrinsic = ({
   const isValidAmountString = useCallback(
     (value: any) => {
       if (!value.match(/^[0-9]+([.][0-9]+)?$/)) {
-        console.log('wrong boom')
         onSetErrorMessage('Only numbers and "." are accepted.')
         return false
       }
@@ -350,7 +349,6 @@ const ManualExtrinsic = ({
             <MenuItem
               key={text}
               value={text}
-              sx={{}}
             >
               <div className="pallet">{text}</div>
             </MenuItem>
