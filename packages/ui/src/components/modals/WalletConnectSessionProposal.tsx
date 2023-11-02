@@ -33,7 +33,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
   useEffect(() => {
     if (!web3wallet || !sessionProposal) return
 
-    const wCRequestedNetwork = sessionProposal?.params.requiredNamespaces.polkadot.chains?.[0]
+    const wCRequestedNetwork = sessionProposal?.params.requiredNamespaces?.polkadot?.chains?.[0]
 
     if (wCRequestedNetwork !== currentNamespace) {
       setErrorMessage(
@@ -53,7 +53,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         namespaces: {
           polkadot: {
             accounts: accountsToShare,
-            methods: sessionProposal.params.requiredNamespaces.polkadot.methods,
+            methods: sessionProposal.params.requiredNamespaces?.polkadot?.methods,
             events: []
           }
         }
@@ -90,7 +90,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
       <DialogTitle>WalletConnect Connection Request</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
-          {!!errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+          {!!errorMessage && <AlertStyled severity="error">{errorMessage}</AlertStyled>}
           <Grid
             item
             xs={12}
@@ -100,11 +100,11 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
             <AppInfoStyled>Website:</AppInfoStyled> {sessionProposal?.params.proposer.metadata.url}
             <br />
             <AppInfoStyled>Methods:</AppInfoStyled>{' '}
-            {sessionProposal?.params.requiredNamespaces.polkadot?.methods.map(
+            {sessionProposal?.params.requiredNamespaces?.polkadot?.methods?.map(
               (method, index) =>
                 `${method}${
                   index ===
-                  (sessionProposal?.params.requiredNamespaces.polkadot?.methods.length - 1 || 0)
+                  (sessionProposal?.params.requiredNamespaces?.polkadot?.methods?.length - 1 || 0)
                     ? ''
                     : ', '
                 }`
@@ -180,6 +180,11 @@ const ButtonContainerStyled = styled(Grid)`
     margin-left: 1rem;
   }
 `
+
+const AlertStyled = styled(Alert)`
+  margin-bottom: 1rem;
+`
+
 export default styled(WalletConnectSessionProposal)`
   .accountEdition {
     margin-bottom: 1rem;
