@@ -10,6 +10,14 @@ import-storage:
         - providers: 1
           data:
             free: '10000000000000000000'
+      - - - 5DqVySMC366P8NRjdyp948TJj64hAvg17eaiEn4ZbuKCNZHc
+        - providers: 1
+          data:
+            free: '10000000000000000000'
+      - - - 5HKy3cW562kw9zXWQFtMWGqhNYgjLZGntUeYhNFsYcEKqjbc
+        - providers: 1
+          data:
+            free: '10000000000000000000'
   Council:
     Members: [5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY]
   PhragmenElection:

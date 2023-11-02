@@ -71,24 +71,24 @@
         "dotenv_config_path=assets/envs/.env.astar"
       ]
     },
-    "start-assethub-polkadot": {
-      "description": "starts the indexer with assethub-polkadot",
+    "start-asset-hub-polkadot": {
+      "description": "starts the indexer with asset-hub-polkadot",
       "cmd": [
         "node",
         "-r",
         "dotenv/config",
         "lib/main",
-        "dotenv_config_path=assets/envs/.env.assethub-polkadot"
+        "dotenv_config_path=assets/envs/.env.asset-hub-polkadot"
       ]
     },
-    "start-assethub-kusama": {
-      "description": "starts the indexer with assethub-kusama",
+    "start-asset-hub-kusama": {
+      "description": "starts the indexer with asset-hub-kusama",
       "cmd": [
         "node",
         "-r",
         "dotenv/config",
         "lib/main",
-        "dotenv_config_path=assets/envs/.env.assethub-kusama"
+        "dotenv_config_path=assets/envs/.env.asset-hub-kusama"
       ]
     },
     "start-hydradx": {
