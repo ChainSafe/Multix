@@ -115,6 +115,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureToQuery([])
         setMultisigList([])
+        setPureProxyList([])
       }
 
       if (!!data?.accountMultisigs && data.accountMultisigs.length > 0) {
@@ -155,6 +156,9 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
         // add the selection to the pure to query
         setPureToQuery(Array.from(pureToQuerySet))
+        // if there is nothing to query set the list to empty
+        // to signify that the pure proxies are done loading
+        pureToQuerySet.size === 0 && setPureProxyList([])
       }
 
       setIsRefreshingMultiProxyList(false)
@@ -314,7 +318,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
 
     return true
-  }, [multisigList, ownAddressList.length, pureProxyList, watchedAddresses.length])
+  }, [multisigList, ownAddressList, pureProxyList, watchedAddresses])
 
   const isLoading = useMemo(
     () =>
