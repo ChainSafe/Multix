@@ -69,7 +69,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const multiProxyList = useMemo(() => {
     return [...(pureProxyList || []), ...(multisigList || [])]
   }, [multisigList, pureProxyList])
-
   const selectedMultiProxyAddress = useMemo(
     () => getMultiProxyAddress(selectedMultiProxy),
     [selectedMultiProxy]
@@ -115,7 +114,9 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureToQuery([])
         setMultisigList([])
-        setPureProxyList([])
+        // watched addresses are part of the pure to query
+        // only signal we're done querying if there are no watched addresses
+        watchedAddresses.length === 0 && setPureProxyList([])
       }
 
       if (!!data?.accountMultisigs && data.accountMultisigs.length > 0) {
@@ -156,14 +157,15 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
         // add the selection to the pure to query
         setPureToQuery(Array.from(pureToQuerySet))
-        // if there is nothing to query set the list to empty
+
+        // if there is no pure to query set the PureProxyList to empty array
         // to signify that the pure proxies are done loading
-        pureToQuerySet.size === 0 && setPureProxyList([])
+        pureToQuerySet.size === 0 && watchedAddresses.length === 0 && setPureProxyList([])
       }
 
       setIsRefreshingMultiProxyList(false)
     },
-    []
+    [watchedAddresses]
   )
 
   const refreshWatchedPureList = useCallback((data: PureByIdsSubscription | null) => {

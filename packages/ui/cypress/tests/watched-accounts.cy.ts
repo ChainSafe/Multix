@@ -142,14 +142,12 @@ describe('Watched Accounts', () => {
     const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
-      url: settingsPageWatchAccountUrl,
+      url: landingPageUrl,
       accountNames: {
         [purePublicKey]: pureName
       },
       watchedAccounts: [purePublicKey]
     })
-    // navigate to the home page and edit the name
-    topMenuItems.homeButton().click()
     multisigPage.optionsMenuButton().click()
     multisigPage.editNamesMenuOption().click()
     editNamesModal.body().should('be.visible')
