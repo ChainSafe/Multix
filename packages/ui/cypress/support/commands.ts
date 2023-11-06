@@ -47,14 +47,27 @@ const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 const extension = new Extension()
 const Account1 = testAccounts['Multisig Member Account 1'].address
 
+const injectExtension = (win: Cypress.AUTWindow, extension: Extension) => {
+  Object.defineProperty(win, 'injectedWeb3', {
+    get: () => extension.getInjectedEnable()
+  })
+}
 Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')
   cy.wrap(extension.init(accounts))
 
   return cy.window().then((win) => {
-    Object.defineProperty(win, 'injectedWeb3', {
-      get: () => extension.getInjectedEnable()
-    })
+    injectExtension(win, extension)
+  })
+})
+
+Cypress.Commands.add('visitWithInjectedExtension', (url: string) => {
+  cy.log('Extension enabled')
+
+  return cy.visit(url, {
+    onLoad(win) {
+      injectExtension(win, extension)
+    }
   })
 })
 
@@ -128,6 +141,13 @@ declare global {
        * @example cy.initExtension([{ address: '7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba', name: 'Alice', type: 'sr25519'}])
        */
       initExtension: (accounts: InjectedAccountWitMnemonic[]) => Chainable<AUTWindow>
+
+      /**
+       * Visit a page with extension injected. It needs to be initialized first.
+       * @param {string} url - Page to visit.
+       * @example cy.visitWithInjectedExtension('http://localhost:3333')
+       */
+      visitWithInjectedExtension: (url: string) => Chainable<AUTWindow>
 
       /**
        * Read the authentication request queue.

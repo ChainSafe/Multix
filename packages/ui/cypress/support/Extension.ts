@@ -37,6 +37,7 @@ export class Extension {
     this.accounts = []
     this.txRequests = {}
     this.keyring = undefined
+    this.allowedOrigins = {}
   }
 
   init = async (accounts: InjectedAccountWitMnemonic[]) => {

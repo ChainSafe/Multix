@@ -20,9 +20,7 @@ const initConnectAndRefreshWithAddress = (
   cy.connectAccounts(connectedAddresses)
 
   //refresh the page now that the extension is allowed to connect
-  cy.visit(addressUrl ? landingPageAddressUrl(addressUrl) : landingPageUrl)
-  // inject the extension
-  cy.initExtension(initAccounts)
+  cy.visitWithInjectedExtension(addressUrl ? landingPageAddressUrl(addressUrl) : landingPageUrl)
 }
 
 describe('Account address in the address bar', () => {
@@ -90,7 +88,7 @@ describe('Account address in the address bar', () => {
     })
   })
 
-  it('shows an error and can reset  with 1 watched (pure), 0 connected account, unknown linked address', () => {
+  it('shows an error and can reset with 1 watched (pure), 0 connected account, unknown linked address', () => {
     const { purePublicKey, pureAddress } = watchMultisigs['multisig-with-pure']
 
     // we have a watched account that is a pure
@@ -114,7 +112,7 @@ describe('Account address in the address bar', () => {
     })
   })
 
-  it('shows an error and can reset  with 0 watched, 1 connected account (multi), unknown linked address', () => {
+  it('shows an error and can reset with 0 watched, 1 connected account (multi), unknown linked address', () => {
     const { address } = knownMultisigs['test-multisig-1']
     const nonMulitisigAccountAddress = testAccounts['Non Multisig Member 1'].address
 
@@ -256,5 +254,28 @@ describe('Account address in the address bar', () => {
     topMenuItems.desktopMenu().within(() => topMenuItems.networkSelector().click())
     topMenuItems.networkSelectorOption('kusama').click()
     cy.url().should('not.include', 'address=')
+  })
+
+  it('navigating to home, settings, about, overview does not change the address bar', () => {
+    const { address, publicKey } = watchMultisigs['multisig-without-pure']
+
+    // we have a watched account that is a multisig
+    cy.visitWithLocalStorage({
+      // any account
+      url: landingPageUrl,
+      watchedAccounts: [publicKey]
+    })
+
+    // check that there is an address in the address bar
+    cy.url().should('include', address)
+
+    topMenuItems.homeButton().click()
+    cy.url().should('include', address)
+    topMenuItems.settingsButton().click()
+    cy.url().should('include', address)
+    topMenuItems.overviewButton().click()
+    cy.url().should('include', address)
+    topMenuItems.aboutButton().click()
+    cy.url().should('include', address)
   })
 })
