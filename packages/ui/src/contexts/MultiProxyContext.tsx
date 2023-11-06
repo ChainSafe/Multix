@@ -61,9 +61,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
+  // if set to null, it means that is hasn't been initialized yet
   const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList'] | null>(
     null
   )
+  // if set to null, it means that is hasn't been initialized yet
   const [multisigList, setMultisigList] = useState<IMultisigContext['multiProxyList'] | null>(null)
   const [pureToQuery, setPureToQuery] = useState<string[]>([])
   const multiProxyList = useMemo(() => {
@@ -293,15 +295,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     },
     [getMultiProxyByAddress, setAddress]
   )
-
-  // useEffect(() => {
-  //   if (multiProxyList.length > 0 && !selectedMultiProxy) {
-  //     const multiAddress = localStorage.getItem(LOCALSTORAGE_KEY)
-  //     const previouslySelected = multiAddress && getMultiProxyByAddress(multiAddress)
-
-  //     setSelectedMultiProxy(previouslySelected || multiProxyList[0])
-  //   }
-  // }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
   const refetch = useCallback(() => {
     refetchMultisigSub()

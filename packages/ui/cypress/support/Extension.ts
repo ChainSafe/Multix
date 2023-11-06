@@ -88,9 +88,9 @@ export class Extension {
             }
           })
 
-          // this app has already allowed some accounts
+          // this origin has already allowed some accounts
           if (this.allowedOrigins[origin]?.length) {
-            console.log('Previously allowed origin', origin)
+            // return the list of accounts
             const res = resolvedObject(
               this.accounts.filter(({ address }) => this.allowedOrigins[origin].includes(address))
             )
@@ -106,7 +106,6 @@ export class Extension {
 
               // store the allowed accounts for this orgin
               this.allowedOrigins[origin] = accountAddresses
-              console.log('storing for future', origin, accountAddresses)
 
               const res = resolvedObject(selectedAccounts)
               resolve(res)
