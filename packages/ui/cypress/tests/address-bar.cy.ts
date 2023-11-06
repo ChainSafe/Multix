@@ -209,10 +209,10 @@ describe('Account address in the address bar', () => {
       expectedMultiAddress
     )
     cy.url().should('include', expectedMultiAddress)
-    topMenuItems.multiproxySelectorInput().should('have.value', expectedMultiAddress)
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultiAddress.slice(0, 6))
     })
+    topMenuItems.multiproxySelectorInput().should('have.value', expectedMultiAddress)
   })
 
   it('switching accounts changes the address in the address bar', () => {
