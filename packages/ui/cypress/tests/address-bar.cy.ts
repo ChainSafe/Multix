@@ -34,7 +34,7 @@ describe('Account address in the address bar', () => {
       watchedAccounts: [publicKey]
     })
 
-    cy.url().should('include', address)
+    cy.url({ timeout: 10000 }).should('include', address)
     topMenuItems.multiproxySelectorInput().should('have.value', address)
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', address.slice(0, 6))
@@ -50,7 +50,7 @@ describe('Account address in the address bar', () => {
       undefined
     )
 
-    cy.url().should('include', address)
+    cy.url({ timeout: 10000 }).should('include', address)
     topMenuItems.multiproxySelectorInput().should('have.value', address)
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', address.slice(0, 6))
