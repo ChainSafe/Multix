@@ -4,3 +4,5 @@ export const landingPageUrl = `${baseUrl}?${networkParams}`
 export const settingsPageUrl = `${baseUrl}/settings?${networkParams}`
 const WATCH_ACCOUNT_ANCHOR = 'watched-accounts'
 export const settingsPageWatchAccountUrl = `${settingsPageUrl}#${WATCH_ACCOUNT_ANCHOR}`
+export const landingPageAddressUrl = (address: string) =>
+  `${baseUrl}?${networkParams}&address=${address}`

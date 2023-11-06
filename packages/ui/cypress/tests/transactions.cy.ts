@@ -7,7 +7,7 @@ import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
-const testAccount1Address = testAccounts['Test Account 1'].address
+const testAccount1Address = testAccounts['Multisig Member Account 1'].address
 
 const fillAndSubmitTransactionForm = () => {
   sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
@@ -23,7 +23,7 @@ describe('Perform transactions', () => {
     cy.connectAccounts([testAccount1Address])
   })
 
-  it('Abort a tx with Alice', () => {
+  it('Abort a multisig tx', () => {
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
@@ -41,9 +41,9 @@ describe('Perform transactions', () => {
     })
   })
 
-  it('Makes a balance transfer with Alice', () => {
+  it('Makes a balance transfer multisig tx', () => {
     cy.rejectCurrentMultisigTx({
-      account: testAccounts['Test Account 1'],
+      account: testAccounts['Multisig Member Account 1'],
       multisigInfo: {
         address: knownMultisigs['test-multisig-1'].address,
         threshold: knownMultisigs['test-multisig-1'].threshold,

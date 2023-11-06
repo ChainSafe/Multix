@@ -4,7 +4,8 @@ export const watchSignatories = [
     address: '5GGjPYsz8B8mxAzNScFNDPkZ1g97VWFCPCMexPSkPnibPBez',
     name: 'Pure Signatory 1',
     type: 'sr25519',
-    mnemonic: 'citizen heavy warrior cattle enter chef label split differ seek turtle gorilla'
+    mnemonic: 'citizen heavy warrior cattle enter chef label split differ seek turtle gorilla',
+    publickey: '0xba1d098e50bdca49f03b9f0c702a65762a04dfc5868ae1c3788a2bc1939dbf4b'
   },
   {
     address: '5E9XHcUfeDCL2HEvH8c8rcfroNDSzbLwhV5A1fq7J7RUwAkd',

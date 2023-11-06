@@ -60,6 +60,7 @@ export const useDisplayError = () => {
             The linked address can't be found in your accounts or watched accounts.
           </div>
           <Button
+            data-cy="button-reset-linked-address"
             onClick={() =>
               setSearchParams((prev) => {
                 prev.delete('address')

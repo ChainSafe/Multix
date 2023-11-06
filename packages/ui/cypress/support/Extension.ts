@@ -4,6 +4,7 @@ import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { TypeRegistry } from '@polkadot/types'
 import { SignerPayloadJSON } from '@polkadot/types/types'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
+import { SignerResult } from '@polkadot/api/types'
 
 export interface AuthRequest {
   id: number
@@ -29,6 +30,7 @@ export class Extension {
   accounts: InjectedAccountWitMnemonic[] = []
   txRequests: TxRequests = {}
   keyring: Keyring | undefined
+  allowedOrigins: Record<string, string[]> = {}
 
   reset = () => {
     this.authRequests = {}
@@ -51,6 +53,49 @@ export class Extension {
     return {
       'polkadot-js': {
         enable: (origin: string) => {
+          const resolvedObject = (selectedAccounts: InjectedAccountWitMnemonic[]) => ({
+            accounts: {
+              get: () => selectedAccounts,
+              subscribe: (cb: (accounts: InjectedAccountWitMnemonic[]) => void) =>
+                cb(selectedAccounts)
+            } as unknown as InjectedAccounts,
+            signer: {
+              signPayload: (payload: SignerPayloadJSON): Promise<SignerResult> => {
+                return new Promise<SignerResult>((resolve, reject) => {
+                  const id = Date.now()
+                  const res = () => {
+                    const registry = new TypeRegistry()
+                    registry.setSignedExtensions(payload.signedExtensions)
+                    const pair = this.keyring?.getPair(this.accounts[0].address)
+                    if (!pair) {
+                      console.error('Pair not found')
+                      return
+                    }
+                    const signature = registry
+                      .createType('ExtrinsicPayload', payload, {
+                        version: payload.version
+                      })
+                      .sign(pair)
+                    resolve({ id, signature: signature.signature })
+                  }
+
+                  const rej = (reason: string) => reject(new Error(reason))
+
+                  this.txRequests[id] = { id, payload, resolve: res, reject: rej }
+                })
+              }
+            }
+          })
+
+          // this app has already allowed some accounts
+          if (this.allowedOrigins[origin]?.length) {
+            console.log('Previously allowed origin', origin)
+            const res = resolvedObject(
+              this.accounts.filter(({ address }) => this.allowedOrigins[origin].includes(address))
+            )
+            return Promise.resolve(res)
+          }
+
           return new Promise<Injected>((resolve, reject) => {
             const timestamp = Date.now()
             const res = (accountAddresses: string[]) => {
@@ -58,39 +103,12 @@ export class Extension {
                 accountAddresses.includes(address)
               )
 
-              resolve({
-                accounts: {
-                  get: () => selectedAccounts,
-                  subscribe: (cb: (accounts: InjectedAccountWitMnemonic[]) => void) =>
-                    cb(selectedAccounts)
-                } as unknown as InjectedAccounts,
-                signer: {
-                  signPayload: (payload: SignerPayloadJSON) => {
-                    return new Promise((resolve, reject) => {
-                      const id = Date.now()
-                      const res = () => {
-                        const registry = new TypeRegistry()
-                        registry.setSignedExtensions(payload.signedExtensions)
-                        const pair = this.keyring?.getPair(this.accounts[0].address)
-                        if (!pair) {
-                          console.error('Pair not found')
-                          return
-                        }
-                        const signature = registry
-                          .createType('ExtrinsicPayload', payload, {
-                            version: payload.version
-                          })
-                          .sign(pair)
-                        resolve({ id, signature: signature.signature })
-                      }
+              // store the allowed accounts for this orgin
+              this.allowedOrigins[origin] = accountAddresses
+              console.log('storing for future', origin, accountAddresses)
 
-                      const rej = (reason: string) => reject(new Error(reason))
-
-                      this.txRequests[id] = { id, payload, resolve: res, reject: rej }
-                    })
-                  }
-                }
-              })
+              const res = resolvedObject(selectedAccounts)
+              resolve(res)
             }
 
             const rej = (reason: string) => reject(new Error(reason))

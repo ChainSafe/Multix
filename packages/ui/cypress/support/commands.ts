@@ -45,7 +45,7 @@ const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 // }
 
 const extension = new Extension()
-const Account1 = testAccounts['Test Account 1'].address
+const Account1 = testAccounts['Multisig Member Account 1'].address
 
 Cypress.Commands.add('initExtension', (accounts: InjectedAccountWitMnemonic[]) => {
   cy.log('Initializing extension')

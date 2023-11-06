@@ -41,6 +41,7 @@ const NetworkSelection = () => {
           <MenuItemStyled
             key={networkName}
             value={networkName}
+            data-cy={`select-network-option-${networkName}`}
           >
             <ImgStyled
               alt={`network-logo-${networkName}`}
@@ -63,6 +64,7 @@ const NetworkSelection = () => {
       autoWidth={true}
       onChange={handleNetworkSelection}
       MenuProps={MenuPropsStyles}
+      data-cy={`select-networks`}
     >
       <ListSubheader>Polkadot & Parachains</ListSubheader>
       {renderNetworks(polkadotNetworksAndParachains)}

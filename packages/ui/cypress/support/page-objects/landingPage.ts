@@ -11,6 +11,8 @@ export const landingPage = {
   rpcLoader: () => cy.get('[data-cy=loader-rpc-connection]'),
   polkadotWikiLink: () => cy.get('[data-cy=link-polkadot-wiki]'),
   noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
+  linkedAddressNotFound: () => cy.get('[data-cy=label-linked-address-not-found]'),
+  resetLinkedAddressButton: () => cy.get('[data-cy=button-reset-linked-address]'),
 
   // page specific assertion
   shouldHaveNoAccountErrorAndWikiLink() {

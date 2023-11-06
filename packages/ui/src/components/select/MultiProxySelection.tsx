@@ -121,6 +121,7 @@ const MultiProxySelection = ({ className }: Props) => {
           </InputAdornment>
         )
       }}
+      inputProps={{ ...params.inputProps, 'data-cy': 'input-select-multiproxy' }}
       onKeyDown={handleSpecialKeys}
     />
   )
