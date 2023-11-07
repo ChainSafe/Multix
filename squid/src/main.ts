@@ -31,12 +31,12 @@ const supportedMultisigCalls = [
   'Multisig.as_multi_threshold_1'
 ]
 export const env = new Env().getEnv()
-const archiveUrl =
-  env.archiveName &&
-  lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-    release: 'ArrowSquid',
-    type: 'Substrate'
-  })
+const archiveUrl = env.archiveName
+  ? lookupArchive(env.archiveName as KnownArchivesSubstrate, {
+      release: 'ArrowSquid',
+      type: 'Substrate'
+    })
+  : undefined
 const chainId = env.chainId
 
 export const fields = {
