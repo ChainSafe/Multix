@@ -31,14 +31,13 @@ const supportedMultisigCalls = [
   'Multisig.as_multi_threshold_1'
 ]
 export const env = new Env().getEnv()
-const archiveUrl = env.archiveName
-  ? lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-      release: 'ArrowSquid',
-      genesis: env.genesis,
-      // this is needed until this is merged https://github.com/subsquid/archive-registry/pull/119
-      type: 'Substrate' as 'EVM'
-    })
-  : env.archiveUrl
+const archiveUrl =
+  env.archiveName &&
+  lookupArchive(env.archiveName as KnownArchivesSubstrate, {
+    release: 'ArrowSquid',
+    genesis: env.genesis,
+    type: 'Substrate'
+  })
 const chainId = env.chainId
 
 export const fields = {

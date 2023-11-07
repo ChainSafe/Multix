@@ -12,5 +12,5 @@
     "project": "tsconfig.json"
   },
   "rules": {},
-  "ignorePatterns": ["db/**/*", "src/types/**/*", "src/model/generated/**/*", "prettierrc.js"]
+  "ignorePatterns": ["lib/**/*", "db/**/*", "src/types/**/*", "src/model/generated/**/*", "prettierrc.js"]
 }
