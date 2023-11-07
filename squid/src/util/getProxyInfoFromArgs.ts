@@ -1,30 +1,30 @@
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { getProxyAccountId } from './getProxyAccountId'
-import { Ctx, dataEvent } from '../main'
+import { Ctx, fields } from '../main'
 import { ProxyType } from '../types/v9111'
 import { JsonLog } from './JsonLog'
 import { encodeId } from './accountEncoding'
+import { Event } from '@subsquid/substrate-processor'
 
 interface Params {
-  item: EventItem<'Proxy.ProxyAdded' | 'Proxy.ProxyRemoved', (typeof dataEvent)['data']>
+  event: Event<typeof fields>
   chainId: string
   ctx: Ctx
 }
-export const getProxyInfoFromArgs = ({ item, chainId, ctx }: Params) => {
+export const getProxyInfoFromArgs = ({ event, chainId, ctx }: Params) => {
   let delegator: Uint8Array | undefined
   let delegatee: Uint8Array | undefined
   let proxyType: ProxyType
   let delay: number = 0
 
-  const args = item.event.args
+  const args = event.args
 
   if (Array.isArray(args)) {
     ;[delegator, delegatee, proxyType, delay] = args
   } else if (args.delegator) {
-    ;({ delegator, delegatee, proxyType, delay } = item.event.args)
+    ;({ delegator, delegatee, proxyType, delay } = args)
   } else {
-    ctx.log.error(`The proxy could not be determined ${JsonLog(item)}`)
+    ctx.log.error(`The proxy could not be determined ${JsonLog(event)}`)
     return
   }
   const _delegator = (delegator && encodeId(delegator)) || ''
