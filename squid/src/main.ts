@@ -32,12 +32,11 @@ const supportedMultisigCalls = [
 ]
 export const env = new Env().getEnv()
 const archiveUrl =
-  env.archiveUrl ||
+  env.archiveName &&
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
     release: 'ArrowSquid',
     genesis: env.genesis,
-    // this is needed until this is merged https://github.com/subsquid/archive-registry/pull/119
-    type: 'Substrate' as 'EVM'
+    type: 'Substrate'
   })
 const chainId = env.chainId
 
