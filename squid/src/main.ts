@@ -35,7 +35,6 @@ const archiveUrl =
   env.archiveName &&
   lookupArchive(env.archiveName as KnownArchivesSubstrate, {
     release: 'ArrowSquid',
-    genesis: env.genesis,
     type: 'Substrate'
   })
 const chainId = env.chainId

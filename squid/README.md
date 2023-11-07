@@ -253,6 +253,7 @@ PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
 ARCHIVE_NAME="rococo" # optional - must be empty or set to the archive name if part of the @subsquid/archive-registry'
 CHAIN_ID='rococo' # a unique chain id for the database prefix
+IS_ETHEREUM='false'
 ```
 
 ## Differences from polkadot.js
