@@ -10,10 +10,10 @@ deploy:
   addons:
     postgres:
   processor:
-    - name: assethub-kusama-processor
-      cmd: ['sqd', 'start-assethub-kusama']
-    - name: assethub-polkadot-processor
-      cmd: ['sqd', 'start-assethub-polkadot']
+    - name: asset-hub-kusama-processor
+      cmd: ['sqd', 'start-asset-hub-kusama']
+    - name: asset-hub-polkadot-processor
+      cmd: ['sqd', 'start-asset-hub-polkadot']
     - name: rococo-processor
       cmd: ['sqd', 'start-rococo']
     - name: kusama-processor

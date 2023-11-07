@@ -51,17 +51,17 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v7/graphql',
     logo: chainsKusamaSVG
   } as NetworkInfo,
-  'assethub-dot': {
-    chainId: 'assethub-polkadot',
-    explorerNetworkName: 'assethub-polkadot',
+  'asset-hub-dot': {
+    chainId: 'asset-hub-polkadot',
+    explorerNetworkName: 'asset-hub-polkadot',
     rpcUrl: 'wss://polkadot-asset-hub-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v7/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v7/graphql',
     logo: nodesAssetHubSVG
   } as NetworkInfo,
-  'assethub-ksm': {
-    chainId: 'assethub-kusama',
-    explorerNetworkName: 'assethub-kusama',
+  'asset-hub-ksm': {
+    chainId: 'asset-hub-kusama',
+    explorerNetworkName: 'asset-hub-kusama',
     rpcUrl: 'wss://kusama-asset-hub-rpc.polkadot.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-large/v/v7/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-large/v/v7/graphql',
@@ -199,7 +199,7 @@ export const networkList = {
 
 export const polkadotNetworksAndParachains = [
   'polkadot',
-  'assethub-dot',
+  'asset-hub-dot',
   'acala',
   'astar',
   'bifrost-dot',
@@ -208,7 +208,7 @@ export const polkadotNetworksAndParachains = [
   'moonbeam',
   'phala'
 ]
-export const kusamaNetworksAndParachains = ['kusama', 'assethub-ksm', 'khala', 'moonriver']
+export const kusamaNetworksAndParachains = ['kusama', 'asset-hub-ksm', 'khala', 'moonriver']
 export const soloChains = ['joystream']
 export const testChains = ['rococo', 'rhala testnet', 'local']
 
