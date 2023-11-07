@@ -35,13 +35,14 @@ const Header = ({ handleDrawerOpen }: Props) => {
             />
           </HomeLinkStyled>
         </LogoWrapperStyled>
-        <DesktopMenuStyled>
+        <DesktopMenuStyled data-cy="menu-desktop">
           <MenuWrapperStyled>
             {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
               isAccountConnected || isDisplayWhenNoWallet ? (
                 <NavLink
                   key={name}
                   to={path}
+                  data-cy={`button-navigate-${name.toLowerCase().replace(/ /g, '-')}`}
                 >
                   {name}
                 </NavLink>
@@ -54,6 +55,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 data-cy="button-menu-connect"
                 onClick={allowConnectionToExtension}
                 disabled={isAccountLoading}
+                variant="primary"
               >
                 Connect
               </ConnectButtonStyled>

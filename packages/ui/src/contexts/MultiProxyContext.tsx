@@ -42,6 +42,7 @@ export interface IMultisigContext {
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
   selectedIsWatched: boolean
+  refetch: () => void
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -75,9 +76,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       ),
     [selectedMultiProxy, ownAddressList]
   )
+  const [isRefreshingMultiProxyList, setIsRefreshingMultiProxyList] = useState(false)
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedSubscription | null) => {
+      setIsRefreshingMultiProxyList(true)
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureToQuery([])
@@ -123,11 +126,14 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         // add the selection to the pure to query
         setPureToQuery(Array.from(pureToQuerySet))
       }
+
+      setIsRefreshingMultiProxyList(false)
     },
     []
   )
 
   const refreshWatchedPureList = useCallback((data: PureByIdsSubscription | null) => {
+    setIsRefreshingMultiProxyList(true)
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
     // we do have an answer, but there is nothing
     if (!!data?.accounts && data.accounts.length === 0) {
@@ -174,17 +180,25 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     )
 
     setPureProxyList(pureProxyArray)
+    setIsRefreshingMultiProxyList(false)
   }, [])
 
   const ownAddressIds = useAccountId(ownAddressList)
   const watchedAddressesIds = useAccountId(watchedAddresses)
-  const { isLoading: isMultisigsubLoading, error: isMultisigSubError } =
-    useMultisigsBySignatoriesOrWatchedSubscription({
-      accountIds: ownAddressIds,
-      watchedAccountIds: watchedAddressesIds,
-      onUpdate: refreshPureToQueryAndMultisigList
-    })
-  const { isLoading: isPureSubLoading, error: isPureSubError } = usePureByIdsSubscription({
+  const {
+    isLoading: isMultisigsubLoading,
+    error: isMultisigSubError,
+    refetch: refetchMultisigSub
+  } = useMultisigsBySignatoriesOrWatchedSubscription({
+    accountIds: ownAddressIds,
+    watchedAccountIds: watchedAddressesIds,
+    onUpdate: refreshPureToQueryAndMultisigList
+  })
+  const {
+    isLoading: isPureSubLoading,
+    error: isPureSubError,
+    refetch: refetchPureSub
+  } = usePureByIdsSubscription({
     pureIds: [...watchedAddressesIds, ...pureToQueryIds],
     onUpdate: refreshWatchedPureList
   })
@@ -271,18 +285,24 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     }
   }, [getMultiProxyByAddress, multiProxyList, selectedMultiProxy])
 
+  const refetch = useCallback(() => {
+    refetchMultisigSub()
+    refetchPureSub()
+  }, [refetchMultisigSub, refetchPureSub])
+
   return (
     <MultisigContext.Provider
       value={{
         selectedMultiProxy,
         multiProxyList,
         selectMultiProxy,
-        isLoading: isMultisigsubLoading || isPureSubLoading,
+        isLoading: isMultisigsubLoading || isPureSubLoading || isRefreshingMultiProxyList,
         selectedHasProxy,
         error: isMultisigSubError || isPureSubError,
         getMultisigByAddress,
         getMultisigAsAccountBaseInfo,
-        selectedIsWatched
+        selectedIsWatched,
+        refetch
       }}
     >
       {children}

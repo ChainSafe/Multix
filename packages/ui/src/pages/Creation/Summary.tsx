@@ -1,5 +1,5 @@
 import { Alert, Box, Chip, Paper } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import AccountDisplay from '../../components/AccountDisplay'
 import SignerSelection from '../../components/select/SignerSelection'
@@ -10,6 +10,7 @@ import { AccountBadge } from '../../types'
 import BN from 'bn.js'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useApi } from '../../contexts/ApiContext'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
 interface Props {
   className?: string
@@ -42,7 +43,7 @@ const Summary = ({
 }: Props) => {
   const { ownAddressList } = useAccounts()
   const { chainInfo } = useApi()
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
 
   useEffect(() => {
     if (!isBalanceError) {
@@ -62,14 +63,12 @@ const Summary = ({
           tokenSymbol: chainInfo?.tokenSymbol
         })
 
-    const reservedMessage = reservedString
-      ? `Note that it includes ${reservedString} that will be reserved. ${
-          !isCreationSummary ? 'It will be returned upon transaction approval/rejection' : ''
-        }`
-      : ''
-    setErrorMessage(
-      `The selected signer doesn't have the required ${requiredBalanceString} to submit this transaction. ${reservedMessage}`
+    const errorWithReservedFunds = getErrorMessageReservedFunds(
+      'selected signer',
+      requiredBalanceString,
+      reservedString
     )
+    setErrorMessage(errorWithReservedFunds)
   }, [balanceMin, chainInfo, isBalanceError, isCreationSummary, reservedBalance])
 
   const possibleSigners = useMemo(() => {

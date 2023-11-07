@@ -16,6 +16,7 @@ import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import BN from 'bn.js'
+import { isTypeBalance } from '../../utils/isTypeBalance'
 
 interface Props {
   extrinsicIndex?: string
@@ -46,8 +47,6 @@ const initFormState = {
 } as FormState
 
 const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<')
-
-const isTypeBalance = (typeName: string) => ['Balance', 'BalanceOf', 'Amount'].includes(typeName)
 
 const isNumType = (type: string) => paramConversion.num.includes(type)
 
@@ -119,7 +118,6 @@ const ManualExtrinsic = ({
   const isValidAmountString = useCallback(
     (value: any) => {
       if (!value.match(/^[0-9]+([.][0-9]+)?$/)) {
-        console.log('wrong boom')
         onSetErrorMessage('Only numbers and "." are accepted.')
         return false
       }
@@ -351,7 +349,6 @@ const ManualExtrinsic = ({
             <MenuItem
               key={text}
               value={text}
-              sx={{}}
             >
               <div className="pallet">{text}</div>
             </MenuItem>

@@ -6,7 +6,7 @@ import AccountDisplay from '../AccountDisplay'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import IdenticonBadge from '../IdenticonBadge'
 import { AccountBadge } from '../../types'
-import { Autocomplete, TextFieldStyled } from '../library'
+import { Autocomplete, TextField } from '../library'
 import OptionMenuItem from './OptionMenuItem'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 
@@ -166,7 +166,7 @@ const GenericAccountSelection = ({
   }
 
   const getRenderInput = (params: AutocompleteRenderInputParams) => (
-    <TextFieldStyled
+    <TextField
       data-cy="input-account-address"
       {...params}
       inputRef={inputRef}

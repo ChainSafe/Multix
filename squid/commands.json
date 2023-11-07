@@ -180,6 +180,16 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.moonbeam"
       ]
+    },
+    "start-joystream": {
+      "description": "starts the indexer with joystream",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.joystream"
+      ]
     }
   }
 }
