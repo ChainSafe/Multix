@@ -63,13 +63,13 @@ const processor = new SubstrateBatchProcessor()
   .setFields({ ...fields })
   .addCall({
     name: [
-          'Proxy.proxy',
-          'Proxy.remove_proxies',
-          'Multisig.as_multi',
-          'Multisig.approve_as_multi',
-          'Multisig.cancel_as_multi',
-          'Multisig.as_multi_threshold_1'
-        ]
+      'Proxy.proxy',
+      'Proxy.remove_proxies',
+      'Multisig.as_multi',
+      'Multisig.approve_as_multi',
+      'Multisig.cancel_as_multi',
+      'Multisig.as_multi_threshold_1'
+    ]
   })
   .addEvent({
     name: ['Proxy.PureCreated', 'Proxy.AnonymousCreated', 'Proxy.ProxyAdded', 'Proxy.ProxyRemoved']
