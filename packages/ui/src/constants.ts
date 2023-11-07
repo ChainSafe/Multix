@@ -199,7 +199,7 @@ export const networkList = {
 
 export const polkadotNetworksAndParachains = [
   'polkadot',
-  'asse-thub-dot',
+  'asset-hub-dot',
   'acala',
   'astar',
   'bifrost-dot',
