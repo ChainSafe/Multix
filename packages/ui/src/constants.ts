@@ -94,7 +94,7 @@ export const networkList = {
   'bifrost-dot': {
     chainId: 'bifrost-polkadot',
     explorerNetworkName: 'bifrost',
-    rpcUrl: 'wss://bifrost-polkadot.api.onfinality.io/public-ws',
+    rpcUrl: 'wss://eu.bifrost-polkadot-rpc.liebi.com/ws',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v1/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v1/graphql',
     logo: nodesBifrostSVG
@@ -110,7 +110,7 @@ export const networkList = {
   interlay: {
     chainId: 'interlay',
     explorerNetworkName: 'interlay',
-    rpcUrl: 'wss://interlay.api.onfinality.io/public-ws',
+    rpcUrl: 'wss://interlay-rpc.dwellir.com',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v1/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v1/graphql',
     logo: nodesInterlaySVG
@@ -134,7 +134,7 @@ export const networkList = {
   moonbeam: {
     chainId: 'moonbeam',
     explorerNetworkName: 'moonbeam',
-    rpcUrl: 'wss://moonbeam.api.onfinality.io/public-ws',
+    rpcUrl: 'wss://moonbeam-rpc.dwellir.com',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v1/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v1/graphql',
     logo: nodesMoonbeamSVG
@@ -142,7 +142,7 @@ export const networkList = {
   moonriver: {
     chainId: 'moonriver',
     explorerNetworkName: 'moonriver',
-    rpcUrl: 'wss://moonriver.api.onfinality.io/public-ws',
+    rpcUrl: 'wss://moonriver-rpc.dwellir.com',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v1/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v1/graphql',
     logo: nodesMoonriverSVG
