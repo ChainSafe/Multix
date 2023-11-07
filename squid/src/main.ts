@@ -30,6 +30,16 @@ const supportedMultisigCalls = [
   'Multisig.cancel_as_multi',
   'Multisig.as_multi_threshold_1'
 ]
+
+const supportedCalls = ['Proxy.proxy', 'Proxy.remove_proxies', ...supportedMultisigCalls]
+
+const supportedEvents = [
+  'Proxy.PureCreated',
+  'Proxy.AnonymousCreated',
+  'Proxy.ProxyAdded',
+  'Proxy.ProxyRemoved'
+]
+
 export const env = new Env().getEnv()
 const archiveUrl = env.archiveName
   ? lookupArchive(env.archiveName as KnownArchivesSubstrate, {
@@ -59,19 +69,12 @@ const processor = new SubstrateBatchProcessor()
   .setBlockRange({
     from: Number(env.blockstart)
   })
-  .setFields({ ...fields })
+  .setFields(fields)
   .addCall({
-    name: [
-      'Proxy.proxy',
-      'Proxy.remove_proxies',
-      'Multisig.as_multi',
-      'Multisig.approve_as_multi',
-      'Multisig.cancel_as_multi',
-      'Multisig.as_multi_threshold_1'
-    ]
+    name: supportedCalls
   })
   .addEvent({
-    name: ['Proxy.PureCreated', 'Proxy.AnonymousCreated', 'Proxy.ProxyAdded', 'Proxy.ProxyRemoved']
+    name: supportedEvents
   })
 
 export type Ctx = DataHandlerContext<Store, typeof fields>
