@@ -39,6 +39,7 @@ import * as v9370 from '../v9370'
 import * as v9381 from '../v9381'
 import * as v9420 from '../v9420'
 import * as v9430 from '../v9430'
+import * as v1000000 from '../v1000000'
 
 export const proxy =  {
     name: 'Proxy.proxy',
@@ -1008,6 +1009,17 @@ export const proxy =  {
             real: v9430.MultiAddress,
             forceProxyType: sts.option(() => v9430.ProxyType),
             call: v9430.Call,
+        })
+    ),
+    /**
+     * See [`Pallet::proxy`].
+     */
+    v1000000: new CallType(
+        'Proxy.proxy',
+        sts.struct({
+            real: v1000000.MultiAddress,
+            forceProxyType: sts.option(() => v1000000.ProxyType),
+            call: v1000000.Call,
         })
     ),
 }
