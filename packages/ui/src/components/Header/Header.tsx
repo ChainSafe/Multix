@@ -12,7 +12,7 @@ import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
-import { useSwtichAddress } from '../../hooks/useSwitchAddress'
+import { useSwitchAddress } from '../../hooks/useSwitchAddress'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -25,7 +25,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension, isAccountLoading } =
     useAccounts()
   useWalletConnectEventsManager()
-  useSwtichAddress()
+  useSwitchAddress()
 
   return (
     <MuiAppBarStyled position="sticky">

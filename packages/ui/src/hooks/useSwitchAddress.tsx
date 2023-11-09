@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 
-export const useSwtichAddress = () => {
+export const useSwitchAddress = () => {
   const [searchParams, setSearchParams] = useSearchParams({
     address: '',
     network: ''

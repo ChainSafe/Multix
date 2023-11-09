@@ -68,7 +68,7 @@ export const useDisplayError = () => {
               })
             }
           >
-            Reset
+            Back to Home
           </Button>
         </ErrorMessageStyled>
       </CenterStyled>
