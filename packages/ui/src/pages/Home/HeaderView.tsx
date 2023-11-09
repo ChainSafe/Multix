@@ -5,11 +5,12 @@ import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMemo } from 'react'
 
 const HeaderView = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
 
   const selectedAddress = useMemo((): string => {
@@ -22,7 +23,12 @@ const HeaderView = () => {
     <PureProxyWrapper data-cy="header-account">
       <OverviewWrapper>
         <ButtonWithIcon
-          onClick={() => navigate('/overview')}
+          onClick={() => {
+            navigate({
+              pathname: '/overview',
+              search: createSearchParams(searchParams).toString()
+            })
+          }}
           variant="link"
           data-cy="button-see-overview"
         >

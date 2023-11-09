@@ -1,6 +1,6 @@
 import { styled } from '@mui/material'
 import { useAccounts } from '../contexts/AccountsContext'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
@@ -9,6 +9,7 @@ export const ConnectOrWatch = () => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   return (
     <WrapperStyled>
@@ -30,7 +31,12 @@ export const ConnectOrWatch = () => {
         {isAllowedToConnectToExtension ? (
           <Button
             variant="primary"
-            onClick={() => navigate('/create')}
+            onClick={() => {
+              navigate({
+                pathname: '/create',
+                search: createSearchParams(searchParams).toString()
+              })
+            }}
             data-cy="button-create-one"
           >
             Create one
@@ -46,7 +52,13 @@ export const ConnectOrWatch = () => {
         )}
         or
         <Button
-          onClick={() => navigate(`/settings${WATCH_ACCOUNT_ANCHOR}`)}
+          onClick={() => {
+            navigate({
+              pathname: '/settings',
+              search: createSearchParams(searchParams).toString(),
+              hash: WATCH_ACCOUNT_ANCHOR
+            })
+          }}
           data-cy="button-watch-account"
         >
           Watch account

@@ -9,7 +9,7 @@ import ThresholdSelection from './ThresholdSelection'
 import NameSelection from './NameSelection'
 import Summary from './Summary'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useToasts } from '../../contexts/ToastContext'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
@@ -35,8 +35,17 @@ const MultisigCreation = ({ className }: Props) => {
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams({ creationInProgress: 'false' })
   const signCallBack = useSigningCallback({
-    onSuccess: () => navigate('/?creationInProgress=true')
+    onSuccess: () => {
+      navigate({
+        pathname: '/',
+        search: createSearchParams({
+          ...searchParams,
+          creationInProgress: 'true'
+        }).toString()
+      })
+    }
   })
   const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()

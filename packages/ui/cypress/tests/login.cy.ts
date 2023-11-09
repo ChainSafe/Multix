@@ -33,8 +33,8 @@ describe('Connect Account', () => {
   })
 
   it('Connect Accounts', () => {
-    const address1 = testAccounts['Test Account 1'].address
-    const address2 = testAccounts['Test Account 2'].address
+    const address1 = testAccounts['Multisig Member Account 1'].address
+    const address2 = testAccounts['Multisig Member Account 2'].address
 
     cy.connectAccounts([address1, address2])
 

@@ -28,7 +28,10 @@ const Home = ({ className }: HomeProps) => {
 
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
-    setSearchParams({ creationInProgress: 'false' })
+    setSearchParams((prev) => {
+      prev.set('creationInProgress', 'false')
+      return prev
+    })
   }, [setSearchParams])
 
   useEffect(() => {

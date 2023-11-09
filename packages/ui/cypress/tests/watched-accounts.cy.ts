@@ -22,7 +22,8 @@ const addWatchAccount = (address: string, name?: string) => {
   settingsPage.addButton().click()
 }
 
-const { name: testAccountName, address: testAccountAddress } = testAccounts['Test Account 1']
+const { name: testAccountName, address: testAccountAddress } =
+  testAccounts['Multisig Member Account 1']
 
 describe('Watched Accounts', () => {
   it('can add an account to the watch list', () => {
@@ -142,14 +143,12 @@ describe('Watched Accounts', () => {
     const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
-      url: settingsPageWatchAccountUrl,
+      url: landingPageUrl,
       accountNames: {
         [purePublicKey]: pureName
       },
       watchedAccounts: [purePublicKey]
     })
-    // navigate to the home page and edit the name
-    topMenuItems.homeButton().click()
     multisigPage.optionsMenuButton().click()
     multisigPage.editNamesMenuOption().click()
     editNamesModal.body().should('be.visible')

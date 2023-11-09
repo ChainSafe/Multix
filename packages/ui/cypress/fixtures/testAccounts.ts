@@ -6,17 +6,17 @@ export interface InjectedAccountWitMnemonic extends InjectedAccount {
 }
 
 export const testAccounts = {
-  'Test Account 1': {
+  'Multisig Member Account 1': {
     address: '5H679cx9tkuHqyReUgBxeTqXKjVikVwLySDH1buiYuoqhi2w',
     publicKey: '0xde3ed24acdfe71c13b4d42539c5390ddee147ba6b29b0593ce842e77ff034445',
-    name: 'Test Account 1',
+    name: 'Multisig Member Account 1',
     type: 'sr25519',
     mnemonic: 'climb worth pioneer mushroom cloth expose tube high half final curtain toward'
   } as InjectedAccountWitMnemonic,
-  'Test Account 2': {
+  'Multisig Member Account 2': {
     address: '5GCXBrumiRDQ8KQsgbG39HdBNLQKt6XCQbeHZJccGdZbYTgt',
     publicKey: '0xb6e6fb4f2a2268bf6e8a211d958cbf602881418bcc533216cadfae3e24785f28',
-    name: 'Test Account 2',
+    name: 'Multisig Member Account 2',
     type: 'sr25519',
     mnemonic: 'divorce lottery slender again adapt process slow pigeon suit chase news begin'
   } as InjectedAccountWitMnemonic,
@@ -33,5 +33,12 @@ export const testAccounts = {
     name: 'Non Multisig Member 2',
     type: 'sr25519',
     mnemonic: 'erosion never fee pill vocal fetch enforce soap betray zero answer hollow'
+  } as InjectedAccountWitMnemonic,
+  'Many Multisig And Pure Member 1': {
+    address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+    publicKey: '0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d',
+    name: 'Many Multisig And Pure Member 1',
+    type: 'sr25519',
+    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice'
   } as InjectedAccountWitMnemonic
 }

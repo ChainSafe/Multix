@@ -23,7 +23,7 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when extension is connected but no account is shared', () => {
     cy.visit(landingPageUrl)
-    cy.initExtension([testAccounts['Test Account 1']])
+    cy.initExtension([testAccounts['Multisig Member Account 1']])
     clickOnConnect()
     // don't connect any of the initialized accounts
     cy.connectAccounts([])

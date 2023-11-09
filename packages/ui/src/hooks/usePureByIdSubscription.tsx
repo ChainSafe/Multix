@@ -46,6 +46,7 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
   const { error, data, isLoading, refetch } = useSubscription(
     [`KeyWatchedPureById-${pureIds}-${selectedNetwork}`],
     () => {
+      onUpdate(null)
       if (!client) return new Observable<null>()
 
       return fromWsClientSubscription<{

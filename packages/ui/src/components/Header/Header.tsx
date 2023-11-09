@@ -11,7 +11,8 @@ import { isEmptyArray } from '../../utils'
 import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
+import { useSwitchAddress } from '../../hooks/useSwitchAddress'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -20,9 +21,11 @@ interface Props {
 const Header = ({ handleDrawerOpen }: Props) => {
   const { ownAccountList } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
+  const [params] = useSearchParams()
   const { isAllowedToConnectToExtension, allowConnectionToExtension, isAccountLoading } =
     useAccounts()
   useWalletConnectEventsManager()
+  useSwitchAddress()
 
   return (
     <MuiAppBarStyled position="sticky">
@@ -37,17 +40,19 @@ const Header = ({ handleDrawerOpen }: Props) => {
         </LogoWrapperStyled>
         <DesktopMenuStyled data-cy="menu-desktop">
           <MenuWrapperStyled>
-            {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) =>
-              isAccountConnected || isDisplayWhenNoWallet ? (
+            {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
+              const paramsString = createSearchParams(params).toString()
+
+              return isAccountConnected || isDisplayWhenNoWallet ? (
                 <NavLink
                   key={name}
-                  to={path}
+                  to={`${path}?${paramsString}`}
                   data-cy={`button-navigate-${name.toLowerCase().replace(/ /g, '-')}`}
                 >
                   {name}
                 </NavLink>
               ) : null
-            )}
+            })}
           </MenuWrapperStyled>
           <RightButtonsWrapperStyled>
             {!isAllowedToConnectToExtension && (
