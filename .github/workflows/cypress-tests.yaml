@@ -48,11 +48,11 @@ jobs:
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
-        env: VITE_CHAIN_ID="kusama"
-          VITE_NETWORK_NAME="kusama"
-          VITE_WS_PROVIDER="ws://localhost:8000"
-          VITE_GRAPHQL_WS_PROVIDER="ws://localhost:4350/graphql"
-          VITE_GRAPHQL_HTTP_PROVIDER="http://localhost:4350/graphql"
+        env: VITE_CHAIN_ID:"kusama"
+          VITE_NETWORK_NAME:"kusama"
+          VITE_WS_PROVIDER:"ws://localhost:8000"
+          VITE_GRAPHQL_WS_PROVIDER:"ws://localhost:4350/graphql"
+          VITE_GRAPHQL_HTTP_PROVIDER:"http://localhost:4350/graphql"
       # store the screenshots if the tests fail
       - name: Store screenshots
         uses: actions/upload-artifact@v1
