@@ -48,7 +48,8 @@ jobs:
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
-        env: VITE_CHAIN_ID: 'kusama'
+        env:
+          VITE_CHAIN_ID: 'kusama'
           VITE_NETWORK_NAME: 'kusama'
           VITE_WS_PROVIDER: 'ws://localhost:8000'
           VITE_GRAPHQL_WS_PROVIDER: 'ws://localhost:4350/graphql'
