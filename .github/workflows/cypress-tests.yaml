@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'packages/ui/**/*'
+      - '.github/workflows/cypress-tests.yaml'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
