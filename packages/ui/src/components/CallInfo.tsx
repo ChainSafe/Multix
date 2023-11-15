@@ -119,7 +119,6 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
     <ul className="params">
       {Object.entries(args).map(([key, value], index) => {
         const _typeName = typeName || getTypeName(index, name, api)
-        console.log('_type', _typeName)
 
         if (_typeName === 'Vec<RuntimeCall>') {
           return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })

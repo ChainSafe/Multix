@@ -178,9 +178,6 @@ const ProposalSigning = ({
       })
 
       const shouldSubmit = amountOfSigner >= threshold - 1
-      console.log(amountOfSigner, threshold)
-      console.log(shouldSubmit)
-      console.log('callInfo?.call && callInfo?.weight', callInfo?.call, callInfo?.weight)
 
       setIsSubmitting(true)
       let tx: SubmittableExtrinsic<'promise'>
