@@ -32,38 +32,38 @@ export interface CallDataInfoFromChain {
 
 type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 
-export const getMultisigInfo = (c: ISanitizedCall): Partial<CallDataInfoFromChain>[] => {
+export const getMultisigInfo = (call: ISanitizedCall): Partial<CallDataInfoFromChain>[] => {
   const result: Partial<CallDataInfoFromChain>[] = []
 
-  const getCallResult = (c: ISanitizedCall) => {
-    if (typeof c.method !== 'string' && c.method.pallet === 'multisig') {
-      if (c.method.method === 'asMulti' && typeof c.args.call?.method !== 'string') {
+  const getCallResult = ({ args, method }: ISanitizedCall) => {
+    if (typeof method !== 'string' && method.pallet === 'multisig') {
+      if (method.method === 'asMulti' && typeof args.call?.method !== 'string') {
         result.push({
-          name: `${c.args.call?.method?.pallet}.${c.args.call?.method.method}`,
-          hash: c.args.call?.hash,
-          callData: c.args.callData as CallDataInfoFromChain['callData']
+          name: `${args.call?.method?.pallet}.${args.call?.method.method}`,
+          hash: args.call?.hash,
+          callData: args.callData as CallDataInfoFromChain['callData']
         })
       } else {
         result.push({
           name: 'Unknown call',
-          hash: (c.args?.call_hash as Uint8Array).toString() || undefined,
+          hash: (args?.call_hash as Uint8Array).toString() || undefined,
           callData: undefined
         })
       }
       // this is not a multisig call
       // try to dig deeper
     } else {
-      if (c.args.calls) {
-        for (const call of c.args.calls) {
+      if (args.calls) {
+        for (const call of args.calls) {
           getCallResult(call)
         }
-      } else if (c.args.call) {
-        getCallResult(c.args.call)
+      } else if (args.call) {
+        getCallResult(args.call)
       }
     }
   }
 
-  getCallResult(c)
+  getCallResult(call)
   return result
 }
 
