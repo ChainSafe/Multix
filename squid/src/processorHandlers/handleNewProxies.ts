@@ -43,7 +43,9 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[], chainId
         delegatee: delegateeAccount,
         type,
         delay,
-        createdAt
+        createdAt,
+        creationBlockNumber: null,
+        extrinsicIndex: null
       })
     )
   }
