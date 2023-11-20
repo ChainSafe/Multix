@@ -4,16 +4,16 @@ import { styled } from '@mui/material/styles'
 import CallInfo from '../CallInfo'
 import { MdOutlineGesture as GestureIcon } from 'react-icons/md'
 import { HiOutlineQuestionMarkCircle as QuestionMarkIcon } from 'react-icons/hi2'
-import { AggregatedData } from './TransactionList'
 import { useCallback, useMemo } from 'react'
 import { isProxyCall } from '../../utils'
 import { AccountBadge } from '../../types'
 import TransactionProgress from './TransactionProgress'
 import { useModals } from '../../contexts/ModalsContext'
+import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 
 interface Props {
   className?: string
-  aggregatedData: AggregatedData
+  aggregatedData: CallDataInfoFromChain
   isProposer: boolean
   possibleSigners: string[]
   multisigSignatories: string[]
