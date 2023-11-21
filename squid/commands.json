@@ -1,7 +1,15 @@
 {
   "$schema": "https://cdn.subsquid.io/schemas/commands.json",
   "commands": {
+    "migration:apply": {
+      "description": "Apply the DB migrations",
+      "cmd": [
+        "squid-typeorm-migration",
+        "apply"
+       ]
+    },
     "start-rococo": {
+      "deps": ["migration:apply"],
       "description": "starts the indexer with rococo",
       "cmd": [
         "node",
