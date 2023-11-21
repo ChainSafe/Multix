@@ -7,8 +7,7 @@ import {
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
-  getProxyInfoFromArgs,
-  JsonLog
+  getProxyInfoFromArgs
 } from './util'
 import {
   handleNewMultisigCalls,
@@ -168,23 +167,13 @@ processor.run(
 
         if (call.name === 'Proxy.kill_pure') {
           const proxyToKillArgs = getProxyKillPureArgs(call.args)
-          ctx.log.info(`call.args ${JsonLog(call.args)}`)
-          ctx.log.info(
-            `need to kill spawned from ${proxyToKillArgs.spawner} ${proxyToKillArgs.blockNumber} ${proxyToKillArgs.extrinsicIndex}`
-          )
-          newPureProxies.size &&
-            ctx.log.info(`---> new pure ${JsonLog(Array.from(newPureProxies.values()))}`)
           Array.from(newPureProxies.values()).forEach(
             ({ creationBlockNumber, extrinsicIndex, who, id }) => {
-              ctx.log.info(`${creationBlockNumber} ${proxyToKillArgs.blockNumber}`)
-              ctx.log.info(`${extrinsicIndex} ${proxyToKillArgs.extrinsicIndex}`)
-              ctx.log.info(`${proxyToKillArgs.spawner} ${who}`)
               if (
                 creationBlockNumber === proxyToKillArgs.blockNumber &&
                 extrinsicIndex === proxyToKillArgs.extrinsicIndex &&
                 proxyToKillArgs.spawner === who
               ) {
-                ctx.log.info(`--> inside batch`)
                 newPureProxies.delete(id)
               }
             }

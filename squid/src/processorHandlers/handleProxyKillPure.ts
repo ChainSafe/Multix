@@ -1,7 +1,6 @@
 import { ProxyAccount } from '../model'
 import { Ctx } from '../main'
 import { KillPureCallInfo } from '../util/getProxyKillPureArgs'
-import { JsonLog } from '../util'
 
 export const handleProxyKillPure = async (ctx: Ctx, proxyKillPureArgs: KillPureCallInfo[]) => {
   const proxyAccountsToRemove: ProxyAccount[] = []
@@ -16,8 +15,6 @@ export const handleProxyKillPure = async (ctx: Ctx, proxyKillPureArgs: KillPureC
         }
       }
     })
-
-    !!matchingProxyAcccount && ctx.log.info(`got one ${JsonLog(matchingProxyAcccount)}`)
 
     matchingProxyAcccount && proxyAccountsToRemove.push(matchingProxyAcccount)
   }
