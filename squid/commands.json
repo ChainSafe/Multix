@@ -3,10 +3,7 @@
   "commands": {
     "migration:apply": {
       "description": "Apply the DB migrations",
-      "cmd": [
-        "squid-typeorm-migration",
-        "apply"
-       ]
+      "cmd": ["squid-typeorm-migration", "apply"]
     },
     "start-rococo": {
       "deps": ["migration:apply"],
