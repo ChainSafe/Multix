@@ -6,7 +6,6 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
-import { AggregatedData } from '../Transactions/TransactionList'
 import SignerSelection from '../select/SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useToasts } from '../../contexts/ToastContext'
@@ -20,12 +19,13 @@ import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
+import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 
 export interface SigningModalProps {
   onClose: () => void
   className?: string
   possibleSigners: string[]
-  proposalData: AggregatedData
+  proposalData: CallDataInfoFromChain
   onSuccess?: () => void
 }
 
