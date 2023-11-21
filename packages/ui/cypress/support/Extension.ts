@@ -31,7 +31,6 @@ export class Extension {
   txRequests: TxRequests = {}
   keyring: Keyring | undefined
   allowedOrigins: Record<string, string[]> = {}
-  notOwnedAccounts: string[] = []
 
   reset = () => {
     this.authRequests = {}
@@ -46,12 +45,9 @@ export class Extension {
     this.accounts = accounts
     await cryptoWaitReady()
     this.keyring = new Keyring({ type: 'sr25519' })
-    accounts.forEach(({ address, mnemonic }) => {
-      if (mnemonic) {
-        this.keyring?.addFromMnemonic(mnemonic)
-      } else {
-        this.notOwnedAccounts.push(address)
-      }
+    accounts.forEach(({ mnemonic }) => {
+      // we only add to the keyring the accounts with a known mnemonic
+      !!mnemonic && this.keyring?.addFromMnemonic(mnemonic)
     })
   }
 

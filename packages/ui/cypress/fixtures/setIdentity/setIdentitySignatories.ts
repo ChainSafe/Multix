@@ -24,6 +24,7 @@ export const setIdentitySignatories = [
   },
   {
     // this is a joystream account, with multisig, but not one of our accounts, we don't actually know the mnemonic
+    // so we can't sign anything with it
     address: 'j4WauZ6dVC6G8C1gDYKMbTZVVJoMAud6znTbdpNhKDpcZD4yX',
     name: 'Real account with Multisig',
     type: 'sr25519',

@@ -16,7 +16,7 @@ const initAndConnect = (account: InjectedAccountWitMnemonic, landingPage = landi
 }
 
 describe('Set an identity', () => {
-  it.only('Does not have the identity option if the pallet is not present', () => {
+  it('Does not have the identity option if the pallet is not present', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
     initAndConnect(multisigSignatoryWithoutIdentity, landingPageNetwork('joystream'))
     multisigPage.optionsMenuButton().click()
