@@ -91,7 +91,7 @@ processor.run(
     const newProxies: Map<string, NewProxy> = new Map()
     const proxyRemovalIds: Set<string> = new Set()
     const delegatorToRemoveIds: Set<string> = new Set()
-    const pureToKill: Map<string, KillPureCallInfo> = new Map()
+    const pureToKill: KillPureCallInfo[] = []
 
     for (const block of ctx.blocks) {
       const { calls, events, header } = block
@@ -179,10 +179,7 @@ processor.run(
             }
           )
 
-          pureToKill.set(
-            `${proxyToKillArgs.blockNumber}-${proxyToKillArgs.extrinsicIndex}`,
-            proxyToKillArgs
-          )
+          pureToKill.push(proxyToKillArgs)
         }
       }
 
@@ -240,11 +237,10 @@ processor.run(
       // and add them to the list to remove
       addToProxyRemoval.forEach((id) => proxyRemovalIds.add(id))
     }
-    // newPureProxies.size && ctx.log.info(`---> new pure ${JsonLog(newPureProxies.values())}`)
     proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
     newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
     newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
-    pureToKill.size && (await handleProxyKillPure(ctx, Array.from(pureToKill.values())))
+    pureToKill.length && (await handleProxyKillPure(ctx, pureToKill))
     newPureProxies.size &&
       (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
     newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values()), chainId))
