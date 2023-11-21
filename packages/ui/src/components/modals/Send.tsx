@@ -135,7 +135,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   )
 
   const easySetupOptions: Partial<Record<EasyTransferTitle, ReactNode>> = useMemo(() => {
-    return {
+    const res = {
       [EasyTransferTitle.SendTokens]: (
         <BalancesTransfer
           from={selectedOrigin.address}
@@ -158,12 +158,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
           isProxySelected={!!isProxySelected}
         />
       )
-    }
-  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected])
+    } as Partial<Record<EasyTransferTitle, ReactNode>>
 
-  useEffect(() => {
     if (hasIdentityPallet) {
-      easySetupOptions[EasyTransferTitle.SetIdentity] = (
+      res[EasyTransferTitle.SetIdentity] = (
         <SetIdentity
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
@@ -171,7 +169,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
         />
       )
     }
-  }, [easySetupOptions, hasIdentityPallet, selectedOrigin.address])
+
+    return res
+  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected, hasIdentityPallet])
 
   const signCallback = useSigningCallback({
     onSuccess,
