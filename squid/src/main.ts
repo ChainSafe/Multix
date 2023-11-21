@@ -100,13 +100,13 @@ processor.run(
 
       const timestamp = new Date(header.timestamp || 0)
       for (const call of calls) {
+        // we only care about the successful actions and the ones signed
         if (!call.success || !call.origin) continue
 
         if (supportedMultisigCalls.includes(call.name)) {
           const signer = getOriginAccount(call.origin)
-          const callArgs = call.args
 
-          const { otherSignatories, threshold } = handleMultisigCall(callArgs)
+          const { otherSignatories, threshold } = handleMultisigCall(call.args)
           const signatories = [signer, ...otherSignatories]
 
           const multisigAddress = getMultisigAddress(signatories, threshold)
@@ -138,8 +138,6 @@ processor.run(
         }
 
         if (call.name === 'Proxy.remove_proxies') {
-          // we only care about the successful actions and the ones signed
-
           const signer = getOriginAccount(call.origin)
           const signerAccountId = getAccountId(signer, chainId)
 
@@ -169,21 +167,23 @@ processor.run(
         }
 
         if (call.name === 'Proxy.kill_pure') {
-          // we only care about the successful actions and the ones signed
-
-          ctx.log.info(`---KILL INFO ${JsonLog(call)}`)
-          const proxyToKillArgs = getProxyKillPureArgs(ctx, call.args)
-          Array.from(newPureProxies.values()).find(
+          const proxyToKillArgs = getProxyKillPureArgs(call.args)
+          ctx.log.info(`call.args ${JsonLog(call.args)}`)
+          ctx.log.info(
+            `need to kill spawned from ${proxyToKillArgs.spawner} ${proxyToKillArgs.blockNumber} ${proxyToKillArgs.extrinsicIndex}`
+          )
+          newPureProxies.size &&
+            ctx.log.info(`---> new pure ${JsonLog(Array.from(newPureProxies.values()))}`)
+          Array.from(newPureProxies.values()).forEach(
             ({ creationBlockNumber, extrinsicIndex, who, id }) => {
-              ctx.log.info(`SPAWNER: ${proxyToKillArgs.spawner}`)
-              ctx.log.info(`WHO ${who}`)
-
+              ctx.log.info(`${creationBlockNumber} ${proxyToKillArgs.blockNumber}`)
+              ctx.log.info(`${extrinsicIndex} ${proxyToKillArgs.extrinsicIndex}`)
+              ctx.log.info(`${proxyToKillArgs.spawner} ${who}`)
               if (
                 creationBlockNumber === proxyToKillArgs.blockNumber &&
                 extrinsicIndex === proxyToKillArgs.extrinsicIndex &&
                 proxyToKillArgs.spawner === who
               ) {
-                // TODO check if the who is public key or an address
                 ctx.log.info(`--> inside batch`)
                 newPureProxies.delete(id)
               }
@@ -208,7 +208,6 @@ processor.run(
           // ctx.log.info(`pure ${newPureProxy.pure}`)
           // ctx.log.info(`who ${newPureProxy.who}`)
 
-          // ctx.log.info(`---- PURE CREATED ${JsonLog(event)}`)
           newPureProxy &&
             newPureProxies.set(newPureProxy.id, {
               ...newPureProxy,
@@ -252,6 +251,7 @@ processor.run(
       // and add them to the list to remove
       addToProxyRemoval.forEach((id) => proxyRemovalIds.add(id))
     }
+    // newPureProxies.size && ctx.log.info(`---> new pure ${JsonLog(newPureProxies.values())}`)
     proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
     newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
     newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))

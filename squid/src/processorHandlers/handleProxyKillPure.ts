@@ -4,22 +4,23 @@ import { KillPureCallInfo } from '../util/getProxyKillPureArgs'
 import { JsonLog } from '../util'
 
 export const handleProxyKillPure = async (ctx: Ctx, proxyKillPureArgs: KillPureCallInfo[]) => {
-  const toRemove: ProxyAccount[] = []
+  const proxyAccountsToRemove: ProxyAccount[] = []
+
   for (const { blockNumber, extrinsicIndex, spawner } of proxyKillPureArgs) {
-    const getAll = await ctx.store.find(ProxyAccount)
-    ctx.log.info(`--> ALL ${JsonLog(getAll)}`)
-    const temp = await ctx.store.findOneBy(ProxyAccount, {
-      creationBlockNumber: blockNumber,
-      extrinsicIndex: extrinsicIndex,
-      delegatee: {
-        address: spawner
+    const matchingProxyAcccount = await ctx.store.findOne(ProxyAccount, {
+      where: {
+        creationBlockNumber: blockNumber,
+        extrinsicIndex: extrinsicIndex,
+        delegatee: {
+          address: spawner
+        }
       }
     })
 
-    temp && toRemove.push(temp)
+    !!matchingProxyAcccount && ctx.log.info(`got one ${JsonLog(matchingProxyAcccount)}`)
+
+    matchingProxyAcccount && proxyAccountsToRemove.push(matchingProxyAcccount)
   }
 
-  ctx.log.info(`--> Remove ${toRemove.map((proxyAccount) => JSON.stringify(proxyAccount))}`)
-
-  await ctx.store.remove(toRemove)
+  await ctx.store.remove(proxyAccountsToRemove)
 }

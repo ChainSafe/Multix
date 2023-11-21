@@ -11,8 +11,8 @@ export interface NewPureProxy {
   delay: number
   type: ProxyType
   createdAt: Date
-  creationBlockNumber?: number | null
-  extrinsicIndex?: number | null
+  creationBlockNumber?: number
+  extrinsicIndex?: number
 }
 
 export const handleNewPureProxies = async (

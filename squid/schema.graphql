@@ -36,8 +36,8 @@ type ProxyAccount @entity {
   type: ProxyType!
   delay: Int!
   createdAt: DateTime!
-  extrinsicIndex: Int
-  creationBlockNumber: Int
+  extrinsicIndex: Int # only useful for pure proxies
+  creationBlockNumber: Int # only useful for pure proxies
 }
 
 # from https://github.com/paritytech/polkadot/blob/476d3ddddf7a8f7361edac92228d0200abac0895/runtime/polkadot/src/lib.rs#L918

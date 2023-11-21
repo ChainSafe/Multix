@@ -1,4 +1,4 @@
-import { Ctx } from '../main'
+import { Call } from '@subsquid/substrate-processor'
 import { encodeId } from './accountEncoding'
 
 export interface KillPureCallInfo {
@@ -7,17 +7,9 @@ export interface KillPureCallInfo {
   blockNumber: number
 }
 
-export const getProxyKillPureArgs = (ctx: Ctx, proxyKillArgs: any) => {
-  // const toRemove = await ctx.store.findBy(ProxyAccount, {
-  //   id: In(proxyRemovals)
-  // })
-
-  // // ctx.log.info(`--> Remove ${toRemove.map((proxyAccount) => JSON.stringify(proxyAccount))}`)
-
-  // await ctx.store.remove(toRemove)
-
+export const getProxyKillPureArgs = (proxyKillArgs: Call['args']) => {
   return {
-    extrinsicIndex: proxyKillArgs.extrinsicIndex,
+    extrinsicIndex: proxyKillArgs.extIndex,
     blockNumber: proxyKillArgs.height,
     spawner: encodeId(proxyKillArgs.spawner.value)
   } as KillPureCallInfo

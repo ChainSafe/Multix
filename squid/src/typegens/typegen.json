@@ -14,7 +14,7 @@
     "Multisig.as_multi",
     "Multisig.approve_as_multi",
     "Multisig.cancel_as_multi",
-    "Multisig.as_multi_threshold_1",
+    "Multisig.as_multi_threshold_1"
   ],
   "storage": []
 }
