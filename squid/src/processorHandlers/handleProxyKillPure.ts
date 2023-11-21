@@ -1,20 +1,23 @@
-import { Equal } from 'typeorm'
 import { ProxyAccount } from '../model'
 import { Ctx } from '../main'
 import { KillPureCallInfo } from '../util/getProxyKillPureArgs'
+import { JsonLog } from '../util'
 
 export const handleProxyKillPure = async (ctx: Ctx, proxyKillPureArgs: KillPureCallInfo[]) => {
   const toRemove: ProxyAccount[] = []
-
-  proxyKillPureArgs.forEach(async ({ blockNumber, extrinsicIndex, spawner }) => {
+  for (const { blockNumber, extrinsicIndex, spawner } of proxyKillPureArgs) {
+    const getAll = await ctx.store.find(ProxyAccount)
+    ctx.log.info(`--> ALL ${JsonLog(getAll)}`)
     const temp = await ctx.store.findOneBy(ProxyAccount, {
-      creationBlockNumber: Equal(blockNumber),
-      extrinsicIndex: Equal(extrinsicIndex),
-      delegatee: Equal(spawner)
+      creationBlockNumber: blockNumber,
+      extrinsicIndex: extrinsicIndex,
+      delegatee: {
+        address: spawner
+      }
     })
 
     temp && toRemove.push(temp)
-  })
+  }
 
   ctx.log.info(`--> Remove ${toRemove.map((proxyAccount) => JSON.stringify(proxyAccount))}`)
 

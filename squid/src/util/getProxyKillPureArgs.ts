@@ -1,6 +1,5 @@
 import { Ctx } from '../main'
 import { encodeId } from './accountEncoding'
-import { getAccountId } from './getAccountId'
 
 export interface KillPureCallInfo {
   spawner: string
@@ -8,7 +7,7 @@ export interface KillPureCallInfo {
   blockNumber: number
 }
 
-export const getProxyKillPureArgs = (ctx: Ctx, proxyKillArgs: any, chainId: string) => {
+export const getProxyKillPureArgs = (ctx: Ctx, proxyKillArgs: any) => {
   // const toRemove = await ctx.store.findBy(ProxyAccount, {
   //   id: In(proxyRemovals)
   // })
@@ -20,6 +19,6 @@ export const getProxyKillPureArgs = (ctx: Ctx, proxyKillArgs: any, chainId: stri
   return {
     extrinsicIndex: proxyKillArgs.extrinsicIndex,
     blockNumber: proxyKillArgs.height,
-    spawner: getAccountId(encodeId(proxyKillArgs.spawner.value), chainId)
+    spawner: encodeId(proxyKillArgs.spawner.value)
   } as KillPureCallInfo
 }

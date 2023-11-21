@@ -172,18 +172,19 @@ processor.run(
           // we only care about the successful actions and the ones signed
 
           ctx.log.info(`---KILL INFO ${JsonLog(call)}`)
-          const proxyToKillArgs = getProxyKillPureArgs(ctx, call.args, chainId)
+          const proxyToKillArgs = getProxyKillPureArgs(ctx, call.args)
           Array.from(newPureProxies.values()).find(
             ({ creationBlockNumber, extrinsicIndex, who, id }) => {
               ctx.log.info(`SPAWNER: ${proxyToKillArgs.spawner}`)
-              ctx.log.info(`WHO ${getAccountId(who, chainId)}`)
+              ctx.log.info(`WHO ${who}`)
 
               if (
                 creationBlockNumber === proxyToKillArgs.blockNumber &&
                 extrinsicIndex === proxyToKillArgs.extrinsicIndex &&
-                proxyToKillArgs.spawner === getAccountId(who, chainId)
+                proxyToKillArgs.spawner === who
               ) {
                 // TODO check if the who is public key or an address
+                ctx.log.info(`--> inside batch`)
                 newPureProxies.delete(id)
               }
             }
