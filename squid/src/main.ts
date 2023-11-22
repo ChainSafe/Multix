@@ -23,6 +23,8 @@ import {
 import { Env } from './util/Env'
 import { getAccountId } from './util/getAccountId'
 import { getProxyAccountIByDelegatorIds } from './util/getProxyAccountIByDelegatorIds'
+import { KillPureCallInfo, getProxyKillPureArgs } from './util/getProxyKillPureArgs'
+import { handleProxyKillPure } from './processorHandlers/handleProxyKillPure'
 
 const supportedMultisigCalls = [
   'Multisig.as_multi',
@@ -31,7 +33,8 @@ const supportedMultisigCalls = [
   'Multisig.as_multi_threshold_1'
 ]
 
-const supportedCalls = ['Proxy.proxy', 'Proxy.remove_proxies', ...supportedMultisigCalls]
+const supportedProxyCalls = ['Proxy.proxy', 'Proxy.remove_proxies', 'Proxy.kill_pure']
+const supportedCalls = [...supportedProxyCalls, ...supportedMultisigCalls]
 
 const supportedEvents = [
   'Proxy.PureCreated',
@@ -88,19 +91,21 @@ processor.run(
     const newProxies: Map<string, NewProxy> = new Map()
     const proxyRemovalIds: Set<string> = new Set()
     const delegatorToRemoveIds: Set<string> = new Set()
+    const pureToKill: KillPureCallInfo[] = []
 
     for (const block of ctx.blocks) {
       const { calls, events, header } = block
+      const blockNumber = block.header.height
 
       const timestamp = new Date(header.timestamp || 0)
       for (const call of calls) {
+        // we only care about the successful actions and the ones signed
+        if (!call.success || !call.origin) continue
+
         if (supportedMultisigCalls.includes(call.name)) {
-          if (!call.success || !call.origin) continue
-
           const signer = getOriginAccount(call.origin)
-          const callArgs = call.args
 
-          const { otherSignatories, threshold } = handleMultisigCall(callArgs)
+          const { otherSignatories, threshold } = handleMultisigCall(call.args)
           const signatories = [signer, ...otherSignatories]
 
           const multisigAddress = getMultisigAddress(signatories, threshold)
@@ -114,7 +119,6 @@ processor.run(
           } as NewMultisigsInfo
 
           newMultisigsInfo.push(newMulti)
-          const blockNumber = block.header.height
           const blockHash = block.header.hash
 
           newMultisigCalls.push({
@@ -133,9 +137,6 @@ processor.run(
         }
 
         if (call.name === 'Proxy.remove_proxies') {
-          // we only care about the successful actions and the ones signed
-          if (!call.success || !call.origin) continue
-
           const signer = getOriginAccount(call.origin)
           const signerAccountId = getAccountId(signer, chainId)
 
@@ -163,6 +164,23 @@ processor.run(
           // for any other account, and remove the link
           delegatorToRemoveIds.add(signerAccountId)
         }
+
+        if (call.name === 'Proxy.kill_pure') {
+          const proxyToKillArgs = getProxyKillPureArgs(call.args)
+          Array.from(newPureProxies.values()).forEach(
+            ({ creationBlockNumber, extrinsicIndex, who, id }) => {
+              if (
+                creationBlockNumber === proxyToKillArgs.blockNumber &&
+                extrinsicIndex === proxyToKillArgs.extrinsicIndex &&
+                proxyToKillArgs.spawner === who
+              ) {
+                newPureProxies.delete(id)
+              }
+            }
+          )
+
+          pureToKill.push(proxyToKillArgs)
+        }
       }
 
       for (const event of events) {
@@ -179,7 +197,9 @@ processor.run(
           newPureProxy &&
             newPureProxies.set(newPureProxy.id, {
               ...newPureProxy,
-              createdAt: timestamp
+              createdAt: timestamp,
+              creationBlockNumber: blockNumber,
+              extrinsicIndex: event.extrinsicIndex
             })
         }
 
@@ -220,6 +240,7 @@ processor.run(
     proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
     newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
     newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
+    pureToKill.length && (await handleProxyKillPure(ctx, pureToKill))
     newPureProxies.size &&
       (await handleNewPureProxies(ctx, Array.from(newPureProxies.values()), chainId))
     newProxies.size && (await handleNewProxies(ctx, Array.from(newProxies.values()), chainId))

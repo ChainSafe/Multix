@@ -10,6 +10,7 @@
   "calls": [
     "Proxy.proxy",
     "Proxy.remove_proxies",
+    "Proxy.kill_pure",
     "Multisig.as_multi",
     "Multisig.approve_as_multi",
     "Multisig.cancel_as_multi",

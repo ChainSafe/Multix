@@ -11,6 +11,8 @@ export interface NewPureProxy {
   delay: number
   type: ProxyType
   createdAt: Date
+  creationBlockNumber?: number
+  extrinsicIndex?: number
 }
 
 export const handleNewPureProxies = async (
@@ -43,7 +45,16 @@ export const handleNewPureProxies = async (
   const whoAccounts = await getOrCreateAccounts(ctx, Array.from(dedupWho.values()), chainId)
 
   const proxyAccounts: ProxyAccount[] = []
-  for (const { who, pure, delay, createdAt, type } of newPureProxies) {
+
+  for (const {
+    who,
+    pure,
+    delay,
+    createdAt,
+    type,
+    extrinsicIndex,
+    creationBlockNumber
+  } of newPureProxies) {
     const id = getProxyAccountId(who, pure, ProxyType.Any, delay, chainId)
 
     proxyAccounts.push(
@@ -53,7 +64,9 @@ export const handleNewPureProxies = async (
         delegatee: whoAccounts.find(({ address }) => who === address),
         type,
         delay,
-        createdAt
+        createdAt,
+        extrinsicIndex,
+        creationBlockNumber
       })
     )
   }
