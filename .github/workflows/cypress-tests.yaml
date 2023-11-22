@@ -26,17 +26,19 @@ jobs:
       - name: Install and show git version
         run: apt-get -y install git && git --version
         id: git-install
-      - name: run chopstick forking kusama
-        run: npx --yes @acala-network/chopsticks@latest --config ./chopsticks-config.yml
       - uses: isbang/compose-action@v1.5.1
         with:
           compose-file: './docker-compose.yml'
       - name: Install indexer deps
+        working-directory: squid
         run: npm ci
       - name: run indexer routine
-        run: npm run codegen; npm run typegen; npm run build; npm run db:migrate; node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.chopsticks
-      - name: Graphql server
-        run: npm run start:graphql-server
+        working-directory: squid
+        run: |
+          npm run codegen
+          npm run typegen
+          npm run build
+          npm run db:migrate
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
@@ -44,7 +46,11 @@ jobs:
         with:
           working-directory: packages/ui
           install-command: yarn install
-          start: 'yarn start'
+          start: |
+            npx --yes @acala-network/chopsticks@latest --config ../../chopsticks-config.yml
+            cd packages/ui && yarn start
+            cd squid && npm run start:graphql-server
+            cd squid && node -r dotenv/config ../../squid/lib/main dotenv_config_path=assets/envs/.env.chopsticks
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
