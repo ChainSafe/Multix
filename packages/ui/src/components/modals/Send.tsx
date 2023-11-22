@@ -22,6 +22,7 @@ import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import SetIdentity from '../EasySetup/SetIdentity'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { useHasIdentityPallet } from '../../hooks/useHasIdentityPallet'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -62,6 +63,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
+  const hasIdentityPallet = useHasIdentityPallet()
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -132,17 +134,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     [getMultisigByAddress, selectedMultiProxy]
   )
 
-  const easySetupOptions: Record<EasyTransferTitle, ReactNode> = useMemo(() => {
-    return {
+  const easySetupOptions: Partial<Record<EasyTransferTitle, ReactNode>> = useMemo(() => {
+    const res = {
       [EasyTransferTitle.SendTokens]: (
         <BalancesTransfer
-          from={selectedOrigin.address}
-          onSetExtrinsic={setExtrinsicToCall}
-          onSetErrorMessage={setEasyOptionErrorMessage}
-        />
-      ),
-      [EasyTransferTitle.SetIdentity]: (
-        <SetIdentity
           from={selectedOrigin.address}
           onSetExtrinsic={setExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
@@ -163,8 +158,20 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
           isProxySelected={!!isProxySelected}
         />
       )
+    } as Partial<Record<EasyTransferTitle, ReactNode>>
+
+    if (hasIdentityPallet) {
+      res[EasyTransferTitle.SetIdentity] = (
+        <SetIdentity
+          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessage}
+        />
+      )
     }
-  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected])
+
+    return res
+  }, [selectedOrigin, easyOptionErrorMessage, isProxySelected, hasIdentityPallet])
 
   const signCallback = useSigningCallback({
     onSuccess,

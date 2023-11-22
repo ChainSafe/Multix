@@ -20,6 +20,7 @@ import WithProxySelection from './WithProxySelection'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
+import { getAsMultiTx } from '../../utils/getAsMultiTx'
 
 interface Props {
   className?: string
@@ -100,10 +101,7 @@ const MultisigCreation = ({ className }: Props) => {
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
-    return api.tx.multisig.asMulti(threshold, otherSignatories, null, remarkTx, {
-      refTime: 0,
-      proofSize: 0
-    })
+    return getAsMultiTx({ api, threshold, otherSignatories, tx: remarkTx })
   }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
 
   const batchCall = useMemo(() => {
@@ -139,10 +137,8 @@ const MultisigCreation = ({ className }: Props) => {
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
-    const multiSigProxyCall = api.tx.multisig.asMulti(threshold, otherSignatories, null, proxyTx, {
-      refTime: 0,
-      proofSize: 0
-    })
+    const multiSigProxyCall = getAsMultiTx({ api, threshold, otherSignatories, tx: proxyTx })
+
     // Some funds are needed on the multisig for the pure proxy creation
     const transferTx = api.tx.balances.transferKeepAlive(
       multiAddress,

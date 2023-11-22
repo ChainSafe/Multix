@@ -4,6 +4,7 @@ import { MultiProxy } from '../contexts/MultiProxyContext'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useGetSortAddress } from './useGetSortAddress'
+import { getAsMultiTx } from '../utils/getAsMultiTx'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -62,10 +63,7 @@ export const useGetMultisigTx = ({
         tx = extrinsicToCall
       }
 
-      return api.tx.multisig.asMulti(threshold, otherSigners, null, tx, {
-        refTime: 0,
-        proofSize: 0
-      })
+      return getAsMultiTx({ api, threshold, otherSignatories: otherSigners, tx })
     } catch (e) {
       console.error('Error in multisigTx')
       console.error(e)
