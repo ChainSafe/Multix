@@ -27,4 +27,10 @@ export class ProxyAccount {
 
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
+
+    @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
+    @Column_("int4", {nullable: true})
+    creationBlockNumber!: number | undefined | null
 }

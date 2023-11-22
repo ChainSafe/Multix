@@ -39,6 +39,7 @@ import * as v9370 from '../v9370'
 import * as v9381 from '../v9381'
 import * as v9420 from '../v9420'
 import * as v9430 from '../v9430'
+import * as v1000000 from '../v1000000'
 
 export const proxy =  {
     name: 'Proxy.proxy',
@@ -1010,6 +1011,17 @@ export const proxy =  {
             call: v9430.Call,
         })
     ),
+    /**
+     * See [`Pallet::proxy`].
+     */
+    v1000000: new CallType(
+        'Proxy.proxy',
+        sts.struct({
+            real: v1000000.MultiAddress,
+            forceProxyType: sts.option(() => v1000000.ProxyType),
+            call: v1000000.Call,
+        })
+    ),
 }
 
 export const removeProxies =  {
@@ -1031,5 +1043,65 @@ export const removeProxies =  {
     v2005: new CallType(
         'Proxy.remove_proxies',
         sts.unit()
+    ),
+}
+
+export const killPure =  {
+    name: 'Proxy.kill_pure',
+    /**
+     * Removes a previously spawned pure proxy.
+     * 
+     * WARNING: **All access to this account will be lost.** Any funds held in it will be
+     * inaccessible.
+     * 
+     * Requires a `Signed` origin, and the sender account must have been created by a call to
+     * `pure` with corresponding parameters.
+     * 
+     * - `spawner`: The account that originally called `pure` to create this account.
+     * - `index`: The disambiguation index originally passed to `pure`. Probably `0`.
+     * - `proxy_type`: The proxy type originally passed to `pure`.
+     * - `height`: The height of the chain when the call to `pure` was processed.
+     * - `ext_index`: The extrinsic index in which the call to `pure` was processed.
+     * 
+     * Fails with `NoPermission` in case the caller is not a previously created pure
+     * account whose `pure` call has corresponding parameters.
+     */
+    v9300: new CallType(
+        'Proxy.kill_pure',
+        sts.struct({
+            spawner: v9300.MultiAddress,
+            proxyType: v9300.ProxyType,
+            index: sts.number(),
+            height: sts.number(),
+            extIndex: sts.number(),
+        })
+    ),
+    /**
+     * Removes a previously spawned pure proxy.
+     * 
+     * WARNING: **All access to this account will be lost.** Any funds held in it will be
+     * inaccessible.
+     * 
+     * Requires a `Signed` origin, and the sender account must have been created by a call to
+     * `pure` with corresponding parameters.
+     * 
+     * - `spawner`: The account that originally called `pure` to create this account.
+     * - `index`: The disambiguation index originally passed to `pure`. Probably `0`.
+     * - `proxy_type`: The proxy type originally passed to `pure`.
+     * - `height`: The height of the chain when the call to `pure` was processed.
+     * - `ext_index`: The extrinsic index in which the call to `pure` was processed.
+     * 
+     * Fails with `NoPermission` in case the caller is not a previously created pure
+     * account whose `pure` call has corresponding parameters.
+     */
+    v9420: new CallType(
+        'Proxy.kill_pure',
+        sts.struct({
+            spawner: v9420.MultiAddress,
+            proxyType: v9420.ProxyType,
+            index: sts.number(),
+            height: sts.number(),
+            extIndex: sts.number(),
+        })
     ),
 }
