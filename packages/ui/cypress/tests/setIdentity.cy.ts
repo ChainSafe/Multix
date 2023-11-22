@@ -1,5 +1,5 @@
 import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { landingPageUrl } from '../fixtures/landingData'
+import { landingPageAddressUrl, landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
 import { setIdentityMultisigs } from '../fixtures/setIdentity/setIdentityMultisigs'
 import { setIdentitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'
 import { multisigPage } from '../support/page-objects/multisigPage'
@@ -8,14 +8,27 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
-const initAndConnect = (account: InjectedAccountWitMnemonic) => {
-  cy.visit(landingPageUrl)
+const initAndConnect = (account: InjectedAccountWitMnemonic, landingPage = landingPageUrl) => {
+  cy.visit(landingPage)
   cy.initExtension([account])
   clickOnConnect()
   cy.connectAccounts([account.address])
 }
 
 describe('Set an identity', () => {
+  it('Does not have the identity option if the pallet is not present', () => {
+    const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
+    initAndConnect(multisigSignatoryWithoutIdentity, landingPageNetwork('joystream'))
+    multisigPage.optionsMenuButton().click()
+    multisigPage.setIdentityMenuOption().should('not.exist')
+
+    //click outside to close the menu
+    cy.get('body').click(0, 0)
+    multisigPage.newTransactionButton().click()
+    sendTxModal.selectEasySetup().should('contain', 'Send tokens').click()
+    sendTxModal.selectionEasySetupSetIdentity().should('not.exist')
+  })
+
   it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
     initAndConnect(multisigSignatoryWithoutIdentity)

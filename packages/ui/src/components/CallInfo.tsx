@@ -1,6 +1,5 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
-import { AggregatedData } from './Transactions/TransactionList'
 import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
@@ -12,11 +11,11 @@ import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
 import { ApiPromise } from '@polkadot/api'
-import { isTypeBalance } from '../utils/isTypeBalance'
-import { isTypeAccount } from '../utils/isTypeAccount'
+import { isTypeBalance, isTypeAccount } from '../utils'
+import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 
 interface Props {
-  aggregatedData: Omit<AggregatedData, 'from' | 'timestamp'>
+  aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
   expanded?: boolean
   children?: ReactNode
   className?: string

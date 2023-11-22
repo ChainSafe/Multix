@@ -11,6 +11,7 @@ import {
 } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { EasyTransferTitle } from '../../components/modals/Send'
+import { useHasIdentityPallet } from '../../hooks/useHasIdentityPallet'
 
 interface MultisigActionMenuProps {
   withNewTransactionButton?: boolean
@@ -24,6 +25,7 @@ const MultisigActionMenu = ({
   const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, onOpenSendModal } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
+  const hasIdentityPallet = useHasIdentityPallet()
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
@@ -45,6 +47,7 @@ const MultisigActionMenu = ({
     ]
 
     !selectedIsWatched &&
+      hasIdentityPallet &&
       opts.push({
         text: 'Set identity',
         icon: <IdentityIcon size={20} />,

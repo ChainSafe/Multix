@@ -1,11 +1,11 @@
-module.exports = class Data1688401458874 {
-    name = 'Data1688401458874'
+module.exports = class Data1700495579146 {
+    name = 'Data1700495579146'
 
     async up(db) {
         await db.query(`CREATE TABLE "account_multisig" ("id" character varying NOT NULL, "multisig_id" character varying, "signatory_id" character varying, CONSTRAINT "PK_9c47c4be06a450da56b95bf3e06" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_373149008deefb43018021ac00" ON "account_multisig" ("multisig_id") `)
         await db.query(`CREATE INDEX "IDX_b9094826e16b3725b5bcb814b1" ON "account_multisig" ("signatory_id") `)
-        await db.query(`CREATE TABLE "proxy_account" ("id" character varying NOT NULL, "type" character varying(17) NOT NULL, "delay" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "delegator_id" character varying, "delegatee_id" character varying, CONSTRAINT "PK_ec6559af2b2f1e64069037b7eef" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "proxy_account" ("id" character varying NOT NULL, "type" character varying(17) NOT NULL, "delay" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_index" integer, "creation_block_number" integer, "delegator_id" character varying, "delegatee_id" character varying, CONSTRAINT "PK_ec6559af2b2f1e64069037b7eef" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_f88663d41538b675ba6787b168" ON "proxy_account" ("delegator_id") `)
         await db.query(`CREATE INDEX "IDX_bd9bcaf30e85ab22af2710b822" ON "proxy_account" ("delegatee_id") `)
         await db.query(`CREATE TABLE "multisig_call" ("id" character varying NOT NULL, "block_hash" text NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "call_index" integer NOT NULL, "multisig_id" character varying, CONSTRAINT "PK_fa22322b62825a7b48838d98e17" PRIMARY KEY ("id"))`)

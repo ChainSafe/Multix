@@ -31,6 +31,7 @@ import { Button } from '../library'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
+import { getAsMultiTx } from '../../utils/getAsMultiTx'
 
 interface Props {
   onClose: () => void
@@ -121,9 +122,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     const addProxyTx = api.tx.proxy.addProxy(newMultisigAddress, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, addProxyTx)
     // call with the old multisig
-    return api.tx.multisig.asMulti(oldThreshold, otherOldSignatories, null, proxyTx, {
-      refTime: 0,
-      proofSize: 0
+    return getAsMultiTx({
+      api,
+      threshold: oldThreshold,
+      otherSignatories: otherOldSignatories,
+      tx: proxyTx
     })
   }, [
     api,
@@ -168,9 +171,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     )
     const removeProxyTx = api.tx.proxy.removeProxy(selectedMultisig?.address, 'Any', 0)
     const proxyTx = api.tx.proxy.proxy(selectedMultiProxy?.proxy, null, removeProxyTx)
-    return api.tx.multisig.asMulti(newThreshold, otherNewSignatories, null, proxyTx, {
-      refTime: 0,
-      proofSize: 0
+    return getAsMultiTx({
+      api,
+      otherSignatories: otherNewSignatories,
+      threshold: newThreshold,
+      tx: proxyTx
     })
   }, [
     api,

@@ -6,7 +6,6 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
-import { AggregatedData } from '../Transactions/TransactionList'
 import SignerSelection from '../select/SignerSelection'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useToasts } from '../../contexts/ToastContext'
@@ -19,12 +18,14 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
+import { getAsMultiTx } from '../../utils/getAsMultiTx'
+import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 
 export interface SigningModalProps {
   onClose: () => void
   className?: string
   possibleSigners: string[]
-  proposalData: AggregatedData
+  proposalData: CallDataInfoFromChain
   onSuccess?: () => void
 }
 
@@ -192,13 +193,14 @@ const ProposalSigning = ({
 
         // If we can submit the proposal and have the call data
       } else if (shouldSubmit && callInfo?.call && callInfo?.weight) {
-        tx = api.tx.multisig.asMulti(
+        tx = getAsMultiTx({
+          api,
           threshold,
-          otherSigners,
-          proposalData.info.when,
-          proposalData.callData || addedCallData,
-          callInfo.weight
-        )
+          otherSignatories: otherSigners,
+          weight: callInfo.weight,
+          when: proposalData.info.when,
+          tx: proposalData.callData || addedCallData
+        })
 
         // if we can't submit yet (more signatures required), all we need is the call hash
       } else if (!shouldSubmit && proposalData.hash) {

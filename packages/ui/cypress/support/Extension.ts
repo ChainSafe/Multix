@@ -46,7 +46,8 @@ export class Extension {
     await cryptoWaitReady()
     this.keyring = new Keyring({ type: 'sr25519' })
     accounts.forEach(({ mnemonic }) => {
-      this.keyring?.addFromMnemonic(mnemonic)
+      // we only add to the keyring the accounts with a known mnemonic
+      !!mnemonic && this.keyring?.addFromMnemonic(mnemonic)
     })
   }
 
