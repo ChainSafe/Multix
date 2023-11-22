@@ -27,7 +27,7 @@ jobs:
         run: apt-get -y install git && git --version
         id: git-install
       - name: run chopstick forking kusama
-        run: npm install --global @acala-network/chopsticks@latest && chopsticks --config ./chopsticks-config.yml
+        run: npx --yes @acala-network/chopsticks@latest --config ./chopsticks-config.yml
       - uses: isbang/compose-action@v1.5.1
         with:
           compose-file: './docker-compose.yml'
