@@ -28,7 +28,8 @@ jobs:
         id: git-install
       - uses: isbang/compose-action@v1.5.1
         with:
-          compose-file: './docker-compose.yml'
+          # compose-file: './docker-compose.yml'
+          services: 'db'
       - name: Install indexer deps
         working-directory: squid
         run: npm ci
