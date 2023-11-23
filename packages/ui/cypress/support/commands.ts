@@ -4,6 +4,7 @@ import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import 'cypress-wait-until'
+import { settingsPage } from './page-objects/settingsPage'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
@@ -107,6 +108,16 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
     // let's allow Accounts to connect
     cy.enableAuth(requests[0].id, accountAddresses)
   })
+})
+
+Cypress.Commands.add('addWatchAccount', (address: string, name?: string) => {
+  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
+
+  if (name) {
+    settingsPage.accountNameInput().type(name)
+  }
+
+  settingsPage.addButton().click()
 })
 
 interface IVisitWithLocalStorage {
@@ -222,6 +233,8 @@ declare global {
        * @example cy.visitWithLocalStorage({url: http://localhost:3333, watchedAccounts: ['0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e'], watchedAccounts: {"0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e":"my custom name"}})
        */
       visitWithLocalStorage: (params: IVisitWithLocalStorage) => void
+
+      addWatchAccount: (address: string, name?: string) => void
     }
   }
 }

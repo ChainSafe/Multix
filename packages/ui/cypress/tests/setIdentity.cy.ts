@@ -1,5 +1,5 @@
 import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { landingPageAddressUrl, landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
+import { landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
 import { setIdentityMultisigs } from '../fixtures/setIdentity/setIdentityMultisigs'
 import { setIdentitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'
 import { multisigPage } from '../support/page-objects/multisigPage'
