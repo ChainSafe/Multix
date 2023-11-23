@@ -26,10 +26,14 @@ jobs:
       - name: Install and show git version
         run: apt-get -y install git && git --version
         id: git-install
-      - uses: isbang/compose-action@v1.5.1
+      - name: run docker-compose
+        uses: sudo-bot/action-docker-compose@latest
         with:
-          # compose-file: './docker-compose.yml'
-          services: 'db'
+          # https://docs.docker.com/compose/reference/overview/
+          cli-args: |
+            "up"
+            "db"
+            "-d"
       - name: Install indexer deps
         working-directory: squid
         run: npm ci
