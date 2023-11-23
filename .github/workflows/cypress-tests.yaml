@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,14 +34,14 @@ jobs:
       - name: Install and show git version
         run: apt-get -y install git && git --version
         id: git-install
-      - name: run docker-compose
-        uses: sudo-bot/action-docker-compose@latest
-        with:
-          # https://docs.docker.com/compose/reference/overview/
-          cli-args: |
-            up
-            db
-            -d
+      # - name: run docker-compose
+      #   uses: sudo-bot/action-docker-compose@latest
+      #   with:
+      #     # https://docs.docker.com/compose/reference/overview/
+      #     cli-args: |
+      #       up
+      #       db
+      #       -d
       - name: Install indexer deps
         working-directory: squid
         run: npm ci
