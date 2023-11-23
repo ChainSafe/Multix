@@ -31,9 +31,9 @@ jobs:
         with:
           # https://docs.docker.com/compose/reference/overview/
           cli-args: |
-            "up"
-            "db"
-            "-d"
+            up
+            db
+            -d
       - name: Install indexer deps
         working-directory: squid
         run: npm ci
