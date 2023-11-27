@@ -58,7 +58,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          working-directory: packages/ui
           install-command: yarn install
           start: |
             npx --yes @acala-network/chopsticks@latest --config ../../chopsticks-config.yml
