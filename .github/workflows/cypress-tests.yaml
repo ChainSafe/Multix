@@ -60,7 +60,7 @@ jobs:
         with:
           install-command: yarn install
           start: |
-            npx --yes @acala-network/chopsticks@latest --config ../../chopsticks-config.yml
+            npx --yes @acala-network/chopsticks@latest --config chopsticks-config.yml
             yarn ui:start
             npm run start:graphql-server
             npm run start:chopsticks
