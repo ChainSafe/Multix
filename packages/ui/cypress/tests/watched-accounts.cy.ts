@@ -12,6 +12,16 @@ import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
 import { testAccounts } from '../fixtures/testAccounts'
 
+const addWatchAccount = (address: string, name?: string) => {
+  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
+
+  if (name) {
+    settingsPage.accountNameInput().type(name)
+  }
+
+  settingsPage.addButton().click()
+}
+
 const { name: testAccountName, address: testAccountAddress } =
   testAccounts['Multisig Member Account 1']
 
@@ -19,7 +29,7 @@ describe('Watched Accounts', () => {
   it('can add an account to the watch list', () => {
     cy.visit(landingPageUrl)
     landingPage.watchAccountButton().click()
-    cy.addWatchAccount(testAccountAddress, testAccountName)
+    addWatchAccount(testAccountAddress, testAccountName)
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.addressLabel().should('be.visible')
@@ -31,7 +41,7 @@ describe('Watched Accounts', () => {
   it('can remove an account from the watch list', () => {
     // add an account first
     cy.visit(settingsPageWatchAccountUrl)
-    cy.addWatchAccount(testAccountAddress)
+    addWatchAccount(testAccountAddress)
     // now remove it
     settingsPage.accountContainer().within(() => {
       settingsPage.accountDeleteButton().click()
@@ -44,10 +54,10 @@ describe('Watched Accounts', () => {
   it('can see error when attempting to add same address more than once', () => {
     // add an account first
     cy.visit(settingsPageWatchAccountUrl)
-    cy.addWatchAccount(testAccountAddress)
+    addWatchAccount(testAccountAddress)
     settingsPage.accountContainer().should('have.length', 1)
     // attempt to add the same account again
-    cy.addWatchAccount(testAccountAddress)
+    addWatchAccount(testAccountAddress)
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Account already added')
     settingsPage.accountContainer().should('have.length', 1)
     settingsPage.addButton().should('be.disabled')
@@ -55,7 +65,7 @@ describe('Watched Accounts', () => {
 
   it('can see error when attempting to add an invalid address', () => {
     cy.visit(settingsPageWatchAccountUrl)
-    cy.addWatchAccount('123')
+    addWatchAccount('123')
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Invalid address')
     settingsPage.accountContainer().should('have.length', 0)
     settingsPage.addButton().should('be.disabled')

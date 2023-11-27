@@ -1,21 +1,24 @@
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
-import { landingPageUrl } from '../fixtures/landingData'
-import { landingPage } from '../support/page-objects/landingPage'
+import { settingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { testAccounts } from '../fixtures/testAccounts'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 
-const { name: testAccountName, address: testAccountAddress } =
-  testAccounts['Multisig Member Account 1']
+const {
+  name: testAccountName,
+  address: testAccountAddress,
+  kusamaAddress
+} = testAccounts['Multisig Member Account 1']
 
 describe('Network can be switched', () => {
   it('should switch account using menu', () => {
-    cy.visit(landingPageUrl)
+    cy.visitWithLocalStorage({
+      url: settingsPageWatchAccountUrl,
+      accountNames: { [testAccountAddress]: testAccountName as string },
+      watchedAccounts: [testAccountAddress]
+    })
 
-    landingPage.watchAccountButton().click()
-
-    cy.url().should('contain', 'settings?network=rococo')
-    cy.addWatchAccount(testAccountAddress, testAccountName)
+    cy.url().should('contain', 'network=rococo')
 
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
@@ -29,12 +32,13 @@ describe('Network can be switched', () => {
       .desktopMenu()
       .within(() => cy.waitUntil(() => topMenuItems.multiproxyLoader().should('not.be.visible')))
 
-    cy.url().should('contain', 'settings?network=kusama')
+    cy.url().should('contain', 'network=kusama')
 
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.nameLabel().should('contain', testAccountName)
-      accountDisplay.addressLabel().contains('Hbiow')
+
+      if (kusamaAddress) accountDisplay.addressLabel().contains(kusamaAddress.slice(0, 5))
     })
   })
 })

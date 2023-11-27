@@ -3,11 +3,13 @@ import { InjectedAccount } from '@polkadot/extension-inject/types'
 export interface InjectedAccountWitMnemonic extends InjectedAccount {
   mnemonic: string
   publicKey?: string
+  kusamaAddress?: string
 }
 
 export const testAccounts = {
   'Multisig Member Account 1': {
     address: '5H679cx9tkuHqyReUgBxeTqXKjVikVwLySDH1buiYuoqhi2w',
+    kusamaAddress: 'HbiowJ2X7vDbdF6FP11YRCXUKmxZAkXRp42QGBg2i2LSY8P',
     publicKey: '0xde3ed24acdfe71c13b4d42539c5390ddee147ba6b29b0593ce842e77ff034445',
     name: 'Multisig Member Account 1',
     type: 'sr25519',
