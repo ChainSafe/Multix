@@ -15,8 +15,6 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +50,9 @@ jobs:
           npm run typegen
           npm run build
           npm run db:migrate
+        env:
+          DB_HOST: postgres
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
