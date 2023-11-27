@@ -4,7 +4,6 @@ import { AuthRequests, Extension, TxRequests } from './Extension'
 import { MultisigInfo, rejectCurrentMultisigTxs } from '../utils/rejectCurrentMultisigTxs'
 import { testAccounts, InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import 'cypress-wait-until'
-import { settingsPage } from './page-objects/settingsPage'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
