@@ -26,6 +26,8 @@
     "lint:fix": "yarn workspaces foreach run lint:fix",
     "formatAll": "prettier --write .",
     "ui:start": "yarn workspace multix-ui start",
+    "start:graphql-server": "cd squid && npm run start:graphql-server",
+    "start:chopsticks": "cd squid && node -r dotenv/config ../../squid/lib/main dotenv_config_path=assets/envs/.env.chopsticks",
     "ui:lint": "yarn workspace multix-ui lint"
   },
   "devDependencies": {

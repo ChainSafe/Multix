@@ -61,9 +61,9 @@ jobs:
           install-command: yarn install
           start: |
             npx --yes @acala-network/chopsticks@latest --config ../../chopsticks-config.yml
-            cd packages/ui && yarn start
-            cd squid && npm run start:graphql-server
-            cd squid && node -r dotenv/config ../../squid/lib/main dotenv_config_path=assets/envs/.env.chopsticks
+            yarn ui:start
+            npm run start:graphql-server
+            npm run start:chopsticks
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
