@@ -29,7 +29,7 @@ docker compose up -d db
 npm run db:migrate
 
 # 5. Now start the squid processor that you wish, see commands.json
-npm run start:indexer:rococo #or specify your own .env based on the .env.example and use "start:indexer"
+npm run start #or specify your own .env based on the .env.example
 
 # 6. The above command will block the terminal
 # start the graphql server using the following command in a new terminal

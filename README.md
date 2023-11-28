@@ -42,7 +42,7 @@ docker compose up db -d;
 npm run codegen;
 npm run build;
 npm run db:migrate;
-npm run start:indexer # this will start the indexer using the environment variables set in your .env
+npm run start # this will start the indexer using the environment variables set in your .env
 # alternatively, you can run with predefined values, see in /squid/assets/envs/, e.g here with polkadot
 node -r dotenv/config lib/main dotenv_config_path=assets/envs/.env.polkadot
 ```
@@ -76,13 +76,14 @@ yarn && cd squid && npm ci
 # go back to the root
 cd ..
 
-# kill any docker and launch the full setup. It will
+# Launch the full setip. It will:
 # - delete any previous Chopsticks database
+# - launch a docker with the indexer db
 # - launch a Chopsticks node
 # - build and launch a subsquid indexer pointed at Chopsticks
 # - launch a graphQL server for the squid
-# - launch the UI
-docker compose down; docker compose up db -d; rm db.sqlite*; npm run start:chopsticks-test-build-and-launch-all
+# - launch the UI with local env pointed at Chopsticks
+rm db.sqlite*; npm run start:chopsticks-test-build-and-launch-all
 
 yarn ui:test
 ```

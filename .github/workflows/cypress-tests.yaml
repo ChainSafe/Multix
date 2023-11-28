@@ -32,14 +32,6 @@ jobs:
       - name: Install and show git version
         run: apt-get -y install git && git --version
         id: git-install
-      # - name: run docker-compose
-      #   uses: sudo-bot/action-docker-compose@latest
-      #   with:
-      #     # https://docs.docker.com/compose/reference/overview/
-      #     cli-args: |
-      #       up
-      #       db
-      #       -d
       - name: Install indexer deps
         working-directory: squid
         run: npm ci
@@ -60,11 +52,11 @@ jobs:
         with:
           install-command: yarn install
           start: |
-            npx --yes @acala-network/chopsticks@latest --config chopsticks-config.yml
+            npm run start:chopsticks
             yarn ui:start-with-chopsticks
             npm run start:graphql-server
-            npm run start:chopsticks-indexer-ci
-          wait-on: 'http://localhost:3333'
+            npm run indexer:start:chopsticks-ci
+          wait-on: 'http://localhost:3333, http://localhost:8000'
           # custom test command to run
           command: yarn test:ci
       # store the screenshots if the tests fail
