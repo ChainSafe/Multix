@@ -40,10 +40,10 @@ const getBadge = (account?: AccountBaseInfo | string) => {
   return typeof account === 'string'
     ? undefined
     : account?.meta?.isProxy
-    ? AccountBadge.PURE
-    : account?.meta?.isMulti
-    ? AccountBadge.MULTI
-    : undefined
+      ? AccountBadge.PURE
+      : account?.meta?.isMulti
+        ? AccountBadge.MULTI
+        : undefined
 }
 
 const isOptionEqualToValue = (option: AccountBaseInfo, value: AccountBaseInfo) => {
