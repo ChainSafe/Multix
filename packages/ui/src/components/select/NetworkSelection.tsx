@@ -35,16 +35,16 @@ const NetworkSelection = () => {
 
   const renderNetworks = useCallback(
     (allowedNetworks: string[]) => {
-      const filteredNetworks = networksToShow.filter(([networkName]) =>
+      const displayedNetworks = networksToShow.filter(([networkName]) =>
         allowedNetworks.includes(networkName)
       )
 
-      return filteredNetworks.map(([networkName, { logo }]) => (
+      return displayedNetworks.map(([networkName, { logo }]) => (
         <MenuItemStyled
           key={networkName}
           value={networkName}
           data-cy={`select-network-option-${networkName}`}
-          isOneLine={filteredNetworks.length === 1}
+          isOneLine={displayedNetworks.length === 1}
         >
           <ImgStyled
             alt={`network-logo-${networkName}`}
