@@ -76,7 +76,7 @@ yarn && cd squid && npm ci
 # go back to the root
 cd ..
 
-# Launch the full setip. It will:
+# Launch the full setup. It will:
 # - delete any previous Chopsticks database
 # - launch a docker with the indexer db
 # - launch a Chopsticks node
