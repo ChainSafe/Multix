@@ -16,7 +16,7 @@ describe('Network can be switched', () => {
   it('should switch account using menu', () => {
     cy.visitWithLocalStorage({
       url: settingsPageWatchAccountUrl,
-      accountNames: { [multisigPublicKey]: multisigName as string },
+      accountNames: { [multisigPublicKey]: multisigName },
       watchedAccounts: [multisigPublicKey]
     })
 
