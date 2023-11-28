@@ -51,6 +51,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install-command: yarn install
+          env:
+            VITE_WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
           start: |
             npm run start:chopsticks
             yarn ui:start-with-chopsticks
