@@ -13,7 +13,7 @@ export const landingPage = {
   noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
   linkedAddressNotFound: () => cy.get('[data-cy=label-linked-address-not-found]'),
   resetLinkedAddressButton: () => cy.get('[data-cy=button-reset-linked-address]'),
-  firstMultisigCreationText: () => cy.get('[data-cy=text-first-multisig-creation'),
+  firstMultisigCreationLabel: () => cy.get('[data-cy=label-first-multisig-creation'),
 
   // page specific assertion
   shouldHaveNoAccountErrorAndWikiLink() {

@@ -39,7 +39,6 @@ describe('Multisig creation', () => {
       cy.wrap(txRequests[0].payload.address).should('eq', address1)
       newMultisigPage.nextButton().should('not.exist')
       newMultisigPage.creatingLoader().should('exist')
-      console.log(txRequests)
       cy.approveTx(txRequests[0].id)
       notifications.notificationWrapper().should('have.length', 1)
       notifications.successNotificationIcon().should('be.visible')
@@ -47,10 +46,10 @@ describe('Multisig creation', () => {
       // Chopsticks does not fire the "inBroadcast" event yet
       // see https://github.com/AcalaNetwork/chopsticks/issues/568
       // landingPage
-      //   .firstMultisigCreationText()
+      //   .firstMultisigCreationLabel()
       //   .should('have.text', 'Multisig creation in progress...')
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
-      multisigPage.accountHeader(10000).within(() => {
+      multisigPage.accountHeader().within(() => {
         accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
       })
     })
