@@ -43,15 +43,9 @@ describe('Multisig creation', () => {
       notifications.notificationWrapper().should('have.length', 1)
       notifications.successNotificationIcon().should('be.visible')
       notifications.notificationWrapper().should('contain', 'Tx in block')
-      landingPage.firstMultisigCreationText().should('have.text', 'Multisig creation in progress')
+      landingPage
+        .firstMultisigCreationText()
+        .should('have.text', 'Multisig creation in progress...')
     })
   })
-
-  // Todo, check that:
-  // that we can't continue with less than 2 sig
-  // threshold too high or low
-  // name is optional
-  // error message if no own account
-  // not enough funds for signer error
-  // without pure
 })
