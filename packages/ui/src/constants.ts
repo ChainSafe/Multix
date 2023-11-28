@@ -158,7 +158,7 @@ export const networkList = {
   'rhala testnet': {
     chainId: 'rhala',
     explorerNetworkName: '',
-    rpcUrl: 'wss://subbridge-test.phala.network/rhala/ws',
+    rpcUrl: 'wss://rhala-node.phala.network/ws',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
     logo: nodesKhalaSVG
