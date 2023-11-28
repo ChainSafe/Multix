@@ -50,8 +50,10 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          GQL_PORT: 4350
           VITE_WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
+          DB_HOST: postgres
+          GQL_PORT: 4350
+          DB_PORT: 5432
         with:
           install-command: yarn install
           start: |
