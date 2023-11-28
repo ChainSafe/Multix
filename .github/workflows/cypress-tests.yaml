@@ -54,9 +54,9 @@ jobs:
           start: |
             npm run start:chopsticks
             yarn ui:start-with-chopsticks
-            npm run start:graphql-server
             npm run indexer:start:chopsticks-ci
-          wait-on: 'http://localhost:3333, http://localhost:8000'
+            npm run start:graphql-server
+          wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
       # store the screenshots if the tests fail
