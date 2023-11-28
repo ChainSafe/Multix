@@ -1,6 +1,8 @@
 import { landingPageNetwork } from '../fixtures/landingData'
 import { testAccounts } from '../fixtures/testAccounts'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPage } from '../support/page-objects/landingPage'
+import { multisigPage } from '../support/page-objects/multisigPage'
 import { newMultisigPage } from '../support/page-objects/newMultisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
@@ -43,9 +45,15 @@ describe('Multisig creation', () => {
       notifications.notificationWrapper().should('have.length', 1)
       notifications.successNotificationIcon().should('be.visible')
       notifications.notificationWrapper().should('contain', 'Tx in block')
-      landingPage
-        .firstMultisigCreationText()
-        .should('have.text', 'Multisig creation in progress...')
+      // Chopsticks does not fire the "inBroadcast" event
+      // see https://github.com/AcalaNetwork/chopsticks/issues/568
+      // landingPage
+      //   .firstMultisigCreationText()
+      //   .should('have.text', 'Multisig creation in progress...')
+      const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
+      multisigPage.accountHeader(20000).within(() => {
+        accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+      })
     })
   })
 })
