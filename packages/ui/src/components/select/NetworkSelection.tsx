@@ -34,22 +34,26 @@ const NetworkSelection = () => {
   )
 
   const renderNetworks = useCallback(
-    (allowedNetworks: string[]) =>
-      networksToShow
-        .filter(([networkName]) => allowedNetworks.includes(networkName))
-        .map(([networkName, { logo }]) => (
-          <MenuItemStyled
-            key={networkName}
-            value={networkName}
-            data-cy={`select-network-option-${networkName}`}
-          >
-            <ImgStyled
-              alt={`network-logo-${networkName}`}
-              src={logo}
-            />
-            <ItemNameStyled>{networkName}</ItemNameStyled>
-          </MenuItemStyled>
-        )),
+    (allowedNetworks: string[]) => {
+      const filteredNetworks = networksToShow.filter(([networkName]) =>
+        allowedNetworks.includes(networkName)
+      )
+
+      return filteredNetworks.map(([networkName, { logo }]) => (
+        <MenuItemStyled
+          key={networkName}
+          value={networkName}
+          data-cy={`select-network-option-${networkName}`}
+          isOneLine={filteredNetworks.length === 1}
+        >
+          <ImgStyled
+            alt={`network-logo-${networkName}`}
+            src={logo}
+          />
+          <ItemNameStyled>{networkName}</ItemNameStyled>
+        </MenuItemStyled>
+      ))
+    },
     [networksToShow]
   )
 
@@ -186,11 +190,13 @@ const SelectStyled = styled(SelectMui)`
   }
 `
 
-const MenuItemStyled = styled(MenuItem)`
+const MenuItemStyled = styled(MenuItem)<{ isOneLine: boolean }>`
   text-transform: capitalize;
   padding: 0.75rem;
   max-width: 9.1875rem;
   box-sizing: content-box;
+  // Fix for correct display of the one line networks list in Safari
+  ${({ isOneLine }) => isOneLine && 'column-span: all'}
 `
 
 const ImgStyled = styled('img')`
