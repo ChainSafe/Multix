@@ -50,6 +50,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
+          GQL_PORT: 4350
           VITE_WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
         with:
           install-command: yarn install
