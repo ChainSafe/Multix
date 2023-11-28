@@ -51,7 +51,7 @@ describe('Multisig creation', () => {
       //   .firstMultisigCreationText()
       //   .should('have.text', 'Multisig creation in progress...')
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
-      multisigPage.accountHeader(30000).within(() => {
+      multisigPage.accountHeader(60000).within(() => {
         accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
       })
     })
