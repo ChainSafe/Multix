@@ -24,7 +24,7 @@ export type TxRequests = Record<number, TxRequest>
 export type AuthRequests = Record<number, AuthRequest>
 
 export type EnableRequest = number
-
+const ss58Format = 2
 export class Extension {
   authRequests: AuthRequests = {}
   accounts: InjectedAccountWitMnemonic[] = []
@@ -44,10 +44,10 @@ export class Extension {
     this.reset()
     this.accounts = accounts
     await cryptoWaitReady()
-    this.keyring = new Keyring({ type: 'sr25519' })
+    this.keyring = new Keyring({ type: 'sr25519', ss58Format })
     accounts.forEach(({ mnemonic }) => {
       // we only add to the keyring the accounts with a known mnemonic
-      !!mnemonic && this.keyring?.addFromMnemonic(mnemonic)
+      !!mnemonic && this.keyring?.addFromUri(mnemonic)
     })
   }
 
@@ -68,9 +68,12 @@ export class Extension {
                   const res = () => {
                     const registry = new TypeRegistry()
                     registry.setSignedExtensions(payload.signedExtensions)
-                    const pair = this.keyring?.getPair(this.accounts[0].address)
+                    const pair = this.keyring?.getPair(payload.address)
                     if (!pair) {
-                      console.error('Pair not found')
+                      console.error(
+                        `Pair not found for encoded address ${payload.address}, with keyring:`,
+                        this.keyring?.toJson
+                      )
                       return
                     }
                     const signature = registry

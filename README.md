@@ -61,6 +61,28 @@ From the repository root
 # install all dependencies
 yarn;
 
-# install and launch the db in a docker
+# start Multix UI (accessible on localhost:3333 per default)
 yarn ui:start
+```
+
+#### Running tests in Cypress
+
+Make sure you have docker.
+
+```bash
+# install all dependancies
+yarn && cd squid && npm ci
+
+# go back to the root
+cd ..
+
+# kill any docker and launch the full setup. It will
+# - delete any previous Chopsticks database
+# - launch a Chopsticks node
+# - build and launch a subsquid indexer pointed at Chopsticks
+# - launch a graphQL server for the squid
+# - launch the UI
+docker compose down; docker compose up db -d; rm db.sqlite*; npm run start:chopsticks-test-build-and-launch-all
+
+yarn ui:test
 ```

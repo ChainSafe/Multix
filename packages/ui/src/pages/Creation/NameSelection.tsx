@@ -35,6 +35,7 @@ const NameSelection = ({ className, name, setName }: Props) => {
         label="Multisig name"
         value={name}
         onChange={handleChange}
+        inputProps={{ 'data-cy': 'input-name-creation' }}
       />
     </Box>
   )

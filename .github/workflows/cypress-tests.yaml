@@ -61,18 +61,12 @@ jobs:
           install-command: yarn install
           start: |
             npx --yes @acala-network/chopsticks@latest --config chopsticks-config.yml
-            yarn ui:start
+            yarn ui:start-with-chopsticks
             npm run start:graphql-server
-            npm run start:chopsticks
+            npm run start:chopsticks-indexer-ci
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci
-        env:
-          VITE_CHAIN_ID: 'kusama'
-          VITE_NETWORK_NAME: 'kusama'
-          VITE_WS_PROVIDER: 'ws://localhost:8000'
-          VITE_GRAPHQL_WS_PROVIDER: 'ws://localhost:4350/graphql'
-          VITE_GRAPHQL_HTTP_PROVIDER: 'http://localhost:4350/graphql'
       # store the screenshots if the tests fail
       - name: Store screenshots
         uses: actions/upload-artifact@v1

@@ -9,7 +9,7 @@ interface Props {
 const SuccessCreation = ({ className }: Props) => {
   return (
     <Box className={className}>
-      <h1>Multisig creation in progress...</h1>
+      <h1 data-cy="text-first-multisig-creation">Multisig creation in progress...</h1>
       <Grid
         container
         alignItems="center"
