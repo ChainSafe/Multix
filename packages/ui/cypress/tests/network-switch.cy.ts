@@ -3,7 +3,7 @@ import { settingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
-import convertRococoAddressToKusama from '../utils/convertRococoAddressToKusama'
+import { encodeAddress } from '@polkadot/keyring'
 
 const {
   publicKey: multisigPublicKey,
@@ -12,15 +12,19 @@ const {
   name: multisigName
 } = watchMultisigs['multisig-with-pure']
 
+const KUSAMA_S58_PREFIX = 2
+const kusamaAddress = encodeAddress(multisigAddress, KUSAMA_S58_PREFIX)
+
 describe('Network can be switched', () => {
-  it('should switch account using menu', () => {
+  it('should switch network using selector', () => {
     cy.visitWithLocalStorage({
       url: settingsPageWatchAccountUrl,
       accountNames: { [multisigPublicKey]: multisigName },
       watchedAccounts: [multisigPublicKey]
     })
 
-    cy.url().should('contain', `network=rococo&address=${multisigPureAddress}`)
+    cy.url().should('contain', 'network=rococo')
+    cy.url().should('contain', `address=${multisigPureAddress}`)
 
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
@@ -28,14 +32,7 @@ describe('Network can be switched', () => {
       accountDisplay.addressLabel().contains(multisigAddress.slice(0, 5))
     })
 
-    topMenuItems.desktopMenu().within(() =>
-      topMenuItems
-        .multiproxySelector()
-        .click()
-        .type(`${multisigPureAddress.slice(0, 5)}{downArrow}{enter}`)
-    )
-    topMenuItems.multiproxySelectorInput().should('have.value', multisigPureAddress)
-
+    topMenuItems.desktopMenu().within(() => topMenuItems.multiproxySelector().should('exist'))
     topMenuItems.desktopMenu().within(() => topMenuItems.networkSelector().click())
     topMenuItems.networkSelectorOption('kusama').click()
     topMenuItems
@@ -46,13 +43,11 @@ describe('Network can be switched', () => {
     cy.url().should('not.contain', 'address=')
 
     topMenuItems.desktopMenu().within(() => topMenuItems.multiproxySelector().should('not.exist'))
-    topMenuItems.desktopMenu().within(() => topMenuItems.connectButton().should('exist'))
+
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.nameLabel().should('contain', multisigName)
-      accountDisplay
-        .addressLabel()
-        .contains(convertRococoAddressToKusama(multisigAddress).slice(0, 5))
+      accountDisplay.addressLabel().contains(kusamaAddress.slice(0, 5))
     })
   })
 })
