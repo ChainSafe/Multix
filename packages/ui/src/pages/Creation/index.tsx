@@ -448,6 +448,7 @@ const MultisigCreation = ({ className }: Props) => {
           {!isSubmitted && (
             <Button
               variant="primary"
+              data-cy="button-next"
               disabled={!canGoNext}
               onClick={goNext}
             >
@@ -459,6 +460,7 @@ const MultisigCreation = ({ className }: Props) => {
               variant="primary"
               aria-label="send"
               disabled={true}
+              data-cy="button-creating-loader"
             >
               <LoaderStyled />
               Creating...

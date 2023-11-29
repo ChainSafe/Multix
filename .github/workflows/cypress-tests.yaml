@@ -3,11 +3,18 @@ on:
   pull_request:
     paths:
       - 'packages/ui/**/*'
+      - '.github/workflows/cypress-tests.yaml'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,17 +29,35 @@ jobs:
           key: ${{ runner.os }}-node_modules-files-build-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node_modules-build-
-      - name: Install and show git version
-        run: apt-get -y install git && git --version
-        id: git-install
+      - name: Install indexer deps
+        working-directory: squid
+        run: npm ci
+      - name: run indexer routine
+        working-directory: squid
+        run: |
+          npm run codegen
+          npm run typegen
+          npm run build
+          npm run db:migrate
+        env:
+          DB_HOST: postgres
+
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          VITE_WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
+          DB_HOST: postgres
+          GQL_PORT: 4350
+          DB_PORT: 5432
         with:
-          working-directory: packages/ui
           install-command: yarn install
-          start: 'yarn start'
+          start: |
+            npm run start:chopsticks
+            yarn ui:start-with-chopsticks
+            npm run indexer:start:chopsticks-ci
+            npm run start:graphql-server
           wait-on: 'http://localhost:3333'
           # custom test command to run
           command: yarn test:ci

@@ -68,6 +68,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
         }}
         value={threshold || ''}
         onChange={handleChange}
+        inputProps={{ 'data-cy': 'input-threshold-creation' }}
       />
     </Box>
   )
