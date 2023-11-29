@@ -48,7 +48,7 @@ describe('Multisig creation', () => {
       notifications.successNotificationIcon(30000).should('be.visible')
       notifications.notificationWrapper().should('contain', 'Tx in block')
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
-      multisigPage.accountHeader().within(() => {
+      multisigPage.accountHeader(10000).within(() => {
         accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
       })
     })
