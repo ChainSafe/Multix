@@ -9,6 +9,7 @@ export const topMenuItems = {
   multiproxySelector: () => cy.get('[data-cy=select-multiproxy]', { timeout: 20000 }),
   multiproxySelectorInput: () => cy.get('[data-cy=input-select-multiproxy]', { timeout: 10000 }),
   multiproxySelectorOption: () => cy.get('[data-cy=select-multiproxy-option]'),
+  multiproxyLoader: () => cy.get('[data-cy=proxy-selection-loader]', { timeout: 10000 }),
   networkSelector: () => cy.get('[data-cy=select-networks]'),
   networkSelectorOption: (networkName: string) =>
     cy.get(`[data-cy=select-network-option-${networkName}]`)
