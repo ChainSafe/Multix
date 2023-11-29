@@ -1,6 +1,7 @@
 export const notifications = {
-  successNotificationIcon: () => cy.get('[data-cy=notification-icon-success]'),
+  successNotificationIcon: (timeout = 4000) =>
+    cy.get('[data-cy=notification-icon-success]', { timeout }),
   errorNotificationIcon: () => cy.get('[data-cy=notification-icon-error]'),
   loadingNotificationIcon: () => cy.get('[data-cy=notification-icon-loading]'),
-  notificationWrapper: () => cy.get('[data-cy=notification-wrapper]', { timeout: 30000 })
+  notificationWrapper: (timeout = 4000) => cy.get('[data-cy=notification-wrapper]', { timeout })
 }
