@@ -3,7 +3,7 @@ import { settingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
-import { encodeAddress } from '@polkadot/keyring'
+import { encodeAddress } from '@polkadot/util-crypto'
 
 const {
   publicKey: multisigPublicKey,
