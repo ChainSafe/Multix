@@ -11,13 +11,17 @@ interface AccordionProps {
 
 const MultisigAccordion = ({ multisig }: AccordionProps) => {
   return (
-    <AccordionMuiStyled TransitionProps={{ timeout: { appear: 300, enter: 300, exit: 0 } }}>
+    <AccordionMuiStyled
+      TransitionProps={{ timeout: { appear: 300, enter: 300, exit: 0 } }}
+      data-cy="accordion-signatories"
+    >
       <AccordionSummary
         expandIcon={
           <HiOutlineChevronDown
             color="black"
             size="1rem"
             strokeWidth="2"
+            data-cy="icon-expand-signatories-summary"
           />
         }
       >
@@ -27,7 +31,7 @@ const MultisigAccordion = ({ multisig }: AccordionProps) => {
       </AccordionSummary>
       <AccordionDetails>
         <MultisigPaperStyled key={multisig.address}>
-          <AddressListStyled>
+          <AddressListStyled data-cy="list-item-signatory">
             {multisig?.signatories?.map((signatory) => (
               <li key={signatory}>
                 <AccountDisplay address={signatory} />
