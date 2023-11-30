@@ -17,5 +17,5 @@ export const multisigPage = {
   thresholdListItem: () => cy.get('[data-cy=list-item-threshold]'),
   balanceListItem: () => cy.get('[data-cy=list-item-balance]'),
   signatoriesAccordion: () => cy.get('[data-cy=accordion-signatories]'),
-  expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]'),
+  expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]')
 }

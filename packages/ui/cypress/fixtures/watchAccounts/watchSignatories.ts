@@ -26,7 +26,7 @@ export const watchSignatories = [
     name: 'No Pure Signatory 2',
     type: 'sr25519',
     mnemonic: 'mutual pluck punch boy gym key brush dune master aunt track dynamic'
-  },
+  }
 ]
 
 // signatory that is a member of 3 multisigs. 2 multisig with a pure, 1 multisig without a pure
@@ -36,12 +36,12 @@ export const signatoryOfMultipleMultisigs = {
   type: 'sr25519',
   mnemonic: 'cement risk mutual large fluid run witness vintage civil pipe cost weasel',
   multisigWithPure1: {
-    address: '5EKfTP24LJvTDLf3GP3vvJASv1jXmcZumFWGcSzVQ66epXZe', 
+    address: '5EKfTP24LJvTDLf3GP3vvJASv1jXmcZumFWGcSzVQ66epXZe'
   },
   multisigWithPure2: {
-    address: '5ENJzVn5CcVrzSi9dfmysrFWQ6Ce5iX3L22sa1bnZN8KvGBT', 
+    address: '5ENJzVn5CcVrzSi9dfmysrFWQ6Ce5iX3L22sa1bnZN8KvGBT'
   },
   multisigWithoutPure: {
-    address: '5HoPXnwfDpqhgNYGMSZTzhdvc3TDSvd41XDaVMg7yUo8W5un', 
+    address: '5HoPXnwfDpqhgNYGMSZTzhdvc3TDSvd41XDaVMg7yUo8W5un'
   }
-};
+}
