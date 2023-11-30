@@ -9,10 +9,10 @@ import { waitForTxRequest } from '../utils/waitForTxRequests'
 describe('Set an identity', () => {
   it('Does not have the identity option if the pallet is not present', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageNetwork('joystream'),
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [multisigSignatoryWithoutIdentity]
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
     })
     multisigPage.optionsMenuButton().click()
     multisigPage.setIdentityMenuOption().should('not.exist')
@@ -26,10 +26,10 @@ describe('Set an identity', () => {
 
   it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [multisigSignatoryWithoutIdentity]
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
     })
     multisigPage.optionsMenuButton().click()
     multisigPage.setIdentityMenuOption().should('be.visible').click()
@@ -83,10 +83,10 @@ describe('Set an identity', () => {
 
   it('Can edit an identity from the new tx button', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[0]
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [multisigSignatoryWithoutIdentity]
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
     })
     // select the right multisig (Alice has a lot)
     const first5DigitsAddress = setIdentityMultisigs['multisig-with-identity'].address.slice(0, 4)

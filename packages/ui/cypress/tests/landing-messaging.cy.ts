@@ -31,10 +31,10 @@ describe('Landing Page Messaging', () => {
   })
 
   it('can see an error when landing with connected extension but no account shared', () => {
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: []
+      injectExtensionWithAccounts: []
     })
     landingPage.shouldHaveNoAccountErrorAndWikiLink()
   })
@@ -54,7 +54,7 @@ describe('Landing Page Messaging', () => {
 
   it('can see error message if watching an account that is not part of a multisig', () => {
     const nonMemberPublicKey = testAccounts['Non Multisig Member 1'].publicKey!
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey]
     })
@@ -67,11 +67,11 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when connected to an account and watched but not part of a multisig', () => {
     const nonMemberPublicKey1 = testAccounts['Non Multisig Member 1'].publicKey!
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       watchedAccounts: [nonMemberPublicKey1],
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [testAccounts['Non Multisig Member 2']]
+      injectExtensionWithAccounts: [testAccounts['Non Multisig Member 2']]
     })
 
     landingPage

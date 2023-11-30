@@ -16,10 +16,10 @@ const fillAndSubmitTransactionForm = () => {
 
 describe('Perform transactions', () => {
   beforeEach(() => {
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [testAccounts['Multisig Member Account 1']]
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
   })
 

@@ -103,23 +103,23 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
   })
 })
 
-interface IVisitWithLocalStorage {
+interface IvisitCustom {
   url: string
   watchedAccounts?: string[]
   accountNames?: Record<string, string>
   extensionConnectionAllowed?: boolean
-  injectedAccountsExtension?: InjectedAccountWitMnemonic[]
+  injectExtensionWithAccounts?: InjectedAccountWitMnemonic[]
 }
 
 Cypress.Commands.add(
-  'visitWithLocalStorage',
+  'visitCustom',
   ({
     url,
     watchedAccounts,
     accountNames,
     extensionConnectionAllowed,
-    injectedAccountsExtension
-  }: IVisitWithLocalStorage) => {
+    injectExtensionWithAccounts
+  }: IvisitCustom) => {
     return cy.visit(url, {
       onBeforeLoad(win) {
         !!watchedAccounts?.length &&
@@ -133,8 +133,8 @@ Cypress.Commands.add(
         !!extensionConnectionAllowed &&
           win.localStorage.setItem(LOCALSTORAGE_EXTENSION_CONNECTION_KEY, 'true')
 
-        if (injectedAccountsExtension) {
-          extension.init(injectedAccountsExtension, 'Multix')
+        if (injectExtensionWithAccounts) {
+          extension.init(injectExtensionWithAccounts, 'Multix')
           injectExtension(win, extension)
         }
       }
@@ -235,16 +235,16 @@ declare global {
        * @param {string[]} params.watchedAccounts - List of public keys of accounts to watch
        * @param {{[publicKey: string]: string}} params.accountNames - Object of addresses associated to names
        * @param {boolean} params.extensionConnectionAllowed - whether the extension was previously allowed to connect to the website
-       * @param {InjectedAccountWitMnemonic} params.injectedAccountsExtension - Init and inject these account
-       * @example cy.visitWithLocalStorage({
-       *            injectedAccountsExtension: [],
+       * @param {InjectedAccountWitMnemonic} params.injectExtensionWithAccounts - Init and inject these account
+       * @example cy.visitCustom({
+       *            injectExtensionWithAccounts: [],
        *            extensionConnectionAllowed: false,
        *            url: http://localhost:3333,
        *            watchedAccounts: ['0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e'],
        *            watchedAccounts: {"0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e":"my custom name"}
        *          })
        */
-      visitWithLocalStorage: (params: IVisitWithLocalStorage) => void
+      visitCustom: (params: IvisitCustom) => void
     }
   }
 }

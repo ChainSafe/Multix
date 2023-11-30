@@ -19,10 +19,10 @@ const typeAndAdd = (address: string) => {
 }
 describe('Multisig creation', () => {
   beforeEach(() => {
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageNetwork('local'),
       extensionConnectionAllowed: true,
-      injectedAccountsExtension: [fundedAccount1, fundedAccount2, fundedAccount3]
+      injectExtensionWithAccounts: [fundedAccount1, fundedAccount2, fundedAccount3]
     })
   })
 

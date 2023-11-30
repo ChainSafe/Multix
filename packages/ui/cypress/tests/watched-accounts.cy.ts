@@ -75,7 +75,7 @@ describe('Watched Accounts', () => {
     const { name: multisigName, publicKey: multisigPublicKey } =
       watchMultisigs['multisig-without-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: settingsPageWatchAccountUrl,
       accountNames: {
         [multisigPublicKey]: multisigName
@@ -109,7 +109,7 @@ describe('Watched Accounts', () => {
   it('can see the expected account details displayed for a watched pure', () => {
     const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: settingsPageWatchAccountUrl,
       accountNames: {
         [purePublicKey]: pureName
@@ -142,7 +142,7 @@ describe('Watched Accounts', () => {
   it('can edit the name of a watched pure', () => {
     const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       accountNames: {
         [purePublicKey]: pureName
@@ -172,7 +172,7 @@ describe('Watched Accounts', () => {
   it('can open the correct subscan link for a watched pure', () => {
     const { purePublicKey, name: pureName, pureAddress } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       accountNames: {
         [purePublicKey]: pureName
@@ -196,7 +196,7 @@ describe('Watched Accounts', () => {
   it('can not see the "New Transaction" button when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       watchedAccounts: [purePublicKey]
     })
@@ -207,7 +207,7 @@ describe('Watched Accounts', () => {
   it('can not utilize wallet connect when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: settingsPageUrl,
       watchedAccounts: [purePublicKey]
     })
@@ -226,7 +226,7 @@ describe('Watched Accounts', () => {
   it('can see but not interact with txs when in watched account mode', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
-    cy.visitWithLocalStorage({
+    cy.visitCustom({
       url: landingPageUrl,
       watchedAccounts: [purePublicKey]
     })
