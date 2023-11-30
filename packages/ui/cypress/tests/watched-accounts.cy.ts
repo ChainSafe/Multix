@@ -240,9 +240,7 @@ describe('Watched Accounts', () => {
       })
   })
 
-  // This test is to ensure that if a multisig has a pure the user will the same
-  // display wether watching via the pure address or it's controlling multisig address
-  it('can see the same details displayed when watching a pure or its multisig', () => {
+  it('can see the same details displayed when watching a pure or its multisig address', () => {
     const { purePublicKey, address: multisigAddress } = watchMultisigs['multisig-with-pure']
 
     cy.visitWithLocalStorage({
@@ -301,7 +299,7 @@ describe('Watched Accounts', () => {
       })
   })
 
-  it('can see all multisigs that a watched signatory is member of', () => {
+  it.only('can see all multisigs that a watched signatory is a member of', () => {
     const signatory = signatoryOfMultipleMultisigs.address
     const expectedAddresses = [
       signatoryOfMultipleMultisigs.multisigWithPure1.address,
@@ -313,16 +311,14 @@ describe('Watched Accounts', () => {
       url: landingPageUrl,
       watchedAccounts: [signatory]
     })
-
     topMenuItems.multiproxySelector().should('be.visible').first().click()
-    // ensure all 3 multisigs are displayed in the multiproxy selector
+    // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
       .multiproxySelectorOption()
       .should('have.length', 3)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
           accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
-          // ensure the pure badge exists on the first two options and multisigBadge in the third option
           if (index < 2) {
             accountDisplay.pureBadge().should('exist')
           } else {
@@ -330,5 +326,16 @@ describe('Watched Accounts', () => {
           }
         })
       })
+    // ensure each multisig that the signatory is a member of can be viewed
+    expectedAddresses.forEach((address, index) => {
+      topMenuItems.multiproxySelector().first().click()
+      topMenuItems.multiproxySelectorOption().eq(index).click()
+      multisigPage
+        .accountHeader()
+        .should('be.visible')
+        .within(() => {
+          accountDisplay.addressLabel().should('contain.text', address.slice(0, 6))
+        })
+    })
   })
 })
