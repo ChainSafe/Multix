@@ -23,10 +23,19 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when extension is connected but no account is shared', () => {
     cy.visit(landingPageUrl)
-    cy.initExtension([testAccounts['Multisig Member Account 1']])
+    cy.initExtension([])
     clickOnConnect()
-    // don't connect any of the initialized accounts
+    // Connect the extension but no account
     cy.connectAccounts([])
+    landingPage.shouldHaveNoAccountErrorAndWikiLink()
+  })
+
+  it('can see an error when landing with connected extension but no account shared', () => {
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: []
+    })
     landingPage.shouldHaveNoAccountErrorAndWikiLink()
   })
 
@@ -57,15 +66,14 @@ describe('Landing Page Messaging', () => {
   })
 
   it('can see an error when connected to an account and watched but not part of a multisig', () => {
-    const nonMemberPublicKey = testAccounts['Non Multisig Member 1'].publicKey!
+    const nonMemberPublicKey1 = testAccounts['Non Multisig Member 1'].publicKey!
     cy.visitWithLocalStorage({
       url: landingPageUrl,
-      watchedAccounts: [nonMemberPublicKey]
+      watchedAccounts: [nonMemberPublicKey1],
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Non Multisig Member 2']]
     })
-    cy.initExtension([testAccounts['Non Multisig Member 1']])
-    clickOnConnect()
-    // connect another account that is not part of any multisig
-    cy.connectAccounts([testAccounts['Non Multisig Member 2'].address])
+
     landingPage
       .noMultisigFoundError()
       .should('contain.text', 'No multisig found for your accounts or watched accounts.')

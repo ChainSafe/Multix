@@ -1,27 +1,12 @@
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageAddressUrl, landingPageUrl } from '../fixtures/landingData'
-import { InjectedAccountWitMnemonic, testAccounts } from '../fixtures/testAccounts'
+import { testAccounts } from '../fixtures/testAccounts'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { watchSignatories } from '../fixtures/watchAccounts/watchSignatories'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { clickOnConnect } from '../utils/clickOnConnect'
-
-const initConnectAndRefreshWithAddress = (
-  initAccounts: InjectedAccountWitMnemonic[],
-  connectedAddresses: string[],
-  addressUrl?: string
-) => {
-  cy.visit(landingPageUrl)
-  cy.initExtension(Object.values(initAccounts))
-  clickOnConnect()
-  cy.connectAccounts(connectedAddresses)
-
-  //refresh the page now that the extension is allowed to connect
-  cy.visitWithInjectedExtension(addressUrl ? landingPageAddressUrl(addressUrl) : landingPageUrl)
-}
 
 describe('Account address in the address bar', () => {
   it('shows multi and update address with 1 watched (multi), 0 connected account, no linked address', () => {
@@ -44,11 +29,11 @@ describe('Account address in the address bar', () => {
   it('shows multi and update address with 0 watched, 1 connected account (multi), no linked address', () => {
     const { address } = knownMultisigs['test-multisig-1']
 
-    initConnectAndRefreshWithAddress(
-      [testAccounts['Multisig Member Account 1']],
-      [testAccounts['Multisig Member Account 1'].address],
-      undefined
-    )
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Multisig Member Account 1']]
+    })
 
     cy.url({ timeout: 10000 }).should('include', address)
     topMenuItems.multiproxySelectorInput().should('have.value', address)
@@ -116,11 +101,12 @@ describe('Account address in the address bar', () => {
     const { address } = knownMultisigs['test-multisig-1']
     const nonMulitisigAccountAddress = testAccounts['Non Multisig Member 1'].address
 
-    initConnectAndRefreshWithAddress(
-      [testAccounts['Multisig Member Account 1']],
-      [testAccounts['Multisig Member Account 1'].address],
-      nonMulitisigAccountAddress
-    )
+    cy.visitWithLocalStorage({
+      url: landingPageAddressUrl(nonMulitisigAccountAddress),
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Multisig Member Account 1']]
+    })
+
     landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
     cy.url().should('include', nonMulitisigAccountAddress)
     topMenuItems.multiproxySelector().should('be.visible')
@@ -189,11 +175,12 @@ describe('Account address in the address bar', () => {
 
   it('shows a pure with 0 watched, 1 connected account (many multi & pure), pure linked address', () => {
     const expectedPureAddress = '5EXePPDNnucmLgrirMPQatFfu4WjncVbVoDZXx1gq75e3JcF'
-    initConnectAndRefreshWithAddress(
-      [testAccounts['Many Multisig And Pure Member 1']],
-      [testAccounts['Many Multisig And Pure Member 1'].address],
-      expectedPureAddress
-    )
+    cy.visitWithLocalStorage({
+      url: landingPageAddressUrl(expectedPureAddress),
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Many Multisig And Pure Member 1']]
+    })
+
     cy.url().should('include', expectedPureAddress)
     topMenuItems.multiproxySelectorInput().should('have.value', expectedPureAddress)
     multisigPage.accountHeader().within(() => {
@@ -203,11 +190,13 @@ describe('Account address in the address bar', () => {
 
   it('shows a multi with 0 watched, 1 connected account (many multi & pure), multi linked address', () => {
     const expectedMultiAddress = '5DxNgjvfJLfDTAAgFD1kWtJAh2KVNTTkwytr7S37dZwVpXd7'
-    initConnectAndRefreshWithAddress(
-      [testAccounts['Many Multisig And Pure Member 1']],
-      [testAccounts['Many Multisig And Pure Member 1'].address],
-      expectedMultiAddress
-    )
+
+    cy.visitWithLocalStorage({
+      url: landingPageAddressUrl(expectedMultiAddress),
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Many Multisig And Pure Member 1']]
+    })
+
     cy.url().should('include', expectedMultiAddress)
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultiAddress.slice(0, 6))

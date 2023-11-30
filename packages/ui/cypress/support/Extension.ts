@@ -39,7 +39,7 @@ export class Extension {
     this.allowedOrigins = {}
   }
 
-  init = async (accounts: InjectedAccountWitMnemonic[]) => {
+  init = async (accounts: InjectedAccountWitMnemonic[], allowedOrigin?: string) => {
     this.reset()
     this.accounts = accounts
     await cryptoWaitReady()
@@ -48,6 +48,12 @@ export class Extension {
       // we only add to the keyring the accounts with a known mnemonic
       !!mnemonic && this.keyring?.addFromUri(mnemonic)
     })
+
+    const accountAddresses = accounts.map(({ address }) => address)
+    // if passed along all the accounts will be allowed for this origin
+    if (allowedOrigin) {
+      this.allowedOrigins[allowedOrigin] = accountAddresses
+    }
   }
 
   getInjectedEnable = () => {
@@ -92,7 +98,7 @@ export class Extension {
           })
 
           // this origin has already allowed some accounts
-          if (this.allowedOrigins[origin]?.length) {
+          if (this.allowedOrigins[origin]) {
             // return the list of accounts
             const res = resolvedObject(
               this.accounts.filter(({ address }) => this.allowedOrigins[origin].includes(address))

@@ -4,7 +4,6 @@ import { landingPageUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
-import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 const testAccount1Address = testAccounts['Multisig Member Account 1'].address
@@ -17,10 +16,11 @@ const fillAndSubmitTransactionForm = () => {
 
 describe('Perform transactions', () => {
   beforeEach(() => {
-    cy.visit(landingPageUrl)
-    cy.initExtension(Object.values(testAccounts))
-    clickOnConnect()
-    cy.connectAccounts([testAccount1Address])
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      extensionConnectionAllowed: true,
+      injectedAccountsExtension: [testAccounts['Multisig Member Account 1']]
+    })
   })
 
   it('Abort a multisig tx', () => {
