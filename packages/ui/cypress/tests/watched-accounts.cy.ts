@@ -299,7 +299,7 @@ describe('Watched Accounts', () => {
       })
   })
 
-  it.only('can see all multisigs that a watched signatory is a member of', () => {
+  it('can see all multisigs that a watched signatory is a member of', () => {
     const signatory = signatoryOfMultipleMultisigs.address
     const expectedAddresses = [
       signatoryOfMultipleMultisigs.multisigWithPure1.address,
