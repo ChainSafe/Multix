@@ -146,7 +146,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       /**
-       * Initialized the Polkadot extension. If an origin is passed there is no need to authorize the first connection
+       * Initialized the Polkadot extension. If an origin is passed there is no need to authorize the first connection for Dapps of this origin
        * @param {InjectedAccount[]} accounts - Accounts to load into the extension.
        * @param {string | undefined} origin - Dapp name to automatically share accounts without needing to authorize
        * @param {string} origin - Dapp name to allow the accounts for automatically
@@ -156,13 +156,6 @@ declare global {
         accounts: InjectedAccountWitMnemonic[],
         origin?: string
       ) => Chainable<AUTWindow>
-
-      /**
-       * Visit a page with extension injected. It needs to be initialized first.
-       * @param {string} url - Page to visit.
-       * @example cy.visitWithInjectedExtension('http://localhost:3333')
-       */
-      // visitWithInjectedExtension: (url: string) => Chainable<AUTWindow>
 
       /**
        * Read the authentication request queue.
