@@ -22,13 +22,22 @@
     "docker:db": "docker compose up -d db",
     "docker:down": "docker compose down",
     "build": "yarn workspaces foreach run build",
+    "build:indexer": "cd squid && npm run codegen && npm run typegen && npm run build && npm run db:migrate",
     "lint": "yarn workspaces foreach run lint",
     "lint:fix": "yarn workspaces foreach run lint:fix",
     "formatAll": "prettier --write .",
+    "start:chopsticks-test-build-and-launch-all": "concurrently --kill-others 'npm run start:chopsticks' 'npm run ui:start-with-chopsticks' 'npm run docker:down && npm run docker:db && npm run build:indexer && npm run indexer:start:chopsticks-local' 'npm run start:graphql-server'",
+    "start:chopsticks": "npx --yes @acala-network/chopsticks@0.9.4-4 --config chopsticks-config.yml",
+    "start:graphql-server": "cd squid && npm run start:graphql-server",
+    "indexer:start:chopsticks-ci": "cd squid && npm run start:chopsticks-ci",
+    "indexer:start:chopsticks-local": "cd squid && npm run start:chopsticks-local",
     "ui:start": "yarn workspace multix-ui start",
-    "ui:lint": "yarn workspace multix-ui lint"
+    "ui:lint": "yarn workspace multix-ui lint",
+    "ui:test": "yarn workspace multix-ui test",
+    "ui:start-with-chopsticks": "yarn workspace multix-ui start-with-chopsticks"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3"

@@ -54,6 +54,7 @@
   },
   "scripts": {
     "start": "vite --port 3333",
+    "start-with-chopsticks": "vite --port 3333 --mode staging",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "lint": "eslint --color 'src/**/*.{js,ts,tsx}'",

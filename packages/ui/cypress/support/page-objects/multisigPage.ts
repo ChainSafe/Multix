@@ -1,6 +1,6 @@
 export const multisigPage = {
   // header elements
-  accountHeader: () => cy.get('[data-cy=header-account]'),
+  accountHeader: (timeout = 4000) => cy.get('[data-cy=header-account]', { timeout }),
   seeOverviewButton: () => cy.get('[data-cy=button-see-overview]'),
   newTransactionButton: () => cy.get('[data-cy=button-new-transaction]'),
   optionsMenuButton: () => cy.get('[data-cy=button-options-menu]'),

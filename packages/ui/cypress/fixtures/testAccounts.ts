@@ -40,5 +40,26 @@ export const testAccounts = {
     name: 'Many Multisig And Pure Member 1',
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice'
+  } as InjectedAccountWitMnemonic,
+  'Funded Account 1 Chopsticks Kusama': {
+    address: 'JEqfw2FPda5eycsqqXN2Ay67eEh5R85aSHcArs3XdUYjj5H',
+    publicKey: '0xfa8e003cb5d22db1e8658e05245c3bab0851e516b71a8256bc3edf006b817161',
+    name: 'Funded Account 1 Chopsticks',
+    type: 'sr25519',
+    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/1'
+  } as InjectedAccountWitMnemonic,
+  'Funded Account 2 Chopsticks Kusama': {
+    address: 'JF3RaX21TrQuPrRbEV7i1iT5QXNQZBN6qvKx3iZN8CEN9bB',
+    publicKey: '0xfab5903e86cb55051903d16a94bdd454f8db9e377d79dd6d420dfe9734d00c4f',
+    name: 'Funded Account 2 Chopsticks',
+    type: 'sr25519',
+    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/2'
+  } as InjectedAccountWitMnemonic,
+  'Funded Account 3 Chopsticks Kusama': {
+    address: 'HxehWqUZGorCrahv3PiWWqdcFNBG9oQhZ2ft5VXueWaSBEs',
+    publicKey: '0xee35231494a285e552ba4592c8e32ac42192f3bb3443618f8e62ecc896f0e749',
+    name: 'Funded Account 3 Chopsticks',
+    type: 'sr25519',
+    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/3'
   } as InjectedAccountWitMnemonic
 }

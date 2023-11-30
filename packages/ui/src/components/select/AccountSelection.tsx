@@ -185,7 +185,7 @@ const AccountSelection = ({
               onClick={onAdd}
               variant={actionButtonVariant}
               disabled={!selected || !!errorMessage}
-              data-cy="button-add-watched-account"
+              data-cy="button-add-account"
             >
               {actionButtonLabel}
             </ButtonStyled>

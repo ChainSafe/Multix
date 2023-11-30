@@ -76,6 +76,7 @@ const MultisigActionMenu = ({
     return opts
   }, [
     selectedIsWatched,
+    hasIdentityPallet,
     selectedHasProxy,
     setIsEditModalOpen,
     selectedMultiProxy,
