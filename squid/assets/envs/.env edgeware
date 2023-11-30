@@ -1,0 +1,4 @@
+RPC_WS="wss://edgeware.jelliedowl.net"
+BLOCK_START=15000000
+PREFIX=7
+CHAIN_ID='edgeware'
