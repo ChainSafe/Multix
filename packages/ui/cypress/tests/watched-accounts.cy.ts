@@ -11,6 +11,7 @@ import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
 import { testAccounts } from '../fixtures/testAccounts'
+import { signatoryOfMultipleMultisigs } from '../fixtures/watchAccounts/watchSignatories'
 
 const addWatchAccount = (address: string, name?: string) => {
   settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
@@ -82,7 +83,6 @@ describe('Watched Accounts', () => {
       },
       watchedAccounts: [multisigPublicKey]
     })
-
     // ensure the multisig name is displayed in the settings account container
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
@@ -237,6 +237,98 @@ describe('Watched Accounts', () => {
       .within(() => {
         multisigPage.pendingTransactionItem().should('have.length', 1)
         multisigPage.reviewButton().should('not.exist')
+      })
+  })
+
+  // This test is to ensure that if a multisig has a pure the user will the same
+  // display wether watching via the pure address or it's controlling multisig address
+  it('can see the same details displayed when watching a pure or its multisig', () => {
+    const { purePublicKey, address: multisigAddress } = watchMultisigs['multisig-with-pure']
+
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      watchedAccounts: [purePublicKey]
+    })
+    // store details of the displayed addresses for later comparison
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('be.visible').invoke('text').as('headerPureAddress')
+    })
+    multisigPage.multisigDetailsContainer().within(() => {
+      multisigPage.multisigAccountSummary().within(() => {
+        accountDisplay
+          .addressLabel()
+          .should('be.visible')
+          .invoke('text')
+          .as('controllingMultisigAddress')
+      })
+    })
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
+    topMenuItems
+      .multiproxySelectorOption()
+      // ensure there is only one option, the pure, in the multiproxy selector
+      .should('have.length', 1)
+      .within(() => {
+        accountDisplay.pureBadge().should('be.visible')
+        accountDisplay.addressLabel().should('be.visible').invoke('text').as('dropdownPureAddress')
+      })
+    // now watch via the multisig address and ensure that we see the same details displayed
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      watchedAccounts: [multisigAddress]
+    })
+    multisigPage.accountHeader().within(() => {
+      cy.get<string>('@headerPureAddress').then((headerPureAddress) => {
+        accountDisplay.addressLabel().should('have.text', headerPureAddress)
+      })
+    })
+    multisigPage.multisigDetailsContainer().within(() => {
+      multisigPage.multisigAccountSummary().within(() => {
+        cy.get<string>('@controllingMultisigAddress').then((controllingMultisigAddress) => {
+          accountDisplay.addressLabel().should('have.text', controllingMultisigAddress)
+        })
+      })
+    })
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
+    topMenuItems
+      .multiproxySelectorOption()
+      // ensure there is still only one option, the pure, in the multiproxy selector
+      .should('have.length', 1)
+      .within(() => {
+        accountDisplay.pureBadge().should('be.visible')
+        cy.get<string>('@dropdownPureAddress').then((dropdownPureAddress) => {
+          accountDisplay.addressLabel().should('have.text', dropdownPureAddress)
+        })
+      })
+  })
+
+  it('can see all multisigs that a watched signatory is member of', () => {
+    const signatory = signatoryOfMultipleMultisigs.address
+    const expectedAddresses = [
+      signatoryOfMultipleMultisigs.multisigWithPure1.address,
+      signatoryOfMultipleMultisigs.multisigWithPure2.address,
+      signatoryOfMultipleMultisigs.multisigWithoutPure.address
+    ]
+
+    cy.visitWithLocalStorage({
+      url: landingPageUrl,
+      watchedAccounts: [signatory]
+    })
+
+    topMenuItems.multiproxySelector().should('be.visible').first().click()
+    // ensure all 3 multisigs are displayed in the multiproxy selector
+    topMenuItems
+      .multiproxySelectorOption()
+      .should('have.length', 3)
+      .each(($el, index) => {
+        cy.wrap($el).within(() => {
+          accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
+          // ensure the pure badge exists on the first two options and multisigBadge in the third option
+          if (index < 2) {
+            accountDisplay.pureBadge().should('exist')
+          } else {
+            accountDisplay.multisigBadge().should('exist')
+          }
+        })
       })
   })
 })
