@@ -9,6 +9,8 @@ import 'reactflow/dist/style.css'
 import OverviewHeaderView from './OverviewHeaderView'
 import { renderMultisigHeading } from '../multisigHelpers'
 import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
+import LoadingBox from '../../components/LoadingBox'
+
 interface Props {
   className?: string
 }
@@ -35,12 +37,21 @@ const getMultisigInfo = (multisig: MultiProxy['multisigs'][0]) => {
 }
 
 const Overview = ({ className }: Props) => {
-  const { selectedMultiProxy, multiProxyList } = useMultiProxy()
+  const { selectedMultiProxy, multiProxyList, isLoading: isLoadingMultisigs } = useMultiProxy()
   const hasPureProxy = useMemo(() => selectedMultiProxy?.proxy, [selectedMultiProxy?.proxy])
   const hasSeveralMultisigs = useMemo(
     () => selectedMultiProxy?.multisigs && selectedMultiProxy?.multisigs.length > 1,
     [selectedMultiProxy]
   )
+
+  if (isLoadingMultisigs) {
+    return (
+      <LoadingBox
+        message="Loading your multisigs..."
+        dataCy="loader-multisigs"
+      />
+    )
+  }
 
   if (multiProxyList.length === 0) {
     return <ConnectOrWatch />
