@@ -54,7 +54,7 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     )
   }
 
-  const { error, data, isLoading, refetch } = useSubscription(
+  const { error, data, isLoading, refetch, isFetching } = useSubscription(
     [`KeyMultisigsBySignatoriesOrWatched-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
     () => {
       onUpdate(null)
@@ -106,5 +106,5 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading: hasSomethingToQuery && isLoading, error, refetch }
+  return { data, isLoading: hasSomethingToQuery && isLoading, isFetching, error, refetch }
 }
