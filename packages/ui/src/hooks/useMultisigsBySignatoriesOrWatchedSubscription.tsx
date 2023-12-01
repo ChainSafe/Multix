@@ -106,5 +106,11 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   // console.log('subscription data', data)
   //   return <div>Data: {JSON.stringify(data?.multisigCalls)}</div>;
 
-  return { data, isLoading: hasSomethingToQuery && isLoading, isFetching, error, refetch }
+  return {
+    data,
+    isLoading: hasSomethingToQuery && isLoading,
+    isFetchingMultisigs: isFetching,
+    error,
+    refetch
+  }
 }

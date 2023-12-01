@@ -36,7 +36,7 @@ export interface IMultisigContext {
   selectedMultiProxy?: MultiProxy
   multiProxyList: MultiProxy[]
   isLoading: boolean
-  isFetching: boolean
+  isFetchingMultisigs: boolean
   selectMultiProxy: (multi: MultiProxy | string) => boolean
   selectedHasProxy: boolean
   error: Error | null
@@ -226,7 +226,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const watchedAddressesIds = useAccountId(watchedAddresses)
   const {
     isLoading: isMultisigsubLoading,
-    isFetching: isMultisigsFetching,
+    isFetchingMultisigs,
     error: isMultisigSubError,
     refetch: refetchMultisigSub
   } = useMultisigsBySignatoriesOrWatchedSubscription({
@@ -343,7 +343,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         multiProxyList,
         selectMultiProxy,
         isLoading,
-        isFetching: isMultisigsFetching,
+        isFetchingMultisigs,
         selectedHasProxy,
         error: isMultisigSubError || isPureSubError,
         getMultisigByAddress,
