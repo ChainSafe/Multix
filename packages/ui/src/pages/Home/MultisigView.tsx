@@ -30,9 +30,10 @@ const MultisigView = () => {
               <MultisigWrapperStyled
                 selectedHasProxy={selectedHasProxy}
                 key={multisig.address}
+                data-cy="container-multisig-details"
               >
                 {selectedHasProxy && (
-                  <AccountDisplayWrapperStyled>
+                  <AccountDisplayWrapperStyled data-cy="container-multisig-account-summary">
                     <AccountDisplay
                       address={multisig.address || ''}
                       badge={AccountBadge.MULTI}
@@ -41,12 +42,12 @@ const MultisigView = () => {
                   </AccountDisplayWrapperStyled>
                 )}
                 <List>
-                  <ListElement>
+                  <ListElement data-cy="list-item-threshold">
                     <ListFieldText>Threshold</ListFieldText>
                     <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
                   </ListElement>
                   {selectedHasProxy && (
-                    <ListElement>
+                    <ListElement data-cy="list-item-balance">
                       <ListFieldText>Balance</ListFieldText>
                       <Balance address={multisig.address} />
                     </ListElement>

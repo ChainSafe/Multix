@@ -28,3 +28,15 @@ export const watchSignatories = [
     mnemonic: 'mutual pluck punch boy gym key brush dune master aunt track dynamic'
   }
 ]
+
+// signatory that is a member of 3 multisigs. 2 multisig with a pure, 1 multisig without a pure
+export const signatoryOfMultipleMultisigs = {
+  address: '5CUZNrH9eMCvyz3wL5n8V9oJuaaNPKWCGCZZj7UfUV4otHMN',
+  name: 'Signatory of Multiple Multisigs',
+  type: 'sr25519',
+  mnemonic: 'cement risk mutual large fluid run witness vintage civil pipe cost weasel',
+  multisigWithPureAddress1: '5EKfTP24LJvTDLf3GP3vvJASv1jXmcZumFWGcSzVQ66epXZe',
+  multisigWithPureAddress2: '5ENJzVn5CcVrzSi9dfmysrFWQ6Ce5iX3L22sa1bnZN8KvGBT',
+  multisigWithoutPureAddress: '5HoPXnwfDpqhgNYGMSZTzhdvc3TDSvd41XDaVMg7yUo8W5un',
+  publicKey: '0x12315840d264e4274a7122d8150bb8c5205d3cdc1b92a5c854ce90ae9b0f9e77'
+}
