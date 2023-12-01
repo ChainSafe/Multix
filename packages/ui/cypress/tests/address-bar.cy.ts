@@ -13,7 +13,7 @@ describe('Account address in the address bar', () => {
     const { address, publicKey } = watchMultisigs['multisig-without-pure']
 
     // we have a watched account that is a multisig
-    cy.visitCustom({
+    cy.setupAndVisit({
       // any account
       url: landingPageUrl,
       watchedAccounts: [publicKey]
@@ -29,7 +29,7 @@ describe('Account address in the address bar', () => {
   it('shows multi and update address with 0 watched, 1 connected account (multi), no linked address', () => {
     const { address } = knownMultisigs['test-multisig-1']
 
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
@@ -52,7 +52,7 @@ describe('Account address in the address bar', () => {
     const { publicKey, address: multisigAddress } = watchMultisigs['multisig-without-pure']
 
     // we have a watched account that is a multisig
-    cy.visitCustom({
+    cy.setupAndVisit({
       // any account
       url: landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address),
       watchedAccounts: [publicKey]
@@ -77,7 +77,7 @@ describe('Account address in the address bar', () => {
     const { purePublicKey, pureAddress } = watchMultisigs['multisig-with-pure']
 
     // we have a watched account that is a pure
-    cy.visitCustom({
+    cy.setupAndVisit({
       // unknown account in the url
       url: landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address),
       watchedAccounts: [purePublicKey]
@@ -101,7 +101,7 @@ describe('Account address in the address bar', () => {
     const { address } = knownMultisigs['test-multisig-1']
     const nonMulitisigAccountAddress = testAccounts['Non Multisig Member 1'].address
 
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(nonMulitisigAccountAddress),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
@@ -126,7 +126,7 @@ describe('Account address in the address bar', () => {
     const { purePublicKey, pureAddress } = watchMultisigs['multisig-with-pure']
 
     // we have a watched account that is a pure
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(pureAddress),
       watchedAccounts: [purePublicKey]
     })
@@ -142,7 +142,7 @@ describe('Account address in the address bar', () => {
     const { publicKey, pureAddress } = watchMultisigs['multisig-with-pure']
 
     // we have a watched account that is a pure
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(pureAddress),
       // here is the difference compared to previous test
       watchedAccounts: [publicKey]
@@ -160,7 +160,7 @@ describe('Account address in the address bar', () => {
     const { publickey: signatoryPublicKey } = watchSignatories[0]
 
     // we have a watched account that is a pure
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(pureAddress),
       // here is the difference compared to previous test
       watchedAccounts: [signatoryPublicKey!]
@@ -175,7 +175,7 @@ describe('Account address in the address bar', () => {
 
   it('shows a pure with 0 watched, 1 connected account (many multi & pure), pure linked address', () => {
     const expectedPureAddress = '5EXePPDNnucmLgrirMPQatFfu4WjncVbVoDZXx1gq75e3JcF'
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(expectedPureAddress),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Many Multisig And Pure Member 1']]
@@ -191,7 +191,7 @@ describe('Account address in the address bar', () => {
   it('shows a multi with 0 watched, 1 connected account (many multi & pure), multi linked address', () => {
     const expectedMultiAddress = '5DxNgjvfJLfDTAAgFD1kWtJAh2KVNTTkwytr7S37dZwVpXd7'
 
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(expectedMultiAddress),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Many Multisig And Pure Member 1']]
@@ -209,7 +209,7 @@ describe('Account address in the address bar', () => {
     const multiAddress = '5DxNgjvfJLfDTAAgFD1kWtJAh2KVNTTkwytr7S37dZwVpXd7'
     const first6Letters = multiAddress.slice(0, 6)
 
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageAddressUrl(expectedPureAddress),
       watchedAccounts: [testAccounts['Many Multisig And Pure Member 1'].publicKey!]
     })
@@ -231,7 +231,7 @@ describe('Account address in the address bar', () => {
     const { address, publicKey } = watchMultisigs['multisig-without-pure']
 
     // we have a watched account that is a multisig
-    cy.visitCustom({
+    cy.setupAndVisit({
       // any account
       url: landingPageUrl,
       watchedAccounts: [publicKey]
@@ -249,7 +249,7 @@ describe('Account address in the address bar', () => {
     const { address, publicKey } = watchMultisigs['multisig-without-pure']
 
     // we have a watched account that is a multisig
-    cy.visitCustom({
+    cy.setupAndVisit({
       // any account
       url: landingPageUrl,
       watchedAccounts: [publicKey]

@@ -16,7 +16,7 @@ const fillAndSubmitTransactionForm = () => {
 
 describe('Perform transactions', () => {
   beforeEach(() => {
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]

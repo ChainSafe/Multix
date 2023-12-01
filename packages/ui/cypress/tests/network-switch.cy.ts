@@ -17,7 +17,7 @@ const kusamaAddress = encodeAddress(multisigAddress, KUSAMA_S58_PREFIX)
 
 describe('Network can be switched', () => {
   it('should switch network using selector', () => {
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: settingsPageWatchAccountUrl,
       accountNames: { [multisigPublicKey]: multisigName },
       watchedAccounts: [multisigPublicKey]

@@ -103,7 +103,7 @@ Cypress.Commands.add('connectAccounts', (accountAddresses = [Account1] as string
   })
 })
 
-interface IvisitCustom {
+interface IsetupAndVisit {
   url: string
   watchedAccounts?: string[]
   accountNames?: Record<string, string>
@@ -112,14 +112,14 @@ interface IvisitCustom {
 }
 
 Cypress.Commands.add(
-  'visitCustom',
+  'setupAndVisit',
   ({
     url,
     watchedAccounts,
     accountNames,
     extensionConnectionAllowed,
     injectExtensionWithAccounts
-  }: IvisitCustom) => {
+  }: IsetupAndVisit) => {
     return cy.visit(url, {
       onBeforeLoad(win) {
         !!watchedAccounts?.length &&
@@ -229,7 +229,7 @@ declare global {
        * @param {{[publicKey: string]: string}} params.accountNames - Object of addresses associated to names
        * @param {boolean} params.extensionConnectionAllowed - whether the extension was previously allowed to connect to the website
        * @param {InjectedAccountWitMnemonic} params.injectExtensionWithAccounts - Init and inject these account
-       * @example cy.visitCustom({
+       * @example cy.setupAndVisit({
        *            injectExtensionWithAccounts: [],
        *            extensionConnectionAllowed: false,
        *            url: http://localhost:3333,
@@ -237,7 +237,7 @@ declare global {
        *            watchedAccounts: {"0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e":"my custom name"}
        *          })
        */
-      visitCustom: (params: IvisitCustom) => void
+      setupAndVisit: (params: IsetupAndVisit) => void
     }
   }
 }

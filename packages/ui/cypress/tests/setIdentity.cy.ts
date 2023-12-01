@@ -9,7 +9,7 @@ import { waitForTxRequest } from '../utils/waitForTxRequests'
 describe('Set an identity', () => {
   it('Does not have the identity option if the pallet is not present', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageNetwork('joystream'),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
@@ -26,7 +26,7 @@ describe('Set an identity', () => {
 
   it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
@@ -83,7 +83,7 @@ describe('Set an identity', () => {
 
   it('Can edit an identity from the new tx button', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[0]
-    cy.visitCustom({
+    cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
