@@ -280,7 +280,7 @@ describe('Watched Accounts', () => {
     }
 
     // watch the pure public key
-    cy.visitWithLocalStorage({
+    cy.setupAndVisit({
       url: landingPageUrl,
       watchedAccounts: [purePublicKey]
     })
@@ -288,7 +288,7 @@ describe('Watched Accounts', () => {
     pureCheck()
 
     // now watch via the multisig public key and ensure that we see the same details displayed
-    cy.visitWithLocalStorage({
+    cy.setupAndVisit({
       url: landingPageUrl,
       watchedAccounts: [multisigPublicKey]
     })
@@ -304,7 +304,7 @@ describe('Watched Accounts', () => {
       signatoryOfMultipleMultisigs.multisigWithoutPureAddress
     ]
 
-    cy.visitWithLocalStorage({
+    cy.setupAndVisit({
       url: landingPageUrl,
       watchedAccounts: [signatoryPublicKey]
     })
