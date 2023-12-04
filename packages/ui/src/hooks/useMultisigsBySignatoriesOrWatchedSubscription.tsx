@@ -109,7 +109,6 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
   return {
     data,
     isLoading: hasSomethingToQuery && isLoading,
-    isFetchingMultisigs: isFetching,
     error,
     refetch
   }

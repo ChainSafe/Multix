@@ -37,14 +37,14 @@ const getMultisigInfo = (multisig: MultiProxy['multisigs'][0]) => {
 }
 
 const Overview = ({ className }: Props) => {
-  const { selectedMultiProxy, multiProxyList, isFetchingMultisigs } = useMultiProxy()
+  const { selectedMultiProxy, multiProxyList, isLoading } = useMultiProxy()
   const hasPureProxy = useMemo(() => selectedMultiProxy?.proxy, [selectedMultiProxy?.proxy])
   const hasSeveralMultisigs = useMemo(
     () => selectedMultiProxy?.multisigs && selectedMultiProxy?.multisigs.length > 1,
     [selectedMultiProxy]
   )
 
-  if (isFetchingMultisigs) {
+  if (isLoading) {
     return (
       <LoadingBox
         message="Loading your multisigs..."
