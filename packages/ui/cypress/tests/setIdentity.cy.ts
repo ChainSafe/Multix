@@ -1,24 +1,19 @@
-import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
 import { setIdentityMultisigs } from '../fixtures/setIdentity/setIdentityMultisigs'
 import { setIdentitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { clickOnConnect } from '../utils/clickOnConnect'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
-
-const initAndConnect = (account: InjectedAccountWitMnemonic, landingPage = landingPageUrl) => {
-  cy.visit(landingPage)
-  cy.initExtension([account])
-  clickOnConnect()
-  cy.connectAccounts([account.address])
-}
 
 describe('Set an identity', () => {
   it('Does not have the identity option if the pallet is not present', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
-    initAndConnect(multisigSignatoryWithoutIdentity, landingPageNetwork('joystream'))
+    cy.setupAndVisit({
+      url: landingPageNetwork('joystream'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+    })
     multisigPage.optionsMenuButton().click()
     multisigPage.setIdentityMenuOption().should('not.exist')
 
@@ -31,7 +26,11 @@ describe('Set an identity', () => {
 
   it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
-    initAndConnect(multisigSignatoryWithoutIdentity)
+    cy.setupAndVisit({
+      url: landingPageUrl,
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+    })
     multisigPage.optionsMenuButton().click()
     multisigPage.setIdentityMenuOption().should('be.visible').click()
     sendTxModal.sendTxTitle().should('be.visible')
@@ -84,7 +83,11 @@ describe('Set an identity', () => {
 
   it('Can edit an identity from the new tx button', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[0]
-    initAndConnect(multisigSignatoryWithoutIdentity)
+    cy.setupAndVisit({
+      url: landingPageUrl,
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+    })
     // select the right multisig (Alice has a lot)
     const first5DigitsAddress = setIdentityMultisigs['multisig-with-identity'].address.slice(0, 4)
     topMenuItems

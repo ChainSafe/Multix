@@ -61,11 +61,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
-  // if set to null, it means that is hasn't been initialized yet
+  // if set to null, it means that it hasn't been initialized yet
   const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList'] | null>(
     null
   )
-  // if set to null, it means that is hasn't been initialized yet
+  // if set to null, it means that it hasn't been initialized yet
   const [multisigList, setMultisigList] = useState<IMultisigContext['multiProxyList'] | null>(null)
   const [pureToQuery, setPureToQuery] = useState<string[]>([])
   const multiProxyList = useMemo(() => {
@@ -110,7 +110,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       if (!data) {
         setPureToQuery([])
         setMultisigList(null)
-        setPureProxyList(null)
       }
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
@@ -172,6 +171,12 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const refreshWatchedPureList = useCallback((data: PureByIdsSubscription | null) => {
     setIsRefreshingMultiProxyList(true)
+    // Data is only null when it is fetching
+    if (!data) {
+      // signal that we are fetching by setting the list to null
+      setPureProxyList(null)
+    }
+
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
     // we do have an answer, but there is nothing
     if (!!data?.accounts && data.accounts.length === 0) {
