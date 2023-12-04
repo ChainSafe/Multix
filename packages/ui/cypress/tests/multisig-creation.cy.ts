@@ -1,16 +1,17 @@
 import { landingPageNetwork } from '../fixtures/landingData'
 import { testAccounts } from '../fixtures/testAccounts'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
-import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { newMultisigPage } from '../support/page-objects/newMultisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { clickOnConnect } from '../utils/clickOnConnect'
 
-const { address: address1 } = testAccounts['Funded Account 1 Chopsticks Kusama']
-const { address: address2 } = testAccounts['Funded Account 2 Chopsticks Kusama']
-const { address: address3 } = testAccounts['Funded Account 3 Chopsticks Kusama']
+const fundedAccount1 = testAccounts['Funded Account 1 Chopsticks Kusama']
+const fundedAccount2 = testAccounts['Funded Account 2 Chopsticks Kusama']
+const fundedAccount3 = testAccounts['Funded Account 3 Chopsticks Kusama']
+const { address: address1 } = fundedAccount1
+const { address: address2 } = fundedAccount2
+const { address: address3 } = fundedAccount3
 
 const typeAndAdd = (address: string) => {
   newMultisigPage.addressSelector().click().type(`${address}{downArrow}{enter}`)
@@ -18,10 +19,11 @@ const typeAndAdd = (address: string) => {
 }
 describe('Multisig creation', () => {
   beforeEach(() => {
-    cy.visit(landingPageNetwork('local'))
-    cy.initExtension(Object.values(testAccounts))
-    clickOnConnect()
-    cy.connectAccounts([address1, address2, address3])
+    cy.setupAndVisit({
+      url: landingPageNetwork('local'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [fundedAccount1, fundedAccount2, fundedAccount3]
+    })
   })
 
   it('Create a multisig tx with proxy', () => {
