@@ -173,8 +173,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     setIsRefreshingMultiProxyList(true)
     // Data is only null when it is fetching
     if (!data) {
+      // signal that we are fetching by setting the list to null
       setPureProxyList(null)
-      console.log('reset ppList')
     }
 
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
