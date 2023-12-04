@@ -54,7 +54,7 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     )
   }
 
-  const { error, data, isLoading, refetch, isFetching } = useSubscription(
+  const { error, data, isLoading, refetch } = useSubscription(
     [`KeyMultisigsBySignatoriesOrWatched-${accountIds}-${watchedAccountIds}-${selectedNetwork}`],
     () => {
       onUpdate(null)

@@ -15,7 +15,7 @@ export const useDisplayLoader = () => {
   if (!isWatchAddressInitialized || !isLocalStorageSetupDone) {
     return (
       <LoadingBox
-        message={'Initialization...'}
+        message="Initialization..."
         dataCy="loader-initialization"
       />
     )
