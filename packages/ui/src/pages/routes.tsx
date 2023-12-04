@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { About, Creation, Home, Overview, Settings } from './index'
 import React from 'react'
 import App from '../App'
+import ErrorFallback from '../components/ErrorFallback/ErrorFallback'
 
 interface Route {
   path: string
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorFallback />,
     children: ROUTES
   }
 ])
