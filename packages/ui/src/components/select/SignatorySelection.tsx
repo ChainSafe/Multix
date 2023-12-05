@@ -72,7 +72,7 @@ const HeadingStyled = styled('h4')`
 
 const PaperStyled = styled(Paper)`
   padding: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   box-shadow: none;
@@ -114,7 +114,6 @@ const DeleteButtonStyled = styled(IconButton)`
 
 const AddSignatoryFieldStyled = styled(Box)`
   display: flex;
-  padding: 0.5rem 0;
   justify-content: space-between;
   transition: background 0.3s linear;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
