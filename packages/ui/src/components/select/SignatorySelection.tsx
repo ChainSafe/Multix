@@ -7,12 +7,11 @@ import { HiOutlineTrash } from 'react-icons/hi2'
 import AccountDisplay from '../AccountDisplay'
 
 interface Props {
-  className?: string
   signatories: string[]
   setSignatories: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const SignatorySelection = ({ className, signatories, setSignatories }: Props) => {
+const SignatorySelection = ({ signatories, setSignatories }: Props) => {
   const addSignatory = useCallback(
     (newSignatory: string) => {
       const newSignatories = [...signatories, newSignatory]
@@ -30,31 +29,29 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
   )
 
   return (
-    <Box className={className}>
+    <Box>
       {signatories.length > 0 && (
         <>
-          <div className="additionText">Selected:</div>
-          <Paper className="selectedList">
+          <HeadingStyled>Selected:</HeadingStyled>
+          <PaperStyled>
             {signatories.map((address, index) => (
-              <div
-                key={address}
-                className="selectedSignatory"
-              >
+              <SignatoryStyled key={address}>
                 <AccountDisplay address={address} />
-                <IconButton
-                  className="deleteButton"
-                  aria-label="delete"
-                  onClick={() => removeSignatory(index)}
-                >
-                  <HiOutlineTrash />
-                </IconButton>
-              </div>
+                <ButtonWrapperStyled>
+                  <DeleteButtonStyled
+                    aria-label="delete"
+                    onClick={() => removeSignatory(index)}
+                  >
+                    <HiOutlineTrash />
+                  </DeleteButtonStyled>
+                </ButtonWrapperStyled>
+              </SignatoryStyled>
             ))}
-          </Paper>
-          <div className="additionText">New signatory...</div>
+          </PaperStyled>
+          <HeadingStyled>New signatory:</HeadingStyled>
         </>
       )}
-      <Box className="addSignatoryField">
+      <AddSignatoryFieldStyled>
         <AccountSelection
           currentSelection={signatories}
           addAccount={addSignatory}
@@ -63,38 +60,64 @@ const SignatorySelection = ({ className, signatories, setSignatories }: Props) =
           //make sure the first state is empty
           value=""
         />
-      </Box>
+      </AddSignatoryFieldStyled>
     </Box>
   )
 }
 
-export default styled(SignatorySelection)`
-  .selectedList {
-    padding: 1rem;
-    margin-bottom: 2rem;
-  }
+const HeadingStyled = styled('h4')`
+  margin: 0.5rem 0;
+  font-weight: 500;
+`
 
-  .selectedSignatory {
-    margin-bottom: 1rem;
+const PaperStyled = styled(Paper)`
+  padding: 0;
+  margin-bottom: 2rem;
+  border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  box-shadow: none;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  .deleteButton {
-    margin-left: 1rem;
-    height: 2.5rem;
-    align-self: center;
-  }
-
-  .selectedSignatory,
-  .addSignatoryField {
-    display: flex;
-  }
-
-  .additionText {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    padding: 0.5rem;
   }
 `
+
+const SignatoryStyled = styled('div')`
+  margin-bottom: 0.5rem;
+  display: flex;
+  padding: 0.5rem 0;
+  justify-content: space-between;
+  transition: background 0.3s linear;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:has(button:hover) {
+    background: ${({ theme }) => theme.custom.gray[300]};
+    border-radius: ${({ theme }) => theme.custom.borderRadius};
+  }
+`
+
+const ButtonWrapperStyled = styled('div')`
+  display: flex;
+  flex: 1;
+  align-self: center;
+  justify-content: flex-end;
+`
+
+const DeleteButtonStyled = styled(IconButton)`
+  margin: 0 0.5rem;
+  height: 2.5rem;
+`
+
+const AddSignatoryFieldStyled = styled(Box)`
+  display: flex;
+  padding: 0.5rem 0;
+  justify-content: space-between;
+  transition: background 0.3s linear;
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+`
+
+export default SignatorySelection

@@ -437,7 +437,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               spacing={2}
             >
               <Box className="loader">
-                {callError ? <ErrorOutlineIcon size={64} /> : <CircularProgress size={64} />}
+                {callError ? <ErrorOutlineIcon size={48} /> : <CircularProgress size={48} />}
                 {!!callError && (
                   <div className="callErrorMessage">
                     {callError.includes('multisig.NoTimepoint')
@@ -504,7 +504,11 @@ export default styled(ChangeMultisig)`
   }
 
   .subSection {
-    padding: 0 1.5rem;
+    padding: 0;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      padding: 0 1.5rem;
+    }
   }
 
   .loader {
