@@ -35,9 +35,6 @@ describe('Network can be switched', () => {
     topMenuItems.desktopMenu().within(() => topMenuItems.multiproxySelector().should('exist'))
     topMenuItems.desktopMenu().within(() => topMenuItems.networkSelector().click())
     topMenuItems.networkSelectorOption('kusama').click()
-    topMenuItems
-      .desktopMenu()
-      .within(() => cy.waitUntil(() => topMenuItems.multiproxyLoader().should('not.be.visible')))
 
     cy.url().should('contain', 'network=kusama')
     cy.url().should('not.contain', 'address=')

@@ -4,6 +4,6 @@ import { waitForAuthRequest } from './waitForAuthRequests'
 
 export const clickOnConnect = () => {
   topMenuItems.connectButton().click()
-  landingPage.accountsLoader().should('contain', 'Loading accounts')
+  landingPage.accountsLoader().should('contain', 'Loading your accounts')
   waitForAuthRequest()
 }
