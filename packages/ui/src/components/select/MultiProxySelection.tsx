@@ -1,4 +1,4 @@
-import { Box, CircularProgress, InputAdornment } from '@mui/material'
+import { Box, InputAdornment } from '@mui/material'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -126,18 +126,7 @@ const MultiProxySelection = ({ className }: Props) => {
     />
   )
 
-  if (isLoading) {
-    return (
-      <BoxStyled>
-        <CircularProgress
-          data-cy="proxy-selection-loader"
-          size={24}
-        />
-      </BoxStyled>
-    )
-  }
-
-  if (multiProxyList.length === 0) {
+  if (isLoading || multiProxyList.length === 0) {
     return null
   }
 
@@ -157,14 +146,6 @@ const MultiProxySelection = ({ className }: Props) => {
     />
   )
 }
-
-const BoxStyled = styled(Box)`
-  display: flex;
-
-  .MuiCircularProgress-root {
-    color: ${({ theme }) => theme.palette.primary.main};
-  }
-`
 
 export default styled(MultiProxySelection)`
   min-width: 12.5rem;

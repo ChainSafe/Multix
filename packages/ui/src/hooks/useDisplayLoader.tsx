@@ -1,10 +1,9 @@
-import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { useApi } from '../contexts/ApiContext'
-import { Box, CircularProgress } from '@mui/material'
 import { useNetwork } from '../contexts/NetworkContext'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
+import LoadingBox from '../components/LoadingBox'
 
 export const useDisplayLoader = () => {
   const { isLoading: isLoadingMultisigs } = useMultiProxy()
@@ -15,48 +14,39 @@ export const useDisplayLoader = () => {
 
   if (!isWatchAddressInitialized || !isLocalStorageSetupDone) {
     return (
-      <LoaderBoxStyled data-cy="loader-initialization">
-        <CircularProgress />
-        Initialization...
-      </LoaderBoxStyled>
+      <LoadingBox
+        message="Initialization..."
+        testId="initialization"
+      />
     )
   }
 
   if (!api) {
     return (
-      <LoaderBoxStyled data-cy="loader-rpc-connection">
-        <CircularProgress />
-        {`Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
-      </LoaderBoxStyled>
+      <LoadingBox
+        message={`Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
+        testId="rpc-connection"
+      />
     )
   }
 
   if (isAccountLoading) {
     return (
-      <LoaderBoxStyled data-cy="loader-accounts-connection">
-        <CircularProgress />
-        Loading accounts...
-      </LoaderBoxStyled>
+      <LoadingBox
+        message="Loading your accounts..."
+        testId="accounts-connection"
+      />
     )
   }
 
   if (isLoadingMultisigs) {
     return (
-      <LoaderBoxStyled data-cy="loader-multisigs">
-        <CircularProgress />
-        <div>Loading your multisigs...</div>
-      </LoaderBoxStyled>
+      <LoadingBox
+        message="Loading your multisigs..."
+        testId="multisigs"
+      />
     )
   }
 
   return null
 }
-
-const LoaderBoxStyled = styled(Box)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-  padding: 1rem;
-`
