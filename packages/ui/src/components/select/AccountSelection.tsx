@@ -181,14 +181,14 @@ const AccountSelection = ({
             />
           )}
           {withAddButton && (
-            <ButtonStyled
+            <ButtonAddStyled
               onClick={onAdd}
               variant={actionButtonVariant}
               disabled={!selected || !!errorMessage}
               data-cy="button-add-account"
             >
               {actionButtonLabel}
-            </ButtonStyled>
+            </ButtonAddStyled>
           )}
         </BoxStyled>
       </Grid>
@@ -202,12 +202,36 @@ const AlertStyled = styled(Alert)`
 
 const BoxStyled = styled(Box)`
   align-items: center;
+  flex-direction: column;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .MuiBox-root,
+  label {
+    width: 100%;
+    margin: 0.5rem 0;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      margin: 0;
+    }
+  }
 `
 
-const ButtonStyled = styled(Button)`
-  margin-left: 1rem;
-  align-self: end;
+const ButtonAddStyled = styled(Button)`
+  margin-top: 1rem;
+  align-self: center;
   text-align: center;
+  width: 100%;
+  min-height: 2.5625rem;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    align-self: end;
+    margin: 0 0 0 1rem;
+    width: auto;
+  }
 `
 
 export default styled(AccountSelection)`
