@@ -239,7 +239,9 @@ export default styled(AccountSelection)`
   flex: 1;
 
   .MuiAutocomplete-root {
-    margin-right: 0.5rem;
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      margin-right: 0.5rem;
+    }
   }
 
   & > * {
