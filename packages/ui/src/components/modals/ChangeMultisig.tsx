@@ -504,7 +504,11 @@ export default styled(ChangeMultisig)`
   }
 
   .subSection {
-    padding: 0 1.5rem;
+    padding: 0;
+
+    @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+      padding: 0 1.5rem;
+    }
   }
 
   .loader {

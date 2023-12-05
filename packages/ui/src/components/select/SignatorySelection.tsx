@@ -37,16 +37,18 @@ const SignatorySelection = ({ signatories, setSignatories }: Props) => {
             {signatories.map((address, index) => (
               <SignatoryStyled key={address}>
                 <AccountDisplay address={address} />
-                <DeleteButtonStyled
-                  aria-label="delete"
-                  onClick={() => removeSignatory(index)}
-                >
-                  <HiOutlineTrash />
-                </DeleteButtonStyled>
+                <ButtonWrapperStyled>
+                  <DeleteButtonStyled
+                    aria-label="delete"
+                    onClick={() => removeSignatory(index)}
+                  >
+                    <HiOutlineTrash />
+                  </DeleteButtonStyled>
+                </ButtonWrapperStyled>
               </SignatoryStyled>
             ))}
           </PaperStyled>
-          <HeadingStyled>New signatory...</HeadingStyled>
+          <HeadingStyled>New signatory:</HeadingStyled>
         </>
       )}
       <AddSignatoryFieldStyled>
@@ -65,15 +67,19 @@ const SignatorySelection = ({ signatories, setSignatories }: Props) => {
 
 const HeadingStyled = styled('h4')`
   margin: 0.5rem 0;
-  font-weight: 400;
+  font-weight: 500;
 `
 
 const PaperStyled = styled(Paper)`
-  padding: 0.5rem;
+  padding: 0;
   margin-bottom: 2rem;
   border: 1px solid ${({ theme }) => theme.custom.text.borderColor};
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   box-shadow: none;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.values.md}px) {
+    padding: 0.5rem;
+  }
 `
 
 const SignatoryStyled = styled('div')`
@@ -94,10 +100,16 @@ const SignatoryStyled = styled('div')`
   }
 `
 
-const DeleteButtonStyled = styled(IconButton)`
-  margin-left: 1rem;
-  height: 2.5rem;
+const ButtonWrapperStyled = styled('div')`
+  display: flex;
+  flex: 1;
   align-self: center;
+  justify-content: flex-end;
+`
+
+const DeleteButtonStyled = styled(IconButton)`
+  margin: 0 0.5rem;
+  height: 2.5rem;
 `
 
 const AddSignatoryFieldStyled = styled(Box)`
