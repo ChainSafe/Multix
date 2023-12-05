@@ -364,7 +364,7 @@ const MultisigCreation = ({ className }: Props) => {
           <Grid
             item
             xs={12}
-            md={6}
+            md={8}
           >
             <Alert
               className="infoBox"
@@ -487,7 +487,7 @@ export default styled(MultisigCreation)(
   padding-bottom: 2rem;
 
   .infoBox {
-    margin-top: 1rem;
+    margin: 1rem 0;
   }
 
   .stepItem {
