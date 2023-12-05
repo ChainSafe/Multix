@@ -16,7 +16,7 @@ export const useDisplayLoader = () => {
     return (
       <LoadingBox
         message="Initialization..."
-        dataCy="loader-initialization"
+        testId="initialization"
       />
     )
   }
@@ -25,7 +25,7 @@ export const useDisplayLoader = () => {
     return (
       <LoadingBox
         message={`Connecting to the node at ${selectedNetworkInfo?.rpcUrl}`}
-        dataCy="loader-rpc-connection"
+        testId="rpc-connection"
       />
     )
   }
@@ -34,7 +34,7 @@ export const useDisplayLoader = () => {
     return (
       <LoadingBox
         message="Loading your accounts..."
-        dataCy="loader-accounts-connection"
+        testId="accounts-connection"
       />
     )
   }
@@ -43,7 +43,7 @@ export const useDisplayLoader = () => {
     return (
       <LoadingBox
         message="Loading your multisigs..."
-        dataCy="loader-multisigs"
+        testId="multisigs"
       />
     )
   }

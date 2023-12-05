@@ -3,11 +3,11 @@ import { Box, CircularProgress } from '@mui/material'
 
 interface Props {
   message: string
-  dataCy?: string
+  testId?: string
 }
 
-const LoadingBox = ({ message, dataCy }: Props) => (
-  <MessageBox data-cy={dataCy}>
+const LoadingBox = ({ message, testId }: Props) => (
+  <MessageBox data-cy={`loader-${testId}`}>
     <CircularProgress />
     <div>{message}</div>
   </MessageBox>

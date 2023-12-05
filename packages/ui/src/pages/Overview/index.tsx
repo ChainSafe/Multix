@@ -48,7 +48,7 @@ const Overview = ({ className }: Props) => {
     return (
       <LoadingBox
         message="Loading your multisigs..."
-        dataCy="loader-multisigs"
+        testId="multisigs"
       />
     )
   }
