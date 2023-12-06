@@ -29,7 +29,7 @@ export const watchSignatories = [
   }
 ]
 
-// signatory that is a member of 3 multisigs. 2 multisig with a pure, 1 multisig without a pure
+// signatory that is a member of 5 multisigs. 3 multisig with a pure, 2 multisig without a pure
 export const signatoryOfMultipleMultisigs = {
   address: '5CUZNrH9eMCvyz3wL5n8V9oJuaaNPKWCGCZZj7UfUV4otHMN',
   name: 'Signatory of Multiple Multisigs',
