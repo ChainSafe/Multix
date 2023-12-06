@@ -314,7 +314,7 @@ describe('Watched Accounts', () => {
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
       .multiproxySelectorOption()
-      .should('have.length', 3)
+      .should('have.length', 5)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
           accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
