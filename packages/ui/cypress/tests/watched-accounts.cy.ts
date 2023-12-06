@@ -301,7 +301,9 @@ describe('Watched Accounts', () => {
     const expectedAddresses = [
       signatoryOfMultipleMultisigs.multisigWithPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithPureAddress2,
-      signatoryOfMultipleMultisigs.multisigWithoutPureAddress
+      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
+      signatoryOfMultipleMultisigs.multisigWithoutPureAddress1,
+      signatoryOfMultipleMultisigs.multisigWithoutPureAddress2
     ]
 
     cy.setupAndVisit({
