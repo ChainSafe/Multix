@@ -29,14 +29,16 @@ export const watchSignatories = [
   }
 ]
 
-// signatory that is a member of 3 multisigs. 2 multisig with a pure, 1 multisig without a pure
+// signatory that is a member of 5 multisigs. 3 multisig with a pure, 2 multisig without a pure
 export const signatoryOfMultipleMultisigs = {
   address: '5CUZNrH9eMCvyz3wL5n8V9oJuaaNPKWCGCZZj7UfUV4otHMN',
   name: 'Signatory of Multiple Multisigs',
   type: 'sr25519',
   mnemonic: 'cement risk mutual large fluid run witness vintage civil pipe cost weasel',
+  publicKey: '0x12315840d264e4274a7122d8150bb8c5205d3cdc1b92a5c854ce90ae9b0f9e77',
   multisigWithPureAddress1: '5EKfTP24LJvTDLf3GP3vvJASv1jXmcZumFWGcSzVQ66epXZe',
   multisigWithPureAddress2: '5ENJzVn5CcVrzSi9dfmysrFWQ6Ce5iX3L22sa1bnZN8KvGBT',
-  multisigWithoutPureAddress: '5HoPXnwfDpqhgNYGMSZTzhdvc3TDSvd41XDaVMg7yUo8W5un',
-  publicKey: '0x12315840d264e4274a7122d8150bb8c5205d3cdc1b92a5c854ce90ae9b0f9e77'
+  multisigWithPureAddress3: '5DgQei7KwXUJvBC6TKVHYGMA61guzQXvAcYvjYyv6CSuWv6j',
+  multisigWithoutPureAddress1: '5HoPXnwfDpqhgNYGMSZTzhdvc3TDSvd41XDaVMg7yUo8W5un',
+  multisigWithoutPureAddress2: '5FVY41XvzFSA5ZdeGU6PX283MLDYxc6juPD1JRLuCuKAoDDP'
 }

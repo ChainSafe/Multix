@@ -299,9 +299,11 @@ describe('Watched Accounts', () => {
   it('can see all multisigs that a watched signatory is a member of', () => {
     const { publicKey: signatoryPublicKey } = signatoryOfMultipleMultisigs
     const expectedAddresses = [
+      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
       signatoryOfMultipleMultisigs.multisigWithPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithPureAddress2,
-      signatoryOfMultipleMultisigs.multisigWithoutPureAddress
+      signatoryOfMultipleMultisigs.multisigWithoutPureAddress1,
+      signatoryOfMultipleMultisigs.multisigWithoutPureAddress2
     ]
 
     cy.setupAndVisit({
@@ -312,11 +314,11 @@ describe('Watched Accounts', () => {
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
       .multiproxySelectorOption()
-      .should('have.length', 3)
+      .should('have.length', 5)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
           accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
-          if (index < 2) {
+          if (index < 3) {
             accountDisplay.pureBadge().should('exist')
           } else {
             accountDisplay.multisigBadge().should('exist')
