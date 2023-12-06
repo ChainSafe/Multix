@@ -299,9 +299,9 @@ describe('Watched Accounts', () => {
   it('can see all multisigs that a watched signatory is a member of', () => {
     const { publicKey: signatoryPublicKey } = signatoryOfMultipleMultisigs
     const expectedAddresses = [
+      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
       signatoryOfMultipleMultisigs.multisigWithPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithPureAddress2,
-      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
       signatoryOfMultipleMultisigs.multisigWithoutPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithoutPureAddress2
     ]
@@ -318,7 +318,7 @@ describe('Watched Accounts', () => {
       .each(($el, index) => {
         cy.wrap($el).within(() => {
           accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
-          if (index < 2) {
+          if (index < 3) {
             accountDisplay.pureBadge().should('exist')
           } else {
             accountDisplay.multisigBadge().should('exist')
