@@ -61,18 +61,18 @@ export const testAccounts = {
     name: 'Funded Account 3 Chopsticks',
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/3'
-  } as InjectedAccountWitMnemonic
-  'Signatory 1 Of Multisig With Uknown Transaction': {
+  } as InjectedAccountWitMnemonic,
+  'Signatory 1 Of Multisig With Unknown Tx': {
     address: '5C5RWYL7zoV6V2vdwXENSpSzWHXUxyhHBrEzhfySdQmkiF9d',
     publicKey: '0x008c37659f858da7ec1416ce01b975af4c6eb5931805047d173d63123174a74e',
-    name: 'Funded Account 3 Chopsticks',
+    name: 'Signatory 1 Of Multisig With Unknown Tx',
     type: 'sr25519',
     mnemonic: 'various sun sell patch follow stove warfare worry cupboard kick wise wild'
-  } as InjectedAccountWitMnemonic
-  'Signatory 2 Of Multisig With Uknown Transaction': {
+  } as InjectedAccountWitMnemonic,
+  'Signatory 2 Of Multisig With Unknown Tx': {
     address: '5DAA5LQP8C4Cus1caXr3rwDa5LuPCJmXeoj3HrCUWEpGUV7g',
     publicKey: '0x3064b82d59077c4d2d7b924b72e63fb9b829b5cd0706b9236c35b79ffa89995b',
-    name: 'Funded Account 3 Chopsticks',
+    name: 'Signatory 2 Of Multisig With Unknown Tx',
     type: 'sr25519',
     mnemonic: 'canyon narrow primary zoo purpose double rice faculty critic embark trophy economy'
   } as InjectedAccountWitMnemonic

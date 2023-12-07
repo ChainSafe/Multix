@@ -6,8 +6,6 @@ export const multisigPage = {
   optionsMenuButton: () => cy.get('[data-cy=button-options-menu]'),
   editNamesMenuOption: () => cy.get('[data-cy=menu-option-edit-names]'),
   subscanMenuOption: () => cy.get('[data-cy=menu-option-subscan]'),
-  transactionList: () => cy.get('[data-cy=container-transaction-list]', { timeout: 20000 }),
-  pendingTransactionItem: () => cy.get('[data-cy=container-pending-tx-item]'),
   reviewButton: () => cy.get('[data-cy=button-review-tx]'),
   setIdentityMenuOption: () => cy.get('[data-cy=menu-option-set-identity]'),
 
@@ -17,5 +15,12 @@ export const multisigPage = {
   thresholdListItem: () => cy.get('[data-cy=list-item-threshold]'),
   balanceListItem: () => cy.get('[data-cy=list-item-balance]'),
   signatoriesAccordion: () => cy.get('[data-cy=accordion-signatories]'),
-  expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]')
+  expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]'),
+
+  // transaction list elements
+  transactionList: () => cy.get('[data-cy=container-transaction-list]', { timeout: 20000 }),
+  pendingTransactionItem: () => cy.get('[data-cy=container-pending-tx-item]'),
+  pendingTransactionCallName: () => cy.get('[data-cy=label-call-name]'),
+  unknownCallIcon: () => cy.get('[data-cy=icon-unknown-call]'),
+  unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]')
 }

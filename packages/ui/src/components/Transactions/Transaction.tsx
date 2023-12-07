@@ -58,6 +58,7 @@ const Transaction = ({
           <QuestionMarkIcon
             size={112}
             className="callIcon"
+            data-cy="icon-unknown-call"
           />
         ) : (
           <GestureIcon
