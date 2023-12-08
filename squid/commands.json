@@ -195,6 +195,10 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.joystream"
       ]
+    },
+    "start-watr": {
+      "description": "starts the indexer with watr",
+      "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.watr"]
     }
   }
 }
