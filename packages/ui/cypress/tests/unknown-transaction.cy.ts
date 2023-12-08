@@ -48,7 +48,11 @@ describe('Unknown Transaction', () => {
         txSigningModal.rejectButton().should('not.exist')
         // now provide call data and ensure we see the call info and approve button enabled
         txSigningModal.callDataInput().type(callData)
-        txSigningModal.callInfoContainer().should('be.visible')
+        txSigningModal
+          .callInfoContainer()
+          .should('be.visible')
+          .should('contain.text', 'system.remark')
+          .should('contain.text', 'remark: Unknown Transaction Test')
         txSigningModal.approveButton().should('be.enabled')
       })
   })

@@ -223,6 +223,7 @@ const CallInfo = ({
           className={className}
           severity="info"
           variant="outlined"
+          data-cy="alert-no-call-data"
         >
           No Call data found on-chain. Use Multix to initiate multisig transactions and avoid this
           annoyance.
