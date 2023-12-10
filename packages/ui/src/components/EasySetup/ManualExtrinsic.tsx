@@ -16,7 +16,7 @@ import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import BN from 'bn.js'
-import { isTypeBalance } from '../../utils/isTypeBalance'
+import { isTypeBalanceWithBalanceCall } from '../../utils/isTypeBalance'
 
 interface Props {
   extrinsicIndex?: string
@@ -160,7 +160,7 @@ const ManualExtrinsic = ({
 
         // Deal with balance like types where the param needs to
         // be multiplied by the token decimals
-        if (isTypeBalance(typeName)) {
+        if (isTypeBalanceWithBalanceCall(typeName, `${palletRpc}.${callable}`)) {
           if (!isValidAmountString(value) || !chainInfo?.tokenDecimals) {
             return previousValue
           }
@@ -389,7 +389,10 @@ const ManualExtrinsic = ({
                 value={inputParams[ind] ? inputParams[ind].value : ''}
                 onChange={(event) => onParamChange(event, { ind, paramField })}
                 InputProps={{
-                  endAdornment: isTypeBalance(paramField.typeName) && (
+                  endAdornment: isTypeBalanceWithBalanceCall(
+                    paramField.typeName,
+                    `${palletRpc}.${callable}`
+                  ) && (
                     <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
                   )
                 }}
