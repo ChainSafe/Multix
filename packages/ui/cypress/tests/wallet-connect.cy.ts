@@ -31,7 +31,7 @@ describe('Wallet Connect', () => {
     // ensure elements are enabled when connected
     settingsPage.walletConnectAlert().should('not.exist')
     settingsPage.walletConnectKeyInput().should('be.enabled')
-    // ensure dapp button is disabled until typed in
+    // ensure dapp button is disabled until input is typed in
     settingsPage.connectDappButton().should('be.disabled')
     // type in input field
     settingsPage.walletConnectKeyInput().type('test')
