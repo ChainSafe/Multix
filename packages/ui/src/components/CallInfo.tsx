@@ -11,7 +11,7 @@ import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
 import { ApiPromise } from '@polkadot/api'
-import { isTypeBalance, isTypeAccount } from '../utils'
+import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 
 interface Props {
@@ -128,7 +128,7 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
         }
 
         // generically show nice value for Balance type
-        if (isTypeBalance(_typeName)) {
+        if (isTypeBalanceWithBalanceCall(_typeName, name)) {
           return handleBalanceDisplay({ value, decimals, unit, key })
         }
 

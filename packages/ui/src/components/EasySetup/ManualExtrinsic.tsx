@@ -16,7 +16,7 @@ import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
 import BN from 'bn.js'
-import { isTypeBalance } from '../../utils/isTypeBalance'
+import { isTypeBalanceWithBalanceCall } from '../../utils/isTypeBalance'
 
 interface Props {
   extrinsicIndex?: string
@@ -160,7 +160,7 @@ const ManualExtrinsic = ({
 
         // Deal with balance like types where the param needs to
         // be multiplied by the token decimals
-        if (isTypeBalance(typeName)) {
+        if (isTypeBalanceWithBalanceCall(typeName, `${palletRpc}.${callable}`)) {
           if (!isValidAmountString(value) || !chainInfo?.tokenDecimals) {
             return previousValue
           }
@@ -333,6 +333,7 @@ const ManualExtrinsic = ({
       </AlertStyled>
       <FormControl>
         <Select
+          data-cy="select-manual-pallet"
           className="palletSelection"
           displayEmpty
           onChange={(event) => onPalletCallableParamChange(event, 'palletRpc')}
@@ -347,6 +348,7 @@ const ManualExtrinsic = ({
         >
           {palletRPCs.map(({ text }) => (
             <MenuItem
+              data-cy={`option-pallet-${text}`}
               key={text}
               value={text}
             >
@@ -357,6 +359,7 @@ const ManualExtrinsic = ({
       </FormControl>
       <FormControl>
         <Select
+          data-cy="select-manual-method"
           displayEmpty
           onChange={(event) => onPalletCallableParamChange(event, 'callable')}
           value={callable}
@@ -370,6 +373,7 @@ const ManualExtrinsic = ({
         >
           {callables.map(({ text }) => (
             <MenuItem
+              data-cy={`option-method-${text}`}
               key={text}
               value={text}
             >
@@ -381,7 +385,10 @@ const ManualExtrinsic = ({
       <ul className="paramInputs">
         {paramFields?.map((paramField, ind) => {
           return (
-            <li key={`${paramField.name}-${paramField.type}`}>
+            <li
+              key={`${paramField.name}-${paramField.type}`}
+              data-cy={`param-field-${paramField.name}`}
+            >
               <TextField
                 placeholder={paramField.type}
                 type="text"
@@ -389,10 +396,14 @@ const ManualExtrinsic = ({
                 value={inputParams[ind] ? inputParams[ind].value : ''}
                 onChange={(event) => onParamChange(event, { ind, paramField })}
                 InputProps={{
-                  endAdornment: isTypeBalance(paramField.typeName) && (
+                  endAdornment: isTypeBalanceWithBalanceCall(
+                    paramField.typeName,
+                    `${palletRpc}.${callable}`
+                  ) && (
                     <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
                   )
                 }}
+                inputProps={{ 'data-cy': `param-input-${paramField.name}` }}
               />
             </li>
           )

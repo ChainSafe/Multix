@@ -97,6 +97,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
         </AlertStyled>
       )}
       <TextField
+        data-cy="input-from-call-data"
         label={`Call data`}
         onChange={onCallDataChange}
         value={pastedCallData || ''}
