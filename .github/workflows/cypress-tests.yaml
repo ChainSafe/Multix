@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
+      options: --network=host
     services:
       postgres:
         image: postgres:14
