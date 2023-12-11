@@ -200,8 +200,14 @@ const CallInfo = ({
   const hasArgs = useMemo(() => args && Object.keys(args).length > 0, [args])
 
   return (
-    <div className={className}>
-      <CallNameStyled className="callName">
+    <div
+      className={className}
+      data-cy="container-call-info"
+    >
+      <CallNameStyled
+        className="callName"
+        data-cy="label-call-name"
+      >
         {name}
         {!!aggregatedData.callData && withLink && (
           <Linkstyled
@@ -217,6 +223,7 @@ const CallInfo = ({
           className={className}
           severity="info"
           variant="outlined"
+          data-cy="alert-no-call-data"
         >
           No Call data found on-chain. Use Multix to initiate multisig transactions and avoid this
           annoyance.

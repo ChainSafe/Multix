@@ -259,6 +259,7 @@ const ProposalSigning = ({
       maxWidth={'md'}
       open
       className={className}
+      data-cy="modal-tx-signing"
     >
       <ModalCloseButton onClose={onClose} />
       <DialogTitle>Transaction signing</DialogTitle>
@@ -298,7 +299,12 @@ const ProposalSigning = ({
             >
               <span className="title">Call hash</span>
               <br />
-              <span className="hash">{proposalData.hash}</span>
+              <span
+                className="hash"
+                data-cy="label-call-hash"
+              >
+                {proposalData.hash}
+              </span>
             </HashGridStyled>
           </>
           {!isProposerSelected && !proposalData.callData && (
@@ -319,6 +325,7 @@ const ProposalSigning = ({
                   onChange={onAddedCallDataChange}
                   value={addedCallData || ''}
                   fullWidth
+                  data-cy="input-call-data"
                 />
               </Grid>
               <Grid
@@ -383,6 +390,7 @@ const ProposalSigning = ({
                 variant="primary"
                 onClick={() => onSign(false)}
                 disabled={isSubmitting}
+                data-cy="button-reject-tx"
               >
                 Reject
               </Button>
@@ -392,6 +400,7 @@ const ProposalSigning = ({
                 variant="primary"
                 onClick={() => onSign(true)}
                 disabled={!!errorMessage || isSubmitting || (mustSubmitCallData && !callInfo?.call)}
+                data-cy="button-approve-tx"
               >
                 Approve
               </Button>
