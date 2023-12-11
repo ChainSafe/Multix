@@ -1,4 +1,4 @@
-endpoint: wss://kusama-rpc.dwellir.com
+endpoint: wss://rpc.ibp.network/kusama
 mock-signature-host: true
 block: 20487320
 db: ./db.sqlite
@@ -61,4 +61,4 @@ import-storage:
       - [[5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY], rank: 7]
     Voting: []
   ParasDisputes:
-    $removePrefix: ['disputes'] # those can makes block building super slow
+    # $removePrefix: ['disputes'] # those can makes block building super slow
