@@ -22,7 +22,5 @@ export const multisigPage = {
   pendingTransactionItem: () => cy.get('[data-cy=container-pending-tx-item]'),
   pendingTransactionCallName: () => cy.get('[data-cy=label-call-name]'),
   unknownCallIcon: () => cy.get('[data-cy=icon-unknown-call]'),
-  unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]'),
-  paramExpander: () => cy.get('[data-cy=label-expander]'),
-  contentExpander: () => cy.get('[data-cy=content-expander]')
+  unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]')
 }

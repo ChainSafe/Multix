@@ -278,7 +278,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     >
       <ModalCloseButton onClose={onClose} />
       <DialogTitle data-cy="title-send-tx">Send tx</DialogTitle>
-      <DialogContent className="generalContainer">
+      <DialogContent
+        data-cy="modal-send-tx"
+        className="generalContainer"
+      >
         <Grid
           alignItems="center"
           container
