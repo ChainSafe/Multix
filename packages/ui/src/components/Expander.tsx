@@ -16,13 +16,19 @@ const Expander = ({ className = '', title, content, expanded = false }: Props) =
   return (
     <Box className={className}>
       <div
+        data-cy="label-expander"
         onClick={() => setOpen(!open)}
         className="titleWrapper"
       >
         <ChevronRightIcon className={`${open ? 'rotated' : ''} expanderIcon`} />
         {title}
       </div>
-      <Collapse in={open}>{content}</Collapse>
+      <Collapse
+        in={open}
+        data-cy="content-expander"
+      >
+        {content}
+      </Collapse>
     </Box>
   )
 }

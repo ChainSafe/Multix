@@ -10,5 +10,13 @@ export const sendTxModal = {
     cy.get(`[data-cy=set-identity-field-${field}] > ${element}`),
   sendTxError: () => cy.get('[data-cy=error-send-tx]'),
   selectEasySetup: () => cy.get('[data-cy=select-easy-setup]'),
-  selectionEasySetupSetIdentity: () => cy.get('[data-cy=select-option-easy-setup-set-identity]')
+  selectionEasySetupSetIdentity: () => cy.get('[data-cy=select-option-easy-setup-set-identity]'),
+  selectionEasySetupSetupManualExtrinsic: () =>
+    cy.get('[data-cy=select-option-easy-setup-manual-extrinsic]'),
+  manualPalletSelection: () => cy.get('[data-cy=select-manual-pallet]'),
+  manualMethodSelection: () => cy.get('[data-cy=select-manual-method]'),
+  optionPallet: (pallet: string) => cy.get(`[data-cy=option-pallet-${pallet}]`),
+  optionMethod: (method: string) => cy.get(`[data-cy=option-method-${method}]`),
+  paramField: (param: string) => cy.get(`[data-cy=param-field-${param}]`),
+  paramInput: (param: string) => cy.get(`[data-cy=param-input-${param}]`)
 }

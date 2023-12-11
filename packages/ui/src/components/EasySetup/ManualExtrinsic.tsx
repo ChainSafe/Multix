@@ -333,6 +333,7 @@ const ManualExtrinsic = ({
       </AlertStyled>
       <FormControl>
         <Select
+          data-cy="select-manual-pallet"
           className="palletSelection"
           displayEmpty
           onChange={(event) => onPalletCallableParamChange(event, 'palletRpc')}
@@ -347,6 +348,7 @@ const ManualExtrinsic = ({
         >
           {palletRPCs.map(({ text }) => (
             <MenuItem
+              data-cy={`option-pallet-${text}`}
               key={text}
               value={text}
             >
@@ -357,6 +359,7 @@ const ManualExtrinsic = ({
       </FormControl>
       <FormControl>
         <Select
+          data-cy="select-manual-method"
           displayEmpty
           onChange={(event) => onPalletCallableParamChange(event, 'callable')}
           value={callable}
@@ -370,6 +373,7 @@ const ManualExtrinsic = ({
         >
           {callables.map(({ text }) => (
             <MenuItem
+              data-cy={`option-method-${text}`}
               key={text}
               value={text}
             >
@@ -381,7 +385,10 @@ const ManualExtrinsic = ({
       <ul className="paramInputs">
         {paramFields?.map((paramField, ind) => {
           return (
-            <li key={`${paramField.name}-${paramField.type}`}>
+            <li
+              key={`${paramField.name}-${paramField.type}`}
+              data-cy={`param-field-${paramField.name}`}
+            >
               <TextField
                 placeholder={paramField.type}
                 type="text"
@@ -396,6 +403,7 @@ const ManualExtrinsic = ({
                     <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
                   )
                 }}
+                inputProps={{ 'data-cy': `param-input-${paramField.name}` }}
               />
             </li>
           )
