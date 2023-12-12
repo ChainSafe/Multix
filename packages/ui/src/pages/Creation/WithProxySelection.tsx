@@ -18,6 +18,8 @@ const WithProxySelection = ({ setWithProxy, withProxy, className }: Props) => {
           <Checkbox
             checked={withProxy}
             onChange={() => setWithProxy(!withProxy)}
+            // @ts-ignore
+            inputProps={{ 'data-cy': 'checkbox-use-pure-proxy' }}
           />
         }
       />

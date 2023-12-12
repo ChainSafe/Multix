@@ -62,6 +62,13 @@ export const testAccounts = {
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/3'
   } as InjectedAccountWitMnemonic,
+  'Not Funded Account 4 Chopsticks Kusama': {
+    address: 'GecgyHrgdLEqkx34Ca5FW45QZ2wh66h3xbzzzgnxLKg2n8R',
+    publicKey: '0xb437b8ddcd4d0b6086b06e70027f96626a51376bf285531e9e7d3acf45a2c113',
+    name: 'Not Funded Account 4 Chopsticks',
+    type: 'sr25519',
+    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/4'
+  } as InjectedAccountWitMnemonic,
   'Signatory 1 Of Multisig With Unknown Tx': {
     address: '5C5RWYL7zoV6V2vdwXENSpSzWHXUxyhHBrEzhfySdQmkiF9d',
     publicKey: '0x008c37659f858da7ec1416ce01b975af4c6eb5931805047d173d63123174a74e',

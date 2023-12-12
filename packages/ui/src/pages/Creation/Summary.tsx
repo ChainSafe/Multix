@@ -150,7 +150,14 @@ const Summary = ({
           possibleSigners={possibleSigners}
         />
       </Box>
-      {!!errorMessage && !isSubmittingExtrinsic && <Alert severity="error">{errorMessage}</Alert>}
+      {!!errorMessage && !isSubmittingExtrinsic && (
+        <Alert
+          data-cy="error-not-enough-funds"
+          severity="error"
+        >
+          {errorMessage}
+        </Alert>
+      )}
     </Box>
   )
 }

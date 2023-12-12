@@ -436,7 +436,14 @@ const MultisigCreation = ({ className }: Props) => {
         className="buttonContainer"
         flexDirection="column"
       >
-        {!!errorMessage && <div className="errorMessage">{errorMessage}</div>}
+        {!!errorMessage && (
+          <div
+            data-cy="create-multisig-error-message"
+            className="errorMessage"
+          >
+            {errorMessage}
+          </div>
+        )}
         <div className="buttonWrapper">
           <Button
             variant="secondary"
