@@ -65,7 +65,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
                 Connect
               </ConnectButtonStyled>
             )}
-            <MultiProxySelection />
+            <MultiProxySelection isDesktop={true} />
             <NetworkSelectionStyled />
           </RightButtonsWrapperStyled>
         </DesktopMenuStyled>

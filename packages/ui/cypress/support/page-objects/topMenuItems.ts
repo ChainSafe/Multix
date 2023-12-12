@@ -6,7 +6,8 @@ export const topMenuItems = {
   overviewButton: () => cy.get('[data-cy=button-navigate-overview]'),
   aboutButton: () => cy.get('[data-cy=button-navigate-about]'),
   connectButton: () => cy.get('[data-cy=button-menu-connect]'),
-  multiproxySelector: () => cy.get('[data-cy=select-multiproxy]', { timeout: 20000 }),
+  multiproxySelectorDesktop: () =>
+    cy.get('[data-cy=select-multiproxy-desktop]', { timeout: 20000 }),
   multiproxySelectorInput: () => cy.get('[data-cy=input-select-multiproxy]', { timeout: 10000 }),
   multiproxySelectorOption: () => cy.get('[data-cy=select-multiproxy-option]'),
   networkSelector: () => cy.get('[data-cy=select-networks]'),

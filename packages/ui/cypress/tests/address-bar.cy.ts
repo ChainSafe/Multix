@@ -45,7 +45,7 @@ describe('Account address in the address bar', () => {
   it('shows an error with 0 watched, 0 connected account, unknown linked address', () => {
     cy.visit(landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address))
     landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
-    topMenuItems.multiproxySelector().should('not.exist')
+    topMenuItems.multiproxySelectorDesktop().should('not.exist')
   })
 
   it('shows an error and can reset with 1 watched (multi), 0 connected account, unknown linked address', () => {
@@ -60,7 +60,7 @@ describe('Account address in the address bar', () => {
 
     landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
-    topMenuItems.multiproxySelector().should('be.visible')
+    topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInput().should('have.value', '')
 
     // click reset leads to the multisig
@@ -84,7 +84,7 @@ describe('Account address in the address bar', () => {
     })
     landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
-    topMenuItems.multiproxySelector().should('be.visible')
+    topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInput().should('have.value', '')
 
     // click reset leads to the pure
@@ -109,7 +109,7 @@ describe('Account address in the address bar', () => {
 
     landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
     cy.url().should('include', nonMulitisigAccountAddress)
-    topMenuItems.multiproxySelector().should('be.visible')
+    topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInput().should('have.value', '')
 
     // click reset leads to the multi
@@ -219,7 +219,7 @@ describe('Account address in the address bar', () => {
     topMenuItems
       .desktopMenu()
       .within(() =>
-        topMenuItems.multiproxySelector().click().type(`${first6Letters}{downArrow}{enter}`)
+        topMenuItems.multiproxySelectorDesktop().click().type(`${first6Letters}{downArrow}{enter}`)
       )
     cy.url().should('include', multiAddress)
     multisigPage.accountHeader().within(() => {

@@ -13,6 +13,7 @@ import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
 
 interface Props {
   className?: string
+  isDesktop: boolean
 }
 
 const getDisplayAddress = (option?: MultiProxy) =>
@@ -27,7 +28,7 @@ const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
   return option.multisigs[0].address === value.multisigs[0].address
 }
 
-const MultiProxySelection = ({ className }: Props) => {
+const MultiProxySelection = ({ className, isDesktop }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
   const {
     multiProxyList,
@@ -142,7 +143,7 @@ const MultiProxySelection = ({ className }: Props) => {
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={canFindMultiProxyFromUrl ? selectedMultiProxy || multiProxyList[0] : ''}
-      data-cy="select-multiproxy"
+      data-cy={`select-multiproxy-${isDesktop ? 'desktop' : 'mobile'}`}
     />
   )
 }

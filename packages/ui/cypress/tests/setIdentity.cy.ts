@@ -93,7 +93,10 @@ describe('Set an identity', () => {
     topMenuItems
       .desktopMenu()
       .within(() =>
-        topMenuItems.multiproxySelector().click().type(`${first5DigitsAddress}{downArrow}{enter}`)
+        topMenuItems
+          .multiproxySelectorDesktop()
+          .click()
+          .type(`${first5DigitsAddress}{downArrow}{enter}`)
       )
     multisigPage.accountHeader().should('contain', first5DigitsAddress)
 
