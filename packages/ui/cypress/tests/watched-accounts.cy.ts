@@ -90,7 +90,7 @@ describe('Watched Accounts', () => {
     })
     // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOption().within(() => {
+    topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.multisigBadge().should('be.visible')
       accountDisplay.pureBadge().should('not.exist')
@@ -123,7 +123,7 @@ describe('Watched Accounts', () => {
     })
     // ensure the name is included in the selectable drop-down option
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOption().within(() => {
+    topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.pureBadge().should('be.visible')
       accountDisplay.multisigBadge().should('not.exist')
@@ -268,7 +268,7 @@ describe('Watched Accounts', () => {
       })
       topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
       topMenuItems
-        .multiproxySelectorOption()
+        .multiproxySelectorOptionDesktop()
         .should('have.length', 1)
         .within(() => {
           accountDisplay.pureBadge().should('be.visible')
@@ -313,7 +313,7 @@ describe('Watched Accounts', () => {
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
-      .multiproxySelectorOption()
+      .multiproxySelectorOptionDesktop()
       .should('have.length', 5)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
@@ -328,7 +328,7 @@ describe('Watched Accounts', () => {
     // ensure each multisig that the signatory is a member of can be viewed
     expectedAddresses.forEach((address, index) => {
       topMenuItems.multiproxySelectorDesktop().click()
-      topMenuItems.multiproxySelectorOption().eq(index).click()
+      topMenuItems.multiproxySelectorOptionDesktop().eq(index).click()
       multisigPage
         .accountHeader()
         .should('be.visible')

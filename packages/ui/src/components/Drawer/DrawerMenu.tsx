@@ -42,7 +42,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
           </ListItemStyled>
         )}
         <ListItemStyled>
-          <MultiProxySelection isDesktop={false} />
+          <MultiProxySelection testId="mobile" />
         </ListItemStyled>
         <ListItemStyled>
           <NetworkSelection />

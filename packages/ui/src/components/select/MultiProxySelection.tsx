@@ -13,7 +13,7 @@ import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
 
 interface Props {
   className?: string
-  isDesktop: boolean
+  testId?: string
 }
 
 const getDisplayAddress = (option?: MultiProxy) =>
@@ -28,7 +28,7 @@ const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
   return option.multisigs[0].address === value.multisigs[0].address
 }
 
-const MultiProxySelection = ({ className, isDesktop }: Props) => {
+const MultiProxySelection = ({ className, testId = '' }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
   const {
     multiProxyList,
@@ -95,12 +95,12 @@ const MultiProxySelection = ({ className, isDesktop }: Props) => {
         key={displayAddress}
         component="li"
         {...props}
-        data-cy="select-multiproxy-option"
+        data-cy={`select-multiproxy-option-${testId}`}
       >
         <AccountDisplay
           address={displayAddress || ''}
           badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
-          data-cy="select-multiproxy-option-details"
+          data-cy={`select-multiproxy-option-details-${testId}`}
         />
       </Box>
     )
@@ -122,7 +122,7 @@ const MultiProxySelection = ({ className, isDesktop }: Props) => {
           </InputAdornment>
         )
       }}
-      inputProps={{ ...params.inputProps, 'data-cy': 'input-select-multiproxy' }}
+      inputProps={{ ...params.inputProps, 'data-cy': `input-select-multiproxy-${testId}` }}
       onKeyDown={handleSpecialKeys}
     />
   )
@@ -143,7 +143,7 @@ const MultiProxySelection = ({ className, isDesktop }: Props) => {
       getOptionLabel={getOptionLabel}
       onChange={onChange}
       value={canFindMultiProxyFromUrl ? selectedMultiProxy || multiProxyList[0] : ''}
-      data-cy={`select-multiproxy-${isDesktop ? 'desktop' : 'mobile'}`}
+      data-cy={`select-multiproxy-${testId}`}
     />
   )
 }
