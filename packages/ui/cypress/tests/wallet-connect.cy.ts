@@ -26,7 +26,6 @@ describe('Wallet Connect', () => {
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
-    topMenuItems.settingsButton().click()
     settingsPage.wallectConnectAccordion().should('be.visible').click()
     // ensure elements are enabled when connected
     settingsPage.walletConnectAlert().should('not.exist')
