@@ -89,8 +89,8 @@ describe('Watched Accounts', () => {
       accountDisplay.nameLabel().should('be.visible').should('have.text', multisigName)
     })
     // ensure the name is included in the selectable drop-down option
-    topMenuItems.multiproxySelector().should('be.visible').first().click()
-    topMenuItems.multiproxySelectorOption().within(() => {
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.multisigBadge().should('be.visible')
       accountDisplay.pureBadge().should('not.exist')
@@ -122,8 +122,8 @@ describe('Watched Accounts', () => {
       accountDisplay.nameLabel().should('be.visible').should('have.text', pureName)
     })
     // ensure the name is included in the selectable drop-down option
-    topMenuItems.multiproxySelector().should('be.visible').first().click()
-    topMenuItems.multiproxySelectorOption().within(() => {
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.pureBadge().should('be.visible')
       accountDisplay.multisigBadge().should('not.exist')
@@ -250,7 +250,7 @@ describe('Watched Accounts', () => {
 
     const pureCheck = () => {
       multisigPage
-        .accountHeader()
+        .accountHeader(6000)
         .should('be.visible')
         .within(() => {
           accountDisplay
@@ -266,9 +266,9 @@ describe('Watched Accounts', () => {
             .and('contain.text', multisigAddress.slice(0, 6))
         })
       })
-      topMenuItems.multiproxySelector().should('be.visible').first().click()
+      topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
       topMenuItems
-        .multiproxySelectorOption()
+        .multiproxySelectorOptionDesktop()
         .should('have.length', 1)
         .within(() => {
           accountDisplay.pureBadge().should('be.visible')
@@ -310,10 +310,10 @@ describe('Watched Accounts', () => {
       url: landingPageUrl,
       watchedAccounts: [signatoryPublicKey]
     })
-    topMenuItems.multiproxySelector().should('be.visible').first().click()
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
-      .multiproxySelectorOption()
+      .multiproxySelectorOptionDesktop()
       .should('have.length', 5)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
@@ -327,8 +327,8 @@ describe('Watched Accounts', () => {
       })
     // ensure each multisig that the signatory is a member of can be viewed
     expectedAddresses.forEach((address, index) => {
-      topMenuItems.multiproxySelector().first().click()
-      topMenuItems.multiproxySelectorOption().eq(index).click()
+      topMenuItems.multiproxySelectorDesktop().click()
+      topMenuItems.multiproxySelectorOptionDesktop().eq(index).click()
       multisigPage
         .accountHeader()
         .should('be.visible')

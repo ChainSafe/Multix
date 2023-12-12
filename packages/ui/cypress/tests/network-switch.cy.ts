@@ -32,14 +32,18 @@ describe('Network can be switched', () => {
       accountDisplay.addressLabel().contains(multisigAddress.slice(0, 5))
     })
 
-    topMenuItems.desktopMenu().within(() => topMenuItems.multiproxySelector().should('exist'))
+    topMenuItems
+      .desktopMenu()
+      .within(() => topMenuItems.multiproxySelectorDesktop().should('exist'))
     topMenuItems.desktopMenu().within(() => topMenuItems.networkSelector().click())
     topMenuItems.networkSelectorOption('kusama').click()
 
     cy.url().should('contain', 'network=kusama')
     cy.url().should('not.contain', 'address=')
 
-    topMenuItems.desktopMenu().within(() => topMenuItems.multiproxySelector().should('not.exist'))
+    topMenuItems
+      .desktopMenu()
+      .within(() => topMenuItems.multiproxySelectorDesktop().should('not.exist'))
 
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
