@@ -41,7 +41,7 @@ Cypress.Commands.add(
     extensionConnectionAllowed,
     injectExtensionWithAccounts
   }: IsetupAndVisit) => {
-    return cy.visit(url, {
+    cy.visit(url, {
       onBeforeLoad(win) {
         !!watchedAccounts?.length &&
           win.localStorage.setItem(
@@ -53,12 +53,12 @@ Cypress.Commands.add(
 
         !!extensionConnectionAllowed &&
           win.localStorage.setItem(LOCALSTORAGE_EXTENSION_CONNECTION_KEY, 'true')
-
-        if (injectExtensionWithAccounts) {
-          cy.initExtension(injectExtensionWithAccounts, MULTIX_DAPP_NAME)
-        }
       }
     })
+
+    if (injectExtensionWithAccounts) {
+      cy.initExtension(injectExtensionWithAccounts, MULTIX_DAPP_NAME)
+    }
   }
 )
 
