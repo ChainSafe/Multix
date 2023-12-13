@@ -1680,6 +1680,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chainsafe/cypress-polkadot-wallet@npm:1.0.0-beta.12":
+  version: 1.0.0-beta.12
+  resolution: "@chainsafe/cypress-polkadot-wallet@npm:1.0.0-beta.12"
+  dependencies:
+    "@polkadot/extension-inject": ^0.46.6
+    "@polkadot/keyring": ^12.6.1
+    "@polkadot/types": ^10.11.1
+    "@polkadot/util-crypto": ^12.6.1
+  peerDependencies:
+    cypress: ">=10"
+  checksum: f0d328885669318e87af1e8ec575b768fef52a41bb07c19db34566073afecb573b9796af3d3f0b185cbe427483c5beb914dfe2b6d5ddad7364d01432a1bcf7a8
+  languageName: node
+  linkType: hard
+
 "@chainsafe/multix@workspace:.":
   version: 0.0.0-use.local
   resolution: "@chainsafe/multix@workspace:."
@@ -3914,7 +3928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-inject@npm:0.46.6, @polkadot/extension-inject@npm:^0.46.5":
+"@polkadot/extension-inject@npm:0.46.6, @polkadot/extension-inject@npm:^0.46.5, @polkadot/extension-inject@npm:^0.46.6":
   version: 0.46.6
   resolution: "@polkadot/extension-inject@npm:0.46.6"
   dependencies:
@@ -10991,6 +11005,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "multix-ui@workspace:packages/ui"
   dependencies:
+    "@chainsafe/cypress-polkadot-wallet": 1.0.0-beta.12
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@fontsource/jost": ^5.0.8

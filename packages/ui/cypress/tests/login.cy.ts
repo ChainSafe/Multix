@@ -5,6 +5,7 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { clickOnConnect } from '../utils/clickOnConnect'
 import { newMultisigPage } from '../support/page-objects/newMultisigPage'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
+import { MULTIX_DAPP_NAME } from '../support/commands'
 
 describe('Connect Account', () => {
   beforeEach(() => {
@@ -19,7 +20,7 @@ describe('Connect Account', () => {
       // we should have 1 connection request to the extension
       cy.wrap(requests.length).should('eq', 1)
       // this request should be from the application Multix
-      cy.wrap(requests[0].origin).should('eq', 'Multix')
+      cy.wrap(requests[0].origin).should('eq', MULTIX_DAPP_NAME)
       // let's allow it for Alice
       cy.rejectAuth(requests[0].id, 'Cancelled')
       // the ui should then move on to connecting to the rpcs
