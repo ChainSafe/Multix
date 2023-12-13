@@ -438,7 +438,7 @@ const MultisigCreation = ({ className }: Props) => {
       >
         {!!errorMessage && (
           <div
-            data-cy="create-multisig-error-message"
+            data-cy="container-create-multisig-error"
             className="errorMessage"
           >
             {errorMessage}

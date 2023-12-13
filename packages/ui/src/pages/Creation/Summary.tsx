@@ -152,7 +152,7 @@ const Summary = ({
       </Box>
       {!!errorMessage && !isSubmittingExtrinsic && (
         <Alert
-          data-cy="error-not-enough-funds"
+          data-cy="lert-insufficient-funds"
           severity="error"
         >
           {errorMessage}

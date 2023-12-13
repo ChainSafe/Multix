@@ -21,13 +21,13 @@ const typeAndAdd = (address: string) => {
   newMultisigPage.addButton().click()
 }
 
-const acceptMutlisigCreation = () => {
+const acceptMultisigCreation = () => {
   cy.getTxRequests().then((req) => {
     const txRequests = Object.values(req)
     cy.wrap(txRequests.length).should('eq', 1)
     cy.wrap(txRequests[0].payload.address).should('eq', address1)
     newMultisigPage.nextButton().should('not.exist')
-    newMultisigPage.creatingLoader().should('exist')
+    newMultisigPage.creatingLoader().should('be.visible')
     cy.approveTx(txRequests[0].id)
     notifications.notificationWrapper(10000).should('have.length', 1)
     notifications.loadingNotificationIcon().should('be.visible')
@@ -79,7 +79,7 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
       newMultisigPage.nextButton().should('contain', 'Create').click()
 
-      acceptMutlisigCreation()
+      acceptMultisigCreation()
     })
 
     it('Create a multisig tx WITHOUT Pure Proxy', () => {
@@ -90,7 +90,7 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
       newMultisigPage.nextButton().should('contain', 'Create').click()
 
-      acceptMutlisigCreation()
+      acceptMultisigCreation()
 
       landingPage.infoMultisigCreated().should('be.visible')
     })

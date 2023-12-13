@@ -15,7 +15,7 @@ export const landingPage = {
   resetLinkedAddressButton: () => cy.get('[data-cy=button-reset-linked-address]'),
   firstMultisigCreationLabel: () =>
     cy.get('[data-cy=label-first-multisig-creation', { timeout: 30000 }),
-  infoMultisigCreated: () => cy.get('[data-cy=info-multisig-created]'),
+  infoMultisigCreated: () => cy.get('[data-cy=container-multisig-creation-info]'),
 
   // page specific assertion
   shouldHaveNoAccountErrorAndWikiLink() {

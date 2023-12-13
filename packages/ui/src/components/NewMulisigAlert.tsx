@@ -16,7 +16,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
     >
       <div
         className="infoText"
-        data-cy="info-multisig-created"
+        data-cy="container-multisig-creation-info"
       >
         Your new multisig is being created. It will be available in ~1min from the dropdown.
       </div>

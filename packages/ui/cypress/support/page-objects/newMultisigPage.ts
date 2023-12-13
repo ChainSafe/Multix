@@ -7,7 +7,7 @@ export const newMultisigPage = {
   step1: {
     accountNameInput: () => cy.get('[data-cy=input-account-name]'),
     invalidAddressSelection: () => cy.get('[data-cy=label-watch-account-error]'),
-    createMutlisigError: () => cy.get('[data-cy=create-multisig-error-message]')
+    createMutlisigError: () => cy.get('[data-cy=container-create-multisig-error]')
   },
   step2: {
     thresholdWarning: () => cy.get('[data-cy=input-warning-message]'),
@@ -16,6 +16,6 @@ export const newMultisigPage = {
     checkboxUsePureProxy: () => cy.get('[data-cy=checkbox-use-pure-proxy]')
   },
   step3: {
-    errorNotEnoughFunds: () => cy.get('[data-cy=error-not-enough-funds]')
+    errorNotEnoughFunds: () => cy.get('[data-cy=lert-insufficient-funds]')
   }
 }
