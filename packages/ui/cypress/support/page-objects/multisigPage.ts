@@ -16,6 +16,7 @@ export const multisigPage = {
   balanceListItem: () => cy.get('[data-cy=list-item-balance]'),
   signatoriesAccordion: () => cy.get('[data-cy=accordion-signatories]'),
   expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]'),
+  signatoriesList: () => cy.get('[data-cy=list-item-signatory]'),
 
   // transaction list elements
   transactionList: () => cy.get('[data-cy=container-transaction-list]', { timeout: 20000 }),

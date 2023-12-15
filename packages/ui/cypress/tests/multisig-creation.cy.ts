@@ -6,6 +6,7 @@ import { newMultisigPage } from '../support/page-objects/newMultisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { landingPage } from '../support/page-objects/landingPage'
+
 const fundedAccount1 = testAccounts['Funded Account 1 Chopsticks Kusama']
 const fundedAccount2 = testAccounts['Funded Account 2 Chopsticks Kusama']
 const fundedAccount3 = testAccounts['Funded Account 3 Chopsticks Kusama']
@@ -62,6 +63,27 @@ describe('Multisig creation', () => {
   })
 
   describe('Multisig creation - Happy path', () => {
+    const verifySignatories = () => {
+      multisigPage
+        .signatoriesAccordion()
+        .click()
+        .within(() => {
+          multisigPage
+            .signatoriesList()
+            .find('li')
+            .then((liElements) => {
+              cy.wrap(liElements[0]).should('contain.text', fundedAccount1.name)
+              cy.wrap(liElements[0]).should('contain.text', address1.slice(0, 6))
+
+              cy.wrap(liElements[1]).should('contain.text', fundedAccount3.name)
+              cy.wrap(liElements[1]).should('contain.text', address3.slice(0, 6))
+
+              cy.wrap(liElements[2]).should('contain.text', fundedAccount2.name)
+              cy.wrap(liElements[2]).should('contain.text', address2.slice(0, 6))
+            })
+        })
+    }
+
     beforeEach(() => {
       topMenuItems.newMultisigButton().click()
       typeAndAdd(address1)
@@ -69,21 +91,33 @@ describe('Multisig creation', () => {
       typeAndAdd(address3)
 
       newMultisigPage.nextButton().should('contain', 'Next').click()
-
       newMultisigPage.step2.thresholdInput().type('2')
     })
 
     it('Create a multisig tx with proxy', () => {
-      newMultisigPage.step2.nameInput().type('Mutlisig with proxy')
+      const multisigName = 'Multisig with proxy'
+      newMultisigPage.step2.nameInput().type('Multisig with proxy')
 
       newMultisigPage.nextButton().should('contain', 'Next').click()
       newMultisigPage.nextButton().should('contain', 'Create').click()
 
       acceptMultisigCreation()
+
+      accountDisplay.nameLabel().should('contain.text', multisigName)
+
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 1)
+        })
+
+      verifySignatories()
     })
 
     it('Create a multisig tx WITHOUT Pure Proxy', () => {
-      newMultisigPage.step2.nameInput().type('Mutlisig without proxy')
+      const multisigName = 'Multisig without proxy'
+      newMultisigPage.step2.nameInput().type(multisigName)
       newMultisigPage.step2.checkboxUsePureProxy().click()
       newMultisigPage.step2.checkboxUsePureProxy().should('not.be.checked')
 
@@ -93,6 +127,14 @@ describe('Multisig creation', () => {
       acceptMultisigCreation()
 
       landingPage.infoMultisigCreated().should('be.visible')
+      accountDisplay.nameLabel().should('contain.text', multisigName)
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 2)
+        })
+      verifySignatories()
     })
   })
 
@@ -108,9 +150,15 @@ describe('Multisig creation', () => {
     })
 
     it('Should add signatory with no name given', () => {
-      typeAndAdd(randomSignatory1)
-
+      newMultisigPage.addressSelector().click().type(`${randomSignatory1}{downArrow}{enter}`)
       newMultisigPage.step1.accountNameInput().should('have.value', '')
+      newMultisigPage.addButton().click()
+
+      newMultisigPage.addressSelector().click().type(`${address1}{downArrow}{enter}`)
+      newMultisigPage.step1.accountNameInput().should('have.value', fundedAccount1.name)
+      newMultisigPage.addButton().click()
+
+      newMultisigPage.nextButton().should('be.enabled')
     })
 
     it('Shows the error message => when signatory address is invalid', () => {
@@ -141,19 +189,24 @@ describe('Multisig creation', () => {
     it('Should show the warning => when threshold is too high or low', () => {
       typeAndAdd(address1)
       typeAndAdd(address2)
+
       newMultisigPage.nextButton().should('contain', 'Next').click()
       const warningMessage = 'Threshold must be between'
 
       // When is too high
       newMultisigPage.step2.thresholdInput().type('3')
       newMultisigPage.step2.thresholdWarning().should('be.visible').and('contain', warningMessage)
+      newMultisigPage.nextButton().should('contain', 'Next').and('be.disabled')
+
       // When is too low
       newMultisigPage.step2.thresholdInput().type('0')
       newMultisigPage.step2.thresholdWarning().should('be.visible').and('contain', warningMessage)
+      newMultisigPage.nextButton().should('contain', 'Next').and('be.disabled')
 
       // When is valid
       newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.step2.thresholdWarning().should('not.exist')
+      newMultisigPage.nextButton().should('contain', 'Next').and('be.enabled')
     })
   })
 
