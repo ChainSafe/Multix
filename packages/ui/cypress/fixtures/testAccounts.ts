@@ -63,8 +63,8 @@ export const testAccounts = {
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/3'
   } as InjectedAccountWitMnemonic,
   'Not Funded Account 4 Chopsticks Kusama': {
-    address: 'GecgyHrgdLEqkx34Ca5FW45QZ2wh66h3xbzzzgnxLKg2n8R',
-    publicKey: '0xb437b8ddcd4d0b6086b06e70027f96626a51376bf285531e9e7d3acf45a2c113',
+    address: 'FtumrS4fFxcUL3UW5mxJ5ispXS4ADpGo3bas5ouQKbjxVZG',
+    publicKey: '0x92e26f4dab1f112580136d3f0287207900a7ed74d9d1211b4062110599bf2930',
     name: 'Not Funded Account 4 Chopsticks',
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/4'

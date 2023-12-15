@@ -15,7 +15,7 @@ const notFundedAccount4 = testAccounts['Not Funded Account 4 Chopsticks Kusama']
 const { address: address1 } = fundedAccount1
 const { address: address2 } = fundedAccount2
 const { address: address3 } = fundedAccount3
-const { address: address4 } = notFundedAccount4
+const { address: unfundedAccount } = notFundedAccount4
 
 const typeAndAdd = (address: string) => {
   newMultisigPage.addressSelector().click().type(`${address}{downArrow}{enter}`)
@@ -216,14 +216,14 @@ describe('Multisig creation', () => {
     })
 
     it('Should show the error => if the funds are not sufficient to create Multisig', () => {
-      typeAndAdd(address4)
+      typeAndAdd(unfundedAccount)
       typeAndAdd(address1)
 
       newMultisigPage.nextButton().should('contain', 'Next').click()
       newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
-      newMultisigPage.addressSelector().click().clear().type(`${address4}{downArrow}{enter}`)
+      newMultisigPage.addressSelector().click().clear().type(`${unfundedAccount}{downArrow}{enter}`)
 
       newMultisigPage.step3
         .errorNotEnoughFunds()
