@@ -39,7 +39,7 @@ export const networkList = {
   polkadot: {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
-    rpcUrl: 'wss://rpc.polkadot.io',
+    rpcUrl: 'wss://polkadot.api.onfinality.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
     logo: chainsPolkadotCircleSVG
@@ -47,7 +47,7 @@ export const networkList = {
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
-    rpcUrl: 'wss://kusama-rpc.polkadot.io',
+    rpcUrl: 'wss://kusama.api.onfinality.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
     logo: chainsKusamaSVG
