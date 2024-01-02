@@ -37,11 +37,6 @@ const acceptMultisigCreation = () => {
     notifications.successNotificationIcon(30000).should('be.visible')
     landingPage.firstMultisigCreationLabel().should('not.exist')
     notifications.notificationWrapper().should('contain', 'Tx in block')
-
-    const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
-    multisigPage.accountHeader(10000).within(() => {
-      accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
-    })
   })
 }
 
@@ -86,22 +81,30 @@ describe('Multisig creation', () => {
 
     beforeEach(() => {
       topMenuItems.newMultisigButton().click()
+      // Step 1
       typeAndAdd(address1)
       typeAndAdd(address2)
       typeAndAdd(address3)
-
       newMultisigPage.nextButton().should('contain', 'Next').click()
-      newMultisigPage.step2.thresholdInput().type('2')
     })
 
     it('Create a multisig tx with proxy', () => {
       const multisigName = 'Multisig with proxy'
+      const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
+
+      // Step 2
+      newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.step2.nameInput().type('Multisig with proxy')
-
       newMultisigPage.nextButton().should('contain', 'Next').click()
-      newMultisigPage.nextButton().should('contain', 'Create').click()
 
+      // Step 3
+      newMultisigPage.nextButton().should('contain', 'Create').click()
       acceptMultisigCreation()
+
+      // Landing Page
+      multisigPage.accountHeader(10000).within(() => {
+        accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+      })
 
       accountDisplay.nameLabel().should('contain.text', multisigName)
 
@@ -117,14 +120,36 @@ describe('Multisig creation', () => {
 
     it('Create a multisig tx WITHOUT Pure Proxy', () => {
       const multisigName = 'Multisig without proxy'
+      const expectedMultisigAddress = 'F764i4HX9LvpW14injFtt9MThuifVdic8PnuPtUAVvMDiwD'
+      const first6CharAddress = expectedMultisigAddress.slice(0, 6)
+
+      // Step 2
+      newMultisigPage.step2.thresholdInput().type('3')
       newMultisigPage.step2.nameInput().type(multisigName)
       newMultisigPage.step2.checkboxUsePureProxy().click()
       newMultisigPage.step2.checkboxUsePureProxy().should('not.be.checked')
-
       newMultisigPage.nextButton().should('contain', 'Next').click()
-      newMultisigPage.nextButton().should('contain', 'Create').click()
 
+      // Step 3
+      newMultisigPage.nextButton().should('contain', 'Create').click()
       acceptMultisigCreation()
+
+      // wait for multisig creation
+      cy.wait(10000)
+
+      topMenuItems
+        .desktopMenu()
+        .within(() =>
+          topMenuItems
+            .multiproxySelectorDesktop()
+            .click()
+            .type(`${first6CharAddress}{downArrow}{enter}`)
+        )
+
+      // Landing Page
+      multisigPage.accountHeader(10000).within(() => {
+        accountDisplay.addressLabel().should('contain.text', first6CharAddress)
+      })
 
       landingPage.infoMultisigCreated().should('be.visible')
       accountDisplay.nameLabel().should('contain.text', multisigName)
@@ -132,7 +157,7 @@ describe('Multisig creation', () => {
         .transactionList()
         .should('be.visible')
         .within(() => {
-          multisigPage.pendingTransactionItem().should('have.length', 2)
+          multisigPage.pendingTransactionItem().should('have.length', 1)
         })
       verifySignatories()
     })
