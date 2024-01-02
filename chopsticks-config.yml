@@ -24,10 +24,6 @@ import-storage:
         - providers: 1
           data:
             free: '10000000000000000000'
-      - - - GecgyHrgdLEqkx34Ca5FW45QZ2wh66h3xbzzzgnxLKg2n8R
-        - providers: 1
-          data:
-            free: '0'
   FellowshipCollective:
     $removePrefix:
       - IdToIndex
