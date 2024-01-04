@@ -1680,17 +1680,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/cypress-polkadot-wallet@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@chainsafe/cypress-polkadot-wallet@npm:2.0.0"
+"@chainsafe/cypress-polkadot-wallet@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@chainsafe/cypress-polkadot-wallet@npm:2.1.0"
   dependencies:
     "@polkadot/extension-inject": ^0.46.6
-    "@polkadot/keyring": ^12.6.1
-    "@polkadot/types": ^10.11.1
-    "@polkadot/util-crypto": ^12.6.1
+    "@polkadot/keyring": ^12.6.2
+    "@polkadot/types": ^10.11.2
+    "@polkadot/util-crypto": ^12.6.2
   peerDependencies:
     cypress: ">=10"
-  checksum: f63a82ef803415e41fc2e05e3ef3215204d03110cf031e5d53e5ce6e5e141b7c3703a28a2b47f90fa4658be6a891d5e243be83b12e32396d14f84632b0496987
+  checksum: 5af62f9d378c789d50bc574177cc27204da190cba6dba2ddfbf065e677458d98851436a293fbc66d861519a2e185217cdbcf57db8db71f52f3afbdb744122d24
   languageName: node
   linkType: hard
 
@@ -3960,6 +3960,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/keyring@npm:^12.6.2":
+  version: 12.6.2
+  resolution: "@polkadot/keyring@npm:12.6.2"
+  dependencies:
+    "@polkadot/util": 12.6.2
+    "@polkadot/util-crypto": 12.6.2
+    tslib: ^2.6.2
+  peerDependencies:
+    "@polkadot/util": 12.6.2
+    "@polkadot/util-crypto": 12.6.2
+  checksum: 16b198b072ff22cd9fb0281d1dc1e97a3939eccf268e5e2c9272e85ae90cb6212d248d6b76bf85359351d3d43fd9c8b6f951001485e0d2bcff35b675cb189f3d
+  languageName: node
+  linkType: hard
+
 "@polkadot/networks@npm:12.5.1":
   version: 12.5.1
   resolution: "@polkadot/networks@npm:12.5.1"
@@ -4099,6 +4113,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/types-augment@npm:10.11.2":
+  version: 10.11.2
+  resolution: "@polkadot/types-augment@npm:10.11.2"
+  dependencies:
+    "@polkadot/types": 10.11.2
+    "@polkadot/types-codec": 10.11.2
+    "@polkadot/util": ^12.6.2
+    tslib: ^2.6.2
+  checksum: 4b4e1bbb229b420bafac3c5641dab249f18a2c17fe967c6ac2b78ad157de7c60357b24a53f202b27e2590fb33f12fbb78cff1ef43fceb65f6b9899053f4ed14d
+  languageName: node
+  linkType: hard
+
 "@polkadot/types-codec@npm:10.11.1":
   version: 10.11.1
   resolution: "@polkadot/types-codec@npm:10.11.1"
@@ -4110,6 +4136,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/types-codec@npm:10.11.2":
+  version: 10.11.2
+  resolution: "@polkadot/types-codec@npm:10.11.2"
+  dependencies:
+    "@polkadot/util": ^12.6.2
+    "@polkadot/x-bigint": ^12.6.2
+    tslib: ^2.6.2
+  checksum: 2af000be31294bb0e1c6b07a418f80fcd263f233ec0db0026f5936a11af3c1cc697c598e929ea35be6eedbaa029eef007eafd29476ba5d2186adf7c5e055b420
+  languageName: node
+  linkType: hard
+
 "@polkadot/types-create@npm:10.11.1":
   version: 10.11.1
   resolution: "@polkadot/types-create@npm:10.11.1"
@@ -4118,6 +4155,17 @@ __metadata:
     "@polkadot/util": ^12.6.1
     tslib: ^2.6.2
   checksum: 432ecb76fbaa52f0255a66a2aca864b31af3ea72eeafc7910b07604214c88291bd0e4be2135804ad31394b807a8ecaa8699d672545e69746f0b7a01f193b8266
+  languageName: node
+  linkType: hard
+
+"@polkadot/types-create@npm:10.11.2":
+  version: 10.11.2
+  resolution: "@polkadot/types-create@npm:10.11.2"
+  dependencies:
+    "@polkadot/types-codec": 10.11.2
+    "@polkadot/util": ^12.6.2
+    tslib: ^2.6.2
+  checksum: 74c81458700c1f88e3ae603e7d96bec09b87849f3c89aa36c0119e23f12dacea8a0db56c2ee59eb3073e168188340d8b91e329841bbd98fa9200d8a56986f576
   languageName: node
   linkType: hard
 
@@ -4158,6 +4206,22 @@ __metadata:
     rxjs: ^7.8.1
     tslib: ^2.6.2
   checksum: d73ac080449df43b09cd5203077af862a30b07b315650455ffac8b87380ba4bafe91901c783cf0786f1c36cf348e067609a3e3b2466a1d43f325c4d191bb46c5
+  languageName: node
+  linkType: hard
+
+"@polkadot/types@npm:10.11.2, @polkadot/types@npm:^10.11.2":
+  version: 10.11.2
+  resolution: "@polkadot/types@npm:10.11.2"
+  dependencies:
+    "@polkadot/keyring": ^12.6.2
+    "@polkadot/types-augment": 10.11.2
+    "@polkadot/types-codec": 10.11.2
+    "@polkadot/types-create": 10.11.2
+    "@polkadot/util": ^12.6.2
+    "@polkadot/util-crypto": ^12.6.2
+    rxjs: ^7.8.1
+    tslib: ^2.6.2
+  checksum: 26a93ac19907e221cb00aef4106f90a7c9c74fe47951d4ccd899127bce30e176b9d17ba589f1370c74495faef469ef3dc3f9ffa482b31477b2d635b843d3fc78
   languageName: node
   linkType: hard
 
@@ -4325,6 +4389,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/x-bigint@npm:^12.6.2":
+  version: 12.6.2
+  resolution: "@polkadot/x-bigint@npm:12.6.2"
+  dependencies:
+    "@polkadot/x-global": 12.6.2
+    tslib: ^2.6.2
+  checksum: 78123efa2a5fad7fccb79dbe0c44f5506b70405a2b9b1dc9db9450ddd2f01791b011a46c9fff31ed8b21aace6f676179c4b7746c97ca254e8822bcf543e4d779
+  languageName: node
+  linkType: hard
+
 "@polkadot/x-fetch@npm:^12.6.1":
   version: 12.6.1
   resolution: "@polkadot/x-fetch@npm:12.6.1"
@@ -4351,6 +4425,15 @@ __metadata:
   dependencies:
     tslib: ^2.6.2
   checksum: b259df5ca4a9df5d41dc86465707bebb6aa09045c32270a99afe5b0e03ae83d299b300f9eeea805eaba5e49059b7a033418a180b02e179891fafeb1d3222845a
+  languageName: node
+  linkType: hard
+
+"@polkadot/x-global@npm:12.6.2":
+  version: 12.6.2
+  resolution: "@polkadot/x-global@npm:12.6.2"
+  dependencies:
+    tslib: ^2.6.2
+  checksum: 63738eb46465e3e43151d746321c178131385a734e1d3865fc76667fec9d4b1fb8b35a0d8ee75834035b54a4047e0bae86c4f2e465b16c73d4fc15ec4426446f
   languageName: node
   linkType: hard
 
@@ -11005,7 +11088,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "multix-ui@workspace:packages/ui"
   dependencies:
-    "@chainsafe/cypress-polkadot-wallet": ^2.0.0
+    "@chainsafe/cypress-polkadot-wallet": ^2.1.0
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@fontsource/jost": ^5.0.8

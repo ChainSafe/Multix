@@ -31,7 +31,7 @@
     "vite": "^5.0.6"
   },
   "devDependencies": {
-    "@chainsafe/cypress-polkadot-wallet": "^2.0.0",
+    "@chainsafe/cypress-polkadot-wallet": "^2.1.0",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/typescript-react-query": "^4.1.0",
