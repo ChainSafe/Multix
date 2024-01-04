@@ -23,7 +23,7 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when extension is connected but no account is shared', () => {
     cy.visit(landingPageUrl)
-    cy.initExtension([])
+    cy.initWallet([])
     clickOnConnect()
     // Connect the extension but no account
     cy.connectAccounts([])
@@ -41,7 +41,7 @@ describe('Landing Page Messaging', () => {
 
   it('can see an error when account is shared but not part of a multisig', () => {
     cy.visit(landingPageUrl)
-    cy.initExtension([testAccounts['Non Multisig Member 1']])
+    cy.initWallet([testAccounts['Non Multisig Member 1']])
     clickOnConnect()
     // share the account that is not part of any multisig
     cy.connectAccounts([testAccounts['Non Multisig Member 1'].address])

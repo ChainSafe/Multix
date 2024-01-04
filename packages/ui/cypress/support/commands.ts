@@ -20,7 +20,7 @@ Cypress.Commands.add('connectAccounts', (accountAddresses: string[]) => {
     // this request should be from the application Multix
     cy.wrap(requests[0].origin).should('eq', MULTIX_DAPP_NAME)
     // let's allow Accounts to connect
-    cy.enableAuth(requests[0].id, accountAddresses)
+    cy.approveAuth(requests[0].id, accountAddresses)
   })
 })
 
@@ -57,7 +57,7 @@ Cypress.Commands.add(
     })
 
     if (injectExtensionWithAccounts) {
-      cy.initExtension(injectExtensionWithAccounts, MULTIX_DAPP_NAME)
+      cy.initWallet(injectExtensionWithAccounts, MULTIX_DAPP_NAME)
     }
   }
 )
@@ -79,7 +79,7 @@ declare global {
 
       /**
        * Connect accounts to Multix and wait until it's ready
-       * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initExtension before
+       * @param {string[]} accountAddresses - The addresses expected to be shared to the Dapp. These accounts must be passed to initWallet before
        * @example cy.connectAccounts([7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba])
        */
       connectAccounts: (accountAddresses: string[]) => void

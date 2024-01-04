@@ -10,7 +10,7 @@ import { MULTIX_DAPP_NAME } from '../support/commands'
 describe('Connect Account', () => {
   beforeEach(() => {
     cy.visit(landingPageUrl)
-    cy.initExtension(Object.values(testAccounts))
+    cy.initWallet(Object.values(testAccounts))
     clickOnConnect()
   })
 
