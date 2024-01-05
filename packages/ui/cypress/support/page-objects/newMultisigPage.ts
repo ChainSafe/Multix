@@ -6,7 +6,7 @@ export const newMultisigPage = {
 
   step1: {
     accountNameInput: () => cy.get('[data-cy=input-account-name]'),
-    invalidAddressSelection: () => cy.get('[data-cy=label-watch-account-error]'),
+    addAccountError: () => cy.get('[data-cy=label-add-account-error]'),
     createMutlisigError: () => cy.get('[data-cy=container-create-multisig-error]'),
     signatoryItem: (address: string) => cy.get(`[data-cy=item-signatory-${address}]`)
   },

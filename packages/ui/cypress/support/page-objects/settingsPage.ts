@@ -6,7 +6,7 @@ export const settingsPage = {
   addButton: () => cy.get('[data-cy=button-add-account]'),
   accountContainer: () => cy.get('[data-cy=container-account-details]', { timeout: 20000 }),
   accountDeleteButton: () => cy.get('[data-cy=button-delete-watched-account]'),
-  errorLabel: () => cy.get('[data-cy=label-watch-account-error]'),
+  errorLabel: () => cy.get('[data-cy=label-add-account-error]'),
   // wallet connect section
   wallectConnectAccordion: () => cy.get('[data-cy=accordion-title-wallet-connect]'),
   walletConnectAlert: () => cy.get('[data-cy=alert-wallet-connect-warning]'),

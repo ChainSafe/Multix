@@ -209,10 +209,7 @@ describe('Multisig creation', () => {
     it('Shows an error message => when signatory address is invalid', () => {
       typeAndAdd(randomSignatory1.slice(0, 10))
 
-      newMultisigPage.step1
-        .invalidAddressSelection()
-        .should('be.visible')
-        .and('contain', 'Invalid address')
+      newMultisigPage.step1.addAccountError().should('be.visible').and('contain', 'Invalid address')
     })
 
     it('Shows a warning => when signatory addresses do not contain a account owned', () => {
@@ -223,6 +220,19 @@ describe('Multisig creation', () => {
         .createMutlisigError()
         .should('be.visible')
         .and('contain', 'At least one of your own accounts must be a signatory.')
+
+      newMultisigPage.nextButton().should('be.disabled')
+    })
+
+    it('Shows an error => when the same signatory addresses is added twice', () => {
+      typeAndAdd(randomSignatory1)
+      typeAndAdd(randomSignatory1)
+
+      newMultisigPage.step1
+        .addAccountError()
+        .should('be.visible')
+        .and('contain', 'Account already added')
+      newMultisigPage.nextButton().should('be.disabled')
     })
   })
 
