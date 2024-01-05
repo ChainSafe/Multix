@@ -35,7 +35,10 @@ const SignatorySelection = ({ signatories, setSignatories }: Props) => {
           <HeadingStyled>Selected:</HeadingStyled>
           <PaperStyled>
             {signatories.map((address, index) => (
-              <SignatoryStyled key={address}>
+              <SignatoryStyled
+                key={address}
+                data-cy={`item-signatory-${address}`}
+              >
                 <AccountDisplay address={address} />
                 <ButtonWrapperStyled>
                   <DeleteButtonStyled

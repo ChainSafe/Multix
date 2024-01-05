@@ -15,14 +15,14 @@ const notFundedAccount4 = testAccounts['Not Funded Account 4 Chopsticks Kusama']
 const { address: address1 } = fundedAccount1
 const { address: address2 } = fundedAccount2
 const { address: address3 } = fundedAccount3
-const { address: unfundedAccount } = notFundedAccount4
+const { address: notFundedAccountAddress } = notFundedAccount4
 
 const typeAndAdd = (address: string) => {
   newMultisigPage.addressSelector().click().type(`${address}{downArrow}{enter}`)
   newMultisigPage.addButton().click()
 }
 
-const acceptMultisigCreation = () => {
+const acceptMultisigCreationAndVerifyNotifications = () => {
   cy.getTxRequests().then((req) => {
     const txRequests = Object.values(req)
     cy.wrap(txRequests.length).should('eq', 1)
@@ -35,14 +35,13 @@ const acceptMultisigCreation = () => {
     notifications.notificationWrapper().should('contain', 'broadcast')
 
     notifications.successNotificationIcon(30000).should('be.visible')
-    landingPage.firstMultisigCreationLabel().should('not.exist')
     notifications.notificationWrapper().should('contain', 'Tx in block')
   })
 }
 
 describe('Multisig creation', () => {
-  const randomSignatory1 = 'ECLwZzFusnTr6hdztrkVaTKeQoWxKZBh9e8EzdG92QX7PAy'
-  const randomSignatory2 = 'EsNfSu18sXNnbYKn8mshXH3JH5dSDadDFcxrJfVeo4ySmTs'
+  const randomSignatory1 = 'EkZJTKtzp3bKszJ6KzBM4knZ7VJhiiSFLLCnnqKKKGNkChd'
+  const randomSignatory2 = 'H7k1EusYzDfm5GUVTeS6v5wWuL4tDjFKYYmnEwzXYJqCaGY'
 
   beforeEach(() => {
     cy.setupAndVisit({
@@ -88,40 +87,45 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
     })
 
-    it('Create a multisig tx with proxy', () => {
+    it('Create a multisig tx with pure proxy', () => {
       const multisigName = 'Multisig with proxy'
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
 
       // Step 2
       newMultisigPage.step2.thresholdInput().type('2')
-      newMultisigPage.step2.nameInput().type('Multisig with proxy')
+      newMultisigPage.step2.nameInput().type(multisigName)
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
       // Step 3
+      newMultisigPage.step3.infoBox().should('contain', '1 batch transaction')
+      newMultisigPage.step3.errorNotEnoughFunds().should('not.exist')
       newMultisigPage.nextButton().should('contain', 'Create').click()
-      acceptMultisigCreation()
+      acceptMultisigCreationAndVerifyNotifications()
+
+      landingPage.firstMultisigCreationLabel().should('be.visible')
 
       // Landing Page
       multisigPage.accountHeader(10000).within(() => {
         accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+        accountDisplay.nameLabel().should('contain.text', multisigName)
       })
 
-      accountDisplay.nameLabel().should('contain.text', multisigName)
+      verifySignatories()
 
+      // there should be a pending pure proxy creation
       multisigPage
         .transactionList()
         .should('be.visible')
         .within(() => {
           multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'proxy.createPure')
         })
-
-      verifySignatories()
     })
 
-    it('Create a multisig tx WITHOUT Pure Proxy', () => {
+    it('Create a multisig tx without pure proxy', () => {
       const multisigName = 'Multisig without proxy'
       const expectedMultisigAddress = 'F764i4HX9LvpW14injFtt9MThuifVdic8PnuPtUAVvMDiwD'
-      const first6CharAddress = expectedMultisigAddress.slice(0, 6)
+      const expectedMultisigAddressFirst6Char = expectedMultisigAddress.slice(0, 6)
 
       // Step 2
       newMultisigPage.step2.thresholdInput().type('3')
@@ -131,11 +135,21 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
       // Step 3
+      newMultisigPage.step3.infoBox().should('contain', 'you will sign a remark transaction')
+      newMultisigPage.step3.errorNotEnoughFunds().should('not.exist')
       newMultisigPage.nextButton().should('contain', 'Create').click()
-      acceptMultisigCreation()
+      acceptMultisigCreationAndVerifyNotifications()
 
-      // wait for multisig creation
-      cy.wait(10000)
+      // The banner should be there, and disapear within 30s
+      landingPage.multisigCreationInfoBanner().should('be.visible')
+
+      cy.clock().then((clock) => {
+        // The banner should disapear after 30s, speed it up by 15s
+        clock.tick(15000)
+        // The banner should disappear
+        landingPage.multisigCreationInfoBanner(30000).should('not.exist')
+        clock.restore()
+      })
 
       topMenuItems
         .desktopMenu()
@@ -143,23 +157,24 @@ describe('Multisig creation', () => {
           topMenuItems
             .multiproxySelectorDesktop()
             .click()
-            .type(`${first6CharAddress}{downArrow}{enter}`)
+            .type(`${expectedMultisigAddressFirst6Char}{downArrow}{enter}`)
         )
 
       // Landing Page
       multisigPage.accountHeader(10000).within(() => {
-        accountDisplay.addressLabel().should('contain.text', first6CharAddress)
+        accountDisplay.addressLabel().should('contain.text', expectedMultisigAddressFirst6Char)
+        accountDisplay.nameLabel().should('contain.text', multisigName)
       })
 
-      landingPage.infoMultisigCreated().should('be.visible')
-      accountDisplay.nameLabel().should('contain.text', multisigName)
+      verifySignatories()
+
       multisigPage
         .transactionList()
         .should('be.visible')
         .within(() => {
           multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'system.remark')
         })
-      verifySignatories()
     })
   })
 
@@ -168,25 +183,30 @@ describe('Multisig creation', () => {
       topMenuItems.newMultisigButton().click()
     })
 
-    it('Should not allow to click next => when creating a multisig with less than 2 Signatories selected', () => {
+    it('Does not allow to click next => when creating a multisig with less than 2 Signatories selected', () => {
       typeAndAdd(address1)
 
       newMultisigPage.nextButton().should('be.disabled')
     })
 
-    it('Should add signatory with no name given', () => {
+    it('Allows signatories without a name', () => {
+      typeAndAdd(address1)
+
       newMultisigPage.addressSelector().click().type(`${randomSignatory1}{downArrow}{enter}`)
       newMultisigPage.step1.accountNameInput().should('have.value', '')
       newMultisigPage.addButton().click()
 
-      newMultisigPage.addressSelector().click().type(`${address1}{downArrow}{enter}`)
-      newMultisigPage.step1.accountNameInput().should('have.value', fundedAccount1.name)
-      newMultisigPage.addButton().click()
+      newMultisigPage.step1
+        .signatoryItem(randomSignatory1)
+        .should('be.visible')
+        .within((sig) => {
+          accountDisplay.nameLabel().should('have.text', '')
+        })
 
       newMultisigPage.nextButton().should('be.enabled')
     })
 
-    it('Shows the error message => when signatory address is invalid', () => {
+    it('Shows an error message => when signatory address is invalid', () => {
       typeAndAdd(randomSignatory1.slice(0, 10))
 
       newMultisigPage.step1
@@ -195,7 +215,7 @@ describe('Multisig creation', () => {
         .and('contain', 'Invalid address')
     })
 
-    it('should show the warning => when signatories address does NOT belong to your account', () => {
+    it('Shows a warning => when signatory addresses do not contain a account owned', () => {
       typeAndAdd(randomSignatory1)
       typeAndAdd(randomSignatory2)
 
@@ -211,7 +231,7 @@ describe('Multisig creation', () => {
       topMenuItems.newMultisigButton().click()
     })
 
-    it('Should show the warning => when threshold is too high or low', () => {
+    it('Shows a warning => when threshold is too high or low', () => {
       typeAndAdd(address1)
       typeAndAdd(address2)
 
@@ -240,15 +260,19 @@ describe('Multisig creation', () => {
       topMenuItems.newMultisigButton().click()
     })
 
-    it('Should show the error => if the funds are not sufficient to create Multisig', () => {
-      typeAndAdd(unfundedAccount)
+    it('Shows an error => if the funds are not sufficient to create Multisig', () => {
+      typeAndAdd(notFundedAccountAddress)
       typeAndAdd(address1)
 
       newMultisigPage.nextButton().should('contain', 'Next').click()
       newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
-      newMultisigPage.addressSelector().click().clear().type(`${unfundedAccount}{downArrow}{enter}`)
+      newMultisigPage
+        .addressSelector()
+        .click()
+        .clear()
+        .type(`${notFundedAccountAddress}{downArrow}{enter}`)
 
       newMultisigPage.step3
         .errorNotEnoughFunds()
