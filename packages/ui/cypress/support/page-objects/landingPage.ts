@@ -6,14 +6,17 @@ export const landingPage = {
   connectWalletButton: () => cy.get('[data-cy=button-connect-wallet]'),
   watchAccountButton: () => cy.get('[data-cy=button-watch-account]'),
   accountsLoader: () => cy.get('[data-cy=loader-accounts-connection]'),
-  multisigLoader: () => cy.get('[data-cy=loader-multisig]'),
+  multisigLoader: () => cy.get('[data-cy=loader-multisigs]', { timeout: 10000 }),
   initializationLoader: () => cy.get('[data-cy=loader-initialization]'),
   rpcLoader: () => cy.get('[data-cy=loader-rpc-connection]'),
   polkadotWikiLink: () => cy.get('[data-cy=link-polkadot-wiki]'),
   noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
   linkedAddressNotFound: () => cy.get('[data-cy=label-linked-address-not-found]'),
   resetLinkedAddressButton: () => cy.get('[data-cy=button-reset-linked-address]'),
-  firstMultisigCreationLabel: () => cy.get('[data-cy=label-first-multisig-creation'),
+  firstMultisigCreationLabel: () =>
+    cy.get('[data-cy=label-first-multisig-creation', { timeout: 30000 }),
+  multisigCreationInfoBanner: (timeout = 4000) =>
+    cy.get('[data-cy=banner-multisig-creation-info]', { timeout }),
 
   // page specific assertion
   shouldHaveNoAccountErrorAndWikiLink() {

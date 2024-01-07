@@ -118,7 +118,10 @@ const Summary = ({
         ))}
       </Paper>
       <Box className="explainer">
-        <Alert severity="info">
+        <Alert
+          severity="info"
+          data-cy="label-creation-info"
+        >
           {isCreationSummary ? (
             withProxy ? (
               <>
@@ -150,7 +153,14 @@ const Summary = ({
           possibleSigners={possibleSigners}
         />
       </Box>
-      {!!errorMessage && !isSubmittingExtrinsic && <Alert severity="error">{errorMessage}</Alert>}
+      {!!errorMessage && !isSubmittingExtrinsic && (
+        <Alert
+          data-cy="alert-insufficient-funds"
+          severity="error"
+        >
+          {errorMessage}
+        </Alert>
+      )}
     </Box>
   )
 }

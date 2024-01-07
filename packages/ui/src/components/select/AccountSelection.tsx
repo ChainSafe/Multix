@@ -151,7 +151,7 @@ const AccountSelection = ({
         <Grid
           item
           xs={12}
-          data-cy="label-watch-account-error"
+          data-cy="label-add-account-error"
         >
           <AlertStyled severity="warning">{errorMessage}</AlertStyled>
         </Grid>

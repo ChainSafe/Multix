@@ -14,7 +14,10 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
       variant="outlined"
       severity="info"
     >
-      <div className="infoText">
+      <div
+        className="infoText"
+        data-cy="banner-multisig-creation-info"
+      >
         Your new multisig is being created. It will be available in ~1min from the dropdown.
       </div>
       <IconButton

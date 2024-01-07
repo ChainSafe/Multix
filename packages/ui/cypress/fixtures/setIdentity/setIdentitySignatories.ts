@@ -23,7 +23,7 @@ export const setIdentitySignatories = [
     mnemonic: 'will hero hire retreat capital dash ordinary trap loop dragon dog parade'
   },
   {
-    // this is a joystream account, with multisig, but not one of our accounts, we don't actually know the mnemonic
+    // this is a joystream account, with multisig, but not one of our accounts, we don't actually know the mnemonic,
     // so we can't sign anything with it
     address: 'j4WauZ6dVC6G8C1gDYKMbTZVVJoMAud6znTbdpNhKDpcZD4yX',
     name: 'Real account with Multisig',
