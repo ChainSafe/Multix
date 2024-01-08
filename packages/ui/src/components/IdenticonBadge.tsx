@@ -4,6 +4,8 @@ import { styled } from '@mui/material/styles'
 import { AccountBadge, IconSizeVariant } from '../types'
 import MultixIdenticon from './MultixIdenticon'
 import { ICON_SIZE_LARGE, ICON_SIZE_MEDIUM, ICON_SIZE_SMALL } from '../constants'
+import { HiMiniEye as EyeIcon } from 'react-icons/hi2'
+import { useMultiProxy } from '../contexts/MultiProxyContext'
 
 interface Props {
   className?: string
@@ -20,6 +22,8 @@ export const IdenticonBadge = ({
   sideBadge = false,
   size = 'medium'
 }: Props) => {
+  const { isWatchedAccount } = useMultiProxy()
+
   const AccountIcon = () => (
     <MultixIdenticon
       value={address}
@@ -42,7 +46,12 @@ export const IdenticonBadge = ({
       slotProps={{ badgeType: badge, sideBadge }}
       size={size}
       color="primary"
-      badgeContent={badge}
+      badgeContent={
+        <>
+          {isWatchedAccount(address) ? <EyeIconStyled /> : null}
+          {badge}
+        </>
+      }
       anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
       data-cy={`badge-${badge}`}
     >
@@ -50,6 +59,10 @@ export const IdenticonBadge = ({
     </BadgeStyled>
   )
 }
+
+const EyeIconStyled = styled(EyeIcon)`
+  margin-right: 0.2rem;
+`
 
 const BadgeStyled = styled(Badge)<{
   size: IconSizeVariant
@@ -68,7 +81,7 @@ const BadgeStyled = styled(Badge)<{
     `}
 
   .MuiBadge-badge {
-    max-width: 3.285rem;
+    max-width: 5.3rem;
     max-height: 1.69rem;
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
@@ -77,6 +90,7 @@ const BadgeStyled = styled(Badge)<{
     border-radius: ${({ theme }) => theme.custom.borderRadius};
     border: 1px solid ${({ theme }) => theme.custom.gray[400]};
     transform: scale(1) translate(-20%, 0);
+    flex-wrap: nowrap;
 
     ${({ theme, slotProps: { badgeType } }) =>
       badgeType === AccountBadge.PURE &&

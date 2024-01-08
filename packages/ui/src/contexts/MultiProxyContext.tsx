@@ -42,6 +42,7 @@ export interface IMultisigContext {
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
   selectedIsWatched: boolean
+  isWatchedAccount: (who: string | MultiProxy | undefined) => boolean
   refetch: () => void
   defaultAddress?: string
   selectedMultiProxyAddress?: string
@@ -81,12 +82,36 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   // This is true if the currently selected Multiproxy contains no signatory owned by the user
   // this happens with a watched account
   const pureToQueryIds = useAccountId(pureToQuery)
-  const selectedIsWatched = useMemo(
-    () =>
-      !selectedMultiProxy?.multisigs.some(
+  const getMultiProxyByAddress = useCallback(
+    (address?: string) => {
+      if (!address) return undefined
+
+      return multiProxyList.find(
+        (multiProxy) =>
+          // either by proxy address
+          multiProxy.proxy === address ||
+          // or by multisig address
+          multiProxy.multisigs.some((multisig) => multisig.address === address)
+      )
+    },
+    [multiProxyList]
+  )
+
+  const isWatchedAccount = useCallback(
+    (who: string | MultiProxy | undefined) => {
+      if (!who) return false
+
+      const account = typeof who === 'string' ? getMultiProxyByAddress(who) : who
+      return !account?.multisigs.some(
         (multisig) => multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
-      ),
-    [selectedMultiProxy, ownAddressList]
+      )
+    },
+    [getMultiProxyByAddress, ownAddressList]
+  )
+
+  const selectedIsWatched = useMemo(
+    () => isWatchedAccount(selectedMultiProxy),
+    [isWatchedAccount, selectedMultiProxy]
   )
   const [isRefreshingMultiProxyList, setIsRefreshingMultiProxyList] = useState(false)
   const [, setSearchParams] = useSearchParams({
@@ -246,21 +271,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     onUpdate: refreshWatchedPureList
   })
 
-  const getMultiProxyByAddress = useCallback(
-    (address?: string) => {
-      if (!address) return undefined
-
-      return multiProxyList.find(
-        (multiProxy) =>
-          // either by proxy address
-          multiProxy.proxy === address ||
-          // or by multisig address
-          multiProxy.multisigs.some((multisig) => multisig.address === address)
-      )
-    },
-    [multiProxyList]
-  )
-
   const getMultisigByAddress = useCallback(
     (address: string) => {
       return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
@@ -353,7 +363,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         selectedIsWatched,
         refetch,
         canFindMultiProxyFromUrl,
-        setCanFindMultiProxyFromUrl
+        setCanFindMultiProxyFromUrl,
+        isWatchedAccount
       }}
     >
       {children}
