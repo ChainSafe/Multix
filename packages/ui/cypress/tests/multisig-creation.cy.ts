@@ -164,6 +164,7 @@ describe('Multisig creation', () => {
       multisigPage.accountHeader(10000).within(() => {
         accountDisplay.addressLabel().should('contain.text', expectedMultisigAddressFirst6Char)
         accountDisplay.nameLabel().should('contain.text', multisigName)
+        accountDisplay.watchedIcon().should('not.exist')
       })
 
       verifySignatories()

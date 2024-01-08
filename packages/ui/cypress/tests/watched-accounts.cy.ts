@@ -93,6 +93,7 @@ describe('Watched Accounts', () => {
     topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.multisigBadge().should('be.visible')
+      accountDisplay.watchedIcon().should('be.visible')
       accountDisplay.pureBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', multisigName)
     })
@@ -101,6 +102,7 @@ describe('Watched Accounts', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.multisigBadge().should('be.visible')
+      accountDisplay.watchedIcon().should('be.visible')
       accountDisplay.pureBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', multisigName)
     })
@@ -126,6 +128,7 @@ describe('Watched Accounts', () => {
     topMenuItems.multiproxySelectorOptionDesktop().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.pureBadge().should('be.visible')
+      accountDisplay.watchedIcon().should('be.visible')
       accountDisplay.multisigBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', pureName)
     })
@@ -134,6 +137,7 @@ describe('Watched Accounts', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.pureBadge().should('be.visible')
+      accountDisplay.watchedIcon().should('be.visible')
       accountDisplay.multisigBadge().should('not.exist')
       accountDisplay.nameLabel().should('have.text', pureName)
     })
@@ -257,6 +261,7 @@ describe('Watched Accounts', () => {
             .addressLabel()
             .should('be.visible')
             .and('contain.text', pureAddress.slice(0, 6))
+          accountDisplay.watchedIcon().should('be.visible')
         })
       multisigPage.multisigDetailsContainer().within(() => {
         multisigPage.multisigAccountSummary().within(() => {
@@ -264,6 +269,7 @@ describe('Watched Accounts', () => {
             .addressLabel()
             .should('be.visible')
             .and('contain.text', multisigAddress.slice(0, 6))
+          accountDisplay.watchedIcon().should('be.visible')
         })
       })
       topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
@@ -272,6 +278,7 @@ describe('Watched Accounts', () => {
         .should('have.length', 1)
         .within(() => {
           accountDisplay.pureBadge().should('be.visible')
+          accountDisplay.watchedIcon().should('be.visible')
           accountDisplay
             .addressLabel()
             .should('be.visible')
@@ -318,6 +325,7 @@ describe('Watched Accounts', () => {
       .each(($el, index) => {
         cy.wrap($el).within(() => {
           accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
+          accountDisplay.watchedIcon().should('be.visible')
           if (index < 3) {
             accountDisplay.pureBadge().should('exist')
           } else {
@@ -334,6 +342,7 @@ describe('Watched Accounts', () => {
         .should('be.visible')
         .within(() => {
           accountDisplay.addressLabel().should('contain.text', address.slice(0, 6))
+          accountDisplay.watchedIcon().should('be.visible')
         })
     })
   })
