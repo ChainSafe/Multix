@@ -48,7 +48,7 @@ export const IdenticonBadge = ({
       color="primary"
       badgeContent={
         <>
-          {isWatchedAccount(address) ? <EyeIconStyled /> : null}
+          {isWatchedAccount(address) ? <EyeIconStyled data-cy="icon-watched" /> : null}
           {badge}
         </>
       }

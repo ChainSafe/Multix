@@ -3,7 +3,7 @@ import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { testAccounts } from '../fixtures/testAccounts'
 
-describe('Wallet Connect', () => {
+describe('WalletConnect', () => {
   it('can see expected wc state when a wallet is not connected', () => {
     cy.visit(settingsPageUrl)
     topMenuItems.connectButton().should('be.visible')
