@@ -136,16 +136,13 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
   return b.timestamp.valueOf() - a.timestamp.valueOf()
 }
 
-export const usePendingTx = () => {
+export const usePendingTx = (multisigAddresses: string[]) => {
   const [isLoading, setIsLoading] = useState(true)
   const { api, chainInfo } = useApi()
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()
-  const multisigAddresses = useMemo(
-    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
-    [selectedMultiProxy?.multisigs]
-  )
 
+  // refresh the pending TX for the set of multisig addresses
   const refresh = useCallback(async () => {
     setTxWithCallDataByDate({})
 
@@ -215,7 +212,13 @@ export const usePendingTx = () => {
             return true
           }
 
-          return (agg.args as any).real.Id === selectedMultiProxy?.proxy
+          const isForCurrentProxy = (agg.args as any).real.Id === selectedMultiProxy?.proxy
+
+          if (!isForCurrentProxy) {
+            console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)
+          }
+
+          return isForCurrentProxy
         })
 
         // sort by date, the newest first
@@ -234,7 +237,7 @@ export const usePendingTx = () => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy])
+  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy])
 
   useEffect(() => {
     refresh()

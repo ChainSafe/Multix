@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router-dom'
@@ -11,6 +11,7 @@ import TransactionList from '../../components/Transactions/TransactionList'
 import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
 import { useDisplayLoader } from '../../hooks/useDisplayLoader'
 import { useDisplayError } from '../../hooks/useDisplayError'
+import { DeepTxAlert } from '../../components/DeepTxAlert'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {
@@ -68,6 +69,7 @@ const Home = ({ className }: HomeProps) => {
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
       {/* <CurrentReferendumBanner /> */}
+      <DeepTxAlert />
       <Grid
         item
         alignItems="center"

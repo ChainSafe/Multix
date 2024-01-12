@@ -6,14 +6,23 @@ import { getDifference, getIntersection } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
 import Transaction from './Transaction'
+import { useMemo } from 'react'
 
 interface Props {
   className?: string
 }
 
 const TransactionList = ({ className }: Props) => {
-  const { getMultisigByAddress } = useMultiProxy()
-  const { txWithCallDataByDate, isLoading: isLoadingPendingTxs, refresh } = usePendingTx()
+  const { getMultisigByAddress, selectedMultiProxy } = useMultiProxy()
+  const multisigAddresses = useMemo(
+    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
+    [selectedMultiProxy?.multisigs]
+  )
+  const {
+    txWithCallDataByDate,
+    isLoading: isLoadingPendingTxs,
+    refresh
+  } = usePendingTx(multisigAddresses)
   const { ownAddressList } = useAccounts()
 
   return (

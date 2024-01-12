@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useCallback } from 'react'
+import { useState, useContext, createContext, useCallback, useMemo } from 'react'
 import ChangeMultisig from '../components/modals/ChangeMultisig'
 import EditNames from '../components/modals/EditNames'
 import Send, { DEFAULT_EASY_SETUP_SELECTION, EasyTransferTitle } from '../components/modals/Send'
@@ -7,6 +7,7 @@ import { SignClientTypes } from '@walletconnect/types'
 import WCSessionProposal from '../components/modals/WalletConnectSessionProposal'
 import ProposalSigningModal, { SigningModalProps } from '../components/modals/ProposalSigning'
 import WalletConnectSigning from '../components/modals/WalletConnectSigning'
+import { useMultiProxy } from './MultiProxyContext'
 
 interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
@@ -44,7 +45,12 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const [wCSessionProposal, setWCSessionProposal] = useState<
     OpenWCModalParams['sessionProposal'] | undefined
   >()
-  const { refresh } = usePendingTx()
+  const { selectedMultiProxy } = useMultiProxy()
+  const multisigAddresses = useMemo(
+    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
+    [selectedMultiProxy?.multisigs]
+  )
+  const { refresh } = usePendingTx(multisigAddresses)
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [setIsEditModalOpen])
   const onCloseChangeMultiModal = useCallback(
     () => setIsChangeMultiModalOpen(false),
