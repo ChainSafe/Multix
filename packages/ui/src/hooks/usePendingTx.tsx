@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { HexString, MultisigStorageInfo } from '../types'
 import { useMultisigCallSubscription } from './useMultisigCallsSubscription'

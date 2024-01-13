@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Box, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router-dom'

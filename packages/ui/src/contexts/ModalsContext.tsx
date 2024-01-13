@@ -23,7 +23,7 @@ interface OpenWCModalParams {
   sessionProposal: SignClientTypes.EventArguments['session_proposal']
 }
 
-type SigningInfo = Omit<SigningModalProps, 'className' | 'onClose'>
+type SigningInfo = Omit<SigningModalProps, 'onClose'>
 
 const ModalsContext = createContext<ModalsContextProps | undefined>(undefined)
 
