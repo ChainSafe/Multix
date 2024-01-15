@@ -12,7 +12,8 @@ import { Button } from './library'
 import { useAccounts } from '../contexts/AccountsContext'
 
 interface ParentMultisigInfo {
-  relevantMultisig: string
+  parentSignatoryAddress: string
+  isSignatoryProxy: boolean
   threshold: number
   signatories: string[]
 }
@@ -20,7 +21,7 @@ interface ParentMultisigInfo {
 export const DeepTxAlert = () => {
   // const [isDisplayed, setIsDisplayed] = useState(true)
   const { selectedMultiProxy } = useMultiProxy()
-  const { onOpenSigningModal } = useModals()
+  const { onOpenDeepTxModal } = useModals()
   const { ownAddressList } = useAccounts()
   const proxyAndMultisigsIds = useMemo(
     () =>
@@ -36,10 +37,6 @@ export const DeepTxAlert = () => {
   })
   const [parentMultisigs, setParenMultisigs] = useState<Record<string, ParentMultisigInfo>>({})
   const parentMultisigAddresses = useMemo(() => Object.keys(parentMultisigs), [parentMultisigs])
-  console.log('parentMultisigs', parentMultisigs)
-  // const onClose = useCallback(() => {
-  //   setIsDisplayed(false)
-  // }, [])
 
   useEffect(() => {
     if (!data || data?.accountMultisigs.length === 0) {
@@ -47,27 +44,55 @@ export const DeepTxAlert = () => {
       return
     }
 
+    // the data is the list of multisig with our current
+    // multisig/pure being a signatory
     if (data && data.accountMultisigs.length > 0) {
+      // Create a map with the parent multisig
+      // that is involved in a Tx with the current pure/multisig as signatory
       const parentInfoMap = data.accountMultisigs.reduce(
-        (acc: Record<string, ParentMultisigInfo>, curr) => {
-          const signatories = curr.multisig.signatories.map(({ signatory }) => signatory.address)
-          const relevantMultisig = getIntersection(
-            selectedMultiProxy?.multisigs.map(({ address }) => address),
-            signatories
+        (acc: Record<string, ParentMultisigInfo>, currParentMultisig) => {
+          const parentMultisigSignatories = currParentMultisig.multisig.signatories.map(
+            ({ signatory }) => signatory.address
           )
-          // what multisig/pure is the signatory
-          const relevant =
-            selectedMultiProxy?.proxy && signatories.includes(selectedMultiProxy.proxy)
-              ? selectedMultiProxy.proxy
-              : // We support only 1 multisig part of another one
-                (relevantMultisig.length === 1 && relevantMultisig[0]) || 'none'
+
+          let signatoryOfParent = { address: '', isSignatoryProxy: false }
+
+          // See if the parent signatories is one of our pure or our current multisig
+          if (
+            selectedMultiProxy?.proxy &&
+            parentMultisigSignatories.includes(selectedMultiProxy?.proxy)
+          ) {
+            signatoryOfParent = { address: selectedMultiProxy?.proxy, isSignatoryProxy: true }
+          } else {
+            // it must be one of our multisig then
+            const relevantMultisig = getIntersection(
+              selectedMultiProxy?.multisigs.map(({ address }) => address),
+              parentMultisigSignatories
+            )
+
+            if (!relevantMultisig.length) {
+              console.error(
+                'Unexpected error: No multisig or proxy found as signatory',
+                data,
+                selectedMultiProxy
+              )
+            }
+
+            signatoryOfParent = {
+              // here, we may have several of our current multisigs
+              // being a signatory of the parent. We go for the first
+              address: relevantMultisig[0],
+              isSignatoryProxy: false
+            }
+          }
 
           return {
             ...acc,
-            [curr.multisig.address]: {
-              relevantMultisig: relevant,
-              threshold: curr.multisig.threshold || 0,
-              signatories: curr.multisig.signatories
+            [currParentMultisig.multisig.address]: {
+              parentSignatoryAddress: signatoryOfParent.address,
+              isSignatoryProxy: signatoryOfParent.isSignatoryProxy,
+              threshold: currParentMultisig.multisig.threshold || 0,
+              signatories: currParentMultisig.multisig.signatories
             } as unknown as ParentMultisigInfo
           }
         },
@@ -81,33 +106,43 @@ export const DeepTxAlert = () => {
     (aggregatedData: CallDataInfoFromChain) => {
       if (!aggregatedData) return
 
-      // const neededSigners =
-      //   (aggregatedData.info?.approvals || []).length >= multisig.threshold
-      //     ? multisigSignatories
-      //     : getDifference(multisigSignatories, info?.approvals)
-      const relevantMultisig = selectedMultiProxy?.multisigs.find((add) => {
-        return add.address === parentMultisigs[aggregatedData.from].relevantMultisig
-      })
-      const possibleSigners = getIntersection(ownAddressList, relevantMultisig?.signatories)
+      let possibleSigners: string[] = []
 
-      onOpenSigningModal({
+      // if the signatory is the pure we select
+      // the first multisig as the possible signatory
+      if (parentMultisigs[aggregatedData.from].isSignatoryProxy) {
+        possibleSigners = getIntersection(
+          ownAddressList,
+          selectedMultiProxy?.multisigs[0].signatories
+        )
+      } else {
+        /// otherwise if it's a specific multisig we should find it
+        const relevantMultisig = selectedMultiProxy?.multisigs.find((add) => {
+          return add.address === parentMultisigs[aggregatedData.from].parentSignatoryAddress
+        })
+        possibleSigners = getIntersection(ownAddressList, relevantMultisig?.signatories)
+      }
+
+      if (!possibleSigners.length) {
+        console.error(
+          'Unexpected error: Could not find the possible signatories',
+          aggregatedData.from,
+          parentMultisigs,
+          selectedMultiProxy
+        )
+      }
+
+      onOpenDeepTxModal({
         possibleSigners,
         proposalData: aggregatedData
       })
     },
-    [onOpenSigningModal, ownAddressList, parentMultisigs, selectedMultiProxy]
+    [onOpenDeepTxModal, ownAddressList, parentMultisigs, selectedMultiProxy]
   )
 
-  console.log('parentMultisigs', parentMultisigs)
   const { txWithCallDataByDate } = usePendingTx(parentMultisigAddresses)
 
-  console.log('txWithCallDataByDate', txWithCallDataByDate)
-
-  if (
-    // !isDisplayed ||
-    !parentMultisigAddresses.length ||
-    Object.values(txWithCallDataByDate).length === 0
-  )
+  if (!parentMultisigAddresses.length || Object.values(txWithCallDataByDate).length === 0)
     return null
 
   return Object.values(txWithCallDataByDate).map((data) => {
@@ -115,6 +150,7 @@ export const DeepTxAlert = () => {
       <AlertStyled
         variant="outlined"
         severity="info"
+        key={data1.hash}
       >
         <div
           className="infoText"
