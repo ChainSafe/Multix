@@ -28,18 +28,15 @@ const TransactionList = ({ className }: Props) => {
   return (
     <Box className={className}>
       {isLoadingPendingTxs && (
-        <Box className="loader">
+        <LoaderStyled>
           <CircularProgress />
-        </Box>
+        </LoaderStyled>
       )}
       {Object.entries(txWithCallDataByDate).length === 0 && !isLoadingPendingTxs && (
-        <Paper className="noCall">
-          <FlareIcon
-            size={24}
-            className="noCallIcon"
-          />
-          <div className="noCallText">You're all set!</div>
-        </Paper>
+        <NoCallWrapperStyled>
+          <FlareIconStyled size={24} />
+          <div>You're all set!</div>
+        </NoCallWrapperStyled>
       )}
       {Object.entries(txWithCallDataByDate).length !== 0 &&
         Object.entries(txWithCallDataByDate).map(([date, aggregatedData]) => {
@@ -97,29 +94,26 @@ const TransactionWrapper = styled(Box)`
   }
 `
 
+const FlareIconStyled = styled(FlareIcon)`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`
+
 const DateContainerStyled = styled(Box)`
   margin-bottom: 0.3rem;
 `
 
-export default styled(TransactionList)(
-  ({ theme }) => `
-  .noCallIcon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-
-  .noCall {
-    background-color: ${theme.custom.background.primary};
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: center;
-    padding: 2rem;
-  }
-
-  .loader {
-    display: flex;
-    justify-content: center;
-  }
+const NoCallWrapperStyled = styled(Paper)`
+  background-color: ${({ theme }) => theme.custom.background.primary};
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  padding: 2rem;
 `
-)
+
+const LoaderStyled = styled(Box)`
+  display: flex;
+  justify-content: center;
+`
+export default TransactionList
