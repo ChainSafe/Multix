@@ -1,7 +1,6 @@
 import { Alert } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-// import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-hooks'
 import { MultisigAggregated, useMultiProxy } from '../contexts/MultiProxyContext'
 import { useAccountId } from '../hooks/useAccountId'
@@ -178,15 +177,6 @@ export const DeepTxAlert = () => {
           Pending tx {`${data1.name} from: ${getDisplayAddress(data1.from)}`}
           <Button onClick={() => onClickCreate(data1)}>Create</Button>
         </InfoTextStyled>
-        {/* <IconButton
-          className="closeButton"
-          size="small"
-          aria-label="close"
-          color="inherit"
-          onClick={onClose}
-        >
-          <CloseIcon size={20} />
-        </IconButton> */}
       </AlertStyled>
     ))
   })

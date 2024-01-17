@@ -49,14 +49,6 @@ const DeepTxCreationModal = ({
   const { callInfo: parentCallInfo, isGettingCallInfo: isGettingParentCallInfo } =
     useCallInfoFromCallData(proposalData.callData)
 
-  // const parentFromAddress = useMemo(
-  //   () =>
-  //     parentMultisigInfo.isSignatoryProxy
-  //       ? selectedMultiProxy?.proxy
-  //       : parentMultisigInfo.parentSignatoryAddress,
-  //   [parentMultisigInfo, selectedMultiProxy?.proxy]
-  // )
-
   // this will never be a proxy, if there's a proxy, it's already in the call
   const parentMultisigTx = useGetMultisigTx({
     fromAddress: parentMultisigInfo.parentSignatoryAddress,
@@ -74,41 +66,6 @@ const DeepTxCreationModal = ({
     when: proposalData.info?.when
   })
 
-  console.log('parentMultisigTx', parentMultisigTx?.toHuman())
-
-  // const parentMultisigTx = useMemo(() => {
-  //   if (isGettingParentCallInfo || !api) {
-  //     // not ready yet
-  //     return
-  //   }
-
-  //   //FIXME add the approveAsMulti to submit if needed
-  //   if (!proposalData || !parentCallInfo) {
-  //     console.error('One of api, proposalData, callInfo is undefined')
-  //     return
-  //   }
-
-  //   return getAsMultiTx({
-  //     api,
-  //     threshold: parentMultisigInfo.threshold,
-  //     otherSignatories: parentMultisigInfo.signatories.filter((address) =>
-  //       parentMultisigInfo.isSignatoryProxy
-  //         ? address !== selectedMultiProxy?.proxy
-  //         : address !== currentMultisigInvolved.address
-  //     ),
-  //     weight: parentCallInfo.weight,
-  //     when: proposalData.info?.when,
-  //     tx: proposalData.callData
-  //   })
-  // }, [
-  //   isGettingParentCallInfo,
-  //   api,
-  //   proposalData,
-  //   parentCallInfo,
-  //   parentMultisigInfo,
-  //   selectedMultiProxy?.proxy,
-  //   currentMultisigInvolved.address
-  // ])
   const fullTx = useGetMultisigTx({
     fromAddress: parentMultisigInfo.parentSignatoryAddress,
     extrinsicToCall: (api && parentMultisigTx && api.tx(parentMultisigTx)) || undefined,
@@ -119,36 +76,8 @@ const DeepTxCreationModal = ({
       ? selectedMultiProxy?.multisigs[0]
       : getMultisigByAddress(parentMultisigInfo.involvedMultisigAddress)
   })
-  console.log('fullTX', fullTx?.toHuman())
-
-  // const fullTx2 = useMemo(() => {
-  //   if (!parentMultisigTx || !api) return
-
-  //   return getAsMultiTx({
-  //     api,
-  //     threshold: parentMultisigInfo.threshold,
-  //     otherSignatories: parentMultisigInfo.signatories.filter((address) =>
-  //       parentMultisigInfo.isSignatoryProxy
-  //         ? address !== selectedMultiProxy?.proxy
-  //         : address !== currentMultisigInvolved.address
-  //     ),
-  //     weight: parentCallInfo?.weight,
-  //     when: proposalData.info?.when,
-  //     tx: proposalData.callData
-  //   })
-  // }, [
-  //   api,
-  //   currentMultisigInvolved.address,
-  //   parentCallInfo?.weight,
-  //   parentMultisigInfo,
-  //   parentMultisigTx,
-  //   proposalData.callData,
-  //   proposalData.info?.when,
-  //   selectedMultiProxy?.proxy
-  // ])
 
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    // FIXME this shouldn't be 0
     min: new BN(0),
     address: selectedAccount?.address
   })
@@ -177,148 +106,6 @@ const DeepTxCreationModal = ({
       "The selected signer doesn't have enough funds to pay for the transaction fees."
     )
   }, [hasSignerEnoughFunds])
-
-  // const onSign = useCallback(
-  //   async (isApproving: boolean) => {
-  //     const otherSigners = getSortAddress(
-  //       signatories.filter((signer) => signer !== selectedAccount?.address)
-  //     )
-
-  //     if (!threshold) {
-  //       const error = 'Threshold is undefined'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     if (!proposalData?.hash) {
-  //       const error = 'Hash is undefined'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     if (!proposalData?.info?.when.height) {
-  //       const error = 'No time point found'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     if (!api) {
-  //       const error = 'Api is not ready'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     if (!selectedAccount) {
-  //       const error = 'No selected address'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     if (!currentMultisigInvolved) {
-  //       const error = 'No selected multisig'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     // if the callData is needed, but none was supplied or found
-  //     if (!parentCallInfo?.call) {
-  //       const error = 'No callData found'
-  //       console.error(error)
-  //       setErrorMessage(error)
-  //       return
-  //     }
-
-  //     // In case the tx has been approved between the last couple blocks
-  //     // and the tx in the indexer hasn't been updated we should query the latest state
-  //     // right before sending the tx to have the right amount of signers.
-  //     const callStorage = await api.query.multisig.multisigs.entries(
-  //       currentMultisigInvolved.address
-  //     )
-
-  //     let amountOfSigner = 0
-  //     callStorage.some((storage) => {
-  //       const hash = (storage[0].toHuman() as Array<string>)[1]
-  //       if (proposalData.hash === hash) {
-  //         const info = storage[1].toJSON() as unknown as MultisigStorageInfo
-  //         amountOfSigner = info.approvals.length
-
-  //         return true
-  //       }
-
-  //       return false
-  //     })
-
-  //     const shouldSubmit = amountOfSigner >= threshold - 1
-
-  //     setIsSubmitting(true)
-  //     let tx: SubmittableExtrinsic<'promise'>
-
-  //     // if it's a rejection we can send it right away, no need for weight or calldata
-  //     if (!isApproving) {
-  //       tx = api.tx.multisig.cancelAsMulti(
-  //         threshold,
-  //         otherSigners,
-  //         proposalData.info.when,
-  //         proposalData.hash
-  //       )
-
-  //       // If we can submit the proposal and have the call data
-  //     } else if (shouldSubmit && parentCallInfo?.call && parentCallInfo?.weight) {
-  //       tx = getAsMultiTx({
-  //         api,
-  //         threshold,
-  //         otherSignatories: otherSigners,
-  //         weight: parentCallInfo.weight,
-  //         when: proposalData.info.when,
-  //         tx: proposalData.callData
-  //       })
-
-  //       // if we can't submit yet (more signatures required), all we need is the call hash
-  //     } else if (!shouldSubmit && proposalData.hash) {
-  //       tx = api.tx.multisig.approveAsMulti(
-  //         threshold,
-  //         otherSigners,
-  //         proposalData.info.when,
-  //         proposalData.hash,
-  //         { refTime: 0, proofSize: 0 }
-  //       )
-  //     } else {
-  //       console.error("We don't have the required data to submit the call")
-  //       return
-  //     }
-
-  //     tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback).catch(
-  //       (error: Error) => {
-  //         setIsSubmitting(false)
-  //         addToast({
-  //           title: error.message,
-  //           type: 'error',
-  //           link: getSubscanExtrinsicLink(tx.hash.toHex())
-  //         })
-  //       }
-  //     )
-  //   },
-  //   [
-  //     getSortAddress,
-  //     signatories,
-  //     threshold,
-  //     proposalData,
-  //     api,
-  //     selectedAccount,
-  //     currentMultisigInvolved,
-  //     parentCallInfo,
-  //     selectedSigner,
-  //     signCallback,
-  //     addToast,
-  //     getSubscanExtrinsicLink
-  //   ]
-  // )
 
   const onSign = useCallback(async () => {
     if (!api) {
