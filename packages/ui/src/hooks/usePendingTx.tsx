@@ -136,7 +136,7 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
   return b.timestamp.valueOf() - a.timestamp.valueOf()
 }
 
-export const usePendingTx = (multisigAddresses: string[]) => {
+export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false) => {
   const [isLoading, setIsLoading] = useState(true)
   const { api, chainInfo } = useApi()
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
@@ -208,7 +208,12 @@ export const usePendingTx = (multisigAddresses: string[]) => {
 
         // remove the proxy transaction that aren't for the selected proxy
         const relevantTxs = definedTxs.filter((agg) => {
-          if (!isProxyCall(agg.name) || !agg?.args || !(agg.args as any).real.Id) {
+          if (
+            !isProxyCall(agg.name) ||
+            !agg?.args ||
+            !(agg.args as any).real.Id ||
+            skipProxyCheck
+          ) {
             return true
           }
 

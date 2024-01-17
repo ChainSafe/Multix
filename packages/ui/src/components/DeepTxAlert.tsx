@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 // import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
 import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-hooks'
-import { useMultiProxy } from '../contexts/MultiProxyContext'
+import { MultisigAggregated, useMultiProxy } from '../contexts/MultiProxyContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { CallDataInfoFromChain, usePendingTx } from '../hooks/usePendingTx'
 import { getDisplayAddress, getIntersection } from '../utils'
@@ -11,8 +11,11 @@ import { useModals } from '../contexts/ModalsContext'
 import { Button } from './library'
 import { useAccounts } from '../contexts/AccountsContext'
 
-interface ParentMultisigInfo {
+export interface ParentMultisigInfo {
   parentSignatoryAddress: string
+  parentMultisigAddress: string
+  involvedMultisigProxyAddress?: string
+  involvedMultisigAddress: string
   isSignatoryProxy: boolean
   threshold: number
   signatories: string[]
@@ -56,6 +59,7 @@ export const DeepTxAlert = () => {
           )
 
           let signatoryOfParent = { address: '', isSignatoryProxy: false }
+          let relevantMultisigAddress = ''
 
           // See if the parent signatories is one of our pure or our current multisig
           if (
@@ -78,6 +82,8 @@ export const DeepTxAlert = () => {
               )
             }
 
+            relevantMultisigAddress = relevantMultisig[0]
+
             signatoryOfParent = {
               // here, we may have several of our current multisigs
               // being a signatory of the parent. We go for the first
@@ -90,10 +96,14 @@ export const DeepTxAlert = () => {
             ...acc,
             [currParentMultisig.multisig.address]: {
               parentSignatoryAddress: signatoryOfParent.address,
+              involvedMultisigAddress: relevantMultisigAddress,
+              involvedMultisigProxyAddress: selectedMultiProxy?.proxy,
               isSignatoryProxy: signatoryOfParent.isSignatoryProxy,
               threshold: currParentMultisig.multisig.threshold || 0,
-              signatories: currParentMultisig.multisig.signatories
-            } as unknown as ParentMultisigInfo
+              signatories: currParentMultisig.multisig.signatories.map(
+                ({ signatory }) => signatory.address
+              )
+            } as ParentMultisigInfo
           }
         },
         {} as Record<string, ParentMultisigInfo>
@@ -107,20 +117,19 @@ export const DeepTxAlert = () => {
       if (!aggregatedData) return
 
       let possibleSigners: string[] = []
+      let currentMultisigInvolved: MultisigAggregated | undefined
 
       // if the signatory is the pure we select
       // the first multisig as the possible signatory
       if (parentMultisigs[aggregatedData.from].isSignatoryProxy) {
-        possibleSigners = getIntersection(
-          ownAddressList,
-          selectedMultiProxy?.multisigs[0].signatories
-        )
+        currentMultisigInvolved = selectedMultiProxy?.multisigs[0]
+        possibleSigners = getIntersection(ownAddressList, currentMultisigInvolved?.signatories)
       } else {
         /// otherwise if it's a specific multisig we should find it
-        const relevantMultisig = selectedMultiProxy?.multisigs.find((add) => {
+        currentMultisigInvolved = selectedMultiProxy?.multisigs.find((add) => {
           return add.address === parentMultisigs[aggregatedData.from].parentSignatoryAddress
         })
-        possibleSigners = getIntersection(ownAddressList, relevantMultisig?.signatories)
+        possibleSigners = getIntersection(ownAddressList, currentMultisigInvolved?.signatories)
       }
 
       if (!possibleSigners.length) {
@@ -132,15 +141,28 @@ export const DeepTxAlert = () => {
         )
       }
 
+      if (!currentMultisigInvolved) {
+        console.error(
+          'Unexpected error: Could not find the current multisig involved',
+          aggregatedData.from,
+          parentMultisigs,
+          selectedMultiProxy
+        )
+
+        return
+      }
+
       onOpenDeepTxModal({
         possibleSigners,
-        proposalData: aggregatedData
+        proposalData: aggregatedData,
+        parentMultisigInfo: parentMultisigs[aggregatedData.from],
+        currentMultisigInvolved
       })
     },
     [onOpenDeepTxModal, ownAddressList, parentMultisigs, selectedMultiProxy]
   )
 
-  const { txWithCallDataByDate } = usePendingTx(parentMultisigAddresses)
+  const { txWithCallDataByDate } = usePendingTx(parentMultisigAddresses, true)
 
   if (!parentMultisigAddresses.length || Object.values(txWithCallDataByDate).length === 0)
     return null
@@ -152,13 +174,10 @@ export const DeepTxAlert = () => {
         severity="info"
         key={data1.hash}
       >
-        <div
-          className="infoText"
-          data-cy="banner-multisig-creation-info"
-        >
+        <InfoTextStyled data-cy="banner-multisig-creation-info">
           Pending tx {`${data1.name} from: ${getDisplayAddress(data1.from)}`}
           <Button onClick={() => onClickCreate(data1)}>Create</Button>
-        </div>
+        </InfoTextStyled>
         {/* <IconButton
           className="closeButton"
           size="small"
@@ -173,14 +192,20 @@ export const DeepTxAlert = () => {
   })
 }
 
+const InfoTextStyled = styled('div')`
+  flex: 1;
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-left: auto;
+  }
+`
+
 const AlertStyled = styled(Alert)`
   width: 100%;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-
-  .infoText {
-    flex: 1;
-  }
 
   .MuiAlert-message {
     display: flex;

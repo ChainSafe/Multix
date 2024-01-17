@@ -168,6 +168,8 @@ const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) 
           onClose={onCloseDeepTxModal}
           proposalData={deepTxModalInfo.proposalData}
           onSuccess={deepTxModalInfo.onSuccess}
+          parentMultisigInfo={deepTxModalInfo.parentMultisigInfo}
+          currentMultisigInvolved={deepTxModalInfo.currentMultisigInvolved}
         />
       )}
       {isOpenWalletConnectSigning && !!walletConnectRequest && (
