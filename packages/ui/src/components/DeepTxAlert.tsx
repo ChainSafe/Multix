@@ -178,7 +178,13 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
           pendingCallData.includes(call.callData?.slice(2) as string)
         )
       ) {
-        console.info('filtering call', call)
+        console.info('filtering call, currently signing', call)
+        return false
+      }
+
+      // filter the tx where we've already signed
+      if (call.info?.approvals.includes(parentMultisigs[call.from].parentSignatoryAddress)) {
+        console.info('filtering call, already signed', call)
         return false
       }
 
@@ -214,7 +220,6 @@ const AlertStyled = styled(Alert)`
   width: 100%;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  margin-left: 8px;
 
   .MuiAlert-message {
     display: flex;
