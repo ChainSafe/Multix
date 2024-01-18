@@ -20,8 +20,11 @@ export interface ParentMultisigInfo {
   signatories: string[]
 }
 
-export const DeepTxAlert = () => {
-  // const [isDisplayed, setIsDisplayed] = useState(true)
+interface Props {
+  pendingTxCallData: string[]
+}
+
+export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
   const { selectedMultiProxy } = useMultiProxy()
   const { onOpenDeepTxModal } = useModals()
   const { ownAddressList } = useAccounts()
@@ -167,7 +170,22 @@ export const DeepTxAlert = () => {
     return null
 
   return Object.values(txWithCallDataByDate).map((data) => {
-    return data.map((data1) => (
+    const filteredMap = data.filter((call) => {
+      // filter the tx that are potentially already created and are pending
+      if (
+        call?.callData &&
+        pendingTxCallData.some((pendingCallData) =>
+          pendingCallData.includes(call.callData?.slice(2) as string)
+        )
+      ) {
+        console.info('filtering call', call)
+        return false
+      }
+
+      return true
+    })
+
+    return filteredMap.map((data1) => (
       <AlertStyled
         variant="outlined"
         severity="info"
@@ -196,6 +214,7 @@ const AlertStyled = styled(Alert)`
   width: 100%;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+  margin-left: 8px;
 
   .MuiAlert-message {
     display: flex;

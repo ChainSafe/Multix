@@ -7,6 +7,7 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
 import Transaction from './Transaction'
 import { useMemo } from 'react'
+import { DeepTxAlert } from '../DeepTxAlert'
 
 interface Props {
   className?: string
@@ -24,9 +25,18 @@ const TransactionList = ({ className }: Props) => {
     refresh
   } = usePendingTx(multisigAddresses)
   const { ownAddressList } = useAccounts()
+  const pendingTxCallData = useMemo(() => {
+    return Object.values(txWithCallDataByDate)
+      .reduce((acc, curr) => {
+        return [...acc, ...curr]
+      }, [])
+      .map(({ callData }) => callData)
+      .filter((a) => !!a) as string[]
+  }, [txWithCallDataByDate])
 
   return (
     <Box className={className}>
+      <DeepTxAlert pendingTxCallData={pendingTxCallData} />
       {isLoadingPendingTxs && (
         <LoaderStyled>
           <CircularProgress />

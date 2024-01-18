@@ -69,7 +69,6 @@ const Home = ({ className }: HomeProps) => {
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
       {/* <CurrentReferendumBanner /> */}
-      <DeepTxAlert />
       <Grid
         item
         alignItems="center"
