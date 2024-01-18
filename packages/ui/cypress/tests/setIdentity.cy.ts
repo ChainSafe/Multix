@@ -82,14 +82,16 @@ describe('Set an identity', () => {
   })
 
   it('Can edit an identity from the new tx button', () => {
-    const multisigSignatoryWithoutIdentity = setIdentitySignatories[0]
     cy.setupAndVisit({
-      url: landingPageUrl,
+      url: landingPageNetwork('polkadot'),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+      injectExtensionWithAccounts: setIdentityMultisigs['pure-with-polkadot-identity'].signatories
     })
     // select the right multisig (Alice has a lot)
-    const first5DigitsAddress = setIdentityMultisigs['multisig-with-identity'].address.slice(0, 4)
+    const first5DigitsAddress = setIdentityMultisigs['pure-with-polkadot-identity'].address.slice(
+      0,
+      4
+    )
     topMenuItems
       .desktopMenu()
       .within(() =>
@@ -105,15 +107,15 @@ describe('Set an identity', () => {
     sendTxModal.selectionEasySetupSetIdentity().click()
 
     const expectedIdentity = {
-      display: 'Some new name',
-      legal: 'legaly idk',
-      web: 'http://www.test.com'
+      display: 'The Kus DOT Delegate',
+      twitter: '@TheKusamarian',
+      email: 'hey@thekusamarian.xyz'
     }
 
     // Some fields should be pre-filled
     sendTxModal.setIdentityFieldInput('display').should('have.value', expectedIdentity.display)
-    sendTxModal.setIdentityFieldInput('legal').should('have.value', expectedIdentity.legal)
-    sendTxModal.setIdentityFieldInput('web').should('have.value', expectedIdentity.web)
+    sendTxModal.setIdentityFieldInput('email').should('have.value', expectedIdentity.email)
+    sendTxModal.setIdentityFieldInput('twitter').should('have.value', expectedIdentity.twitter)
 
     // Remove the Display and we should have an error
     sendTxModal.setIdentityField('display').type('{selectall}{del}')

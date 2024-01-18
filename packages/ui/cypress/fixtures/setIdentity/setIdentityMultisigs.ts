@@ -10,10 +10,10 @@ export const setIdentityMultisigs = {
 
   // this is a multisig I use all the time. Because Rococo now filters identity calls
   // I couldn't re-create a dedicated one so only sharing here 1 signatory
-  'multisig-with-identity': {
+  'pure-with-polkadot-identity': {
     name: 'Multisig with identity',
-    address: '5EMm18Z8WWWT2wit1RxpoZv39goPdYmSksnDTePYAzrUhdJv',
+    address: '15KHTWdJyzyxaQbBNRmQN89KmFr1jPXXsPHM5Rxvd1Tkb2XZ',
     threshold: 2,
-    signatories: [setIdentitySignatories[0].address]
+    signatories: [setIdentitySignatories[4]]
   }
 }
