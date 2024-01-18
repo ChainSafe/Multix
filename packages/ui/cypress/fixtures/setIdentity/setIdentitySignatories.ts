@@ -29,5 +29,13 @@ export const setIdentitySignatories = [
     name: 'Real account with Multisig',
     type: 'sr25519',
     mnemonic: ''
+  },
+  {
+    // this is a polkadot account, with multisig, but not one of our accounts, we don't actually know the mnemonic,
+    // so we can't sign anything with it
+    address: '12WWjrZGuVxyk5AyFeDGaN45J1FJ6MesXRxhmY41rhKxL961',
+    name: 'Real account with Multisig 2',
+    type: 'sr25519',
+    mnemonic: ''
   }
 ] as InjectedAccountWitMnemonic[]
