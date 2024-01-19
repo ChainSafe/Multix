@@ -25,7 +25,7 @@ interface Props {
 }
 
 export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
-  const { selectedMultiProxy, isWatchedAccount } = useMultiProxy()
+  const { selectedMultiProxy, selectedIsWatched } = useMultiProxy()
   const { onOpenDeepTxModal } = useModals()
   const { ownAddressList } = useAccounts()
   const proxyAndMultisigsIds = useMemo(
@@ -199,7 +199,7 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
       >
         <InfoTextStyled data-cy="banner-multisig-creation-info">
           Pending tx {`${data1.name} from: ${getDisplayAddress(data1.from)}`}
-          {!isWatchedAccount && <Button onClick={() => onClickCreate(data1)}>Create</Button>}
+          {!selectedIsWatched && <Button onClick={() => onClickCreate(data1)}>Create</Button>}
         </InfoTextStyled>
       </AlertStyled>
     ))
@@ -213,6 +213,7 @@ const InfoTextStyled = styled('div')`
 
   button {
     margin-left: auto;
+    margin-right: 2px;
   }
 `
 
