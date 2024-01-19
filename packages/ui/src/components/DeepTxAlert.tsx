@@ -212,7 +212,8 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
         key={data1.hash}
       >
         <InfoTextStyled data-cy="banner-multisig-creation-info">
-          Pending tx {`${data1.name} from: `}
+          Pending tx <span className="functionName">{data1.name}</span>
+          {` from: `}
           <AccountDisplay
             address={data1.from}
             iconSize="small"
@@ -228,6 +229,12 @@ const InfoTextStyled = styled('div')`
   flex: 1;
   display: flex;
   align-items: center;
+
+  .functionName {
+    padding: 0.5rem;
+    margin: 0 0.5rem 0 0.5rem;
+    background-color: ${(props) => props.theme.custom.proxyBadge.multi};
+  }
 
   button {
     margin-left: auto;
