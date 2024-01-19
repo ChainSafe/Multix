@@ -93,7 +93,6 @@ const Home = ({ className }: HomeProps) => {
           lg={8}
         >
           <TransactionsWrapperStyled data-cy="container-transaction-list">
-            <h3>Transactions</h3>
             <TransactionList />
           </TransactionsWrapperStyled>
         </Grid>

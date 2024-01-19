@@ -37,6 +37,7 @@ const TransactionList = ({ className }: Props) => {
   return (
     <Box className={className}>
       <DeepTxAlert pendingTxCallData={pendingTxCallData} />
+      <h3>Transactions</h3>
       {isLoadingPendingTxs && (
         <LoaderStyled>
           <CircularProgress />
