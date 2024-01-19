@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
-import { Button } from '../library'
-import { useCallback, useEffect, useState } from 'react'
+import { Button, TextField } from '../library'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
@@ -18,6 +18,8 @@ import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { ParentMultisigInfo } from '../DeepTxAlert'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
+import { HexString } from '../../types'
+import { getDisplayArgs, getExtrinsicName } from '../../utils'
 
 export interface DeepTxCreationProps {
   onClose: () => void
@@ -45,9 +47,17 @@ const DeepTxCreationModal = ({
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
+  const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
+  const mustSubmitCallData = useMemo(() => {
+    if (!parentMultisigInfo.threshold || !proposalData.info?.approvals) return true
+
+    // if it's the last approval call, we must use asMulti and have the call data
+    // either from the chain, or from users
+    return proposalData.info?.approvals.length >= parentMultisigInfo.threshold - 1
+  }, [parentMultisigInfo.threshold, proposalData.info?.approvals])
 
   const { callInfo: parentCallInfo, isGettingCallInfo: isGettingParentCallInfo } =
-    useCallInfoFromCallData(proposalData.callData)
+    useCallInfoFromCallData(proposalData.callData || addedCallData)
 
   // this will never be a proxy, if there's a proxy, it's already in the call
   const parentMultisigTx = useGetMultisigTx({
@@ -62,10 +72,16 @@ const DeepTxCreationModal = ({
       threshold: parentMultisigInfo.threshold,
       type: ProxyType.Any
     },
+    approvalLength: proposalData.info?.approvals.length,
     weight: parentCallInfo?.weight,
-    when: proposalData.info?.when
+    when: proposalData.info?.when,
+    forceAsMulti: false,
+    approveAsMultiHash: proposalData.hash as HexString
   })
 
+  // this is the one that we submit to the child multisig
+  // it contains the first multisig tx (from the child)
+  // and calls a asMulti because it's a creation
   const fullTx = useGetMultisigTx({
     fromAddress: parentMultisigInfo.parentSignatoryAddress,
     extrinsicToCall: (api && parentMultisigTx && api.tx(parentMultisigTx)) || undefined,
@@ -74,7 +90,8 @@ const DeepTxCreationModal = ({
     threshold: currentMultisigInvolved?.threshold,
     selectedMultisig: parentMultisigInfo.isSignatoryProxy
       ? selectedMultiProxy?.multisigs[0]
-      : getMultisigByAddress(parentMultisigInfo.involvedMultisigAddress)
+      : getMultisigByAddress(parentMultisigInfo.involvedMultisigAddress),
+    forceAsMulti: true
   })
 
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
@@ -122,6 +139,14 @@ const DeepTxCreationModal = ({
       return
     }
 
+    // if the callData is needed, but none was supplied or found
+    if (mustSubmitCallData && !parentCallInfo?.call) {
+      const error = 'No callData found or supplied'
+      console.error(error)
+      setErrorMessage(error)
+      return
+    }
+
     if (!fullTx) {
       const error = 'No extrinsic to call'
       console.error(error)
@@ -144,12 +169,22 @@ const DeepTxCreationModal = ({
   }, [
     api,
     selectedAccount,
+    mustSubmitCallData,
+    parentCallInfo?.call,
     fullTx,
     selectedSigner,
     signCallback,
     addToast,
     getSubscanExtrinsicLink
   ])
+
+  const onAddedCallDataChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setErrorMessage('')
+      setAddedCallData(event.target.value as HexString)
+    },
+    []
+  )
 
   return (
     <Dialog
@@ -205,6 +240,34 @@ const DeepTxCreationModal = ({
               </span>
             </HashGridStyled>
           </>
+          {!proposalData.callData && (
+            <>
+              <Grid
+                item
+                xs={0}
+                md={1}
+              />
+              <Grid
+                item
+                xs={12}
+                md={6}
+              >
+                <TextField
+                  className="addedCallData"
+                  label={`Call data ${mustSubmitCallData ? '' : '(optional)'}`}
+                  onChange={onAddedCallDataChange}
+                  value={addedCallData || ''}
+                  fullWidth
+                  data-cy="input-call-data"
+                />
+              </Grid>
+              <Grid
+                item
+                xs={0}
+                md={5}
+              />
+            </>
+          )}
           {!!parentCallInfo?.call && (
             <>
               <Grid
@@ -219,7 +282,15 @@ const DeepTxCreationModal = ({
                 className="callInfo"
               >
                 <CallInfo
-                  aggregatedData={proposalData}
+                  aggregatedData={
+                    proposalData.callData
+                      ? proposalData
+                      : {
+                          args: getDisplayArgs(parentCallInfo?.call),
+                          callData: addedCallData,
+                          name: getExtrinsicName(parentCallInfo?.section, parentCallInfo?.method)
+                        }
+                  }
                   expanded
                 />
               </Grid>
@@ -251,7 +322,9 @@ const DeepTxCreationModal = ({
               <Button
                 variant="primary"
                 onClick={onSign}
-                disabled={!!errorMessage || isSubmitting || !parentCallInfo?.call}
+                disabled={
+                  !!errorMessage || isSubmitting || (mustSubmitCallData && !parentCallInfo?.call)
+                }
                 data-cy="button-approve-tx"
               >
                 Create
@@ -294,6 +367,10 @@ export default styled(DeepTxCreationModal)(
   .errorMessage {
     margin-top: 0.5rem;
     color: ${theme.custom.error};
+  }
+
+  .addedCallData {
+    margin-top: 1rem;
   }
 `
 )

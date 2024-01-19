@@ -71,6 +71,7 @@ const ProposalSigning = ({
     // either from the chain, or from users
     return proposalData.info?.approvals.length >= threshold - 1
   }, [isProposerSelected, proposalData, threshold])
+
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
     onClose()

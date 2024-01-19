@@ -6,7 +6,8 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useGetSortAddress } from './useGetSortAddress'
 import { getAsMultiTx } from '../utils/getAsMultiTx'
 import { Weight } from '@polkadot/types/interfaces'
-import { MultisigStorageInfo } from '../types'
+import { HexString, MultisigStorageInfo } from '../types'
+import { getApproveAsMultiTx } from '../utils'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -17,6 +18,9 @@ interface Params {
   extrinsicToCall?: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   weight?: Weight
   when?: MultisigStorageInfo['when']
+  forceAsMulti?: boolean
+  approveAsMultiHash?: HexString
+  approvalLength?: number
 }
 
 export const useGetMultisigTx = ({
@@ -27,7 +31,10 @@ export const useGetMultisigTx = ({
   isProxy,
   extrinsicToCall,
   weight,
-  when
+  when,
+  approvalLength = 0,
+  forceAsMulti = true,
+  approveAsMultiHash
 }: Params) => {
   const { api } = useApi()
   const { getSortAddress } = useGetSortAddress()
@@ -38,7 +45,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    const otherSigners = getSortAddress(
+    const otherSignatories = getSortAddress(
       selectedMultisig.signatories.filter((signer) => signer !== senderAddress)
     )
 
@@ -54,11 +61,27 @@ export const useGetMultisigTx = ({
       return
     }
 
-    if (!extrinsicToCall) {
+    if (forceAsMulti && !extrinsicToCall) {
+      console.error(
+        'The extrinsic call is required when multisig.asMulti is called',
+        extrinsicToCall
+      )
       return
     }
 
-    let tx: SubmittableExtrinsic<'promise'>
+    // if forceAsMulti then there is no need to pass
+    // to this function the approvalLength and hash
+    // they are however required if not
+    if (!forceAsMulti && (!approvalLength || !approveAsMultiHash)) {
+      console.error(
+        'No approvalLength and approveAsMultiHash passed',
+        approvalLength,
+        approveAsMultiHash
+      )
+      return
+    }
+
+    let tx: SubmittableExtrinsic<'promise'> | undefined
 
     try {
       // the proxy is selected
@@ -69,7 +92,15 @@ export const useGetMultisigTx = ({
         tx = extrinsicToCall
       }
 
-      return getAsMultiTx({ api, threshold, otherSignatories: otherSigners, tx, weight, when })
+      return forceAsMulti || approvalLength >= threshold - 1
+        ? getAsMultiTx({ api, threshold, otherSignatories, tx, weight, when })
+        : getApproveAsMultiTx({
+            api,
+            threshold,
+            otherSignatories,
+            hash: approveAsMultiHash,
+            when
+          })
     } catch (e) {
       console.error('Error in multisigTx')
       console.error(e)
@@ -83,8 +114,11 @@ export const useGetMultisigTx = ({
     fromAddress,
     extrinsicToCall,
     isProxy,
+    forceAsMulti,
+    approvalLength,
     weight,
-    when
+    when,
+    approveAsMultiHash
   ])
 
   return multisigTx
