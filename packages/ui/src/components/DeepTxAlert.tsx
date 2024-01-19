@@ -5,10 +5,11 @@ import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-ho
 import { MultisigAggregated, useMultiProxy } from '../contexts/MultiProxyContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { CallDataInfoFromChain, usePendingTx } from '../hooks/usePendingTx'
-import { getDisplayAddress, getIntersection } from '../utils'
+import { getIntersection } from '../utils'
 import { useModals } from '../contexts/ModalsContext'
 import { Button } from './library'
 import { useAccounts } from '../contexts/AccountsContext'
+import AccountDisplay from './AccountDisplay'
 
 export interface ParentMultisigInfo {
   parentSignatoryAddress: string
@@ -198,7 +199,11 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
         key={data1.hash}
       >
         <InfoTextStyled data-cy="banner-multisig-creation-info">
-          Pending tx {`${data1.name} from: ${getDisplayAddress(data1.from)}`}
+          Pending tx {`${data1.name} from: `}
+          <AccountDisplay
+            address={data1.from}
+            iconSize="small"
+          />
           {!selectedIsWatched && <Button onClick={() => onClickCreate(data1)}>Create</Button>}
         </InfoTextStyled>
       </AlertStyled>
