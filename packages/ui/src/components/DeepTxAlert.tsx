@@ -173,13 +173,26 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
   return Object.values(txWithCallDataByDate).map((data) => {
     const filteredMap = data.filter((call) => {
       // filter the tx that are potentially already created and are pending
+      // when we have the calldata in both (in case it's an as multi)
       if (
         call?.callData &&
         pendingTxCallData.some((pendingCallData) =>
           pendingCallData.includes(call.callData?.slice(2) as string)
         )
       ) {
-        console.info('filtering call, currently signing', call)
+        console.info('filtering call, currently signing (with asMulti)', call)
+        return false
+      }
+
+      // filter the tx that are potentially already created and are pending
+      // when we have the hash of the parent in the current calldata (in case it's an approveAsMulti)
+      if (
+        pendingTxCallData.some((pendingCallData) => {
+          const isIncluded = pendingCallData.includes(call.hash?.slice(2) as string)
+          return isIncluded
+        })
+      ) {
+        console.info('filtering call, currently signing (with approveAsMult)', call)
         return false
       }
 
