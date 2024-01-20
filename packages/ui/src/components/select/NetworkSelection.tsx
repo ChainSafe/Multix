@@ -16,7 +16,7 @@ const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
   // if no ws endpoint is set (in the env) for local nodes, we filter it out
   const networksToShow = useMemo(() => {
-    return networkList.local.httpGraphqlUrl.replace('http', 'ws')
+    return networkList.local.httpGraphqlUrl
       ? Object.entries(networkList)
       : Object.entries(networkList).filter(([name]) => name !== 'local')
   }, [])
