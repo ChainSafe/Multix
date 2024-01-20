@@ -1,3 +1,5 @@
+import { HTTP_GRAPHQL_URL } from './constants'
+
 export const fetchData = <TData, TVariables>(
   query: string,
   variables?: TVariables,
@@ -5,7 +7,7 @@ export const fetchData = <TData, TVariables>(
   url?: string
 ): (() => Promise<TData>) => {
   return async () => {
-    const res = await fetch(url || import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER, {
+    const res = await fetch(url || HTTP_GRAPHQL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

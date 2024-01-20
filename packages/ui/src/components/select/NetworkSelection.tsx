@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ListSubheader, MenuItem, Select as SelectMui, SelectChangeEvent } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
@@ -16,7 +16,7 @@ const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
   // if no ws endpoint is set (in the env) for local nodes, we filter it out
   const networksToShow = useMemo(() => {
-    return networkList.local.wsGraphqlUrl
+    return networkList.local.httpGraphqlUrl.replace('http', 'ws')
       ? Object.entries(networkList)
       : Object.entries(networkList).filter(([name]) => name !== 'local')
   }, [])
