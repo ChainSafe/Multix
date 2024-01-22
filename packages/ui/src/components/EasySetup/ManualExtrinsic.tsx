@@ -301,7 +301,6 @@ const ManualExtrinsic = ({
     }
 
     if (api.tx[palletRpc][callable].meta.args.length !== transformedParams?.length) {
-      onSetErrorMessage('Unexpected number of params.')
       return
     }
 
