@@ -181,7 +181,7 @@ const ManualExtrinsic = ({
         return [...previousValue, value]
       }, [] as any[])
     },
-    [chainInfo, isAmountOverflow, isValidAmountString]
+    [callable, chainInfo?.tokenDecimals, isAmountOverflow, isValidAmountString, palletRpc]
   )
 
   useEffect(() => {
@@ -297,6 +297,11 @@ const ManualExtrinsic = ({
     }
 
     if (!callable || !palletRpc || !areAllParamsFilled || hasErrorMessage) {
+      return
+    }
+
+    if (api.tx[palletRpc][callable].meta.args.length !== transformedParams?.length) {
+      onSetErrorMessage('Unexpected number of params.')
       return
     }
 
