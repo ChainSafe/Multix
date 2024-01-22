@@ -11,7 +11,6 @@ import TransactionList from '../../components/Transactions/TransactionList'
 import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
 import { useDisplayLoader } from '../../hooks/useDisplayLoader'
 import { useDisplayError } from '../../hooks/useDisplayError'
-import { DeepTxAlert } from '../../components/DeepTxAlert'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 
 interface HomeProps {

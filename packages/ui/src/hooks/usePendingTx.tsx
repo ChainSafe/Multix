@@ -242,7 +242,7 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy])
+  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy, skipProxyCheck])
 
   useEffect(() => {
     refresh()
