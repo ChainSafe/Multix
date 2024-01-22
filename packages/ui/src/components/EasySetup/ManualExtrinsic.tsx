@@ -181,7 +181,7 @@ const ManualExtrinsic = ({
         return [...previousValue, value]
       }, [] as any[])
     },
-    [chainInfo, isAmountOverflow, isValidAmountString]
+    [callable, chainInfo?.tokenDecimals, isAmountOverflow, isValidAmountString, palletRpc]
   )
 
   useEffect(() => {
