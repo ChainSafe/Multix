@@ -1,4 +1,4 @@
-import { Alert } from '@mui/material'
+import { Alert, Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-hooks'
@@ -211,34 +211,85 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
         severity="info"
         key={data1.hash}
       >
-        <InfoTextStyled data-cy="banner-multisig-creation-info">
-          Pending tx <span className="functionName">{data1.name}</span>
-          {` from: `}
-          <AccountDisplay
-            address={data1.from}
-            iconSize="small"
-          />
-          {!selectedIsWatched && <Button onClick={() => onClickCreate(data1)}>Create</Button>}
+        <InfoTextStyled
+          container
+          spacing={0}
+          data-cy="banner-multisig-creation-info"
+        >
+          <Grid
+            item
+            xs={12}
+            sm={9}
+            md={9}
+            container
+          >
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={6}
+              display="flex"
+              alignItems="center"
+              className="gridItem"
+            >
+              Pending tx <FunctionNameStyled>{data1.name}</FunctionNameStyled>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={6}
+              display="flex"
+              alignItems="center"
+              className="gridItem"
+            >
+              from:
+              <AccountDisplay
+                address={data1.from}
+                iconSize="small"
+              />
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            md={3}
+            display="flex"
+            alignItems="center"
+            className="gridItem"
+          >
+            {!selectedIsWatched && <Button onClick={() => onClickCreate(data1)}>Create</Button>}
+          </Grid>
         </InfoTextStyled>
       </AlertStyled>
     ))
   })
 }
 
-const InfoTextStyled = styled('div')`
-  flex: 1;
-  display: flex;
-  align-items: center;
+const FunctionNameStyled = styled('span')`
+  padding: 0.5rem;
+  margin: 0 0.5rem 0 0.5rem;
+  background-color: ${(props) => props.theme.custom.proxyBadge.multi};
+  text-overflow: ellipsis;
+  overflow: hidden;
+`
 
-  .functionName {
-    padding: 0.5rem;
-    margin: 0 0.5rem 0 0.5rem;
-    background-color: ${(props) => props.theme.custom.proxyBadge.multi};
-  }
+const InfoTextStyled = styled(Grid)`
+  /* flex: 1;
+  display: flex;*/
+  align-items: center;
+  margin: 0;
 
   button {
     margin-left: auto;
     margin-right: 2px;
+  }
+
+  .gridItem {
+    padding: 0;
   }
 `
 
