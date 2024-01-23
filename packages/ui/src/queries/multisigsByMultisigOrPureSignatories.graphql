@@ -8,13 +8,6 @@ query multisigsByMultisigOrPureSignatories($accountIds: [String!]) {
           address
         }
       }
-      # delegateeFor(limit: 100) {
-      #   type
-      #   delegator {
-      #     address
-      #     isPureProxy
-      #   }
-      # }
     }
   }
 }

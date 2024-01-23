@@ -33,8 +33,7 @@ export interface NetworkInfo {
   logo: string
 }
 
-const GRAPHQL_BASE_URL = 'squid.subsquid.io/multix-arrow/v/v2/graphql'
-export const HTTP_GRAPHQL_URL = `https://${GRAPHQL_BASE_URL}`
+export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v2/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
@@ -165,7 +164,6 @@ export const networkList = {
   //   chainId: 'westend',
   //   explorerNetworkName: 'westend',
   //   rpcUrl: 'wss://westend-rpc.polkadot.io',
-  //   wsGraphqlUrl: WS_GRAPHQL_URL,
   //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
   //   logo: nodesWestendColourSVG
   // } as NetworkInfo,
@@ -180,16 +178,14 @@ export const networkList = {
   //   chainId: 'watr',
   //   explorerNetworkName: '',
   //   rpcUrl: 'wss://watr-rpc.watr-api.network',
-  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
-  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
   //   logo: chainsWatrPNG
   // },
   kilt: {
     chainId: 'kilt',
     explorerNetworkName: 'spiritnet',
     rpcUrl: 'wss://spiritnet.kilt.io',
-    wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
-    httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKiltPNG
   },
   local: {
