@@ -300,6 +300,10 @@ const ManualExtrinsic = ({
       return
     }
 
+    if (api.tx[palletRpc][callable].meta.args.length !== transformedParams?.length) {
+      return
+    }
+
     try {
       const extrinsic = transformedParams
         ? api.tx[palletRpc][callable](...transformedParams)
