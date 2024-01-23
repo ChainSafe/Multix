@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
 import { Button, TextField } from '../library'
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useApi } from '../../contexts/ApiContext'
@@ -13,13 +13,14 @@ import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import BN from 'bn.js'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { ParentMultisigInfo } from '../DeepTxAlert'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
 import { HexString } from '../../types'
-import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { getDisplayArgs, getErrorMessageReservedFunds, getExtrinsicName } from '../../utils'
+import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
+import { formatBnBalance } from '../../utils/formatBnBalance'
 
 export interface DeepTxCreationProps {
   onClose: () => void
@@ -41,10 +42,10 @@ const DeepTxCreationModal = ({
   currentMultisigInvolved
 }: DeepTxCreationProps) => {
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api } = useApi()
+  const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedAccount, selectedSigner } = useAccounts()
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { addToast } = useToasts()
   const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
@@ -94,8 +95,14 @@ const DeepTxCreationModal = ({
     forceAsMulti: true
   })
 
+  const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
+    threshold: currentMultisigInvolved?.threshold,
+    signatories: currentMultisigInvolved?.signatories,
+    call: fullTx
+  })
+
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: new BN(0),
+    min: multisigProposalNeededFunds,
     address: selectedAccount?.address
   })
 
@@ -114,15 +121,24 @@ const DeepTxCreationModal = ({
   }, [parentCallInfo, proposalData])
 
   useEffect(() => {
-    if (hasSignerEnoughFunds) {
-      setErrorMessage('')
-      return
-    }
+    if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBnBalance(
+        multisigProposalNeededFunds,
+        chainInfo?.tokenDecimals,
+        { tokenSymbol: chainInfo?.tokenSymbol }
+      )
 
-    setErrorMessage(
-      "The selected signer doesn't have enough funds to pay for the transaction fees."
-    )
-  }, [hasSignerEnoughFunds])
+      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
+      const errorWithReservedFunds = getErrorMessageReservedFunds(
+        '"Signing with" account',
+        requiredBalanceString,
+        reservedString
+      )
+      setErrorMessage(errorWithReservedFunds)
+    }
+  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
 
   const onSign = useCallback(async () => {
     if (!api) {
