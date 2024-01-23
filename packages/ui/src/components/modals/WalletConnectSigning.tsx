@@ -58,13 +58,15 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     if (!callInfo?.call || !api) return
     return api.tx(callInfo.call)
   }, [api, callInfo])
+  // this is a creation, we can force asMulti
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
     extrinsicToCall,
     senderAddress: selectedAccount?.address,
     isProxy: isProxySelected,
     fromAddress: originAddress,
-    threshold
+    threshold,
+    forceAsMulti: true
   })
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,

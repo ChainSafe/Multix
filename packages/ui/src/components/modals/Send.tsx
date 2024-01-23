@@ -79,13 +79,16 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const [selectedEasyOption, setSelectedEasyOption] = useState<EasyTransferTitle>(
     preselected || DEFAULT_EASY_SETUP_SELECTION
   )
+
+  // this is a creation so we can force the asMulti
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
     extrinsicToCall,
     senderAddress: selectedAccount?.address,
     isProxy: isProxySelected,
     fromAddress: selectedOrigin.address,
-    threshold
+    threshold,
+    forceAsMulti: true
   })
 
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({

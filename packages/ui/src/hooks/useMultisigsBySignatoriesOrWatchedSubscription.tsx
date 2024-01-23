@@ -28,7 +28,7 @@ export const useMultisigsBySignatoriesOrWatchedSubscription = ({
     () =>
       selectedNetworkInfo &&
       hasSomethingToQuery &&
-      createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+      createClient({ url: selectedNetworkInfo.httpGraphqlUrl.replace('http', 'ws') }),
     [selectedNetworkInfo, hasSomethingToQuery]
   )
 

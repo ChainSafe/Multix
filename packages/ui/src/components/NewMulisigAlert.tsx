@@ -36,6 +36,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
 export default styled(NewMulisigAlert)`
   width: 100%;
   margin-top: 1rem;
+  margin-bottom: 0.5rem;
 
   .infoText {
     flex: 1;

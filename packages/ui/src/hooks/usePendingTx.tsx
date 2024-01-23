@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { HexString, MultisigStorageInfo } from '../types'
 import { useMultisigCallSubscription } from './useMultisigCallsSubscription'
@@ -136,16 +136,13 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
   return b.timestamp.valueOf() - a.timestamp.valueOf()
 }
 
-export const usePendingTx = () => {
+export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false) => {
   const [isLoading, setIsLoading] = useState(true)
   const { api, chainInfo } = useApi()
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()
-  const multisigAddresses = useMemo(
-    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
-    [selectedMultiProxy?.multisigs]
-  )
 
+  // refresh the pending TX for the set of multisig addresses
   const refresh = useCallback(async () => {
     setTxWithCallDataByDate({})
 
@@ -211,11 +208,22 @@ export const usePendingTx = () => {
 
         // remove the proxy transaction that aren't for the selected proxy
         const relevantTxs = definedTxs.filter((agg) => {
-          if (!isProxyCall(agg.name) || !agg?.args || !(agg.args as any).real.Id) {
+          if (
+            !isProxyCall(agg.name) ||
+            !agg?.args ||
+            !(agg.args as any).real.Id ||
+            skipProxyCheck
+          ) {
             return true
           }
 
-          return (agg.args as any).real.Id === selectedMultiProxy?.proxy
+          const isForCurrentProxy = (agg.args as any).real.Id === selectedMultiProxy?.proxy
+
+          if (!isForCurrentProxy) {
+            console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)
+          }
+
+          return isForCurrentProxy
         })
 
         // sort by date, the newest first
@@ -234,7 +242,7 @@ export const usePendingTx = () => {
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy])
+  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy, skipProxyCheck])
 
   useEffect(() => {
     refresh()

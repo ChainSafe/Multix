@@ -17,7 +17,7 @@ export const usePureByIdsSubscription = ({ onUpdate, pureIds }: Args) => {
     () =>
       selectedNetworkInfo &&
       hasSomethingToQuery &&
-      createClient({ url: selectedNetworkInfo.wsGraphqlUrl }),
+      createClient({ url: selectedNetworkInfo.httpGraphqlUrl.replace('http', 'ws') }),
     [hasSomethingToQuery, selectedNetworkInfo]
   )
 

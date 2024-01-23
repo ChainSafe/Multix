@@ -6,31 +6,48 @@ import { getDifference, getIntersection } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
 import Transaction from './Transaction'
+import { useMemo } from 'react'
+import { DeepTxAlert } from '../DeepTxAlert'
 
 interface Props {
   className?: string
 }
 
 const TransactionList = ({ className }: Props) => {
-  const { getMultisigByAddress } = useMultiProxy()
-  const { txWithCallDataByDate, isLoading: isLoadingPendingTxs, refresh } = usePendingTx()
+  const { getMultisigByAddress, selectedMultiProxy } = useMultiProxy()
+  const multisigAddresses = useMemo(
+    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
+    [selectedMultiProxy?.multisigs]
+  )
+  const {
+    txWithCallDataByDate,
+    isLoading: isLoadingPendingTxs,
+    refresh
+  } = usePendingTx(multisigAddresses)
   const { ownAddressList } = useAccounts()
+  const pendingTxCallData = useMemo(() => {
+    return Object.values(txWithCallDataByDate)
+      .reduce((acc, curr) => {
+        return [...acc, ...curr]
+      }, [])
+      .map(({ callData }) => callData)
+      .filter((a) => !!a) as string[]
+  }, [txWithCallDataByDate])
 
   return (
     <Box className={className}>
+      <DeepTxAlert pendingTxCallData={pendingTxCallData} />
+      <h3>Transactions</h3>
       {isLoadingPendingTxs && (
-        <Box className="loader">
+        <LoaderStyled>
           <CircularProgress />
-        </Box>
+        </LoaderStyled>
       )}
       {Object.entries(txWithCallDataByDate).length === 0 && !isLoadingPendingTxs && (
-        <Paper className="noCall">
-          <FlareIcon
-            size={24}
-            className="noCallIcon"
-          />
-          <div className="noCallText">You're all set!</div>
-        </Paper>
+        <NoCallWrapperStyled>
+          <FlareIconStyled size={24} />
+          <div>You're all set!</div>
+        </NoCallWrapperStyled>
       )}
       {Object.entries(txWithCallDataByDate).length !== 0 &&
         Object.entries(txWithCallDataByDate).map(([date, aggregatedData]) => {
@@ -88,29 +105,26 @@ const TransactionWrapper = styled(Box)`
   }
 `
 
+const FlareIconStyled = styled(FlareIcon)`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`
+
 const DateContainerStyled = styled(Box)`
   margin-bottom: 0.3rem;
 `
 
-export default styled(TransactionList)(
-  ({ theme }) => `
-  .noCallIcon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-
-  .noCall {
-    background-color: ${theme.custom.background.primary};
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: center;
-    padding: 2rem;
-  }
-
-  .loader {
-    display: flex;
-    justify-content: center;
-  }
+const NoCallWrapperStyled = styled(Paper)`
+  background-color: ${({ theme }) => theme.custom.background.primary};
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  padding: 2rem;
 `
-)
+
+const LoaderStyled = styled(Box)`
+  display: flex;
+  justify-content: center;
+`
+export default TransactionList
