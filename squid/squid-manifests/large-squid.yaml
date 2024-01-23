@@ -42,6 +42,10 @@ deploy:
       cmd: ['sqd', 'start-khala']
     - name: joystream-processor
       cmd: ['sqd', 'start-joystream']
+    - name: kilt-processor
+      cmd: ['sqd', 'start-kilt']
+    # - name: watr-processor
+    #   cmd: ['sqd', 'start-watr']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor

@@ -16,7 +16,8 @@ import { nodesInterlaySVG } from './logos/interlaySVG'
 import { nodesMoonriverSVG } from './logos/moonriverSVG'
 import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
 import { nodesJoystreamSVG } from './logos/joystreamSVG'
-import { chainsWatrPNG } from './logos/watrPNG'
+// import { chainsWatrPNG } from './logos/watrPNG'
+import { nodesKiltPNG } from './logos/kiltPNG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -188,13 +189,21 @@ export const networkList = {
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
     logo: nodesJoystreamSVG
   },
-  watr: {
-    chainId: 'watr',
-    explorerNetworkName: '',
-    rpcUrl: 'wss://watr-rpc.watr-api.network',
+  // watr: {
+  //   chainId: 'watr',
+  //   explorerNetworkName: '',
+  //   rpcUrl: 'wss://watr-rpc.watr-api.network',
+  //   wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
+  //   httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
+  //   logo: chainsWatrPNG
+  // },
+  kilt: {
+    chainId: 'kilt',
+    explorerNetworkName: 'spiritnet',
+    rpcUrl: 'wss://spiritnet.kilt.io',
     wsGraphqlUrl: 'wss://squid.subsquid.io/multix-arrow/v/v2/graphql',
     httpGraphqlUrl: 'https://squid.subsquid.io/multix-arrow/v/v2/graphql',
-    logo: chainsWatrPNG
+    logo: nodesKiltPNG
   },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
@@ -216,7 +225,8 @@ export const polkadotNetworksAndParachains = [
   'interlay',
   'moonbeam',
   'phala',
-  'watr'
+  'kilt'
+  // 'watr'
 ]
 export const kusamaNetworksAndParachains = ['kusama', 'asset-hub-ksm', 'khala', 'moonriver']
 export const soloChains = ['joystream']
