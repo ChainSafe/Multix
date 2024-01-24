@@ -43,6 +43,7 @@ export const WalletConnectActiveSessions = () => {
               <ul>
                 <li>Namespace: {session.requiredNamespaces?.polkadot?.chains?.join(', ')}</li>
                 <li>Methods: {session.requiredNamespaces?.polkadot?.methods?.join(', ')}</li>
+                <li>Events: {session.requiredNamespaces?.polkadot?.events?.join(', ')}</li>
                 <li>Expiring: {expiryDate.toDateString()}</li>
               </ul>
             </div>
