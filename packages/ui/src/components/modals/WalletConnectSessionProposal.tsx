@@ -30,10 +30,20 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
     return getAccountsWithNamespace(accountsToShare)
   }, [getAccountsWithNamespace, selectedMultiProxy?.multisigs, selectedMultiProxy?.proxy])
 
+  const { methods, events, chains } = useMemo(
+    () =>
+      sessionProposal?.params.requiredNamespaces?.polkadot || {
+        methods: [],
+        events: [],
+        chains: []
+      },
+    [sessionProposal?.params.requiredNamespaces?.polkadot]
+  )
+
   useEffect(() => {
     if (!web3wallet || !sessionProposal) return
 
-    const wCRequestedNetwork = sessionProposal?.params.requiredNamespaces?.polkadot?.chains?.[0]
+    const wCRequestedNetwork = chains?.[0]
 
     if (wCRequestedNetwork !== currentNamespace) {
       setErrorMessage(
@@ -42,7 +52,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         - Current: ${currentNamespace}`
       )
     }
-  }, [currentNamespace, sessionProposal, web3wallet])
+  }, [chains, currentNamespace, sessionProposal, web3wallet])
 
   const onApprove = useCallback(() => {
     if (!web3wallet || !sessionProposal) return
@@ -53,8 +63,8 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         namespaces: {
           polkadot: {
             accounts: accountsToShare,
-            methods: sessionProposal.params.requiredNamespaces?.polkadot?.methods,
-            events: []
+            methods,
+            events
           }
         }
       })
@@ -63,7 +73,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         onClose()
         refresh()
       })
-  }, [accountsToShare, onClose, refresh, sessionProposal, web3wallet])
+  }, [accountsToShare, events, methods, onClose, refresh, sessionProposal, web3wallet])
 
   const onReject = useCallback(() => {
     if (!web3wallet || !sessionProposal) return
@@ -99,16 +109,9 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
             <br />
             <AppInfoStyled>Website:</AppInfoStyled> {sessionProposal?.params.proposer.metadata.url}
             <br />
-            <AppInfoStyled>Methods:</AppInfoStyled>{' '}
-            {sessionProposal?.params.requiredNamespaces?.polkadot?.methods?.map(
-              (method, index) =>
-                `${method}${
-                  index ===
-                  (sessionProposal?.params.requiredNamespaces?.polkadot?.methods?.length - 1 || 0)
-                    ? ''
-                    : ', '
-                }`
-            )}
+            <AppInfoStyled>Methods:</AppInfoStyled> {methods.join(', ')}
+            <br />
+            <AppInfoStyled>Events:</AppInfoStyled> {events.join(', ')}
           </Grid>
           <Grid
             item
