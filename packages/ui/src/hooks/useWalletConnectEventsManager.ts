@@ -14,6 +14,7 @@ export default function useWalletConnectEventsManager() {
   // Open session proposal modal for confirmation / rejection
   const onSessionProposal = useCallback(
     (proposal: SignClientTypes.EventArguments['session_proposal']) => {
+      console.info('WalletConnect session_proposal', proposal)
       openWalletConnectSessionModal({ sessionProposal: proposal })
     },
     [openWalletConnectSessionModal]
@@ -30,7 +31,7 @@ export default function useWalletConnectEventsManager() {
         console.error('web3Wallet is undefined')
         return
       }
-      console.log('---> session_request', requestEvent)
+      console.info('WalletConnect session_request', requestEvent)
       const { topic, params } = requestEvent
       const { request } = params
       const requestSession = web3wallet.engine.signClient.session.get(topic)
