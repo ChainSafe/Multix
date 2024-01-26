@@ -48,6 +48,7 @@ const AccountDisplay = ({
     } else {
       // There should not be a `displayParent` without a `display`
       // but we can't be too sure.
+      setSub('')
       setMainDisplay(identity.displayParent || identity.display || '')
     }
   }, [address, api, identity])
@@ -64,18 +65,20 @@ const AccountDisplay = ({
           <NameWrapperStyled>
             {!!identity && mainDisplay && (
               // Class name for external styling
+              // Do not remove
               <IdentityIcon
                 className="identityBadge"
                 identity={identity}
               />
             )}
-            {!!sub && <span>{sub}</span>}
             {/*// Class name for external styling*/}
+            {/* // Do not remove */}
             <NameStyled
               className="multisigName"
               data-cy="label-account-name"
             >
               {localName || mainDisplay}
+              {!!sub && <span className="subIdentity">/{sub}</span>}
             </NameStyled>
           </NameWrapperStyled>
         )}
@@ -104,29 +107,36 @@ const BoxStyled = styled(Box)`
 `
 
 const NameWrapperStyled = styled('div')`
-  display: grid;
+  display: flex;
   grid-auto-flow: column;
   align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 
   svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .subIdentity {
+    margin-left: 0.3rem;
+    font-weight: 300;
+    font-size: 0.8rem;
   }
 `
 
-const AddressStyled = styled('div')(
-  ({ theme }) => `
-    color: ${theme.custom.text.primary};
-    font-size: 1rem;
-    font-weight: 400;
+const AddressStyled = styled('div')`
+  color: ${({ theme }) => theme.custom.text.primary};
+  font-size: 1rem;
+  font-weight: 400;
 `
-)
 
 const NameStyled = styled('div')`
   color: ${({ theme }) => theme.custom.text.primary};
   font-size: 1rem;
   font-weight: 500;
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
