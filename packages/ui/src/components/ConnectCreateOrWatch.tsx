@@ -18,7 +18,7 @@ export const ConnectOrWatch = () => {
       {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
         <div data-cy="label-no-multisig-found">
           No multisig found for your accounts or watched accounts on{' '}
-          <NetworkNameStyped>{selectedNetwork}</NetworkNameStyped>.
+          <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.
         </div>
       ) : (
         <>
@@ -93,6 +93,6 @@ const ButtonWrapperStyled = styled('div')`
   }
 `
 
-const NetworkNameStyped = styled('span')`
+const NetworkNameStyled = styled('span')`
   text-transform: capitalize;
 `

@@ -1,5 +1,5 @@
 import { testAccounts } from '../fixtures/testAccounts'
-import { landingPageUrl } from '../fixtures/landingData'
+import { landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { clickOnConnect } from '../utils/clickOnConnect'
@@ -47,7 +47,24 @@ describe('Landing Page Messaging', () => {
     cy.connectAccounts([testAccounts['Non Multisig Member 1'].address])
     landingPage
       .noMultisigFoundError()
-      .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+      .should('contain.text', 'No multisig found for your accounts or watched accounts on Rococo.')
+    landingPage.createOneButton().should('be.visible').should('be.enabled')
+    landingPage.watchAccountButton().should('be.visible').should('be.enabled')
+  })
+
+  it('redirect to Polkadot if wrong network in url', () => {
+    cy.visit(landingPageNetwork('wrong network'))
+    cy.initWallet([testAccounts['Non Multisig Member 1']])
+    clickOnConnect()
+    // share the account that is not part of any multisig
+    cy.connectAccounts([testAccounts['Non Multisig Member 1'].address])
+    landingPage
+      .noMultisigFoundError()
+      .should(
+        'contain.text',
+        'No multisig found for your accounts or watched accounts on Polkadot.'
+      )
+    cy.url().should('include', 'network=polkadot')
     landingPage.createOneButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
@@ -60,7 +77,7 @@ describe('Landing Page Messaging', () => {
     })
     landingPage
       .noMultisigFoundError()
-      .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+      .should('contain.text', 'No multisig found for your accounts or watched accounts on Rococo.')
     landingPage.connectWalletButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
@@ -76,7 +93,7 @@ describe('Landing Page Messaging', () => {
 
     landingPage
       .noMultisigFoundError()
-      .should('contain.text', 'No multisig found for your accounts or watched accounts.')
+      .should('contain.text', 'No multisig found for your accounts or watched accounts on Rococo.')
     landingPage.createOneButton().should('be.visible').should('be.enabled')
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
