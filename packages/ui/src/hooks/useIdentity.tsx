@@ -6,6 +6,7 @@ export const useIdentity = (address: string) => {
   const { api } = useApi()
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
 
+  console.log('identidy', identity)
   useEffect(() => {
     if (!api) {
       return

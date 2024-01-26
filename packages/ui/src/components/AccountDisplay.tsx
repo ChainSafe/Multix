@@ -48,6 +48,7 @@ const AccountDisplay = ({
     } else {
       // There should not be a `displayParent` without a `display`
       // but we can't be too sure.
+      setSub('')
       setMainDisplay(identity.displayParent || identity.display || '')
     }
   }, [address, api, identity])
@@ -69,7 +70,6 @@ const AccountDisplay = ({
                 identity={identity}
               />
             )}
-            {!!sub && <span>{sub}</span>}
             {/*// Class name for external styling*/}
             <NameStyled
               className="multisigName"
@@ -77,6 +77,7 @@ const AccountDisplay = ({
             >
               {localName || mainDisplay}
             </NameStyled>
+            {!!sub && <span className="subIdentity">/{sub}</span>}
           </NameWrapperStyled>
         )}
         <AddressStyled
@@ -109,8 +110,16 @@ const NameWrapperStyled = styled('div')`
   align-items: center;
 
   svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .subIdentity {
+    margin-left: 0.5rem;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `
 
