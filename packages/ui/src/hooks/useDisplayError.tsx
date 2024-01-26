@@ -12,7 +12,8 @@ import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router-dom'
 
 export const useDisplayError = () => {
-  const { isExtensionError, isAccountLoading, ownAccountList } = useAccounts()
+  const { isExtensionError, isAccountLoading, ownAccountList, isAllowedToConnectToExtension } =
+    useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
   const [, setSearchParams] = useSearchParams()
@@ -20,7 +21,7 @@ export const useDisplayError = () => {
   if (
     watchedAddresses.length === 0 &&
     !isAccountLoading &&
-    (isExtensionError || ownAccountList.length === 0)
+    (isExtensionError || (isAllowedToConnectToExtension && ownAccountList.length === 0))
   ) {
     return (
       <CenterStyled>
