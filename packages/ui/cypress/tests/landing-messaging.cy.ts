@@ -62,7 +62,7 @@ describe('Landing Page Messaging', () => {
       .noMultisigFoundError()
       .should(
         'contain.text',
-        'No multisig found for your accounts or watched accounts on Polkadot.'
+        'No multisig found for your accounts or watched accounts on polkadot.'
       )
     cy.url().should('include', 'network=polkadot')
     landingPage.createOneButton().should('be.visible').should('be.enabled')
