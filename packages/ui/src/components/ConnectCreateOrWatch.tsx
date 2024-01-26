@@ -4,18 +4,21 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
+import { useNetwork } from '../contexts/NetworkContext'
 
 export const ConnectOrWatch = () => {
   const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { selectedNetwork } = useNetwork()
 
   return (
     <WrapperStyled>
       {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
         <div data-cy="label-no-multisig-found">
-          No multisig found for your accounts or watched accounts.
+          No multisig found for your accounts or watched accounts on{' '}
+          <NetworkNameStyped>{selectedNetwork}</NetworkNameStyped>.
         </div>
       ) : (
         <>
@@ -88,4 +91,8 @@ const ButtonWrapperStyled = styled('div')`
   button {
     margin: 0 0.5rem;
   }
+`
+
+const NetworkNameStyped = styled('span')`
+  text-transform: capitalize;
 `
