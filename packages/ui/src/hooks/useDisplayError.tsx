@@ -12,12 +12,16 @@ import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router-dom'
 
 export const useDisplayError = () => {
-  const { isExtensionError, isAccountLoading } = useAccounts()
+  const { isExtensionError, isAccountLoading, ownAccountList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
   const [, setSearchParams] = useSearchParams()
 
-  if (isExtensionError && watchedAddresses.length === 0 && !isAccountLoading) {
+  if (
+    watchedAddresses.length === 0 &&
+    !isAccountLoading &&
+    (isExtensionError || ownAccountList.length === 0)
+  ) {
     return (
       <CenterStyled>
         <div data-cy="label-no-account-found">
@@ -29,6 +33,20 @@ export const useDisplayError = () => {
             data-cy="link-polkadot-wiki"
           >
             wiki.polkadot.network
+            <LaunchIcon
+              className="launchIcon"
+              size={20}
+            />
+          </Linkstyled>
+          <br />
+          You did connect an extension? Find possible solutions in our wiki{' '}
+          <Linkstyled
+            href="https://github.com/ChainSafe/Multix/wiki/Why-doesn't-Multix-find-my-account%3F"
+            target="_blank"
+            rel="noreferrer"
+            data-cy="link-multix-wiki"
+          >
+            Multix wiki
             <LaunchIcon
               className="launchIcon"
               size={20}
