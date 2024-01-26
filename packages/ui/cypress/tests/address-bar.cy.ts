@@ -46,7 +46,10 @@ describe('Account address in the address bar', () => {
     cy.visit(landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address))
     landingPage
       .linkedAddressNotFound()
-      .should('contain.text', "The linked address can't be found on Rococo")
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on Rococo"
+      )
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
   })
 
@@ -62,7 +65,10 @@ describe('Account address in the address bar', () => {
 
     landingPage
       .linkedAddressNotFound()
-      .should('contain.text', "The linked address can't be found on Rococo")
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on Rococo"
+      )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')
@@ -88,7 +94,10 @@ describe('Account address in the address bar', () => {
     })
     landingPage
       .linkedAddressNotFound()
-      .should('contain.text', "The linked address can't be found on Rococo")
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on Rococo"
+      )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')
@@ -115,7 +124,10 @@ describe('Account address in the address bar', () => {
 
     landingPage
       .linkedAddressNotFound()
-      .should('contain.text', "The linked address can't be found on Rococo")
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on Rococo"
+      )
     cy.url().should('include', nonMulitisigAccountAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')
