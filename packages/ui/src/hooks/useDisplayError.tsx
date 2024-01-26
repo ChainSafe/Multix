@@ -60,7 +60,7 @@ export const useDisplayError = () => {
           <ErrorOutlineIcon size={64} />
           <div data-cy="label-linked-address-not-found">
             The linked address can't be found in your accounts or watched accounts on{' '}
-            <NetworkNameStyped>{selectedNetwork}</NetworkNameStyped>.
+            <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.
           </div>
           <Button
             data-cy="button-reset-linked-address"
@@ -104,6 +104,6 @@ const ErrorMessageStyled = styled('div')`
   }
 `
 
-const NetworkNameStyped = styled('span')`
+const NetworkNameStyled = styled('span')`
   text-transform: capitalize;
 `
