@@ -2,10 +2,11 @@ import AccountDisplay from '../../components/AccountDisplay'
 import { AccountBadge } from '../../types'
 // import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
-import { Chip } from '@mui/material'
+import { Chip, Typography } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
+import { renderProxyTypeToText } from '../../utils/proxyTypeRendererUtils'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
@@ -26,6 +27,7 @@ const MultisigView = () => {
       <MultisigList>
         {selectedMultiProxy &&
           selectedMultiProxy.multisigs.map((multisig) => {
+            console.log({ multisig })
             return (
               <MultisigWrapperStyled
                 selectedHasProxy={selectedHasProxy}
@@ -46,6 +48,12 @@ const MultisigView = () => {
                     <ListFieldText>Threshold</ListFieldText>
                     <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
                   </ListElement>
+                  {multisig.type && (
+                    <ListElement data-cy="list-item-proxy-type">
+                      <ListFieldText>Proxy Type</ListFieldText>
+                      <ListFieldValue as="p">{renderProxyTypeToText(multisig.type)}</ListFieldValue>
+                    </ListElement>
+                  )}
                   {selectedHasProxy && (
                     <ListElement data-cy="list-item-balance">
                       <ListFieldText>Balance</ListFieldText>
@@ -132,6 +140,12 @@ const ListFieldText = styled('div')`
   font-size: 1rem;
   font-weight: 400;
   color: ${({ theme }) => theme.custom.gray[800]};
+`
+
+const ListFieldValue = styled(Typography)`
+  color: ${({ theme }) => theme.custom.gray[800]};
+  font-size: 1rem;
+  font-weight: 400;
 `
 
 const AccountDisplayWrapperStyled = styled('div')`

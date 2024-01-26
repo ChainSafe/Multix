@@ -13,6 +13,7 @@ export const multisigPage = {
   multisigDetailsContainer: () => cy.get('[data-cy=container-multisig-details]'),
   multisigAccountSummary: () => cy.get('[data-cy=container-multisig-account-summary]'),
   thresholdListItem: () => cy.get('[data-cy=list-item-threshold]'),
+  proxyTypeListItem: () => cy.get('[data-cy=list-item-proxy-type]]'),
   balanceListItem: () => cy.get('[data-cy=list-item-balance]'),
   signatoriesAccordion: () => cy.get('[data-cy=accordion-signatories]'),
   expandSignatoriesIcon: () => cy.get('[data-cy=icon-expand-signatories-summary]'),
