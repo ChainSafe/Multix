@@ -48,7 +48,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on Rococo"
+        "The linked address can't be found in your accounts or watched accounts on rococo"
       )
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
   })
@@ -67,7 +67,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on Rococo"
+        "The linked address can't be found in your accounts or watched accounts on rococo"
       )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
@@ -96,7 +96,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on Rococo"
+        "The linked address can't be found in your accounts or watched accounts on rococo"
       )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
@@ -126,7 +126,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on Rococo"
+        "The linked address can't be found in your accounts or watched accounts on rococo"
       )
     cy.url().should('include', nonMulitisigAccountAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
