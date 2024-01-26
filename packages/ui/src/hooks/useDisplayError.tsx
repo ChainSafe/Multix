@@ -41,7 +41,7 @@ export const useDisplayError = () => {
           <br />
           You did connect an extension? Find possible solutions in our wiki{' '}
           <Linkstyled
-            href="https://github.com/ChainSafe/Multix/wiki/Why-doesn't-Multix-find-my-account%3F"
+            href="https://github.com/ChainSafe/Multix/wiki/Why-can't-Multix-find-my-account%3F"
             target="_blank"
             rel="noreferrer"
             data-cy="link-multix-wiki"
