@@ -6,6 +6,7 @@ import { Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
+import { camelcasetoString } from '../../utils'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
@@ -46,6 +47,12 @@ const MultisigView = () => {
                     <ListFieldText>Threshold</ListFieldText>
                     <ChipStyled label={`${multisig.threshold}/${multisig.signatories?.length}`} />
                   </ListElement>
+                  {multisig.type && (
+                    <ListElement data-cy="list-item-proxy-type">
+                      <ListFieldText>Proxy Type</ListFieldText>
+                      <ListFieldValue>{camelcasetoString(multisig.type)}</ListFieldValue>
+                    </ListElement>
+                  )}
                   {selectedHasProxy && (
                     <ListElement data-cy="list-item-balance">
                       <ListFieldText>Balance</ListFieldText>
@@ -132,6 +139,12 @@ const ListFieldText = styled('div')`
   font-size: 1rem;
   font-weight: 400;
   color: ${({ theme }) => theme.custom.gray[800]};
+`
+
+const ListFieldValue = styled('div')`
+  color: ${({ theme }) => theme.custom.text.secondary};
+  font-size: 1rem;
+  font-weight: 400;
 `
 
 const AccountDisplayWrapperStyled = styled('div')`
