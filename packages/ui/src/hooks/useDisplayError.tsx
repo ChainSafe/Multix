@@ -10,6 +10,7 @@ import { Center } from '../components/layout/Center'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router-dom'
+import { useNetwork } from '../contexts/NetworkContext'
 
 export const useDisplayError = () => {
   const { isExtensionError, isAccountLoading, ownAccountList, isAllowedToConnectToExtension } =
@@ -17,6 +18,7 @@ export const useDisplayError = () => {
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
   const [, setSearchParams] = useSearchParams()
+  const { selectedNetwork } = useNetwork()
 
   if (
     watchedAddresses.length === 0 &&
@@ -76,7 +78,8 @@ export const useDisplayError = () => {
         <ErrorMessageStyled>
           <ErrorOutlineIcon size={64} />
           <div data-cy="label-linked-address-not-found">
-            The linked address can't be found in your accounts or watched accounts.
+            The linked address can't be found in your accounts or watched accounts on{' '}
+            <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.
           </div>
           <Button
             data-cy="button-reset-linked-address"
@@ -118,4 +121,8 @@ const ErrorMessageStyled = styled('div')`
   button {
     margin-top: 1rem;
   }
+`
+
+const NetworkNameStyled = styled('span')`
+  text-transform: capitalize;
 `
