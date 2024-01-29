@@ -10,6 +10,7 @@ export const landingPage = {
   initializationLoader: () => cy.get('[data-cy=loader-initialization]'),
   rpcLoader: () => cy.get('[data-cy=loader-rpc-connection]'),
   polkadotWikiLink: () => cy.get('[data-cy=link-polkadot-wiki]'),
+  multixWikiLink: () => cy.get('[data-cy=link-multix-wiki]'),
   noAccountFoundError: () => cy.get('[data-cy=label-no-account-found]', { timeout: 10000 }),
   linkedAddressNotFound: () => cy.get('[data-cy=label-linked-address-not-found]'),
   resetLinkedAddressButton: () => cy.get('[data-cy=button-reset-linked-address]'),
@@ -25,5 +26,10 @@ export const landingPage = {
       'No account found. Please connect at least one in a wallet extension. More info at'
     )
     this.polkadotWikiLink().should('be.visible')
+    this.noAccountFoundError().should(
+      'contain.text',
+      'You did connect an extension? Find possible solutions in our wiki'
+    )
+    this.multixWikiLink().should('be.visible')
   }
 }
