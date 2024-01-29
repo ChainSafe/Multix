@@ -40,10 +40,10 @@ deploy:
       cmd: ['sqd', 'start-moonriver']
     - name: khala-processor
       cmd: ['sqd', 'start-khala']
-    - name: kilt-processor
-      cmd: ['sqd', 'start-kilt']
     - name: westend-processor
       cmd: ['sqd', 'start-westend']
+    # - name: kilt-processor
+    #   cmd: ['sqd', 'start-kilt']
     # - name: joystream-processor
     #   cmd: ['sqd', 'start-joystream']
     # - name: watr-processor

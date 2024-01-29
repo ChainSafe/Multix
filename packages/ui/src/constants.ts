@@ -7,17 +7,17 @@ import { phalaSVG } from './logos/phalaSVG'
 import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
 import { hydradxSVG } from './logos/hydradxSVG'
-// import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
-// import { chainsPendulumSVG } from './logos/pendulumSVG'
 import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
 import { nodesInterlaySVG } from './logos/interlaySVG'
 import { nodesMoonriverSVG } from './logos/moonriverSVG'
 import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
-// import { nodesJoystreamSVG } from './logos/joystreamSVG'
-// import { chainsWatrPNG } from './logos/watrPNG'
 import { nodesKiltPNG } from './logos/kiltPNG'
+import { chainsPendulumSVG } from './logos/pendulumSVG'
+import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
+import { nodesJoystreamSVG } from './logos/joystreamSVG'
+import { chainsWatrPNG } from './logos/watrPNG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -37,150 +37,147 @@ export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v2/gra
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
-export const networkList = {
+export const networkList: Record<string, NetworkInfo> = {
   polkadot: {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     rpcUrl: 'wss://rpc.ibp.network/polkadot',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsPolkadotCircleSVG
-  } as NetworkInfo,
+  },
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
     rpcUrl: 'wss://rpc.ibp.network/kusama',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsKusamaSVG
-  } as NetworkInfo,
+  },
   'asset-hub-dot': {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'asset-hub-polkadot',
     rpcUrl: 'wss://sys.ibp.network/statemint',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
-  } as NetworkInfo,
+  },
   'asset-hub-ksm': {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'asset-hub-kusama',
     rpcUrl: 'wss://sys.ibp.network/statemine',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
-  } as NetworkInfo,
+  },
   acala: {
     chainId: 'acala',
     explorerNetworkName: 'acala',
     rpcUrl: 'wss://acala-rpc-3.aca-api.network/ws',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsAcalaSVG
-  } as NetworkInfo,
-  // amplitude: {
-  //   chainId: 'amplitude',
-  //   explorerNetworkName: 'amplitude',
-  //   rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
-  //   wsGraphqlUrl: WS_GRAPHQL_URL,
-  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
-  //   logo: chainsAmplitudeSVG
-  // } as NetworkInfo,
+  },
   astar: {
     chainId: 'astar',
     explorerNetworkName: 'astar',
     rpcUrl: 'wss://rpc.astar.network',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAstarPNG
-  } as NetworkInfo,
+  },
   'bifrost-dot': {
     chainId: 'bifrost-polkadot',
     explorerNetworkName: 'bifrost',
     rpcUrl: 'wss://eu.bifrost-polkadot-rpc.liebi.com/ws',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesBifrostSVG
-  } as NetworkInfo,
+  },
   hydradx: {
     chainId: 'hydradx',
     explorerNetworkName: 'hydradx',
     rpcUrl: 'wss://hydradx-rpc.dwellir.com',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: hydradxSVG
-  } as NetworkInfo,
+  },
   interlay: {
     chainId: 'interlay',
     explorerNetworkName: 'interlay',
     rpcUrl: 'wss://interlay-rpc.dwellir.com',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesInterlaySVG
-  } as NetworkInfo,
+  },
   khala: {
     chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
-    wsGraphqlUrl: 'wss:///squid.subsquid.io/multix-arrow/v/v2/graphql',
     httpGraphqlUrl: 'https:///squid.subsquid.io/multix-arrow/v/v2/graphql',
     logo: nodesKhalaSVG
-  } as NetworkInfo,
-  // pendulum: {
-  //   chainId: 'pendulum',
-  //   explorerNetworkName: 'pendulum',
-  //   rpcUrl: 'wss://rpc-pendulum.prd.pendulumchain.tech',
-  //   wsGraphqlUrl: WS_GRAPHQL_URL,
-  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
-  //   logo: chainsPendulumSVG
-  // } as NetworkInfo,
+  },
   moonbeam: {
     chainId: 'moonbeam',
     explorerNetworkName: 'moonbeam',
     rpcUrl: 'wss://moonbeam-rpc.dwellir.com',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesMoonbeamSVG
-  } as NetworkInfo,
+  },
   moonriver: {
     chainId: 'moonriver',
     explorerNetworkName: 'moonriver',
     rpcUrl: 'wss://moonriver-rpc.dwellir.com',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesMoonriverSVG
-  } as NetworkInfo,
+  },
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
     rpcUrl: 'wss://api.phala.network/ws',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: phalaSVG
-  } as NetworkInfo,
+  },
   'rhala testnet': {
     chainId: 'rhala',
     explorerNetworkName: '',
     rpcUrl: 'wss://rhala-node.phala.network/ws',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKhalaSVG
-  } as NetworkInfo,
+  },
   rococo: {
     chainId: 'rococo',
     explorerNetworkName: 'rococo',
     rpcUrl: 'wss://rococo-rpc.polkadot.io',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsRococoSVG
-  } as NetworkInfo,
+  },
   westend: {
     chainId: 'westend',
     explorerNetworkName: 'westend',
     rpcUrl: 'wss://westend-rpc.polkadot.io',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesWestendColourSVG
-  } as NetworkInfo,
-  // joystream: {
-  //   chainId: 'joystream',
-  //   explorerNetworkName: 'joystream',
-  //   rpcUrl: 'wss://rpc.joystream.org',
-  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
-  //   logo: nodesJoystreamSVG
-  // },
-  // watr: {
-  //   chainId: 'watr',
-  //   explorerNetworkName: '',
-  //   rpcUrl: 'wss://watr-rpc.watr-api.network',
-  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
-  //   logo: chainsWatrPNG
-  // },
+  },
+  amplitude: {
+    chainId: 'amplitude',
+    explorerNetworkName: 'amplitude',
+    rpcUrl: 'wss://rpc-amplitude.pendulumchain.tech',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: chainsAmplitudeSVG
+  },
+  pendulum: {
+    chainId: 'pendulum',
+    explorerNetworkName: 'pendulum',
+    rpcUrl: 'wss://rpc-pendulum.prd.pendulumchain.tech',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: chainsPendulumSVG
+  },
+  joystream: {
+    chainId: 'joystream',
+    explorerNetworkName: 'joystream',
+    rpcUrl: 'wss://rpc.joystream.org',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: nodesJoystreamSVG
+  },
+  watr: {
+    chainId: 'watr',
+    explorerNetworkName: '',
+    rpcUrl: 'wss://watr-rpc.watr-api.network',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: chainsWatrPNG
+  },
   kilt: {
     chainId: 'kilt',
     explorerNetworkName: 'spiritnet',
@@ -197,7 +194,7 @@ export const networkList = {
   }
 }
 
-export const polkadotNetworksAndParachains = [
+export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'polkadot',
   'asset-hub-dot',
   'acala',
@@ -205,14 +202,28 @@ export const polkadotNetworksAndParachains = [
   'bifrost-dot',
   'hydradx',
   'interlay',
+  // 'kilt',
   'moonbeam',
-  'phala',
-  'kilt'
+  // 'pendulum',
+  'phala'
   // 'watr'
 ]
-export const kusamaNetworksAndParachains = ['kusama', 'asset-hub-ksm', 'khala', 'moonriver']
-export const soloChains = []
-export const testChains = ['rococo', 'rhala testnet', 'westend', 'local']
+export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
+  'kusama',
+  'asset-hub-ksm',
+  // 'amplitude',
+  'khala',
+  'moonriver'
+]
+export const soloChains: Partial<keyof typeof networkList>[] = [
+  //joystream
+]
+export const testChains: Partial<keyof typeof networkList>[] = [
+  'rococo',
+  'rhala testnet',
+  'westend',
+  'local'
+]
 
 export type SupportedNetworks = keyof typeof networkList
 
