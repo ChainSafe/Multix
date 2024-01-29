@@ -6,7 +6,7 @@ import { Chip, Typography } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
-import { camelcasetoString } from '../../utils/stringUtils'
+import { camelcasetoString } from '../../utils'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
@@ -50,7 +50,7 @@ const MultisigView = () => {
                   {multisig.type && (
                     <ListElement data-cy="list-item-proxy-type">
                       <ListFieldText>Proxy Type</ListFieldText>
-                      <ListFieldValue as="p">{camelcasetoString(multisig.type)}</ListFieldValue>
+                      <ListFieldValue>{camelcasetoString(multisig.type)}</ListFieldValue>
                     </ListElement>
                   )}
                   {selectedHasProxy && (
@@ -141,8 +141,8 @@ const ListFieldText = styled('div')`
   color: ${({ theme }) => theme.custom.gray[800]};
 `
 
-const ListFieldValue = styled(Typography)`
-  color: ${({ theme }) => theme.custom.gray[800]};
+const ListFieldValue = styled('div')`
+  color: ${({ theme }) => theme.custom.text.secondary};
   font-size: 1rem;
   font-weight: 400;
 `
