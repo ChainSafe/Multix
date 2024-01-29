@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { NetworkInfo, SupportedNetworks, networkList } from '../constants'
 
 const LOCALSTORAGE_SELECTED_NETWORK = 'multix.selectedNetwork'
+const DEFAULT_NETWORK = 'polkadot'
 
 type NetworkContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -25,10 +26,9 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
 
   const selectNetwork = useCallback(
     (network: string, shouldResetAccountAddress = false) => {
-      const isNewSelectedNetworkSupported = isSupportedNetwork(network)
-
-      if (!isNewSelectedNetworkSupported) {
+      if (!isSupportedNetwork(network)) {
         console.error('This network is not supported', network)
+        selectNetwork(DEFAULT_NETWORK)
         return
       }
 
@@ -64,7 +64,7 @@ const NetworkContextProvider = ({ children }: NetworkContextProps) => {
         return
       }
 
-      selectNetwork('kusama')
+      selectNetwork(DEFAULT_NETWORK)
     }
   }, [searchParams, selectNetwork, selectedNetwork])
 

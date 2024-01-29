@@ -44,7 +44,12 @@ describe('Account address in the address bar', () => {
 
   it('shows an error with 0 watched, 0 connected account, unknown linked address', () => {
     cy.visit(landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address))
-    landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
+    landingPage
+      .linkedAddressNotFound()
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on rococo"
+      )
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
   })
 
@@ -58,7 +63,12 @@ describe('Account address in the address bar', () => {
       watchedAccounts: [publicKey]
     })
 
-    landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
+    landingPage
+      .linkedAddressNotFound()
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on rococo"
+      )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')
@@ -82,7 +92,12 @@ describe('Account address in the address bar', () => {
       url: landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address),
       watchedAccounts: [purePublicKey]
     })
-    landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
+    landingPage
+      .linkedAddressNotFound()
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on rococo"
+      )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')
@@ -107,7 +122,12 @@ describe('Account address in the address bar', () => {
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
 
-    landingPage.linkedAddressNotFound().should('contain.text', "The linked address can't be found")
+    landingPage
+      .linkedAddressNotFound()
+      .should(
+        'contain.text',
+        "The linked address can't be found in your accounts or watched accounts on rococo"
+      )
     cy.url().should('include', nonMulitisigAccountAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
     topMenuItems.multiproxySelectorInputDesktop().should('have.value', '')

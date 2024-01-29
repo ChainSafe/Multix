@@ -70,18 +70,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const getaccountList = useCallback(
     async (isEthereum: boolean): Promise<void> => {
       web3Enable(DAPP_NAME)
-        .then(
-          (ext) => {
-            if (ext.length === 0) {
-              setIsExtensionError(true)
-            }
-          },
-          (reason) => {
-            console.error('ooops', reason)
+        .then((ext) => {
+          if (ext.length === 0) {
             setIsExtensionError(true)
           }
-        )
+        })
         .catch((e) => {
+          console.log('ooops web3Enable failed')
           console.error(e)
           setIsExtensionError(true)
         })
@@ -120,7 +115,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         }
       ).catch((error) => {
         setIsExtensionError(true)
-        console.error(error)
+        console.error('web3AccountSubscribe error', error)
       })
     },
     [chainInfo?.ss58Format, getAccountByAddress, selectAccount]
