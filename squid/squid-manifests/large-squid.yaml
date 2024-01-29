@@ -40,18 +40,18 @@ deploy:
       cmd: ['sqd', 'start-moonriver']
     - name: khala-processor
       cmd: ['sqd', 'start-khala']
-    - name: joystream-processor
-      cmd: ['sqd', 'start-joystream']
-    - name: kilt-processor
-      cmd: ['sqd', 'start-kilt']
+    - name: westend-processor
+      cmd: ['sqd', 'start-westend']
+    # - name: kilt-processor
+    #   cmd: ['sqd', 'start-kilt']
+    # - name: joystream-processor
+    #   cmd: ['sqd', 'start-joystream']
     # - name: watr-processor
     #   cmd: ['sqd', 'start-watr']
     # - name: pendulum-processor
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
     #   cmd: ['sqd', 'start-amplitude']
-    # - name: westend-processor
-    #   cmd: ['sqd', 'start-westend']
   api:
     cmd:
       [
