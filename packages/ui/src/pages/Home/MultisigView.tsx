@@ -6,7 +6,7 @@ import { Chip, Typography } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
-import { renderProxyTypeToText } from '../../utils/proxyTypeRendererUtils'
+import { camelcasetoString } from '../../utils/stringUtils'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
@@ -27,7 +27,6 @@ const MultisigView = () => {
       <MultisigList>
         {selectedMultiProxy &&
           selectedMultiProxy.multisigs.map((multisig) => {
-            console.log({ multisig })
             return (
               <MultisigWrapperStyled
                 selectedHasProxy={selectedHasProxy}
@@ -51,7 +50,7 @@ const MultisigView = () => {
                   {multisig.type && (
                     <ListElement data-cy="list-item-proxy-type">
                       <ListFieldText>Proxy Type</ListFieldText>
-                      <ListFieldValue as="p">{renderProxyTypeToText(multisig.type)}</ListFieldValue>
+                      <ListFieldValue as="p">{camelcasetoString(multisig.type)}</ListFieldValue>
                     </ListElement>
                   )}
                   {selectedHasProxy && (
