@@ -9,13 +9,13 @@ import { nodesAssetHubSVG } from './logos/assetHubSVG'
 import { hydradxSVG } from './logos/hydradxSVG'
 // import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
 // import { chainsPendulumSVG } from './logos/pendulumSVG'
-// import { nodesWestendColourSVG } from './logos/westend_colourSVG'
+import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
 import { nodesInterlaySVG } from './logos/interlaySVG'
 import { nodesMoonriverSVG } from './logos/moonriverSVG'
 import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
-import { nodesJoystreamSVG } from './logos/joystreamSVG'
+// import { nodesJoystreamSVG } from './logos/joystreamSVG'
 // import { chainsWatrPNG } from './logos/watrPNG'
 import { nodesKiltPNG } from './logos/kiltPNG'
 
@@ -160,20 +160,20 @@ export const networkList = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsRococoSVG
   } as NetworkInfo,
-  // westend: {
-  //   chainId: 'westend',
-  //   explorerNetworkName: 'westend',
-  //   rpcUrl: 'wss://westend-rpc.polkadot.io',
-  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
-  //   logo: nodesWestendColourSVG
-  // } as NetworkInfo,
-  joystream: {
-    chainId: 'joystream',
-    explorerNetworkName: 'joystream',
-    rpcUrl: 'wss://rpc.joystream.org',
+  westend: {
+    chainId: 'westend',
+    explorerNetworkName: 'westend',
+    rpcUrl: 'wss://westend-rpc.polkadot.io',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesJoystreamSVG
-  },
+    logo: nodesWestendColourSVG
+  } as NetworkInfo,
+  // joystream: {
+  //   chainId: 'joystream',
+  //   explorerNetworkName: 'joystream',
+  //   rpcUrl: 'wss://rpc.joystream.org',
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesJoystreamSVG
+  // },
   // watr: {
   //   chainId: 'watr',
   //   explorerNetworkName: '',
@@ -211,8 +211,8 @@ export const polkadotNetworksAndParachains = [
   // 'watr'
 ]
 export const kusamaNetworksAndParachains = ['kusama', 'asset-hub-ksm', 'khala', 'moonriver']
-export const soloChains = ['joystream']
-export const testChains = ['rococo', 'rhala testnet', 'local']
+export const soloChains = []
+export const testChains = ['rococo', 'rhala testnet', 'westend', 'local']
 
 export type SupportedNetworks = keyof typeof networkList
 

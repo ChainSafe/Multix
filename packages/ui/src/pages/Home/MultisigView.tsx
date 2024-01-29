@@ -6,7 +6,7 @@ import { Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
-import { camelcasetoString } from '../../utils'
+import { camelcaseToString } from '../../utils'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
@@ -50,7 +50,7 @@ const MultisigView = () => {
                   {multisig.type && (
                     <ListElement data-cy="list-item-proxy-type">
                       <ListFieldText>Proxy Type</ListFieldText>
-                      <ListFieldValue>{camelcasetoString(multisig.type)}</ListFieldValue>
+                      <ListFieldValue>{camelcaseToString(multisig.type)}</ListFieldValue>
                     </ListElement>
                   )}
                   {selectedHasProxy && (
@@ -78,10 +78,6 @@ const HeaderStyled = styled('header')`
     margin-top: 0;
   }
 `
-
-// const BoxStyled = styled(Box)`
-//   display: flex;
-// `
 
 const MultisigList = styled('div')`
   & > :not(:first-of-type) {
@@ -115,7 +111,7 @@ const MultisigWrapperStyled = styled('div')<{ selectedHasProxy: boolean }>`
     ${({ theme, selectedHasProxy }) => (selectedHasProxy ? theme.custom.text.borderColor : 'none')};
   border-radius: ${({ theme, selectedHasProxy }) =>
     selectedHasProxy ? theme.custom.borderRadius : '0'};
-  padding: ${({ theme, selectedHasProxy }) => (selectedHasProxy ? '1rem 0.75rem' : '0')};
+  padding: ${({ selectedHasProxy }) => (selectedHasProxy ? '1rem 0.75rem' : '0')};
 
   &:not(:first-of-type) {
     margin-bottom: 0.5rem;
