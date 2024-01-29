@@ -40,7 +40,6 @@ When you launch the front-end, for it to point to the urls specified in your `.e
 VITE_NETWORK_NAME="kusama" # this name is needed to build explorer links
 VITE_WS_PROVIDER="wss://rpc.ibp.network/kusama" # the front-end will connect to this blockchain node
 VITE_GRAPHQL_HTTP_PROVIDER="http://localhost:4350/graphql" # url queried for the indexer queries
-VITE_WALLETCONNECT_PROJECT_ID="" # a WalletConnect project id
 ```
 
 ## Hacky watch signatory account
