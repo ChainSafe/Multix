@@ -7,22 +7,23 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 describe('Set an identity', () => {
-  // it('Does not have the identity option if the pallet is not present', () => {
-  //   const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
-  //   cy.setupAndVisit({
-  //     url: landingPageNetwork('joystream'),
-  //     extensionConnectionAllowed: true,
-  //     injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
-  //   })
-  //   multisigPage.optionsMenuButton().click()
-  //   multisigPage.setIdentityMenuOption().should('not.exist')
+  // joystream network isn't supported any more.
+  it.skip('Does not have the identity option if the pallet is not present', () => {
+    const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
+    cy.setupAndVisit({
+      url: landingPageNetwork('joystream'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+    })
+    multisigPage.optionsMenuButton().click()
+    multisigPage.setIdentityMenuOption().should('not.exist')
 
-  //   //click outside to close the menu
-  //   cy.get('body').click(0, 0)
-  //   multisigPage.newTransactionButton().click()
-  //   sendTxModal.selectEasySetup().should('contain', 'Send tokens').click()
-  //   sendTxModal.selectionEasySetupSetIdentity().should('not.exist')
-  // })
+    //click outside to close the menu
+    cy.get('body').click(0, 0)
+    multisigPage.newTransactionButton().click()
+    sendTxModal.selectEasySetup().should('contain', 'Send tokens').click()
+    sendTxModal.selectionEasySetupSetIdentity().should('not.exist')
+  })
 
   it('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
