@@ -2,7 +2,7 @@ import { Alert, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { TextField } from '../library'
 import CallInfo from '../CallInfo'
@@ -15,7 +15,7 @@ import { u8aToHex } from '@polkadot/util'
 interface Props {
   className?: string
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
-  onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
   isProxySelected: boolean
 }
 

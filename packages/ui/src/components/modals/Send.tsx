@@ -47,7 +47,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
-  const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState('')
+  const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState<ReactNode | string>('')
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { addToast } = useToasts()
   const possibleOrigin = useMemo(() => {
@@ -63,6 +63,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
+  console.log('easyOptionErrorMessage', easyOptionErrorMessage)
   const hasIdentityPallet = useHasIdentityPallet()
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
