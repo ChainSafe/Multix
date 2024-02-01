@@ -44,7 +44,8 @@ describe('Unknown Transaction', () => {
       .should('be.visible')
       .within(() => {
         txSigningModal.callHashLabel().should('contain.text', expectedCallHash)
-        txSigningModal.approveButton().should('not.be.enabled')
+        txSigningModal.approveButton().should('not.exist')
+        txSigningModal.executeButton().should('be.disabled')
         txSigningModal.rejectButton().should('not.exist')
         // now provide call data and ensure we see the call info and approve button enabled
         txSigningModal.callDataInput().type(callData)
