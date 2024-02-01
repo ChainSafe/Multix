@@ -5,8 +5,10 @@ import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
+import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 
 const testAccount1Address = testAccounts['Multisig Member Account 1'].address
+const testAccount2Address = testAccounts['Multisig Member Account 2'].address
 
 const fillAndSubmitTransactionForm = () => {
   sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
@@ -19,7 +21,10 @@ describe('Perform transactions', () => {
     cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
+      injectExtensionWithAccounts: [
+        testAccounts['Multisig Member Account 1'],
+        testAccounts['Multisig Member Account 2']
+      ]
     })
   })
 
@@ -67,5 +72,29 @@ describe('Perform transactions', () => {
       notifications.notificationWrapper().should('have.length', 1)
       notifications.notificationWrapper().should('contain', 'broadcast')
     })
+
+    multisigPage
+      .transactionList()
+      .should('be.visible')
+      .within(() => {
+        multisigPage.pendingTransactionItem(15000).within(() => {
+          multisigPage.reviewButton().click()
+        })
+      })
+
+    // tx can be rejected by the proposer
+    txSigningModal.approveButton().should('not.exist')
+    txSigningModal.executeButton().should('not.exist')
+    txSigningModal.rejectButton().should('be.visible')
+    txSigningModal.rejectButton().should('not.be.disabled')
+
+    // tx can be approved by other signatory
+    txSigningModal
+      .signerInput()
+      .type(`{selectall}{del}${testAccount2Address.slice(0, 4)}{downArrow}{enter}`)
+    // tx can be approved by another signer
+    txSigningModal.approveButton().should('be.visible')
+    txSigningModal.executeButton().should('not.exist')
+    txSigningModal.rejectButton().should('not.exist')
   })
 })

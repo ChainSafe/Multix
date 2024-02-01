@@ -20,6 +20,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
+import { debounce } from '../../utils/debounce'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -42,6 +43,7 @@ const ProposalSigning = ({
   const { getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
+  const [debouncedAddedCallData, setDebouncedAddedCallData] = useState<HexString | undefined>()
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const multisig = useMemo(
@@ -55,7 +57,7 @@ const ProposalSigning = ({
     [proposalData, selectedAccount]
   )
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
-    proposalData.callData || addedCallData
+    proposalData.callData || debouncedAddedCallData
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: new BN(0),
@@ -89,6 +91,12 @@ const ProposalSigning = ({
 
   const signCallback = useSigningCallback({ onSuccess, onSubmitting })
   const { getSortAddress } = useGetSortAddress()
+
+  const debouncedCallDatahange = useMemo(
+    () => debounce(setDebouncedAddedCallData, 300),
+    [setDebouncedAddedCallData]
+  )
+
   useEffect(() => {
     if (isProposerSelected) {
       setAddedCallData(undefined)
@@ -265,8 +273,9 @@ const ProposalSigning = ({
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setErrorMessage('')
       setAddedCallData(event.target.value as HexString)
+      debouncedCallDatahange(event.target.value as HexString)
     },
-    []
+    [debouncedCallDatahange]
   )
 
   return (
@@ -323,7 +332,7 @@ const ProposalSigning = ({
               </span>
             </HashGridStyled>
           </>
-          {!isProposerSelected && !proposalData.callData && (
+          {!proposalData.callData && (
             <>
               <Grid
                 item

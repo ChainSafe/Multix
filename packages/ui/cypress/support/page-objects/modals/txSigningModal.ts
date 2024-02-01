@@ -5,5 +5,6 @@ export const txSigningModal = {
   executeButton: () => cy.get('[data-cy=button-execute-tx]'),
   rejectButton: () => cy.get('[data-cy=button-reject-tx]'),
   callDataInput: () => cy.get('[data-cy=input-call-data]'),
-  callInfoContainer: () => cy.get('[data-cy=container-call-info]')
+  callInfoContainer: () => cy.get('[data-cy=container-call-info]'),
+  signerInput: () => cy.get('[data-cy=input-account-address]')
 }
