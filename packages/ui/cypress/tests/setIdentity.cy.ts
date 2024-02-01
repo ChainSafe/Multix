@@ -7,7 +7,8 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 describe('Set an identity', () => {
-  it('Does not have the identity option if the pallet is not present', () => {
+  // joystream network isn't supported any more.
+  it.skip('Does not have the identity option if the pallet is not present', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
     cy.setupAndVisit({
       url: landingPageNetwork('joystream'),

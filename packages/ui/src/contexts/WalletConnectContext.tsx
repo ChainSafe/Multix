@@ -5,6 +5,7 @@ import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet'
 
 export type WalletConnect = { [address: string]: string }
 
+const WALLETCONNECT_PROJECT_ID = '3cb99365b226c0f1918b24cbc2b84d49'
 type WalletConnectContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
@@ -25,7 +26,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
     () =>
       new Core({
         logger: undefined, // use 'debug' to get more insight
-        projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
+        projectId: WALLETCONNECT_PROJECT_ID
         // relayUrl: relayerRegionURL ?? import.meta.env.VITE_WALLETCONNECT_PUBLIC_RELAY_URL
       }),
     []

@@ -21,13 +21,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: '16'
+          node-version: 20
           cache-dependency-path: 'yarn.lock'
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn build
-        env:
-          VITE_WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
