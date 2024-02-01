@@ -65,6 +65,11 @@ const ProposalSigning = ({
     () => (proposalData.info?.approvals || []).length >= threshold - 1,
     [proposalData.info?.approvals, threshold]
   )
+  const mustBeExecuted = useMemo(
+    () => (proposalData.info?.approvals || []).length >= threshold,
+    [proposalData.info?.approvals, threshold]
+  )
+
   const mustProvideCallData = useMemo(() => {
     // the proposer can only reject or execute the last call,
     // if it's not the last call, then we don't need the calldata
@@ -187,7 +192,7 @@ const ProposalSigning = ({
 
       // this is only relevant if we didn't know that we had
       // reached the threshold before
-      const shouldSubmit = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
+      const shouldExecute = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
 
       setIsSubmitting(true)
       let tx: SubmittableExtrinsic<'promise'>
@@ -202,7 +207,7 @@ const ProposalSigning = ({
         )
 
         // If we can submit the proposal and have the call data
-      } else if (shouldSubmit && callInfo?.call && callInfo?.weight) {
+      } else if (shouldExecute && callInfo?.call && callInfo?.weight) {
         tx = getAsMultiTx({
           api,
           threshold,
@@ -213,7 +218,7 @@ const ProposalSigning = ({
         })
 
         // if we can't submit yet (more signatures required), all we need is the call hash
-      } else if (!shouldSubmit && proposalData.hash) {
+      } else if (!shouldExecute && proposalData.hash) {
         tx = api.tx.multisig.approveAsMulti(
           threshold,
           otherSigners,
@@ -405,16 +410,16 @@ const ProposalSigning = ({
                 Reject
               </Button>
             )}
-            {!isGettingCallInfo && (!isProposerSelected || hasReachedThreshold) && (
+            {!isGettingCallInfo && (!isProposerSelected || mustBeExecuted) && (
               <Button
                 variant="primary"
                 onClick={() => onSign(true)}
                 disabled={
                   !!errorMessage || isSubmitting || (mustProvideCallData && !callInfo?.call)
                 }
-                data-cy={`button-${hasReachedThreshold ? 'execute' : 'approve'}-tx`}
+                data-cy={`button-${mustBeExecuted ? 'execute' : 'approve'}-tx`}
               >
-                {hasReachedThreshold ? 'Execute' : 'Approve'}
+                {mustBeExecuted ? 'Execute' : 'Approve'}
               </Button>
             )}
             {isGettingCallInfo && (

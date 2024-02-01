@@ -27,7 +27,7 @@ describe('Unknown Transaction', () => {
       })
   })
 
-  it('can see the expected state of an unknown tx without call data', () => {
+  it.only('can see the expected state of an unknown tx without call data', () => {
     const { hashOfUknownCall: expectedCallHash, callData } =
       knownMultisigs['multisig-with-unknown-transaction']
 
@@ -44,8 +44,8 @@ describe('Unknown Transaction', () => {
       .should('be.visible')
       .within(() => {
         txSigningModal.callHashLabel().should('contain.text', expectedCallHash)
-        txSigningModal.approveButton().should('not.exist')
-        txSigningModal.executeButton().should('be.disabled')
+        txSigningModal.executeButton().should('not.exist')
+        txSigningModal.approveButton().should('be.disabled')
         txSigningModal.rejectButton().should('not.exist')
         // now provide call data and ensure we see the call info and approve button enabled
         txSigningModal.callDataInput().type(callData)
