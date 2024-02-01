@@ -72,7 +72,7 @@ describe('Unknown Transaction', () => {
     const callData =
       '0x0403000d8cb5267b1ff606b8c087f546f98390af50d38951bfcc0f1fd8555c707221a302286bee'
     multisigPage
-      .pendingTransactionItem()
+      .pendingTransactionItem(8000)
       .eq(0)
       .within(() => {
         multisigPage.pendingTransactionCallName().should('contain.text', 'Unknown call')
