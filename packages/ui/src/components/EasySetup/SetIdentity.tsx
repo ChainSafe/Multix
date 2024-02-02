@@ -126,10 +126,6 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     address: from
   })
 
-  // console.log('hasOriginEnoughFunds', hasOriginEnoughFunds)
-  // console.log('setIdentityReservedFunds', setIdentityReservedFunds)
-  // console.log('from', from)
-
   useEffect(() => {
     if (fieldtooLongError.length > 0) {
       onSetErrorMessage(`A field exceeds the ${MAX_ALLOWED_VAL_LENGTH} character limit`)
@@ -157,8 +153,8 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
         reservedString
       )
 
-      console.log('set error', requiredBalanceString)
       onSetErrorMessage(errorWithReservedFunds)
+      return
     }
 
     onSetErrorMessage('')
