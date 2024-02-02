@@ -60,8 +60,14 @@ describe('Set an identity', () => {
     sendTxModal.setIdentityFieldElement('legal', 'label').should('have.class', 'Mui-error')
     sendTxModal.buttonSend().should('be.disabled')
 
+    // too many bytes should show the From error
+    sendTxModal.setIdentityField('legal').type('{selectall}{del}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+    sendTxModal.setIdentityFieldElement('legal', 'label').should('not.have.class', 'Mui-error')
+    sendTxModal.sendTxError().should('contain', `The "From" account doesn't have`)
+    sendTxModal.buttonSend().should('be.disabled')
+
     // removing should remove the error
-    sendTxModal.setIdentityField('legal').type('{selectall}{del}leeg')
+    sendTxModal.setIdentityField('legal').type('{selectall}{del}enough')
     sendTxModal.sendTxError().should('not.exist')
     sendTxModal.setIdentityFieldElement('legal', 'label').should('not.have.class', 'Mui-error')
     sendTxModal.buttonSend().should('be.enabled')
