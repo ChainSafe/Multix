@@ -20,6 +20,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
+import { debounce } from '../../utils/debounce'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -42,35 +43,46 @@ const ProposalSigning = ({
   const { getMultisigByAddress } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
+  const [debouncedAddedCallData, setDebouncedAddedCallData] = useState<HexString | undefined>()
   const [errorMessage, setErrorMessage] = useState('')
   const { addToast } = useToasts()
   const multisig = useMemo(
     () => getMultisigByAddress(proposalData.from),
     [getMultisigByAddress, proposalData]
   )
-  const threshold = useMemo(() => multisig?.threshold, [multisig])
+  const threshold = useMemo(() => multisig?.threshold || 0, [multisig])
   const signatories = useMemo(() => multisig?.signatories || [], [multisig])
   const isProposerSelected = useMemo(
     () => proposalData?.info?.depositor === selectedAccount?.address,
     [proposalData, selectedAccount]
   )
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
-    proposalData.callData || addedCallData
+    proposalData.callData || debouncedAddedCallData
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: new BN(0),
     address: selectedAccount?.address
   })
-  const mustSubmitCallData = useMemo(() => {
-    // the proposer can only reject, and the calldata isn't needed for this
-    if (isProposerSelected) return false
+  const hasReachedThreshold = useMemo(
+    () => (proposalData.info?.approvals || []).length >= threshold - 1,
+    [proposalData.info?.approvals, threshold]
+  )
+  const mustBeExecuted = useMemo(
+    () => (proposalData.info?.approvals || []).length >= threshold,
+    [proposalData.info?.approvals, threshold]
+  )
 
-    if (!threshold || !proposalData.info?.approvals) return true
+  const mustProvideCallData = useMemo(() => {
+    // the proposer can only reject or execute the last call,
+    // if it's not the last call, then we don't need the calldata
+    if (isProposerSelected && !hasReachedThreshold) return false
+
+    if (!threshold || !proposalData.callData) return true
 
     // if it's the last approval call, we must use asMulti and have the call data
     // either from the chain, or from users
-    return proposalData.info?.approvals.length >= threshold - 1
-  }, [isProposerSelected, proposalData, threshold])
+    return hasReachedThreshold
+  }, [hasReachedThreshold, isProposerSelected, proposalData.callData, threshold])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -79,6 +91,12 @@ const ProposalSigning = ({
 
   const signCallback = useSigningCallback({ onSuccess, onSubmitting })
   const { getSortAddress } = useGetSortAddress()
+
+  const debouncedCallDatahange = useMemo(
+    () => debounce(setDebouncedAddedCallData, 300),
+    [setDebouncedAddedCallData]
+  )
+
   useEffect(() => {
     if (isProposerSelected) {
       setAddedCallData(undefined)
@@ -153,32 +171,36 @@ const ProposalSigning = ({
       }
 
       // if the callData is needed, but none was supplied or found
-      if (mustSubmitCallData && !callInfo?.call) {
+      if (mustProvideCallData && !callInfo?.call) {
         const error = 'No callData found or supplied'
         console.error(error)
         setErrorMessage(error)
         return
       }
 
-      // In case the tx has been approved between the last couple blocks
-      // and the tx in the indexer hasn't been updated we should query the latest state
-      // right before sending the tx to have the right amount of signers.
-      const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
-
       let amountOfSigner = 0
-      callStorage.some((storage) => {
-        const hash = (storage[0].toHuman() as Array<string>)[1]
-        if (proposalData.hash === hash) {
-          const info = storage[1].toJSON() as unknown as MultisigStorageInfo
-          amountOfSigner = info.approvals.length
+      if (!hasReachedThreshold) {
+        // In case the tx has been approved between the last couple blocks
+        // and the tx in the indexer hasn't been updated we should query the latest state
+        // right before sending the tx to have the right amount of signers.
+        const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
 
-          return true
-        }
+        callStorage.some((storage) => {
+          const hash = (storage[0].toHuman() as Array<string>)[1]
+          if (proposalData.hash === hash) {
+            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            amountOfSigner = info.approvals.length
 
-        return false
-      })
+            return true
+          }
 
-      const shouldSubmit = amountOfSigner >= threshold - 1
+          return false
+        })
+      }
+
+      // this is only relevant if we didn't know that we had
+      // reached the threshold before
+      const shouldExecute = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
 
       setIsSubmitting(true)
       let tx: SubmittableExtrinsic<'promise'>
@@ -193,7 +215,7 @@ const ProposalSigning = ({
         )
 
         // If we can submit the proposal and have the call data
-      } else if (shouldSubmit && callInfo?.call && callInfo?.weight) {
+      } else if (shouldExecute && callInfo?.call && callInfo?.weight) {
         tx = getAsMultiTx({
           api,
           threshold,
@@ -204,7 +226,7 @@ const ProposalSigning = ({
         })
 
         // if we can't submit yet (more signatures required), all we need is the call hash
-      } else if (!shouldSubmit && proposalData.hash) {
+      } else if (!shouldExecute && proposalData.hash) {
         tx = api.tx.multisig.approveAsMulti(
           threshold,
           otherSigners,
@@ -236,8 +258,9 @@ const ProposalSigning = ({
       api,
       selectedAccount,
       multisig,
-      mustSubmitCallData,
+      mustProvideCallData,
       callInfo,
+      hasReachedThreshold,
       selectedSigner,
       signCallback,
       addedCallData,
@@ -250,8 +273,9 @@ const ProposalSigning = ({
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setErrorMessage('')
       setAddedCallData(event.target.value as HexString)
+      debouncedCallDatahange(event.target.value as HexString)
     },
-    []
+    [debouncedCallDatahange]
   )
 
   return (
@@ -308,7 +332,7 @@ const ProposalSigning = ({
               </span>
             </HashGridStyled>
           </>
-          {!isProposerSelected && !proposalData.callData && (
+          {!proposalData.callData && (
             <>
               <Grid
                 item
@@ -322,7 +346,7 @@ const ProposalSigning = ({
               >
                 <TextField
                   className="addedCallData"
-                  label={`Call data ${mustSubmitCallData ? '' : '(optional)'}`}
+                  label={`Call data ${mustProvideCallData ? '' : '(optional)'}`}
                   onChange={onAddedCallDataChange}
                   value={addedCallData || ''}
                   fullWidth
@@ -381,10 +405,9 @@ const ProposalSigning = ({
               </Grid>
             </>
           )}
-          <Grid
+          <ButtonContainerStyled
             item
             xs={12}
-            className="buttonContainer"
           >
             {!isGettingCallInfo && isProposerSelected && (
               <Button
@@ -396,14 +419,16 @@ const ProposalSigning = ({
                 Reject
               </Button>
             )}
-            {!isGettingCallInfo && !isProposerSelected && (
+            {!isGettingCallInfo && (!isProposerSelected || mustBeExecuted) && (
               <Button
                 variant="primary"
                 onClick={() => onSign(true)}
-                disabled={!!errorMessage || isSubmitting || (mustSubmitCallData && !callInfo?.call)}
-                data-cy="button-approve-tx"
+                disabled={
+                  !!errorMessage || isSubmitting || (mustProvideCallData && !callInfo?.call)
+                }
+                data-cy={`button-${mustBeExecuted ? 'execute' : 'approve'}-tx`}
               >
-                Approve
+                {mustBeExecuted ? 'Execute' : 'Approve'}
               </Button>
             )}
             {isGettingCallInfo && (
@@ -411,7 +436,7 @@ const ProposalSigning = ({
                 <CircularProgress size="1rem" />
               </Button>
             )}
-          </Grid>
+          </ButtonContainerStyled>
         </Grid>
       </DialogContent>
     </Dialog>
@@ -433,20 +458,22 @@ const HashGridStyled = styled(Grid)`
     font-size: small;
   }
 `
-export default styled(ProposalSigning)(
-  ({ theme }) => `
-  .buttonContainer {
-    text-align: right;
-    margin-top: 1rem;
-  }
 
-  .addedCallData {
+const ButtonContainerStyled = styled(Grid)`
+  text-align: right;
+  margin-top: 1rem;
+
+  button:not(:first-of-type) {
+    margin-left: 1rem;
+  }
+`
+export default styled(ProposalSigning)`
+  .buttonContainer .addedCallData {
     margin-top: 1rem;
   }
 
   .errorMessage {
     margin-top: 0.5rem;
-    color: ${theme.custom.error};
+    color: ${({ theme }) => theme.custom.error};
   }
 `
-)

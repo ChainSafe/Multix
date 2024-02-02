@@ -1,7 +1,7 @@
 import { Box, CircularProgress, Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { usePendingTx } from '../../hooks/usePendingTx'
-import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { MultisigAggregated, useMultiProxy } from '../../contexts/MultiProxyContext'
 import { getDifference, getIntersection } from '../../utils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
@@ -56,20 +56,22 @@ const TransactionList = ({ className }: Props) => {
               <DateContainerStyled>{date}</DateContainerStyled>
               {aggregatedData.map((agg, index) => {
                 const { callData, info, from } = agg
-                const multisig = getMultisigByAddress(from)
+                const { threshold, signatories } =
+                  getMultisigByAddress(from) ||
+                  ({ threshold: undefined, signatories: undefined } as MultisigAggregated)
 
                 // if the "from"  is not a multisig from the
                 // currently selected multiProxy or we have no info
-                if (!info || !multisig?.threshold) {
+                if (!info || !threshold) {
                   return null
                 }
 
-                const multisigSignatories = multisig?.signatories || []
+                const multisigSignatories = signatories || []
                 // if the threshold is met, but the transaction is still not executed
                 // it means we need one signtory to submit with asMulti
                 // so any signatory should be able to approve (again)
                 const neededSigners =
-                  info?.approvals.length >= multisig.threshold
+                  info?.approvals.length >= threshold
                     ? multisigSignatories
                     : getDifference(multisigSignatories, info?.approvals)
                 const possibleSigners = getIntersection(neededSigners, ownAddressList)
@@ -88,7 +90,7 @@ const TransactionList = ({ className }: Props) => {
                     onSuccess={refresh}
                     possibleSigners={possibleSigners}
                     multisigSignatories={multisigSignatories}
-                    threshold={multisig.threshold}
+                    threshold={threshold}
                   />
                 )
               })}
