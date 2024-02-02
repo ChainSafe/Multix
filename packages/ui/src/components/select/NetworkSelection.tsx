@@ -74,8 +74,12 @@ const NetworkSelection = () => {
       {renderNetworks(polkadotNetworksAndParachains)}
       <ListSubheader>Kusama & Parachains</ListSubheader>
       {renderNetworks(kusamaNetworksAndParachains)}
-      <ListSubheader>Solo chains</ListSubheader>
-      {renderNetworks(soloChains)}
+      {soloChains.length && (
+        <>
+          <ListSubheader>Solo chains</ListSubheader>
+          {renderNetworks(soloChains)}
+        </>
+      )}
       <ListSubheader>Testnets</ListSubheader>
       {renderNetworks(testChains)}
     </SelectStyled>

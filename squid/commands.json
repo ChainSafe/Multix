@@ -186,6 +186,10 @@
         "dotenv_config_path=assets/envs/.env.moonbeam"
       ]
     },
+    "start-kilt": {
+      "description": "starts the indexer with kilt",
+      "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.kilt"]
+    },
     "start-joystream": {
       "description": "starts the indexer with joystream",
       "cmd": [
@@ -195,10 +199,6 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.joystream"
       ]
-    },
-    "start-kilt": {
-      "description": "starts the indexer with kilt",
-      "cmd": ["node", "-r", "dotenv/config", "lib/main", "dotenv_config_path=assets/envs/.env.kilt"]
     }
   }
 }

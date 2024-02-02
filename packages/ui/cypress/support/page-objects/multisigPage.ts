@@ -21,7 +21,8 @@ export const multisigPage = {
 
   // transaction list elements
   transactionList: () => cy.get('[data-cy=container-transaction-list]', { timeout: 20000 }),
-  pendingTransactionItem: () => cy.get('[data-cy=container-pending-tx-item]'),
+  pendingTransactionItem: (timeout = 4000) =>
+    cy.get('[data-cy=container-pending-tx-item]', { timeout }),
   pendingTransactionCallName: () => cy.get('[data-cy=label-call-name]'),
   unknownCallIcon: () => cy.get('[data-cy=icon-unknown-call]'),
   unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]')
