@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import BN from 'bn.js'
@@ -16,7 +16,7 @@ interface Props {
   className?: string
   from: string
   onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
-  onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {

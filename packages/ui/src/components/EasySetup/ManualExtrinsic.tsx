@@ -11,7 +11,7 @@ import {
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
 import { getGlobalMaxValue, inputToBn } from '../../utils'
@@ -22,7 +22,7 @@ interface Props {
   extrinsicIndex?: string
   className?: string
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>, key?: string) => void
-  onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
   onSelectFromCallData: () => void
   hasErrorMessage: boolean
 }

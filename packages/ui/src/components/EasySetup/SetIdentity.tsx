@@ -2,19 +2,23 @@ import { Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { TextField } from '../library'
 import { useIdentity } from '../../hooks/useIdentity'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { getErrorMessageReservedFunds } from '../../utils'
+import { formatBnBalance } from '../../utils/formatBnBalance'
+import { useSetIdentityReservedFunds } from '../../hooks/useSetIdentityReservedFunds'
 
 interface Props {
   className?: string
   from: string
   onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
-  onSetErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
 }
 
-type IdentityFields = {
+export type IdentityFields = {
   display: string | undefined
   legal: string | undefined
   web: string | undefined
@@ -115,6 +119,13 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     return res
   }, [identityFields])
 
+  const { reserved: setIdentityReservedFunds } = useSetIdentityReservedFunds(identityFields)
+
+  const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckBalance({
+    min: setIdentityReservedFunds,
+    address: from
+  })
+
   useEffect(() => {
     if (fieldtooLongError.length > 0) {
       onSetErrorMessage(`A field exceeds the ${MAX_ALLOWED_VAL_LENGTH} character limit`)
@@ -126,8 +137,36 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       return
     }
 
+    if (!setIdentityReservedFunds.isZero() && !hasOriginEnoughFunds) {
+      const requiredBalanceString = formatBnBalance(
+        setIdentityReservedFunds,
+        chainInfo?.tokenDecimals,
+        { tokenSymbol: chainInfo?.tokenSymbol }
+      )
+
+      const reservedString = formatBnBalance(setIdentityReservedFunds, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
+      const errorWithReservedFunds = getErrorMessageReservedFunds(
+        '"From" account',
+        requiredBalanceString,
+        reservedString
+      )
+
+      onSetErrorMessage(errorWithReservedFunds)
+      return
+    }
+
     onSetErrorMessage('')
-  }, [fieldtooLongError, hasChangedAtLeastAField, identityFields, onSetErrorMessage])
+  }, [
+    chainInfo,
+    fieldtooLongError,
+    hasChangedAtLeastAField,
+    hasOriginEnoughFunds,
+    identityFields,
+    onSetErrorMessage,
+    setIdentityReservedFunds
+  ])
 
   useEffect(() => {
     if (chainIdentity) {
