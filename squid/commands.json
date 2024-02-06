@@ -199,6 +199,16 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.joystream"
       ]
+    },
+    "start-paseo": {
+      "description": "starts the indexer with paseo",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.paseo"
+      ]
     }
   }
 }

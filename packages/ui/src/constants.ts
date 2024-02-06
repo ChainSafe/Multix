@@ -18,6 +18,7 @@ import { chainsPendulumSVG } from './logos/pendulumSVG'
 import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
 import { nodesJoystreamSVG } from './logos/joystreamSVG'
 import { chainsWatrPNG } from './logos/watrPNG'
+import paseoSVG from './logos/paseoSVG.svg'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -150,6 +151,13 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesWestendColourSVG
   },
+  paseo: {
+    chainId: 'paseo',
+    explorerNetworkName: '',
+    rpcUrl: 'wss://paseo.rpc.amforc.com',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: paseoSVG
+  },
   amplitude: {
     chainId: 'amplitude',
     explorerNetworkName: 'amplitude',
@@ -220,6 +228,7 @@ export const soloChains: Partial<keyof typeof networkList>[] = [
 ]
 export const testChains: Partial<keyof typeof networkList>[] = [
   'rococo',
+  'paseo',
   'rhala testnet',
   'westend',
   'local'
