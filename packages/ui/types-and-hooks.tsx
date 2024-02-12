@@ -810,6 +810,7 @@ export type PureByIdsSubscriptionVariables = Exact<{
 export type PureByIdsSubscription = { __typename?: 'Subscription', accounts: Array<{ __typename?: 'Account', address: string, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }> } }> }> };
 
 
+
 export const MultisigByIdDocument = `
     query MultisigById($id: String!) {
   accounts(where: {id_eq: $id, isMultisig_eq: true}) {
@@ -824,18 +825,21 @@ export const MultisigByIdDocument = `
   }
 }
     `;
+
 export const useMultisigByIdQuery = <
       TData = MultisigByIdQuery,
       TError = unknown
     >(
       variables: MultisigByIdQueryVariables,
       options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
-    ) =>
-    useQuery<MultisigByIdQuery, TError, TData>(
+    ) => {
+    
+    return useQuery<MultisigByIdQuery, TError, TData>(
       ['MultisigById', variables],
       fetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument, variables),
       options
-    );
+    )};
+
 export const MultisigCallsByMultisigIdDocument = `
     subscription MultisigCallsByMultisigId($multisigs: [String!]) {
   multisigCalls(
@@ -865,18 +869,21 @@ export const MultisigsByMultisigOrPureSignatoriesDocument = `
   }
 }
     `;
+
 export const useMultisigsByMultisigOrPureSignatoriesQuery = <
       TData = MultisigsByMultisigOrPureSignatoriesQuery,
       TError = unknown
     >(
       variables?: MultisigsByMultisigOrPureSignatoriesQueryVariables,
       options?: UseQueryOptions<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>
-    ) =>
-    useQuery<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>(
+    ) => {
+    
+    return useQuery<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>(
       variables === undefined ? ['multisigsByMultisigOrPureSignatories'] : ['multisigsByMultisigOrPureSignatories', variables],
       fetchData<MultisigsByMultisigOrPureSignatoriesQuery, MultisigsByMultisigOrPureSignatoriesQueryVariables>(MultisigsByMultisigOrPureSignatoriesDocument, variables),
       options
-    );
+    )};
+
 export const MultisigsBySignatoriesOrWatchedDocument = `
     subscription MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds: [String!]) {
   accountMultisigs(

@@ -1,6 +1,6 @@
 {
   "overwrite": true,
-  "schema": "http://localhost:4350/graphql",
+  "schema": "https://squid.subsquid.io/multix-arrow/v/v2/graphql",
   "documents": "src/**/*.graphql",
   "generates": {
     "src/gql/": {
