@@ -102,8 +102,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       if (!who) return false
 
       const account = typeof who === 'string' ? getMultiProxyByAddress(who) : who
-      return !account?.multisigs.some(
-        (multisig) => multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
+      return !account?.multisigs.some((multisig) =>
+        multisig.signatories?.some((signatory) => ownAddressList.includes(signatory))
       )
     },
     [getMultiProxyByAddress, ownAddressList]
