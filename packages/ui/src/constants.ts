@@ -34,7 +34,7 @@ export interface NetworkInfo {
   logo: string
 }
 
-export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v2/graphql`
+export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v3/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
@@ -106,7 +106,7 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'khala',
     explorerNetworkName: 'khala',
     rpcUrl: 'wss://khala-api.phala.network/ws',
-    httpGraphqlUrl: 'https:///squid.subsquid.io/multix-arrow/v/v2/graphql',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKhalaSVG
   },
   moonbeam: {
