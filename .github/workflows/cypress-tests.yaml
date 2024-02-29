@@ -4,6 +4,7 @@ on:
     paths:
       - 'packages/ui/**/*'
       - '.github/workflows/cypress-tests.yaml'
+      - 'chopsticks-config.yml'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
