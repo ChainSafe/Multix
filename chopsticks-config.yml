@@ -1,4 +1,4 @@
-endpoint: wss://rpc-kusama.luckyfriday.io
+endpoint: wss://kusama.rpc.amforc.com
 mock-signature-host: true
 block: 20487320
 db: ./db.sqlite
