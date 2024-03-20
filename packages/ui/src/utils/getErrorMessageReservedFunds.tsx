@@ -21,7 +21,7 @@ const ReservedMessage = ({ reservedAmount }: { reservedAmount?: string }) => {
 
   return (
     <span>
-      Note that it includes ${reservedAmount} that will be reserved.{' '}
+      Note that it includes {reservedAmount} that will be reserved.{' '}
       <a
         href={wikiLinkReservedFunds}
         target="_blank"
