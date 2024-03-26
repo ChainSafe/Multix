@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Handle, Position } from 'reactflow'
 import { Box } from '@mui/material'
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { AccountBadge } from '../../types'
 
 export type NodeData = {

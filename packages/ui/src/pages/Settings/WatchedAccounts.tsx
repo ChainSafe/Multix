@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Box, Grid, IconButton, Paper } from '@mui/material'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
 import { useMemo } from 'react'
@@ -32,7 +32,10 @@ const WatchedAccounts = () => {
                     key={address}
                     data-cy="container-account-details"
                   >
-                    <AccountDisplayStyled address={address} />
+                    <AccountDisplayStyled
+                      address={address}
+                      canEdit
+                    />
                     <IconButtonDeleteStyled
                       aria-label="delete"
                       onClick={() => removeWatchedAccount(address)}

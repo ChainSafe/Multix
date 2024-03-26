@@ -10,6 +10,8 @@ export interface MultisigStorageInfo {
 
 export type IconSizeVariant = 'small' | 'medium' | 'large'
 
+export type EditButtonSize = 'small' | 'medium' | 'large'
+
 export enum AccountBadge {
   PURE = 'pure',
   MULTI = 'multi'

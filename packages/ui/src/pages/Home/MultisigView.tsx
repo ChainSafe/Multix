@@ -1,4 +1,4 @@
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { AccountBadge } from '../../types'
 // import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
@@ -39,6 +39,7 @@ const MultisigView = () => {
                       address={multisig.address || ''}
                       badge={AccountBadge.MULTI}
                       withBalance={false}
+                      canEdit
                     />
                   </AccountDisplayWrapperStyled>
                 )}

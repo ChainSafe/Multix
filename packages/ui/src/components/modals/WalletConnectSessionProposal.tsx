@@ -7,7 +7,7 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { SignClientTypes } from '@walletconnect/types'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
-import AccountDisplay from '../AccountDisplay'
+import AccountDisplay from '../AccountDisplay/AccountDisplay'
 import { AccountBadge } from '../../types'
 import { getSdkError } from '@walletconnect/utils'
 

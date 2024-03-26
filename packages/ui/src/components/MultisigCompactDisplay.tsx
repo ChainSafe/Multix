@@ -1,7 +1,7 @@
 import { Box, Chip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { AccountBadge } from '../types'
-import AccountDisplay from './AccountDisplay'
+import AccountDisplay from './AccountDisplay/AccountDisplay'
 import Expander from './Expander'
 import { useMultisigByIdQuery } from '../../types-and-hooks'
 import { useEffect, useState } from 'react'
@@ -60,10 +60,7 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
             <ul className="signatoryList">
               {signatories.map((sig) => (
                 <li key={sig}>
-                  <AccountDisplay
-                    address={sig}
-                    withName={true}
-                  />
+                  <AccountDisplay address={sig} />
                 </li>
               ))}
             </ul>

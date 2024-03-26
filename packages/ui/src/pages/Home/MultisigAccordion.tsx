@@ -2,7 +2,7 @@ import { Accordion as AccordionMui, AccordionDetails, AccordionSummary, Paper } 
 import { HiOutlineChevronDown } from 'react-icons/hi2'
 import { styled } from '@mui/material/styles'
 import React from 'react'
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { MultisigAggregated } from '../../contexts/MultiProxyContext'
 
 interface AccordionProps {
@@ -34,7 +34,10 @@ const MultisigAccordion = ({ multisig }: AccordionProps) => {
           <AddressListStyled data-cy="list-item-signatory">
             {multisig?.signatories?.map((signatory) => (
               <li key={signatory}>
-                <AccountDisplay address={signatory} />
+                <AccountDisplay
+                  address={signatory}
+                  canEdit
+                />
               </li>
             ))}
           </AddressListStyled>

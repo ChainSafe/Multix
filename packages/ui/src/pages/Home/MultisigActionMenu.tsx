@@ -1,13 +1,13 @@
 import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
 import { useMemo } from 'react'
-import { HiOutlinePencil } from 'react-icons/hi2'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useModals } from '../../contexts/ModalsContext'
 import {
   HiOutlineArrowTopRightOnSquare as LaunchIcon,
-  HiOutlineUserPlus as IdentityIcon
+  HiOutlineUserPlus as IdentityIcon,
+  HiOutlinePencilSquare as PencilIcon
 } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { EasyTransferTitle } from '../../components/modals/Send'
@@ -31,7 +31,7 @@ const MultisigActionMenu = ({
     const opts = [
       {
         text: 'Edit names',
-        icon: <HiOutlinePencil size={20} />,
+        icon: <PencilIcon size={20} />,
         onClick: () => setIsEditModalOpen(true)
       },
       {

@@ -1,4 +1,4 @@
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
@@ -41,6 +41,7 @@ const HeaderView = () => {
           iconSize={'large'}
           address={selectedAddress}
           badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+          canEdit
         />
         <BalanceStyledWrapper>
           <BalanceStyled>

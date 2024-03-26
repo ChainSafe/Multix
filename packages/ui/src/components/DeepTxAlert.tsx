@@ -9,7 +9,7 @@ import { getIntersection } from '../utils'
 import { useModals } from '../contexts/ModalsContext'
 import { Button } from './library'
 import { useAccounts } from '../contexts/AccountsContext'
-import AccountDisplay from './AccountDisplay'
+import AccountDisplay from './AccountDisplay/AccountDisplay'
 
 export interface ParentMultisigInfo {
   parentSignatoryAddress: string
