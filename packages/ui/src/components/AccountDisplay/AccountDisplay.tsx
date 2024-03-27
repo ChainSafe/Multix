@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Tooltip } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
@@ -11,9 +11,17 @@ import Balance from '../library/Balance'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import { useIdentity } from '../../hooks/useIdentity'
 import { IconButton } from '@mui/material'
-import { HiOutlinePencilSquare as PencilIcon } from 'react-icons/hi2'
+import {
+  HiOutlinePencilSquare as PencilIcon,
+  HiOutlineSquare2Stack as CopyIcon
+} from 'react-icons/hi2'
 import { EditInput } from './EditInput'
 import { useAccounts } from '../../contexts/AccountsContext'
+import { copyTextToClipboard } from '../../utils/copyToClipboard'
+
+const DEFAULT_PLACEMENT = 'top'
+const DEFAULT_TITLE = 'Address copied!'
+const DEFAULT_AUTO_HIDE_DURATION = 2000
 
 interface Props {
   address: string
@@ -23,6 +31,7 @@ interface Props {
   withBalance?: boolean
   iconSize?: IconSizeVariant
   canEdit?: boolean
+  canCopy?: boolean
 }
 
 const AccountDisplay = ({
@@ -32,8 +41,10 @@ const AccountDisplay = ({
   withName = true,
   withBalance = false,
   iconSize = 'medium',
-  canEdit = false
+  canEdit = false,
+  canCopy = false
 }: Props) => {
+  const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
   const { getNamesWithExtension } = useAccountNames()
   const { ownAddressList } = useAccounts()
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
@@ -62,6 +73,14 @@ const AccountDisplay = ({
       setIdentityName(identity.displayParent || identity.display || '')
     }
   }, [address, api, identity])
+
+  const handleTooltipClose = useCallback(() => setIsCopyTooltipOpen(false), [])
+  const handleCopyAddress = useCallback(() => {
+    if (!canCopy) return
+
+    setIsCopyTooltipOpen(true)
+    copyTextToClipboard(address)
+  }, [address, canCopy])
 
   const onEditClick = useCallback(() => setIsEditing(true), [])
   const onCloseEdit = useCallback(() => setIsEditing(false), [])
@@ -118,10 +137,23 @@ const AccountDisplay = ({
           </>
         )}
         <AddressStyled
-          className="multisigAddress"
           data-cy="label-account-address"
+          onClick={handleCopyAddress}
         >
-          {getDisplayAddress(encodedAddress)}
+          <Tooltip
+            onClose={handleTooltipClose}
+            open={isCopyTooltipOpen}
+            title={DEFAULT_TITLE}
+            placement={DEFAULT_PLACEMENT}
+            leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
+          >
+            <AddressWrapperStyled>{getDisplayAddress(encodedAddress)}</AddressWrapperStyled>
+          </Tooltip>
+          {canCopy && (
+            <CopyIconWrapperStyled className="copyIcon">
+              <CopyIcon />
+            </CopyIconWrapperStyled>
+          )}
         </AddressStyled>
         {withBalance && (
           <Box>
@@ -132,6 +164,24 @@ const AccountDisplay = ({
     </div>
   )
 }
+
+const AddressWrapperStyled = styled('span')``
+
+const CopyIconWrapperStyled = styled(Box)`
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background: ${({ theme }) => theme.custom.gray[400]};
+  border-radius: 0.5rem;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  display: none;
+  opacity: 90%;
+  color: ${({ theme }) => theme.custom.gray[800]};
+`
 
 const EditIconButtonStyled = styled(IconButton)`
   color: ${({ theme }) => theme.custom.gray[700]};
@@ -185,9 +235,14 @@ const NameWrapperStyled = styled('div')`
 `
 
 const AddressStyled = styled('div')`
-  color: ${({ theme }) => theme.custom.text.primary};
+  color: ${({ theme }) => theme.custom.text.secondary};
   font-size: 1rem;
   font-weight: 400;
+  position: relative;
+
+  &:hover > .copyIcon {
+    display: flex;
+  }
 `
 
 const NameStyled = styled('div')`

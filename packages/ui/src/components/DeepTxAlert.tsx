@@ -249,6 +249,7 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
               <AccountDisplay
                 address={data1.from}
                 iconSize="small"
+                canCopy
               />
             </Grid>
           </Grid>

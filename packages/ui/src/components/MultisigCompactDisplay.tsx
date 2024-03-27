@@ -43,6 +43,7 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
         isMultisig={signatories.length > 0}
         address={address}
         badge={badge}
+        canCopy
       />
       {signatories.length > 0 && (
         <Expander
@@ -60,7 +61,10 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
             <ul className="signatoryList">
               {signatories.map((sig) => (
                 <li key={sig}>
-                  <AccountDisplay address={sig} />
+                  <AccountDisplay
+                    address={sig}
+                    canCopy
+                  />
                 </li>
               ))}
             </ul>

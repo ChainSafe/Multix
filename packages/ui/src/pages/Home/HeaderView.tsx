@@ -42,6 +42,7 @@ const HeaderView = () => {
           address={selectedAddress}
           badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
           canEdit
+          canCopy
         />
         <BalanceStyledWrapper>
           <BalanceStyled>
@@ -144,10 +145,6 @@ const AccountDisplayStyled = styled(AccountDisplay)`
     font-size: 1.5rem;
     font-weight: 500;
     color: ${({ theme }) => theme.custom.gray[800]};
-  }
-
-  .multisigAddress {
-    color: ${({ theme }) => theme.custom.text.secondary};
   }
 
   & > div:last-child {

@@ -37,6 +37,7 @@ const CustomNode = ({ data, className = '' }: Props) => {
       <AccountDisplay
         address={address}
         badge={badge}
+        canCopy
       />
     </Box>
   )

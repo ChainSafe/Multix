@@ -71,6 +71,7 @@ const Overview = ({ className }: Props) => {
               address={selectedMultiProxy?.proxy || ''}
               badge={AccountBadge.PURE}
               withName
+              canCopy
             />
             <div>
               <div>
@@ -88,6 +89,7 @@ const Overview = ({ className }: Props) => {
                       <AccountDisplay
                         address={address}
                         badge={AccountBadge.MULTI}
+                        canCopy
                       />
                     </li>
                   ))}

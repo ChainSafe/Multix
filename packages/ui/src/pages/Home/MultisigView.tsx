@@ -40,6 +40,7 @@ const MultisigView = () => {
                       badge={AccountBadge.MULTI}
                       withBalance={false}
                       canEdit
+                      canCopy
                     />
                   </AccountDisplayWrapperStyled>
                 )}
