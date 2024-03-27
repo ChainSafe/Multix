@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'link'
+  variant?: 'primary' | 'secondary' | 'link' | 'negative'
   border?: CSSStyleDeclaration['border']
 }
 
@@ -81,6 +81,24 @@ export const Button = styled('button')<ButtonProps>`
     &:disabled {
       cursor: not-allowed;
       color: ${theme.custom.button.primaryDisabledColor};
+    }
+  `}
+
+  ${({ variant, theme }) =>
+    variant === 'negative' &&
+    `
+    background: ${theme.palette.error.main};
+    color: ${theme.palette.primary.white};
+    
+    &:hover, &:focus {
+      filter: brightness(1.1);
+    }
+  
+    &:disabled {
+      cursor: not-allowed;
+      filter: brightness(0.9);
+      color: ${theme.custom.button.primaryDisabledColor};
+      box-shadow: none;
     }
   `}
 `
