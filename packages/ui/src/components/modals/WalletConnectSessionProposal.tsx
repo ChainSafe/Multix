@@ -124,6 +124,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
                   address={selectedMultiProxy?.proxy}
                   badge={AccountBadge.PURE}
                   withName
+                  canCopy
                 />
               )}
               {selectedMultiProxy?.multisigs.map(({ address }) => {
@@ -133,6 +134,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
                     address={address}
                     badge={AccountBadge.MULTI}
                     withName
+                    canCopy
                   />
                 )
               })}

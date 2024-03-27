@@ -93,6 +93,7 @@ const Summary = ({
           <AccountDisplayProxyStyled
             address={proxyAddress || ''}
             badge={AccountBadge.PURE}
+            canCopy
           />
         </>
       )}
@@ -114,6 +115,7 @@ const Summary = ({
             key={signatory}
             address={signatory}
             className="account"
+            canCopy
           />
         ))}
       </Paper>

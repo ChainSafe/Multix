@@ -37,6 +37,7 @@ const MultisigAccordion = ({ multisig }: AccordionProps) => {
                 <AccountDisplay
                   address={signatory}
                   canEdit
+                  canCopy
                 />
               </li>
             ))}

@@ -35,6 +35,7 @@ const WatchedAccounts = () => {
                     <AccountDisplayStyled
                       address={address}
                       canEdit
+                      canCopy
                     />
                     <IconButtonDeleteStyled
                       aria-label="delete"

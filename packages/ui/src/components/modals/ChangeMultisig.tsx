@@ -374,6 +374,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   <AccountDisplay
                     address={selectedMultiProxy?.proxy || ''}
                     badge={AccountBadge.PURE}
+                    canCopy
                   />
                 </Box>
                 {multisigList.length > 1 && (

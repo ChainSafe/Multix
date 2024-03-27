@@ -37,7 +37,10 @@ const ListItemToSign = ({ approvals, signer }: { approvals: string[]; signer: st
             <MdOutlineHourglassBottom size={24} />
           )}
         </ListItemIcon>
-        <AccountDisplay address={signer} />
+        <AccountDisplay
+          address={signer}
+          canCopy
+        />
       </ListItemButtonStyled>
     </ListItem>
   )
