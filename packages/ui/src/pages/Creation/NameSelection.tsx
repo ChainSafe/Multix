@@ -1,27 +1,20 @@
-import { Box } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import { Alert, Box, styled } from '@mui/material'
+import React, { useCallback } from 'react'
 import { TextField } from '../../components/library'
 
 interface Props {
   className?: string
   name?: string
   setName: React.Dispatch<React.SetStateAction<string>>
+  originalName?: string
 }
 
-const NameSelection = ({ className, name, setName }: Props) => {
-  const [error, setError] = useState('')
-
+const NameSelection = ({ className, name, setName, originalName = '' }: Props) => {
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setError('')
       const value = event.target.value
 
       setName(value)
-
-      if (!value) {
-        setError('Please give the Multisig a name')
-        return
-      }
     },
     [setName]
   )
@@ -30,15 +23,23 @@ const NameSelection = ({ className, name, setName }: Props) => {
     <Box className={className}>
       <TextField
         fullWidth
-        error={!!error}
-        helperText={error}
         label="Multisig name"
         value={name}
         onChange={handleChange}
         inputProps={{ 'data-cy': 'input-name-creation' }}
       />
+      {!!originalName && (
+        <AlertStyled severity="info">
+          The address book contains the name <i>"{originalName}"</i> for this multisig already. Any
+          change will override it.
+        </AlertStyled>
+      )}
     </Box>
   )
 }
+
+const AlertStyled = styled(Alert)`
+  margin-top: 1rem;
+`
 
 export default NameSelection
