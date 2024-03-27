@@ -51,7 +51,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()
   const [name, setName] = useState('')
-  const { addName } = useAccountNames()
+  const { addName, getNamesWithExtension } = useAccountNames()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const ownAccountPartOfSignatories = useMemo(
     () => signatories.some((sig) => ownAddressList.includes(sig)),
@@ -103,7 +103,10 @@ const MultisigCreation = ({ className }: Props) => {
     const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
     return getAsMultiTx({ api, threshold, otherSignatories, tx: remarkTx })
   }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
-
+  const originalName = useMemo(
+    () => multiAddress && getNamesWithExtension(multiAddress),
+    [getNamesWithExtension, multiAddress]
+  )
   const batchCall = useMemo(() => {
     if (!withProxy) {
       // this batchCall is only useful if the user wants a proxy.
@@ -156,6 +159,10 @@ const MultisigCreation = ({ className }: Props) => {
     threshold,
     withProxy
   ])
+
+  useEffect(() => {
+    !!originalName && setName(originalName)
+  }, [originalName])
 
   const { multisigProposalNeededFunds, reserved: multisigReserved } =
     useMultisigProposalNeededFunds({
@@ -392,6 +399,7 @@ const MultisigCreation = ({ className }: Props) => {
             <NameSelection
               setName={setName}
               name={name}
+              originalName={originalName}
             />
             {supportsProxy && (
               <WithProxySelection
