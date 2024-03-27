@@ -411,7 +411,7 @@ const ProposalSigning = ({
           >
             {!isGettingCallInfo && isProposerSelected && (
               <Button
-                variant="primary"
+                variant="negative"
                 onClick={() => onSign(false)}
                 disabled={isSubmitting}
                 data-cy="button-reject-tx"
