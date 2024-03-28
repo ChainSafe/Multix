@@ -1,7 +1,7 @@
 import { Alert, Box, Chip, Paper } from '@mui/material'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import SignerSelection from '../../components/select/SignerSelection'
 import { MultiProxy } from '../../contexts/MultiProxyContext'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -93,6 +93,7 @@ const Summary = ({
           <AccountDisplayProxyStyled
             address={proxyAddress || ''}
             badge={AccountBadge.PURE}
+            canCopy
           />
         </>
       )}
@@ -114,6 +115,7 @@ const Summary = ({
             key={signatory}
             address={signatory}
             className="account"
+            canCopy
           />
         ))}
       </Paper>

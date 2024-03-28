@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Alert, Box } from '@mui/material'
 import { MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { useMemo } from 'react'
 import { AccountBadge } from '../../types'
 import MultisigCompactDisplay from '../../components/MultisigCompactDisplay'
@@ -71,6 +71,7 @@ const Overview = ({ className }: Props) => {
               address={selectedMultiProxy?.proxy || ''}
               badge={AccountBadge.PURE}
               withName
+              canCopy
             />
             <div>
               <div>
@@ -88,6 +89,7 @@ const Overview = ({ className }: Props) => {
                       <AccountDisplay
                         address={address}
                         badge={AccountBadge.MULTI}
+                        canCopy
                       />
                     </li>
                   ))}

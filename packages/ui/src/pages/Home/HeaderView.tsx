@@ -1,4 +1,4 @@
-import AccountDisplay from '../../components/AccountDisplay'
+import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { AccountBadge } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
@@ -41,6 +41,8 @@ const HeaderView = () => {
           iconSize={'large'}
           address={selectedAddress}
           badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+          canEdit
+          canCopy
         />
         <BalanceStyledWrapper>
           <BalanceStyled>
@@ -143,10 +145,6 @@ const AccountDisplayStyled = styled(AccountDisplay)`
     font-size: 1.5rem;
     font-weight: 500;
     color: ${({ theme }) => theme.custom.gray[800]};
-  }
-
-  .multisigAddress {
-    color: ${({ theme }) => theme.custom.text.secondary};
   }
 
   & > div:last-child {

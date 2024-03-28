@@ -2,7 +2,7 @@ import { Grid } from '@mui/material'
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useAccountNames } from '../contexts/AccountNamesContext'
-import AccountDisplay from './AccountDisplay'
+import AccountDisplay from './AccountDisplay/AccountDisplay'
 import { debounce } from '../utils/debounce'
 import { InputField } from './library'
 
@@ -68,7 +68,6 @@ const AccountEditName = ({ address, onNameChange, className, testId }: Props) =>
           disabled={isExtensionAccount}
           value={name}
           data-cy={`input-edit-${testId}-name`}
-          // onKeyDown={handleSpecialKeys}
         />
       </Grid>
     </Grid>

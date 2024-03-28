@@ -17,7 +17,7 @@ import {
 } from 'react-icons/hi2'
 import { MdOutlineHourglassBottom } from 'react-icons/md'
 
-import AccountDisplay from '../AccountDisplay'
+import AccountDisplay from '../AccountDisplay/AccountDisplay'
 
 interface TransactionProgressProps {
   value: number
@@ -37,7 +37,10 @@ const ListItemToSign = ({ approvals, signer }: { approvals: string[]; signer: st
             <MdOutlineHourglassBottom size={24} />
           )}
         </ListItemIcon>
-        <AccountDisplay address={signer} />
+        <AccountDisplay
+          address={signer}
+          canCopy
+        />
       </ListItemButtonStyled>
     </ListItem>
   )

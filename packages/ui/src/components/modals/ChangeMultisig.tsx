@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import AccountDisplay from '../AccountDisplay'
+import AccountDisplay from '../AccountDisplay/AccountDisplay'
 import ThresholdSelection from '../../pages/Creation/ThresholdSelection'
 import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
@@ -374,6 +374,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   <AccountDisplay
                     address={selectedMultiProxy?.proxy || ''}
                     badge={AccountBadge.PURE}
+                    canCopy
                   />
                 </Box>
                 {multisigList.length > 1 && (
