@@ -1,15 +1,12 @@
 import { Box, Tooltip } from '@mui/material'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { AccountBadge, IconSizeVariant } from '../../types'
 import { getDisplayAddress } from '../../utils'
 import IdenticonBadge from '../IdenticonBadge'
-import { useApi } from '../../contexts/ApiContext'
 import IdentityIcon from '../IdentityIcon'
 import Balance from '../library/Balance'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
-import { useIdentity } from '../../hooks/useIdentity'
 import { IconButton } from '@mui/material'
 import {
   HiOutlinePencilSquare as PencilIcon,
@@ -18,6 +15,7 @@ import {
 import { EditInput } from './EditInput'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { copyTextToClipboard } from '../../utils/copyToClipboard'
+import { useAccountDisplayInfo } from '../../hooks/useAccountDisplayInfo'
 
 const DEFAULT_PLACEMENT = 'top'
 const DEFAULT_TITLE = 'Address copied!'
@@ -45,34 +43,17 @@ const AccountDisplay = ({
   canCopy = false
 }: Props) => {
   const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
-  const { getNamesWithExtension } = useAccountNames()
   const { ownAddressList } = useAccounts()
-  const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
-  const { api } = useApi()
-  const [identityName, setIdentityName] = useState<string>('')
-  const [sub, setSub] = useState<string | null>(null)
   const getEncodedAddress = useGetEncodedAddress()
   const encodedAddress = useMemo(() => getEncodedAddress(address), [address, getEncodedAddress])
-  const identity = useIdentity(address)
-  const nameDisplay = useMemo(() => localName || identityName, [identityName, localName])
+
   const [isEditing, setIsEditing] = useState(false)
   const isOwnAccount = useMemo(() => ownAddressList.includes(address), [address, ownAddressList])
 
-  useEffect(() => {
-    if (!identity) return
-
-    if (identity.displayParent && identity.display) {
-      // when an identity is a sub identity `displayParent` is set
-      // and `display` get the sub identity
-      setIdentityName(identity.displayParent)
-      setSub(identity.display)
-    } else {
-      // There should not be a `displayParent` without a `display`
-      // but we can't be too sure.
-      setSub('')
-      setIdentityName(identity.displayParent || identity.display || '')
-    }
-  }, [address, api, identity])
+  const { displayName, subIdentity, isLocalNameDisplayed, identity, localName, identityName } =
+    useAccountDisplayInfo({
+      address
+    })
 
   const handleTooltipClose = useCallback(() => setIsCopyTooltipOpen(false), [])
   const handleCopyAddress = useCallback(() => {
@@ -97,7 +78,7 @@ const AccountDisplay = ({
           <>
             {!isEditing && (
               <NameWrapperStyled>
-                {!!identity && identityName && (
+                {!!identityName && !!identity && (
                   <IdentityIcon
                     // Class name for external styling
                     // Do not remove
@@ -111,10 +92,12 @@ const AccountDisplay = ({
                   className="multisigName"
                   data-cy="label-account-name"
                 >
-                  {nameDisplay}
-                  {!!sub && <span className="subIdentity">/{sub}</span>}
+                  {displayName}
+                  {!isLocalNameDisplayed && !!subIdentity && (
+                    <span className="subIdentity">/{subIdentity}</span>
+                  )}
                 </NameStyled>
-                {canEdit && !nameDisplay && <NoNameStyled>No Name</NoNameStyled>}
+                {canEdit && !displayName && <NoNameStyled>No Name</NoNameStyled>}
                 {canEdit && !isOwnAccount && (
                   <EditIconButtonStyled
                     className={iconSize !== 'large' ? 'small' : ''}

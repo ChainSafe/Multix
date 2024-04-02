@@ -1,8 +1,8 @@
 import { Box, InputAdornment } from '@mui/material'
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { isMultiProxy, MultiProxy, useMultiProxy } from '../../contexts/MultiProxyContext'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import AccountDisplay from '../AccountDisplay/AccountDisplay'
 import IdenticonBadge from '../IdenticonBadge'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
@@ -10,22 +10,26 @@ import { AccountBadge } from '../../types'
 import { Autocomplete } from '../library'
 import { AutocompleteRenderInputParams } from '@mui/material/Autocomplete/Autocomplete'
 import TextFieldLargeStyled from '../library/TextFieldLargeStyled'
+import { useGetIdentity } from '../../hooks/useGetIdentity'
+import { getIdentityName } from '../../utils/getIdentityName'
+import { getDisplayName } from '../../utils/getDisplayName'
 
 interface Props {
   className?: string
   testId?: string
 }
 
-const getDisplayAddress = (option?: MultiProxy) =>
-  option?.proxy ? option?.proxy : option?.multisigs[0].address
+interface Option {
+  address: string
+  isPure: boolean
+  localName: string
+  identityName: string
+}
 
-const isOptionEqualToValue = (option?: MultiProxy, value?: MultiProxy) => {
+const isOptionEqualToValue = (option?: Option, value?: Option) => {
   if (!option || !value) return false
 
-  if (!!option.proxy || !!value.proxy) {
-    return option.proxy === value.proxy
-  }
-  return option.multisigs[0].address === value.multisigs[0].address
+  return option.address === value.address
 }
 
 const MultiProxySelection = ({ className, testId = '' }: Props) => {
@@ -37,44 +41,93 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
     isLoading,
     canFindMultiProxyFromUrl
   } = useMultiProxy()
+  const [options, setOptions] = useState<Option[]>([])
   const isSelectedProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
-  // We only support one multisigs if they have no proxy
   const addressToShow = useMemo(
+    // We only support one multisigs if they have no proxy
     () => selectedMultiProxy?.proxy || selectedMultiProxy?.multisigs[0].address,
     [selectedMultiProxy]
   )
+
+  const defaultOption = useMemo(() => {
+    let res: Option | undefined = options[0]
+
+    if (!canFindMultiProxyFromUrl) return res
+
+    if (selectedMultiProxy?.proxy) {
+      res = options.find((option) => option.address === selectedMultiProxy.proxy)
+    } else {
+      res = options.find((option) => option.address === selectedMultiProxy?.multisigs[0].address)
+    }
+
+    return res || ''
+  }, [canFindMultiProxyFromUrl, options, selectedMultiProxy])
   const { accountNames } = useAccountNames()
   const filterOptions = createFilterOptions({
     ignoreCase: true,
-    stringify: (option: typeof selectedMultiProxy) => {
-      const displayAddress = getDisplayAddress(option) || ''
-      return `${option?.proxy}${option?.multisigs[0].address}${accountNames[displayAddress]}` || ''
+    stringify: (option: Option) => {
+      const { localName, identityName, address } = option
+      return `${localName}${identityName}${address}` || ''
     }
   })
+  const getIdentity = useGetIdentity()
 
-  const getOptionLabel = useCallback(
-    (option?: NonNullable<MultiProxy | string>): string => {
-      // We only support one multisigs if they have no proxy
+  useEffect(() => {
+    const addressList = multiProxyList.map((mp) => {
+      const isPure = !!mp.proxy
 
-      if (isMultiProxy(option)) {
-        const addressToSearch = option?.proxy || option?.multisigs[0].address
-        const name = !!addressToSearch && accountNames[addressToSearch]
-        return name || (addressToSearch as string)
+      return {
+        isPure,
+        address: isPure ? mp.proxy : mp.multisigs[0].address
       }
+    })
 
-      return ''
-    },
-    [accountNames]
-  )
+    const allIdentityNames = Promise.all(
+      addressList.map(({ address }) => {
+        return getIdentity(address!)
+      })
+    )
+
+    allIdentityNames
+      .then((allNames) => {
+        const optionList = addressList.map(
+          (info, index) =>
+            ({
+              ...info,
+              localName: accountNames[info.address!],
+              identityName: getIdentityName(allNames[index]).identityName
+            }) as Option
+        )
+
+        setOptions(optionList)
+      })
+      .catch(console.error)
+  }, [accountNames, getIdentity, multiProxyList])
+
+  const getOptionLabel = useCallback((option?: NonNullable<Option | string>): string => {
+    if (!option) return ''
+
+    if (typeof option === 'string') return option
+
+    // We only support one multisigs if they have no proxy
+    return getDisplayName(option.localName, option.identityName) || option.address
+  }, [])
 
   const onChange = useCallback(
     (
       _: React.SyntheticEvent<Element, Event>,
-      value: NonNullable<MultiProxy | string | undefined | (string | MultiProxy | undefined)[]>
+      value: NonNullable<string | Option> | (string | Option)[]
     ) => {
       if (!value) return
 
-      isMultiProxy(value) && selectMultiProxy(value)
+      if (Array.isArray(value)) return
+
+      if (typeof value === 'string') {
+        selectMultiProxy(value)
+        return
+      }
+
+      selectMultiProxy(value.address)
     },
     [selectMultiProxy]
   )
@@ -87,19 +140,18 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
 
   const renderOptions = (
     props: React.HTMLAttributes<HTMLLIElement>,
-    option: typeof selectedMultiProxy
+    option: Option
   ): React.ReactNode => {
-    const displayAddress = getDisplayAddress(option)
     return (
       <Box
-        key={displayAddress}
+        key={option.address}
         component="li"
         {...props}
         data-cy={`select-multiproxy-option-${testId}`}
       >
         <AccountDisplay
-          address={displayAddress || ''}
-          badge={option?.proxy ? AccountBadge.PURE : AccountBadge.MULTI}
+          address={option.address}
+          badge={option.isPure ? AccountBadge.PURE : AccountBadge.MULTI}
           data-cy={`select-multiproxy-option-details-${testId}`}
         />
       </Box>
@@ -137,12 +189,12 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
       isOptionEqualToValue={isOptionEqualToValue}
       disableClearable
       filterOptions={filterOptions}
-      options={multiProxyList}
+      options={options}
       renderOption={renderOptions}
       renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
-      value={canFindMultiProxyFromUrl ? selectedMultiProxy || multiProxyList[0] : ''}
+      value={defaultOption}
       data-cy={`select-multiproxy-${testId}`}
     />
   )
