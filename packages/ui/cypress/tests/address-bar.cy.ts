@@ -236,6 +236,7 @@ describe('Account address in the address bar', () => {
 
     // check that there is the pure address in the address bar
     cy.url().should('include', expectedPureAddress)
+    topMenuItems.multiproxySelectorInputDesktop().should('have.value', expectedPureAddress)
     topMenuItems
       .desktopMenu()
       .within(() =>

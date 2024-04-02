@@ -26,6 +26,8 @@ interface Option {
   identityName: string
 }
 
+const emptyOption = { address: '', isPure: false, localName: '', identityName: '' } as Option
+
 const isOptionEqualToValue = (option?: Option, value?: Option) => {
   if (!option || !value) return false
 
@@ -49,18 +51,22 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
     [selectedMultiProxy]
   )
 
-  const defaultOption = useMemo(() => {
-    let res: Option | undefined = options[0]
+  const selectedOption = useMemo(() => {
+    let res: Option = emptyOption
 
     if (!canFindMultiProxyFromUrl) return res
 
+    if (!selectedMultiProxy) return options[0]
+
     if (selectedMultiProxy?.proxy) {
-      res = options.find((option) => option.address === selectedMultiProxy.proxy)
+      res = options.find((option) => option.address === selectedMultiProxy.proxy) || emptyOption
     } else {
-      res = options.find((option) => option.address === selectedMultiProxy?.multisigs[0].address)
+      res =
+        options.find((option) => option.address === selectedMultiProxy?.multisigs[0].address) ||
+        emptyOption
     }
 
-    return res || ''
+    return res
   }, [canFindMultiProxyFromUrl, options, selectedMultiProxy])
   const { accountNames } = useAccountNames()
   const filterOptions = createFilterOptions({
@@ -179,7 +185,7 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
     />
   )
 
-  if (isLoading || multiProxyList.length === 0) {
+  if (isLoading || multiProxyList.length === 0 || !selectedOption) {
     return null
   }
 
@@ -194,7 +200,7 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
       renderInput={renderInput}
       getOptionLabel={getOptionLabel}
       onChange={onChange}
-      value={defaultOption}
+      value={selectedOption}
       data-cy={`select-multiproxy-${testId}`}
     />
   )
