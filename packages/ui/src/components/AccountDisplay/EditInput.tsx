@@ -57,11 +57,13 @@ export const EditInput = ({
         onChange={onNameChange}
         value={name}
         inputRef={inputRef}
+        data-cy="input-name-edition"
       />
       <SubmitIconButtonStyled
         aria-label="submit"
         onClick={onSubmit}
         className={buttonSize !== 'large' ? 'small' : ''}
+        data-cy="button-edition-submit"
       >
         <SubmitIcon size={16} />
       </SubmitIconButtonStyled>
@@ -69,6 +71,7 @@ export const EditInput = ({
         aria-label="close"
         onClick={onClose}
         className={buttonSize !== 'large' ? 'small' : ''}
+        data-cy="button-edition-cancel"
       >
         <CloseIcon size={16} />
       </CloseIconButtonStyled>

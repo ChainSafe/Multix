@@ -1,11 +1,11 @@
-import { settingsPageUrl } from '../fixtures/landingData'
+import { getSettingsPageUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { testAccounts } from '../fixtures/testAccounts'
 
 describe('WalletConnect', () => {
   it('can see expected wc state when a wallet is not connected', () => {
-    cy.visit(settingsPageUrl)
+    cy.visit(getSettingsPageUrl())
     topMenuItems.connectButton().should('be.visible')
     settingsPage.wallectConnectAccordion().should('be.visible').click()
     // ensure elements are disabled when not connected
@@ -22,7 +22,7 @@ describe('WalletConnect', () => {
 
   it('can see expected wc state when wallet is connected', () => {
     cy.setupAndVisit({
-      url: settingsPageUrl,
+      url: getSettingsPageUrl(),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
@@ -38,7 +38,7 @@ describe('WalletConnect', () => {
   })
 
   it('can see the wallet connect accordion is collapsed by default', () => {
-    cy.visit(settingsPageUrl)
+    cy.visit(getSettingsPageUrl())
     topMenuItems.connectButton().should('be.visible')
     topMenuItems.settingsButton().click()
     // ensure wallet connect accordion is closed by default

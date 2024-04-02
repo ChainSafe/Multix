@@ -97,12 +97,15 @@ const AccountDisplay = ({
                     <span className="subIdentity">/{subIdentity}</span>
                   )}
                 </NameStyled>
-                {canEdit && !displayName && <NoNameStyled>No Name</NoNameStyled>}
+                {canEdit && !displayName && (
+                  <NoNameStyled data-cy="label-no-name">No Name</NoNameStyled>
+                )}
                 {canEdit && !isOwnAccount && (
                   <EditIconButtonStyled
                     className={iconSize !== 'large' ? 'small' : ''}
                     aria-label="edit"
                     onClick={onEditClick}
+                    data-cy="button-name-edit"
                   >
                     <PencilIcon size={20} />
                   </EditIconButtonStyled>
