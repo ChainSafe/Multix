@@ -85,4 +85,4 @@ scale:
   api:
     profile: small
     # load-balance three replicas
-    replicas: 2
+    # replicas: 2
