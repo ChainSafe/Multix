@@ -94,7 +94,12 @@ const AccountDisplay = ({
                 >
                   {displayName}
                   {!isLocalNameDisplayed && !!subIdentity && (
-                    <span className="subIdentity">/{subIdentity}</span>
+                    <span
+                      className="subIdentity"
+                      data-cy="label-sub-identity"
+                    >
+                      /{subIdentity}
+                    </span>
                   )}
                 </NameStyled>
                 {canEdit && !displayName && (

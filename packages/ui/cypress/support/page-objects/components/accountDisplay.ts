@@ -9,5 +9,7 @@ export const accountDisplay = {
   nameEditButton: () => cy.get('[data-cy=button-name-edit]'),
   validateEditButton: () => cy.get('[data-cy=button-edition-submit]'),
   cancelEditButton: () => cy.get('[data-cy=button-edition-cancel]'),
-  nameEditionInput: () => cy.get('[data-cy=input-name-edition]')
+  nameEditionInput: () => cy.get('[data-cy=input-name-edition]'),
+  identityIcon: () => cy.get('[data-cy=icon-identity]'),
+  subIdentityLabel: () => cy.get('[data-cy=label-sub-identity]')
 }
