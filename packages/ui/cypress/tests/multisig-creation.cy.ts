@@ -6,6 +6,7 @@ import { newMultisigPage } from '../support/page-objects/newMultisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { landingPage } from '../support/page-objects/landingPage'
+import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 const fundedAccount1 = testAccounts['Funded Account 1 Chopsticks Kusama']
 const fundedAccount2 = testAccounts['Funded Account 2 Chopsticks Kusama']
@@ -23,6 +24,7 @@ const typeAndAdd = (address: string) => {
 }
 
 const acceptMultisigCreationAndVerifyNotifications = () => {
+  waitForTxRequest()
   cy.getTxRequests().then((req) => {
     const txRequests = Object.values(req)
     cy.wrap(txRequests.length).should('eq', 1)
