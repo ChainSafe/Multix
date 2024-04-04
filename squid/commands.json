@@ -5,6 +5,32 @@
       "description": "Apply the DB migrations",
       "cmd": ["squid-typeorm-migration", "apply"]
     },
+    "api": {
+      "description": "Start the PostGraphile GraphQL server",
+      "deps": ["build"],
+      "cmd": ["node", "--require=dotenv/config", "lib/api.js"]
+    },
+    "api:prod": {
+      "description": "Start the PostGraphile GraphQL server in Subsquid Cloud setting",
+      "cmd": ["node", "lib/api.js"]
+    },
+    "clean": {
+      "description": "delete all build artifacts",
+      "cmd": ["npx", "--yes", "rimraf", "lib"]
+    },
+    "build": {
+      "description": "Build the squid project",
+      "deps": ["clean"],
+      "cmd": ["tsc"]
+    },
+    "up": {
+      "description": "Start a PG database",
+      "cmd": ["docker", "compose", "up", "-d"]
+    },
+    "down": {
+      "description": "Drop a PG database",
+      "cmd": ["docker", "compose", "down"]
+    },
     "start-rococo": {
       "deps": ["migration:apply"],
       "description": "starts the indexer with rococo",
