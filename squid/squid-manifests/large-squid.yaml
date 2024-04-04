@@ -55,6 +55,8 @@ deploy:
     # - name: amplitude-processor
     #   cmd: ['sqd', 'start-amplitude']
   api:
+    env:
+      SQD_DEBUG: sqd:graphql-server
     cmd:
       [
         'npx',
@@ -85,4 +87,4 @@ scale:
   api:
     profile: small
     # load-balance three replicas
-    replicas: 2
+    # replicas: 2
