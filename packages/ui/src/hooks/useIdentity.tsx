@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types'
 
-export const useIdentity = (address: string) => {
+export const useIdentity = (address?: string) => {
   const { api } = useApi()
   const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null)
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !address) {
       return
     }
 
