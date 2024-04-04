@@ -1,5 +1,5 @@
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
-import { settingsPageWatchAccountUrl } from '../fixtures/landingData'
+import { getSettingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
@@ -18,7 +18,7 @@ const kusamaAddress = encodeAddress(multisigAddress, KUSAMA_S58_PREFIX)
 describe('Network can be switched', () => {
   it('should switch network using selector', () => {
     cy.setupAndVisit({
-      url: settingsPageWatchAccountUrl,
+      url: getSettingsPageWatchAccountUrl(),
       accountNames: { [multisigPublicKey]: multisigName },
       watchedAccounts: [multisigPublicKey]
     })

@@ -1,8 +1,8 @@
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import {
   landingPageUrl,
-  settingsPageUrl,
-  settingsPageWatchAccountUrl
+  getSettingsPageUrl,
+  getSettingsPageWatchAccountUrl
 } from '../fixtures/landingData'
 import { landingPage } from '../support/page-objects/landingPage'
 import { settingsPage } from '../support/page-objects/settingsPage'
@@ -41,7 +41,7 @@ describe('Watched Accounts', () => {
 
   it('can remove an account from the watch list', () => {
     // add an account first
-    cy.visit(settingsPageWatchAccountUrl)
+    cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount(testAccountAddress)
     // now remove it
     settingsPage.accountContainer().within(() => {
@@ -54,7 +54,7 @@ describe('Watched Accounts', () => {
 
   it('can see error when attempting to add same address more than once', () => {
     // add an account first
-    cy.visit(settingsPageWatchAccountUrl)
+    cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount(testAccountAddress)
     settingsPage.accountContainer().should('have.length', 1)
     // attempt to add the same account again
@@ -65,7 +65,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see error when attempting to add an invalid address', () => {
-    cy.visit(settingsPageWatchAccountUrl)
+    cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount('123')
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Invalid address')
     settingsPage.accountContainer().should('have.length', 0)
@@ -77,7 +77,7 @@ describe('Watched Accounts', () => {
       watchMultisigs['multisig-without-pure']
 
     cy.setupAndVisit({
-      url: settingsPageWatchAccountUrl,
+      url: getSettingsPageWatchAccountUrl(),
       accountNames: {
         [multisigPublicKey]: multisigName
       },
@@ -112,7 +112,7 @@ describe('Watched Accounts', () => {
     const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.setupAndVisit({
-      url: settingsPageWatchAccountUrl,
+      url: getSettingsPageWatchAccountUrl(),
       accountNames: {
         [purePublicKey]: pureName
       },
@@ -212,7 +212,7 @@ describe('Watched Accounts', () => {
     const { purePublicKey } = watchMultisigs['multisig-with-pure']
 
     cy.setupAndVisit({
-      url: settingsPageUrl,
+      url: getSettingsPageUrl(),
       watchedAccounts: [purePublicKey]
     })
     settingsPage.wallectConnectAccordion().click()
