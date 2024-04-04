@@ -90,6 +90,7 @@ const IdentityIcon = ({ className, identity }: Props) => {
     <Tooltip
       className={className}
       title={tooltipContent}
+      data-cy="icon-identity"
     >
       <span>
         {isGood ? (
