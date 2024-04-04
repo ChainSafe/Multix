@@ -169,9 +169,9 @@ const CopyIconWrapperStyled = styled(Box)`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  display: none;
-  opacity: 90%;
+  opacity: 0;
   color: ${({ theme }) => theme.custom.gray[800]};
+  transition: opacity 250ms;
 `
 
 const EditIconButtonStyled = styled(IconButton)`
@@ -232,7 +232,7 @@ const AddressStyled = styled('div')`
   position: relative;
 
   &:hover > .copyIcon {
-    display: flex;
+    opacity: 90%;
   }
 `
 
