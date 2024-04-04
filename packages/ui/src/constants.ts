@@ -211,7 +211,7 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
   'hydradx',
   'interlay',
   // 'kilt',
-  'moonbeam',
+  // 'moonbeam',
   // 'pendulum',
   'phala'
   // 'watr'
@@ -220,8 +220,8 @@ export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = 
   'kusama',
   'asset-hub-ksm',
   // 'amplitude',
-  'khala',
-  'moonriver'
+  'khala'
+  // 'moonriver'
 ]
 export const soloChains: Partial<keyof typeof networkList>[] = [
   //joystream

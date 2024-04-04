@@ -1,6 +1,6 @@
 endpoint: wss://kusama.rpc.amforc.com
 mock-signature-host: true
-block: 20487320
+block: 22568290
 db: ./db.sqlite
 # wasm-override: staging_kusama_runtime.wasm
 runtime-log-level: 5
