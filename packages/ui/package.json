@@ -28,7 +28,7 @@
     "reactflow": "^11.10.3",
     "rxjs": "^7.8.1",
     "typescript": "5.3.3",
-    "vite": "^5.1.1"
+    "vite": "^5.1.7"
   },
   "devDependencies": {
     "@chainsafe/cypress-polkadot-wallet": "^2.1.0",
