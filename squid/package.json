@@ -23,6 +23,7 @@
   "dependencies": {
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-aggregates": "^0.1.1",
+    "@graphile/pg-pubsub": "^4.13.0",
     "@polkadot/util-crypto": "^12.6.2",
     "@subsquid/archive-registry": "^3.3.0",
     "@subsquid/graphql-server": "^4.5.1",

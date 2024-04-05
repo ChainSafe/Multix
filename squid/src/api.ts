@@ -3,10 +3,13 @@ import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector'
 import express from 'express'
 import { NodePlugin } from 'graphile-build'
 import type * as pg from 'pg'
-import { gql, makeExtendSchemaPlugin, postgraphile, Plugin } from 'postgraphile'
+import { gql, makeExtendSchemaPlugin, postgraphile, Plugin, makePluginHook } from 'postgraphile'
 import FilterPlugin from 'postgraphile-plugin-connection-filter'
+import PgPubsub from '@graphile/pg-pubsub'
 
 const app = express()
+
+const pluginHook = makePluginHook([PgPubsub])
 
 export const ProcessorStatusPlugin: Plugin = makeExtendSchemaPlugin((build, options) => {
   const schemas: string[] = options.stateSchemas || ['squid_processor']
@@ -52,6 +55,7 @@ app.use(
     },
     'public',
     {
+      pluginHook, // add the plugin hook. This will make the @pgSubscription avaiable in our schema definitions
       graphiql: true,
       enhanceGraphiql: true,
       dynamicJson: true,
@@ -65,8 +69,11 @@ app.use(
       ],
       externalUrlBase: process.env.BASE_PATH,
       graphileBuildOptions: {
-        stateSchemas: ['evm']
-      }
+        stateSchemas: ['substrate']
+      },
+      // subscriptions: true,
+      // simpleSubscriptions: true,
+      live: true
     }
   )
 )
