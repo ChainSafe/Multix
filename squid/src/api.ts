@@ -71,9 +71,8 @@ app.use(
       graphileBuildOptions: {
         stateSchemas: ['substrate']
       },
-      // subscriptions: true,
-      // simpleSubscriptions: true,
-      live: true
+      subscriptions: true,
+      simpleSubscriptions: true
     }
   )
 )
