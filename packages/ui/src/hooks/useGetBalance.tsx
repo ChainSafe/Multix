@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types'
 import { formatBnBalance } from '../utils/formatBnBalance'
-import { Balance } from '@polkadot/types/interfaces/runtime'
+import BN from 'bn.js'
+import { FrameSystemAccountInfo } from '@polkadot/types/lookup'
 
 interface useGetBalanceProps {
   address?: string
   numberAfterComma?: number
 }
+
 export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalanceProps) => {
   const { api, chainInfo } = useApi()
-  const [balance, setBalance] = useState<Balance | null>(null)
+  const [balance, setBalance] = useState<BN | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)
 
   useEffect(() => {
@@ -18,18 +19,20 @@ export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalancePr
 
     let unsubscribe: () => void
 
-    api.derive.balances
-      .account(address, (info: DeriveBalancesAccount) => {
-        setBalance(info.freeBalance)
+    api.query.system
+      .account(address, ({ data: { free, frozen } }: FrameSystemAccountInfo) => {
+        const transferable = free.sub(frozen)
+
+        setBalance(transferable)
         setFormattedBalance(
-          formatBnBalance(info.freeBalance, chainInfo?.tokenDecimals, {
+          formatBnBalance(transferable, chainInfo?.tokenDecimals, {
             numberAfterComma,
             tokenSymbol: chainInfo?.tokenSymbol
           })
         )
       })
       .then((unsub) => {
-        unsubscribe = unsub
+        unsubscribe = unsub as unknown as () => void
       })
       .catch(console.error)
 

@@ -91,7 +91,7 @@ export const networkList: Record<string, NetworkInfo> = {
   hydradx: {
     chainId: 'hydradx',
     explorerNetworkName: 'hydradx',
-    rpcUrl: 'wss://hydradx-rpc.dwellir.com',
+    rpcUrl: 'wss://rpc.helikon.io/hydradx',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: hydradxSVG
   },
