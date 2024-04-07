@@ -1,15 +1,15 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  MultisigsBySignatoriesOrWatchedSubscription,
+  MultisigsBySignatoriesOrWatchedQuery,
   ProxyType,
-  PureByIdsSubscription
+  PureByIdsQueryQuery
 } from '../../types-and-hooks'
 import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
-import { useMultisigsBySignatoriesOrWatchedSubscription } from '../hooks/useMultisigsBySignatoriesOrWatchedSubscription'
+import { useQueryMultisigs1 } from '../hooks/useQueryMultisigs1'
 import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
-import { usePureByIdsSubscription } from '../hooks/usePureByIdSubscription'
+import { usePureByIdsSubscription } from '../hooks/usePureQuery'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
 import { useSearchParams } from 'react-router-dom'
 
@@ -38,7 +38,7 @@ export interface IMultisigContext {
   isLoading: boolean
   selectMultiProxy: (multi: MultiProxy | string) => boolean
   selectedHasProxy: boolean
-  error: Error | null
+  error: unknown | Error | null
   getMultisigByAddress: (address: string) => MultisigAggregated | undefined
   getMultisigAsAccountBaseInfo: () => AccountBaseInfo[]
   selectedIsWatched: boolean
@@ -53,7 +53,7 @@ export interface IMultisigContext {
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
 const getSignatoriesFromAccount = (
-  signatories: MultisigsBySignatoriesOrWatchedSubscription['accountMultisigs'][0]['multisig']['signatories']
+  signatories: MultisigsBySignatoriesOrWatchedQuery['accountMultisigs'][0]['multisig']['signatories']
 ) => {
   return signatories.map(({ signatory }) => signatory.address)
 }
@@ -129,7 +129,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   )
 
   const refreshPureToQueryAndMultisigList = useCallback(
-    (data: MultisigsBySignatoriesOrWatchedSubscription | null) => {
+    (data: MultisigsBySignatoriesOrWatchedQuery | null) => {
       setIsRefreshingMultiProxyList(true)
       // Data is only null when it is fetching
       if (!data) {
@@ -194,7 +194,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [watchedAddresses]
   )
 
-  const refreshWatchedPureList = useCallback((data: PureByIdsSubscription | null) => {
+  const refreshWatchedPureList = useCallback((data: PureByIdsQueryQuery | null) => {
     setIsRefreshingMultiProxyList(true)
     // Data is only null when it is fetching
     if (!data) {
@@ -254,22 +254,34 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const ownAddressIds = useAccountId(ownAddressList)
   const watchedAddressesIds = useAccountId(watchedAddresses)
   const {
+    data: multisigData,
     isLoading: isMultisigsubLoading,
     error: isMultisigSubError,
     refetch: refetchMultisigSub
-  } = useMultisigsBySignatoriesOrWatchedSubscription({
+  } = useQueryMultisigs1({
     accountIds: ownAddressIds,
-    watchedAccountIds: watchedAddressesIds,
-    onUpdate: refreshPureToQueryAndMultisigList
+    watchedAccountIds: watchedAddressesIds
   })
   const {
+    data: pureQueryResultData,
     isLoading: isPureSubLoading,
     error: isPureSubError,
     refetch: refetchPureSub
   } = usePureByIdsSubscription({
-    pureIds: [...watchedAddressesIds, ...pureToQueryIds],
-    onUpdate: refreshWatchedPureList
+    pureIds: [...watchedAddressesIds, ...pureToQueryIds]
   })
+
+  useEffect(() => {
+    if (!multisigData) return
+
+    refreshPureToQueryAndMultisigList(multisigData)
+  }, [multisigData, refreshPureToQueryAndMultisigList])
+
+  useEffect(() => {
+    if (!pureQueryResultData) return
+
+    refreshWatchedPureList(pureQueryResultData)
+  }, [pureQueryResultData, refreshWatchedPureList])
 
   const getMultisigByAddress = useCallback(
     (address: string) => {

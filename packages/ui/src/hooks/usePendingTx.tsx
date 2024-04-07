@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { HexString, MultisigStorageInfo } from '../types'
-import { useMultisigCallSubscription } from './useMultisigCallsSubscription'
+import { useMultisigCallQuery } from './useMultisigCallsQuery'
 import { isEmptyArray } from '../utils'
 import { useAccountId } from './useAccountId'
 import { ApiPromise } from '@polkadot/api'
@@ -251,7 +251,12 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
   const multisigIds = useAccountId(multisigAddresses)
   // re-fetch the on-chain if some new event appeared for any of the
   // multisig we are watching
-  useMultisigCallSubscription({ onUpdate: refresh, multisigIds })
+  const { data: multisigsCallsData } = useMultisigCallQuery({ multisigIds })
+
+  useEffect(() => {
+    if (!multisigsCallsData) return
+    refresh()
+  }, [multisigsCallsData, refresh])
 
   return { isLoading, txWithCallDataByDate, refresh }
 }
