@@ -73,9 +73,7 @@ deploy:
         '--dumb-cache-max-age',
         1000,
         '--subscription-max-response-size',
-        500000,
-        '--max-response-size',
-        100000
+        500000
       ]
 scale:
   dedicated: true
