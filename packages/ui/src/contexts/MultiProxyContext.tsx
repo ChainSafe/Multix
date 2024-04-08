@@ -369,6 +369,14 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [isDoneFetchingIndexerInfo, isMultisigsubLoading, isPureSubLoading, isRefreshingMultiProxyList]
   )
 
+  // if the main multisig query is loading, we should reset the lists.
+  useEffect(() => {
+    if (isMultisigsubLoading) {
+      setPureProxyList(null)
+      setMultisigList(null)
+    }
+  }, [isMultisigsubLoading])
+
   const defaultAddress = useMemo(() => {
     if (multiProxyList?.length === 0 || isLoading) {
       return undefined
