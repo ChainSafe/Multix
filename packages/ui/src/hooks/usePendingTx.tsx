@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { HexString, MultisigStorageInfo } from '../types'
-import { useMultisigCallQuery } from './useMultisigCallsQuery'
+import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils'
 import { useAccountId } from './useAccountId'
 import { ApiPromise } from '@polkadot/api'
