@@ -276,8 +276,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   useEffect(() => {
     if (!multisigData) return
 
-    console.log('multisigData', multisigData)
-
     refreshPureToQueryAndMultisigList(multisigData)
   }, [multisigData, refreshPureToQueryAndMultisigList])
 
@@ -346,26 +344,10 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     return true
   }, [multisigList, ownAddressList, pureProxyList, watchedAddresses])
 
-  console.log('isDoneFetchingIndexerInfo', isDoneFetchingIndexerInfo)
-  console.log(
-    'isMultisigQueryLoading || isPureQueryLoading || !isDoneFetchingIndexerInfo',
-    isMultisigQueryLoading,
-    isPureQueryLoading,
-    !isDoneFetchingIndexerInfo
-  )
-
   const isLoading = useMemo(
     () => isMultisigQueryLoading || isPureQueryLoading || !isDoneFetchingIndexerInfo,
     [isDoneFetchingIndexerInfo, isMultisigQueryLoading, isPureQueryLoading]
   )
-
-  // if the main multisig query is loading, we should reset the lists.
-  useEffect(() => {
-    if (isMultisigQueryLoading) {
-      setPureProxyList(null)
-      setMultisigList(null)
-    }
-  }, [isMultisigQueryLoading])
 
   const defaultAddress = useMemo(() => {
     if (multiProxyList?.length === 0 || isLoading) {
