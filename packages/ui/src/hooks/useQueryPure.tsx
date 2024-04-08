@@ -17,5 +17,5 @@ export const useQueryPure = ({ pureIds }: Args) => {
     }
   )
 
-  return { data, isLoading, error, refetch }
+  return { data, isLoading: isLoading && hasSomethingToQuery, error, refetch }
 }

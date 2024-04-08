@@ -21,5 +21,5 @@ export const useMultisigCallQuery = ({ multisigIds }: Args) => {
     }
   )
 
-  return { error, data, isLoading, refetch }
+  return { error, data, isLoading: isLoading && hasSomethingToQuery, refetch }
 }

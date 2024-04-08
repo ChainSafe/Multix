@@ -347,6 +347,12 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [multisigList, ownAddressList, pureProxyList, watchedAddresses])
 
   console.log('isDoneFetchingIndexerInfo', isDoneFetchingIndexerInfo)
+  console.log(
+    'isMultisigQueryLoading || isPureQueryLoading || !isDoneFetchingIndexerInfo',
+    isMultisigQueryLoading,
+    isPureQueryLoading,
+    !isDoneFetchingIndexerInfo
+  )
 
   const isLoading = useMemo(
     () => isMultisigQueryLoading || isPureQueryLoading || !isDoneFetchingIndexerInfo,
