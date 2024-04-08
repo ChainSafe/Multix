@@ -21,6 +21,7 @@ import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
 
 interface Props {
   className?: string
@@ -48,6 +49,7 @@ const MultisigCreation = ({ className }: Props) => {
       })
     }
   })
+  const { setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { getSortAddress } = useGetSortAddress()
   const { addToast } = useToasts()
   const [name, setName] = useState('')
@@ -313,8 +315,16 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
+    setRefetchMultisigTimeoutMinutes(1)
     withProxy ? handleCreateWithPure() : handleCreateRemark()
-  }, [currentStep, handleCreateRemark, handleCreateWithPure, isLastStep, withProxy])
+  }, [
+    currentStep,
+    handleCreateRemark,
+    handleCreateWithPure,
+    isLastStep,
+    setRefetchMultisigTimeoutMinutes,
+    withProxy
+  ])
 
   const goBack = useCallback(() => {
     window.scrollTo(0, 0)

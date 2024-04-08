@@ -1,7 +1,4 @@
-subscription MultisigsBySignatoriesOrWatched(
-  $accountIds: [String!]
-  $watchedAccountIds: [String!]
-) {
+query MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds: [String!]) {
   accountMultisigs(
     where: {
       OR: [
