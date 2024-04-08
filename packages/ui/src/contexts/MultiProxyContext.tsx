@@ -5,11 +5,11 @@ import {
   PureByIdsQueryQuery
 } from '../../types-and-hooks'
 import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
-import { useQueryMultisigs1 } from '../hooks/useQueryMultisigs1'
+import { useQueryMultisigs } from '../hooks/useQueryMultisigs'
 import { useAccounts } from './AccountsContext'
 import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
-import { usePureByIdsSubscription } from '../hooks/usePureQuery'
+import { useQueryPure } from '../hooks/useQueryPure'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
 import { useSearchParams } from 'react-router-dom'
 
@@ -48,6 +48,7 @@ export interface IMultisigContext {
   selectedMultiProxyAddress?: string
   setCanFindMultiProxyFromUrl: React.Dispatch<React.SetStateAction<boolean>>
   canFindMultiProxyFromUrl: boolean
+  setRefetchMultisigTimeoutMinutes: React.Dispatch<React.SetStateAction<number>>
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -59,6 +60,8 @@ const getSignatoriesFromAccount = (
 }
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
+  const [refetchMultisigTimeoutMinutes, setRefetchMultisigTimeoutMinutes] = useState(0)
+  const [shouldPollMultisigs, setShouldPollMultisigs] = useState(false)
   const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
   const [selectedMultiProxy, setSelectedMultiProxy] =
     useState<IMultisigContext['selectedMultiProxy']>(undefined)
@@ -251,6 +254,20 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     setIsRefreshingMultiProxyList(false)
   }, [])
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (refetchMultisigTimeoutMinutes > 0) {
+      setShouldPollMultisigs(true)
+      const timeoutInMs = refetchMultisigTimeoutMinutes * 60 * 1000
+      timeout = setTimeout(() => {
+        setShouldPollMultisigs(false)
+        setRefetchMultisigTimeoutMinutes(0)
+      }, timeoutInMs)
+    }
+
+    return () => timeout && clearTimeout(timeout)
+  }, [refetchMultisigTimeoutMinutes])
+
   const ownAddressIds = useAccountId(ownAddressList)
   const watchedAddressesIds = useAccountId(watchedAddresses)
   const {
@@ -258,16 +275,17 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     isLoading: isMultisigsubLoading,
     error: isMultisigSubError,
     refetch: refetchMultisigSub
-  } = useQueryMultisigs1({
+  } = useQueryMultisigs({
     accountIds: ownAddressIds,
-    watchedAccountIds: watchedAddressesIds
+    watchedAccountIds: watchedAddressesIds,
+    shouldRefetch: shouldPollMultisigs
   })
   const {
     data: pureQueryResultData,
     isLoading: isPureSubLoading,
     error: isPureSubError,
     refetch: refetchPureSub
-  } = usePureByIdsSubscription({
+  } = useQueryPure({
     pureIds: [...watchedAddressesIds, ...pureToQueryIds]
   })
 
@@ -376,7 +394,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         refetch,
         canFindMultiProxyFromUrl,
         setCanFindMultiProxyFromUrl,
-        isWatchedAccount
+        isWatchedAccount,
+        setRefetchMultisigTimeoutMinutes
       }}
     >
       {children}
