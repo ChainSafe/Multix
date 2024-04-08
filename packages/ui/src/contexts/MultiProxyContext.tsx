@@ -49,6 +49,7 @@ export interface IMultisigContext {
   setCanFindMultiProxyFromUrl: React.Dispatch<React.SetStateAction<boolean>>
   canFindMultiProxyFromUrl: boolean
   setRefetchMultisigTimeoutMinutes: React.Dispatch<React.SetStateAction<number>>
+  resetLists: () => void
 }
 
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
@@ -119,6 +120,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [, setSearchParams] = useSearchParams({
     address: ''
   })
+
+  const resetLists = useCallback(() => {
+    setMultisigList(null)
+    setPureProxyList(null)
+  }, [])
 
   const setAddress = useCallback(
     (address: string) => {
@@ -375,7 +381,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         canFindMultiProxyFromUrl,
         setCanFindMultiProxyFromUrl,
         isWatchedAccount,
-        setRefetchMultisigTimeoutMinutes
+        setRefetchMultisigTimeoutMinutes,
+        resetLists
       }}
     >
       {children}
