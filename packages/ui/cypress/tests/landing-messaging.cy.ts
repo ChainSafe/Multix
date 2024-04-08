@@ -82,7 +82,7 @@ describe('Landing Page Messaging', () => {
     landingPage.watchAccountButton().should('be.visible').should('be.enabled')
   })
 
-  it('can see an error when connected to an account and watched but not part of a multisig', () => {
+  it.only('can see an error when connected to an account and watched but not part of a multisig', () => {
     const nonMemberPublicKey1 = testAccounts['Non Multisig Member 1'].publicKey!
     cy.setupAndVisit({
       url: landingPageUrl,

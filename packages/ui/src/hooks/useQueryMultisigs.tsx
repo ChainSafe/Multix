@@ -33,7 +33,7 @@ export const useQueryMultisigs = ({
 
   return {
     data,
-    isLoading: hasSomethingToQuery && isLoading,
+    isLoading,
     error,
     refetch
   }

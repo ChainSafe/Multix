@@ -2,6 +2,8 @@ import { useMultisigCallsByMultisigIdQuery } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
+const DEFAULT_REFETCH_INTERVAL = 5000
+
 interface Args {
   multisigIds: string[]
 }
@@ -15,7 +17,7 @@ export const useMultisigCallQuery = ({ multisigIds }: Args) => {
     {
       enabled: hasSomethingToQuery,
       queryKey: [`KeyMultisigCallsByMultisigId-${multisigIds}-${selectedNetwork}`],
-      refetchInterval: 5000
+      refetchInterval: DEFAULT_REFETCH_INTERVAL
     }
   )
 
