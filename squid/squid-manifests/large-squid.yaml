@@ -44,8 +44,8 @@ deploy:
       cmd: ['sqd', 'start-westend']
     - name: paseo-processor
       cmd: ['sqd', 'start-paseo']
-    # - name: kilt-processor
-    #   cmd: ['sqd', 'start-kilt']
+    - name: kilt-processor
+      cmd: ['sqd', 'start-kilt']
     # - name: joystream-processor
     #   cmd: ['sqd', 'start-joystream']
     # - name: watr-processor
@@ -61,7 +61,6 @@ deploy:
       [
         'npx',
         'squid-graphql-server',
-        '--subscriptions',
         '--sql-statement-timeout',
         3000,
         '--dumb-cache',
@@ -71,9 +70,7 @@ deploy:
         '--dumb-cache-size',
         100,
         '--dumb-cache-max-age',
-        1000,
-        '--subscription-max-response-size',
-        500000
+        1000
       ]
 scale:
   dedicated: true
