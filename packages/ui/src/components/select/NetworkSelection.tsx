@@ -11,6 +11,7 @@ import {
   testChains
 } from '../../constants'
 import { theme } from '../../styles/theme'
+import { useMultiProxy } from '../../contexts/MultiProxyContext'
 
 const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
@@ -20,6 +21,7 @@ const NetworkSelection = () => {
       ? Object.entries(networkList)
       : Object.entries(networkList).filter(([name]) => name !== 'local')
   }, [])
+  const { resetLists } = useMultiProxy()
 
   const handleNetworkSelection = useCallback(
     ({ target: { value } }: SelectChangeEvent<unknown>) => {
@@ -28,9 +30,10 @@ const NetworkSelection = () => {
         return
       }
 
+      resetLists()
       selectNetwork(value, true)
     },
-    [selectNetwork]
+    [resetLists, selectNetwork]
   )
 
   const renderNetworks = useCallback(

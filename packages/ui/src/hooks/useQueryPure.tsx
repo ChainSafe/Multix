@@ -9,6 +9,7 @@ interface Args {
 export const useQueryPure = ({ pureIds }: Args) => {
   const { selectedNetwork } = useNetwork()
   const hasSomethingToQuery = useMemo(() => pureIds.length > 0, [pureIds])
+
   const { error, data, isLoading, refetch } = usePureByIdsQueryQuery(
     { pureIds },
     {
@@ -17,5 +18,5 @@ export const useQueryPure = ({ pureIds }: Args) => {
     }
   )
 
-  return { data, isLoading: hasSomethingToQuery && isLoading, error, refetch }
+  return { data, isLoading: isLoading && hasSomethingToQuery, error, refetch }
 }
