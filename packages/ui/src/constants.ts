@@ -210,7 +210,7 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
   'bifrost-dot',
   'hydradx',
   'interlay',
-  // 'kilt',
+  'kilt',
   // 'moonbeam',
   // 'pendulum',
   'phala'
