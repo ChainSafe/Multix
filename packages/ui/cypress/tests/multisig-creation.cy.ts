@@ -7,6 +7,7 @@ import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { landingPage } from '../support/page-objects/landingPage'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
+import { waitForMultisigLength } from '../utils/waitForMultisigLength'
 
 const fundedAccount1 = testAccounts['Funded Account 1 Chopsticks Kusama']
 const fundedAccount2 = testAccounts['Funded Account 2 Chopsticks Kusama']
@@ -23,7 +24,7 @@ const typeAndAdd = (address: string) => {
   newMultisigPage.addButton().click()
 }
 
-const acceptMultisigCreationAndVerifyNotifications = () => {
+const acceptMultisigCreationAndVerifyNotifications = (firstMultisig = false) => {
   waitForTxRequest()
   cy.getTxRequests().then((req) => {
     const txRequests = Object.values(req)
@@ -35,6 +36,8 @@ const acceptMultisigCreationAndVerifyNotifications = () => {
     notifications.notificationWrapper(10000).should('have.length', 1)
     notifications.loadingNotificationIcon().should('be.visible')
     notifications.notificationWrapper().should('contain', 'broadcast')
+
+    firstMultisig && landingPage.firstMultisigCreationLabel().should('be.visible')
 
     notifications.successNotificationIcon(30000).should('be.visible')
     notifications.notificationWrapper().should('contain', 'Tx in block')
@@ -102,9 +105,7 @@ describe('Multisig creation', () => {
       newMultisigPage.step3.infoBox().should('contain', '1 batch transaction')
       newMultisigPage.step3.errorNotEnoughFunds().should('not.exist')
       newMultisigPage.nextButton().should('contain', 'Create').click()
-      acceptMultisigCreationAndVerifyNotifications()
-
-      landingPage.firstMultisigCreationLabel().should('be.visible')
+      acceptMultisigCreationAndVerifyNotifications(true)
 
       // Landing Page
       multisigPage.accountHeader(10000).within(() => {
@@ -144,14 +145,12 @@ describe('Multisig creation', () => {
 
       // The banner should be there, and disapear within 30s
       landingPage.multisigCreationInfoBanner().should('be.visible')
+      landingPage.creationInfoBannerCloseButton().click()
 
-      cy.clock().then((clock) => {
-        // The banner should disapear after 30s, speed it up by 15s
-        clock.tick(15000)
-        // The banner should disappear
-        landingPage.multisigCreationInfoBanner(30000).should('not.exist')
-        clock.restore()
-      })
+      // The banner should disappear
+      landingPage.multisigCreationInfoBanner().should('not.exist')
+
+      waitForMultisigLength(2)
 
       topMenuItems
         .desktopMenu()

@@ -263,6 +263,9 @@ describe('Account address in the address bar', () => {
 
     topMenuItems.desktopMenu().within(() => topMenuItems.networkSelector().click())
     topMenuItems.networkSelectorOption('kusama').click()
+    landingPage
+      .noMultisigFoundError()
+      .should('contain.text', 'No multisig found for your accounts or watched accounts on kusama.')
     cy.url().should('not.include', 'address=')
   })
 
