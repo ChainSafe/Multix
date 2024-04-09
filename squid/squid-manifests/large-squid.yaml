@@ -44,8 +44,8 @@ deploy:
       cmd: ['sqd', 'start-westend']
     - name: paseo-processor
       cmd: ['sqd', 'start-paseo']
-    - name: kilt-processor
-      cmd: ['sqd', 'start-kilt']
+    # - name: kilt-processor
+    #   cmd: ['sqd', 'start-kilt']
     # - name: joystream-processor
     #   cmd: ['sqd', 'start-joystream']
     # - name: watr-processor
@@ -56,7 +56,7 @@ deploy:
     #   cmd: ['sqd', 'start-amplitude']
   api:
     env:
-      SQD_DEBUG: sqd:graphql-server
+      # SQD_DEBUG: sqd:graphql-server
     cmd:
       [
         'npx',

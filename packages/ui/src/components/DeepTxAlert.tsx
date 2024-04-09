@@ -214,7 +214,7 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
         <InfoTextStyled
           container
           spacing={0}
-          data-cy="banner-multisig-creation-info"
+          data-cy="banner-nested-multisig-tx"
         >
           <Grid
             item

@@ -1,4 +1,4 @@
-endpoint: wss://kusama.rpc.amforc.com
+endpoint: wss://rpc.ibp.network/kusama
 mock-signature-host: true
 block: 22568290
 db: ./db.sqlite

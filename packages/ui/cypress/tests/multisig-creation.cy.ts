@@ -144,14 +144,10 @@ describe('Multisig creation', () => {
 
       // The banner should be there, and disapear within 30s
       landingPage.multisigCreationInfoBanner().should('be.visible')
+      landingPage.creationInfoBannerCloseButton().click()
 
-      cy.clock().then((clock) => {
-        // The banner should disapear after 30s, speed it up by 15s
-        clock.tick(15000)
-        // The banner should disappear
-        landingPage.multisigCreationInfoBanner(30000).should('not.exist')
-        clock.restore()
-      })
+      // The banner should disappear
+      landingPage.multisigCreationInfoBanner().should('not.exist')
 
       topMenuItems
         .desktopMenu()

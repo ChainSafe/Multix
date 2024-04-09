@@ -21,6 +21,7 @@ const NewMulisigAlert = ({ className = '', onClose }: Props) => {
         Your new multisig is being created. It will be available in ~1min from the dropdown.
       </div>
       <IconButton
+        data-cy="button-close-multisig-creation-info"
         className="closeButton"
         size="small"
         aria-label="close"
