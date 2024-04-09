@@ -92,7 +92,7 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
     })
 
-    it.only('Create a multisig with a pure proxy', () => {
+    it('Create a multisig with a pure proxy', () => {
       const multisigName = 'Multisig with proxy'
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
 
@@ -125,7 +125,7 @@ describe('Multisig creation', () => {
         })
     })
 
-    it.only('Create a multisig without a pure proxy', () => {
+    it('Create a multisig without a pure proxy', () => {
       const multisigName = 'Multisig without proxy'
       const expectedMultisigAddress = 'F764i4HX9LvpW14injFtt9MThuifVdic8PnuPtUAVvMDiwD'
       const expectedMultisigAddressFirst6Char = expectedMultisigAddress.slice(0, 6)
