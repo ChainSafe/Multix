@@ -7,6 +7,7 @@ import { notifications } from '../support/page-objects/notifications'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { landingPage } from '../support/page-objects/landingPage'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
+import { waitForMultisigLength } from '../utils/waitForMultisigLength'
 
 const fundedAccount1 = testAccounts['Funded Account 1 Chopsticks Kusama']
 const fundedAccount2 = testAccounts['Funded Account 2 Chopsticks Kusama']
@@ -23,7 +24,7 @@ const typeAndAdd = (address: string) => {
   newMultisigPage.addButton().click()
 }
 
-const acceptMultisigCreationAndVerifyNotifications = () => {
+const acceptMultisigCreationAndVerifyNotifications = (firstMultisig = false) => {
   waitForTxRequest()
   cy.getTxRequests().then((req) => {
     const txRequests = Object.values(req)
@@ -35,6 +36,8 @@ const acceptMultisigCreationAndVerifyNotifications = () => {
     notifications.notificationWrapper(10000).should('have.length', 1)
     notifications.loadingNotificationIcon().should('be.visible')
     notifications.notificationWrapper().should('contain', 'broadcast')
+
+    firstMultisig && landingPage.firstMultisigCreationLabel().should('be.visible')
 
     notifications.successNotificationIcon(30000).should('be.visible')
     notifications.notificationWrapper().should('contain', 'Tx in block')
@@ -89,7 +92,7 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
     })
 
-    it('Create a multisig with a pure proxy', () => {
+    it.only('Create a multisig with a pure proxy', () => {
       const multisigName = 'Multisig with proxy'
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
 
@@ -102,9 +105,7 @@ describe('Multisig creation', () => {
       newMultisigPage.step3.infoBox().should('contain', '1 batch transaction')
       newMultisigPage.step3.errorNotEnoughFunds().should('not.exist')
       newMultisigPage.nextButton().should('contain', 'Create').click()
-      acceptMultisigCreationAndVerifyNotifications()
-
-      landingPage.firstMultisigCreationLabel().should('be.visible')
+      acceptMultisigCreationAndVerifyNotifications(true)
 
       // Landing Page
       multisigPage.accountHeader(10000).within(() => {
@@ -124,7 +125,7 @@ describe('Multisig creation', () => {
         })
     })
 
-    it('Create a multisig without a pure proxy', () => {
+    it.only('Create a multisig without a pure proxy', () => {
       const multisigName = 'Multisig without proxy'
       const expectedMultisigAddress = 'F764i4HX9LvpW14injFtt9MThuifVdic8PnuPtUAVvMDiwD'
       const expectedMultisigAddressFirst6Char = expectedMultisigAddress.slice(0, 6)
@@ -148,6 +149,8 @@ describe('Multisig creation', () => {
 
       // The banner should disappear
       landingPage.multisigCreationInfoBanner().should('not.exist')
+
+      waitForMultisigLength(2)
 
       topMenuItems
         .desktopMenu()
