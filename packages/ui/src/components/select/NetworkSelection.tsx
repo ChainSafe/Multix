@@ -47,7 +47,7 @@ const NetworkSelection = () => {
           key={networkName}
           value={networkName}
           data-cy={`select-network-option-${networkName}`}
-          isOneLine={displayedNetworks.length === 1}
+          className={displayedNetworks.length === 1 ? 'oneLine' : undefined}
         >
           <ImgStyled
             alt={`network-logo-${networkName}`}
@@ -197,13 +197,15 @@ const SelectStyled = styled(SelectMui)`
   }
 `
 
-const MenuItemStyled = styled(MenuItem)<{ isOneLine: boolean }>`
+const MenuItemStyled = styled(MenuItem)`
   text-transform: capitalize;
   padding: 0.75rem;
   max-width: 9.1875rem;
   box-sizing: content-box;
-  // Fix for correct display of the one line networks list in Safari
-  ${({ isOneLine }) => isOneLine && 'column-span: all'}
+
+  &.oneLine {
+    column-span: all;
+  }
 `
 
 const ImgStyled = styled('img')`

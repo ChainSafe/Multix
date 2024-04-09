@@ -1,5 +1,5 @@
 import { Box, Tooltip } from '@mui/material'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { AccountBadge, IconSizeVariant } from '../../types'
 import { getDisplayAddress } from '../../utils'
@@ -55,7 +55,16 @@ const AccountDisplay = ({
       address
     })
 
-  const handleTooltipClose = useCallback(() => setIsCopyTooltipOpen(false), [])
+  useEffect(() => {
+    let timeOut: NodeJS.Timeout
+
+    if (isCopyTooltipOpen) {
+      timeOut = setTimeout(() => setIsCopyTooltipOpen(false), DEFAULT_AUTO_HIDE_DURATION)
+    }
+
+    return () => timeOut && clearTimeout(timeOut)
+  }, [isCopyTooltipOpen])
+
   const handleCopyAddress = useCallback(() => {
     if (!canCopy) return
 
@@ -132,11 +141,9 @@ const AccountDisplay = ({
           onClick={handleCopyAddress}
         >
           <Tooltip
-            onClose={handleTooltipClose}
             open={isCopyTooltipOpen}
             title={DEFAULT_TITLE}
             placement={DEFAULT_PLACEMENT}
-            leaveDelay={DEFAULT_AUTO_HIDE_DURATION}
           >
             <AddressWrapperStyled>{getDisplayAddress(encodedAddress)}</AddressWrapperStyled>
           </Tooltip>
