@@ -325,7 +325,9 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         multi = getMultiProxyAddress(newMulti)
       }
 
-      if (!multi) {
+      const multiProxyFound = getMultiProxyByAddress(multi)
+
+      if (!multi || !multiProxyFound) {
         return false
       }
 
@@ -333,7 +335,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       setSelectedMultiProxyAddress(multi)
       return true
     },
-    [setAddress]
+    [getMultiProxyByAddress, setAddress]
   )
 
   const refetch = useCallback(() => {
