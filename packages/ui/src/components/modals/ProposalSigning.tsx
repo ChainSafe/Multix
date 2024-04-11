@@ -40,7 +40,7 @@ const ProposalSigning = ({
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { getMultisigByAddress } = useMultiProxy()
+  const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
   const [debouncedAddedCallData, setDebouncedAddedCallData] = useState<HexString | undefined>()
@@ -239,16 +239,22 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback).catch(
-        (error: Error) => {
+      tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+        .then(() => {
+          // poll for 1min if the tx may make changes
+          // such as creating a proxy, adding/removing a multisig
+          if (mustProvideCallData) {
+            setRefetchMultisigTimeoutMinutes(1)
+          }
+        })
+        .catch((error: Error) => {
           setIsSubmitting(false)
           addToast({
             title: error.message,
             type: 'error',
             link: getSubscanExtrinsicLink(tx.hash.toHex())
           })
-        }
-      )
+        })
     },
     [
       getSortAddress,
@@ -264,6 +270,7 @@ const ProposalSigning = ({
       selectedSigner,
       signCallback,
       addedCallData,
+      setRefetchMultisigTimeoutMinutes,
       addToast,
       getSubscanExtrinsicLink
     ]

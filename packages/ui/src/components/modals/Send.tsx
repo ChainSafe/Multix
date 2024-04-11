@@ -45,7 +45,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
+  const {
+    selectedMultiProxy,
+    getMultisigAsAccountBaseInfo,
+    getMultisigByAddress,
+    setRefetchMultisigTimeoutMinutes
+  } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState<ReactNode | string>('')
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
@@ -227,6 +232,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     multisigTx
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .then(() => {
+        // poll for 1min if the tx may make changes
+        // such as creating a pure proxy
+        setRefetchMultisigTimeoutMinutes(1)
+      })
       .catch((error: Error) => {
         setIsSubmitting(false)
         addToast({
@@ -244,6 +254,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     multisigTx,
     selectedSigner,
     signCallback,
+    setRefetchMultisigTimeoutMinutes,
     addToast,
     getSubscanExtrinsicLink
   ])
