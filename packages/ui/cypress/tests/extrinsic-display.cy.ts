@@ -17,7 +17,7 @@ describe('Verify extrinsics display', () => {
     })
   })
 
-  it.only('The omnipool.sell extrinsic is displayed in plank', () => {
+  it('The omnipool.sell extrinsic is displayed in plank', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
@@ -39,6 +39,10 @@ describe('Verify extrinsics display', () => {
   })
 
   it('A manual omnipool.sell extrinsic creation has input in plank', () => {
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+    })
+
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     sendTxModal.selectEasySetup().click()
@@ -75,6 +79,10 @@ describe('Verify extrinsics display', () => {
       '0x0703d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0b00b04e2bde6f'
     const sendingAmount = '123 HDX'
     const expectedRecipient = '7NPoMQ..kZpiba'
+
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+    })
 
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
