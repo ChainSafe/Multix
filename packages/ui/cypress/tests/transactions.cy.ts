@@ -31,7 +31,7 @@ describe('Perform transactions', () => {
 
   it('Abort a multisig tx', () => {
     multisigPage.accountHeader().within(() => {
-      accountDisplay.addressLabel().should('not.be.empty')
+      accountDisplay.addressLabel().should('not.have.text', '')
     })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
@@ -41,7 +41,9 @@ describe('Perform transactions', () => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
-      sendTxModal.buttonSend().should('be.disabled')
+      sendTxModal.buttonSend().should('not.exist')
+      sendTxModal.buttonSending().should('be.visible').should('be.disabled')
+
       const errorMessage = 'Whuuuut'
       cy.rejectTx(txRequests[0].id, errorMessage)
       notifications.errorNotificationIcon().should('be.visible')
@@ -63,7 +65,7 @@ describe('Perform transactions', () => {
       WSendpoint: 'wss://rococo-rpc.polkadot.io'
     })
     multisigPage.accountHeader().within(() => {
-      accountDisplay.addressLabel().should('not.be.empty')
+      accountDisplay.addressLabel().should('not.have.text', '')
     })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
@@ -73,7 +75,8 @@ describe('Perform transactions', () => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
-      sendTxModal.buttonSend().should('be.disabled')
+      sendTxModal.buttonSend().should('not.exist')
+      sendTxModal.buttonSending().should('be.visible').should('be.disabled')
       cy.approveTx(txRequests[0].id)
       notifications.loadingNotificationIcon().should('be.visible')
       notifications.notificationWrapper().should('have.length', 1)
