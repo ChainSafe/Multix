@@ -173,7 +173,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     error: isPureQueryError,
     refetch: refetchPureQuery
   } = useQueryPure({
-    pureIds: [...watchedAddressesIds, ...pureLinkedToMultisigsIds]
+    pureIds: [...watchedAddressesIds, ...pureLinkedToMultisigsIds],
+    shouldRefetch: shouldPollMultisigs
   })
 
   const refreshPureToQueryAndMultisigList = useCallback(
