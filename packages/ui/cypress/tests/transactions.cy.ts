@@ -6,6 +6,7 @@ import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 
 const testAccount1Address = testAccounts['Multisig Member Account 1'].address
 const testAccount2Address = testAccounts['Multisig Member Account 2'].address
@@ -29,6 +30,9 @@ describe('Perform transactions', () => {
   })
 
   it('Abort a multisig tx', () => {
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('not.be.empty')
+    })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
@@ -57,6 +61,9 @@ describe('Perform transactions', () => {
         )
       },
       WSendpoint: 'wss://rococo-rpc.polkadot.io'
+    })
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('not.be.empty')
     })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
