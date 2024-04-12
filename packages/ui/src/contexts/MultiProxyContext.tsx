@@ -92,10 +92,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [multiProxyList]
   )
 
-  useEffect(() => {
-    console.log('pureProxyList')
-  }, [pureProxyList])
-
   const selectedMultiProxy = useMemo(() => {
     if (!selectedMultiProxyAddress) return
 
@@ -179,8 +175,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedQuery) => {
-      console.log('3')
-
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureLinkedToMultisigs([])
@@ -225,17 +219,10 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
         // flatten out multisigMap
         const multisigArray = Array.from(multisigMap.values())
-        console.log('---->set')
         setMultisigList(multisigArray)
 
         // add the selection to the pure to query
         setPureLinkedToMultisigs(Array.from(pureToQuerySet))
-
-        // if (!!pureProxyList && pureProxyList?.length > 0) {
-        //   // force a refetch, the list of pure may be the same
-        //   // the underlying msigs aren't (such as in a signatories rotations)
-        //   refetchPureQuery()
-        // }
 
         // if there is no pure to query, set the PureProxyList to empty array
         // to signify that the pure proxies are done loading
@@ -300,10 +287,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [multisigData, refreshPureToQueryAndMultisigList])
 
   useEffect(() => {
-    console.log('refreshPureToQueryAndMultisigList')
-  }, [refreshPureToQueryAndMultisigList])
-
-  useEffect(() => {
     if (!pureQueryResultData) return
 
     refreshPureList(pureQueryResultData)
@@ -329,8 +312,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const selectMultiProxy = useCallback(
     (newMulti: typeof selectedMultiProxy | string) => {
-      console.log('6')
-
       let multi: string | undefined
 
       if (typeof newMulti === 'string') {
