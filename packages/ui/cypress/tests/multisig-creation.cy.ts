@@ -92,7 +92,7 @@ describe('Multisig creation', () => {
       newMultisigPage.nextButton().should('contain', 'Next').click()
     })
 
-    it.only('Create a multisig with a pure proxy', () => {
+    it('Create a multisig with a pure proxy', () => {
       const multisigName = 'Multisig with proxy'
       const expectedMultisigAddress = 'D9b1mkwhCwyRMUQZLyyKPdVkiJfFCuyVuWr3EmYAV6ETXkX'
 
