@@ -91,6 +91,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     },
     [multiProxyList]
   )
+
+  useEffect(() => {
+    console.log('pureProxyList')
+  }, [pureProxyList])
+
   const selectedMultiProxy = useMemo(() => {
     if (!selectedMultiProxyAddress) return
 
@@ -126,7 +131,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     setPureProxyList(null)
   }, [])
 
-  const setAddress = useCallback(
+  const setAddressInUrl = useCallback(
     (address: string) => {
       setSearchParams((prev) => {
         prev.set('address', address)
@@ -173,6 +178,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedQuery) => {
+      console.log('3')
+
       // we do have an answer, but there is no multisig
       if (!!data?.accountMultisigs && data.accountMultisigs.length === 0) {
         setPureLinkedToMultisigs([])
@@ -217,23 +224,24 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
         // flatten out multisigMap
         const multisigArray = Array.from(multisigMap.values())
+        console.log('---->set')
         setMultisigList(multisigArray)
 
         // add the selection to the pure to query
         setPureLinkedToMultisigs(Array.from(pureToQuerySet))
 
-        if (!!pureProxyList && pureProxyList?.length > 0) {
-          // force a refetch, the list of pure may be the same
-          // the underlying msigs aren't (such as in a signatories rotations)
-          refetchPureQuery()
-        }
+        // if (!!pureProxyList && pureProxyList?.length > 0) {
+        //   // force a refetch, the list of pure may be the same
+        //   // the underlying msigs aren't (such as in a signatories rotations)
+        //   refetchPureQuery()
+        // }
 
         // if there is no pure to query, set the PureProxyList to empty array
         // to signify that the pure proxies are done loading
         pureToQuerySet.size === 0 && watchedAddresses.length === 0 && setPureProxyList([])
       }
     },
-    [pureProxyList, refetchPureQuery, watchedAddresses.length]
+    [watchedAddresses]
   )
 
   const refreshPureList = useCallback((data: PureByIdsQueryQuery) => {
@@ -287,9 +295,12 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   useEffect(() => {
     if (!multisigData) return
-
     refreshPureToQueryAndMultisigList(multisigData)
   }, [multisigData, refreshPureToQueryAndMultisigList])
+
+  useEffect(() => {
+    console.log('refreshPureToQueryAndMultisigList')
+  }, [refreshPureToQueryAndMultisigList])
 
   useEffect(() => {
     if (!pureQueryResultData) return
@@ -301,7 +312,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     (address: string) => {
       return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
     },
-    [selectedMultiProxy?.multisigs]
+    [selectedMultiProxy]
   )
 
   const getMultisigAsAccountBaseInfo = () =>
@@ -317,6 +328,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const selectMultiProxy = useCallback(
     (newMulti: typeof selectedMultiProxy | string) => {
+      console.log('6')
+
       let multi: string | undefined
 
       if (typeof newMulti === 'string') {
@@ -331,11 +344,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         return false
       }
 
-      setAddress(multi)
+      setAddressInUrl(multi)
       setSelectedMultiProxyAddress(multi)
       return true
     },
-    [getMultiProxyByAddress, setAddress]
+    [getMultiProxyByAddress, setAddressInUrl]
   )
 
   const refetch = useCallback(() => {

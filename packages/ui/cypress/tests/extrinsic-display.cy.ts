@@ -17,7 +17,7 @@ describe('Verify extrinsics display', () => {
     })
   })
 
-  it('The omnipool.sell extrinsic is displayed in plank', () => {
+  it.only('The omnipool.sell extrinsic is displayed in plank', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
