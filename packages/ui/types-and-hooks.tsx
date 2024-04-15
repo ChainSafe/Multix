@@ -705,70 +705,6 @@ export type SquidStatus = {
   height?: Maybe<Scalars['Int']['output']>;
 };
 
-export type Subscription = {
-  __typename?: 'Subscription';
-  accountById?: Maybe<Account>;
-  accountMultisigById?: Maybe<AccountMultisig>;
-  accountMultisigs: Array<AccountMultisig>;
-  accounts: Array<Account>;
-  multisigCallById?: Maybe<MultisigCall>;
-  multisigCalls: Array<MultisigCall>;
-  proxyAccountById?: Maybe<ProxyAccount>;
-  proxyAccounts: Array<ProxyAccount>;
-};
-
-
-export type SubscriptionAccountByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type SubscriptionAccountMultisigByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type SubscriptionAccountMultisigsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<AccountMultisigOrderByInput>>;
-  where?: InputMaybe<AccountMultisigWhereInput>;
-};
-
-
-export type SubscriptionAccountsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<AccountOrderByInput>>;
-  where?: InputMaybe<AccountWhereInput>;
-};
-
-
-export type SubscriptionMultisigCallByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type SubscriptionMultisigCallsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MultisigCallOrderByInput>>;
-  where?: InputMaybe<MultisigCallWhereInput>;
-};
-
-
-export type SubscriptionProxyAccountByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type SubscriptionProxyAccountsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ProxyAccountOrderByInput>>;
-  where?: InputMaybe<ProxyAccountWhereInput>;
-};
-
 export type WhereIdInput = {
   id: Scalars['String']['input'];
 };
@@ -831,13 +767,15 @@ export const useMultisigByIdQuery = <
       TError = unknown
     >(
       variables: MultisigByIdQueryVariables,
-      options?: UseQueryOptions<MultisigByIdQuery, TError, TData>
+      options?: Omit<UseQueryOptions<MultisigByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigByIdQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<MultisigByIdQuery, TError, TData>(
-      ['MultisigById', variables],
-      useFetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument).bind(null, variables),
-      options
+      {
+    queryKey: ['MultisigById', variables],
+    queryFn: useFetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument).bind(null, variables),
+    ...options
+  }
     )};
 
 export const MultisigCallsByMultisigIdDocument = `
@@ -860,13 +798,15 @@ export const useMultisigCallsByMultisigIdQuery = <
       TError = unknown
     >(
       variables?: MultisigCallsByMultisigIdQueryVariables,
-      options?: UseQueryOptions<MultisigCallsByMultisigIdQuery, TError, TData>
+      options?: Omit<UseQueryOptions<MultisigCallsByMultisigIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigCallsByMultisigIdQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<MultisigCallsByMultisigIdQuery, TError, TData>(
-      variables === undefined ? ['MultisigCallsByMultisigId'] : ['MultisigCallsByMultisigId', variables],
-      useFetchData<MultisigCallsByMultisigIdQuery, MultisigCallsByMultisigIdQueryVariables>(MultisigCallsByMultisigIdDocument).bind(null, variables),
-      options
+      {
+    queryKey: variables === undefined ? ['MultisigCallsByMultisigId'] : ['MultisigCallsByMultisigId', variables],
+    queryFn: useFetchData<MultisigCallsByMultisigIdQuery, MultisigCallsByMultisigIdQueryVariables>(MultisigCallsByMultisigIdDocument).bind(null, variables),
+    ...options
+  }
     )};
 
 export const MultisigsByMultisigOrPureSignatoriesDocument = `
@@ -890,13 +830,15 @@ export const useMultisigsByMultisigOrPureSignatoriesQuery = <
       TError = unknown
     >(
       variables?: MultisigsByMultisigOrPureSignatoriesQueryVariables,
-      options?: UseQueryOptions<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>
+      options?: Omit<UseQueryOptions<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>(
-      variables === undefined ? ['multisigsByMultisigOrPureSignatories'] : ['multisigsByMultisigOrPureSignatories', variables],
-      useFetchData<MultisigsByMultisigOrPureSignatoriesQuery, MultisigsByMultisigOrPureSignatoriesQueryVariables>(MultisigsByMultisigOrPureSignatoriesDocument).bind(null, variables),
-      options
+      {
+    queryKey: variables === undefined ? ['multisigsByMultisigOrPureSignatories'] : ['multisigsByMultisigOrPureSignatories', variables],
+    queryFn: useFetchData<MultisigsByMultisigOrPureSignatoriesQuery, MultisigsByMultisigOrPureSignatoriesQueryVariables>(MultisigsByMultisigOrPureSignatoriesDocument).bind(null, variables),
+    ...options
+  }
     )};
 
 export const MultisigsBySignatoriesOrWatchedDocument = `
@@ -930,13 +872,15 @@ export const useMultisigsBySignatoriesOrWatchedQuery = <
       TError = unknown
     >(
       variables?: MultisigsBySignatoriesOrWatchedQueryVariables,
-      options?: UseQueryOptions<MultisigsBySignatoriesOrWatchedQuery, TError, TData>
+      options?: Omit<UseQueryOptions<MultisigsBySignatoriesOrWatchedQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigsBySignatoriesOrWatchedQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<MultisigsBySignatoriesOrWatchedQuery, TError, TData>(
-      variables === undefined ? ['MultisigsBySignatoriesOrWatched'] : ['MultisigsBySignatoriesOrWatched', variables],
-      useFetchData<MultisigsBySignatoriesOrWatchedQuery, MultisigsBySignatoriesOrWatchedQueryVariables>(MultisigsBySignatoriesOrWatchedDocument).bind(null, variables),
-      options
+      {
+    queryKey: variables === undefined ? ['MultisigsBySignatoriesOrWatched'] : ['MultisigsBySignatoriesOrWatched', variables],
+    queryFn: useFetchData<MultisigsBySignatoriesOrWatchedQuery, MultisigsBySignatoriesOrWatchedQueryVariables>(MultisigsBySignatoriesOrWatchedDocument).bind(null, variables),
+    ...options
+  }
     )};
 
 export const PureByIdsQueryDocument = `
@@ -966,11 +910,13 @@ export const usePureByIdsQueryQuery = <
       TError = unknown
     >(
       variables?: PureByIdsQueryQueryVariables,
-      options?: UseQueryOptions<PureByIdsQueryQuery, TError, TData>
+      options?: Omit<UseQueryOptions<PureByIdsQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<PureByIdsQueryQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<PureByIdsQueryQuery, TError, TData>(
-      variables === undefined ? ['PureByIdsQuery'] : ['PureByIdsQuery', variables],
-      useFetchData<PureByIdsQueryQuery, PureByIdsQueryQueryVariables>(PureByIdsQueryDocument).bind(null, variables),
-      options
+      {
+    queryKey: variables === undefined ? ['PureByIdsQuery'] : ['PureByIdsQuery', variables],
+    queryFn: useFetchData<PureByIdsQueryQuery, PureByIdsQueryQueryVariables>(PureByIdsQueryDocument).bind(null, variables),
+    ...options
+  }
     )};
