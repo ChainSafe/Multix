@@ -69,7 +69,7 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
         value={threshold || ''}
         onChange={handleChange}
         inputProps={{ 'data-cy': 'input-threshold-creation' }}
-        // @ts-ignore adding prop for the test
+        // @ts-expect-error
         FormHelperTextProps={{ 'data-cy': 'input-warning-message' }}
       />
     </Box>
