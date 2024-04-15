@@ -1,5 +1,13 @@
-import { Alert, Dialog, DialogContent, DialogTitle, Grid, SelectChangeEvent } from '@mui/material'
-import { Button, Select } from '../library'
+import {
+  Alert,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  SelectChangeEvent
+} from '@mui/material'
+import { Button, ButtonWithIcon, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -45,7 +53,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
+  const {
+    selectedMultiProxy,
+    getMultisigAsAccountBaseInfo,
+    getMultisigByAddress,
+    setRefetchMultisigTimeoutMinutes
+  } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
   const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState<ReactNode | string>('')
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
@@ -227,6 +240,11 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     multisigTx
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .then(() => {
+        // poll for 1min if the tx may make changes
+        // such as creating a pure proxy
+        setRefetchMultisigTimeoutMinutes(1)
+      })
       .catch((error: Error) => {
         setIsSubmitting(false)
         addToast({
@@ -244,6 +262,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     multisigTx,
     selectedSigner,
     signCallback,
+    setRefetchMultisigTimeoutMinutes,
     addToast,
     getSubscanExtrinsicLink
   ])
@@ -414,22 +433,42 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
             xs={12}
             className="buttonContainer"
           >
-            <Button
-              data-cy="button-send"
-              variant="primary"
-              onClick={onSign}
-              disabled={
-                !!easyOptionErrorMessage || !!errorMessage || isSubmitting || !extrinsicToCall
-              }
-            >
-              Send
-            </Button>
+            {isSubmitting ? (
+              <ButtonWithIcon
+                data-cy="button-sending"
+                variant="primary"
+                aria-label="sending"
+                disabled
+              >
+                <LoaderStyled />
+                Sending...
+              </ButtonWithIcon>
+            ) : (
+              <Button
+                data-cy="button-send"
+                variant="primary"
+                onClick={onSign}
+                disabled={!!easyOptionErrorMessage || !!errorMessage || !extrinsicToCall}
+              >
+                Send
+              </Button>
+            )}
           </Grid>
         </Grid>
       </DialogContent>
     </Dialog>
   )
 }
+
+const LoaderStyled = styled(CircularProgress)`
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  margin-right: 4px;
+
+  & > svg {
+    margin: 0;
+  }
+`
 
 export default styled(Send)(
   ({ theme }) => `
@@ -444,6 +483,9 @@ export default styled(Send)(
   .buttonContainer {
     text-align: right;
     margin-top: 1rem;
+    button { 
+      margin-left: auto;
+    }
   }
 
   .errorMessage {

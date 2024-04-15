@@ -79,7 +79,8 @@ describe('Set an identity', () => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', multisigSignatoryWithoutIdentity.address)
-      sendTxModal.buttonSend().should('be.disabled')
+      sendTxModal.buttonSend().should('not.exist')
+      sendTxModal.buttonSending().should('be.visible')
       // expected https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frococo-rpc.polkadot.io#/extrinsics/decode/0x1f0102000412ad770206045069201514711dc2456908b0af226442d475d12a5334e9c4513e001901000564696973056c6565670000000000000000
       cy.wrap(txRequests[0].payload.method).should(
         'eq',

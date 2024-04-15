@@ -4,6 +4,7 @@ export const sendTxModal = {
   sendTokensFieldTo: () => cy.get('[data-cy=send-tokens-field-to]'),
   sendTokensFieldAmount: () => cy.get('[data-cy=send-tokens-field-amount]'),
   buttonSend: () => cy.get('[data-cy=button-send]'),
+  buttonSending: () => cy.get('[data-cy=button-sending]'),
   setIdentitySection: () => cy.get('[data-cy=section-set-identity]'),
   setIdentityField: (field: string) => cy.get(`[data-cy=set-identity-field-${field}]`),
   setIdentityFieldInput: (field: string) => cy.get(`[data-cy=input-set-identity-field-${field}]`),

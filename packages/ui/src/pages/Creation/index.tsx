@@ -254,6 +254,9 @@ const MultisigCreation = ({ className }: Props) => {
 
     remarkCall
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .then(() => {
+        setRefetchMultisigTimeoutMinutes(1)
+      })
       .catch((error: Error) => {
         setIsSubmitted(false)
 
@@ -272,6 +275,7 @@ const MultisigCreation = ({ className }: Props) => {
     remarkCall,
     selectedAccount,
     selectedSigner,
+    setRefetchMultisigTimeoutMinutes,
     signCallBack
   ])
 
@@ -286,6 +290,7 @@ const MultisigCreation = ({ className }: Props) => {
 
     batchCall
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .then(() => setRefetchMultisigTimeoutMinutes(1))
       .catch((error: Error) => {
         setIsSubmitted(false)
 
@@ -304,6 +309,7 @@ const MultisigCreation = ({ className }: Props) => {
     name,
     selectedAccount,
     selectedSigner,
+    setRefetchMultisigTimeoutMinutes,
     signCallBack
   ])
 
@@ -315,16 +321,8 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    setRefetchMultisigTimeoutMinutes(1)
     withProxy ? handleCreateWithPure() : handleCreateRemark()
-  }, [
-    currentStep,
-    handleCreateRemark,
-    handleCreateWithPure,
-    isLastStep,
-    setRefetchMultisigTimeoutMinutes,
-    withProxy
-  ])
+  }, [currentStep, handleCreateRemark, handleCreateWithPure, isLastStep, withProxy])
 
   const goBack = useCallback(() => {
     window.scrollTo(0, 0)

@@ -64,8 +64,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const [refetchMultisigTimeoutMinutes, setRefetchMultisigTimeoutMinutes] = useState(0)
   const [shouldPollMultisigs, setShouldPollMultisigs] = useState(false)
   const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
-  const [selectedMultiProxy, setSelectedMultiProxy] =
-    useState<IMultisigContext['selectedMultiProxy']>(undefined)
+  const [selectedMultiProxyAddress, setSelectedMultiProxyAddress] = useState('')
   // if set to null, it means that it hasn't been initialized yet
   const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList'] | null>(
     null
@@ -76,14 +75,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const multiProxyList = useMemo(() => {
     return [...(pureProxyList || []), ...(multisigList || [])]
   }, [multisigList, pureProxyList])
-  const selectedMultiProxyAddress = useMemo(
-    () => getMultiProxyAddress(selectedMultiProxy),
-    [selectedMultiProxy]
-  )
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
-  const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
-  const pureLinkedToMultisigsIds = useAccountId(pureLinkedToMultisigs)
   const getMultiProxyByAddress = useCallback(
     (address?: string) => {
       if (!address) return undefined
@@ -98,6 +91,14 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     },
     [multiProxyList]
   )
+
+  const selectedMultiProxy = useMemo(() => {
+    if (!selectedMultiProxyAddress) return
+
+    return getMultiProxyByAddress(selectedMultiProxyAddress)
+  }, [getMultiProxyByAddress, selectedMultiProxyAddress])
+  const selectedHasProxy = useMemo(() => !!selectedMultiProxy?.proxy, [selectedMultiProxy])
+  const pureLinkedToMultisigsIds = useAccountId(pureLinkedToMultisigs)
 
   // This is true if the currently Multiproxy passed as param contains no signatory
   // owned by the user this happens with a watched account
@@ -126,7 +127,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     setPureProxyList(null)
   }, [])
 
-  const setAddress = useCallback(
+  const setAddressInUrl = useCallback(
     (address: string) => {
       setSearchParams((prev) => {
         prev.set('address', address)
@@ -135,6 +136,42 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     },
     [setSearchParams]
   )
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (refetchMultisigTimeoutMinutes > 0) {
+      setShouldPollMultisigs(true)
+      const timeoutInMs = refetchMultisigTimeoutMinutes * 60 * 1000
+      timeout = setTimeout(() => {
+        setShouldPollMultisigs(false)
+        setRefetchMultisigTimeoutMinutes(0)
+      }, timeoutInMs)
+    }
+
+    return () => timeout && clearTimeout(timeout)
+  }, [refetchMultisigTimeoutMinutes])
+
+  const ownAddressIds = useAccountId(ownAddressList)
+  const watchedAddressesIds = useAccountId(watchedAddresses)
+  const {
+    data: multisigData,
+    isLoading: isMultisigQueryLoading,
+    error: multisigQueryError,
+    refetch: refetchMultisigQuery
+  } = useQueryMultisigs({
+    accountIds: ownAddressIds,
+    watchedAccountIds: watchedAddressesIds,
+    shouldRefetch: shouldPollMultisigs
+  })
+  const {
+    data: pureQueryResultData,
+    isLoading: isPureQueryLoading,
+    error: isPureQueryError,
+    refetch: refetchPureQuery
+  } = useQueryPure({
+    pureIds: [...watchedAddressesIds, ...pureLinkedToMultisigsIds],
+    shouldRefetch: shouldPollMultisigs
+  })
 
   const refreshPureToQueryAndMultisigList = useCallback(
     (data: MultisigsBySignatoriesOrWatchedQuery) => {
@@ -187,7 +224,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         // add the selection to the pure to query
         setPureLinkedToMultisigs(Array.from(pureToQuerySet))
 
-        // if there is no pure to query set the PureProxyList to empty array
+        // if there is no pure to query, set the PureProxyList to empty array
         // to signify that the pure proxies are done loading
         pureToQuerySet.size === 0 && watchedAddresses.length === 0 && setPureProxyList([])
       }
@@ -195,7 +232,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [watchedAddresses]
   )
 
-  const refreshWatchedPureList = useCallback((data: PureByIdsQueryQuery) => {
+  const refreshPureList = useCallback((data: PureByIdsQueryQuery) => {
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
     // we do have an answer, but there is nothing
     if (!!data?.accounts && data.accounts.length === 0) {
@@ -245,57 +282,21 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [])
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout
-    if (refetchMultisigTimeoutMinutes > 0) {
-      setShouldPollMultisigs(true)
-      const timeoutInMs = refetchMultisigTimeoutMinutes * 60 * 1000
-      timeout = setTimeout(() => {
-        setShouldPollMultisigs(false)
-        setRefetchMultisigTimeoutMinutes(0)
-      }, timeoutInMs)
-    }
-
-    return () => timeout && clearTimeout(timeout)
-  }, [refetchMultisigTimeoutMinutes])
-
-  const ownAddressIds = useAccountId(ownAddressList)
-  const watchedAddressesIds = useAccountId(watchedAddresses)
-  const {
-    data: multisigData,
-    isLoading: isMultisigQueryLoading,
-    error: multisigQueryError,
-    refetch: refetchMultisigQuery
-  } = useQueryMultisigs({
-    accountIds: ownAddressIds,
-    watchedAccountIds: watchedAddressesIds,
-    shouldRefetch: shouldPollMultisigs
-  })
-  const {
-    data: pureQueryResultData,
-    isLoading: isPureQueryLoading,
-    error: isPureQueryError,
-    refetch: refetchPureQuery
-  } = useQueryPure({
-    pureIds: [...watchedAddressesIds, ...pureLinkedToMultisigsIds]
-  })
-
-  useEffect(() => {
     if (!multisigData) return
-
     refreshPureToQueryAndMultisigList(multisigData)
   }, [multisigData, refreshPureToQueryAndMultisigList])
 
   useEffect(() => {
     if (!pureQueryResultData) return
 
-    refreshWatchedPureList(pureQueryResultData)
-  }, [pureQueryResultData, refreshWatchedPureList])
+    refreshPureList(pureQueryResultData)
+  }, [pureQueryResultData, refreshPureList])
 
   const getMultisigByAddress = useCallback(
     (address: string) => {
       return selectedMultiProxy?.multisigs.find((multisig) => multisig.address === address)
     },
-    [selectedMultiProxy?.multisigs]
+    [selectedMultiProxy]
   )
 
   const getMultisigAsAccountBaseInfo = () =>
@@ -311,24 +312,25 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const selectMultiProxy = useCallback(
     (newMulti: typeof selectedMultiProxy | string) => {
-      let multi: MultiProxy | undefined
+      let multi: string | undefined
 
       if (typeof newMulti === 'string') {
-        multi = getMultiProxyByAddress(newMulti)
-      } else {
         multi = newMulti
+      } else {
+        multi = getMultiProxyAddress(newMulti)
       }
 
-      if (!multi) {
+      const multiProxyFound = getMultiProxyByAddress(multi)
+
+      if (!multi || !multiProxyFound) {
         return false
       }
 
-      const addressInUrl = getMultiProxyAddress(multi)
-      setAddress(addressInUrl)
-      setSelectedMultiProxy(multi)
+      setAddressInUrl(multi)
+      setSelectedMultiProxyAddress(multi)
       return true
     },
-    [getMultiProxyByAddress, setAddress]
+    [getMultiProxyByAddress, setAddressInUrl]
   )
 
   const refetch = useCallback(() => {

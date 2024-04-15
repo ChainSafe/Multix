@@ -47,7 +47,8 @@ const DeepTxCreationModal = ({
   const { selectedAccount, selectedSigner } = useAccounts()
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { addToast } = useToasts()
-  const { selectedMultiProxy, getMultisigByAddress } = useMultiProxy()
+  const { selectedMultiProxy, getMultisigByAddress, setRefetchMultisigTimeoutMinutes } =
+    useMultiProxy()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
   const mustSubmitCallData = useMemo(() => {
     if (!parentMultisigInfo.threshold || !proposalData.info?.approvals) return true
@@ -174,6 +175,13 @@ const DeepTxCreationModal = ({
 
     fullTx
       .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .then(() => {
+        // poll for 1min if the tx may make changes
+        // such as creating a proxy, adding/removing a multisig
+        if (mustSubmitCallData) {
+          setRefetchMultisigTimeoutMinutes(1)
+        }
+      })
       .catch((error: Error) => {
         setIsSubmitting(false)
         addToast({
@@ -186,10 +194,11 @@ const DeepTxCreationModal = ({
     api,
     selectedAccount,
     mustSubmitCallData,
-    parentCallInfo?.call,
+    parentCallInfo,
     fullTx,
     selectedSigner,
     signCallback,
+    setRefetchMultisigTimeoutMinutes,
     addToast,
     getSubscanExtrinsicLink
   ])

@@ -6,6 +6,7 @@ import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 
 const testAccount1Address = testAccounts['Multisig Member Account 1'].address
 const testAccount2Address = testAccounts['Multisig Member Account 2'].address
@@ -29,6 +30,9 @@ describe('Perform transactions', () => {
   })
 
   it('Abort a multisig tx', () => {
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('not.have.text', '')
+    })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
@@ -37,7 +41,9 @@ describe('Perform transactions', () => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
-      sendTxModal.buttonSend().should('be.disabled')
+      sendTxModal.buttonSend().should('not.exist')
+      sendTxModal.buttonSending().should('be.visible').should('be.disabled')
+
       const errorMessage = 'Whuuuut'
       cy.rejectTx(txRequests[0].id, errorMessage)
       notifications.errorNotificationIcon().should('be.visible')
@@ -58,6 +64,9 @@ describe('Perform transactions', () => {
       },
       WSendpoint: 'wss://rococo-rpc.polkadot.io'
     })
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('not.have.text', '')
+    })
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     fillAndSubmitTransactionForm()
@@ -66,7 +75,8 @@ describe('Perform transactions', () => {
       const txRequests = Object.values(req)
       cy.wrap(txRequests.length).should('eq', 1)
       cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
-      sendTxModal.buttonSend().should('be.disabled')
+      sendTxModal.buttonSend().should('not.exist')
+      sendTxModal.buttonSending().should('be.visible').should('be.disabled')
       cy.approveTx(txRequests[0].id)
       notifications.loadingNotificationIcon().should('be.visible')
       notifications.notificationWrapper().should('have.length', 1)
