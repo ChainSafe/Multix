@@ -37,7 +37,6 @@ export function isValidNumber(
 }
 
 export function inputToBn(chainDecimals: number, input: string, isSigned = false): BN {
-  // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
   const isDecimalValue = input.match(/^(\d+)\.(\d+)$/)
   let result
 

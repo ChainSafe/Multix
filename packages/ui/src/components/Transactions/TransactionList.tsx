@@ -46,7 +46,7 @@ const TransactionList = ({ className }: Props) => {
       {Object.entries(txWithCallDataByDate).length === 0 && !isLoadingPendingTxs && (
         <NoCallWrapperStyled>
           <FlareIconStyled size={24} />
-          <div>You're all set!</div>
+          <div>You&apos;re all set!</div>
         </NoCallWrapperStyled>
       )}
       {Object.entries(txWithCallDataByDate).length !== 0 &&

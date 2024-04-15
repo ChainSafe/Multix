@@ -31,7 +31,7 @@ const SuccessCreation = ({ className }: Props) => {
           lg={8}
         >
           <h4 className="explainer">
-            It shouldn't take more than 30s.
+            It shouldn&apos;t take more than 30s.
             <br />
             This page will refresh automatically.
           </h4>

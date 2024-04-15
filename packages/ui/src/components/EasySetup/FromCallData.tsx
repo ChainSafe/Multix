@@ -2,7 +2,7 @@ import { Alert, Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { TextField } from '../library'
 import CallInfo from '../CallInfo'
@@ -15,11 +15,9 @@ import { u8aToHex } from '@polkadot/util'
 interface Props {
   className?: string
   onSetExtrinsic: (ext: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
-  onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
-  isProxySelected: boolean
 }
 
-const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMessage }: Props) => {
+const FromCallData = ({ className, onSetExtrinsic }: Props) => {
   const { api } = useApi()
   const [pastedCallData, setPastedCallData] = useState<HexString | undefined>(undefined)
   const [callDataError, setCallDataError] = useState('')
@@ -81,7 +79,7 @@ const FromCallData = ({ className, onSetExtrinsic, isProxySelected, onSetErrorMe
   return (
     <Box className={className}>
       <AlertStyled severity="info">
-        Paste below the "encoded call data" from a{' '}
+        Paste below the &quot;encoded call data&quot; from a{' '}
         <a
           href={extrinsicUrl}
           target="_blank"

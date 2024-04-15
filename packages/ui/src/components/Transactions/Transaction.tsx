@@ -71,19 +71,18 @@ const Transaction = ({
         <CallInfo
           withLink
           aggregatedData={aggregatedData}
-          children={
-            (isProposer || possibleSigners.length > 0) && (
-              <TransactionFooterStyled>
-                <ButtonStyled
-                  onClick={onOpenModal}
-                  data-cy="button-review-tx"
-                >
-                  Review
-                </ButtonStyled>
-              </TransactionFooterStyled>
-            )
-          }
-        />
+        >
+          {(isProposer || possibleSigners.length > 0) && (
+            <TransactionFooterStyled>
+              <ButtonStyled
+                onClick={onOpenModal}
+                data-cy="button-review-tx"
+              >
+                Review
+              </ButtonStyled>
+            </TransactionFooterStyled>
+          )}
+        </CallInfo>
         <TransactionProgress
           multisigSignatories={multisigSignatories}
           approvals={aggregatedData.info?.approvals || []}

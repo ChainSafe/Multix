@@ -78,7 +78,7 @@ export const useDisplayError = () => {
         <ErrorMessageStyled>
           <ErrorOutlineIcon size={64} />
           <div data-cy="label-linked-address-not-found">
-            The linked address can't be found in your accounts or watched accounts on{' '}
+            The linked address can&apos;t be found in your accounts or watched accounts on{' '}
             <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.
           </div>
           <Button

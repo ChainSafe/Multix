@@ -10,8 +10,8 @@ export const getErrorMessageReservedFunds = (
 
   return (
     <span>
-      The {identifier} doesn't have the required {requiredBalanceString} to submit this transaction.{' '}
-      <ReservedMessage reservedAmount={reservedString} />
+      The {identifier} doesn&apos;t have the required {requiredBalanceString} to submit this
+      transaction. <ReservedMessage reservedAmount={reservedString} />
     </span>
   )
 }

@@ -329,9 +329,9 @@ const ManualExtrinsic = ({
   return (
     <Box className={className}>
       <AlertStyled severity="info">
-        If this doesn't suit your needs, try{' '}
+        If this doesn&lsquo;t suit your needs, try{' '}
         <LinkStyled onClick={onClickSelectFromCallData}>
-          submitting the extrinsic "From call data"
+          submitting the extrinsic &quot;From call data&quot;
         </LinkStyled>
         .
       </AlertStyled>

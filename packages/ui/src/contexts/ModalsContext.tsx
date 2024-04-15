@@ -31,7 +31,7 @@ type DeepTxModalInfo = Omit<DeepTxCreationProps, 'onClose'>
 
 const ModalsContext = createContext<ModalsContextProps | undefined>(undefined)
 
-const ModalsContextProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isChangeMultiModalOpen, setIsChangeMultiModalOpen] = useState(false)
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)

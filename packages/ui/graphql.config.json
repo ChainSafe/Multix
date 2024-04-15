@@ -10,6 +10,7 @@
     "types-and-hooks.tsx": {
       "plugins": ["typescript", "typescript-operations", "typescript-react-query"],
       "config": {
+        "reactQueryVersion": 5,
         "fetcher": {
           "func": "./src/hooks/useFetchData#useFetchData",
           "isReactHook": true

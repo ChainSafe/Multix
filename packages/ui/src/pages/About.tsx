@@ -39,8 +39,8 @@ const About = ({ className }: Props) => {
         </li>
         <li>
           <h2>Interoperable</h2>
-          Multix doesn't create a walled garden. You can create a multisig on-chain anywhere, Multix
-          will show it right away.
+          Multix doesn&apos;t create a walled garden. You can create a multisig on-chain anywhere,
+          Multix will show it right away.
         </li>
         <li>
           <h2>Privacy-preserving</h2>
