@@ -30,8 +30,8 @@ const NameSelection = ({ className, name, setName, originalName = '' }: Props) =
       />
       {!!originalName && (
         <AlertStyled severity="info">
-          The address book contains the name <i>"{originalName}"</i> for this multisig already. Any
-          change will override it.
+          The address book contains the name <i>&quot;{originalName}&quot;</i> for this multisig
+          already. Any change will override it.
         </AlertStyled>
       )}
     </Box>

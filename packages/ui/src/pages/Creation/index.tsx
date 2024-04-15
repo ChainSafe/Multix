@@ -385,7 +385,8 @@ const MultisigCreation = ({ className }: Props) => {
               className="infoBox"
               severity="info"
             >
-              The members of a multisig are called "signatories". You should select at least 2.
+              The members of a multisig are called &quot;signatories&quot;. You should select at
+              least 2.
             </Alert>
             <SignatorySelection
               setSignatories={setSignatories}
@@ -420,7 +421,7 @@ const MultisigCreation = ({ className }: Props) => {
                 className="infoBox"
                 severity="info"
               >
-                This network doesn't support proxies.
+                This network doesn&apos;t support proxies.
               </Alert>
             )}
           </Grid>

@@ -31,25 +31,22 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
       }),
     []
   )
-  const createWeb3Wallet = useCallback(
-    (relayerRegionURL?: string) => {
-      return Web3Wallet.init({
-        core,
-        metadata: {
-          name: 'Multix',
-          description: 'Multix Client as Wallet/Peer',
-          url: 'multix.chainsafe.io',
-          icons: ['https://avatars.githubusercontent.com/u/37784886']
-        }
+  const createWeb3Wallet = useCallback(() => {
+    return Web3Wallet.init({
+      core,
+      metadata: {
+        name: 'Multix',
+        description: 'Multix Client as Wallet/Peer',
+        url: 'multix.chainsafe.io',
+        icons: ['https://avatars.githubusercontent.com/u/37784886']
+      }
+    })
+      .then((web) => {
+        setWeb3wallet(web)
+        setIsInitialized(true)
       })
-        .then((web) => {
-          setWeb3wallet(web)
-          setIsInitialized(true)
-        })
-        .catch(console.error)
-    },
-    [core]
-  )
+      .catch(console.error)
+  }, [core])
 
   const pair = useCallback(
     async (params: { uri: string }) => {

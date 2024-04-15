@@ -201,7 +201,7 @@ describe('Multisig creation', () => {
       newMultisigPage.step1
         .signatoryItem(randomSignatory1)
         .should('be.visible')
-        .within((sig) => {
+        .within(() => {
           accountDisplay.nameLabel().should('have.text', '')
         })
 

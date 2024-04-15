@@ -21,7 +21,7 @@ export type ToastContextProps = {
 
 const ToastContext = createContext<ToastContextProps | undefined>(undefined)
 
-const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+const ToastProvider = ({ children }: React.PropsWithChildren) => {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const addToast = (toast: Omit<Toast, 'id'>) => {

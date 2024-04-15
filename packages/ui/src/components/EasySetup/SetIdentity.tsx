@@ -232,6 +232,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
           const isDiplayNameError = fieldName === 'display' && !value && hasChangedAtLeastAField
           return (
             <Grid
+              key={fieldName}
               item
               xs={12}
               sm={6}
