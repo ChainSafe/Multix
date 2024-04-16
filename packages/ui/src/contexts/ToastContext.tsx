@@ -14,7 +14,6 @@ const MAX_VISIBLE_TOASTS = 6
 
 export type ToastContextProps = {
   toasts: Toast[]
-  setToasts: (toasts: Toast[]) => void
   addToast: (toast: Omit<Toast, 'id'>) => void
   removeToast: (id: Toast['id']) => void
 }
@@ -27,9 +26,10 @@ const ToastProvider = ({ children }: React.PropsWithChildren) => {
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = Date.now()
 
-    const rest = toasts.length < MAX_VISIBLE_TOASTS ? toasts : toasts.slice(0, -1)
-
-    setToasts([{ ...toast, id }, ...rest])
+    setToasts((prev) => {
+      const rest = prev.length < MAX_VISIBLE_TOASTS ? prev : prev.slice(0, -1)
+      return [{ ...toast, id }, ...rest]
+    })
   }
 
   const removeToast = (key: Toast['id']) => {
@@ -37,7 +37,7 @@ const ToastProvider = ({ children }: React.PropsWithChildren) => {
   }
 
   return (
-    <ToastContext.Provider value={{ toasts, setToasts, addToast, removeToast }}>
+    <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       <Snackbar />
       {children}
     </ToastContext.Provider>
