@@ -20,6 +20,19 @@ export const useDisplayError = () => {
   const [, setSearchParams] = useSearchParams()
   const { selectedNetwork } = useNetwork()
 
+  console.log('--------------------')
+  console.log('watchedAddresses.length === 0', watchedAddresses.length === 0)
+  console.log('isAccountLoading', isAccountLoading)
+  console.log('isExtensionError', isExtensionError)
+  console.log('isAllowedToConnectToExtension', isAllowedToConnectToExtension)
+  console.log('ownAccountList.length === 0', ownAccountList.length === 0)
+  console.log(
+    '----> show error',
+    watchedAddresses.length === 0 &&
+      !isAccountLoading &&
+      (isExtensionError || (isAllowedToConnectToExtension && ownAccountList.length === 0))
+  )
+
   if (
     watchedAddresses.length === 0 &&
     !isAccountLoading &&

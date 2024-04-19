@@ -41,13 +41,13 @@ export const useSetIdentityReservedFunds = (identityFields?: IdentityFields) => 
 
     const res = reservedFields.add(basicDepost)
 
-    console.log(
-      'res',
-      formatBnBalance(res, chainInfo.tokenDecimals, {
-        tokenSymbol: chainInfo?.tokenSymbol,
-        numberAfterComma: 6
-      })
-    )
+    // console.log(
+    //   'res',
+    //   formatBnBalance(res, chainInfo.tokenDecimals, {
+    //     tokenSymbol: chainInfo?.tokenSymbol,
+    //     numberAfterComma: 6
+    //   })
+    // )
     setReserved(res)
   }, [api, chainInfo, fieldBytes, identityFields, identityfieldNumber])
 

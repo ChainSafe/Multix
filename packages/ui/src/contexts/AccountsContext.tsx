@@ -71,6 +71,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     async (isEthereum: boolean): Promise<void> => {
       web3Enable(DAPP_NAME)
         .then((ext) => {
+          console.log('web3Enable, ext', ext)
           if (ext.length === 0) {
             setIsExtensionError(true)
           }
@@ -79,14 +80,13 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
           console.log('ooops web3Enable failed')
           console.error(e)
           setIsExtensionError(true)
-        })
-        .finally(() => {
           setIsAccountLoading(false)
         })
 
       web3AccountsSubscribe(
         (accountList) => {
           if (accountList.length === 0) {
+            setIsAccountLoading(false)
             setIsExtensionError(true)
             return
           }
@@ -108,6 +108,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
             selectAccount(account || listToPersist[0])
           }
+          setIsAccountLoading(false)
         },
         {
           ss58Format: chainInfo?.ss58Format,
@@ -116,6 +117,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
       ).catch((error) => {
         setIsExtensionError(true)
         console.error('web3AccountSubscribe error', error)
+        setIsAccountLoading(false)
       })
     },
     [chainInfo?.ss58Format, getAccountByAddress, selectAccount]
