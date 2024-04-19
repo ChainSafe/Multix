@@ -74,6 +74,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
           console.log('web3Enable, ext', ext)
           if (ext.length === 0) {
             setIsExtensionError(true)
+            setIsAccountLoading(false)
           }
         })
         .catch((e) => {

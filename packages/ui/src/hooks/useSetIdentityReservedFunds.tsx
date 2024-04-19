@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import BN from 'bn.js'
-import { formatBnBalance } from '../utils/formatBnBalance'
+// import { formatBnBalance } from '../utils/formatBnBalance'
 import { IdentityFields } from '../components/EasySetup/SetIdentity'
 import { getByteCount } from '../utils'
 
