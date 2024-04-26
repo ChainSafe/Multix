@@ -54,9 +54,10 @@ deploy:
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
     #   cmd: ['sqd', 'start-amplitude']
+  # api:
+  #   env:
+  # SQD_DEBUG: sqd:graphql-server
   api:
-    env:
-      # SQD_DEBUG: sqd:graphql-server
     cmd:
       [
         'npx',

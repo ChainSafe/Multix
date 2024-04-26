@@ -11,6 +11,8 @@ export const getProxyKillPureArgs = (proxyKillArgs: Call['args']) => {
   return {
     extrinsicIndex: proxyKillArgs.extIndex,
     blockNumber: proxyKillArgs.height,
-    spawner: encodeId(proxyKillArgs.spawner.value)
+    spawner: encodeId(
+      proxyKillArgs.spawner.value || proxyKillArgs.spawner.id || proxyKillArgs.spawner
+    )
   } as KillPureCallInfo
 }
