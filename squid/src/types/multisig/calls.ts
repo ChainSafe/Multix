@@ -41,6 +41,7 @@ import * as v9420 from '../v9420'
 import * as v9430 from '../v9430'
 import * as v1000000 from '../v1000000'
 import * as v1001000 from '../v1001000'
+import * as v1002000 from '../v1002000'
 
 export const asMulti =  {
     name: 'Multisig.as_multi',
@@ -701,6 +702,19 @@ export const asMulti =  {
             maybeTimepoint: sts.option(() => v1001000.Timepoint),
             call: v1001000.Call,
             maxWeight: v1001000.Weight,
+        })
+    ),
+    /**
+     * See [`Pallet::as_multi`].
+     */
+    v1002000: new CallType(
+        'Multisig.as_multi',
+        sts.struct({
+            threshold: sts.number(),
+            otherSignatories: sts.array(() => v1002000.AccountId32),
+            maybeTimepoint: sts.option(() => v1002000.Timepoint),
+            call: v1002000.Call,
+            maxWeight: v1002000.Weight,
         })
     ),
 }
@@ -1914,6 +1928,16 @@ export const asMultiThreshold1 =  {
         sts.struct({
             otherSignatories: sts.array(() => v1001000.AccountId32),
             call: v1001000.Call,
+        })
+    ),
+    /**
+     * See [`Pallet::as_multi_threshold_1`].
+     */
+    v1002000: new CallType(
+        'Multisig.as_multi_threshold_1',
+        sts.struct({
+            otherSignatories: sts.array(() => v1002000.AccountId32),
+            call: v1002000.Call,
         })
     ),
 }
