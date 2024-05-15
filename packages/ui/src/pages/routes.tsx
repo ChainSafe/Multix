@@ -1,8 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { About, Creation, Home, Overview, Settings } from './index'
+import { Creation, Home, Overview, Settings } from './index'
 import React from 'react'
 import App from '../App'
 import ErrorFallback from '../components/ErrorFallback/ErrorFallback'
+import { Landing } from '../components/LandingComponents/Landing'
 
 interface Route {
   path: string
@@ -38,9 +39,9 @@ export const ROUTES: Route[] = [
   },
   {
     path: 'about',
-    element: <About />,
+    element: <Landing />,
     name: 'About',
-    isDisplayWhenNoWallet: true
+    isDisplayWhenNoWallet: false
   }
 ]
 
