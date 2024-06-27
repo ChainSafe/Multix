@@ -11,7 +11,7 @@ import { sendTxModal } from '../support/page-objects/sendTxModal'
 describe('Verify extrinsics display', () => {
   beforeEach(() => {
     cy.setupAndVisit({
-      url: landingPageNetwork('hydradx'),
+      url: landingPageNetwork('hydration'),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [extrinsicsDisplayAccounts['Alice']]
     })

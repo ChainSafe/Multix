@@ -203,7 +203,7 @@ const ProposalSigning = ({
       const shouldExecute = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
 
       setIsSubmitting(true)
-      let tx: SubmittableExtrinsic<'promise'>
+      let tx: SubmittableExtrinsic<'promise'> | undefined
 
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
@@ -236,6 +236,11 @@ const ProposalSigning = ({
         )
       } else {
         console.error("We don't have the required data to submit the call")
+        return
+      }
+
+      if (!tx) {
+        console.error('tx is undefined in ProposalSigning')
         return
       }
 

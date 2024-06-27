@@ -85,7 +85,7 @@ export const useGetMultisigTx = ({
 
     try {
       // the proxy is selected
-      if (isProxy) {
+      if (isProxy && !!extrinsicToCall) {
         tx = api.tx.proxy.proxy(fromAddress, null, extrinsicToCall)
         // a multisig is selected
       } else {

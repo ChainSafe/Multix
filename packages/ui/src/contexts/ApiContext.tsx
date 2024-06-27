@@ -1,17 +1,13 @@
 import React, { useMemo } from 'react'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { ApiOptions } from '@polkadot/api/types'
-import { TypeRegistry } from '@polkadot/types'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
+import '@polkadot/api-augment'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
-  types?: ApiOptions['types']
 }
-
-const registry = new TypeRegistry()
 
 export interface IApiContext {
   api?: false | ApiPromise
@@ -33,7 +29,7 @@ interface RawChainInfoHuman {
 
 const ApiContext = createContext<IApiContext | undefined>(undefined)
 
-const ApiContextProvider = ({ children, types }: ApiContextProps) => {
+const ApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
   const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
@@ -48,7 +44,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 
     // console.log('---> connecting to', provider.endpoint)
     setIsApiReady(false)
-    const api = new ApiPromise({ provider, types })
+    const api = new ApiPromise({ provider })
     api.isReady.then((newApi) => setApiPromise(newApi)).catch(console.error)
 
     return () => {
@@ -60,7 +56,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
 
     // prevent an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider, types])
+  }, [provider])
 
   useEffect(() => {
     if (!apiPromise) return
@@ -68,9 +64,6 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
     apiPromise.isReady
       .then((api) => {
         setIsApiReady(true)
-        if (types) {
-          registry.register(types)
-        }
 
         const info = api.registry.getChainProperties()
         const raw = info?.toHuman() as unknown as RawChainInfoHuman
@@ -84,7 +77,7 @@ const ApiContextProvider = ({ children, types }: ApiContextProps) => {
         })
       })
       .catch(console.error)
-  }, [apiPromise, types])
+  }, [apiPromise])
 
   return (
     <ApiContext.Provider

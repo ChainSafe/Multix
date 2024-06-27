@@ -6,7 +6,7 @@ import { chainsRococoSVG } from './logos/rococoSVG'
 import { phalaSVG } from './logos/phalaSVG'
 import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
-import { hydradxSVG } from './logos/hydradxSVG'
+import { hydrationSVG } from './logos/hydrationSVG'
 import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
@@ -88,12 +88,12 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesBifrostSVG
   },
-  hydradx: {
+  hydration: {
     chainId: 'hydradx',
-    explorerNetworkName: 'hydradx',
+    explorerNetworkName: 'hydration',
     rpcUrl: 'wss://rpc.helikon.io/hydradx',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: hydradxSVG
+    logo: hydrationSVG
   },
   interlay: {
     chainId: 'interlay',
@@ -208,7 +208,7 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
   'acala',
   'astar',
   'bifrost-dot',
-  'hydradx',
+  'hydration',
   'interlay',
   // 'kilt',
   // 'moonbeam',

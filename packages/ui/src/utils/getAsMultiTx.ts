@@ -16,8 +16,18 @@ interface Params {
 const LEGACY_ASMULTI_PARAM_LENGTH = 6
 
 export const getAsMultiTx = ({ api, threshold, otherSignatories, tx, weight, when }: Params) => {
+  if (!tx) return
+
   return api.tx.multisig.asMulti.meta.args.length === LEGACY_ASMULTI_PARAM_LENGTH
-    ? api.tx.multisig.asMulti(threshold, otherSignatories, when || null, tx, false, weight || 0)
+    ? api.tx.multisig.asMulti(
+        threshold,
+        otherSignatories,
+        when || null,
+        tx,
+        false,
+        // @ts-ignore
+        weight || 0
+      )
     : api.tx.multisig.asMulti(
         threshold,
         otherSignatories,
