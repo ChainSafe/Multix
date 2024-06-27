@@ -12,7 +12,7 @@ interface Params {
 export const getApproveAsMultiTx = ({ api, threshold, otherSignatories, hash, when }: Params) => {
   if (!hash) return
 
-  return api.tx.multisig.approveAsMulti(threshold, otherSignatories, when, hash, {
+  return api.tx.multisig.approveAsMulti(threshold, otherSignatories, when || null, hash, {
     refTime: 0,
     proofSize: 0
   })
