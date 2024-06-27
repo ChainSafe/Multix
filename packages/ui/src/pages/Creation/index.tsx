@@ -150,6 +150,11 @@ const MultisigCreation = ({ className }: Props) => {
       pureProxyCreationNeededFunds.toString()
     )
 
+    if (!multiSigProxyCall) {
+      console.error('multiSigProxyCall is undefined in Creation index.tsx')
+      return
+    }
+
     return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
   }, [
     api,
