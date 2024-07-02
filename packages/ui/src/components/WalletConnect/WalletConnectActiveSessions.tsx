@@ -41,9 +41,27 @@ export const WalletConnectActiveSessions = () => {
           <ContentBoxStyled>
             <div className="info">
               <ul>
-                <li>Namespace: {session.requiredNamespaces?.polkadot?.chains?.join(', ')}</li>
-                <li>Methods: {session.requiredNamespaces?.polkadot?.methods?.join(', ')}</li>
-                <li>Events: {session.requiredNamespaces?.polkadot?.events?.join(', ')}</li>
+                <li>
+                  Namespace:{' '}
+                  {(
+                    session.requiredNamespaces?.polkadot?.chains ||
+                    session.optionalNamespaces?.polkadot?.chains
+                  )?.join(', ')}
+                </li>
+                <li>
+                  Methods:{' '}
+                  {(
+                    session.requiredNamespaces?.polkadot?.methods ||
+                    session.optionalNamespaces?.polkadot?.methods
+                  )?.join(', ')}
+                </li>
+                <li>
+                  Events:{' '}
+                  {(
+                    session.requiredNamespaces?.polkadot?.events ||
+                    session.optionalNamespaces?.polkadot?.events
+                  )?.join(', ')}
+                </li>
                 <li>Expiring: {expiryDate.toDateString()}</li>
               </ul>
             </div>

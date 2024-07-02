@@ -32,12 +32,13 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
 
   const { methods, events, chains } = useMemo(
     () =>
-      sessionProposal?.params.requiredNamespaces?.polkadot || {
+      sessionProposal?.params.requiredNamespaces?.polkadot ||
+      sessionProposal?.params.optionalNamespaces?.polkadot || {
         methods: [],
         events: [],
         chains: []
       },
-    [sessionProposal?.params.requiredNamespaces?.polkadot]
+    [sessionProposal?.params]
   )
 
   useEffect(() => {
