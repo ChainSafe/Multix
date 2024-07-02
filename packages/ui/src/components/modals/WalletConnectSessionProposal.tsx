@@ -31,25 +31,30 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
   }, [getAccountsWithNamespace, selectedMultiProxy?.multisigs, selectedMultiProxy?.proxy])
 
   const { methods, events, chains } = useMemo(
-    () =>
-      sessionProposal?.params.requiredNamespaces?.polkadot ||
-      sessionProposal?.params.optionalNamespaces?.polkadot || {
-        methods: [],
-        events: [],
-        chains: []
-      },
+    () => ({
+      methods: [
+        ...(sessionProposal?.params.requiredNamespaces?.polkadot?.methods ?? []),
+        ...(sessionProposal?.params.optionalNamespaces?.polkadot?.methods ?? [])
+      ],
+      events: [
+        ...(sessionProposal?.params.requiredNamespaces?.polkadot?.events ?? []),
+        ...(sessionProposal?.params.optionalNamespaces?.polkadot?.events ?? [])
+      ],
+      chains: [
+        ...(sessionProposal?.params.requiredNamespaces?.polkadot?.chains ?? []),
+        ...(sessionProposal?.params.optionalNamespaces?.polkadot?.chains ?? [])
+      ]
+    }),
     [sessionProposal?.params]
   )
 
   useEffect(() => {
     if (!web3wallet || !sessionProposal) return
 
-    const wCRequestedNetwork = chains?.[0]
-
-    if (wCRequestedNetwork !== currentNamespace) {
+    if (!chains.includes(currentNamespace)) {
       setErrorMessage(
         `Multix is not connected to the same network as the WalletConnect request. Please switch to the correct network.
-        - Requested: ${wCRequestedNetwork}
+        - Requested: ${chains}
         - Current: ${currentNamespace}`
       )
     }
