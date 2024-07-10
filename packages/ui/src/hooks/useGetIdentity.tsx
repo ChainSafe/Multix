@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
-import { useApi } from '../contexts/ApiContext'
+import { useIdenityApi } from './useIdentityApi'
 
 export const useGetIdentity = () => {
-  const { api } = useApi()
+  const { api } = useIdenityApi()
 
   const getIdentity = useCallback(
     async (address: string) => {

@@ -32,11 +32,15 @@ export interface NetworkInfo {
   rpcUrl: string
   httpGraphqlUrl: string
   logo: string
+  pplChainRpcUrl?: string
 }
 
 export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v3/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
+
+const kusamaPplChain = 'wss://sys.ibp.network/people-kusama'
+const westendPplChain = 'wss://sys.dotters.network/people-westend'
 
 export const networkList: Record<string, NetworkInfo> = {
   polkadot: {
@@ -49,6 +53,7 @@ export const networkList: Record<string, NetworkInfo> = {
   kusama: {
     chainId: 'kusama',
     explorerNetworkName: 'kusama',
+    pplChainRpcUrl: kusamaPplChain,
     rpcUrl: 'wss://rpc.ibp.network/kusama',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsKusamaSVG
@@ -64,6 +69,7 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'asset-hub-kusama',
     rpcUrl: 'wss://sys.ibp.network/statemine',
+    pplChainRpcUrl: kusamaPplChain,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
   },
@@ -147,6 +153,7 @@ export const networkList: Record<string, NetworkInfo> = {
   westend: {
     chainId: 'westend',
     explorerNetworkName: 'westend',
+    pplChainRpcUrl: westendPplChain,
     rpcUrl: 'wss://westend-rpc.polkadot.io',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesWestendColourSVG
