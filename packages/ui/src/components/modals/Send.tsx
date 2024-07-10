@@ -30,7 +30,7 @@ import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import SetIdentity from '../EasySetup/SetIdentity'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
-import { useHasIdentityPallet } from '../../hooks/useHasIdentityPallet'
+import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -76,7 +76,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
-  const hasIdentityPallet = useHasIdentityPallet()
+  const { hasIdentityPallet, hasPplChain } = useHasIdentityFeature()
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -170,7 +170,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       [EasyTransferTitle.FromCallData]: <FromCallData onSetExtrinsic={setExtrinsicToCall} />
     } as Partial<Record<EasyTransferTitle, ReactNode>>
 
-    if (hasIdentityPallet) {
+    if (hasIdentityPallet && !hasPplChain) {
       res[EasyTransferTitle.SetIdentity] = (
         <SetIdentity
           from={selectedOrigin.address}
@@ -181,7 +181,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     }
 
     return res
-  }, [selectedOrigin, easyOptionErrorMessage, hasIdentityPallet])
+  }, [selectedOrigin.address, easyOptionErrorMessage, hasIdentityPallet, hasPplChain])
 
   const signCallback = useSigningCallback({
     onSuccess,

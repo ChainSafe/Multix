@@ -13,6 +13,7 @@ import MainLayout from './components/layout/Main'
 import { WatchedAddressesContextProvider } from './contexts/WatchedAddressesContext'
 import { WalletConnectContextProvider } from './contexts/WalletConnectContext'
 import { ModalsContextProvider } from './contexts/ModalsContext'
+import { PplApiContextProvider } from './contexts/PeopleChainApiContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -24,19 +25,21 @@ const App = () => {
         <NetworkContextProvider>
           <QueryClientProvider client={queryClient}>
             <ApiContextProvider>
-              <WatchedAddressesContextProvider>
-                <AccountContextProvider>
-                  <AccountNamesContextProvider>
-                    <MultiProxyContextProvider>
-                      <WalletConnectContextProvider>
-                        <ModalsContextProvider>
-                          <MainLayout />
-                        </ModalsContextProvider>
-                      </WalletConnectContextProvider>
-                    </MultiProxyContextProvider>
-                  </AccountNamesContextProvider>
-                </AccountContextProvider>
-              </WatchedAddressesContextProvider>
+              <PplApiContextProvider>
+                <WatchedAddressesContextProvider>
+                  <AccountContextProvider>
+                    <AccountNamesContextProvider>
+                      <MultiProxyContextProvider>
+                        <WalletConnectContextProvider>
+                          <ModalsContextProvider>
+                            <MainLayout />
+                          </ModalsContextProvider>
+                        </WalletConnectContextProvider>
+                      </MultiProxyContextProvider>
+                    </AccountNamesContextProvider>
+                  </AccountContextProvider>
+                </WatchedAddressesContextProvider>
+              </PplApiContextProvider>
             </ApiContextProvider>
           </QueryClientProvider>
         </NetworkContextProvider>

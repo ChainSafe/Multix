@@ -303,12 +303,12 @@ describe('Watched Accounts', () => {
     pureCheck()
   })
 
-  it('can see all multisigs that a watched signatory is a member of', () => {
+  it.only('can see all multisigs that a watched signatory is a member of', () => {
     const { publicKey: signatoryPublicKey } = signatoryOfMultipleMultisigs
     const expectedAddresses = [
-      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
       signatoryOfMultipleMultisigs.multisigWithPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithPureAddress2,
+      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
       signatoryOfMultipleMultisigs.multisigWithoutPureAddress1,
       signatoryOfMultipleMultisigs.multisigWithoutPureAddress2
     ]

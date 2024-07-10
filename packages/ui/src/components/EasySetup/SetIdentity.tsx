@@ -3,13 +3,13 @@ import { styled } from '@mui/material/styles'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { useApi } from '../../contexts/ApiContext'
 import { TextField } from '../library'
 import { useIdentity } from '../../hooks/useIdentity'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { getErrorMessageReservedFunds } from '../../utils'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { useSetIdentityReservedFunds } from '../../hooks/useSetIdentityReservedFunds'
+import { useIdenityApi } from '../../hooks/useIdentityApi'
 
 interface Props {
   className?: string
@@ -103,7 +103,7 @@ const fieldNameAndPlaceholder = (fieldName: keyof IdentityFields) => {
 const MAX_ALLOWED_VAL_LENGTH = 32
 
 const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Props) => {
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo } = useIdenityApi()
   const [identityFields, setIdentityFields] = useState<IdentityFields | undefined>()
   const chainIdentity = useIdentity(from)
   const [hasChangedAtLeastAField, setHasChangedAtLeastAField] = useState(false)
