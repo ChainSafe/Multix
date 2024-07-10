@@ -47,8 +47,8 @@ const MultisigActionMenu = ({
     ]
 
     !selectedIsWatched &&
+      !hasPplChain &&
       hasIdentityPallet &&
-      hasPplChain &&
       opts.push({
         text: 'Set identity',
         icon: <IdentityIcon size={20} />,
