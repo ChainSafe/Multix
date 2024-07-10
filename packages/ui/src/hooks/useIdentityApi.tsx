@@ -23,17 +23,5 @@ export const useIdenityApi = () => {
     }
   }, [api, chainInfo, pplApi, pplChainInfo])
 
-  useEffect(() => {
-    if (!pplApi && !api) {
-      return
-    }
-
-    if (pplApi) {
-      setApiToUse(pplApi)
-    } else if (api) {
-      setApiToUse(api)
-    }
-  }, [api, pplApi])
-
   return { api: apiToUse, chainInfo: chainInfoToUse }
 }
