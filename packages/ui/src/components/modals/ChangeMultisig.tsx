@@ -267,7 +267,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep('call2')
 
     secondCall
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack2)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallBack2
+      )
       .catch((error: Error) => {
         addToast({
           title: error.message,
@@ -312,7 +316,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep('call1')
 
     firstCall
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack1)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallBack1
+      )
       .catch((error: Error) => {
         addToast({
           title: error.message,

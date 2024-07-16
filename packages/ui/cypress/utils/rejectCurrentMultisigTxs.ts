@@ -129,7 +129,11 @@ export const rejectCurrentMultisigTxs = ({
 
         api.tx.utility
           .batchAll(allTxs)
-          .signAndSend(keyring.getPair(account.address), callBack(resolve))
+          .signAndSend(
+            keyring.getPair(account.address),
+            { withSignedTransaction: true },
+            callBack(resolve)
+          )
       })
   )
 }

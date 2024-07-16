@@ -258,7 +258,11 @@ const MultisigCreation = ({ className }: Props) => {
     setIsSubmitted(true)
 
     remarkCall
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallBack
+      )
       .then(() => {
         setRefetchMultisigTimeoutMinutes(1)
       })
@@ -294,7 +298,11 @@ const MultisigCreation = ({ className }: Props) => {
     setIsSubmitted(true)
 
     batchCall
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallBack)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallBack
+      )
       .then(() => setRefetchMultisigTimeoutMinutes(1))
       .catch((error: Error) => {
         setIsSubmitted(false)

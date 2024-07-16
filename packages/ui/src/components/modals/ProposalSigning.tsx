@@ -244,7 +244,11 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      tx.signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallback
+      )
         .then(() => {
           // poll for 1min if the tx may make changes
           // such as creating a proxy, adding/removing a multisig
