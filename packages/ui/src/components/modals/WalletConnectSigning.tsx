@@ -151,7 +151,11 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     setIsSubmitting(true)
 
     multisigTx
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallback
+      )
       .then(() => {
         const response = getWalletConnectErrorResponse(
           request.id,

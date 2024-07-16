@@ -174,7 +174,11 @@ const DeepTxCreationModal = ({
     setIsSubmitting(true)
 
     fullTx
-      .signAndSend(selectedAccount.address, { signer: selectedSigner }, signCallback)
+      .signAndSend(
+        selectedAccount.address,
+        { signer: selectedSigner, withSignedTransaction: true },
+        signCallback
+      )
       .then(() => {
         // poll for 1min if the tx may make changes
         // such as creating a proxy, adding/removing a multisig
