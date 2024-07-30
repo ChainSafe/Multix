@@ -13,6 +13,7 @@ import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
 import { useSwitchAddress } from '../../hooks/useSwitchAddress'
+import { useConnectWallet } from '@subwallet-connect/react'
 
 interface Props {
   handleDrawerOpen: () => void
@@ -26,6 +27,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
     useAccounts()
   useWalletConnectEventsManager()
   useSwitchAddress()
+  const [{ wallet }, connect] = useConnectWallet()
+  console.log('wallet', wallet)
 
   return (
     <MuiAppBarStyled position="sticky">
@@ -55,7 +58,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
             })}
           </MenuWrapperStyled>
           <RightButtonsWrapperStyled>
-            {!isAllowedToConnectToExtension && (
+            {/* {!isAllowedToConnectToExtension && (
               <ConnectButtonStyled
                 data-cy="button-menu-connect"
                 onClick={allowConnectionToExtension}
@@ -64,7 +67,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
               >
                 Connect
               </ConnectButtonStyled>
-            )}
+            )} */}
+            <Button onClick={() => connect()}>connectiooo</Button>
             <MultiProxySelection testId="desktop" />
             <NetworkSelectionStyled />
           </RightButtonsWrapperStyled>

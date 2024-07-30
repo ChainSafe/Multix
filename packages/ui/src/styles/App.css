@@ -26,3 +26,9 @@
 ul {
   padding-left: 20px;
 }
+
+.sidebar {
+  width: 0;
+  height: 0;
+  visibility: hidden;
+} 
