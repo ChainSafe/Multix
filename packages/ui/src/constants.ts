@@ -39,6 +39,7 @@ export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v3/gra
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
+const polkadotPplChain = 'wss://sys.ibp.network/people-polkadot'
 const kusamaPplChain = 'wss://sys.ibp.network/people-kusama'
 const westendPplChain = 'wss://sys.dotters.network/people-westend'
 
@@ -46,6 +47,7 @@ export const networkList: Record<string, NetworkInfo> = {
   polkadot: {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
+    pplChainRpcUrl: polkadotPplChain,
     rpcUrl: 'wss://rpc.ibp.network/polkadot',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsPolkadotCircleSVG
@@ -62,6 +64,7 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'asset-hub-polkadot',
     rpcUrl: 'wss://sys.ibp.network/statemint',
+    pplChainRpcUrl: polkadotPplChain,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
   },
