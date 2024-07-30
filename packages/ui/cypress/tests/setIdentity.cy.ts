@@ -89,7 +89,8 @@ describe('Set an identity', () => {
     })
   })
 
-  it('Can edit an identity from the new tx button', () => {
+  // skipping since identity now needs to be handled with the associatedppl chain
+  it.skip('Can edit an identity from the new tx button', () => {
     cy.setupAndVisit({
       url: landingPageNetwork('polkadot'),
       extensionConnectionAllowed: true,
