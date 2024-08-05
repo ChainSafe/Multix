@@ -101,6 +101,9 @@ const handleBalanceDisplay = ({
   )
 }
 
+const handleValueDisplay = ({ value, typeName }: { value: any; typeName: string | undefined }) =>
+  typeName === 'bool' ? (value ? 'true' : 'false') : value
+
 const getTypeName = (index: number, name: string, api: ApiPromise) => {
   const [pallet, method] = name.split('.')
   const metaArgs = !!pallet && !!method && api.tx[pallet][method]?.meta?.args
@@ -153,7 +156,7 @@ const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeP
                   api,
                   typeName: _typeName
                 })
-              : value}
+              : handleValueDisplay({ value, typeName: _typeName })}
           </li>
         )
       })}
