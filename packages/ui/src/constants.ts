@@ -62,7 +62,7 @@ export const networkList: Record<string, NetworkInfo> = {
   },
   'asset-hub-dot': {
     chainId: 'asset-hub-polkadot',
-    explorerNetworkName: 'asset-hub-polkadot',
+    explorerNetworkName: 'assethub-polkadot',
     rpcUrl: 'wss://sys.ibp.network/statemint',
     pplChainRpcUrl: polkadotPplChain,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
@@ -70,7 +70,7 @@ export const networkList: Record<string, NetworkInfo> = {
   },
   'asset-hub-ksm': {
     chainId: 'asset-hub-kusama',
-    explorerNetworkName: 'asset-hub-kusama',
+    explorerNetworkName: 'assethub-kusama',
     rpcUrl: 'wss://sys.ibp.network/statemine',
     pplChainRpcUrl: kusamaPplChain,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
