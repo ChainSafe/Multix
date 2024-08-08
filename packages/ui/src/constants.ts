@@ -63,7 +63,7 @@ export const networkList: Record<string, NetworkInfo> = {
   'asset-hub-dot': {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
-    rpcUrl: 'wss://sys.ibp.network/statemint',
+    rpcUrl: 'wss://sys.ibp.network/asset-hub-polkadot',
     pplChainRpcUrl: polkadotPplChain,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
