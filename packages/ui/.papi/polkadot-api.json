@@ -1,0 +1,70 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "dot": {
+      "chain": "polkadot",
+      "metadata": ".papi/metadata/dot.scale"
+    },
+    "ksm": {
+      "chain": "ksmcc3",
+      "metadata": ".papi/metadata/ksm.scale"
+    },
+    "ksmAssetHub": {
+      "chain": "ksmcc3_asset_hub",
+      "metadata": ".papi/metadata/ksmAssetHub.scale"
+    },
+    "ksmPpl": {
+      "chain": "ksmcc3_people",
+      "metadata": ".papi/metadata/ksmPpl.scale"
+    },
+    "dotPpl": {
+      "chain": "polkadot_people",
+      "metadata": ".papi/metadata/dotPpl.scale"
+    },
+    "dotAssetHub": {
+      "chain": "polkadot_asset_hub",
+      "metadata": ".papi/metadata/dotAssetHub.scale"
+    },
+    "rococo": {
+      "chain": "rococo_v2_2",
+      "metadata": ".papi/metadata/rococo.scale"
+    },
+    "rococoAssetHub": {
+      "chain": "rococo_v2_2_asset_hub",
+      "metadata": ".papi/metadata/rococoAssetHub.scale"
+    },
+    "rococoPpl": {
+      "chain": "rococo_v2_2_people",
+      "metadata": ".papi/metadata/rococoPpl.scale"
+    },
+    "bifrostDot": {
+      "wsUrl": "wss://eu.bifrost-polkadot-rpc.liebi.com/ws",
+      "metadata": ".papi/metadata/bifrostDot.scale"
+    },
+    "hydration": {
+      "wsUrl": "wss://rpc.helikon.io/hydradx",
+      "metadata": ".papi/metadata/hydration.scale"
+    },
+    "khala": {
+      "wsUrl": "wss://khala-api.phala.network/ws",
+      "metadata": ".papi/metadata/khala.scale"
+    },
+    "phala": {
+      "wsUrl": "wss://api.phala.network/ws",
+      "metadata": ".papi/metadata/phala.scale"
+    },
+    "rhala": {
+      "wsUrl": "wss://rhala-node.phala.network/ws",
+      "metadata": ".papi/metadata/rhala.scale"
+    },
+    "paseo": {
+      "wsUrl": "wss://paseo.rpc.amforc.com",
+      "metadata": ".papi/metadata/paseo.scale"
+    },
+    "acala": {
+      "wsUrl": "wss://acala-rpc.dwellir.com",
+      "metadata": ".papi/metadata/acala.scale"
+    }
+  }
+}
