@@ -7,7 +7,6 @@ import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { HexString, MultisigStorageInfo } from '../../types'
@@ -21,6 +20,9 @@ import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
+import { FixedSizeBinary, Transaction } from 'polkadot-api'
+import { DotCalls, DotQueries } from '@polkadot-api/descriptors'
+import { Multisig } from '@polkadot/types/interfaces'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -183,12 +185,12 @@ const ProposalSigning = ({
         // In case the tx has been approved between the last couple blocks
         // and the tx in the indexer hasn't been updated we should query the latest state
         // right before sending the tx to have the right amount of signers.
-        const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
+        const callStorage = await api.query.Multisig.Multisigs.getEntries(multisig.address)
 
         callStorage.some((storage) => {
-          const hash = (storage[0].toHuman() as Array<string>)[1]
+          const hash = storage.keyArgs[1].asHex()
           if (proposalData.hash === hash) {
-            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            const info = storage.value as MultisigStorageInfo
             amountOfSigner = info.approvals.length
 
             return true
@@ -203,16 +205,16 @@ const ProposalSigning = ({
       const shouldExecute = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
 
       setIsSubmitting(true)
-      let tx: SubmittableExtrinsic<'promise'> | undefined
+      let tx: Transaction<any, any, any, any> | undefined
 
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
-        tx = api.tx.multisig.cancelAsMulti(
+        tx = api.tx.Multisig.cancel_as_multi({
           threshold,
-          otherSigners,
-          proposalData.info.when,
-          proposalData.hash
-        )
+          other_signatories: otherSigners,
+          timepoint: proposalData.info.when,
+          call_hash: FixedSizeBinary.fromText(proposalData.hash)
+        })
 
         // If we can submit the proposal and have the call data
       } else if (shouldExecute && callInfo?.call && callInfo?.weight) {

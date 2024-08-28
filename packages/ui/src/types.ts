@@ -3,7 +3,7 @@ import { Weight } from '@polkadot/types/interfaces'
 
 export interface MultisigStorageInfo {
   approvals: string[]
-  deposit: number
+  deposit: bigint
   depositor: string
   when: { height: number; index: number }
 }
