@@ -5,6 +5,7 @@ import { DAPP_NAME } from '../constants'
 import { Signer } from '@polkadot/api/types'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
+import { PolkadotSigner } from 'polkadot-api'
 
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
@@ -21,7 +22,7 @@ export interface IAccountContext {
   getAccountByAddress: (address: string) => InjectedAccountWithMeta | undefined
   isAccountLoading: boolean
   isExtensionError: boolean
-  selectedSigner?: Signer
+  selectedSigner?: PolkadotSigner
   allowConnectionToExtension: () => void
   isAllowedToConnectToExtension: boolean
   isLocalStorageSetupDone: boolean
@@ -34,7 +35,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   const [selectedAccount, setSelected] = useState<InjectedAccountWithMeta>(ownAccountList[0])
   const [isAccountLoading, setIsAccountLoading] = useState(false)
   const [isExtensionError, setIsExtensionError] = useState(false)
-  const [selectedSigner, setSelectedSigner] = useState<Signer | undefined>()
+  const [selectedSigner, setSelectedSigner] = useState<PolkadotSigner | undefined>()
   const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
   const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
   const [accountGotRequested, setAccountGotRequested] = useState(false)
@@ -161,7 +162,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
     web3FromSource(selectedAccount.meta.source)
       .then((injector) => {
-        setSelectedSigner(injector.signer)
+        setSelectedSigner(injector.signer as PolkadotSigner)
       })
       .catch(console.error)
   })

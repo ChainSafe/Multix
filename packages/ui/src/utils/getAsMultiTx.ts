@@ -1,13 +1,12 @@
 import { MultisigStorageInfo } from '../types'
-import { Transaction, TypedApi } from 'polkadot-api'
-import { dot } from '@polkadot-api/descriptors'
+import { Binary, HexString, Transaction } from 'polkadot-api'
 import { ApiType } from '../contexts/ApiContext'
 
 interface Params {
   api: ApiType
   threshold: number
   otherSignatories: string[]
-  tx: Transaction<any, any, any, any>
+  callData?: HexString
   weight?: { ref_time: bigint; proof_size: bigint }
   when?: MultisigStorageInfo['when']
 }
@@ -15,18 +14,19 @@ interface Params {
 // TODO check if  we can do this with papi
 // const LEGACY_ASMULTI_PARAM_LENGTH = 6
 
-export const getAsMultiTx = ({
+export const getAsMultiTx = async ({
   api,
   threshold,
   otherSignatories,
-  tx,
+  callData,
   weight,
   when
-}: Params): Transaction<any, any, any, any> | undefined => {
-  if (!tx) return
+}: Params): Promise<Transaction<any, any, any, any> | undefined> => {
+  if (!callData) return
 
-  // TODO remove this assertion
-  return (api as TypedApi<typeof dot>).tx.Multisig.as_multi({
+  const tx = await api.txFromCallData(Binary.fromHex(callData))
+
+  return api.tx.Multisig.as_multi({
     threshold,
     other_signatories: otherSignatories,
     maybe_timepoint: when,

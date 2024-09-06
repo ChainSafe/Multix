@@ -23,5 +23,5 @@ export interface SubmittingCall {
   call?: GenericCall
   method?: string
   section?: string
-  weight?: Weight
+  weight?: { ref_time: bigint; proof_size: bigint }
 }
