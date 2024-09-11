@@ -5,12 +5,13 @@ import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils'
 import { useAccountId } from './useAccountId'
 import { ApiPromise } from '@polkadot/api'
-import { useApi } from '../contexts/ApiContext'
+import { ApiType, useApi } from '../contexts/ApiContext'
 import { ISanitizedCall, getDisplayArgs, isProxyCall, parseGenericCall } from '../utils'
 import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import { PolkadotClient } from 'polkadot-api'
 dayjs.extend(localizedFormat)
 
 export interface PendingTx {
@@ -67,9 +68,13 @@ export const getMultisigInfo = (call: ISanitizedCall): Partial<CallDataInfoFromC
   return result
 }
 
-const getCallDataFromChainPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
+const getCallDataFromChainPromise = (
+  pendingTxData: PendingTx[],
+  api: ApiType,
+  client: PolkadotClient
+) =>
   pendingTxData.map(async (pendingTx) => {
-    const blockHash = await api.rpc.chain.getBlockHash(pendingTx.info.when.height)
+    const blockHash = await client.rpc.chain.getBlockHash(pendingTx.info.when.height)
     const signedBlock = await api.rpc.chain.getBlock(blockHash)
 
     let date: Date | undefined
