@@ -34,8 +34,7 @@ describe('Unknown Transaction', () => {
           })
       })
 
-    const { hashOfUknownCall: expectedCallHash, callData } =
-      knownMultisigs['multisig-with-unknown-transaction']
+    const { hashOfUknownCall: expectedCallHash, callData } = knownMultisigs['multisig-with-pure']
     const testAccount2Address = testAccounts['Signatory 2 Of Multisig With Unknown Tx'].address
 
     txSigningModal

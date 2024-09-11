@@ -2,7 +2,6 @@ import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageAddressUrl, landingPageUrl } from '../fixtures/landingData'
 import { testAccounts } from '../fixtures/testAccounts'
 import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
-import { watchSignatories } from '../fixtures/watchAccounts/watchSignatories'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
@@ -10,7 +9,7 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 
 describe('Account address in the address bar', () => {
   it('shows multi and update address with 1 watched (multi), 0 connected account, no linked address', () => {
-    const { address, publicKey } = watchMultisigs['multisig-without-pure']
+    const { address, publicKey } = knownMultisigs['test-simple-multisig-1']
 
     // we have a watched account that is a multisig
     cy.setupAndVisit({
@@ -27,12 +26,12 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows multi and update address with 0 watched, 1 connected account (multi), no linked address', () => {
-    const { address } = knownMultisigs['test-multisig-1']
+    const { address } = knownMultisigs['multisigs-unique-users']
 
     cy.setupAndVisit({
       url: landingPageUrl,
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 4']]
     })
 
     cy.url({ timeout: 10000 }).should('include', address)
@@ -48,13 +47,13 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on rococo"
+        "The linked address can't be found in your accounts or watched accounts on paseo"
       )
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
   })
 
   it('shows an error and can reset with 1 watched (multi), 0 connected account, unknown linked address', () => {
-    const { publicKey, address: multisigAddress } = watchMultisigs['multisig-without-pure']
+    const { publicKey, address: multisigAddress } = knownMultisigs['test-simple-multisig-1']
 
     // we have a watched account that is a multisig
     cy.setupAndVisit({
@@ -67,7 +66,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on rococo"
+        "The linked address can't be found in your accounts or watched accounts on paseo"
       )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
@@ -96,7 +95,7 @@ describe('Account address in the address bar', () => {
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on rococo"
+        "The linked address can't be found in your accounts or watched accounts on paseo"
       )
     cy.url().should('include', testAccounts['Non Multisig Member 1'].address)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
@@ -113,20 +112,20 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows an error and can reset with 0 watched, 1 connected account (multi), unknown linked address', () => {
-    const { address } = knownMultisigs['test-multisig-1']
+    const { address } = knownMultisigs['multisigs-unique-users']
     const nonMulitisigAccountAddress = testAccounts['Non Multisig Member 1'].address
 
     cy.setupAndVisit({
       url: landingPageAddressUrl(nonMulitisigAccountAddress),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 4']]
     })
 
     landingPage
       .linkedAddressNotFound()
       .should(
         'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on rococo"
+        "The linked address can't be found in your accounts or watched accounts on paseo"
       )
     cy.url().should('include', nonMulitisigAccountAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible')
@@ -143,7 +142,7 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows the pure with 1 watched (pure), 0 connected account, pure linked address', () => {
-    const { purePublicKey, pureAddress } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey, pureAddress } = knownMultisigs['multisig-with-pure']
 
     // we have a watched account that is a pure
     cy.setupAndVisit({
@@ -176,8 +175,8 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows the pure with 1 watched (signatory pure), 0 connected account, pure linked address', () => {
-    const { pureAddress } = watchMultisigs['multisig-with-pure']
-    const { publickey: signatoryPublicKey } = watchSignatories[0]
+    const { pureAddress } = knownMultisigs['multisig-with-pure']
+    const { publicKey: signatoryPublicKey } = testAccounts['Multisig Member Account 3']
 
     // we have a watched account that is a pure
     cy.setupAndVisit({
@@ -194,11 +193,11 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows a pure with 0 watched, 1 connected account (many multi & pure), pure linked address', () => {
-    const expectedPureAddress = '5EXePPDNnucmLgrirMPQatFfu4WjncVbVoDZXx1gq75e3JcF'
+    const expectedPureAddress = '161hfudUKvdgBMRzHviDGm6MZM55VoyA1thjnUFN12fYD7Jv'
     cy.setupAndVisit({
       url: landingPageAddressUrl(expectedPureAddress),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [testAccounts['Many Multisig And Pure Member 1']]
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
 
     cy.url().should('include', expectedPureAddress)
@@ -209,12 +208,12 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows a multi with 0 watched, 1 connected account (many multi & pure), multi linked address', () => {
-    const expectedMultiAddress = '5DxNgjvfJLfDTAAgFD1kWtJAh2KVNTTkwytr7S37dZwVpXd7'
+    const expectedMultiAddress = '1iEzHCQ6XWNKJBfdtdTSn2pmUygkGXpknXR6aZcsyxHaped'
 
     cy.setupAndVisit({
       url: landingPageAddressUrl(expectedMultiAddress),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [testAccounts['Many Multisig And Pure Member 1']]
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 1']]
     })
 
     cy.url().should('include', expectedMultiAddress)
@@ -225,13 +224,13 @@ describe('Account address in the address bar', () => {
   })
 
   it('switching accounts changes the address in the address bar', () => {
-    const expectedPureAddress = '5EXePPDNnucmLgrirMPQatFfu4WjncVbVoDZXx1gq75e3JcF'
-    const multiAddress = '5DxNgjvfJLfDTAAgFD1kWtJAh2KVNTTkwytr7S37dZwVpXd7'
+    const expectedPureAddress = knownMultisigs['multisig-with-pure'].pureAddress
+    const multiAddress = knownMultisigs['test-simple-multisig-1'].address
     const first6Letters = multiAddress.slice(0, 6)
 
     cy.setupAndVisit({
       url: landingPageAddressUrl(expectedPureAddress),
-      watchedAccounts: [testAccounts['Many Multisig And Pure Member 1'].publicKey!]
+      watchedAccounts: [testAccounts['Multisig Member Account 1'].publicKey!]
     })
 
     // check that there is the pure address in the address bar
@@ -249,7 +248,7 @@ describe('Account address in the address bar', () => {
   })
 
   it('switching networks resets address in the address bar', () => {
-    const { address, publicKey } = watchMultisigs['multisig-without-pure']
+    const { address, publicKey } = knownMultisigs['test-simple-multisig-1']
 
     // we have a watched account that is a multisig
     cy.setupAndVisit({
@@ -270,7 +269,7 @@ describe('Account address in the address bar', () => {
   })
 
   it('navigating to home, settings, about, overview does not change the address bar', () => {
-    const { address, publicKey } = watchMultisigs['multisig-without-pure']
+    const { address, publicKey } = knownMultisigs['test-simple-multisig-1']
 
     // we have a watched account that is a multisig
     cy.setupAndVisit({

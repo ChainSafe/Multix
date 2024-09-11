@@ -193,7 +193,7 @@ describe('Watched Accounts', () => {
     // ensure the correct subscan url is opened
     cy.get('@open').should(
       'have.been.calledOnceWith',
-      `https://rococo.subscan.io/account/${pureAddress}`
+      `https://paseo.subscan.io/account/${pureAddress}`
     )
   })
 

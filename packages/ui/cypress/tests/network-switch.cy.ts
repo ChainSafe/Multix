@@ -23,7 +23,7 @@ describe('Network can be switched', () => {
       watchedAccounts: [multisigPublicKey]
     })
 
-    cy.url().should('contain', 'network=rococo')
+    cy.url().should('contain', 'network=paseo')
     cy.url().should('contain', `address=${multisigPureAddress}`)
 
     settingsPage.accountContainer().within(() => {
