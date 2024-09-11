@@ -35,7 +35,7 @@ export interface NetworkInfo {
   pplChainRpcUrl?: string
 }
 
-export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v3/graphql`
+export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow/v/v4/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
