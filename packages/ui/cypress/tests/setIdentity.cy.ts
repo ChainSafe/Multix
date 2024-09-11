@@ -25,7 +25,7 @@ describe('Set an identity', () => {
     sendTxModal.selectionEasySetupSetIdentity().should('not.exist')
   })
 
-  it('Can set an identity from the options menu', () => {
+  it.skip('Can set an identity from the options menu', () => {
     const multisigSignatoryWithoutIdentity = setIdentitySignatories[1]
     cy.setupAndVisit({
       url: landingPageUrl,

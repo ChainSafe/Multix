@@ -1,5 +1,5 @@
 import { testAccounts } from '../fixtures/testAccounts'
-import { landingPageUrl } from '../fixtures/landingData'
+import { landingPageAddressUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
@@ -7,11 +7,11 @@ import { knownMultisigs } from '../fixtures/knownMultisigs'
 describe('Unknown Transaction', () => {
   beforeEach(() => {
     cy.setupAndVisit({
-      url: landingPageUrl,
+      url: landingPageAddressUrl(knownMultisigs['test-simple-multisig-1'].address),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [
-        testAccounts['Signatory 1 Of Multisig With Unknown Tx'],
-        testAccounts['Signatory 2 Of Multisig With Unknown Tx']
+        testAccounts['Multisig Member Account 1'],
+        testAccounts['Multisig Member Account 2']
       ]
     })
   })
@@ -34,8 +34,9 @@ describe('Unknown Transaction', () => {
           })
       })
 
-    const { hashOfUknownCall: expectedCallHash, callData } = knownMultisigs['multisig-with-pure']
-    const testAccount2Address = testAccounts['Signatory 2 Of Multisig With Unknown Tx'].address
+    const { hashOfUknownCall: expectedCallHash, callData } =
+      knownMultisigs['test-simple-multisig-1']
+    const testAccount2Address = testAccounts['Multisig Member Account 2'].address
 
     txSigningModal
       .body()
@@ -62,14 +63,13 @@ describe('Unknown Transaction', () => {
           .callInfoContainer()
           .should('be.visible')
           .should('contain.text', 'system.remark')
-          .should('contain.text', 'remark: Unknown Transaction Test')
+          .should('contain.text', 'remark: multix ftw')
         txSigningModal.approveButton().should('be.enabled')
       })
   })
 
   it('can see the expected buttons on an unknown tx without call data', () => {
-    const callData =
-      '0x0403000d8cb5267b1ff606b8c087f546f98390af50d38951bfcc0f1fd8555c707221a302286bee'
+    const callData = '0x000010736f6d65'
     multisigPage
       .pendingTransactionItem(8000)
       .eq(0)

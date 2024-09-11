@@ -62,7 +62,7 @@ describe('Perform transactions', () => {
           (address) => address !== testAccount1Address
         )
       },
-      WSendpoint: 'wss://paseo-rpc.polkadot.io'
+      WSendpoint: 'wss://paseo.rpc.amforc.com'
     })
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('not.have.text', '')
