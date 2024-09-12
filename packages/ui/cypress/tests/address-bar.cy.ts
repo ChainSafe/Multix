@@ -1,7 +1,6 @@
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { landingPageAddressUrl, landingPageUrl } from '../fixtures/landingData'
 import { testAccounts } from '../fixtures/testAccounts'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 import { landingPage } from '../support/page-objects/landingPage'
 import { multisigPage } from '../support/page-objects/multisigPage'
@@ -83,7 +82,7 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows an error and can reset with 1 watched (pure), 0 connected account, unknown linked address', () => {
-    const { purePublicKey, pureAddress } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey, pureAddress } = knownMultisigs['watched-multisig-with-pure']
 
     // we have a watched account that is a pure
     cy.setupAndVisit({
@@ -158,7 +157,7 @@ describe('Account address in the address bar', () => {
   })
 
   it('shows the pure with 1 watched (multi), 0 connected account, pure linked address', () => {
-    const { publicKey, pureAddress } = watchMultisigs['multisig-with-pure']
+    const { publicKey, pureAddress } = knownMultisigs['watched-multisig-with-pure']
 
     // we have a watched account that is a pure
     cy.setupAndVisit({

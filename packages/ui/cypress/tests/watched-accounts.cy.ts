@@ -7,7 +7,6 @@ import {
 import { landingPage } from '../support/page-objects/landingPage'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
 import { testAccounts } from '../fixtures/testAccounts'
@@ -109,7 +108,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see the expected account details displayed for a watched pure', () => {
-    const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { name: pureName, purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: getSettingsPageWatchAccountUrl(),
@@ -144,7 +143,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can edit the name of a watched pure', () => {
-    const { name: pureName, purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { name: pureName, purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: landingPageUrl,
@@ -174,7 +173,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can open the correct subscan link for a watched pure', () => {
-    const { purePublicKey, name: pureName, pureAddress } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey, name: pureName, pureAddress } = knownMultisigs['multisig-with-pure']
 
     cy.setupAndVisit({
       url: landingPageUrl,
@@ -198,7 +197,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can not see the "New Transaction" button when in watched account mode', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: landingPageUrl,
@@ -209,7 +208,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can not utilize wallet connect when in watched account mode', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: getSettingsPageUrl(),
@@ -250,7 +249,7 @@ describe('Watched Accounts', () => {
       pureAddress,
       publicKey: multisigPublicKey,
       address: multisigAddress
-    } = watchMultisigs['multisig-with-pure']
+    } = knownMultisigs['watched-multisig-with-pure']
 
     const pureCheck = () => {
       multisigPage

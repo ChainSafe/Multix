@@ -163,7 +163,7 @@ export const networkList: Record<string, NetworkInfo> = {
   },
   paseo: {
     chainId: 'paseo',
-    explorerNetworkName: '',
+    explorerNetworkName: 'paseo',
     rpcUrl: 'wss://paseo.rpc.amforc.com',
     httpGraphqlUrl: 'https://chainsafe.squids.live/multix-arrow/v/v4/graphql',
     logo: paseoSVG

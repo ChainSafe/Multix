@@ -8,7 +8,7 @@ import { multisigWithKusamaIdentity } from '../fixtures/nameDisplay'
 
 describe('Name Edition and Display', () => {
   it('can see the edit button with no name', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: getSettingsPageWatchAccountUrl('polkadot'),
@@ -24,7 +24,7 @@ describe('Name Edition and Display', () => {
   })
 
   it('can edit with no name before', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
     const newName = 'some name'
     const newName2 = 'new name 2'
     cy.setupAndVisit({
@@ -53,7 +53,7 @@ describe('Name Edition and Display', () => {
   })
 
   it('can edit and cancel with a name before', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
     const originalName = 'some name'
     const newName = 'new name'
     cy.setupAndVisit({

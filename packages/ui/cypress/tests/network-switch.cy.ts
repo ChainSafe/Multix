@@ -10,7 +10,7 @@ const {
   address: multisigAddress,
   pureAddress: multisigPureAddress,
   name: multisigName
-} = watchMultisigs['multisig-with-pure']
+} = knownMultisigs['watched-multisig-with-pure']
 
 const KUSAMA_S58_PREFIX = 2
 const kusamaAddress = encodeAddress(multisigAddress, KUSAMA_S58_PREFIX)
