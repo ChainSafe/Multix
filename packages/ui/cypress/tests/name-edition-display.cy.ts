@@ -2,9 +2,9 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 import { getSettingsPageWatchAccountUrl, landingPageNetwork } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { multisigWithKusamaIdentity } from '../fixtures/nameDisplay'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 
 describe('Name Edition and Display', () => {
   it('can see the edit button with no name', () => {

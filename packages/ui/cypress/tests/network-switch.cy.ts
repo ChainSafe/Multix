@@ -2,8 +2,8 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 import { getSettingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { encodeAddress } from '@polkadot/util-crypto'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 
 const {
   publicKey: multisigPublicKey,
