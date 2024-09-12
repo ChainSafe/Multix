@@ -1,5 +1,5 @@
 import { testAccounts } from '../fixtures/testAccounts'
-import { landingPageAddressUrl } from '../fixtures/landingData'
+import { landingPageUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
@@ -7,11 +7,11 @@ import { knownMultisigs } from '../fixtures/knownMultisigs'
 describe('Unknown Transaction', () => {
   beforeEach(() => {
     cy.setupAndVisit({
-      url: landingPageAddressUrl(knownMultisigs['test-simple-multisig-1'].address),
+      url: landingPageUrl,
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [
-        testAccounts['Multisig Member Account 1'],
-        testAccounts['Multisig Member Account 2']
+        testAccounts['Multisig Member Account 4'],
+        testAccounts['Multisig Member Account 5']
       ]
     })
   })
@@ -35,8 +35,8 @@ describe('Unknown Transaction', () => {
       })
 
     const { hashOfUknownCall: expectedCallHash, callData } =
-      knownMultisigs['test-simple-multisig-1']
-    const testAccount2Address = testAccounts['Multisig Member Account 2'].address
+      knownMultisigs['multisigs-unique-users']
+    const testAccount2Address = testAccounts['Multisig Member Account 5'].address
 
     txSigningModal
       .body()
