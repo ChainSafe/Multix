@@ -27,7 +27,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 To ease the development of the front-end, you don't have to run an indexer.
 After `yarn && yarn start` you can directly visit the locally hosted front-end at [http://localhost:3333](http://localhost:3333).
-You will be connected to the default network, e.g http://localhost:3333?network=rococo
+You will be connected to the default network, e.g http://localhost:3333?network=paseo
 
 The front-end will automatically connect to a hosted blockchain node, as well as its associated indexer.
 

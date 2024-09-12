@@ -62,16 +62,16 @@ jobs:
           # custom test command to run
           command: yarn test:ci
       # store the screenshots if the tests fail
-      - name: Store screenshots
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: packages/ui/cypress/screenshots
-      # store the videos if the tests fail
-      - name: Store videos
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-videos
-          path: packages/ui/cypress/videos
+      # - name: Store screenshots
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: cypress-screenshots
+      #     path: packages/ui/cypress/screenshots
+      # # store the videos if the tests fail
+      # - name: Store videos
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: cypress-videos
+      #     path: packages/ui/cypress/videos

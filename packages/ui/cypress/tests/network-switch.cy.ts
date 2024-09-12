@@ -2,15 +2,15 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 import { getSettingsPageWatchAccountUrl } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { encodeAddress } from '@polkadot/util-crypto'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 
 const {
   publicKey: multisigPublicKey,
   address: multisigAddress,
   pureAddress: multisigPureAddress,
   name: multisigName
-} = watchMultisigs['multisig-with-pure']
+} = knownMultisigs['watched-multisig-with-pure']
 
 const KUSAMA_S58_PREFIX = 2
 const kusamaAddress = encodeAddress(multisigAddress, KUSAMA_S58_PREFIX)
@@ -23,7 +23,7 @@ describe('Network can be switched', () => {
       watchedAccounts: [multisigPublicKey]
     })
 
-    cy.url().should('contain', 'network=rococo')
+    cy.url().should('contain', 'network=paseo')
     cy.url().should('contain', `address=${multisigPureAddress}`)
 
     settingsPage.accountContainer().within(() => {

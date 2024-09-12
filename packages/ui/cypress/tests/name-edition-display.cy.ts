@@ -2,13 +2,13 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 import { getSettingsPageWatchAccountUrl, landingPageNetwork } from '../fixtures/landingData'
 import { settingsPage } from '../support/page-objects/settingsPage'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
-import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { multisigWithKusamaIdentity } from '../fixtures/nameDisplay'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 
 describe('Name Edition and Display', () => {
   it('can see the edit button with no name', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
 
     cy.setupAndVisit({
       url: getSettingsPageWatchAccountUrl('polkadot'),
@@ -24,7 +24,7 @@ describe('Name Edition and Display', () => {
   })
 
   it('can edit with no name before', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
     const newName = 'some name'
     const newName2 = 'new name 2'
     cy.setupAndVisit({
@@ -53,7 +53,7 @@ describe('Name Edition and Display', () => {
   })
 
   it('can edit and cancel with a name before', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['watched-multisig-with-pure']
     const originalName = 'some name'
     const newName = 'new name'
     cy.setupAndVisit({
