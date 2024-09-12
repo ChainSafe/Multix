@@ -11,7 +11,7 @@ import { watchMultisigs } from '../fixtures/watchAccounts/watchMultisigs'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
 import { testAccounts } from '../fixtures/testAccounts'
-import { signatoryOfMultipleMultisigs } from '../fixtures/watchAccounts/watchSignatories'
+import { knownMultisigs } from '../fixtures/knownMultisigs'
 
 const addWatchAccount = (address: string, name?: string) => {
   settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
@@ -74,7 +74,7 @@ describe('Watched Accounts', () => {
 
   it('can see the expected account details displayed for a watched multisig', () => {
     const { name: multisigName, publicKey: multisigPublicKey } =
-      watchMultisigs['multisig-without-pure']
+      knownMultisigs['multisigs-unique-users']
 
     cy.setupAndVisit({
       url: getSettingsPageWatchAccountUrl(),
@@ -228,7 +228,7 @@ describe('Watched Accounts', () => {
   })
 
   it('can see but not interact with txs when in watched account mode', () => {
-    const { purePublicKey } = watchMultisigs['multisig-with-pure']
+    const { purePublicKey } = knownMultisigs['multisig-with-pure']
 
     cy.setupAndVisit({
       url: landingPageUrl,
@@ -303,38 +303,43 @@ describe('Watched Accounts', () => {
     pureCheck()
   })
 
-  it.only('can see all multisigs that a watched signatory is a member of', () => {
-    const { publicKey: signatoryPublicKey } = signatoryOfMultipleMultisigs
+  it('can see all multisigs that a watched signatory is a member of', () => {
+    const { publicKey: signatoryPublicKey } = testAccounts['Multisig Member Account 1']
     const expectedAddresses = [
-      signatoryOfMultipleMultisigs.multisigWithPureAddress1,
-      signatoryOfMultipleMultisigs.multisigWithPureAddress2,
-      signatoryOfMultipleMultisigs.multisigWithPureAddress3,
-      signatoryOfMultipleMultisigs.multisigWithoutPureAddress1,
-      signatoryOfMultipleMultisigs.multisigWithoutPureAddress2
+      {
+        address: knownMultisigs['multisig-with-pure'].pureAddress,
+        expectedBadge: 'pure'
+      },
+      {
+        address: knownMultisigs['test-simple-multisig-1'].address,
+        expectedBadge: 'multi'
+      }
     ]
 
     cy.setupAndVisit({
       url: landingPageUrl,
-      watchedAccounts: [signatoryPublicKey]
+      watchedAccounts: [signatoryPublicKey!]
     })
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
       .multiproxySelectorOptionDesktop()
-      .should('have.length', 5)
+      .should('have.length', expectedAddresses.length)
       .each(($el, index) => {
         cy.wrap($el).within(() => {
-          accountDisplay.addressLabel().should('contain.text', expectedAddresses[index].slice(0, 6))
+          accountDisplay
+            .addressLabel()
+            .should('contain.text', expectedAddresses[index].address.slice(0, 6))
           accountDisplay.watchedIcon().should('be.visible')
-          if (index < 3) {
-            accountDisplay.pureBadge().should('exist')
+          if (expectedAddresses[index].expectedBadge === 'pure') {
+            accountDisplay.pureBadge().should('be.visible')
           } else {
-            accountDisplay.multisigBadge().should('exist')
+            accountDisplay.multisigBadge().should('be.visible')
           }
         })
       })
     // ensure each multisig that the signatory is a member of can be viewed
-    expectedAddresses.forEach((address, index) => {
+    expectedAddresses.forEach(({ address }, index) => {
       topMenuItems.multiproxySelectorDesktop().click()
       topMenuItems.multiproxySelectorOptionDesktop().eq(index).click()
       multisigPage

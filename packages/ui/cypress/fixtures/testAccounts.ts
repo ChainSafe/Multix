@@ -56,13 +56,6 @@ export const testAccounts = {
     type: 'sr25519',
     mnemonic: 'erosion never fee pill vocal fetch enforce soap betray zero answer hollow'
   } as InjectedAccountWitMnemonic,
-  'Many Multisig And Pure Member 1': {
-    address: '155x2TMK25Kc6vhGFcwW5neSZmkr2cwy3wp9xJGdSWPfkf2T',
-    publicKey: '0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d',
-    name: 'Many Multisig And Pure Member 1',
-    type: 'sr25519',
-    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice'
-  } as InjectedAccountWitMnemonic,
   'Funded Account 1 Chopsticks Kusama': {
     address: 'JEqfw2FPda5eycsqqXN2Ay67eEh5R85aSHcArs3XdUYjj5H',
     publicKey: '0xfa8e003cb5d22db1e8658e05245c3bab0851e516b71a8256bc3edf006b817161',
@@ -90,19 +83,5 @@ export const testAccounts = {
     name: 'Not Funded Account 4 Chopsticks',
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/4'
-  } as InjectedAccountWitMnemonic,
-  'Signatory 1 Of Multisig With Unknown Tx': {
-    address: '5C5RWYL7zoV6V2vdwXENSpSzWHXUxyhHBrEzhfySdQmkiF9d',
-    publicKey: '0x008c37659f858da7ec1416ce01b975af4c6eb5931805047d173d63123174a74e',
-    name: 'Signatory 1 Of Multisig With Unknown Tx',
-    type: 'sr25519',
-    mnemonic: 'various sun sell patch follow stove warfare worry cupboard kick wise wild'
-  } as InjectedAccountWitMnemonic,
-  'Signatory 2 Of Multisig With Unknown Tx': {
-    address: '5DAA5LQP8C4Cus1caXr3rwDa5LuPCJmXeoj3HrCUWEpGUV7g',
-    publicKey: '0x3064b82d59077c4d2d7b924b72e63fb9b829b5cd0706b9236c35b79ffa89995b',
-    name: 'Signatory 2 Of Multisig With Unknown Tx',
-    type: 'sr25519',
-    mnemonic: 'canyon narrow primary zoo purpose double rice faculty critic embark trophy economy'
   } as InjectedAccountWitMnemonic
 }

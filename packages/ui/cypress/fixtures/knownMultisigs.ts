@@ -27,6 +27,7 @@ export const knownMultisigs = {
   // not be removed
   // it needs to have unique users never used in any other multisig
   'multisigs-unique-users': {
+    name: 'Unique multisig',
     address: '1MJF5WZd31i3vvsLmvgVx4uN1y9AqAGrCXhjnNThxPUVbM1',
     publicKey: '0x0f7af3c714b7cb4b0365aca43c586371bb10560b770f53f20a2dddad8db1365d',
     threshold: 2,
