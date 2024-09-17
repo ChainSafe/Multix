@@ -1,8 +1,8 @@
 export const baseUrl = 'http://localhost:3333'
-export const defaultNetwork = 'rococo'
+export const defaultNetwork = 'paseo'
 const WATCH_ACCOUNT_ANCHOR = 'watched-accounts'
 export const landingPageNetwork = (networkName: string) => `${baseUrl}?network=${networkName}`
-export const landingPageUrl = landingPageNetwork('rococo')
+export const landingPageUrl = landingPageNetwork(defaultNetwork)
 export const getSettingsPageUrl = (network = defaultNetwork) =>
   `${baseUrl}/settings?network=${network}`
 export const getSettingsPageWatchAccountUrl = (network = defaultNetwork) =>

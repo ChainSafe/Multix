@@ -7,21 +7,43 @@ export interface InjectedAccountWitMnemonic extends InjectedAccount {
 
 export const testAccounts = {
   'Multisig Member Account 1': {
-    address: '5H679cx9tkuHqyReUgBxeTqXKjVikVwLySDH1buiYuoqhi2w',
+    address: '162QHxDDkYAmHWSASKExncfgBMVNSoVV3vwmAtu56zqMt1mJ',
     publicKey: '0xde3ed24acdfe71c13b4d42539c5390ddee147ba6b29b0593ce842e77ff034445',
     name: 'Multisig Member Account 1',
     type: 'sr25519',
     mnemonic: 'climb worth pioneer mushroom cloth expose tube high half final curtain toward'
   } as InjectedAccountWitMnemonic,
   'Multisig Member Account 2': {
-    address: '5GCXBrumiRDQ8KQsgbG39HdBNLQKt6XCQbeHZJccGdZbYTgt',
+    address: '158pLCAqaCUsZrRPeEK3HSTLDxPyaQ5LV6Nmibbxpib7iu4R',
     publicKey: '0xb6e6fb4f2a2268bf6e8a211d958cbf602881418bcc533216cadfae3e24785f28',
     name: 'Multisig Member Account 2',
     type: 'sr25519',
     mnemonic: 'divorce lottery slender again adapt process slow pigeon suit chase news begin'
   } as InjectedAccountWitMnemonic,
+  'Multisig Member Account 3': {
+    address: '14fm5WcyMvkVkEpTyEhFFgjDQRZspee5jfuX9QtsyNEuc9if',
+    publicKey: '0xa244679c3186eb336beb3a8335e0a6f6ab0256618f0fcb0cbc493a14cfdc765d',
+    name: 'Multisig Member Account 3',
+    type: 'sr25519',
+    mnemonic: 'double smoke neglect nasty door atom general health doctor subject regret romance'
+  } as InjectedAccountWitMnemonic,
+  'Multisig Member Account 4': {
+    address: '15a1VoMnixXyQnCf7nae89gkmbu5WMGZTniWiixxJD36NGLZ',
+    publicKey: '0xca1db422d29bc27114e68e10e98f6ae6d5981ae412de2e21b8647b46a221ae53',
+    name: 'Multisig Member Account 4',
+    type: 'sr25519',
+    mnemonic: 'prefer live muscle virtual embrace arm stone museum weasel escape ten float'
+  } as InjectedAccountWitMnemonic,
+  'Multisig Member Account 5': {
+    address: '1t8g1ZXypq36LpGCDG5nbiW42chjTScGPhAVBiejZFU5A5s',
+    publicKey: '0x26ff58054d290e16efedc0e9be37d9197791d50ad071c1a9bff12eda2737992a',
+    name: 'Multisig Member Account 5',
+    type: 'sr25519',
+    mnemonic: 'hunt pause dawn identify month ahead ship ribbon brother fit fabric fabric'
+  } as InjectedAccountWitMnemonic,
+
   'Non Multisig Member 1': {
-    address: '5EnfL3AjWckttY6xuUqfFsfjcbxr1KqdzUKHTmh7cWrDKjGd',
+    address: '13ixUNRoNQ2NL57Us7tfQ2VtUDxVhdPn4y3md4gUAbsjW8PS',
     publicKey: '0x78784374dbeba13ff9789fca0e46c4960e219a1fff11ea69d6f0b57a7f3bfb61',
     name: 'Non Multisig Member 1',
     type: 'sr25519',
@@ -33,13 +55,6 @@ export const testAccounts = {
     name: 'Non Multisig Member 2',
     type: 'sr25519',
     mnemonic: 'erosion never fee pill vocal fetch enforce soap betray zero answer hollow'
-  } as InjectedAccountWitMnemonic,
-  'Many Multisig And Pure Member 1': {
-    address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    publicKey: '0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d',
-    name: 'Many Multisig And Pure Member 1',
-    type: 'sr25519',
-    mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice'
   } as InjectedAccountWitMnemonic,
   'Funded Account 1 Chopsticks Kusama': {
     address: 'JEqfw2FPda5eycsqqXN2Ay67eEh5R85aSHcArs3XdUYjj5H',
@@ -68,19 +83,5 @@ export const testAccounts = {
     name: 'Not Funded Account 4 Chopsticks',
     type: 'sr25519',
     mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk//chopsticks/4'
-  } as InjectedAccountWitMnemonic,
-  'Signatory 1 Of Multisig With Unknown Tx': {
-    address: '5C5RWYL7zoV6V2vdwXENSpSzWHXUxyhHBrEzhfySdQmkiF9d',
-    publicKey: '0x008c37659f858da7ec1416ce01b975af4c6eb5931805047d173d63123174a74e',
-    name: 'Signatory 1 Of Multisig With Unknown Tx',
-    type: 'sr25519',
-    mnemonic: 'various sun sell patch follow stove warfare worry cupboard kick wise wild'
-  } as InjectedAccountWitMnemonic,
-  'Signatory 2 Of Multisig With Unknown Tx': {
-    address: '5DAA5LQP8C4Cus1caXr3rwDa5LuPCJmXeoj3HrCUWEpGUV7g',
-    publicKey: '0x3064b82d59077c4d2d7b924b72e63fb9b829b5cd0706b9236c35b79ffa89995b',
-    name: 'Signatory 2 Of Multisig With Unknown Tx',
-    type: 'sr25519',
-    mnemonic: 'canyon narrow primary zoo purpose double rice faculty critic embark trophy economy'
   } as InjectedAccountWitMnemonic
 }

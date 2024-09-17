@@ -56,13 +56,13 @@ describe('Perform transactions', () => {
     cy.rejectCurrentMultisigTx({
       account: testAccounts['Multisig Member Account 1'],
       multisigInfo: {
-        address: knownMultisigs['test-multisig-1'].address,
-        threshold: knownMultisigs['test-multisig-1'].threshold,
-        otherSignatories: knownMultisigs['test-multisig-1'].signatories.filter(
+        address: knownMultisigs['test-simple-multisig-1'].address,
+        threshold: knownMultisigs['test-simple-multisig-1'].threshold,
+        otherSignatories: knownMultisigs['test-simple-multisig-1'].signatories.filter(
           (address) => address !== testAccount1Address
         )
       },
-      WSendpoint: 'wss://rococo-rpc.polkadot.io'
+      WSendpoint: 'wss://paseo.rpc.amforc.com'
     })
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('not.have.text', '')

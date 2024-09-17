@@ -2,7 +2,6 @@ import { nodesKhalaSVG } from './logos/khalaSVG'
 import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
 import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
-import { chainsRococoSVG } from './logos/rococoSVG'
 import { phalaSVG } from './logos/phalaSVG'
 import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
@@ -35,7 +34,7 @@ export interface NetworkInfo {
   pplChainRpcUrl?: string
 }
 
-export const HTTP_GRAPHQL_URL = `https://squid.subsquid.io/multix-arrow/v/v3/graphql`
+export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow/v/v4/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
@@ -146,13 +145,13 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKhalaSVG
   },
-  rococo: {
-    chainId: 'rococo',
-    explorerNetworkName: 'rococo',
-    rpcUrl: 'wss://rococo-rpc.polkadot.io',
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsRococoSVG
-  },
+  // rococo: {
+  //   chainId: 'rococo',
+  //   explorerNetworkName: 'rococo',
+  //   rpcUrl: 'wss://rococo-rpc.polkadot.io',
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: chainsRococoSVG
+  // },
   westend: {
     chainId: 'westend',
     explorerNetworkName: 'westend',
@@ -163,7 +162,7 @@ export const networkList: Record<string, NetworkInfo> = {
   },
   paseo: {
     chainId: 'paseo',
-    explorerNetworkName: '',
+    explorerNetworkName: 'paseo',
     rpcUrl: 'wss://paseo.rpc.amforc.com',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: paseoSVG
@@ -237,7 +236,7 @@ export const soloChains: Partial<keyof typeof networkList>[] = [
   //joystream
 ]
 export const testChains: Partial<keyof typeof networkList>[] = [
-  'rococo',
+  // 'rococo',
   'paseo',
   'rhala testnet',
   'westend',
