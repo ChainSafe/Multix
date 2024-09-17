@@ -51,6 +51,7 @@ export interface IApiContext {
   api?: ApiType
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
+  compatibilityToken?: unknown
 }
 
 interface ChainInfoHuman {
@@ -67,6 +68,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
   const [client, setClient] = useState<PolkadotClient>()
   const [api, setApi] = useState<ApiType>()
+  const [compatibilityToken, setCompatibilityToken] = useState<unknown | undefined>()
 
   useEffect(() => {
     if (!selectedNetworkInfo) return
@@ -158,12 +160,19 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
     })
   }, [client])
 
+  useEffect(() => {
+    if (!api) return
+
+    api.compatibilityToken.then(setCompatibilityToken)
+  }, [api])
+
   return (
     <ApiContext.Provider
       value={{
         api,
         chainInfo,
-        client
+        client,
+        compatibilityToken
       }}
     >
       {children}

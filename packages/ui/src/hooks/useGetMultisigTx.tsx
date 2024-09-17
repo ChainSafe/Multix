@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { ISubmittableResult } from '@polkadot/types/types'
 import { useGetSortAddress } from './useGetSortAddress'
 import { getAsMultiTx } from '../utils/getAsMultiTx'
-import { Weight } from '@polkadot/types/interfaces'
-import { HexString, MultisigStorageInfo } from '../types'
+import { HexString, MultisigStorageInfo, Weight } from '../types'
 import { getApproveAsMultiTx } from '../utils'
+import { Transaction, TypedApi } from 'polkadot-api'
+import { dot, MultiAddress } from '@polkadot-api/descriptors'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -15,7 +14,7 @@ interface Params {
   senderAddress?: string
   fromAddress?: string
   isProxy?: boolean
-  extrinsicToCall?: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+  extrinsicToCall?: Transaction<any, any, any, any> | undefined
   weight?: Weight
   when?: MultisigStorageInfo['when']
   forceAsMulti?: boolean
@@ -36,7 +35,7 @@ export const useGetMultisigTx = ({
   forceAsMulti = true,
   approveAsMultiHash
 }: Params) => {
-  const { api } = useApi()
+  const { api, compatibilityToken } = useApi()
   const { getSortAddress } = useGetSortAddress()
 
   const multisigTx = useMemo(() => {
@@ -81,19 +80,23 @@ export const useGetMultisigTx = ({
       return
     }
 
-    let tx: SubmittableExtrinsic<'promise'> | undefined
+    let tx: Transaction<any, any, any, any> | undefined
 
     try {
       // the proxy is selected
       if (isProxy && !!extrinsicToCall) {
-        tx = api.tx.proxy.proxy(fromAddress, null, extrinsicToCall)
+        tx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
+          real: MultiAddress.Id(fromAddress),
+          force_proxy_type: undefined,
+          call: extrinsicToCall.decodedCall
+        })
         // a multisig is selected
       } else {
         tx = extrinsicToCall
       }
 
       return forceAsMulti || approvalLength >= threshold - 1
-        ? getAsMultiTx({ api, threshold, otherSignatories, tx, weight, when })
+        ? getAsMultiTx({ api, threshold, otherSignatories, tx, weight, when, compatibilityToken })
         : getApproveAsMultiTx({
             api,
             threshold,
@@ -118,7 +121,8 @@ export const useGetMultisigTx = ({
     approvalLength,
     weight,
     when,
-    approveAsMultiHash
+    approveAsMultiHash,
+    compatibilityToken
   ])
 
   return multisigTx

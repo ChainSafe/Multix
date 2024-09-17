@@ -1,5 +1,4 @@
-import { GenericCall } from '@polkadot/types'
-import { Weight } from '@polkadot/types/interfaces'
+import { Transaction } from 'polkadot-api'
 
 export interface MultisigStorageInfo {
   approvals: string[]
@@ -20,8 +19,10 @@ export enum AccountBadge {
 export type HexString = `0x${string}`
 
 export interface SubmittingCall {
-  call?: GenericCall
+  call?: Transaction<any, any, any, any>
   method?: string
   section?: string
-  weight?: { ref_time: bigint; proof_size: bigint }
+  weight?: Weight
 }
+
+export type Weight = { ref_time: bigint; proof_size: bigint }

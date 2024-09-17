@@ -1,6 +1,6 @@
 import { MultisigStorageInfo } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
-import { ApiType } from '../contexts/ApiContext'
+import { ApiType, IApiContext } from '../contexts/ApiContext'
 
 interface Params {
   api: ApiType
@@ -10,27 +10,30 @@ interface Params {
   callData?: HexString
   weight?: { ref_time: bigint; proof_size: bigint }
   when?: MultisigStorageInfo['when']
+  compatibilityToken: IApiContext['compatibilityToken']
 }
 
 // TODO check if  we can do this with papi
 // const LEGACY_ASMULTI_PARAM_LENGTH = 6
 
-export const getAsMultiTx = async ({
+export const getAsMultiTx = ({
   api,
   threshold,
   otherSignatories,
   callData,
   tx,
   weight,
-  when
-}: Params): Promise<Transaction<any, any, any, any> | undefined> => {
+  when,
+  compatibilityToken
+}: Params): Transaction<any, any, any, any> | undefined => {
   // we can pass either the tx, or the callData
   if (!callData && !tx) return
+  if (!compatibilityToken) return
 
   let txToSend: Transaction<any, any, any, any> | undefined = tx
 
   if (!txToSend && callData) {
-    txToSend = await api.txFromCallData(Binary.fromHex(callData))
+    txToSend = api.txFromCallData(Binary.fromHex(callData), compatibilityToken as any)
   }
 
   if (!txToSend) return
