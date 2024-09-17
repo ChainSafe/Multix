@@ -1,37 +1,53 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import BN from 'bn.js'
+import { TypedApi } from 'polkadot-api'
+import { dot } from '@polkadot-api/descriptors'
 
 export const usePureProxyCreationNeededFunds = () => {
   const { api, chainInfo } = useApi()
-  const [min, setMin] = useState(new BN(0))
-  const [reserved, setReserved] = useState(new BN(0))
+  const [min, setMin] = useState(0n)
+  const [reserved, setReserved] = useState(0n)
+  const [depositFactor, setDepositFactor] = useState<bigint | undefined>(undefined)
+  const [depositBase, setDepositBase] = useState<bigint | undefined>(undefined)
+  const [existentialDeposit, setExistentialDeposit] = useState<bigint | undefined>(undefined)
 
   useEffect(() => {
-    if (!api) return
+    if (!(api as TypedApi<typeof dot>).constants?.Proxy?.ProxyDepositFactor) return
+    ;(api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositFactor()
+      .then(setDepositFactor)
+      .catch(console.error)
+  }, [api])
 
-    if (!chainInfo?.tokenDecimals) return
+  useEffect(() => {
+    if (!(api as TypedApi<typeof dot>).constants?.Proxy?.ProxyDepositBase) return
+    ;(api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositBase()
+      .then(setDepositBase)
+      .catch(console.error)
+  }, [api])
 
-    if (
-      !api.consts?.proxy?.proxyDepositFactor ||
-      !api.consts?.proxy?.proxyDepositBase ||
-      !api.consts?.balances?.existentialDeposit
-    )
-      return
+  useEffect(() => {
+    if (!(api as TypedApi<typeof dot>).constants?.Balances.ExistentialDeposit) return
+    ;(api as TypedApi<typeof dot>).constants.Balances.ExistentialDeposit()
+      .then(setExistentialDeposit)
+      .catch(console.error)
+  }, [api])
 
-    const reserved = (api.consts?.proxy?.proxyDepositFactor as unknown as BN)
-      // we only create one proxy here
-      .muln(1)
-      .iadd(api.consts?.proxy?.proxyDepositBase as unknown as BN)
+  useEffect(() => {
+    if (!api || !existentialDeposit || !depositBase || !depositFactor) return
 
-    // the signer should survive and have at lease the existential deposit
+    // if (!chainInfo?.tokenDecimals) return
+
+    // we only create one proxy here
+    const reserved = depositFactor * 1n + depositBase
+
+    // the signer should survive and have at least the existential deposit
     // play safe and add the existential deposit twice which should suffice
-    const survive = (api.consts.balances.existentialDeposit as unknown as BN).muln(2)
+    const survive = existentialDeposit * 2n
 
     setReserved(reserved)
-    setMin(reserved.add(survive))
+    setMin(reserved + survive)
     // console.log('reserved Pure Creation', formatBnBalance(reserved.add(survive), chainInfo.tokenDecimals, { tokenSymbol: chainInfo?.tokenSymbol, numberAfterComma: 3 }))
-  }, [api, chainInfo])
+  }, [api, chainInfo, depositBase, depositFactor, existentialDeposit])
 
   return { pureProxyCreationNeededFunds: min, reserved }
 }

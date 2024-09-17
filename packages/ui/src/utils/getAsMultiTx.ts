@@ -6,6 +6,7 @@ interface Params {
   api: ApiType
   threshold: number
   otherSignatories: string[]
+  tx?: Transaction<any, any, any, any>
   callData?: HexString
   weight?: { ref_time: bigint; proof_size: bigint }
   when?: MultisigStorageInfo['when']
@@ -19,19 +20,27 @@ export const getAsMultiTx = async ({
   threshold,
   otherSignatories,
   callData,
+  tx,
   weight,
   when
 }: Params): Promise<Transaction<any, any, any, any> | undefined> => {
-  if (!callData) return
+  // we can pass either the tx, or the callData
+  if (!callData && !tx) return
 
-  const tx = await api.txFromCallData(Binary.fromHex(callData))
+  let txToSend: Transaction<any, any, any, any> | undefined = tx
+
+  if (!txToSend && callData) {
+    txToSend = await api.txFromCallData(Binary.fromHex(callData))
+  }
+
+  if (!txToSend) return
 
   return api.tx.Multisig.as_multi({
     threshold,
     other_signatories: otherSignatories,
     maybe_timepoint: when,
     max_weight: weight || { proof_size: 0n, ref_time: 0n },
-    call: tx.decodedCall
+    call: txToSend.decodedCall
   })
   // return api.tx.multisig.asMulti.meta.args.length === LEGACY_ASMULTI_PARAM_LENGTH
   //   ? api.tx.multisig.asMulti(

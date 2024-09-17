@@ -1,9 +1,8 @@
-import BN from 'bn.js'
 import { useMemo } from 'react'
 import { useGetBalance } from './useGetBalance'
 
 export interface Props {
-  min?: BN
+  min?: bigint
   address?: string
 }
 
@@ -12,7 +11,7 @@ export const useCheckBalance = ({ min, address }: Props) => {
 
   const hasEnoughFreeBalance = useMemo(() => {
     if (!address || !min || !balance) return false
-    return balance.gt(min)
+    return balance > min
   }, [address, min, balance])
 
   return { hasEnoughFreeBalance }

@@ -1,5 +1,3 @@
-import BN from 'bn.js'
-
 interface Options {
   numberAfterComma?: number
   withThousandDelimiter?: boolean
@@ -16,7 +14,7 @@ function countLeadingZeros(numberString: string): number {
 }
 
 export const formatBnBalance = (
-  value: BN | string,
+  value: bigint | string,
   tokenDecimals = 0,
   { numberAfterComma = 4, withThousandDelimiter = true, tokenSymbol }: Options
 ): string => {
