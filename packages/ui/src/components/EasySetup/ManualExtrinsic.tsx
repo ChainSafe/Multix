@@ -14,7 +14,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import paramConversion from '../../utils/paramConversion'
-import { getGlobalMaxValue, inputToBn } from '../../utils'
+import { getGlobalMaxValue, inputToBigInt } from '../../utils'
 import BN from 'bn.js'
 import { isTypeBalanceWithBalanceCall } from '../../utils/isTypeBalance'
 
@@ -165,7 +165,7 @@ const ManualExtrinsic = ({
             return previousValue
           }
 
-          const bnResult = inputToBn(chainInfo.tokenDecimals, value)
+          const bnResult = inputToBigInt(chainInfo.tokenDecimals, value)
 
           if (isAmountOverflow(bnResult)) {
             return previousValue
