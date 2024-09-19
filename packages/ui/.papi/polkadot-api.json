@@ -54,10 +54,6 @@
       "wsUrl": "wss://api.phala.network/ws",
       "metadata": ".papi/metadata/phala.scale"
     },
-    "rhala": {
-      "wsUrl": "wss://rhala-node.phala.network/ws",
-      "metadata": ".papi/metadata/rhala.scale"
-    },
     "paseo": {
       "wsUrl": "wss://paseo.rpc.amforc.com",
       "metadata": ".papi/metadata/paseo.scale"
@@ -65,6 +61,14 @@
     "acala": {
       "wsUrl": "wss://acala-rpc.dwellir.com",
       "metadata": ".papi/metadata/acala.scale"
+    },
+    "pasPpl": {
+      "wsUrl": "wss://people-paseo.rpc.amforc.com",
+      "metadata": ".papi/metadata/pasPpl.scale"
+    },
+    "wesPpl": {
+      "wsUrl": "wss://westend-people-rpc.polkadot.io",
+      "metadata": ".papi/metadata/wesPpl.scale"
     }
   }
 }

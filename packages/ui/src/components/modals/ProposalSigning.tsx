@@ -8,17 +8,16 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { HexString, MultisigStorageInfo } from '../../types'
+import { MultisigStorageInfo } from '../../types'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
-import { FixedSizeBinary, Transaction } from 'polkadot-api'
+import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -35,7 +34,7 @@ const ProposalSigning = ({
   proposalData,
   onSuccess
 }: SigningModalProps) => {
-  const { api } = useApi()
+  const { api, compatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount, selectedSigner } = useAccounts()
@@ -56,7 +55,7 @@ const ProposalSigning = ({
     proposalData.callData || debouncedAddedCallData
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: new BN(0),
+    min: 0n,
     address: selectedAccount?.address
   })
   const hasReachedThreshold = useMemo(
@@ -106,7 +105,7 @@ const ProposalSigning = ({
   }, [isProposerSelected])
 
   useEffect(() => {
-    if (!!callInfo?.call && callInfo.call.hash.toHex() !== proposalData.hash) {
+    if (!!callInfo?.call && callInfo?.hash !== proposalData.hash) {
       setErrorMessage("The callData provided doesn't match with the on-chain transaction")
       return
     }
@@ -150,7 +149,7 @@ const ProposalSigning = ({
         return
       }
 
-      if (!api) {
+      if (!api || !compatibilityToken) {
         const error = 'Api is not ready'
         console.error(error)
         setErrorMessage(error)
@@ -217,13 +216,14 @@ const ProposalSigning = ({
 
         // If we can submit the proposal and have the call data
       } else if (shouldExecute && callInfo?.call && callInfo?.weight) {
-        tx = await getAsMultiTx({
+        tx = getAsMultiTx({
           api,
           threshold,
           otherSignatories: otherSigners,
           weight: callInfo.weight,
           when: proposalData.info.when,
-          callData: proposalData.callData || addedCallData
+          callData: proposalData.callData || addedCallData,
+          compatibilityToken
         })
 
         // if we can't submit yet (more signatures required), all we need is the call hash
@@ -260,7 +260,8 @@ const ProposalSigning = ({
       hasReachedThreshold,
       selectedSigner,
       signCallback,
-      addedCallData
+      addedCallData,
+      compatibilityToken
     ]
   )
 

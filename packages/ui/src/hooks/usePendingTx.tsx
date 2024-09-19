@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { HexString, MultisigStorageInfo } from '../types'
+import { MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils'
 import { useAccountId } from './useAccountId'
@@ -10,7 +10,7 @@ import { GenericCall } from '@polkadot/types'
 import { AnyJson, AnyTuple } from '@polkadot/types/types'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
-import { PolkadotClient } from 'polkadot-api'
+import { HexString, PolkadotClient } from 'polkadot-api'
 dayjs.extend(localizedFormat)
 
 export interface PendingTx {

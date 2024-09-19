@@ -1,16 +1,21 @@
-import React, { useMemo } from 'react'
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import '@polkadot/api-augment'
+import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
+import { getWsProvider } from 'polkadot-api/ws-provider/web'
+import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
+
+export type PplApiType = TypedApi<typeof dotPpl | typeof ksmPpl | typeof pasPpl | typeof wesPpl>
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
 export interface IApiContext {
-  pplApi?: false | ApiPromise
+  pplApi?: false | PplApiType
   pplChainInfo?: ChainInfoHuman
+  client?: PolkadotClient
 }
 
 export interface ChainInfoHuman {
@@ -19,68 +24,80 @@ export interface ChainInfoHuman {
   tokenSymbol: string
 }
 
-interface RawChainInfoHuman {
-  ss58Format: string
-  tokenDecimals: string[]
-  tokenSymbol: string[]
-}
+// interface RawChainInfoHuman {
+//   ss58Format: string
+//   tokenDecimals: string[]
+//   tokenSymbol: string[]
+// }
 
 const PplApiContext = createContext<IApiContext | undefined>(undefined)
 
 const PplApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [pplApiPromise, setPplApiPromise] = useState<ApiPromise | undefined>()
-  const [isPplApiReady, setIsPplApiReady] = useState(false)
-  const provider = useMemo(
-    () =>
-      !!selectedNetworkInfo?.pplChainRpcUrl && new WsProvider(selectedNetworkInfo?.pplChainRpcUrl),
-    [selectedNetworkInfo]
-  )
+  const [pplChainInfo, setPplChainInfo] = useState<ChainInfoHuman | undefined>()
+  const [pplApi, setPplApi] = useState<IApiContext['pplApi']>()
+  const [client, setClient] = useState<IApiContext['client']>()
 
   useEffect(() => {
-    if (!provider) return
+    if (!selectedNetworkInfo?.pplChainRpcUrl) return
 
-    // console.log('---> connecting to', provider.endpoint)
-    setIsPplApiReady(false)
-    const pplApi = new ApiPromise({ provider })
-    pplApi.isReady.then((newApi) => setPplApiPromise(newApi)).catch(console.error)
+    let cl: PolkadotClient | undefined
+    let typedApi: PplApiType | undefined
 
-    return () => {
-      // console.log('<---disconnecting')
-      setIsPplApiReady(false)
-      !!pplApi && pplApi.disconnect()
-      setPplApiPromise(undefined)
+    switch (selectedNetworkInfo?.chainId) {
+      case 'kusama':
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        typedApi = cl.getTypedApi(ksmPpl)
+        break
+      case 'polkadot':
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        typedApi = cl.getTypedApi(dotPpl)
+        break
+      case 'paseo':
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        typedApi = cl.getTypedApi(pasPpl)
+        break
+      case 'westend':
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        typedApi = cl.getTypedApi(wesPpl)
+        break
     }
 
-    // prevent an infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider])
+    if (!cl || !typedApi) return
+
+    setClient(cl)
+    setPplApi(typedApi)
+  }, [selectedNetworkInfo])
 
   useEffect(() => {
-    if (!pplApiPromise) return
+    if (!client) return
 
-    pplApiPromise.isReady
-      .then((pplApi) => {
-        setIsPplApiReady(true)
+    client?.getChainSpecData().then(({ properties }) => {
+      if (!properties) return
 
-        const info = pplApi.registry.getChainProperties()
-        const raw = info?.toHuman() as unknown as RawChainInfoHuman
-        setChainInfo({
-          // some parachains such as interlay have a comma in the format, e.g: "2,042"
-          ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,
-          tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
-          tokenSymbol: raw?.tokenSymbol[0] || ''
-        })
+      const tokenDecimals = Array.isArray(properties?.tokenDecimals)
+        ? properties?.tokenDecimals[0]
+        : properties?.tokenDecimals
+
+      const tokensymbol = Array.isArray(properties?.tokenSymbol)
+        ? properties?.tokenSymbol[0]
+        : properties?.tokenSymbol
+
+      setPplChainInfo({
+        // some parachains such as interlay have a comma in the format, e.g: "2,042"
+        ss58Format: Number(properties?.ss58Format.replace(',', '')) || 0,
+        tokenDecimals: Number(tokenDecimals) || 0,
+        tokenSymbol: tokensymbol || ''
       })
-      .catch(console.error)
-  }, [pplApiPromise])
+    })
+  }, [client])
 
   return (
     <PplApiContext.Provider
       value={{
-        pplApi: isPplApiReady && pplApiPromise,
-        pplChainInfo: chainInfo
+        client,
+        pplApi,
+        pplChainInfo: pplChainInfo
       }}
     >
       {children}

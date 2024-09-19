@@ -33,7 +33,7 @@ export const getAsMultiTx = ({
   let txToSend: Transaction<any, any, any, any> | undefined = tx
 
   if (!txToSend && callData) {
-    txToSend = api.txFromCallData(Binary.fromHex(callData), compatibilityToken as any)
+    txToSend = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
   }
 
   if (!txToSend) return

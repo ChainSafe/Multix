@@ -7,9 +7,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
-import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { getDisplayArgs, getExtrinsicName } from '../../utils'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
@@ -31,7 +29,6 @@ export interface SigningModalProps {
 }
 
 const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModalProps) => {
-  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { web3wallet } = useWalletConnect()
@@ -45,7 +42,6 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   const { selectedAccount, selectedSigner } = useAccounts()
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
-  const { addToast } = useToasts()
   const originAddress = request.params.request.params.address
   const isProxySelected = useMemo(
     () => selectedMultiProxy?.proxy === originAddress,
@@ -55,9 +51,9 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(callData)
   const extrinsicToCall = useMemo(() => {
-    if (!callInfo?.call || !api) return
-    return api.tx(callInfo.call)
-  }, [api, callInfo])
+    if (!callInfo?.call) return
+    return callInfo.call
+  }, [callInfo])
   // this is a creation, we can force asMulti
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
@@ -79,7 +75,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   })
 
   useEffect(() => {
-    if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
+    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
       const requiredBalanceString = formatBnBalance(
         multisigProposalNeededFunds,
         chainInfo?.tokenDecimals,
@@ -113,7 +109,21 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     onClose()
   }, [onClose])
 
-  const signCallback = useSigningCallback({ onSuccess, onSubmitting })
+  const signCallback = useSigningCallback({
+    onSuccess: () => {
+      onSuccess && onSuccess()
+      const response = getWalletConnectErrorResponse(
+        request.id,
+        'Multix multisig transaction ongoing...'
+      )
+      web3wallet?.respondSessionRequest({
+        topic: request.topic,
+        response
+      })
+    },
+    onSubmitting,
+    onError: () => setIsSubmitting(false)
+  })
 
   const onSign = useCallback(async () => {
     if (!threshold) {
@@ -130,8 +140,8 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       return
     }
 
-    if (!selectedAccount || !originAddress) {
-      const error = 'No selected address or multisig/proxy'
+    if (!selectedSigner || !originAddress) {
+      const error = 'No selected signer or multisig/proxy'
       console.error(error)
       setErrorMessage(error)
       return
@@ -150,44 +160,8 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 
     setIsSubmitting(true)
 
-    multisigTx
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner, withSignedTransaction: true },
-        signCallback
-      )
-      .then(() => {
-        const response = getWalletConnectErrorResponse(
-          request.id,
-          'Multix multisig transaction ongoing...'
-        )
-        web3wallet?.respondSessionRequest({
-          topic: request.topic,
-          response
-        })
-      })
-      .catch((error: Error) => {
-        setIsSubmitting(false)
-        addToast({
-          title: error.message,
-          type: 'error',
-          link: getSubscanExtrinsicLink(multisigTx.hash.toHex())
-        })
-      })
-  }, [
-    threshold,
-    api,
-    selectedAccount,
-    originAddress,
-    extrinsicToCall,
-    multisigTx,
-    selectedSigner,
-    signCallback,
-    request,
-    web3wallet,
-    addToast,
-    getSubscanExtrinsicLink
-  ])
+    multisigTx.signSubmitAndWatch(selectedSigner).subscribe(signCallback)
+  }, [threshold, api, originAddress, extrinsicToCall, multisigTx, selectedSigner, signCallback])
 
   const handleMultisigSelection = useCallback(
     (account: AccountBaseInfo) => {
@@ -280,7 +254,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
             xs={12}
             md={10}
           >
-            <HashGridStyled>0x{callInfo?.call?.hash}</HashGridStyled>
+            <HashGridStyled>{callInfo?.hash}</HashGridStyled>
           </Grid>
 
           {!!callInfo?.call && (

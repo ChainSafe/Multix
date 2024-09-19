@@ -15,11 +15,11 @@ import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { ParentMultisigInfo } from '../DeepTxAlert'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
-import { HexString } from '../../types'
 import { getDisplayArgs, getErrorMessageReservedFunds, getExtrinsicName } from '../../utils'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { formatBnBalance } from '../../utils/formatBnBalance'
 import { hashFromTx } from '../../utils/txHash'
+import { HexString } from 'polkadot-api'
 
 export interface DeepTxCreationProps {
   onClose: () => void
@@ -123,9 +123,13 @@ const DeepTxCreationModal = ({
   })
 
   useEffect(() => {
+    if (!compatibilityToken) {
+      return
+    }
+
     const hash =
       !!parentCallInfo?.call &&
-      hashFromTx(parentCallInfo?.call?.getEncodedData(compatibilityToken as any).asHex())
+      hashFromTx(parentCallInfo?.call?.getEncodedData(compatibilityToken).asHex())
 
     if (hash !== proposalData.hash) {
       setErrorMessage("The callData provided doesn't match with the on-chain transaction")

@@ -3,9 +3,9 @@ import { useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
 import { useGetSortAddress } from './useGetSortAddress'
 import { getAsMultiTx } from '../utils/getAsMultiTx'
-import { HexString, MultisigStorageInfo, Weight } from '../types'
+import { MultisigStorageInfo, Weight } from '../types'
 import { getApproveAsMultiTx } from '../utils'
-import { Transaction, TypedApi } from 'polkadot-api'
+import { HexString, Transaction, TypedApi } from 'polkadot-api'
 import { dot, MultiAddress } from '@polkadot-api/descriptors'
 
 interface Params {

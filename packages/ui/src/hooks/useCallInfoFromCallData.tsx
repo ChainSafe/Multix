@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { HexString, SubmittingCall } from '../types'
-import { GenericCall } from '@polkadot/types'
+import { SubmittingCall } from '../types'
 import { PAYMENT_INFO_ACCOUNT } from '../constants'
+import { Binary, HexString } from 'polkadot-api'
+import { hashFromTx } from '../utils/txHash'
 
 export const useCallInfoFromCallData = (callData?: HexString) => {
-  const { api } = useApi()
+  const { api, compatibilityToken } = useApi()
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
 
@@ -15,35 +16,34 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
       return
     }
 
-    if (!api) {
+    if (!api || !compatibilityToken) {
       setCallInfo(undefined)
       return
     }
 
-    let call: GenericCall
-    try {
-      call = api.createType('Call', callData)
-    } catch (error) {
-      console.error(error)
-      setCallInfo({})
-      return
-    }
-
     setIsGettingCallInfo(true)
-    api
-      .tx(call)
-      .paymentInfo(PAYMENT_INFO_ACCOUNT)
-      .then(({ weight }) => {
+
+    const tx = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
+
+    // TODO this is WRONG weight should be get
+    // using a new api method that's not ready yet
+    tx.getEstimatedFees(PAYMENT_INFO_ACCOUNT, { at: 'best' })
+      .then((weight) => {
         setCallInfo({
-          call,
-          weight,
-          method: call.method,
-          section: call.section
+          decodedCall: tx?.decodedCall,
+          call: tx,
+          hash: hashFromTx(callData),
+          weight: { proof_size: weight, ref_time: weight },
+          method: tx?.decodedCall.type,
+          section: tx?.decodedCall.value.type
         })
       })
-      .catch(console.error)
-      .finally(() => setIsGettingCallInfo(false))
-  }, [api, callData])
+      .catch((e) => {
+        console.error(e)
+        setIsGettingCallInfo(false)
+        setCallInfo(undefined)
+      })
+  }, [api, callData, compatibilityToken])
 
   return { callInfo, isGettingCallInfo }
 }

@@ -10,18 +10,18 @@ import {
   bifrostDot,
   dot,
   dotAssetHub,
-  dotPpl,
+  // dotPpl,
   hydration,
   khala,
   ksm,
   ksmAssetHub,
-  ksmPpl,
+  // ksmPpl,
   paseo,
-  phala,
-  rhala,
-  rococo,
-  rococoAssetHub,
-  rococoPpl
+  phala
+  // rhala,
+  // rococo,
+  // rococoAssetHub,
+  // rococoPpl
 } from '@polkadot-api/descriptors'
 
 type ApiContextProps = {
@@ -31,19 +31,19 @@ type ApiContextProps = {
 export type ApiType = TypedApi<
   | typeof dot
   | typeof dotAssetHub
-  | typeof dotPpl
+  // | typeof dotPpl
   | typeof ksm
   | typeof ksmAssetHub
-  | typeof ksmPpl
+  // | typeof ksmPpl
   | typeof hydration
   | typeof acala
   | typeof bifrostDot
   | typeof phala
   | typeof khala
-  | typeof rhala
-  | typeof rococo
-  | typeof rococoAssetHub
-  | typeof rococoPpl
+  // | typeof rhala
+  // | typeof rococo
+  // | typeof rococoAssetHub
+  // | typeof rococoPpl
   | typeof paseo
 >
 
@@ -51,7 +51,7 @@ export interface IApiContext {
   api?: ApiType
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
-  compatibilityToken?: unknown
+  compatibilityToken?: Awaited<ReturnType<PolkadotClient['getTypedApi']>['compatibilityToken']>
 }
 
 interface ChainInfoHuman {
@@ -65,10 +65,10 @@ const ApiContext = createContext<IApiContext | undefined>(undefined)
 
 const ApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [client, setClient] = useState<PolkadotClient>()
-  const [api, setApi] = useState<ApiType>()
-  const [compatibilityToken, setCompatibilityToken] = useState<unknown | undefined>()
+  const [chainInfo, setChainInfo] = useState<IApiContext['chainInfo']>()
+  const [client, setClient] = useState<IApiContext['client']>()
+  const [api, setApi] = useState<IApiContext['api']>()
+  const [compatibilityToken, setCompatibilityToken] = useState<IApiContext['compatibilityToken']>()
 
   useEffect(() => {
     if (!selectedNetworkInfo) return
@@ -101,22 +101,22 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
         cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
         typedApi = cl.getTypedApi(phala)
         break
-      case 'rhala':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-        typedApi = cl.getTypedApi(rhala)
-        break
+      // case 'rhala':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rhala)
+      //   break
       case 'khala':
         cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
         typedApi = cl.getTypedApi(khala)
         break
-      case 'rococo':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-        typedApi = cl.getTypedApi(rococo)
-        break
-      case 'rococo-asset-hub':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-        typedApi = cl.getTypedApi(rococoAssetHub)
-        break
+      // case 'rococo':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rococo)
+      //   break
+      // case 'rococo-asset-hub':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rococoAssetHub)
+      //   break
       case 'hydration':
         cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
         typedApi = cl.getTypedApi(hydration)
@@ -163,7 +163,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   useEffect(() => {
     if (!api) return
 
-    api.compatibilityToken.then(setCompatibilityToken)
+    api.compatibilityToken.then(setCompatibilityToken).catch(console.error)
   }, [api])
 
   return (
