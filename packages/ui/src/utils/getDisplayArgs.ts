@@ -1,5 +1,4 @@
-import { GenericCall } from '@polkadot/types'
-import { AnyTuple } from '@polkadot/types/types'
+import { Transaction } from 'polkadot-api'
 
-export const getDisplayArgs = (call: GenericCall<AnyTuple> | false | undefined) =>
+export const getDisplayArgs = (call: Transaction<any, any, any, any> | false | undefined) =>
   call && call.toHuman().args
