@@ -18,7 +18,8 @@ export const useAccountDisplayInfo = ({ address }: Props) => {
 
   useEffect(() => {
     getIdentity(address).then(setIdentity).catch(console.error)
-  }, [])
+  }, [address, getIdentity])
+
   const displayName = useMemo(
     () => getDisplayName(localName || '', identityName),
     [localName, identityName]

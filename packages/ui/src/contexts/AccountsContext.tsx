@@ -2,7 +2,6 @@ import React, { useState, useEffect, createContext, useContext, useCallback, use
 import { web3Enable, web3FromSource, web3AccountsSubscribe } from '@polkadot/extension-dapp'
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { DAPP_NAME } from '../constants'
-import { Signer } from '@polkadot/api/types'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
 import { PolkadotSigner } from 'polkadot-api'
