@@ -53,7 +53,7 @@
         "@graphql-eslint/known-type-names": "error"
       },
       "parserOptions": {
-        "schema": "http://localhost:4350/graphql"
+        "schema": "https://chainsafe.squids.live/multix-arrow/v/v4/graphql"
       }
     }
   ],

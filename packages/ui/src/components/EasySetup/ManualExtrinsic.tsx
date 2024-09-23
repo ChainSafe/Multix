@@ -184,11 +184,11 @@
 //     [callable, chainInfo?.tokenDecimals, isAmountOverflow, isValidAmountString, palletRpc]
 //   )
 
-//   useEffect(() => {
-//     !!paramFields?.length &&
-//       !!inputParams.length &&
-//       setTransformedParams(transformParams(paramFields, inputParams))
-//   }, [inputParams, paramFields, transformParams])
+// useEffect(() => {
+//   !!paramFields &&
+//     !!inputParams &&
+//     setTransformedParams(transformParams(paramFields, inputParams))
+// }, [inputParams, paramFields, transformParams])
 
 //   const updatePalletRPCs = useCallback(() => {
 //     if (!api) {
