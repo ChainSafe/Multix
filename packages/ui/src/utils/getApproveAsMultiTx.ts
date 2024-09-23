@@ -1,6 +1,6 @@
-import { FixedSizeBinary } from 'polkadot-api'
+import { FixedSizeBinary, HexString } from 'polkadot-api'
 import { ApiType } from '../contexts/ApiContext'
-import { HexString, MultisigStorageInfo } from '../types'
+import { MultisigStorageInfo } from '../types'
 
 interface Params {
   api: ApiType

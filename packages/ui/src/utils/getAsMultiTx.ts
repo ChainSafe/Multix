@@ -1,4 +1,4 @@
-import { MultisigStorageInfo } from '../types'
+import { MultisigStorageInfo, Weight } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
 import { ApiType, IApiContext } from '../contexts/ApiContext'
 
@@ -8,7 +8,7 @@ interface Params {
   otherSignatories: string[]
   tx?: Transaction<any, any, any, any>
   callData?: HexString
-  weight?: { ref_time: bigint; proof_size: bigint }
+  weight?: Weight
   when?: MultisigStorageInfo['when']
   compatibilityToken: IApiContext['compatibilityToken']
 }

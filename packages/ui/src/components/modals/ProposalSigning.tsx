@@ -463,7 +463,7 @@ const ButtonContainerStyled = styled(Grid)`
     margin-left: 1rem;
   }
 `
-export default styled(ProposalSigning)`
+const ProposalSigningStyled = styled(ProposalSigning)`
   .buttonContainer .addedCallData {
     margin-top: 1rem;
   }
@@ -473,3 +473,5 @@ export default styled(ProposalSigning)`
     color: ${({ theme }) => theme.custom.error};
   }
 `
+
+export default ProposalSigningStyled
