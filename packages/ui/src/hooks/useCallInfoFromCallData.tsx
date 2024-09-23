@@ -25,15 +25,13 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
 
     const tx = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
 
-    // TODO this is WRONG weight should be get
-    // using a new api method that's not ready yet
-    tx.getEstimatedFees(PAYMENT_INFO_ACCOUNT, { at: 'best' })
-      .then((weight) => {
+    tx.getPaymentInfo(PAYMENT_INFO_ACCOUNT, { at: 'best' })
+      .then(({ weight }) => {
         setCallInfo({
           decodedCall: tx?.decodedCall,
           call: tx,
           hash: hashFromTx(callData),
-          weight: { proof_size: weight, ref_time: weight },
+          weight: { proof_size: weight.proof_size, ref_time: weight.ref_time },
           method: tx?.decodedCall.type,
           section: tx?.decodedCall.value.type
         })
