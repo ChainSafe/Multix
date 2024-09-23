@@ -20,8 +20,8 @@ import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { Binary, Transaction, TypedApi } from 'polkadot-api'
-import { dot, MultiAddress, ProxyType } from '@polkadot-api/descriptors'
+import { Binary, Enum, Transaction, TypedApi } from 'polkadot-api'
+import { dot, MultiAddress } from '@polkadot-api/descriptors'
 
 interface Props {
   className?: string
@@ -32,7 +32,7 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, compatibilityToken } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -108,10 +108,25 @@ const MultisigCreation = ({ className }: Props) => {
     const remarkTx = api.tx.System.remark({
       remark: Binary.fromText(`Multix creation ${multiAddress}`)
     })
-    getAsMultiTx({ api, threshold, otherSignatories, tx: remarkTx })
-      .then(setRemarkCall)
-      .catch(console.error)
-  }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
+    const remarkCall = getAsMultiTx({
+      api,
+      threshold,
+      otherSignatories,
+      tx: remarkTx,
+      compatibilityToken
+    })
+
+    setRemarkCall(remarkCall)
+  }, [
+    api,
+    compatibilityToken,
+    getSortAddress,
+    multiAddress,
+    selectedAccount,
+    signatories,
+    threshold,
+    withProxy
+  ])
   const originalName = useMemo(
     () => multiAddress && getNamesWithExtension(multiAddress),
     [getNamesWithExtension, multiAddress]
@@ -122,7 +137,7 @@ const MultisigCreation = ({ className }: Props) => {
       // this batchCall is only useful if the user wants a proxy.
       return
     }
-    if (!api) {
+    if (!api || !compatibilityToken) {
       // console.error('api is not ready')
       return
     }
@@ -150,30 +165,37 @@ const MultisigCreation = ({ className }: Props) => {
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
     const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.create_pure({
-      proxy_type: ProxyType.Any(),
+      proxy_type: Enum('Any'),
       delay: 0,
       index: 0
     })
-    getAsMultiTx({ api, threshold, otherSignatories, tx: proxyTx }).then((multiSigProxyCall) => {
-      // Some funds are needed on the multisig for the pure proxy creation
-      const transferTx = (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
-        dest: MultiAddress.Id(multiAddress),
-        value: pureProxyCreationNeededFunds
-      })
-
-      if (!multiSigProxyCall) {
-        console.error('multiSigProxyCall is undefined in Creation index.tsx')
-        return
-      }
-
-      setBatchCall(
-        api.tx.Utility.batch_all({
-          calls: [transferTx.decodedCall, multiSigProxyCall.decodedCall]
-        })
-      )
+    const multiSigProxyCall = getAsMultiTx({
+      api,
+      threshold,
+      otherSignatories,
+      tx: proxyTx,
+      compatibilityToken
     })
+
+    // Some funds are needed on the multisig for the pure proxy creation
+    const transferTx = (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+      dest: MultiAddress.Id(multiAddress),
+      value: pureProxyCreationNeededFunds
+    })
+
+    if (!multiSigProxyCall) {
+      console.error('multiSigProxyCall is undefined in Creation index.tsx')
+      return
+    }
+
+    setBatchCall(
+      api.tx.Utility.batch_all({
+        calls: [transferTx.decodedCall, multiSigProxyCall.decodedCall]
+      })
+    )
   }, [
     api,
+    compatibilityToken,
     getSortAddress,
     multiAddress,
     pureProxyCreationNeededFunds,

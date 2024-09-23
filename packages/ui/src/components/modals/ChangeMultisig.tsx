@@ -22,7 +22,7 @@ import { getIntersection } from '../../utils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
 import { Button } from '../library'
@@ -30,8 +30,8 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
-import { TypedApi } from 'polkadot-api'
-import { dot, MultiAddress, ProxyType } from '@polkadot-api/descriptors'
+import { Enum, TypedApi } from 'polkadot-api'
+import { dot, MultiAddress } from '@polkadot-api/descriptors'
 
 interface Props {
   onClose: () => void
@@ -122,7 +122,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     const addProxyTx = (api as TypedApi<typeof dot>).tx.Proxy.add_proxy({
       delegate: MultiAddress.Id(newMultisigAddress),
-      proxy_type: ProxyType.Any(),
+      proxy_type: Enum('Any'),
       delay: 0
     })
 
@@ -183,7 +183,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     )
     const removeProxyTx = (api as TypedApi<typeof dot>).tx.Proxy.remove_proxy({
       delegate: MultiAddress.Id(selectedMultisig?.address),
-      proxy_type: ProxyType.Any(),
+      proxy_type: Enum('Any'),
       delay: 0
     })
     const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
@@ -350,7 +350,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {!hasProxyEnoughFunds && (
                   <Alert severity="error">
                     The pure account doesn&apos;t have enough funds. It needs at least{' '}
-                    {formatBnBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
+                    {formatBigIntBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
                       tokenSymbol: chainInfo?.tokenSymbol
                     })}
                   </Alert>

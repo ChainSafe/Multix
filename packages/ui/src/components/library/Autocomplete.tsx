@@ -11,7 +11,7 @@ import {
   AutocompleteInputChangeReason,
   AutocompleteValue,
   FilterOptionsState
-} from '@mui/base/useAutocomplete/useAutocomplete'
+} from '@mui/base'
 import { theme } from '../../styles/theme'
 
 interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {

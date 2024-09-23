@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { formatBnBalance } from '../utils/formatBnBalance'
+import { formatBigIntBalance } from '../utils/formatBnBalance'
 
 interface useGetBalanceProps {
   address?: string
@@ -21,7 +21,7 @@ export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalancePr
 
         setBalance(transferable)
         setFormattedBalance(
-          formatBnBalance(transferable, chainInfo?.tokenDecimals, {
+          formatBigIntBalance(transferable, chainInfo?.tokenDecimals, {
             numberAfterComma,
             tokenSymbol: chainInfo?.tokenSymbol
           })

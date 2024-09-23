@@ -17,7 +17,7 @@ import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
 import { getDisplayArgs, getErrorMessageReservedFunds, getExtrinsicName } from '../../utils'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { hashFromTx } from '../../utils/txHash'
 import { HexString } from 'polkadot-api'
 
@@ -139,13 +139,13 @@ const DeepTxCreationModal = ({
 
   useEffect(() => {
     if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBnBalance(
+      const requiredBalanceString = formatBigIntBalance(
         multisigProposalNeededFunds,
         chainInfo?.tokenDecimals,
         { tokenSymbol: chainInfo?.tokenSymbol }
       )
 
-      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+      const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
       const errorWithReservedFunds = getErrorMessageReservedFunds(

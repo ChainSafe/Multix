@@ -22,7 +22,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 // import SetIdentity from '../EasySetup/SetIdentity'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
@@ -111,13 +111,13 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
   useEffect(() => {
     if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBnBalance(
+      const requiredBalanceString = formatBigIntBalance(
         multisigProposalNeededFunds,
         chainInfo?.tokenDecimals,
         { tokenSymbol: chainInfo?.tokenSymbol }
       )
 
-      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+      const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
       const errorWithReservedFunds = getErrorMessageReservedFunds(

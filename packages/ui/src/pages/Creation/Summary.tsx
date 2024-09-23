@@ -7,7 +7,7 @@ import { MultiProxy } from '../../contexts/MultiProxyContext'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { getIntersection } from '../../utils'
 import { AccountBadge } from '../../types'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useApi } from '../../contexts/ApiContext'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
@@ -52,7 +52,7 @@ const Summary = ({
 
     const requiredBalanceString =
       (balanceMin !== undefined &&
-        formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
+        formatBigIntBalance(balanceMin, chainInfo?.tokenDecimals, {
           tokenSymbol: chainInfo?.tokenSymbol
         })) ||
       ''
@@ -60,7 +60,7 @@ const Summary = ({
     const reservedString =
       reservedBalance === 0n
         ? ''
-        : formatBnBalance(reservedBalance, chainInfo?.tokenDecimals, {
+        : formatBigIntBalance(reservedBalance, chainInfo?.tokenDecimals, {
             tokenSymbol: chainInfo?.tokenSymbol
           })
 

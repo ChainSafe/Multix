@@ -13,7 +13,7 @@ function countLeadingZeros(numberString: string): number {
   return match ? match[0].length : 0
 }
 
-export const formatBnBalance = (
+export const formatBigIntBalance = (
   value: bigint | string,
   tokenDecimals = 0,
   { numberAfterComma = 4, withThousandDelimiter = true, tokenSymbol }: Options

@@ -4,7 +4,7 @@ import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { getExtrinsicName, isProxyCall } from '../utils'
-import { formatBnBalance } from '../utils/formatBnBalance'
+import { formatBigIntBalance } from '../utils/formatBnBalance'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
@@ -88,7 +88,7 @@ const handleBalanceDisplay = ({
   unit: string
   key: string
 }) => {
-  const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
+  const balance = formatBigIntBalance(value.replace(/,/g, ''), decimals, {
     withThousandDelimiter: true,
     tokenSymbol: unit,
     numberAfterComma: 4

@@ -18,7 +18,7 @@ import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
 export interface SigningModalProps {
@@ -76,13 +76,13 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 
   useEffect(() => {
     if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBnBalance(
+      const requiredBalanceString = formatBigIntBalance(
         multisigProposalNeededFunds,
         chainInfo?.tokenDecimals,
         { tokenSymbol: chainInfo?.tokenSymbol }
       )
 
-      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+      const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
       const errorWithReservedFunds = getErrorMessageReservedFunds(
