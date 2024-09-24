@@ -185,8 +185,8 @@ const ManualExtrinsic = ({
   )
 
   useEffect(() => {
-    !!paramFields?.length &&
-      !!inputParams.length &&
+    !!paramFields &&
+      !!inputParams &&
       setTransformedParams(transformParams(paramFields, inputParams))
   }, [inputParams, paramFields, transformParams])
 
