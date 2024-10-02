@@ -206,7 +206,9 @@ const getMultisigInfo = async (
       } else if (call.value.type === 'approve_as_multi') {
         result.push({
           name: 'Unknown call',
-          hash: call.value.value.call_hash,
+          // the call_hash is of type FixedSizeBinary<32> which is
+          // an instance of instance Binary and can be converted to a hex
+          hash: call.value.value.call_hash.asHex(),
           callData: undefined
         })
       }
