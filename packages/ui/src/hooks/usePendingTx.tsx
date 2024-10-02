@@ -2,15 +2,34 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
-import { isEmptyArray } from '../utils'
+import { isEmptyArray, isProxyCall } from '../utils'
 import { useAccountId } from './useAccountId'
 import { ApiType, useApi } from '../contexts/ApiContext'
-import { ISanitizedCall, getDisplayArgs, isProxyCall, parseGenericCall } from '../utils'
-import { GenericCall } from '@polkadot/types'
-import { AnyJson, AnyTuple } from '@polkadot/types/types'
+import { AnyJson } from '@polkadot/types/types'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
-import { HexString, PolkadotClient } from 'polkadot-api'
+import { PolkadotClient, Transaction } from 'polkadot-api'
+import { getDynamicBuilder, getLookupFn } from '@polkadot-api/metadata-builders'
+import {
+  AccountId,
+  Bin,
+  Binary,
+  compact,
+  createDecoder,
+  enhanceDecoder,
+  HexString,
+  metadata as metadataCodec,
+  Struct,
+  Tuple,
+  u8,
+  Variant,
+  type Decoder,
+  type StringRecord,
+  type V14
+} from '@polkadot-api/substrate-bindings'
+import { Hex } from '@polkadot-api/substrate-bindings'
+import { hashFromTx } from '../utils/txHash'
+import { getEncodedCallFromDecodedTx } from '../utils/getEncodedCallFromDecodedTx'
 dayjs.extend(localizedFormat)
 
 export interface PendingTx {
@@ -32,38 +51,178 @@ export interface CallDataInfoFromChain {
 
 type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 
-export const getMultisigInfo = (call: ISanitizedCall): Partial<CallDataInfoFromChain>[] => {
-  const result: Partial<CallDataInfoFromChain>[] = []
+const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
-  const getCallResult = ({ args, method }: ISanitizedCall) => {
-    if (typeof method !== 'string' && method.pallet === 'multisig') {
-      if (method.method === 'asMulti' && typeof args.call?.method !== 'string') {
+const getExtDecoderAt = async (api: ApiType, client: PolkadotClient, blockHash?: string) => {
+  const rawMetadata = await (blockHash
+    ? client
+        ._request<{
+          result: HexString
+        }>('archive_unstable_call', [blockHash, 'Metadata_metadata', ''])
+        .then((x) => opaqueMetadata(x.result)[1])
+    : api.apis.Metadata.metadata())
+
+  const metadata = metadataCodec.dec(rawMetadata.asBytes()).metadata.value as V14
+  const dynBuilder = getDynamicBuilder(getLookupFn(metadata))
+
+  const versionDec = enhanceDecoder(u8[1], (value) => ({
+    version: value & ~(1 << 7),
+    signed: !!(value & (1 << 7))
+  }))
+
+  const address = Variant({
+    Id: AccountId(),
+    Raw: Hex(),
+    Address32: Hex(32),
+    Address20: Hex(20)
+  }).dec
+  const signature = Variant({
+    Ed25519: Hex(64),
+    Sr25519: Hex(64),
+    Ecdsa: Hex(65)
+  }).dec
+
+  const extra = Struct.dec(
+    Object.fromEntries(
+      metadata.extrinsic.signedExtensions.map(
+        (x) => [x.identifier, dynBuilder.buildDefinition(x.type)[1]] as [string, Decoder<any>]
+      )
+    ) as StringRecord<Decoder<any>>
+  )
+
+  const allBytesDec = Hex(Infinity).dec
+  const signedBody = Struct.dec({
+    address,
+    signature,
+    extra,
+    callData: allBytesDec
+  })
+
+  return createDecoder((data) => {
+    const len = compact.dec(data)
+    const { signed, version } = versionDec(data)
+    const body = signed ? signedBody : allBytesDec
+
+    return { len, signed, version, body: body(data) }
+  })
+}
+
+// export const getMultisigInfo = (call: ISanitizedCall): Partial<CallDataInfoFromChain>[] => {
+//   const result: Partial<CallDataInfoFromChain>[] = []
+
+//   const getCallResult = ({ args, method }: ISanitizedCall) => {
+//     if (typeof method !== 'string' && method.pallet === 'multisig') {
+//       if (method.method === 'asMulti' && typeof args.call?.method !== 'string') {
+//         result.push({
+//           name: `${args.call?.method?.pallet}.${args.call?.method.method}`,
+//           hash: args.call?.hash,
+//           callData: args.callData as CallDataInfoFromChain['callData']
+//         })
+//       } else {
+//         result.push({
+//           name: 'Unknown call',
+//           hash: (args?.call_hash as Uint8Array).toString() || undefined,
+//           callData: undefined
+//         })
+//       }
+//       // this is not a multisig call
+//       // try to dig deeper
+//     } else {
+//       if (args.calls) {
+//         for (const call of args.calls) {
+//           getCallResult(call)
+//         }
+//       } else if (args.call) {
+//         getCallResult(args.call)
+//       }
+//     }
+//   }
+
+//   getCallResult(call)
+//   return result
+// }
+
+// export const getMultisigInfo = (
+//   call: Transaction<any, any, any, any>['decodedCall']
+// ): Partial<CallDataInfoFromChain>[] => {
+//   const result: Partial<CallDataInfoFromChain>[] = []
+
+//   //         result.push({
+//   //           name: 'Unknown call',
+//   //           hash: (args?.call_hash as Uint8Array).toString() || undefined,
+//   //           callData: undefined
+//   //         })
+
+//   const getCallResults = (call: Transaction<any, any, any, any>['decodedCall']) => {
+//     if (call.type === 'Multisig') {
+//       if (call.value.type === 'as_Multi') {
+
+//                 result.push({
+//                   name: `${call.value.value.call.type}.${call.value.value.call.value.type}`,
+//                   hash: args.call?.hash,
+//                   callData: args.callData as CallDataInfoFromChain['callData']
+//                 })
+//       } else {
+//         result.push({
+//           name: 'Unknown call',
+//           hash: undefined,
+//           callData: undefined
+//         })
+//       }
+//     } else {
+//     }
+//   }
+//   getCallResults(call)
+//   return result
+// }
+
+const getMultisigInfo = async (
+  call: Transaction<any, any, any, any>['decodedCall'],
+  api: ApiType
+): Promise<Partial<CallDataInfoFromChain>[]> => {
+  const compatibilityToken = await api.compatibilityToken
+
+  const result: any[] = []
+
+  // console.log('----for call', JSONprint(call));
+
+  const getCallResults = (call: Transaction<any, any, any, any>['decodedCall']) => {
+    if (call.type === 'Multisig') {
+      if (call.value.type === 'as_multi') {
+        const callDatawithout0x = getEncodedCallFromDecodedTx(
+          api,
+          call.value.value.call,
+          compatibilityToken
+        )
+        const callData = `0x${callDatawithout0x}`
+        const hash = hashFromTx(callData)
+        // console.log('----- callData', callData);
+        // console.log('----- hash', hash);
         result.push({
-          name: `${args.call?.method?.pallet}.${args.call?.method.method}`,
-          hash: args.call?.hash,
-          callData: args.callData as CallDataInfoFromChain['callData']
+          name: `${call.value.value.call.type}.${call.value.value.call.value.type}`,
+          hash,
+          callData
         })
-      } else {
+      } else if (call.value.type === 'approve_as_multi') {
         result.push({
           name: 'Unknown call',
-          hash: (args?.call_hash as Uint8Array).toString() || undefined,
+          hash: call.value.value.call_hash,
           callData: undefined
         })
       }
-      // this is not a multisig call
-      // try to dig deeper
     } else {
-      if (args.calls) {
-        for (const call of args.calls) {
-          getCallResult(call)
-        }
-      } else if (args.call) {
-        getCallResult(args.call)
+      if (call.value.value.call) {
+        getCallResults(call.value.value.call)
+      }
+
+      if (call.value.value.calls) {
+        call.value.value.calls.forEach((c: any) => getCallResults(c))
       }
     }
   }
 
-  getCallResult(call)
+  getCallResults(call)
+  // console.log('result', JSONprint(result))
   return result
 }
 
@@ -73,18 +232,47 @@ const getCallDataFromChainPromise = (
   client: PolkadotClient
 ) =>
   pendingTxData.map(async (pendingTx) => {
-    const blockHash = await client.rpc.chain.getBlockHash(pendingTx.info.when.height)
-    const signedBlock = await api.rpc.chain.getBlock(blockHash)
+    // const blockHash = await client.rpc.chain.getBlockHash(pendingTx.info.when.height)
+    const blockNumber = pendingTx.info.when.height
+    const blockHash = (
+      await client._request('archive_unstable_hashByHeight', [blockNumber])
+    )?.[0] as HexString | undefined
+
+    if (!blockHash) {
+      console.log('no hash found for height', blockNumber)
+      return
+    }
+
+    const body: HexString[] = await client._request('archive_unstable_body', [blockHash])
 
     let date: Date | undefined
 
+    const decoder = await getExtDecoderAt(api, client, blockHash)
+
+    const txPromises = body.map((extrinsics) => {
+      const decodedExtrinsic = decoder(extrinsics)
+      const toDecode = decodedExtrinsic.signed
+        ? (decodedExtrinsic.body as any).callData
+        : decodedExtrinsic.body
+      // console.log('-----------------------------')
+      // console.log(decodedExtrinsic)
+      return api.txFromCallData(Binary.fromHex(toDecode))
+    })
+
+    const allDecodedTxs = await Promise.all(txPromises)
+
+    // allDecodedTxs.forEach((txs) => {
+    //   console.log('-------------decoded')
+    //   console.log(txs)
+    // })
+
     // get the timestamp which is an unsigned extrinsic set by the validator in each block
     // the information for each of the contained extrinsics
-    signedBlock.block.extrinsics.some(({ method: { args, method, section } }) => {
+    allDecodedTxs.some(({ decodedCall: { type, value } }) => {
       // check for timestamp.set
-      if (section === 'timestamp' && method === 'set') {
+      if (type === 'Timestamp' && value.type === 'Set') {
         // extract the Option<Moment> as Moment
-        const moment = args.toString()
+        const moment = value.value.now as string
 
         // convert to date (unix ms since epoch in Moment - exactly as per the Rust code)
         date = new Date(Number(moment))
@@ -94,40 +282,40 @@ const getCallDataFromChainPromise = (
       return false
     })
 
-    const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
+    const ext = allDecodedTxs[pendingTx.info.when.index]
 
-    const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+    // const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
     // console.log('pendingTxData', pendingTxData)
     // console.log('decoded', decoded)
-    const multisigInfos = getMultisigInfo(decoded) || {}
+    const multisigTxs = (await getMultisigInfo(ext.decodedCall, api)) || []
 
-    const info = multisigInfos.find(({ name, hash, callData }) => {
-      if (!!hash && hash === pendingTx.hash) {
-        return { name, hash, callData }
+    const multisigTxInfo = multisigTxs.find((info) => {
+      if (!!info.hash && info.hash === pendingTx.hash) {
+        return info
       }
 
       return false
     })
 
-    if (!info) {
-      console.log('oops we did not find the right extrinsic', multisigInfos, pendingTx.hash)
+    if (!multisigTxInfo) {
+      console.log('oops we did not find the right extrinsic', multisigTxs, pendingTx.hash)
       return
     }
 
-    const { name, hash, callData } = info
+    const { name, hash, callData } = multisigTxInfo
 
-    let call: false | GenericCall<AnyTuple> = false
-    try {
-      call = !!callData && !!hash && ext.registry.createType('Call', callData)
-    } catch (error) {
-      console.error('Error in getCallDataFromChainPromise', error)
-    }
+    // let call: false | GenericCall<AnyTuple> = false
+    // try {
+    //   call = !!callData && !!hash && ext.registry.createType('Call', callData)
+    // } catch (error) {
+    //   console.error('Error in getCallDataFromChainPromise', error)
+    // }
 
     return {
       callData,
       hash: hash || pendingTx.hash,
       name,
-      args: getDisplayArgs(call),
+      args: ext.decodedCall,
       info: pendingTx.info,
       from: pendingTx.from,
       timestamp: date
@@ -142,7 +330,7 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
 
 export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false) => {
   const [isLoading, setIsLoading] = useState(true)
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, client } = useApi()
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()
 
@@ -150,28 +338,28 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
   const refresh = useCallback(async () => {
     setTxWithCallDataByDate({})
 
-    if (!api) return
+    if (!api || !client) return
 
     if (isEmptyArray(multisigAddresses)) return
 
-    if (!api?.query?.multisig?.multisigs) return
+    if (!api?.query?.Multisig?.Multisigs) return
 
     setIsLoading(true)
 
     const pendingMultisigTxs: PendingTx[] = []
 
     const callsPromises = multisigAddresses.map((address) =>
-      api.query.multisig.multisigs.entries(address)
+      api.query.Multisig.Multisigs.getEntries(address)
     )
 
     await Promise.all(callsPromises)
       .then((res1) => {
         res1.forEach((res, index) => {
-          res.forEach((storage) => {
+          res.forEach(({ keyArgs, value }) => {
             // this is supposed to be the multisig address that we asked the storage for
-            const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
-            const hash = (storage[0].toHuman() as Array<string>)[1]
-            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            const multisigFromChain = keyArgs[0]
+            const hash = keyArgs[1].asHex()
+            const info = value as MultisigStorageInfo
             if (chainInfo?.isEthereum) {
               info.approvals = info.approvals.map((approval) => approval.toLowerCase())
             }
@@ -180,9 +368,10 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
             // These 2 should be the same
             if (multisigFromChain.toLowerCase() !== multisigAddresses[index].toLowerCase()) {
               console.error(
-                'The onchain call and the one found in the block donot correspond',
-                multisigFromChain,
-                multisigAddresses[index]
+                'The multisig we requested the calls for and the one found in the block do not correspond. Requested:',
+                multisigAddresses[index],
+                'received: ',
+                multisigFromChain
               )
               return
             }
@@ -203,7 +392,11 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
       return
     }
 
-    const callDataInfoFromChainPromises = getCallDataFromChainPromise(pendingMultisigTxs, api)
+    const callDataInfoFromChainPromises = getCallDataFromChainPromise(
+      pendingMultisigTxs,
+      api,
+      client
+    )
 
     await Promise.all(callDataInfoFromChainPromises)
       .then((res) => {
@@ -221,6 +414,7 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
             return true
           }
 
+          // TODO Papi will have type/value etc to get to the real ID
           const isForCurrentProxy = (agg.args as any).real.Id === selectedMultiProxy?.proxy
 
           if (!isForCurrentProxy) {
@@ -246,7 +440,14 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy, skipProxyCheck])
+  }, [
+    api,
+    chainInfo?.isEthereum,
+    client,
+    multisigAddresses,
+    selectedMultiProxy?.proxy,
+    skipProxyCheck
+  ])
 
   useEffect(() => {
     refresh()

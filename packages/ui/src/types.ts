@@ -1,10 +1,13 @@
 import { HexString, SS58String, Transaction } from 'polkadot-api'
 
 export interface MultisigStorageInfo {
-  approvals: string[]
+  when: {
+    height: number
+    index: number
+  }
   deposit: bigint
-  depositor: string
-  when: { height: number; index: number }
+  depositor: SS58String
+  approvals: SS58String[]
 }
 
 export type IconSizeVariant = 'small' | 'medium' | 'large'
