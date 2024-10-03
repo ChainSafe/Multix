@@ -12,6 +12,7 @@ import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
 // import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
+import { JSONprint } from '../utils/jsonPrint'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -152,7 +153,7 @@ const createUlTree = ({ name, args }: CreateTreeParams) => {
               unit,
               api
             })} */}
-            {JSON.stringify(value, null, 2)}
+            {JSONprint(value)}
           </li>
         )
       })}

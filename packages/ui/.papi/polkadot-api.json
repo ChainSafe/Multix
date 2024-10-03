@@ -55,7 +55,7 @@
       "metadata": ".papi/metadata/phala.scale"
     },
     "paseo": {
-      "wsUrl": "wss://paseo.rpc.amforc.com",
+      "wsUrl": "wss://rpc.ibp.network/paseo",
       "metadata": ".papi/metadata/paseo.scale"
     },
     "acala": {

@@ -135,11 +135,12 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   }, [selectedNetworkInfo])
 
   useEffect(() => {
-    if (!client) return
+    if (!client || !api) return
 
-    client?.getChainSpecData().then(({ properties, name }) => {
+    client?.getChainSpecData().then(async ({ properties, name }) => {
       if (!properties) return
 
+      const ss58prefix = await api.constants.System.SS58Prefix()
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -150,15 +151,16 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
       const isEthereum = ethereumChains.includes(name)
 
+      console.log('ss58prefix', ss58prefix)
       setChainInfo({
         // some parachains such as interlay have a comma in the format, e.g: "2,042"
-        ss58Format: Number(properties?.ss58Format.replace(',', '')) || 0,
+        ss58Format: Number(ss58prefix) || 0,
         tokenDecimals: Number(tokenDecimals) || 0,
         tokenSymbol: tokensymbol || '',
         isEthereum
       })
     })
-  }, [client])
+  }, [client, api])
 
   useEffect(() => {
     if (!api) return
