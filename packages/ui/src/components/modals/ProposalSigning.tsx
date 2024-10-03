@@ -9,7 +9,7 @@ import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { MultisigStorageInfo } from '../../types'
-import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
@@ -374,7 +374,7 @@ const ProposalSigning = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: getDisplayArgs(callInfo?.call),
+                          args: callInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(callInfo?.section, callInfo?.method)
                         }

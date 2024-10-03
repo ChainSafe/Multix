@@ -4,7 +4,7 @@ import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccou
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import { getGlobalMaxValue, inputToBigInt } from '../../utils'
+import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
 import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'

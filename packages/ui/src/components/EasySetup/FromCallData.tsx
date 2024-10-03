@@ -5,7 +5,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { TextField } from '../library'
 import CallInfo from '../CallInfo'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
-import { getExtrinsicName } from '../../utils'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { usePjsLinks } from '../../hooks/usePjsLinks'
 import { Binary, HexString, Transaction } from 'polkadot-api'
 

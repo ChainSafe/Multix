@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
-import { isEmptyArray, isProxyCall } from '../utils'
+import { isEmptyArray } from '../utils/arrayUtils'
+import { isProxyCall } from '../utils/isProxyCall'
 import { useAccountId } from './useAccountId'
 import { ApiType, useApi } from '../contexts/ApiContext'
-import { AnyJson } from '@polkadot/types/types'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { PolkadotClient, Transaction } from 'polkadot-api'
@@ -42,7 +42,7 @@ export interface CallDataInfoFromChain {
   callData?: HexString
   hash?: string
   name?: string
-  args?: AnyJson
+  args?: Transaction<any, any, any, any>['decodedCall']
   info?: PendingTx['info']
   from: string
   timestamp?: Date

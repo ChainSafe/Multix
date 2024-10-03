@@ -1,17 +1,16 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
-import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
-import { useApi } from '../contexts/ApiContext'
-import { getExtrinsicName, isProxyCall } from '../utils'
-import { formatBigIntBalance } from '../utils/formatBnBalance'
-import MultisigCompactDisplay from './MultisigCompactDisplay'
+import { ApiType, useApi } from '../contexts/ApiContext'
+import { getExtrinsicName } from '../utils/getExtrinsicName'
+import { isProxyCall } from '../utils/isProxyCall'
+// import { formatBigIntBalance } from '../utils/formatBnBalance'
+// import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
-import { ApiPromise } from '@polkadot/api'
-import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
+// import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 
 interface Props {
@@ -24,139 +23,136 @@ interface Props {
 }
 
 interface CreateTreeParams {
-  args: AnyJson
+  args: CallDataInfoFromChain['args']
   decimals: number
   unit: string
   name?: string
-  api: ApiPromise
-  typeName?: string
+  api: ApiType
 }
 
-const handleCallDisplay = ({
-  call,
-  decimals,
-  unit,
-  api,
-  key
-}: {
-  call: any
-  decimals: number
-  unit: string
-  key: string
-  api: ApiPromise
-}) => {
-  const name = `${call.section}.${call.method}`
-  return (
-    <>
-      <li key={key}>{name}</li>
-      {createUlTree({
-        name: `${call.section}.${call.method}`,
-        args: call.args,
-        decimals,
-        unit,
-        api
-      })}
-    </>
-  )
-}
+// const handleCallDisplay = ({
+//   call,
+//   decimals,
+//   unit,
+//   api,
+//   key
+// }: {
+//   call: Transaction<any, any, any, any>['decodedCall']
+//   decimals: number
+//   unit: string
+//   key: string
+//   api: ApiPromise
+// }) => {
+//   const name = `${call.type}.${call.value.type}`
+//   return (
+//     <>
+//       <li key={key}>{name}</li>
+//       {createUlTree({
+//         name: name,
+//         args: call.value.value,
+//         decimals,
+//         unit,
+//         api
+//       })}
+//     </>
+//   )
+// }
 
-const handleBatchDisplay = ({
-  value,
-  decimals,
-  unit,
-  api,
-  key
-}: {
-  value: any[]
-  decimals: number
-  unit: string
-  key: string
-  api: ApiPromise
-}) =>
-  value.map((call: any, index: number) =>
-    handleCallDisplay({ call, decimals, unit, api, key: `${key}-${index}` })
-  )
+// const handleBatchDisplay = ({
+//   value,
+//   decimals,
+//   unit,
+//   api,
+//   key
+// }: {
+//   value: any[]
+//   decimals: number
+//   unit: string
+//   key: string
+//   api: ApiPromise
+// }) =>
+//   value.map((call: any, index: number) =>
+//     handleCallDisplay({ call, decimals, unit, api, key: `${key}-${index}` })
+//   )
 
-const handleBalanceDisplay = ({
-  value,
-  decimals,
-  unit,
-  key
-}: {
-  value: any
-  decimals: number
-  unit: string
-  key: string
-}) => {
-  const balance = formatBigIntBalance(value.replace(/,/g, ''), decimals, {
-    withThousandDelimiter: true,
-    tokenSymbol: unit,
-    numberAfterComma: 4
-  })
+// const handleBalanceDisplay = ({
+//   value,
+//   decimals,
+//   unit,
+//   key
+// }: {
+//   value: any
+//   decimals: number
+//   unit: string
+//   key: string
+// }) => {
+//   const balance = formatBigIntBalance(value.replace(/,/g, ''), decimals, {
+//     withThousandDelimiter: true,
+//     tokenSymbol: unit,
+//     numberAfterComma: 4
+//   })
 
-  return (
-    <li key={key}>
-      {key}: {balance}
-    </li>
-  )
-}
+//   return (
+//     <li key={key}>
+//       {key}: {balance}
+//     </li>
+//   )
+// }
 
-const handleValueDisplay = ({ value, typeName }: { value: any; typeName: string | undefined }) =>
-  typeName === 'bool' ? (value ? 'true' : 'false') : value
+// const handleValueDisplay = ({ value, typeName }: { value: any; typeName: string | undefined }) =>
+//   typeName === 'bool' ? (value ? 'true' : 'false') : value
 
-const getTypeName = (index: number, name: string, api: ApiPromise) => {
-  const [pallet, method] = name.split('.')
-  const metaArgs = !!pallet && !!method && api.tx[pallet][method]?.meta?.args
+// const getTypeName = (index: number, name: string, api: ApiPromise) => {
+//   const [pallet, method] = name.split('.')
+//   const metaArgs = !!pallet && !!method && api.tx[pallet][method]?.meta?.args
 
-  return (
-    (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
-  )
-}
+//   return (
+//     (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
+//   )
+// }
 
-const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeParams) => {
+const createUlTree = ({ name, args }: CreateTreeParams) => {
   if (!args) return
   if (!name) return
 
   return (
     <ul className="params">
       {Object.entries(args).map(([key, value], index) => {
-        const _typeName = typeName || getTypeName(index, name, api)
+        // const _typeName = typeName || getTypeName(index, name, api)
 
-        if (_typeName === 'Vec<RuntimeCall>') {
-          return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
-        }
+        // if (_typeName === 'Vec<RuntimeCall>') {
+        //   return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
+        // }
 
-        if (_typeName === 'RuntimeCall') {
-          return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
-        }
+        // if (_typeName === 'RuntimeCall') {
+        //   return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
+        // }
 
-        // generically show nice value for Balance type
-        if (isTypeBalanceWithBalanceCall(_typeName, name)) {
-          return handleBalanceDisplay({ value, decimals, unit, key })
-        }
+        // // generically show nice value for Balance type
+        // if (isTypeBalanceWithBalanceCall(_typeName, name)) {
+        //   return handleBalanceDisplay({ value, decimals, unit, key })
+        // }
 
-        const destAddress = value?.Id || value
-        if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
-          return (
-            <li key={key}>
-              {key}: {<MultisigCompactDisplay address={destAddress} />}
-            </li>
-          )
-        }
+        // const destAddress = value?.Id || value
+        // if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
+        //   return (
+        //     <li key={key}>
+        //       {key}: {<MultisigCompactDisplay address={destAddress} />}
+        //     </li>
+        //   )
+        // }
 
         return (
           <li key={`${key}-root-${index}`}>
             {key}:{' '}
-            {typeof value === 'object'
-              ? createUlTree({
-                  name,
-                  args: value,
-                  decimals,
-                  unit,
-                  api,
-                  typeName: _typeName
-                })
-              : handleValueDisplay({ value, typeName: _typeName })}
+            {/*{createUlTree({
+              name,
+              args: value,
+              decimals,
+              unit,
+              api
+            })} */}
+            {JSON.stringify(value, null, 2)}
           </li>
         )
       })}
@@ -168,14 +164,14 @@ const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData']
   const { args, name } = agg
   const isProxy = isProxyCall(name)
 
-  if (!isProxy || !(args as { [index: string]: AnyJson })?.call) {
+  if (!isProxy || !args?.value.value.call) {
     return agg
   }
 
-  const call = (args as any).call
+  const call = args.value.value.call
 
-  const newName = getExtrinsicName(call?.section, call?.method)
-  const newArgs = call?.args
+  const newName = getExtrinsicName(call.type, call.value.type)
+  const newArgs = call?.value
   return {
     ...agg,
     name: newName,

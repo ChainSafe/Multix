@@ -15,7 +15,8 @@ import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { ParentMultisigInfo } from '../DeepTxAlert'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
-import { getDisplayArgs, getErrorMessageReservedFunds, getExtrinsicName } from '../../utils'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { hashFromTx } from '../../utils/txHash'
@@ -300,7 +301,7 @@ const DeepTxCreationModal = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: getDisplayArgs(parentCallInfo?.call),
+                          args: parentCallInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(parentCallInfo?.section, parentCallInfo?.method)
                         }

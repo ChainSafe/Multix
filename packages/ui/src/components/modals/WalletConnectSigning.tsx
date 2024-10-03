@@ -8,7 +8,7 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { SignClientTypes } from '@walletconnect/types'
@@ -275,7 +275,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               >
                 <CallInfo
                   aggregatedData={{
-                    args: getDisplayArgs(callInfo?.call),
+                    args: callInfo?.call.decodedCall,
                     callData,
                     name: getExtrinsicName(callInfo?.section, callInfo?.method)
                   }}
