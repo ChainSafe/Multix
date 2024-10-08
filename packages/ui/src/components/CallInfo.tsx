@@ -13,6 +13,7 @@ import { Alert } from '@mui/material'
 // import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 import { JSONprint } from '../utils/jsonPrint'
+import { Transaction } from 'polkadot-api'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -24,7 +25,7 @@ interface Props {
 }
 
 interface CreateTreeParams {
-  args: CallDataInfoFromChain['args']
+  decodedCall?: Transaction<any, any, any, any>['decodedCall']
   decimals: number
   unit: string
   name?: string
@@ -112,71 +113,73 @@ interface CreateTreeParams {
 //   )
 // }
 
-const createUlTree = ({ name, args }: CreateTreeParams) => {
-  if (!args) return
+const createUlTree = ({ name, decodedCall }: CreateTreeParams) => {
+  if (!decodedCall) return
   if (!name) return
 
-  return (
-    <ul className="params">
-      {Object.entries(args).map(([key, value], index) => {
-        // const _typeName = typeName || getTypeName(index, name, api)
+  console.log('decodedCall', decodedCall)
+  return <pre>{JSONprint(decodedCall.value.value)}</pre>
+  // return (
+  //   <ul className="params">
+  //     {Object.entries(decodedCall).map(([type, value], index) => {
+  //       // const _typeName = typeName || getTypeName(index, name, api)
 
-        // if (_typeName === 'Vec<RuntimeCall>') {
-        //   return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
-        // }
+  //       // if (_typeName === 'Vec<RuntimeCall>') {
+  //       //   return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
+  //       // }
 
-        // if (_typeName === 'RuntimeCall') {
-        //   return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
-        // }
+  //       // if (_typeName === 'RuntimeCall') {
+  //       //   return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
+  //       // }
 
-        // // generically show nice value for Balance type
-        // if (isTypeBalanceWithBalanceCall(_typeName, name)) {
-        //   return handleBalanceDisplay({ value, decimals, unit, key })
-        // }
+  //       // // generically show nice value for Balance type
+  //       // if (isTypeBalanceWithBalanceCall(_typeName, name)) {
+  //       //   return handleBalanceDisplay({ value, decimals, unit, key })
+  //       // }
 
-        // const destAddress = value?.Id || value
-        // if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
-        //   return (
-        //     <li key={key}>
-        //       {key}: {<MultisigCompactDisplay address={destAddress} />}
-        //     </li>
-        //   )
-        // }
+  //       // const destAddress = value?.Id || value
+  //       // if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
+  //       //   return (
+  //       //     <li key={key}>
+  //       //       {key}: {<MultisigCompactDisplay address={destAddress} />}
+  //       //     </li>
+  //       //   )
+  //       // }
 
-        return (
-          <li key={`${key}-root-${index}`}>
-            {key}:{' '}
-            {/*{createUlTree({
-              name,
-              args: value,
-              decimals,
-              unit,
-              api
-            })} */}
-            {JSONprint(value)}
-          </li>
-        )
-      })}
-    </ul>
-  )
+  //       return (
+  //         <li key={`${type}-root-${index}`}>
+  //           {`${value}.${value.type}`}
+  //           {/*{createUlTree({
+  //             name,
+  //             args: value,
+  //             decimals,
+  //             unit,
+  //             api
+  //           })} */}
+  //           <pre>{JSONprint(value)}</pre>
+  //         </li>
+  //       )
+  //     })}
+  //   </ul>
+  // )
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
-  const { args, name } = agg
+  const { decodedCall, name } = agg
   const isProxy = isProxyCall(name)
 
-  if (!isProxy || !args?.value.value.call) {
+  if (!isProxy || !decodedCall?.value.value.call) {
     return agg
   }
 
-  const call = args.value.value.call
+  const call = decodedCall.value.value.call
 
   const newName = getExtrinsicName(call.type, call.value.type)
   const newArgs = call?.value
   return {
     ...agg,
     name: newName,
-    args: newArgs
+    decodedCall: newArgs
   }
 }
 
@@ -188,7 +191,9 @@ const CallInfo = ({
   withLink = false,
   withProxyFiltered = true
 }: Props) => {
-  const { args, name } = withProxyFiltered ? filterProxyProxy(aggregatedData) : aggregatedData
+  const { decodedCall, name } = withProxyFiltered
+    ? filterProxyProxy(aggregatedData)
+    : aggregatedData
   const { chainInfo, api } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
@@ -197,7 +202,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
-  const hasArgs = useMemo(() => args && Object.keys(args).length > 0, [args])
+  const hasArgs = useMemo(() => decodedCall && Object.keys(decodedCall).length > 0, [decodedCall])
 
   return (
     <div
@@ -233,7 +238,7 @@ const CallInfo = ({
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, args, decimals, unit, api })}
+          content={createUlTree({ name, decodedCall, decimals, unit, api })}
         />
       )}
       {children}

@@ -40,9 +40,9 @@ export interface PendingTx {
 
 export interface CallDataInfoFromChain {
   callData?: HexString
+  decodedCall?: Transaction<any, any, any, any>['decodedCall']
   hash?: string
   name?: string
-  args?: Transaction<any, any, any, any>['decodedCall']
   info?: PendingTx['info']
   from: string
   timestamp?: Date
@@ -234,7 +234,6 @@ const getCallDataFromChainPromise = (
   client: PolkadotClient
 ) =>
   pendingTxData.map(async (pendingTx) => {
-    // const blockHash = await client.rpc.chain.getBlockHash(pendingTx.info.when.height)
     const blockNumber = pendingTx.info.when.height
     const blockHash = (
       await client._request('archive_unstable_hashByHeight', [blockNumber])
@@ -317,7 +316,8 @@ const getCallDataFromChainPromise = (
       callData,
       hash: hash || pendingTx.hash,
       name,
-      args: ext.decodedCall,
+      decodedCall:
+        (callData && (await api.txFromCallData(Binary.fromHex(callData))).decodedCall) || {},
       info: pendingTx.info,
       from: pendingTx.from,
       timestamp: date
@@ -409,15 +409,15 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
         const relevantTxs = definedTxs.filter((agg) => {
           if (
             !isProxyCall(agg.name) ||
-            !agg?.args ||
-            !(agg.args as any).real.Id ||
+            !agg?.decodedCall ||
+            !(agg.decodedCall as any).real.Id ||
             skipProxyCheck
           ) {
             return true
           }
 
           // TODO Papi will have type/value etc to get to the real ID
-          const isForCurrentProxy = (agg.args as any).real.Id === selectedMultiProxy?.proxy
+          const isForCurrentProxy = (agg.decodedCall as any).real.Id === selectedMultiProxy?.proxy
 
           if (!isForCurrentProxy) {
             console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)

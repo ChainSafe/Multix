@@ -12,6 +12,8 @@ export const usePureProxyCreationNeededFunds = () => {
   const [existentialDeposit, setExistentialDeposit] = useState<bigint | undefined>(undefined)
 
   useEffect(() => {
+    if (!api) return
+
     if (!(api as TypedApi<typeof dot>).constants?.Proxy?.ProxyDepositFactor) return
     ;(api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositFactor()
       .then(setDepositFactor)
@@ -19,6 +21,8 @@ export const usePureProxyCreationNeededFunds = () => {
   }, [api])
 
   useEffect(() => {
+    if (!api) return
+
     if (!(api as TypedApi<typeof dot>).constants?.Proxy?.ProxyDepositBase) return
     ;(api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositBase()
       .then(setDepositBase)
@@ -26,6 +30,8 @@ export const usePureProxyCreationNeededFunds = () => {
   }, [api])
 
   useEffect(() => {
+    if (!api) return
+
     if (!(api as TypedApi<typeof dot>).constants?.Balances.ExistentialDeposit) return
     ;(api as TypedApi<typeof dot>).constants.Balances.ExistentialDeposit()
       .then(setExistentialDeposit)

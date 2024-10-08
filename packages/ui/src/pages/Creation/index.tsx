@@ -127,6 +127,7 @@ const MultisigCreation = ({ className }: Props) => {
     threshold,
     withProxy
   ])
+
   const originalName = useMemo(
     () => multiAddress && getNamesWithExtension(multiAddress),
     [getNamesWithExtension, multiAddress]
