@@ -55,7 +55,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     getMultisigByAddress,
     setRefetchMultisigTimeoutMinutes
   } = useMultiProxy()
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const [easyOptionErrorMessage, setEasyOptionErrorMessage] = useState<ReactNode | string>('')
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const possibleOrigin = useMemo(() => {
@@ -215,8 +215,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       return
     }
 
-    if (!selectedSigner || !selectedOrigin) {
-      const error = 'No selected signer or multisig/proxy'
+    if (!selectedAccount || !selectedOrigin) {
+      const error = 'No selected account or multisig/proxy'
       console.error(error)
       setErrorMessage(error)
       return
@@ -235,8 +235,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     setIsSubmitting(true)
 
-    multisigTx.signSubmitAndWatch(selectedSigner).subscribe(signCallback)
-  }, [threshold, api, selectedOrigin, extrinsicToCall, multisigTx, selectedSigner, signCallback])
+    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
+  }, [threshold, api, selectedOrigin, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(
     ({ target: { value } }) => {

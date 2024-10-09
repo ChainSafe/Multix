@@ -56,7 +56,7 @@ const AccountSelection = ({
   )
   const extensionName = useMemo(() => {
     if (!selected) return ''
-    return getAccountByAddress(selected.address)?.meta.name
+    return getAccountByAddress(selected.address)?.name
   }, [getAccountByAddress, selected])
 
   useEffect(() => {

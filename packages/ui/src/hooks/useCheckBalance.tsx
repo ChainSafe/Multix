@@ -10,7 +10,9 @@ export const useCheckBalance = ({ min, address }: Props) => {
   const { balance } = useGetBalance({ address })
 
   const hasEnoughFreeBalance = useMemo(() => {
-    if (!address || !min || !balance) return false
+    if (!address || !balance || min === undefined) {
+      return false
+    }
     return balance > min
   }, [address, min, balance])
 

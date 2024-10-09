@@ -43,7 +43,7 @@ const DeepTxCreationModal = ({
 }: DeepTxCreationProps) => {
   const { api, chainInfo, compatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const { selectedMultiProxy, getMultisigByAddress, setRefetchMultisigTimeoutMinutes } =
     useMultiProxy()
@@ -166,8 +166,8 @@ const DeepTxCreationModal = ({
       return
     }
 
-    if (!selectedSigner) {
-      const error = 'No selected signer or multisig/proxy'
+    if (!selectedAccount) {
+      const error = 'No selected account'
       console.error(error)
       setErrorMessage(error)
       return
@@ -190,8 +190,10 @@ const DeepTxCreationModal = ({
 
     setIsSubmitting(true)
 
-    fullTx.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallback)
-  }, [api, mustSubmitCallData, parentCallInfo, fullTx, selectedSigner, signCallback])
+    fullTx
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallback)
+  }, [api, mustSubmitCallData, parentCallInfo, fullTx, selectedAccount, signCallback])
 
   const onAddedCallDataChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -301,7 +303,7 @@ const DeepTxCreationModal = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: parentCallInfo?.call.decodedCall,
+                          decodedCall: parentCallInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(parentCallInfo?.section, parentCallInfo?.method)
                         }

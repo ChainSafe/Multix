@@ -39,7 +39,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     selectMultiProxy
   } = useMultiProxy()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
   const originAddress = request.params.request.params.address
@@ -140,7 +140,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       return
     }
 
-    if (!selectedSigner || !originAddress) {
+    if (!selectedAccount || !originAddress) {
       const error = 'No selected signer or multisig/proxy'
       console.error(error)
       setErrorMessage(error)
@@ -160,8 +160,8 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 
     setIsSubmitting(true)
 
-    multisigTx.signSubmitAndWatch(selectedSigner).subscribe(signCallback)
-  }, [threshold, api, originAddress, extrinsicToCall, multisigTx, selectedSigner, signCallback])
+    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
+  }, [threshold, api, originAddress, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const handleMultisigSelection = useCallback(
     (account: AccountBaseInfo) => {
@@ -275,7 +275,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               >
                 <CallInfo
                   aggregatedData={{
-                    args: callInfo?.call.decodedCall,
+                    decodedCall: callInfo?.call.decodedCall,
                     callData,
                     name: getExtrinsicName(callInfo?.section, callInfo?.method)
                   }}

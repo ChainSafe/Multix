@@ -13,11 +13,13 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
   useEffect(() => {
     if (!callData) {
       setCallInfo(undefined)
+      setIsGettingCallInfo(false)
       return
     }
 
     if (!api || !compatibilityToken) {
       setCallInfo(undefined)
+      setIsGettingCallInfo(false)
       return
     }
 
@@ -35,6 +37,7 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
           method: tx?.decodedCall.type,
           section: tx?.decodedCall.value.type
         })
+        setIsGettingCallInfo(false)
       })
       .catch((e) => {
         console.error(e)

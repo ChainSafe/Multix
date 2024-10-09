@@ -34,7 +34,7 @@ const MultisigCreation = ({ className }: Props) => {
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
   const { api, chainInfo, compatibilityToken } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
+  const { selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams({ creationInProgress: 'false' })
   const signCallBack = useSigningCallback({
@@ -288,19 +288,27 @@ const MultisigCreation = ({ className }: Props) => {
       return
     }
 
-    if (!selectedSigner) {
-      console.error('no selected signer')
+    if (!selectedAccount) {
+      console.error('no selected account')
       return
     }
 
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    remarkCall.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallBack)
-  }, [addName, multiAddress, name, remarkCall, selectedSigner, signCallBack])
+    // const remarkTx = await api.txFromCallData(
+    //   Binary.fromHex(
+    //     '0x1701020004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0000004c637265617465642077697468204d756c7469780000',
+    //   ),
+    // );
+
+    remarkCall
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack)
+  }, [addName, multiAddress, name, remarkCall, selectedAccount, signCallBack])
 
   const handleCreateWithPure = useCallback(async () => {
-    if (!selectedSigner || !batchCall) {
+    if (!selectedAccount || !batchCall) {
       console.error('no selected signer')
       return
     }
@@ -308,8 +316,10 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    batchCall.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallBack)
-  }, [addName, batchCall, multiAddress, name, selectedSigner, signCallBack])
+    batchCall
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack)
+  }, [addName, batchCall, multiAddress, name, selectedAccount, signCallBack])
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)

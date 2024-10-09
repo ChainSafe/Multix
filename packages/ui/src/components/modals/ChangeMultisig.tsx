@@ -52,7 +52,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     }
   })
   const { getSortAddress } = useGetSortAddress()
-  const { selectedAccount, selectedSigner, ownAddressList } = useAccounts()
+  const { selectedAccount, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
   const oldThreshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
   const [newThreshold, setNewThreshold] = useState<number | null | undefined>(oldThreshold)
@@ -283,14 +283,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!secondCall || !selectedSigner) {
+    if (!secondCall) {
       return
     }
 
     setCurrentStep('call2')
 
-    secondCall.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallBack2)
-  }, [callError, api, selectedAccount, secondCall, selectedSigner, signCallBack2])
+    secondCall
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack2)
+  }, [callError, api, selectedAccount, secondCall, signCallBack2])
 
   const signCallBack1 = useSigningCallback({
     onSuccess: onMakeSecondCall,
@@ -309,14 +311,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!firstCall || !selectedSigner) {
+    if (!firstCall) {
       return
     }
 
     setCurrentStep('call1')
 
-    firstCall.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallBack1)
-  }, [api, selectedAccount, firstCall, selectedSigner, signCallBack1])
+    firstCall
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack1)
+  }, [api, selectedAccount, firstCall, signCallBack1])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {

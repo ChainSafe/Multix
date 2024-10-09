@@ -105,7 +105,7 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
       {!!callInfo && !!pastedCallInfo && !callDataError && (
         <CallInfo
           aggregatedData={{
-            args: callInfo.call?.decodedCall,
+            decodedCall: callInfo.call?.decodedCall,
             callData: callDataToUse,
             name: getExtrinsicName(callInfo.section, callInfo.method)
           }}

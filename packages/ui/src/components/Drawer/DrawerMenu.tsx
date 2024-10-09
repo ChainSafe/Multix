@@ -1,5 +1,5 @@
 import IconButton from '@mui/material/IconButton'
-import { HiOutlineChevronRight as ChevronRightIcon } from 'react-icons/hi2'
+import { HiOutlineChevronRight as ChevronRightIcon, HiOutlineWallet } from 'react-icons/hi2'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
@@ -18,9 +18,7 @@ interface DrawerMenuProps {
 }
 
 function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
-  const { ownAccountList } = useAccounts()
-  const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
-  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { ownAccountList, setIsConnectionDialogOpen } = useAccounts()
   const [params] = useSearchParams()
 
   return (
@@ -31,14 +29,26 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         </IconButton>
       </DrawerHeader>
       <List disablePadding={true}>
-        {!isAllowedToConnectToExtension && (
+        {!ownAccountList.length ? (
           <ListItemStyled disablePadding>
             <ButtonStyled
               variant="primary"
-              onClick={allowConnectionToExtension}
+              onClick={() => setIsConnectionDialogOpen(true)}
             >
               Connect
             </ButtonStyled>
+          </ListItemStyled>
+        ) : (
+          <ListItemStyled>
+            <Button onClick={() => setIsConnectionDialogOpen(true)}>
+              <WalletButtonStyled>
+                <HiOutlineWallet
+                  className="wallet-icon"
+                  size={20}
+                />{' '}
+                Show wallets
+              </WalletButtonStyled>
+            </Button>
           </ListItemStyled>
         )}
         <ListItemStyled>
@@ -50,24 +60,35 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
           const paramsString = createSearchParams(params).toString()
 
-          return isAccountConnected || isDisplayWhenNoWallet ? (
-            <ListItemStyled
-              key={name}
-              disablePadding
-            >
-              <NavLink
-                onClick={handleDrawerClose}
-                to={`${path}?${paramsString}`}
+          return (
+            isDisplayWhenNoWallet && (
+              <ListItemStyled
+                key={name}
+                disablePadding
               >
-                <ListItemText primary={name} />
-              </NavLink>
-            </ListItemStyled>
-          ) : null
+                <NavLink
+                  onClick={handleDrawerClose}
+                  to={`${path}?${paramsString}`}
+                >
+                  <ListItemText primary={name} />
+                </NavLink>
+              </ListItemStyled>
+            )
+          )
         })}
       </List>
     </>
   )
 }
+
+const WalletButtonStyled = styled('div')`
+  font-weight: 400;
+  display: flex;
+
+  .wallet-icon {
+    margin-right: 0.5rem;
+  }
+`
 const ListItemStyled = styled(ListItem)`
   justify-content: center;
   width: 100%;

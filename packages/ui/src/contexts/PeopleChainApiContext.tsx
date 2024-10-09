@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
-import '@polkadot/api-augment'
 import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
@@ -70,11 +69,12 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
   }, [selectedNetworkInfo])
 
   useEffect(() => {
-    if (!client) return
+    if (!client || !pplApi) return
 
-    client?.getChainSpecData().then(({ properties }) => {
+    client?.getChainSpecData().then(async ({ properties }) => {
       if (!properties) return
 
+      const ss58prefix = await pplApi.constants.System.SS58Prefix()
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -85,12 +85,12 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
 
       setPplChainInfo({
         // some parachains such as interlay have a comma in the format, e.g: "2,042"
-        ss58Format: Number(properties?.ss58Format.replace(',', '')) || 0,
+        ss58Format: Number(ss58prefix) || 0,
         tokenDecimals: Number(tokenDecimals) || 0,
         tokenSymbol: tokensymbol || ''
       })
     })
-  }, [client])
+  }, [client, pplApi])
 
   return (
     <PplApiContext.Provider

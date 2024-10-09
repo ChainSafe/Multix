@@ -117,8 +117,7 @@ const createUlTree = ({ name, decodedCall }: CreateTreeParams) => {
   if (!decodedCall) return
   if (!name) return
 
-  console.log('decodedCall', decodedCall)
-  return <pre>{JSONprint(decodedCall.value.value)}</pre>
+  return <PreStyled>{JSONprint(decodedCall.value.value)}</PreStyled>
   // return (
   //   <ul className="params">
   //     {Object.entries(decodedCall).map(([type, value], index) => {
@@ -215,12 +214,12 @@ const CallInfo = ({
       >
         {name}
         {!!aggregatedData.callData && withLink && (
-          <Linkstyled
+          <LinkStyled
             href={link}
             target="_blank"
           >
             <LaunchIcon size={20} />
-          </Linkstyled>
+          </LinkStyled>
         )}
       </CallNameStyled>
       {!aggregatedData.callData && (
@@ -258,9 +257,13 @@ const CallNameStyled = styled('h4')`
   align-items: center;
 `
 
-const Linkstyled = styled(Link)`
+const LinkStyled = styled(Link)`
   display: flex;
   padding-left: 0.5rem;
+`
+
+const PreStyled = styled('pre')`
+  overflow: auto;
 `
 
 export default styled(CallInfo)`

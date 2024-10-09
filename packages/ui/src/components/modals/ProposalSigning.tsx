@@ -37,7 +37,7 @@ const ProposalSigning = ({
   const { api, compatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
   const [debouncedAddedCallData, setDebouncedAddedCallData] = useState<HexString | undefined>()
   const [errorMessage, setErrorMessage] = useState('')
@@ -58,6 +58,7 @@ const ProposalSigning = ({
     min: 0n,
     address: selectedAccount?.address
   })
+
   const hasReachedThreshold = useMemo(
     () => (proposalData.info?.approvals || []).length >= threshold - 1,
     [proposalData.info?.approvals, threshold]
@@ -156,8 +157,8 @@ const ProposalSigning = ({
         return
       }
 
-      if (!selectedAccount || !selectedSigner) {
-        const error = 'No selected address or selectedSigner'
+      if (!selectedAccount) {
+        const error = 'No selected account'
         console.error(error)
         setErrorMessage(error)
         return
@@ -245,7 +246,7 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signSubmitAndWatch(selectedSigner, { at: 'best' }).subscribe(signCallback)
+      tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' }).subscribe(signCallback)
     },
     [
       getSortAddress,
@@ -258,7 +259,6 @@ const ProposalSigning = ({
       mustProvideCallData,
       callInfo,
       hasReachedThreshold,
-      selectedSigner,
       signCallback,
       addedCallData,
       compatibilityToken
@@ -374,7 +374,7 @@ const ProposalSigning = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: callInfo?.call.decodedCall,
+                          decodedCall: callInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(callInfo?.section, callInfo?.method)
                         }

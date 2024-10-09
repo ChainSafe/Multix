@@ -151,7 +151,6 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
       const isEthereum = ethereumChains.includes(name)
 
-      console.log('ss58prefix', ss58prefix)
       setChainInfo({
         // some parachains such as interlay have a comma in the format, e.g: "2,042"
         ss58Format: Number(ss58prefix) || 0,

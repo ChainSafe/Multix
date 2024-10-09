@@ -1,11 +1,11 @@
 import { Box, IconButton, Toolbar } from '@mui/material'
 import { Button, NavLink } from '../library'
 import { styled } from '@mui/material/styles'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
+import { HiOutlineWallet, HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
 import { ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils/arrayUtils'
 import NetworkSelection from '../select/NetworkSelection'
@@ -13,72 +13,99 @@ import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
 import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
 import { useSwitchAddress } from '../../hooks/useSwitchAddress'
+import { ConnectionDialog } from 'dot-connect/react.js'
 
 interface Props {
   handleDrawerOpen: () => void
 }
 
 const Header = ({ handleDrawerOpen }: Props) => {
-  const { ownAccountList } = useAccounts()
+  const {
+    selectedAccount,
+    ownAccountList,
+    selectAccount,
+    isConnectionDialogOpen,
+    setIsConnectionDialogOpen
+  } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const [params] = useSearchParams()
-  const { isAllowedToConnectToExtension, allowConnectionToExtension, isAccountLoading } =
-    useAccounts()
+
   useWalletConnectEventsManager()
   useSwitchAddress()
 
-  return (
-    <MuiAppBarStyled position="sticky">
-      <Toolbar>
-        <LogoWrapperStyled>
-          <HomeLinkStyled to="/">
-            <LogoStyled
-              src={multixLogo}
-              alt={`Multix logo`}
-            />
-          </HomeLinkStyled>
-        </LogoWrapperStyled>
-        <DesktopMenuStyled data-cy="menu-desktop">
-          <MenuWrapperStyled>
-            {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
-              const paramsString = createSearchParams(params).toString()
+  useEffect(() => {
+    if (!selectedAccount?.address && ownAccountList.length > 0) {
+      selectAccount(ownAccountList[0])
+      setIsConnectionDialogOpen(false)
+    }
+  }, [ownAccountList, selectAccount, selectedAccount?.address, setIsConnectionDialogOpen])
 
-              return isAccountConnected || isDisplayWhenNoWallet ? (
-                <NavLink
-                  key={name}
-                  to={`${path}?${paramsString}`}
-                  data-cy={`button-navigate-${name.toLowerCase().replace(/ /g, '-')}`}
+  return (
+    <>
+      <MuiAppBarStyled position="sticky">
+        <Toolbar>
+          <LogoWrapperStyled>
+            <HomeLinkStyled to="/">
+              <LogoStyled
+                src={multixLogo}
+                alt={`Multix logo`}
+              />
+            </HomeLinkStyled>
+          </LogoWrapperStyled>
+          <DesktopMenuStyled data-cy="menu-desktop">
+            <MenuWrapperStyled>
+              {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
+                const paramsString = createSearchParams(params).toString()
+
+                return isAccountConnected || isDisplayWhenNoWallet ? (
+                  <NavLink
+                    key={name}
+                    to={`${path}?${paramsString}`}
+                    data-cy={`button-navigate-${name.toLowerCase().replace(/ /g, '-')}`}
+                  >
+                    {name}
+                  </NavLink>
+                ) : null
+              })}
+            </MenuWrapperStyled>
+            <RightButtonsWrapperStyled>
+              {ownAccountList.length === 0 && (
+                <ConnectButtonStyled
+                  data-cy="button-menu-connect"
+                  onClick={() => setIsConnectionDialogOpen(true)}
+                  variant="primary"
                 >
-                  {name}
-                </NavLink>
-              ) : null
-            })}
-          </MenuWrapperStyled>
-          <RightButtonsWrapperStyled>
-            {!isAllowedToConnectToExtension && (
-              <ConnectButtonStyled
-                data-cy="button-menu-connect"
-                onClick={allowConnectionToExtension}
-                disabled={isAccountLoading}
-                variant="primary"
-              >
-                Connect
-              </ConnectButtonStyled>
-            )}
-            <MultiProxySelection testId="desktop" />
-            <NetworkSelectionStyled />
-          </RightButtonsWrapperStyled>
-        </DesktopMenuStyled>
-        <IconButtonStyled
-          color="inherit"
-          aria-label="open drawer"
-          edge="end"
-          onClick={handleDrawerOpen}
-        >
-          <MenuIcon />
-        </IconButtonStyled>
-      </Toolbar>
-    </MuiAppBarStyled>
+                  Connect
+                </ConnectButtonStyled>
+              )}
+              <MultiProxySelection testId="desktop" />
+              <NetworkSelectionStyled />
+              {ownAccountList.length > 0 && (
+                <IconButtonStyled
+                  data-cy="button-wallet"
+                  aria-label="wallet"
+                  onClick={() => setIsConnectionDialogOpen(true)}
+                >
+                  <HiOutlineWallet size={20} />
+                </IconButtonStyled>
+              )}
+            </RightButtonsWrapperStyled>
+          </DesktopMenuStyled>
+          <MobileIconButtonStyled
+            color="inherit"
+            aria-label="open drawer"
+            edge="end"
+            onClick={handleDrawerOpen}
+          >
+            <MenuIcon />
+          </MobileIconButtonStyled>
+        </Toolbar>
+      </MuiAppBarStyled>
+      <ConnectionDialog
+        open={isConnectionDialogOpen}
+        onClose={() => setIsConnectionDialogOpen(false)}
+      />
+    </>
   )
 }
 
@@ -152,6 +179,10 @@ const LogoStyled = styled('img')`
 `
 
 const IconButtonStyled = styled(IconButton)`
+  margin-left: 1rem;
+`
+
+const MobileIconButtonStyled = styled(IconButton)`
   display: block;
   color: black;
 

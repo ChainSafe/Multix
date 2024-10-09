@@ -2671,6 +2671,50 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lit-labs/preact-signals@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@lit-labs/preact-signals@npm:1.0.2"
+  dependencies:
+    "@preact/signals-core": ^1.3.0
+    lit: ^3.1.2
+  checksum: bb27f24388d363c751ec5e50f09a58ed5d274c59635e679f425ba8c2cbe1e30342a2f19d4f29fae4c065a854f0f28ce53dd16e48df1f560161b6a9215207bb86
+  languageName: node
+  linkType: hard
+
+"@lit-labs/ssr-dom-shim@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "@lit-labs/ssr-dom-shim@npm:1.2.1"
+  checksum: 75cecf2cc4c1a089c6984d9f45b8264e3b4947b4ebed96aef7eb201bd6b3f26caeaafedf457884ac38d4f2d99cddaf94a4b2414c02c61fbf1f64c0a0dade11f4
+  languageName: node
+  linkType: hard
+
+"@lit/react@npm:^1.0.5, @lit/react@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@lit/react@npm:1.0.6"
+  peerDependencies:
+    "@types/react": 17 || 18
+  checksum: 9d80548dbf9fde8dad1ed82a0dd570428d98700db39ebd7e2b86552bb53bd8e371047332db5a1498ca80fff08d245f5b077397e885a6cca352301ee94ba707c6
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^1.0.0 || ^2.0.0, @lit/reactive-element@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lit/reactive-element@npm:2.0.4"
+  dependencies:
+    "@lit-labs/ssr-dom-shim": ^1.2.0
+  checksum: 359cc19ea9ee8b65e1417eb9c12f40dddba8f0a5ab32f0e5facaecee6060629e44eb4ca27d9af945fe6eda8c033aa636abaa5f0c4e6a529b224d78674acf47ba
+  languageName: node
+  linkType: hard
+
+"@lit/task@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@lit/task@npm:1.0.1"
+  dependencies:
+    "@lit/reactive-element": ^1.0.0 || ^2.0.0
+  checksum: 44ad2187f0a05dbd6cd9cb9638ae9031102fcf8ba7693fb9420cbb49e5274c57229fc6ddf2d3573d761d3b0bbe1502abd358b53ae9c65394b25a59fe7f6253ab
+  languageName: node
+  linkType: hard
+
 "@mui/base@npm:^5.0.0-beta.58":
   version: 5.0.0-dev.20240529-082515-213b5e33ab
   resolution: "@mui/base@npm:5.0.0-dev.20240529-082515-213b5e33ab"
@@ -2860,7 +2904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.5.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.3.2, @noble/hashes@npm:^1.4.0":
+"@noble/hashes@npm:1.5.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.3.2, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.5.0":
   version: 1.5.0
   resolution: "@noble/hashes@npm:1.5.0"
   checksum: 1b46539695fbfe4477c0822d90c881a04d4fa2921c08c552375b444a48cac9930cb1ee68de0a3c7859e676554d0f3771999716606dc4d8f826e414c11692cdd9
@@ -4204,6 +4248,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@preact/signals-core@npm:^1.3.0":
+  version: 1.8.0
+  resolution: "@preact/signals-core@npm:1.8.0"
+  checksum: fa773157621d881e7aefddb8dbded805d8203600211040cc4b5907726e288a163fa58558c1d36bc7085d75e6488af0a806322bbbed005d08be76a76f40244246
+  languageName: node
+  linkType: hard
+
 "@reactflow/background@npm:11.3.14":
   version: 11.3.14
   resolution: "@reactflow/background@npm:11.3.14"
@@ -4297,6 +4348,36 @@ __metadata:
     react: ">=17"
     react-dom: ">=17"
   checksum: cd29257969a11feb273849d3aa540d534513b292115ebf697db1357fae704426be899dcf882ea36e13a33d49073b6c2b44fc67c4ddbc779bf2dcd49ba87053a3
+  languageName: node
+  linkType: hard
+
+"@reactive-dot/core@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "@reactive-dot/core@npm:0.16.0"
+  dependencies:
+    "@reactive-dot/utils": ^0.8.0
+  peerDependencies:
+    polkadot-api: 1.x
+  checksum: 749e3eeca300f79a4395400892275a5b2e19f0a609654cb462998cbc62ad86c2a7c1bbe37ef2953903b1ff76351ff0f89f367921a9a60685a02a5cc8189a5586
+  languageName: node
+  linkType: hard
+
+"@reactive-dot/react@npm:^0.16.2":
+  version: 0.16.2
+  resolution: "@reactive-dot/react@npm:0.16.2"
+  dependencies:
+    "@reactive-dot/core": ^0.16.0
+    jotai: ^2.10.0
+  peerDependencies:
+    react: 18.x
+  checksum: c07186e9b1898f93e0027a350a0f864a75791dec723ffd966716aef1462410722eeccc0d12765dd0e537dec50446ac1b54069d07e561aba0c60e254e40fd64fb
+  languageName: node
+  linkType: hard
+
+"@reactive-dot/utils@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@reactive-dot/utils@npm:0.8.0"
+  checksum: e17be1fe37f567999bbb0871916f5321cbf2879fee9d2af76618792e641ec8929a9c864c835956e6ea970a7508b5d38c8523071192cc268a436f260ba8f11bc0
   languageName: node
   linkType: hard
 
@@ -5326,6 +5407,13 @@ __metadata:
   version: 4.2.5
   resolution: "@types/stylis@npm:4.2.5"
   checksum: 23f5b35a3a04f6bb31a29d404fa1bc8e0035fcaff2356b4047743a057e0c37b2eba7efe14d57dd2b95b398cea3bac294d9c6cd93ed307d8c0b7f5d282224b469
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:^2.0.2":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 4c4855f10de7c6c135e0d32ce462419d8abbbc33713b31d294596c0cc34ae1fa6112a2f9da729c8f7a20707782b0d69da3b1f8df6645b0366d08825ca1522e0c
   languageName: node
   linkType: hard
 
@@ -7443,6 +7531,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dijkstrajs@npm:^1.0.1":
+  version: 1.0.3
+  resolution: "dijkstrajs@npm:1.0.3"
+  checksum: 2183d61ac1f25062f3c3773f3ea8d9f45ba164a00e77e07faf8cc5750da966222d1e2ce6299c875a80f969190c71a0973042192c5624d5223e4ed196ff584c99
+  languageName: node
+  linkType: hard
+
 "dir-glob@npm:^3.0.1":
   version: 3.0.1
   resolution: "dir-glob@npm:3.0.1"
@@ -7487,6 +7582,43 @@ __metadata:
     no-case: ^3.0.4
     tslib: ^2.0.3
   checksum: 5b859ea65097a7ea870e2c91b5768b72ddf7fa947223fd29e167bcdff58fe731d941c48e47a38ec8aa8e43044c8fbd15cd8fa21689a526bc34b6548197cd5b05
+  languageName: node
+  linkType: hard
+
+"dot-connect@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "dot-connect@npm:0.11.0"
+  dependencies:
+    "@lit-labs/preact-signals": ^1.0.2
+    "@lit/react": ^1.0.6
+    "@lit/task": ^1.0.1
+    dot-identicon: ^0.1.0
+    lit: ^3.2.1
+    qrcode: ^1.5.4
+  peerDependencies:
+    "@reactive-dot/core": "*"
+    react: ">= 18"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 1d47846f722bd48b439f21ea0ccb5d813f8c75e9ed21108c9a14fa5cfbd0ac5038659f4a11a225bd5118d2c44dea05bbc4e7aa06817af6db53b74146879e525d
+  languageName: node
+  linkType: hard
+
+"dot-identicon@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "dot-identicon@npm:0.1.0"
+  dependencies:
+    "@lit-labs/preact-signals": ^1.0.2
+    "@lit/react": ^1.0.5
+    "@noble/hashes": ^1.5.0
+    lit: ^3.2.0
+  peerDependencies:
+    react: ">= 18"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 43a11faa45cb25499ea59ed2a204fd228a4ccddeb2315031122e2968be7308abb64ebd56a2ba457b115827d5ad0925b6b0f39eb4e72ffea1cde422491cf56f89
   languageName: node
   linkType: hard
 
@@ -9969,6 +10101,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "jotai@npm:2.10.0"
+  peerDependencies:
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 81c619c1a82444bff50220dab1e2c10960f41922d46c9227004f6dd34db3a615ad596b277657c21d5935c50918936f04ffa858e494e1caf18e4ed60560e183d9
+  languageName: node
+  linkType: hard
+
 "joycon@npm:^3.1.1":
   version: 3.1.1
   resolution: "joycon@npm:3.1.1"
@@ -10237,6 +10384,37 @@ __metadata:
     enquirer:
       optional: true
   checksum: 0e64dc5e66fbd4361f6b35c49489ed842a1d7de30cf2b5c06bf4569669449288698b8ea93f7842aaf3c510963a1e554bca31376b9054d1521445d1ce4c917ea1
+  languageName: node
+  linkType: hard
+
+"lit-element@npm:^4.1.0":
+  version: 4.1.1
+  resolution: "lit-element@npm:4.1.1"
+  dependencies:
+    "@lit-labs/ssr-dom-shim": ^1.2.0
+    "@lit/reactive-element": ^2.0.4
+    lit-html: ^3.2.0
+  checksum: b3c6c77d60a8239134d7c7e7c002be48414074f5b42f9ad026216749101a4f948266a4db9110a536fb23914044d584dbe4185c87064a4fa98baa4045ba2bbb46
+  languageName: node
+  linkType: hard
+
+"lit-html@npm:^3.2.0":
+  version: 3.2.1
+  resolution: "lit-html@npm:3.2.1"
+  dependencies:
+    "@types/trusted-types": ^2.0.2
+  checksum: 31c02df2148bf9a73545570cbe57aae01c4de1d9b44060b6ff13641837d38e39e6b1abcf92e13882cc84f5fee37605ed79602b91ad479728549014462808118e
+  languageName: node
+  linkType: hard
+
+"lit@npm:^3.1.2, lit@npm:^3.2.0, lit@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "lit@npm:3.2.1"
+  dependencies:
+    "@lit/reactive-element": ^2.0.4
+    lit-element: ^4.1.0
+    lit-html: ^3.2.0
+  checksum: 064a31459fe54ad052c0685d058dd5aef089ddc97a247888ef91a0356dfef60c8cc531e48077bbd2cb4e9f48cb86f0ff0951bb535f1d9f144d2351f253291f66
   languageName: node
   linkType: hard
 
@@ -10706,6 +10884,8 @@ __metadata:
     "@polkadot/typegen": ^13.1.1
     "@polkadot/types": ^13.1.1
     "@polkadot/util-crypto": ^13.1.1
+    "@reactive-dot/core": ^0.16.0
+    "@reactive-dot/react": ^0.16.2
     "@tanstack/react-query": ^5.29.2
     "@types/node": ^20.12.7
     "@types/react-dom": ^18.2.25
@@ -10717,6 +10897,7 @@ __metadata:
     cypress: ^13.12.0
     cypress-wait-until: ^3.0.1
     dayjs: ^1.11.10
+    dot-connect: ^0.11.0
     eslint: ^8.57.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-cypress: ^2.15.2
@@ -11480,6 +11661,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pngjs@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "pngjs@npm:5.0.0"
+  checksum: c074d8a94fb75e2defa8021e85356bf7849688af7d8ce9995b7394d57cd1a777b272cfb7c4bce08b8d10e71e708e7717c81fd553a413f21840c548ec9d4893c6
+  languageName: node
+  linkType: hard
+
 "pnglib@npm:0.0.1":
   version: 0.0.1
   resolution: "pnglib@npm:0.0.1"
@@ -11726,6 +11914,19 @@ __metadata:
   version: 1.1.3
   resolution: "pvutils@npm:1.1.3"
   checksum: 23489e6b3c76b6afb6964a20f891d6bef092939f401c78bba186b2bfcdc7a13904a0af0a78f7933346510f8c1228d5ab02d3c80e968fd84d3c76ff98d8ec9aac
+  languageName: node
+  linkType: hard
+
+"qrcode@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "qrcode@npm:1.5.4"
+  dependencies:
+    dijkstrajs: ^1.0.1
+    pngjs: ^5.0.0
+    yargs: ^15.3.1
+  bin:
+    qrcode: bin/qrcode
+  checksum: ae1d57c9cff6099639a590b432c71b15e3bd3905ce4353e6d00c95dee6bb769a8f773f6a7575ecc1b8ed476bf79c5138a4a65cb380c682de3b926d7205d34d10
   languageName: node
   linkType: hard
 
