@@ -11,8 +11,6 @@
     "@mui/styled-engine": "^5.15.14",
     "@polkadot-api/descriptors": "portal:.papi/descriptors",
     "@polkadot/api": "^13.1.1",
-    "@polkadot/api-augment": "^13.1.1",
-    "@polkadot/extension-dapp": "^0.52.3",
     "@polkadot/react-identicon": "^3.10.1",
     "@polkadot/types": "^13.1.1",
     "@polkadot/util-crypto": "^13.1.1",

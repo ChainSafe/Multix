@@ -235,7 +235,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     setIsSubmitting(true)
 
-    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
+    multisigTx
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallback)
   }, [threshold, api, selectedOrigin, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(

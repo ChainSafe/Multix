@@ -2,7 +2,6 @@ import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
-import '@polkadot/api-augment'
 import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import {
@@ -138,9 +137,9 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
     if (!client || !api) return
 
     client?.getChainSpecData().then(async ({ properties, name }) => {
-      if (!properties) return
+      if (!properties || !compatibilityToken) return
 
-      const ss58prefix = await api.constants.System.SS58Prefix()
+      const ss58prefix = api.constants.System.SS58Prefix(compatibilityToken)
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -159,7 +158,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
         isEthereum
       })
     })
-  }, [client, api])
+  }, [client, api, compatibilityToken])
 
   useEffect(() => {
     if (!api) return

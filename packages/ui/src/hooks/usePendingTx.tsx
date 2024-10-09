@@ -351,7 +351,7 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
     const pendingMultisigTxs: PendingTx[] = []
 
     const callsPromises = multisigAddresses.map((address) =>
-      api.query.Multisig.Multisigs.getEntries(address)
+      api.query.Multisig.Multisigs.getEntries(address, { at: 'best' })
     )
 
     await Promise.all(callsPromises)

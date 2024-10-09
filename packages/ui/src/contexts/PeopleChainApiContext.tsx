@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
-import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
+import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
 
@@ -14,7 +14,8 @@ type ApiContextProps = {
 export interface IApiContext {
   pplApi?: false | PplApiType
   pplChainInfo?: ChainInfoHuman
-  client?: PolkadotClient
+  pplClient?: PolkadotClient
+  pplCompatibilityToken?: CompatibilityToken
 }
 
 export interface ChainInfoHuman {
@@ -35,7 +36,15 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const [pplChainInfo, setPplChainInfo] = useState<ChainInfoHuman | undefined>()
   const [pplApi, setPplApi] = useState<IApiContext['pplApi']>()
-  const [client, setClient] = useState<IApiContext['client']>()
+  const [client, setClient] = useState<IApiContext['pplClient']>()
+  const [compatibilityToken, setCompatibilityToken] =
+    useState<IApiContext['pplCompatibilityToken']>()
+
+  useEffect(() => {
+    if (!pplApi) return
+
+    pplApi.compatibilityToken.then(setCompatibilityToken).catch(console.error)
+  }, [pplApi])
 
   useEffect(() => {
     if (!selectedNetworkInfo?.pplChainRpcUrl) return
@@ -72,9 +81,9 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
     if (!client || !pplApi) return
 
     client?.getChainSpecData().then(async ({ properties }) => {
-      if (!properties) return
+      if (!properties || !compatibilityToken) return
 
-      const ss58prefix = await pplApi.constants.System.SS58Prefix()
+      const ss58prefix = pplApi.constants.System.SS58Prefix(compatibilityToken)
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -90,14 +99,15 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
         tokenSymbol: tokensymbol || ''
       })
     })
-  }, [client, pplApi])
+  }, [client, compatibilityToken, pplApi])
 
   return (
     <PplApiContext.Provider
       value={{
-        client,
+        pplClient: client,
         pplApi,
-        pplChainInfo: pplChainInfo
+        pplChainInfo,
+        pplCompatibilityToken: compatibilityToken
       }}
     >
       {children}
