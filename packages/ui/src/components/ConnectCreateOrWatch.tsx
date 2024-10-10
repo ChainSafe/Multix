@@ -1,13 +1,14 @@
 import { styled } from '@mui/material'
-import { useAccounts } from '../contexts/AccountsContext'
+// import { useAccounts } from '../contexts/AccountsContext'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useNetwork } from '../contexts/NetworkContext'
+import { useAccounts } from '../contexts/AccountsContext'
 
 export const ConnectOrWatch = () => {
-  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { setIsConnectionDialogOpen } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -15,7 +16,7 @@ export const ConnectOrWatch = () => {
 
   return (
     <WrapperStyled>
-      {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
+      {watchedAddresses.length !== 0 ? (
         <div data-cy="label-no-multisig-found">
           No multisig found for your accounts or watched accounts on{' '}
           <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.
@@ -31,7 +32,7 @@ export const ConnectOrWatch = () => {
         </>
       )}
       <ButtonWrapperStyled>
-        {isAllowedToConnectToExtension ? (
+        {/* {isAllowedToConnectToExtension ? (
           <Button
             variant="primary"
             onClick={() => {
@@ -44,15 +45,14 @@ export const ConnectOrWatch = () => {
           >
             Create one
           </Button>
-        ) : (
-          <Button
-            variant="primary"
-            onClick={allowConnectionToExtension}
-            data-cy="button-connect-wallet"
-          >
-            Connect Wallet
-          </Button>
-        )}
+        ) : ( */}
+        <Button
+          variant="primary"
+          onClick={() => setIsConnectionDialogOpen(true)}
+          data-cy="button-connect-wallet"
+        >
+          Connect Wallet
+        </Button>
         or
         <Button
           onClick={() => {

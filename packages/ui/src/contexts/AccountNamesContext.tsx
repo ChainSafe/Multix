@@ -30,7 +30,7 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
     (address: string) => {
       const extensionAccount = getAccountByAddress(address)
       if (extensionAccount) {
-        return extensionAccount.meta.name
+        return extensionAccount.name
       }
 
       return accountNames[address] || ''

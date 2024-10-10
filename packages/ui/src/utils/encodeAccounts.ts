@@ -1,8 +1,8 @@
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { encodesubstrateAddress } from './encodeSubstrateAddress'
+import { InjectedPolkadotAccount } from 'polkadot-api/pjs-signer'
 
 export const encodeAccounts = (
-  accounts: InjectedAccountWithMeta[] | string[],
+  accounts: InjectedPolkadotAccount[] | string[],
   ss58Format: number
 ) => {
   return accounts
@@ -16,11 +16,11 @@ export const encodeAccounts = (
       }
 
       return encodedAddress
-        ? ({
+        ? {
             ...account,
             address: encodedAddress
-          } as InjectedAccountWithMeta)
+          }
         : null
     })
-    .filter((acc) => !!acc) as (string | InjectedAccountWithMeta)[]
+    .filter((acc) => !!acc) as InjectedPolkadotAccount[]
 }

@@ -1,5 +1,4 @@
 import { Tooltip } from '@mui/material'
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types'
 import {
   HiOutlineCheckCircle as CheckCircleRoundedIcon,
   HiOutlineMinusCircle as RemoveCircleOutlineRoundedIcon
@@ -7,30 +6,31 @@ import {
 
 import { useMemo } from 'react'
 import { styled } from '@mui/material/styles'
+import { IdentityInfo } from '../hooks/useGetIdentity'
 
 interface Props {
   className?: string
-  identity: DeriveAccountRegistration
+  identity: IdentityInfo
 }
 
 const IdentityIcon = ({ className, identity }: Props) => {
-  const judgements = useMemo(
-    () => identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid),
-    [identity]
-  )
   const isGood = useMemo(
     () =>
-      judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable),
-    [judgements]
+      identity.judgements.some(
+        (judgement): boolean => judgement === 'KnownGood' || judgement === 'Reasonable'
+      ),
+    [identity]
   )
   const isBad = useMemo(
     () =>
-      judgements.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality),
-    [judgements]
+      identity.judgements.some(
+        (judgement): boolean => judgement === 'Erroneous' || judgement === 'LowQuality'
+      ),
+    [identity]
   )
   const displayJudgements = useMemo(
-    () => JSON.stringify(judgements.map(([, jud]) => jud.toString())).replace(/"|\[|\]/g, ''),
-    [judgements]
+    () => JSON.stringify(identity.judgements.map((jud) => jud.toString())).replace(/"|\[|\]/g, ''),
+    [identity]
   )
 
   const tooltipContent = (

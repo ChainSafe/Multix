@@ -215,7 +215,7 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
   'polkadot',
   'asset-hub-dot',
   'acala',
-  'astar',
+  // 'astar',
   'bifrost-dot',
   'hydration',
   'interlay',

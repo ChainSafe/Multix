@@ -8,7 +8,7 @@
     "plugin:react-hooks/recommended",
     "plugin:react/recommended",
     "prettier",
-    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/eslint-recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -38,7 +38,7 @@
     "react/jsx-tag-spacing": "error",
     "prettier/prettier": "error",
     "react-hooks/exhaustive-deps": "error",
-    "react/react-in-jsx-scope": "off",
+    "react/react-in-jsx-scope": "off"
 
   },
   "overrides": [
