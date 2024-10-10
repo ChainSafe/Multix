@@ -238,7 +238,7 @@ export const soloChains: Partial<keyof typeof networkList>[] = [
 export const testChains: Partial<keyof typeof networkList>[] = [
   // 'rococo',
   'paseo',
-  'rhala testnet',
+  // 'rhala testnet',
   'westend',
   'local'
 ]
