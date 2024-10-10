@@ -208,13 +208,14 @@ const ProposalSigning = ({
       setIsSubmitting(true)
       let tx: Transaction<any, any, any, any> | undefined
 
+      console.log('proposalData', proposalData)
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
         tx = api.tx.Multisig.cancel_as_multi({
           threshold,
           other_signatories: otherSigners,
           timepoint: proposalData.info.when,
-          call_hash: FixedSizeBinary.fromText(proposalData.hash)
+          call_hash: FixedSizeBinary.fromHex(proposalData.hash)
         })
 
         // If we can submit the proposal and have the call data
@@ -235,7 +236,7 @@ const ProposalSigning = ({
           threshold,
           other_signatories: otherSigners,
           maybe_timepoint: proposalData.info.when,
-          call_hash: FixedSizeBinary.fromText(proposalData.hash),
+          call_hash: FixedSizeBinary.fromHex(proposalData.hash),
           max_weight: { ref_time: 0n, proof_size: 0n }
         })
       } else {

@@ -41,7 +41,6 @@
     "@graphql-codegen/client-preset": "4.2.5",
     "@graphql-codegen/typescript-react-query": "^6.1.0",
     "@graphql-eslint/eslint-plugin": "^3.20.1",
-    "@polkadot/extension-inject": "^0.52.3",
     "@polkadot/typegen": "^13.1.1",
     "@types/node": "^20.12.7",
     "@types/react-dom": "^18.2.25",

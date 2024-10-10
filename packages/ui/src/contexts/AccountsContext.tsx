@@ -9,7 +9,9 @@ import React, {
 } from 'react'
 // import { PolkadotSigner } from 'polkadot-api'
 import { useAccounts as useRedotAccounts } from '@reactive-dot/react'
-import { WalletAccount } from '@reactive-dot/core/wallets.js'
+import { useApi } from './ApiContext'
+import { encodeAccounts } from '../utils/encodeAccounts'
+import { InjectedPolkadotAccount } from 'polkadot-api/pjs-signer'
 
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 // const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
@@ -19,11 +21,11 @@ type AccountContextProps = {
 }
 
 export interface IAccountContext {
-  selectedAccount?: WalletAccount
-  ownAccountList: WalletAccount[]
+  selectedAccount?: InjectedPolkadotAccount
+  ownAccountList: InjectedPolkadotAccount[]
   ownAddressList: string[]
-  selectAccount: (account: WalletAccount) => void
-  getAccountByAddress: (address: string) => WalletAccount | undefined
+  selectAccount: (account: InjectedPolkadotAccount) => void
+  getAccountByAddress: (address: string) => InjectedPolkadotAccount | undefined
   // isAccountLoading: boolean
   // isExtensionError: boolean
   // selectedSigner?: PolkadotSigner
@@ -37,16 +39,25 @@ export interface IAccountContext {
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
-  const ownAccountList = useRedotAccounts()
-  const [selectedAccount, setSelected] = useState<WalletAccount>(ownAccountList[0])
+  const redotAccountList = useRedotAccounts()
+  const { chainInfo } = useApi()
+  const ownAccountList = useMemo(
+    () => chainInfo && encodeAccounts(redotAccountList, chainInfo.ss58Format),
+    [chainInfo, redotAccountList]
+  )
+  const [selectedAccount, setSelected] = useState<InjectedPolkadotAccount | undefined>(
+    ownAccountList?.[0]
+  )
   const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false)
   // const [isAccountLoading, setIsAccountLoading] = useState(false)
   // const [isExtensionError, setIsExtensionError] = useState(false)
   // const [selectedSigner, setSelectedSigner] = useState<PolkadotSigner | undefined>()
   // const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
-  const ownAddressList = useMemo(() => ownAccountList.map((a) => a.address), [ownAccountList])
+  const ownAddressList = useMemo(
+    () => (ownAccountList || []).map((a) => a.address),
+    [ownAccountList]
+  )
   // const [accountGotRequested, setAccountGotRequested] = useState(false)
-  // const { chainInfo } = useApi()
   // const [isLocalStorageSetupDone, setIsLocalStorageSetupDone] = useState(false)
   // update the current account list with the right network prefix
   // this will run for every network change
@@ -60,7 +71,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
 
   const getAccountByAddress = useCallback(
     (address: string) => {
-      return ownAccountList.find((account) => account.address === address)
+      return (ownAccountList || []).find((account) => account.address === address)
     },
     [ownAccountList]
   )
@@ -70,7 +81,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   //   setIsAllowedToConnectToExtension(true)
   // }, [])
 
-  const selectAccount = useCallback((account: WalletAccount) => {
+  const selectAccount = useCallback((account: InjectedPolkadotAccount) => {
     localStorage.setItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY, account.address)
     setSelected(account)
   }, [])
@@ -178,7 +189,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     <AccountContext.Provider
       value={{
         selectedAccount,
-        ownAccountList,
+        ownAccountList: ownAccountList || [],
         ownAddressList,
         selectAccount,
         // isAccountLoading,

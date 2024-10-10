@@ -1,4 +1,4 @@
-import { InjectedAccount } from '@polkadot/extension-inject/types'
+import { InjectedAccount } from 'polkadot-api/pjs-signer'
 
 export interface InjectedAccountWitMnemonic extends InjectedAccount {
   mnemonic: string
