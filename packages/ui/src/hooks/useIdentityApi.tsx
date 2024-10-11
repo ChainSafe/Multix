@@ -1,16 +1,15 @@
-import { ApiPromise } from '@polkadot/api'
 import { useState, useEffect } from 'react'
-import { useApi } from '../contexts/ApiContext'
-import { ChainInfoHuman, usePplApi } from '../contexts/PeopleChainApiContext'
+import { ChainInfoHuman, PplApiType, usePplApi } from '../contexts/PeopleChainApiContext'
+import { ApiType, useApi } from '../contexts/ApiContext'
 
 export const useIdenityApi = () => {
-  const { api, chainInfo } = useApi()
   const { pplApi, pplChainInfo } = usePplApi()
-  const [apiToUse, setApiToUse] = useState<ApiPromise | null>(null)
+  const { api, chainInfo } = useApi()
+  const [apiToUse, setApiToUse] = useState<PplApiType | ApiType | null>(null)
   const [chainInfoToUse, setChainInfoToUse] = useState<ChainInfoHuman | undefined>(undefined)
 
   useEffect(() => {
-    if (!pplApi && !api) {
+    if (!pplApi) {
       return
     }
 

@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
-import { getSubscanExtrinsicLink, getSubscanAccountLink } from '../utils'
+import { getSubscanExtrinsicLink } from '../utils/getSubscanExtrinsicLink'
+import { getSubscanAccountLink } from '../utils/getSubscanAccountLink'
 
 export const useGetSubscanLinks = () => {
   const { selectedNetworkInfo } = useNetwork()

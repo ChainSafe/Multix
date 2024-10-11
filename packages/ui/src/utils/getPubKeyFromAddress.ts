@@ -1,6 +1,6 @@
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
-import { HexString } from '../types'
+import { HexString } from 'polkadot-api'
 
 const decode = (address: string) => {
   // if it's an ethereum address pass just return it

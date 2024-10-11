@@ -2,7 +2,7 @@ import { Alert, Box, Grid } from '@mui/material'
 import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { isValidAddress } from '../../utils'
+import { isValidAddress } from '../../utils/isValidAddress'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { Button, InputField } from '../library'
 import GenericAccountSelection, { AccountBaseInfo } from './GenericAccountSelection'
@@ -56,7 +56,7 @@ const AccountSelection = ({
   )
   const extensionName = useMemo(() => {
     if (!selected) return ''
-    return getAccountByAddress(selected.address)?.meta.name
+    return getAccountByAddress(selected.address)?.name
   }, [getAccountByAddress, selected])
 
   useEffect(() => {

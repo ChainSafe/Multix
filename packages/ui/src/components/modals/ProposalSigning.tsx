@@ -7,20 +7,17 @@ import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { HexString, MultisigStorageInfo } from '../../types'
-import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
-import { getDisplayArgs, getExtrinsicName } from '../../utils'
+import { MultisigStorageInfo } from '../../types'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import BN from 'bn.js'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
+import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -37,15 +34,13 @@ const ProposalSigning = ({
   proposalData,
   onSuccess
 }: SigningModalProps) => {
-  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api } = useApi()
+  const { api, compatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
   const [debouncedAddedCallData, setDebouncedAddedCallData] = useState<HexString | undefined>()
   const [errorMessage, setErrorMessage] = useState('')
-  const { addToast } = useToasts()
   const multisig = useMemo(
     () => getMultisigByAddress(proposalData.from),
     [getMultisigByAddress, proposalData]
@@ -60,9 +55,10 @@ const ProposalSigning = ({
     proposalData.callData || debouncedAddedCallData
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: new BN(0),
+    min: 0n,
     address: selectedAccount?.address
   })
+
   const hasReachedThreshold = useMemo(
     () => (proposalData.info?.approvals || []).length >= threshold - 1,
     [proposalData.info?.approvals, threshold]
@@ -86,8 +82,13 @@ const ProposalSigning = ({
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
+    // poll for 1min if the tx may make changes
+    // such as creating a proxy, adding/removing a multisig
+    if (mustProvideCallData) {
+      setRefetchMultisigTimeoutMinutes(1)
+    }
     onClose()
-  }, [onClose])
+  }, [mustProvideCallData, onClose, setRefetchMultisigTimeoutMinutes])
 
   const signCallback = useSigningCallback({ onSuccess, onSubmitting })
   const { getSortAddress } = useGetSortAddress()
@@ -105,7 +106,7 @@ const ProposalSigning = ({
   }, [isProposerSelected])
 
   useEffect(() => {
-    if (!!callInfo?.call && callInfo.call.hash.toHex() !== proposalData.hash) {
+    if (!!callInfo?.call && callInfo?.hash !== proposalData.hash) {
       setErrorMessage("The callData provided doesn't match with the on-chain transaction")
       return
     }
@@ -149,7 +150,7 @@ const ProposalSigning = ({
         return
       }
 
-      if (!api) {
+      if (!api || !compatibilityToken) {
         const error = 'Api is not ready'
         console.error(error)
         setErrorMessage(error)
@@ -157,7 +158,7 @@ const ProposalSigning = ({
       }
 
       if (!selectedAccount) {
-        const error = 'No selected address'
+        const error = 'No selected account'
         console.error(error)
         setErrorMessage(error)
         return
@@ -183,12 +184,14 @@ const ProposalSigning = ({
         // In case the tx has been approved between the last couple blocks
         // and the tx in the indexer hasn't been updated we should query the latest state
         // right before sending the tx to have the right amount of signers.
-        const callStorage = await api.query.multisig.multisigs.entries(multisig.address)
+        const callStorage = await api.query.Multisig.Multisigs.getEntries(multisig.address, {
+          at: 'best'
+        })
 
         callStorage.some((storage) => {
-          const hash = (storage[0].toHuman() as Array<string>)[1]
+          const hash = storage.keyArgs[1].asHex()
           if (proposalData.hash === hash) {
-            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            const info = storage.value as MultisigStorageInfo
             amountOfSigner = info.approvals.length
 
             return true
@@ -203,16 +206,17 @@ const ProposalSigning = ({
       const shouldExecute = hasReachedThreshold ? true : amountOfSigner >= threshold - 1
 
       setIsSubmitting(true)
-      let tx: SubmittableExtrinsic<'promise'> | undefined
+      let tx: Transaction<any, any, any, any> | undefined
 
+      console.log('proposalData', proposalData)
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
-        tx = api.tx.multisig.cancelAsMulti(
+        tx = api.tx.Multisig.cancel_as_multi({
           threshold,
-          otherSigners,
-          proposalData.info.when,
-          proposalData.hash
-        )
+          other_signatories: otherSigners,
+          timepoint: proposalData.info.when,
+          call_hash: FixedSizeBinary.fromHex(proposalData.hash)
+        })
 
         // If we can submit the proposal and have the call data
       } else if (shouldExecute && callInfo?.call && callInfo?.weight) {
@@ -222,18 +226,19 @@ const ProposalSigning = ({
           otherSignatories: otherSigners,
           weight: callInfo.weight,
           when: proposalData.info.when,
-          tx: proposalData.callData || addedCallData
+          callData: proposalData.callData || addedCallData,
+          compatibilityToken
         })
 
         // if we can't submit yet (more signatures required), all we need is the call hash
       } else if (!shouldExecute && proposalData.hash) {
-        tx = api.tx.multisig.approveAsMulti(
+        tx = api.tx.Multisig.approve_as_multi({
           threshold,
-          otherSigners,
-          proposalData.info.when,
-          proposalData.hash,
-          { refTime: 0, proofSize: 0 }
-        )
+          other_signatories: otherSigners,
+          maybe_timepoint: proposalData.info.when,
+          call_hash: FixedSizeBinary.fromHex(proposalData.hash),
+          max_weight: { ref_time: 0n, proof_size: 0n }
+        })
       } else {
         console.error("We don't have the required data to submit the call")
         return
@@ -244,26 +249,7 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner, withSignedTransaction: true },
-        signCallback
-      )
-        .then(() => {
-          // poll for 1min if the tx may make changes
-          // such as creating a proxy, adding/removing a multisig
-          if (mustProvideCallData) {
-            setRefetchMultisigTimeoutMinutes(1)
-          }
-        })
-        .catch((error: Error) => {
-          setIsSubmitting(false)
-          addToast({
-            title: error.message,
-            type: 'error',
-            link: getSubscanExtrinsicLink(tx.hash.toHex())
-          })
-        })
+      tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' }).subscribe(signCallback)
     },
     [
       getSortAddress,
@@ -276,12 +262,9 @@ const ProposalSigning = ({
       mustProvideCallData,
       callInfo,
       hasReachedThreshold,
-      selectedSigner,
       signCallback,
       addedCallData,
-      setRefetchMultisigTimeoutMinutes,
-      addToast,
-      getSubscanExtrinsicLink
+      compatibilityToken
     ]
   )
 
@@ -394,7 +377,7 @@ const ProposalSigning = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: getDisplayArgs(callInfo?.call),
+                          decodedCall: callInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(callInfo?.section, callInfo?.method)
                         }
@@ -483,7 +466,7 @@ const ButtonContainerStyled = styled(Grid)`
     margin-left: 1rem;
   }
 `
-export default styled(ProposalSigning)`
+const ProposalSigningStyled = styled(ProposalSigning)`
   .buttonContainer .addedCallData {
     margin-top: 1rem;
   }
@@ -493,3 +476,5 @@ export default styled(ProposalSigning)`
     color: ${({ theme }) => theme.custom.error};
   }
 `
+
+export default ProposalSigningStyled
