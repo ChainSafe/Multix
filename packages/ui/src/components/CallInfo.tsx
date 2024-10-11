@@ -174,11 +174,10 @@ const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData']
   const call = decodedCall.value.value.call
 
   const newName = getExtrinsicName(call.type, call.value.type)
-  const newArgs = call?.value
   return {
     ...agg,
     name: newName,
-    decodedCall: newArgs
+    decodedCall: call
   }
 }
 

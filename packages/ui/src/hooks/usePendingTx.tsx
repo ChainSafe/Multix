@@ -410,14 +410,14 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
           if (
             !isProxyCall(agg.name) ||
             !agg?.decodedCall ||
-            !(agg.decodedCall as any).real.Id ||
+            !agg.decodedCall.value.value.real.value ||
             skipProxyCheck
           ) {
             return true
           }
 
-          // TODO Papi will have type/value etc to get to the real ID
-          const isForCurrentProxy = (agg.decodedCall as any).real.Id === selectedMultiProxy?.proxy
+          const isForCurrentProxy =
+            agg.decodedCall.value.value.real.value === selectedMultiProxy?.proxy
 
           if (!isForCurrentProxy) {
             console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)

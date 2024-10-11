@@ -3539,7 +3539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/api@npm:12.4.2, @polkadot/api@npm:^12.0.2, @polkadot/api@npm:^12.4.1":
+"@polkadot/api@npm:12.4.2, @polkadot/api@npm:^12.0.2":
   version: 12.4.2
   resolution: "@polkadot/api@npm:12.4.2"
   dependencies:
@@ -3604,24 +3604,6 @@ __metadata:
     "@polkadot/api": "*"
     "@polkadot/util": "*"
   checksum: c8281942bf30f31c9b5388475483197e023a113da839b9144d8c558124728e7edd48b305e9f2d7f9674a3f0b6517571b6993eb0f4d40157a796bd772094e7ca3
-  languageName: node
-  linkType: hard
-
-"@polkadot/extension-inject@npm:^0.52.3":
-  version: 0.52.3
-  resolution: "@polkadot/extension-inject@npm:0.52.3"
-  dependencies:
-    "@polkadot/api": ^12.4.1
-    "@polkadot/rpc-provider": ^12.4.1
-    "@polkadot/types": ^12.4.1
-    "@polkadot/util": ^13.0.2
-    "@polkadot/util-crypto": ^13.0.2
-    "@polkadot/x-global": ^13.0.2
-    tslib: ^2.6.2
-  peerDependencies:
-    "@polkadot/api": "*"
-    "@polkadot/util": "*"
-  checksum: 8c400771dbc31f6ebc2ccdbac4532e3eac760a43cc8b6ec8da24d3cda1624bdb09b729739200f0d95f5fdc04c6004b83259f65c8a6ddd17669db657cd2ca5e0f
   languageName: node
   linkType: hard
 
@@ -3754,7 +3736,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/rpc-provider@npm:12.4.2, @polkadot/rpc-provider@npm:^12.0.2, @polkadot/rpc-provider@npm:^12.4.1":
+"@polkadot/rpc-provider@npm:12.4.2, @polkadot/rpc-provider@npm:^12.0.2":
   version: 12.4.2
   resolution: "@polkadot/rpc-provider@npm:12.4.2"
   dependencies:
@@ -3947,7 +3929,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/types@npm:12.4.2, @polkadot/types@npm:^12.0.2, @polkadot/types@npm:^12.4.1":
+"@polkadot/types@npm:12.4.2, @polkadot/types@npm:^12.0.2":
   version: 12.4.2
   resolution: "@polkadot/types@npm:12.4.2"
   dependencies:
@@ -10861,7 +10843,6 @@ __metadata:
     "@mui/styled-engine": ^5.15.14
     "@polkadot-api/descriptors": "portal:.papi/descriptors"
     "@polkadot/api": ^13.1.1
-    "@polkadot/extension-inject": ^0.52.3
     "@polkadot/react-identicon": ^3.10.1
     "@polkadot/typegen": ^13.1.1
     "@polkadot/types": ^13.1.1

@@ -55,9 +55,43 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
           }
         }
 
+        //   {
+        //     "type": "Multisig",
+        //     "value": {
+        //         "type": "MultisigExecuted",
+        //         "value": {
+        //             "approving": "16Xntgq5gXJ3eivd9uKyWBzZQMxoCMW5Lv87J3Rso6fgg5B9",
+        //             "timepoint": {
+        //                 "height": 3339833,
+        //                 "index": 2
+        //             },
+        //             "multisig": "1FybbmNTWxd3DDYuqoJBP7NSKEGNZZMA231XS1Ytx5vhkN3",
+        //             "call_hash": "ʷ��\u00188�~W!D\f��\\O7(��J�\u0017�F�J/��P",
+        //             "result": {
+        //                 "success": false,
+        //                 "value": {
+        //                     "type": "Module",
+        //                     "value": {
+        //                         "type": "Balances",
+        //                         "value": {
+        //                             "type": "InsufficientBalance"
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         event.events.forEach((event) => {
           console.log(JSONprint(event))
 
+          // failed mutlisig
+          if (event.type === 'Multisig' && event.value.type === 'MultisigExecuted') {
+            if (event.value.value.result.success === false) {
+              errorInfo = JSONprint(event.value.value.result.value)
+            }
+          }
           // interrupted batch
           if (event.type === 'Utility' && event.value.type === 'BatchInterrupted') {
             errorInfo = event.value.value.error.type

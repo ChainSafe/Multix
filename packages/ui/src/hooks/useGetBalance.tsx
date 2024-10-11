@@ -15,7 +15,7 @@ export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalancePr
   useEffect(() => {
     if (!api || !address) return
 
-    const unsub = api.query.System.Account.watchValue(address).subscribe(
+    const unsub = api.query.System.Account.watchValue(address, 'best').subscribe(
       ({ data: { free, frozen } }) => {
         const transferable = free - frozen
 
