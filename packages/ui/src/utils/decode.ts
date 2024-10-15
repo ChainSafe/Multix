@@ -14,9 +14,6 @@
 // // You should have received a copy of the GNU General Public License
 // // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// import { Codec, Registry } from '@polkadot/types/types'
-// import { GenericCall, Struct } from '@polkadot/types'
-
 // export interface ISanitizedCall {
 //   [key: string]: unknown
 //   method: string | IFrameMethod

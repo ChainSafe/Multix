@@ -1,12 +1,9 @@
-// import { ISubmittableResult } from '@polkadot/types/types'
 import { useApi } from '../contexts/ApiContext'
 import { useGetSubscanLinks } from './useSubscanLink'
 import { useToasts } from '../contexts/ToastContext'
 // import { getIncompleteMessage } from '../utils/extinsicErrorChecks'
-// import { EventRecord } from '@polkadot/types/interfaces'
 import { TxEvent } from 'polkadot-api'
 import { JSONprint } from '../utils/jsonPrint'
-import { DispatchError } from '@polkadot/types/interfaces'
 
 interface Args {
   onSubmitting?: () => void
@@ -14,12 +11,6 @@ interface Args {
   onError?: (message?: string) => void
   onFinalized?: () => void
 }
-
-// export const useGetSigningCallback =
-//   () =>
-//   ({ onError, onFinalized, onInBlock }: Props) => {
-//     return {
-//       next: (event: TxEvent) => {
 
 export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
   const { addToast } = useToasts()
@@ -151,7 +142,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         // })
       }
     },
-    error: (error: DispatchError) => {
+    error: (error: Error) => {
       console.error(error)
       addToast({ title: error.toString(), type: 'error' })
       onError && onError()

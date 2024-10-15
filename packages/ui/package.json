@@ -10,6 +10,8 @@
     "@mui/material": "^5.15.15",
     "@mui/styled-engine": "^5.15.14",
     "@polkadot-api/descriptors": "portal:.papi/descriptors",
+    "@polkadot-labs/hdkd": "^0.0.8",
+    "@polkadot-labs/hdkd-helpers": "^0.0.8",
     "@polkadot/api": "^13.1.1",
     "@polkadot/react-identicon": "^3.10.1",
     "@polkadot/types": "^13.1.1",

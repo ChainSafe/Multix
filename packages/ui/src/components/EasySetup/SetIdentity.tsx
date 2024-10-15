@@ -1,7 +1,5 @@
 // import { Grid } from '@mui/material'
 // import { styled } from '@mui/material/styles'
-// import { SubmittableExtrinsic } from '@polkadot/api/types'
-// import { ISubmittableResult } from '@polkadot/types/types'
 // import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 // import { TextField } from '../library'
 // import { useIdentity } from '../../hooks/useIdentity'

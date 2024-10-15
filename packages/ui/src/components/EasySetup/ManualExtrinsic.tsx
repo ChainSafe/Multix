@@ -9,8 +9,6 @@
 //   TextField
 // } from '@mui/material'
 // import { styled } from '@mui/material/styles'
-// import { SubmittableExtrinsic } from '@polkadot/api/types'
-// import { ISubmittableResult } from '@polkadot/types/types'
 // import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 // import { useApi } from '../../contexts/ApiContext'
 // import paramConversion from '../../utils/paramConversion'

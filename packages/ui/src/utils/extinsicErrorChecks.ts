@@ -3,8 +3,6 @@
 
 // // from https://github.com/polkadot-js/apps/blob/97aeb41a593165f9a9b218c1ceecb52172473de3/packages/react-components/src/Status/checks.ts
 
-// import type { DispatchError, DispatchResult, Event, EventRecord } from '@polkadot/types/interfaces'
-
 // type EventCheck = (event: Event) => string | null
 
 // const INCOMPLETE = 'incomplete execution'
