@@ -209,6 +209,26 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.paseo"
       ]
+    },
+    "start-coretime-polkadot": {
+      "description": "starts the indexer with coretime-polkadot",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.coretime-polkadot"
+      ]
+    },
+    "start-coretime-kusama": {
+      "description": "starts the indexer with coretime-kusama",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.coretime-kusama"
+      ]
     }
   }
 }
