@@ -2,11 +2,10 @@ import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { PendingTx } from '../../src/hooks/usePendingTx'
 import { paseo, PaseoQueries } from '@polkadot-api/descriptors'
 import { Binary, createClient, Transaction, TxEvent, TypedApi } from 'polkadot-api'
-import { getWsProvider } from 'polkadot-api/ws-provider/node'
+import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
 import { entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { getPolkadotSigner } from 'polkadot-api/signer'
-import { DispatchError } from '@polkadot/types/interfaces'
 
 export interface MultisigInfo {
   address: string
@@ -30,7 +29,7 @@ const callBack = (resolve: (thenableOrResult?: unknown) => void) => ({
       console.log('Finalized block hash', event.txHash)
     }
   },
-  error: (error: DispatchError) => {
+  error: (error: Error) => {
     console.error(error.toString())
   }
 })
