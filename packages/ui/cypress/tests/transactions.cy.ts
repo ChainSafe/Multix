@@ -1,6 +1,6 @@
 import { testAccounts } from '../fixtures/testAccounts'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
-import { landingPageUrl } from '../fixtures/landingData'
+import { landingPageAddressUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { notifications } from '../support/page-objects/notifications'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
@@ -20,7 +20,7 @@ const fillAndSubmitTransactionForm = () => {
 describe('Perform transactions', () => {
   beforeEach(() => {
     cy.setupAndVisit({
-      url: landingPageUrl,
+      url: landingPageAddressUrl(knownMultisigs['test-simple-multisig-1'].address),
       extensionConnectionAllowed: true,
       injectExtensionWithAccounts: [
         testAccounts['Multisig Member Account 1'],

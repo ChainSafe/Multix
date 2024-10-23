@@ -1,7 +1,15 @@
 import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
 import { PendingTx } from '../../src/hooks/usePendingTx'
-import { paseo, PaseoQueries } from '@polkadot-api/descriptors'
-import { Binary, createClient, Transaction, TxEvent, TypedApi } from 'polkadot-api'
+import { paseo } from '@polkadot-api/descriptors'
+import {
+  Binary,
+  createClient,
+  FixedSizeBinary,
+  SS58String,
+  Transaction,
+  TxEvent,
+  TypedApi
+} from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
 import { entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
@@ -34,13 +42,23 @@ const callBack = (resolve: (thenableOrResult?: unknown) => void) => ({
   }
 })
 
-const getPendingMultisixTx = (multisigTxs: any, multisigInfo: MultisigInfo) => {
+interface MultisigQuery {
+  keyArgs: [SS58String, FixedSizeBinary<32>]
+  value: {
+    when: { height: number; index: number }
+    deposit: bigint
+    depositor: SS58String
+    approvals: SS58String[]
+  }
+}
+
+const getPendingMultisixTx = (multisigTxs: MultisigQuery[], multisigInfo: MultisigInfo) => {
   const curratedMultisigTxs: PendingTx[] = []
 
-  multisigTxs.forEach(({ KeyArgs, Value }: PaseoQueries['Multisig']['Multisigs']) => {
-    const [multisigAddress, txHash] = KeyArgs
+  multisigTxs.forEach(({ keyArgs, value }) => {
+    const [multisigAddress, txHash] = keyArgs
     // this is supposed to be the multisig address that we asked the storage for
-    const info = Value
+    const info = value
 
     // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
     // These 2 should be the same
@@ -117,6 +135,7 @@ export const rejectCurrentMultisigTxs = ({
         const multisigTxs = await api.query.Multisig.Multisigs.getEntries(multisigInfo.address, {
           at: 'best'
         })
+        console.log('multisigTxs', multisigTxs)
         const pendingMultisigTxs = getPendingMultisixTx(multisigTxs, multisigInfo)
 
         if (!pendingMultisigTxs.length) {

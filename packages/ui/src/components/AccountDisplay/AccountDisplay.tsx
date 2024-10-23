@@ -49,7 +49,6 @@ const AccountDisplay = ({
 
   const [isEditing, setIsEditing] = useState(false)
   const isOwnAccount = useMemo(() => ownAddressList.includes(address), [address, ownAddressList])
-
   const { displayName, subIdentity, isLocalNameDisplayed, identity, localName, identityName } =
     useAccountDisplayInfo({
       address

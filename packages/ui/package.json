@@ -37,7 +37,7 @@
     "vite": "^5.4.7"
   },
   "devDependencies": {
-    "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
+    "@chainsafe/cypress-polkadot-wallet": "^2.3.0",
     "@eslint/js": "^9.0.0",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/client-preset": "4.2.5",
