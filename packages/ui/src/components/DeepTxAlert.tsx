@@ -5,7 +5,7 @@ import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-ho
 import { MultisigAggregated, useMultiProxy } from '../contexts/MultiProxyContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { CallDataInfoFromChain, usePendingTx } from '../hooks/usePendingTx'
-import { getIntersection } from '../utils'
+import { getIntersection } from '../utils/arrayUtils'
 import { useModals } from '../contexts/ModalsContext'
 import { Button } from './library'
 import { useAccounts } from '../contexts/AccountsContext'

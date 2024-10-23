@@ -1,60 +1,78 @@
-import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { Keyring, WsProvider, ApiPromise } from '@polkadot/api'
-import { MultisigStorageInfo } from '../../src/types'
 import { PendingTx } from '../../src/hooks/usePendingTx'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { ISubmittableResult, AnyTuple, Codec } from '@polkadot/types/types'
-import { StorageKey } from '@polkadot/types'
+import { paseo } from '@polkadot-api/descriptors'
+import {
+  Binary,
+  createClient,
+  FixedSizeBinary,
+  SS58String,
+  Transaction,
+  TxEvent,
+  TypedApi
+} from 'polkadot-api'
+import { getWsProvider } from 'polkadot-api/ws-provider/web'
+import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
+import { entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
+import { getPolkadotSigner } from 'polkadot-api/signer'
 
 export interface MultisigInfo {
   address: string
   otherSignatories: string[]
   threshold: number
 }
-const callBack =
-  (resolve: (thenableOrResult?: unknown) => void) =>
-  ({ status, txHash }: ISubmittableResult) => {
-    console.log('Transaction status:', status.type)
-    if (status.isBroadcast) {
-      console.log('Broadcasted', txHash.toHex())
+const callBack = (resolve: (thenableOrResult?: unknown) => void) => ({
+  next: (event: TxEvent) => {
+    console.log('Transaction status:', event.type)
+
+    if (event.type === 'broadcasted') {
+      console.log('Broadcasted', event.txHash)
     }
 
-    if (status.isInBlock) {
+    if (event.type === 'txBestBlocksState') {
       console.log('In block')
-    }
-
-    if (status.isFinalized) {
-      console.log('Finalized block hash', status.asFinalized.toHex())
       resolve()
     }
-  }
 
-const getPendingMultisixTx = (
-  multisigTxs: [StorageKey<AnyTuple>, Codec][],
-  multisigInfo: MultisigInfo
-) => {
+    if (event.type === 'finalized') {
+      console.log('Finalized block hash', event.txHash)
+    }
+  },
+  error: (error: Error) => {
+    console.error(error.toString())
+  }
+})
+
+interface MultisigQuery {
+  keyArgs: [SS58String, FixedSizeBinary<32>]
+  value: {
+    when: { height: number; index: number }
+    deposit: bigint
+    depositor: SS58String
+    approvals: SS58String[]
+  }
+}
+
+const getPendingMultisixTx = (multisigTxs: MultisigQuery[], multisigInfo: MultisigInfo) => {
   const curratedMultisigTxs: PendingTx[] = []
 
-  multisigTxs.forEach((storage) => {
+  multisigTxs.forEach(({ keyArgs, value }) => {
+    const [multisigAddress, txHash] = keyArgs
     // this is supposed to be the multisig address that we asked the storage for
-    const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
-    const hash = (storage[0].toHuman() as Array<string>)[1]
-    const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+    const info = value
 
     // Fix for ghost proposals for https://github.com/polkadot-js/apps/issues/9103
     // These 2 should be the same
-    if (multisigFromChain.toLowerCase() !== multisigInfo.address.toLowerCase()) {
+    if (multisigAddress.toLowerCase() !== multisigInfo.address.toLowerCase()) {
       console.error(
         'The onchain call and the one found in the block donot correspond',
-        multisigFromChain,
+        multisigAddress,
         multisigInfo.address
       )
       return
     }
 
     curratedMultisigTxs.push({
-      hash,
+      hash: txHash.asHex(),
       info,
       from: multisigInfo.address
     })
@@ -67,9 +85,9 @@ const getRejectionsTxs = (
   pendingMultisigTxs: PendingTx[],
   account: InjectedAccountWitMnemonic,
   multisigInfo: MultisigInfo,
-  api: ApiPromise
+  api: TypedApi<typeof paseo>
 ) => {
-  const allTxs: SubmittableExtrinsic<'promise', ISubmittableResult>[] = []
+  const allTxs: Transaction<any, any, any, any>[] = []
   pendingMultisigTxs.forEach((pendingMultisigTx) => {
     const depositor = pendingMultisigTx.info.depositor
     if (depositor !== account.address) {
@@ -77,12 +95,13 @@ const getRejectionsTxs = (
       return
     }
 
-    const rejectCurrent = api.tx.multisig.cancelAsMulti(
-      multisigInfo.threshold,
-      multisigInfo.otherSignatories,
-      pendingMultisigTx.info.when,
-      pendingMultisigTx.hash
-    )
+    const rejectCurrent = api.tx.Multisig.cancel_as_multi({
+      threshold: multisigInfo.threshold,
+      other_signatories: multisigInfo.otherSignatories,
+      timepoint: pendingMultisigTx.info.when,
+      call_hash: Binary.fromHex(pendingMultisigTx.hash)
+    })
+
     allTxs.push(rejectCurrent)
   })
 
@@ -92,7 +111,7 @@ const getRejectionsTxs = (
 export const rejectCurrentMultisigTxs = ({
   account,
   multisigInfo,
-  WSendpoint
+  WSendpoint: wSendpoint
 }: {
   account: InjectedAccountWitMnemonic
   multisigInfo: MultisigInfo
@@ -104,15 +123,19 @@ export const rejectCurrentMultisigTxs = ({
     { timeout: 30000 },
     () =>
       new Cypress.Promise(async (resolve) => {
-        await cryptoWaitReady()
+        // ALICE ACCOUNT
+        const derive = sr25519CreateDerive(entropyToMiniSecret(mnemonicToEntropy(account.mnemonic)))
+        const aliceKeyPair = derive('')
+        const aliceSigner = getPolkadotSigner(aliceKeyPair.publicKey, 'Sr25519', aliceKeyPair.sign)
 
-        const keyring = new Keyring({ type: 'sr25519' })
-        keyring.addFromMnemonic(account.mnemonic)
+        // CLIENT AND API
+        const client = createClient(getWsProvider(wSendpoint))
+        const api = client.getTypedApi(paseo)
 
-        const wsProvider = new WsProvider(WSendpoint)
-        const api = await ApiPromise.create({ provider: wsProvider })
-
-        const multisigTxs = await api.query.multisig.multisigs.entries(multisigInfo.address)
+        const multisigTxs = await api.query.Multisig.Multisigs.getEntries(multisigInfo.address, {
+          at: 'best'
+        })
+        console.log('multisigTxs', multisigTxs)
         const pendingMultisigTxs = getPendingMultisixTx(multisigTxs, multisigInfo)
 
         if (!pendingMultisigTxs.length) {
@@ -123,17 +146,15 @@ export const rejectCurrentMultisigTxs = ({
 
         console.log('pendingMultisigTxs', pendingMultisigTxs)
 
-        const allTxs = getRejectionsTxs(pendingMultisigTxs, account, multisigInfo, api)
+        const allTxs = getRejectionsTxs(pendingMultisigTxs, account, multisigInfo, api).map(
+          (tx) => tx.decodedCall
+        )
 
         console.log(`The multisig has ${allTxs.length} pending txs. Rejecting them now`)
 
-        api.tx.utility
-          .batchAll(allTxs)
-          .signAndSend(
-            keyring.getPair(account.address),
-            { withSignedTransaction: true },
-            callBack(resolve)
-          )
+        api.tx.Utility.batch_all({ calls: allTxs })
+          .signSubmitAndWatch(aliceSigner, { at: 'best' })
+          .subscribe(callBack(resolve))
       })
   )
 }

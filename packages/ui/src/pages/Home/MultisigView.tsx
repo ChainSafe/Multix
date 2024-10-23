@@ -6,7 +6,7 @@ import { Chip } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
-import { camelcaseToString } from '../../utils'
+import { camelcaseToString } from '../../utils/camelcasetoString'
 
 const MultisigView = () => {
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()

@@ -7,9 +7,7 @@ import { useApi } from '../../contexts/ApiContext'
 import { MultisigAggregated, useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
-import { useToasts } from '../../contexts/ToastContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
@@ -17,10 +15,12 @@ import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { ParentMultisigInfo } from '../DeepTxAlert'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
 import { ProxyType } from '../../../types-and-hooks'
-import { HexString } from '../../types'
-import { getDisplayArgs, getErrorMessageReservedFunds, getExtrinsicName } from '../../utils'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
+import { hashFromTx } from '../../utils/txHash'
+import { HexString } from 'polkadot-api'
 
 export interface DeepTxCreationProps {
   onClose: () => void
@@ -41,12 +41,10 @@ const DeepTxCreationModal = ({
   parentMultisigInfo,
   currentMultisigInvolved
 }: DeepTxCreationProps) => {
-  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, compatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { selectedAccount, selectedSigner } = useAccounts()
+  const { selectedAccount } = useAccounts()
   const [errorMessage, setErrorMessage] = useState<ReactNode | string>('')
-  const { addToast } = useToasts()
   const { selectedMultiProxy, getMultisigByAddress, setRefetchMultisigTimeoutMinutes } =
     useMultiProxy()
   const [addedCallData, setAddedCallData] = useState<HexString | undefined>()
@@ -64,7 +62,7 @@ const DeepTxCreationModal = ({
   // this will never be a proxy, if there's a proxy, it's already in the call
   const parentMultisigTx = useGetMultisigTx({
     fromAddress: parentMultisigInfo.parentSignatoryAddress,
-    extrinsicToCall: (api && parentCallInfo?.call && api.tx(parentCallInfo?.call)) || undefined,
+    extrinsicToCall: (api && parentCallInfo?.call && parentCallInfo?.call) || undefined,
     senderAddress: parentMultisigInfo.parentSignatoryAddress,
     isProxy: false,
     threshold: parentMultisigInfo.threshold,
@@ -86,7 +84,7 @@ const DeepTxCreationModal = ({
   // and calls a asMulti because it's a creation
   const fullTx = useGetMultisigTx({
     fromAddress: parentMultisigInfo.parentSignatoryAddress,
-    extrinsicToCall: (api && parentMultisigTx && api.tx(parentMultisigTx)) || undefined,
+    extrinsicToCall: (api && parentMultisigTx && parentMultisigTx) || undefined,
     senderAddress: selectedAccount?.address,
     isProxy: !!parentMultisigInfo.isSignatoryProxy,
     threshold: currentMultisigInvolved?.threshold,
@@ -112,24 +110,43 @@ const DeepTxCreationModal = ({
     onClose()
   }, [onClose])
 
-  const signCallback = useSigningCallback({ onSuccess, onSubmitting })
+  const signCallback = useSigningCallback({
+    onSuccess: () => {
+      onSuccess && onSuccess()
+      //   // poll for 1min if the tx may make changes
+      //   // such as creating a proxy, adding/removing a multisig
+      if (mustSubmitCallData) {
+        setRefetchMultisigTimeoutMinutes(1)
+      }
+    },
+    onSubmitting,
+    onError: () => setIsSubmitting(false)
+  })
 
   useEffect(() => {
-    if (!!parentCallInfo?.call && parentCallInfo.call.hash.toHex() !== proposalData.hash) {
+    if (!compatibilityToken) {
+      return
+    }
+
+    const hash =
+      !!parentCallInfo?.call &&
+      hashFromTx(parentCallInfo?.call?.getEncodedData(compatibilityToken).asHex())
+
+    if (hash !== proposalData.hash) {
       setErrorMessage("The callData provided doesn't match with the on-chain transaction")
       return
     }
-  }, [parentCallInfo, proposalData])
+  }, [compatibilityToken, parentCallInfo, proposalData])
 
   useEffect(() => {
-    if (!multisigProposalNeededFunds.isZero() && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBnBalance(
+    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(
         multisigProposalNeededFunds,
         chainInfo?.tokenDecimals,
         { tokenSymbol: chainInfo?.tokenSymbol }
       )
 
-      const reservedString = formatBnBalance(reserved, chainInfo?.tokenDecimals, {
+      const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
       const errorWithReservedFunds = getErrorMessageReservedFunds(
@@ -150,7 +167,7 @@ const DeepTxCreationModal = ({
     }
 
     if (!selectedAccount) {
-      const error = 'No selected address or multisig/proxy'
+      const error = 'No selected account'
       console.error(error)
       setErrorMessage(error)
       return
@@ -174,38 +191,9 @@ const DeepTxCreationModal = ({
     setIsSubmitting(true)
 
     fullTx
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner, withSignedTransaction: true },
-        signCallback
-      )
-      .then(() => {
-        // poll for 1min if the tx may make changes
-        // such as creating a proxy, adding/removing a multisig
-        if (mustSubmitCallData) {
-          setRefetchMultisigTimeoutMinutes(1)
-        }
-      })
-      .catch((error: Error) => {
-        setIsSubmitting(false)
-        addToast({
-          title: error.message,
-          type: 'error',
-          link: getSubscanExtrinsicLink(fullTx.hash.toHex())
-        })
-      })
-  }, [
-    api,
-    selectedAccount,
-    mustSubmitCallData,
-    parentCallInfo,
-    fullTx,
-    selectedSigner,
-    signCallback,
-    setRefetchMultisigTimeoutMinutes,
-    addToast,
-    getSubscanExtrinsicLink
-  ])
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallback)
+  }, [api, mustSubmitCallData, parentCallInfo, fullTx, selectedAccount, signCallback])
 
   const onAddedCallDataChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -315,7 +303,7 @@ const DeepTxCreationModal = ({
                     proposalData.callData
                       ? proposalData
                       : {
-                          args: getDisplayArgs(parentCallInfo?.call),
+                          decodedCall: parentCallInfo?.call.decodedCall,
                           callData: addedCallData,
                           name: getExtrinsicName(parentCallInfo?.section, parentCallInfo?.method)
                         }

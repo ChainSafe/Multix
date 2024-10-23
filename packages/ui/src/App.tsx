@@ -14,6 +14,9 @@ import { WatchedAddressesContextProvider } from './contexts/WatchedAddressesCont
 import { WalletConnectContextProvider } from './contexts/WalletConnectContext'
 import { ModalsContextProvider } from './contexts/ModalsContext'
 import { PplApiContextProvider } from './contexts/PeopleChainApiContext'
+import { ReactiveDotProvider } from '@reactive-dot/react'
+import { config } from './walletConfigs'
+import { Suspense } from 'react'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -21,29 +24,33 @@ const App = () => {
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
-      <ToastContextProvider>
-        <NetworkContextProvider>
-          <QueryClientProvider client={queryClient}>
-            <ApiContextProvider>
-              <PplApiContextProvider>
-                <WatchedAddressesContextProvider>
-                  <AccountContextProvider>
-                    <AccountNamesContextProvider>
-                      <MultiProxyContextProvider>
-                        <WalletConnectContextProvider>
-                          <ModalsContextProvider>
-                            <MainLayout />
-                          </ModalsContextProvider>
-                        </WalletConnectContextProvider>
-                      </MultiProxyContextProvider>
-                    </AccountNamesContextProvider>
-                  </AccountContextProvider>
-                </WatchedAddressesContextProvider>
-              </PplApiContextProvider>
-            </ApiContextProvider>
-          </QueryClientProvider>
-        </NetworkContextProvider>
-      </ToastContextProvider>
+      <ReactiveDotProvider config={config}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ToastContextProvider>
+            <NetworkContextProvider>
+              <QueryClientProvider client={queryClient}>
+                <ApiContextProvider>
+                  <PplApiContextProvider>
+                    <WatchedAddressesContextProvider>
+                      <AccountContextProvider>
+                        <AccountNamesContextProvider>
+                          <MultiProxyContextProvider>
+                            <WalletConnectContextProvider>
+                              <ModalsContextProvider>
+                                <MainLayout />
+                              </ModalsContextProvider>
+                            </WalletConnectContextProvider>
+                          </MultiProxyContextProvider>
+                        </AccountNamesContextProvider>
+                      </AccountContextProvider>
+                    </WatchedAddressesContextProvider>
+                  </PplApiContextProvider>
+                </ApiContextProvider>
+              </QueryClientProvider>
+            </NetworkContextProvider>
+          </ToastContextProvider>
+        </Suspense>
+      </ReactiveDotProvider>
     </MuiThemeProvider>
   )
 }

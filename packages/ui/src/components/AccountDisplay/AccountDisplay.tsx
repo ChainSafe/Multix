@@ -2,7 +2,7 @@ import { Box, Tooltip } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { AccountBadge, IconSizeVariant } from '../../types'
-import { getDisplayAddress } from '../../utils'
+import { getDisplayAddress } from '../../utils/getDisplayAddress'
 import IdenticonBadge from '../IdenticonBadge'
 import IdentityIcon from '../IdentityIcon'
 import Balance from '../library/Balance'
@@ -49,7 +49,6 @@ const AccountDisplay = ({
 
   const [isEditing, setIsEditing] = useState(false)
   const isOwnAccount = useMemo(() => ownAddressList.includes(address), [address, ownAddressList])
-
   const { displayName, subIdentity, isLocalNameDisplayed, identity, localName, identityName } =
     useAccountDisplayInfo({
       address
