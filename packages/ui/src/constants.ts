@@ -19,6 +19,7 @@ import { nodesJoystreamSVG } from './logos/joystreamSVG'
 import { chainsWatrPNG } from './logos/watrPNG'
 import paseoSVG from './logos/paseoSVG.svg'
 import { nodesCoretimeSVG } from './logos/coretimeSVG'
+import { availPng } from './logos/availPNG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -219,6 +220,20 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKiltPNG
   },
+  avail: {
+    chainId: 'avail',
+    explorerNetworkName: 'avail',
+    rpcUrl: 'wss://mainnet-rpc.avail.so/ws',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: availPng
+  },
+  'turing-avail': {
+    chainId: 'turing-avail',
+    explorerNetworkName: 'avail-turing',
+    rpcUrl: 'wss://turing-rpc.avail.so/ws',
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: availPng
+  },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
@@ -253,12 +268,14 @@ export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = 
 ]
 export const soloChains: Partial<keyof typeof networkList>[] = [
   //joystream
+  // 'avail'
 ]
 export const testChains: Partial<keyof typeof networkList>[] = [
   // 'rococo',
   'paseo',
   // 'rhala testnet',
   'westend',
+  'turing-avail',
   'local'
 ]
 

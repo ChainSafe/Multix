@@ -58,6 +58,11 @@ deploy:
       cmd: ['sqd', 'start-coretime-kusama']
     - name: coretime-polkadot-processor
       cmd: ['sqd', 'start-coretime-polkadot']
+    - name: turing-avail-processor
+      cmd: ['sqd', 'start-turing-avail']
+    # - name: avail-processor
+    #   cmd: ['sqd', 'start-avail']
+
   # api:
   #   env:
   # SQD_DEBUG: sqd:graphql-server

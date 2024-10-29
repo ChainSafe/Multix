@@ -229,6 +229,26 @@
         "lib/main",
         "dotenv_config_path=assets/envs/.env.coretime-kusama"
       ]
+    },
+    "start-avail": {
+      "description": "starts the indexer with avail",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.avail"
+      ]
+    },
+    "start-turing-avail": {
+      "description": "starts the indexer with turing-avail",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.turing-avail"
+      ]
     }
   }
 }
