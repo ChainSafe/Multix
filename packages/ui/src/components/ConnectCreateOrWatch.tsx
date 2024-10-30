@@ -17,7 +17,7 @@ export const ConnectOrWatch = () => {
 
   return (
     <WrapperStyled>
-      {watchedAddresses.length !== 0 ? (
+      {isAllowedToConnectToExtension || watchedAddresses.length !== 0 ? (
         <div data-cy="label-no-multisig-found">
           No multisig found for your accounts or watched accounts on{' '}
           <NetworkNameStyled>{selectedNetwork}</NetworkNameStyled>.

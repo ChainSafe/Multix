@@ -105,10 +105,13 @@ const Header = ({ handleDrawerOpen }: Props) => {
           </MobileIconButtonStyled>
         </Toolbar>
       </MuiAppBarStyled>
-      <ConnectionDialog
-        open={isConnectionDialogOpen}
-        onClose={() => setIsConnectionDialogOpen(false)}
-      />
+      {isConnectionDialogOpen && (
+        <ConnectionDialog
+          data-cy="dialog-connection"
+          open={isConnectionDialogOpen}
+          onClose={() => setIsConnectionDialogOpen(false)}
+        />
+      )}
     </>
   )
 }
