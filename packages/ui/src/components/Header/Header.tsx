@@ -25,7 +25,8 @@ const Header = ({ handleDrawerOpen }: Props) => {
     ownAccountList,
     selectAccount,
     isConnectionDialogOpen,
-    setIsConnectionDialogOpen
+    setIsConnectionDialogOpen,
+    allowConnectionToExtension
   } = useAccounts()
   const isAccountConnected = useMemo(() => !isEmptyArray(ownAccountList), [ownAccountList])
   const [params] = useSearchParams()
@@ -72,7 +73,10 @@ const Header = ({ handleDrawerOpen }: Props) => {
               {ownAccountList.length === 0 && (
                 <ConnectButtonStyled
                   data-cy="button-menu-connect"
-                  onClick={() => setIsConnectionDialogOpen(true)}
+                  onClick={() => {
+                    setIsConnectionDialogOpen(true)
+                    allowConnectionToExtension()
+                  }}
                   variant="primary"
                 >
                   Connect

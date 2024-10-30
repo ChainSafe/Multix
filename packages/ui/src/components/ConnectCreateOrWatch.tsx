@@ -8,7 +8,8 @@ import { useNetwork } from '../contexts/NetworkContext'
 import { useAccounts } from '../contexts/AccountsContext'
 
 export const ConnectOrWatch = () => {
-  const { setIsConnectionDialogOpen } = useAccounts()
+  const { setIsConnectionDialogOpen, isAllowedToConnectToExtension, allowConnectionToExtension } =
+    useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -32,7 +33,7 @@ export const ConnectOrWatch = () => {
         </>
       )}
       <ButtonWrapperStyled>
-        {/* {isAllowedToConnectToExtension ? (
+        {isAllowedToConnectToExtension ? (
           <Button
             variant="primary"
             onClick={() => {
@@ -45,14 +46,18 @@ export const ConnectOrWatch = () => {
           >
             Create one
           </Button>
-        ) : ( */}
-        <Button
-          variant="primary"
-          onClick={() => setIsConnectionDialogOpen(true)}
-          data-cy="button-connect-wallet"
-        >
-          Connect Wallet
-        </Button>
+        ) : (
+          <Button
+            variant="primary"
+            onClick={() => {
+              setIsConnectionDialogOpen(true)
+              allowConnectionToExtension()
+            }}
+            data-cy="button-connect-wallet"
+          >
+            Connect Wallet
+          </Button>
+        )}
         or
         <Button
           onClick={() => {

@@ -13,13 +13,17 @@ import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from '../contexts/NetworkContext'
 
 export const useDisplayError = () => {
-  const { ownAccountList } = useAccounts()
+  const { ownAccountList, isAllowedToConnectToExtension } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
   const [, setSearchParams] = useSearchParams()
   const { selectedNetwork } = useNetwork()
 
-  if (watchedAddresses.length === 0 && ownAccountList.length === 0) {
+  if (
+    watchedAddresses.length === 0 &&
+    ownAccountList.length === 0 &&
+    isAllowedToConnectToExtension
+  ) {
     return (
       <CenterStyled>
         <div data-cy="label-no-account-found">

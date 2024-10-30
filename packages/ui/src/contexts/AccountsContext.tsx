@@ -5,7 +5,8 @@ import React, {
   useCallback,
   useMemo,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  useEffect
 } from 'react'
 // import { PolkadotSigner } from 'polkadot-api'
 import { useAccounts as useRedotAccounts } from '@reactive-dot/react'
@@ -14,7 +15,7 @@ import { encodeAccounts } from '../utils/encodeAccounts'
 import { InjectedPolkadotAccount } from 'polkadot-api/pjs-signer'
 
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
-// const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
+const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
 
 type AccountContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -29,8 +30,8 @@ export interface IAccountContext {
   // isAccountLoading: boolean
   // isExtensionError: boolean
   // selectedSigner?: PolkadotSigner
-  // allowConnectionToExtension: () => void
-  // isAllowedToConnectToExtension: boolean
+  allowConnectionToExtension: () => void
+  isAllowedToConnectToExtension: boolean
   // isLocalStorageSetupDone: boolean
   isConnectionDialogOpen: boolean
   setIsConnectionDialogOpen: Dispatch<SetStateAction<boolean>>
@@ -52,7 +53,7 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   // const [isAccountLoading, setIsAccountLoading] = useState(false)
   // const [isExtensionError, setIsExtensionError] = useState(false)
   // const [selectedSigner, setSelectedSigner] = useState<PolkadotSigner | undefined>()
-  // const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
+  const [isAllowedToConnectToExtension, setIsAllowedToConnectToExtension] = useState(false)
   const ownAddressList = useMemo(
     () => (ownAccountList || []).map((a) => a.address),
     [ownAccountList]
@@ -76,10 +77,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     [ownAccountList]
   )
 
-  // const allowConnectionToExtension = useCallback(() => {
-  //   localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, 'true')
-  //   setIsAllowedToConnectToExtension(true)
-  // }, [])
+  const allowConnectionToExtension = useCallback(() => {
+    localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, 'true')
+    setIsAllowedToConnectToExtension(true)
+  }, [])
 
   const selectAccount = useCallback((account: InjectedPolkadotAccount) => {
     localStorage.setItem(LOCALSTORAGE_SELECTED_ACCOUNT_KEY, account.address)
@@ -162,15 +163,15 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
   //   accountGotRequested
   // ])
 
-  // useEffect(() => {
-  //   if (!isAllowedToConnectToExtension) {
-  //     const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
-  //     if (previouslyAllowed === 'true') {
-  //       setIsAllowedToConnectToExtension(true)
-  //     }
-  //     setIsLocalStorageSetupDone(true)
-  //   }
-  // }, [isAllowedToConnectToExtension])
+  useEffect(() => {
+    if (!isAllowedToConnectToExtension) {
+      const previouslyAllowed = localStorage.getItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY)
+      if (previouslyAllowed === 'true') {
+        setIsAllowedToConnectToExtension(true)
+      }
+      // setIsLocalStorageSetupDone(true)
+    }
+  }, [isAllowedToConnectToExtension])
 
   // useEffect(() => {
   //   if (!selectedAccount) return
@@ -196,10 +197,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
         // isExtensionError,
         getAccountByAddress,
         isConnectionDialogOpen,
-        setIsConnectionDialogOpen
+        setIsConnectionDialogOpen,
         // selectedSigner,
-        // allowConnectionToExtension,
-        // isAllowedToConnectToExtension,
+        allowConnectionToExtension,
+        isAllowedToConnectToExtension
         // isLocalStorageSetupDone
       }}
     >
