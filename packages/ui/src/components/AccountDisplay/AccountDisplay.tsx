@@ -100,15 +100,15 @@ const AccountDisplay = ({
                   className="multisigName"
                   data-cy="label-account-name"
                 >
-                  {displayName}
                   {!isLocalNameDisplayed && !!subIdentity && (
                     <span
                       className="subIdentity"
                       data-cy="label-sub-identity"
                     >
-                      /{subIdentity}
+                      {subIdentity}/
                     </span>
                   )}
+                  {displayName}
                 </NameStyled>
                 {canEdit && !displayName && (
                   <NoNameStyled data-cy="label-no-name">No Name</NoNameStyled>
