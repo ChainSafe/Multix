@@ -21,9 +21,19 @@ describe('Connect Account', () => {
       cy.wrap(requests.length).should('eq', 1)
       // this request should be from the application Multix
       cy.wrap(requests[0].origin).should('eq', MULTIX_DAPP_NAME)
-      // let's allow it for Alice
+
+      // it is expected for now to have an unhandled exception from dot-connect
+      // upon rejection of the auth request
+      cy.on('uncaught:exception', (err) => {
+        expect(err.message).to.include('Cancelled')
+
+        // return false to prevent the error from
+        // failing this test
+        return false
+      })
+
+      // auth is rejected
       cy.rejectAuth(requests[0].id, 'Cancelled')
-      // the ui should then move on to connecting to the rpcs
       landingPage
         .noAccountFoundError()
         .should(
