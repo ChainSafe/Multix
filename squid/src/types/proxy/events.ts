@@ -6,6 +6,8 @@ import * as v9180 from '../v9180'
 import * as v9190 from '../v9190'
 import * as v9300 from '../v9300'
 import * as v9420 from '../v9420'
+import * as v1002006 from '../v1002006'
+import * as v1003000 from '../v1003000'
 
 export const anonymousCreated =  {
     name: 'Proxy.AnonymousCreated',
@@ -90,6 +92,30 @@ export const proxyAdded =  {
             delay: sts.number(),
         })
     ),
+    /**
+     * A proxy was added.
+     */
+    v1002006: new EventType(
+        'Proxy.ProxyAdded',
+        sts.struct({
+            delegator: v1002006.AccountId32,
+            delegatee: v1002006.AccountId32,
+            proxyType: v1002006.ProxyType,
+            delay: sts.number(),
+        })
+    ),
+    /**
+     * A proxy was added.
+     */
+    v1003000: new EventType(
+        'Proxy.ProxyAdded',
+        sts.struct({
+            delegator: v1003000.AccountId32,
+            delegatee: v1003000.AccountId32,
+            proxyType: v1003000.ProxyType,
+            delay: sts.number(),
+        })
+    ),
 }
 
 export const proxyRemoved =  {
@@ -115,6 +141,30 @@ export const proxyRemoved =  {
             delegator: v9420.AccountId32,
             delegatee: v9420.AccountId32,
             proxyType: v9420.ProxyType,
+            delay: sts.number(),
+        })
+    ),
+    /**
+     * A proxy was removed.
+     */
+    v1002006: new EventType(
+        'Proxy.ProxyRemoved',
+        sts.struct({
+            delegator: v1002006.AccountId32,
+            delegatee: v1002006.AccountId32,
+            proxyType: v1002006.ProxyType,
+            delay: sts.number(),
+        })
+    ),
+    /**
+     * A proxy was removed.
+     */
+    v1003000: new EventType(
+        'Proxy.ProxyRemoved',
+        sts.struct({
+            delegator: v1003000.AccountId32,
+            delegatee: v1003000.AccountId32,
+            proxyType: v1003000.ProxyType,
             delay: sts.number(),
         })
     ),
@@ -145,6 +195,32 @@ export const pureCreated =  {
             pure: v9420.AccountId32,
             who: v9420.AccountId32,
             proxyType: v9420.ProxyType,
+            disambiguationIndex: sts.number(),
+        })
+    ),
+    /**
+     * A pure account has been created by new proxy with given
+     * disambiguation index and proxy type.
+     */
+    v1002006: new EventType(
+        'Proxy.PureCreated',
+        sts.struct({
+            pure: v1002006.AccountId32,
+            who: v1002006.AccountId32,
+            proxyType: v1002006.ProxyType,
+            disambiguationIndex: sts.number(),
+        })
+    ),
+    /**
+     * A pure account has been created by new proxy with given
+     * disambiguation index and proxy type.
+     */
+    v1003000: new EventType(
+        'Proxy.PureCreated',
+        sts.struct({
+            pure: v1003000.AccountId32,
+            who: v1003000.AccountId32,
+            proxyType: v1003000.ProxyType,
             disambiguationIndex: sts.number(),
         })
     ),
