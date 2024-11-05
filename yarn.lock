@@ -7660,9 +7660,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dot-connect@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "dot-connect@npm:0.11.0"
+"dot-connect@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "dot-connect@npm:0.12.0"
   dependencies:
     "@lit-labs/preact-signals": ^1.0.2
     "@lit/react": ^1.0.6
@@ -7671,12 +7671,12 @@ __metadata:
     lit: ^3.2.1
     qrcode: ^1.5.4
   peerDependencies:
-    "@reactive-dot/core": "*"
+    "@reactive-dot/core": ">= 0.25.1"
     react: ">= 18"
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 1d47846f722bd48b439f21ea0ccb5d813f8c75e9ed21108c9a14fa5cfbd0ac5038659f4a11a225bd5118d2c44dea05bbc4e7aa06817af6db53b74146879e525d
+  checksum: 679715ad5603054056a29c6b229fb2c64b9a14a87b51d6e04797915fec7d58ccbd5c40a6126406091ec8772e4a0813159a7d80adea3b9264fd46627fe05e1f83
   languageName: node
   linkType: hard
 
@@ -10971,7 +10971,7 @@ __metadata:
     cypress: ^13.12.0
     cypress-wait-until: ^3.0.1
     dayjs: ^1.11.10
-    dot-connect: ^0.11.0
+    dot-connect: ^0.12.0
     eslint: ^8.57.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-cypress: ^2.15.2

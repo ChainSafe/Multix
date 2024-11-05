@@ -22,16 +22,6 @@ describe('Connect Account', () => {
       // this request should be from the application Multix
       cy.wrap(requests[0].origin).should('eq', MULTIX_DAPP_NAME)
 
-      // it is expected for now to have an unhandled exception from dot-connect
-      // upon rejection of the auth request
-      cy.on('uncaught:exception', (err) => {
-        expect(err.message).to.include('Cancelled')
-
-        // return false to prevent the error from
-        // failing this test
-        return false
-      })
-
       // auth is rejected
       cy.rejectAuth(requests[0].id, 'Cancelled')
       landingPage
