@@ -9,7 +9,6 @@ export const useDisplayLoader = () => {
   const { isLoading: isLoadingMultisigs } = useMultiProxy()
   const { api } = useApi()
   const { selectedNetworkInfo } = useNetwork()
-  // const { isAccountLoading, isLocalStorageSetupDone } = useAccounts()
   const { isInitialized: isWatchAddressInitialized } = useWatchedAddresses()
 
   if (!isWatchAddressInitialized) {
@@ -29,15 +28,6 @@ export const useDisplayLoader = () => {
       />
     )
   }
-
-  // if (isAccountLoading) {
-  //   return (
-  //     <LoadingBox
-  //       message="Loading your accounts..."
-  //       testId="accounts-connection"
-  //     />
-  //   )
-  // }
 
   if (isLoadingMultisigs) {
     return (

@@ -3609,7 +3609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/api@npm:13.1.1, @polkadot/api@npm:^13.1.1":
+"@polkadot/api@npm:13.1.1":
   version: 13.1.1
   resolution: "@polkadot/api@npm:13.1.1"
   dependencies:
@@ -4010,7 +4010,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/types@npm:13.1.1, @polkadot/types@npm:^13.1.1":
+"@polkadot/types@npm:13.1.1":
   version: 13.1.1
   resolution: "@polkadot/types@npm:13.1.1"
   dependencies:
@@ -10965,10 +10965,8 @@ __metadata:
     "@polkadot-api/tx-utils": ^0.0.4
     "@polkadot-labs/hdkd": ^0.0.8
     "@polkadot-labs/hdkd-helpers": ^0.0.8
-    "@polkadot/api": ^13.1.1
     "@polkadot/react-identicon": ^3.10.1
     "@polkadot/typegen": ^13.1.1
-    "@polkadot/types": ^13.1.1
     "@polkadot/util-crypto": ^13.1.1
     "@reactive-dot/core": ^0.19.0
     "@reactive-dot/react": ^0.19.0
@@ -10999,7 +10997,6 @@ __metadata:
     react-icons: ^5.1.0
     react-router-dom: ^6.22.3
     reactflow: ^11.11.1
-    rxjs: ^7.8.1
     ts-node: ^10.9.2
     typescript: 5.4.5
     vite: ^5.4.7

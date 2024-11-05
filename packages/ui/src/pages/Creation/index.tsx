@@ -296,12 +296,6 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    // const remarkTx = await api.txFromCallData(
-    //   Binary.fromHex(
-    //     '0x1701020004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0000004c637265617465642077697468204d756c7469780000',
-    //   ),
-    // );
-
     remarkCall
       .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
       .subscribe(signCallBack)

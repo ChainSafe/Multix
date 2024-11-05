@@ -24,12 +24,6 @@ export interface ChainInfoHuman {
   tokenSymbol: string
 }
 
-// interface RawChainInfoHuman {
-//   ss58Format: string
-//   tokenDecimals: string[]
-//   tokenSymbol: string[]
-// }
-
 const PplApiContext = createContext<IApiContext | undefined>(undefined)
 
 const PplApiContextProvider = ({ children }: ApiContextProps) => {

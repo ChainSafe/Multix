@@ -46,34 +46,6 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
           }
         }
 
-        //   {
-        //     "type": "Multisig",
-        //     "value": {
-        //         "type": "MultisigExecuted",
-        //         "value": {
-        //             "approving": "16Xntgq5gXJ3eivd9uKyWBzZQMxoCMW5Lv87J3Rso6fgg5B9",
-        //             "timepoint": {
-        //                 "height": 3339833,
-        //                 "index": 2
-        //             },
-        //             "multisig": "1FybbmNTWxd3DDYuqoJBP7NSKEGNZZMA231XS1Ytx5vhkN3",
-        //             "call_hash": "ʷ��\u00188�~W!D\f��\\O7(��J�\u0017�F�J/��P",
-        //             "result": {
-        //                 "success": false,
-        //                 "value": {
-        //                     "type": "Module",
-        //                     "value": {
-        //                         "type": "Balances",
-        //                         "value": {
-        //                             "type": "InsufficientBalance"
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
         event.events.forEach((event) => {
           console.log(JSONprint(event))
 
@@ -108,38 +80,6 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
       if (event.type === 'finalized') {
         console.log('finalized:', event)
         onFinalized && onFinalized()
-
-        // event.events.forEach(({type, value}) => {
-        // const { data, method, section } = event
-
-        // console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString())
-
-        // const incomplete = getIncompleteMessage({ event } as EventRecord)
-
-        // // check if multisig or proxy or batch has an error
-        // if (incomplete) {
-        //   errorInfo = incomplete
-        // }
-
-        // if the extrinsic fails alltogether
-        // if (!errorInfo && api.events.system.ExtrinsicFailed.is(event)) {
-        //   // extract the data for this event
-        //   const dispatchError = data[0]
-
-        //   // decode the error
-        //   if ((dispatchError as any).isModule) {
-        //     // for module errors, we have the section indexed, lookup
-        //     // (For specific known errors, we can also do a check against the
-        //     // api.errors.<module>.<ErrorName>.is(dispatchError.asModule) guard)
-        //     const decoded = api.registry.findMetaError((dispatchError as any).asModule)
-
-        //     errorInfo = `${decoded.docs} - ${decoded.section}.${decoded.name}`
-        //   } else {
-        //     // Other, CannotLookup, BadOrigin, no extra info
-        //     errorInfo = dispatchError.toString()
-        //   }
-        // }
-        // })
       }
     },
     error: (error: Error) => {
