@@ -6,8 +6,10 @@ export const useGetWalletConnectNamespace = () => {
   const [genesisHash, setGenesisHash] = useState('')
 
   useEffect(() => {
+    if (!client) return
+
     client
-      ?.getChainSpecData()
+      .getChainSpecData()
       .then((data) => setGenesisHash(data.genesisHash))
       .catch(console.error)
   }, [client])

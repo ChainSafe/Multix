@@ -4,6 +4,7 @@ import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
 import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
+import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import {
   acala,
   bifrostDot,
@@ -77,27 +78,27 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
     switch (selectedNetworkInfo?.chainId) {
       case 'kusama':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(ksm)
         break
       case 'asset-hub-dot':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(dotAssetHub)
         break
       case 'asset-hub-ksm':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(ksmAssetHub)
         break
       case 'acala':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(acala)
         break
       case 'bifrost-dot':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(bifrostDot)
         break
       case 'phala':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(phala)
         break
       // case 'rhala':
@@ -105,7 +106,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
       //   typedApi = cl.getTypedApi(rhala)
       //   break
       case 'khala':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(khala)
         break
       // case 'rococo':
@@ -116,17 +117,17 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
       //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
       //   typedApi = cl.getTypedApi(rococoAssetHub)
       //   break
-      case 'hydration':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      case 'hydradx':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(hydration)
         break
       case 'paseo':
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(paseo)
         break
 
       default:
-        cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
         typedApi = cl.getTypedApi(dot)
     }
     setClient(cl)
