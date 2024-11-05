@@ -17,7 +17,7 @@ export const useGetIdentity = () => {
         return
       }
 
-      const { display, parentAddress } = await (
+      const { sub, parentAddress } = await (
         api as TypedApi<typeof dotPpl>
       ).query.Identity.SuperOf.getValue(address, { at: 'best' }).then((res) => {
         const [parentAddress, parentIdentity] = res || []
@@ -26,13 +26,12 @@ export const useGetIdentity = () => {
           return { parentAddress: '', display: '' }
         }
 
-        const display =
-          (parentIdentity.type !== 'None' &&
-            parentIdentity.value &&
-            (parentIdentity.value as FixedSizeBinary<3>).asText()) ||
-          ''
+        const sub =
+          parentIdentity.type !== 'None' && parentIdentity.value
+            ? (parentIdentity.value as FixedSizeBinary<3>).asText()
+            : ''
 
-        return { display, parentAddress }
+        return { sub, parentAddress }
       })
 
       const addressToUse = parentAddress || address
@@ -43,7 +42,7 @@ export const useGetIdentity = () => {
           at: 'best'
         }
       ).then((val) => {
-        const id: IdentityInfo = { judgements: [], display }
+        const id: IdentityInfo = { judgements: [], sub }
         val?.[0].judgements.forEach(([, judgement]) => {
           id.judgements.push(judgement.type)
         })
@@ -53,13 +52,7 @@ export const useGetIdentity = () => {
             // console.log('value', JSONprint(value));
             const text = (value as IdentityData)?.value as FixedSizeBinary<2> | undefined
             if (text) {
-              // if it has a parent this is the sub name
-              // as the display name is already set
-              if (key === 'display' && !!parentAddress) {
-                id['sub'] = text.asText()
-              } else {
-                id[key] = text.asText()
-              }
+              id[key] = text.asText()
             }
           }
         })

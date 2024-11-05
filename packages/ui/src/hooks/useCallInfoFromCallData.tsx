@@ -25,25 +25,31 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
 
     setIsGettingCallInfo(true)
 
-    const tx = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
+    try {
+      const tx = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
 
-    tx.getPaymentInfo(PAYMENT_INFO_ACCOUNT, { at: 'best' })
-      .then(({ weight }) => {
-        setCallInfo({
-          decodedCall: tx?.decodedCall,
-          call: tx,
-          hash: hashFromTx(callData),
-          weight: { proof_size: weight.proof_size, ref_time: weight.ref_time },
-          method: tx?.decodedCall.type,
-          section: tx?.decodedCall.value.type
+      tx.getPaymentInfo(PAYMENT_INFO_ACCOUNT, { at: 'best' })
+        .then(({ weight }) => {
+          setCallInfo({
+            decodedCall: tx?.decodedCall,
+            call: tx,
+            hash: hashFromTx(callData),
+            weight: { proof_size: weight.proof_size, ref_time: weight.ref_time },
+            method: tx?.decodedCall.type,
+            section: tx?.decodedCall.value.type
+          })
+          setIsGettingCallInfo(false)
         })
-        setIsGettingCallInfo(false)
-      })
-      .catch((e) => {
-        console.error(e)
-        setIsGettingCallInfo(false)
-        setCallInfo(undefined)
-      })
+        .catch((e) => {
+          console.error(e)
+          setIsGettingCallInfo(false)
+          setCallInfo(undefined)
+        })
+    } catch (e) {
+      console.error(e)
+      setIsGettingCallInfo(false)
+      setCallInfo(undefined)
+    }
   }, [api, callData, compatibilityToken])
 
   return { callInfo, isGettingCallInfo }

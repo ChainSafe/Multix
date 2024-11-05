@@ -26,19 +26,23 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
       setIsProxyProxyRemoved(false)
       if (!api) return call
 
-      const decodedCall = (await api.txFromCallData(Binary.fromHex(call))).decodedCall
+      try {
+        const decodedCall = (await api.txFromCallData(Binary.fromHex(call))).decodedCall
 
-      // check if this call is a proxy.proxy
-      if (decodedCall.type === 'Proxy' && decodedCall.value.type === 'proxy') {
-        // a proxy.proxy call is encoded with e.g
-        // callIndex 1e00
-        // real 00 eb53ed54b7f921a438923e6eb52c4d89afc5c0fed5d0d15fb78648c53da227a0
-        // forceProxyType 00
-        setIsProxyProxyRemoved(true)
-        return `0x${call.substring(74)}` as HexString
+        // check if this call is a proxy.proxy
+        if (decodedCall.type === 'Proxy' && decodedCall.value.type === 'proxy') {
+          // a proxy.proxy call is encoded with e.g
+          // callIndex 1e00
+          // real 00 eb53ed54b7f921a438923e6eb52c4d89afc5c0fed5d0d15fb78648c53da227a0
+          // forceProxyType 00
+          setIsProxyProxyRemoved(true)
+          return `0x${call.substring(74)}` as HexString
+        }
+
+        return call
+      } catch (error) {
+        return
       }
-
-      return call
     },
     [api]
   )
