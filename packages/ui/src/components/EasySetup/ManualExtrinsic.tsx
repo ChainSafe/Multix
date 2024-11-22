@@ -399,15 +399,18 @@ const ManualExtrinsic = ({
                 label={`${paramField.name}${paramField.optional ? ' (optional)' : ''}`}
                 value={inputParams[ind] ? inputParams[ind].value : ''}
                 onChange={(event) => onParamChange(event, { ind, paramField })}
-                InputProps={{
-                  endAdornment: isTypeBalanceWithBalanceCall(
-                    paramField.typeName,
-                    `${palletRpc}.${callable}`
-                  ) && (
-                    <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
-                  )
+                slotProps={{
+                  input: {
+                    endAdornment: isTypeBalanceWithBalanceCall(
+                      paramField.typeName,
+                      `${palletRpc}.${callable}`
+                    ) && (
+                      <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
+                    )
+                  },
+
+                  htmlInput: { 'data-cy': `param-input-${paramField.name}` }
                 }}
-                inputProps={{ 'data-cy': `param-input-${paramField.name}` }}
               />
             </li>
           )

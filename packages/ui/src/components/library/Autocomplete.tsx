@@ -91,8 +91,10 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
-        PopperComponent={PopperStyled}
         {...props}
+        slots={{
+          popper: PopperStyled
+        }}
       />
     </AutocompleteWrapper>
   )
