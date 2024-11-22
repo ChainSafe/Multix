@@ -17,7 +17,7 @@ describe('Verify extrinsics display', () => {
     })
   })
 
-  it('The omnipool.sell extrinsic is displayed in plank', () => {
+  it('The router.sell extrinsic is displayed in plank', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
@@ -28,7 +28,7 @@ describe('Verify extrinsics display', () => {
       .within(() => {
         multisigPage.pendingTransactionItem().should('have.length', 1)
         multisigPage.pendingTransactionItem().within(() => {
-          multisigPage.pendingTransactionCallName().should('contain.text', 'omnipool.sell')
+          multisigPage.pendingTransactionCallName().should('contain.text', 'router.sell')
           multisigPage.unknownCallIcon().should('not.exist')
           multisigPage.unknownCallAlert().should('not.exist')
           expander.paramExpander().click()
