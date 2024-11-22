@@ -1,17 +1,19 @@
-import { Autocomplete as AutocompleteMui, Box, Popper } from '@mui/material'
+import {
+  AutocompleteFreeSoloValueMapping,
+  Autocomplete as AutocompleteMui,
+  Box,
+  FilterOptionsState,
+  Popper
+} from '@mui/material'
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import {
+  AutocompleteInputChangeReason,
   AutocompleteRenderInputParams,
-  AutocompleteRenderOptionState
+  AutocompleteRenderOptionState,
+  AutocompleteValue
 } from '@mui/material/Autocomplete/Autocomplete'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
-import {
-  AutocompleteFreeSoloValueMapping,
-  AutocompleteInputChangeReason,
-  AutocompleteValue,
-  FilterOptionsState
-} from '@mui/base/useAutocomplete/useAutocomplete'
 import { theme } from '../../styles/theme'
 
 interface AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {
@@ -89,8 +91,10 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
-        PopperComponent={PopperStyled}
         {...props}
+        slots={{
+          popper: PopperStyled
+        }}
       />
     </AutocompleteWrapper>
   )
