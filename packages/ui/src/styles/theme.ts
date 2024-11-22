@@ -196,4 +196,4 @@ export const theme = createTheme({
       red: 'firebrick'
     }
   }
-} as ThemeOptions)
+} as Omit<ThemeOptions, 'components'>)

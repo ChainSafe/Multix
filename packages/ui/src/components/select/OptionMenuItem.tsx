@@ -10,7 +10,6 @@ interface OptionMenuProps {
 const OptionMenuItem = ({ keyValue, children, ...props }: OptionMenuProps) => (
   <BoxStyled
     key={keyValue}
-    component="li"
     {...props}
   >
     {children}
