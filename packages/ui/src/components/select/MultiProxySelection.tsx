@@ -169,18 +169,23 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
       {...params}
       inputRef={ref}
       label=""
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: addressToShow && (
-          <InputAdornment position="start">
-            <IdenticonBadge
-              address={addressToShow}
-              badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
-            />
-          </InputAdornment>
-        )
+      slotProps={{
+        input: {
+          ...params.InputProps,
+          startAdornment: addressToShow && (
+            <InputAdornment position="start">
+              <IdenticonBadge
+                address={addressToShow}
+                badge={isSelectedProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+              />
+            </InputAdornment>
+          )
+        },
+        htmlInput: {
+          ...params.inputProps,
+          'data-cy': `input-select-multiproxy-${testId}`
+        }
       }}
-      inputProps={{ ...params.inputProps, 'data-cy': `input-select-multiproxy-${testId}` }}
       onKeyDown={handleSpecialKeys}
     />
   )
