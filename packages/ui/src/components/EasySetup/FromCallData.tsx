@@ -40,7 +40,7 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
         }
 
         return call
-      } catch (error) {
+      } catch {
         return
       }
     },
