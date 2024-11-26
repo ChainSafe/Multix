@@ -2877,10 +2877,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/curves@npm:~1.7.0":
+  version: 1.7.0
+  resolution: "@noble/curves@npm:1.7.0"
+  dependencies:
+    "@noble/hashes": 1.6.0
+  checksum: 3317ec9b7699d2476707a89ceb3ddce60e69bac287561a31dd533669408633e093860fea5067eb9c54e5a7ced0705da1cba8859b6b1e0c48d3afff55fe2e77d0
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:1.5.0, @noble/hashes@npm:^1.3.1, @noble/hashes@npm:^1.3.2, @noble/hashes@npm:^1.5.0":
   version: 1.5.0
   resolution: "@noble/hashes@npm:1.5.0"
   checksum: 1b46539695fbfe4477c0822d90c881a04d4fa2921c08c552375b444a48cac9930cb1ee68de0a3c7859e676554d0f3771999716606dc4d8f826e414c11692cdd9
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@noble/hashes@npm:1.6.0"
+  checksum: e7e75898257fb36d933935fcdf1cc67ca7c083eb7b2411aa57fde7eb494c2cea0bec03686462032e25d5b0e1e4ab7357d1afb6718f6a68515db1f392141e9f14
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:~1.6.0":
+  version: 1.6.1
+  resolution: "@noble/hashes@npm:1.6.1"
+  checksum: 27643cd8b551bc933b57cc29aa8c8763d586552fc4c3e06ecf7897f55be3463c0c9dff7f6ebacd88e5ce6d0cdb5415ca4874d0cf4359b5ea4a85be21ada03aab
   languageName: node
   linkType: hard
 
@@ -3470,33 +3493,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot-labs/hdkd-helpers@npm:0.0.8, @polkadot-labs/hdkd-helpers@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@polkadot-labs/hdkd-helpers@npm:0.0.8"
+"@polkadot-labs/hdkd-helpers@npm:0.0.9, @polkadot-labs/hdkd-helpers@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@polkadot-labs/hdkd-helpers@npm:0.0.9"
   dependencies:
     "@noble/curves": ^1.6.0
     "@noble/hashes": ^1.5.0
-    "@polkadot-labs/schnorrkel-wasm": 0.0.5
-    "@scure/base": ^1.1.8
-    scale-ts: ^1.6.0
-  checksum: 031c30b6bbaf8d5091e651efc836aa6952f3464762ea537a2318bf9737c70d8044a97f62c7cedb27e543528c9f10d1ce7fe0453646921f4ba0dab3116a2853b2
+    "@scure/base": ^1.1.9
+    micro-sr25519: ^0.1.0
+    scale-ts: ^1.6.1
+  checksum: c31198039f18c90efe79394ba148a7ddd5298134b5b0e858ea2df9c651c441c701f1b928469c1aeccc9a9a7e7bada776c388c906d6a75095c593bc00e282e127
   languageName: node
   linkType: hard
 
-"@polkadot-labs/hdkd@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@polkadot-labs/hdkd@npm:0.0.8"
+"@polkadot-labs/hdkd@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@polkadot-labs/hdkd@npm:0.0.9"
   dependencies:
-    "@polkadot-labs/hdkd-helpers": 0.0.8
-    "@polkadot-labs/schnorrkel-wasm": 0.0.5
-  checksum: b38c684b73463aae4ea042b5bd044879a84e891d8cdba15ae0e05faa1bb16d78e1c0ed111ed4eea0b7cfefd675b465c4972b8a41b8d2dee03d275844c93eea13
-  languageName: node
-  linkType: hard
-
-"@polkadot-labs/schnorrkel-wasm@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@polkadot-labs/schnorrkel-wasm@npm:0.0.5"
-  checksum: d0dcb873ad1078b6aab2a073eb13a6605561decba65fb6b9f65d0ad58549f7cc4ffafa7b5128da51a7e96a4f7b0e4468e7d30e9a1b23d15abe7402fccfb5be03
+    "@polkadot-labs/hdkd-helpers": 0.0.9
+  checksum: 2c7290ac7d0d7f6700e80f328f0a7e5236dc9226c0d20e9fba139028e13ef935601a44c68babeefa31346c3a660ecf16730108a3a5016803eab28b90919c341a
   languageName: node
   linkType: hard
 
@@ -4315,7 +4330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:^1.1.1, @scure/base@npm:^1.1.3, @scure/base@npm:^1.1.8, @scure/base@npm:^1.1.9":
+"@scure/base@npm:^1.1.1, @scure/base@npm:^1.1.3, @scure/base@npm:^1.1.9":
   version: 1.1.9
   resolution: "@scure/base@npm:1.1.9"
   checksum: 77a06b9a2db8144d22d9bf198338893d77367c51b58c72b99df990c0a11f7cadd066d4102abb15e3ca6798d1529e3765f55c4355742465e49aed7a0c01fe76e8
@@ -10385,6 +10400,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"micro-sr25519@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "micro-sr25519@npm:0.1.0"
+  dependencies:
+    "@noble/curves": ~1.7.0
+    "@noble/hashes": ~1.6.0
+  checksum: 3b2b51e51615ffdd60cadf43bf7560213a01843d301dfb52ded13851442f9d23dfdf151b5cd5fe6340713dd8eb8b1c6e21a539b51f6523f13436cba7b03dd946
+  languageName: node
+  linkType: hard
+
 "micromatch@npm:^4.0.4, micromatch@npm:^4.0.5, micromatch@npm:^4.0.8":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
@@ -10633,8 +10658,8 @@ __metadata:
     "@mui/styled-engine": ^6.1.8
     "@polkadot-api/descriptors": "portal:.papi/descriptors"
     "@polkadot-api/tx-utils": ^0.0.6
-    "@polkadot-labs/hdkd": ^0.0.8
-    "@polkadot-labs/hdkd-helpers": ^0.0.8
+    "@polkadot-labs/hdkd": ^0.0.9
+    "@polkadot-labs/hdkd-helpers": ^0.0.9
     "@polkadot/react-identicon": ^3.11.3
     "@polkadot/util-crypto": ^13.2.3
     "@reactive-dot/core": ^0.26.2
