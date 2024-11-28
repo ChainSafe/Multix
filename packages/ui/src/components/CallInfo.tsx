@@ -4,16 +4,16 @@ import { ReactNode, useMemo } from 'react'
 import { ApiType, useApi } from '../contexts/ApiContext'
 import { getExtrinsicName } from '../utils/getExtrinsicName'
 import { isProxyCall } from '../utils/isProxyCall'
-// import { formatBigIntBalance } from '../utils/formatBnBalance'
-// import MultisigCompactDisplay from './MultisigCompactDisplay'
+import { formatBigIntBalance } from '../utils/formatBnBalance'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
-// import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 import { JSONprint } from '../utils/jsonPrint'
 import { Transaction } from 'polkadot-api'
+import MultisigCompactDisplay from './MultisigCompactDisplay'
+import { ChainInfoHuman } from '../contexts/PeopleChainApiContext'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -30,13 +30,150 @@ interface CreateTreeParams {
   unit: string
   name?: string
   api: ApiType
+  chainInfo?: ChainInfoHuman
 }
 
-const createUlTree = ({ name, decodedCall }: CreateTreeParams) => {
+const isWhiteListedCall = (type: string, value: string) => {
+  return [
+    'Balances.transfer',
+    'Balances.transfer_keep_alive',
+    'Balances.transfer_all',
+    'Balances.transfer_allow_death',
+    'Bounties.award_bounty',
+    'ChildBounties.award_child_bounty',
+    'ChildBounties.add_child_bounty',
+    'ChildBounties.propose_curator',
+    'Staking.bond',
+    'Staking.unbond',
+    'Staking.bond_extra',
+    'Staking.rebond',
+    'Staking.nominate',
+    'Proxy.add_proxy',
+    'Proxy.remove_proxy',
+    'Proxy.kill_pure'
+  ].includes(`${type}.${value}`)
+}
+
+const isBatchedCall = (type: string, value: string) => {
+  return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(`${type}.${value}`)
+}
+
+const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman) => (
+  <li>
+    {label}:{' '}
+    {formatBigIntBalance(amount, chainInfo?.tokenDecimals, {
+      tokenSymbol: chainInfo?.tokenSymbol
+    })}
+  </li>
+)
+
+const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman) => {
+  // for transfer, nomination, staking, bounties
+  const bigIntKey = ['value', 'fee', 'max_additional'].find((key) => typeof value[key] === 'bigint')
+
+  if (bigIntKey) {
+    return formatBalance(value[bigIntKey], bigIntKey, chainInfo)
+  }
+
+  // for Staking.nominate
+  if (Array.isArray(value.targets) && value.targets.length > 0) {
+    return (
+      <li>
+        targets:{' '}
+        <ul>
+          {value.targets.map((target: any) => {
+            const address = target.type === 'Id' ? target.value : null
+
+            if (address) {
+              return (
+                <li key={address}>
+                  <MultisigCompactDisplay address={address} />
+                </li>
+              )
+            }
+
+            return <li key={address}>{JSONprint(target)}</li>
+          })}
+        </ul>
+      </li>
+    )
+  }
+
+  // for Staking.bond
+  if (value.payee?.type === 'Account') {
+    return (
+      <li>
+        payee: <MultisigCompactDisplay address={value.payee?.value} />
+      </li>
+    )
+  }
+
+  // that's an Account with MultiAddress.Id
+  const multiAddressKey = ['dest', 'beneficiary', 'curator', 'delegate', 'spawner'].find(
+    (key) => typeof value[key] === 'object' && value[key].type === 'Id'
+  )
+
+  if (multiAddressKey) {
+    return (
+      <li>
+        {multiAddressKey}: <MultisigCompactDisplay address={value[multiAddressKey]?.value} />
+      </li>
+    )
+  }
+
+  return <li>{JSONprint(value)} </li>
+}
+
+const preparedCall = (
+  decodedCall: CreateTreeParams['decodedCall'],
+  chainInfo: ChainInfoHuman,
+  isBatch = false
+) => {
+  if (!decodedCall) return
+
+  if (isBatchedCall(decodedCall.type, decodedCall.value.type)) {
+    const lowerLevelCalls = decodedCall.value.value.calls as Array<Record<string, any>>
+
+    return lowerLevelCalls.map((call, index) => {
+      return (
+        <BatchCallStyled key={`${call.type}-${index}`}>
+          {preparedCall(call as CreateTreeParams['decodedCall'], chainInfo, true)}
+        </BatchCallStyled>
+      )
+    })
+  }
+
+  if (isWhiteListedCall(decodedCall.type, decodedCall.value.type)) {
+    const lowerLevelCall = decodedCall.value.value
+    if (typeof lowerLevelCall === 'object') {
+      return (
+        <>
+          {isBatch && (
+            <ExtrinsicNameStyled>
+              {getExtrinsicName(decodedCall.type, decodedCall.value.type)}
+            </ExtrinsicNameStyled>
+          )}
+          <ul>
+            {Object.entries(lowerLevelCall).map(([key, value]) =>
+              eachFieldRendered({ [key]: value }, chainInfo)
+            )}
+          </ul>
+        </>
+      )
+    } else {
+      return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
+    }
+  }
+
+  return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
+}
+
+const createUlTree = ({ name, decodedCall, chainInfo }: CreateTreeParams) => {
   if (!decodedCall) return
   if (!name) return
+  if (!chainInfo) return
 
-  return <PreStyled>{JSONprint(decodedCall.value.value)}</PreStyled>
+  return preparedCall(decodedCall, chainInfo)
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
@@ -112,7 +249,7 @@ const CallInfo = ({
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, decodedCall, decimals, unit, api })}
+          content={createUlTree({ name, decodedCall, decimals, unit, api, chainInfo })}
         />
       )}
       {children}
@@ -139,6 +276,25 @@ const LinkStyled = styled(Link)`
 
 const PreStyled = styled('pre')`
   overflow: auto;
+`
+
+const BatchCallStyled = styled('div')`
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+  margin-top: 1rem;
+  margin-left: 1rem;
+  padding: 1rem;
+  padding-top: 0;
+`
+
+const ExtrinsicNameStyled = styled('span')`
+  font-weight: 500;
+  background-color: ${({ theme }) => theme.palette.primary.main};
+  color: white;
+  margin-left: -1rem;
+  border-top-left-radius: 0.75rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+  display: inline-block;
 `
 
 export default styled(CallInfo)`

@@ -32,7 +32,6 @@ const Transaction = ({
 }: Props) => {
   const { onOpenSigningModal } = useModals()
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
-  // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
 
   const onOpenModal = useCallback(() => {
@@ -70,7 +69,7 @@ const Transaction = ({
       <TransactionCallInfoBoxStyled>
         <CallInfo
           withLink
-          aggregatedData={aggregatedData}
+          aggregatedData={{ ...aggregatedData }}
         >
           {(isProposer || possibleSigners.length > 0) && (
             <TransactionFooterStyled>
