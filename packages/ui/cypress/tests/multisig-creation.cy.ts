@@ -115,17 +115,14 @@ describe('Multisig creation', () => {
 
       verifySignatories()
 
-      // this is commented because chopsticks doesnot support archive_unstable_hashByHeight
-      // see https://github.com/AcalaNetwork/chopsticks/issues/852
-
       // there should be a pending pure proxy creation
-      // multisigPage
-      //   .transactionList()
-      //   .should('be.visible')
-      //   .within(() => {
-      //     multisigPage.pendingTransactionItem().should('have.length', 1)
-      //     multisigPage.pendingTransactionCallName().should('contain.text', 'proxy.createPure')
-      //   })
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'proxy.createPure')
+        })
     })
 
     it('Create a multisig without a pure proxy', () => {
@@ -172,16 +169,14 @@ describe('Multisig creation', () => {
       })
 
       verifySignatories()
-      // this is commented because chopsticks doesnot support archive_unstable_hashByHeight
-      // see https://github.com/AcalaNetwork/chopsticks/issues/852
 
-      // multisigPage
-      //   .transactionList()
-      //   .should('be.visible')
-      //   .within(() => {
-      //     multisigPage.pendingTransactionItem().should('have.length', 1)
-      //     multisigPage.pendingTransactionCallName().should('contain.text', 'system.remark')
-      //   })
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'remark:')
+        })
     })
   })
 
