@@ -78,7 +78,7 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   // for Staking.nominate
   if (Array.isArray(value.targets) && value.targets.length > 0) {
     return (
-      <li>
+      <li key="targets">
         targets:{' '}
         <ul>
           {value.targets.map((target: any) => {
@@ -102,7 +102,7 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   // for Staking.bond
   if (value.payee?.type === 'Account') {
     return (
-      <li>
+      <li key={`payee-${value.payee?.value}`}>
         payee: <MultisigCompactDisplay address={value.payee?.value} />
       </li>
     )
@@ -111,7 +111,7 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   // old style accounts
   if (value.dest && typeof value.dest === 'string') {
     return (
-      <li>
+      <li key={`dest-${value.dest}`}>
         dest: <MultisigCompactDisplay address={value.dest} />
       </li>
     )
@@ -124,13 +124,13 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
 
   if (multiAddressKey) {
     return (
-      <li>
+      <li key={`multiadd-${value[multiAddressKey]?.value}`}>
         {multiAddressKey}: <MultisigCompactDisplay address={value[multiAddressKey]?.value} />
       </li>
     )
   }
 
-  return <li>{JSONprint(value)} </li>
+  return <li key="not-pretty-decoded">{JSONprint(value)} </li>
 }
 
 const preparedCall = (

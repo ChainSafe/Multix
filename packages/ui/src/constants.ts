@@ -180,7 +180,7 @@ export const networkList: Record<string, NetworkInfo> = {
   paseo: {
     chainId: 'paseo',
     explorerNetworkName: 'paseo',
-    rpcUrl: 'wss://paseo.rpc.amforc.com',
+    rpcUrl: 'wss://rpc.ibp.network/paseo',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: paseoSVG
   },

@@ -62,7 +62,7 @@ describe('Perform transactions', () => {
           (address) => address !== testAccount1Address
         )
       },
-      WSendpoint: 'wss://paseo.rpc.amforc.com'
+      WSendpoint: 'wss://rpc.ibp.network/paseo'
     })
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('not.have.text', '')
