@@ -108,6 +108,15 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
     )
   }
 
+  // old style accounts
+  if (value.dest && typeof value.dest === 'string') {
+    return (
+      <li>
+        dest: <MultisigCompactDisplay address={value.dest} />
+      </li>
+    )
+  }
+
   // that's an Account with MultiAddress.Id
   const multiAddressKey = ['dest', 'beneficiary', 'curator', 'delegate', 'spawner'].find(
     (key) => typeof value[key] === 'object' && value[key].type === 'Id'

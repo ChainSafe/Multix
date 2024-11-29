@@ -32,8 +32,8 @@ describe('Verify extrinsics display', () => {
           multisigPage.unknownCallIcon().should('not.exist')
           multisigPage.unknownCallAlert().should('not.exist')
           expander.paramExpander().click()
-          expander.contentExpander().should('contain', '"amount_in": "10000000000000"')
-          expander.contentExpander().should('contain', '"min_amount_out": "72179"')
+          expander.contentExpander().should('contain', `amount_in: '10000000000000'`)
+          expander.contentExpander().should('contain', `min_amount_out: '72179'`)
         })
       })
   })
@@ -74,7 +74,7 @@ describe('Verify extrinsics display', () => {
     sendTxModal.paramField('value').should('contain', 'HDX')
   })
 
-  it.skip('A from call data balances.transferKeepAlive extrinsic has balance displayed in HDX and identicon for destination', () => {
+  it('A from call data balances.transferKeepAlive extrinsic has balance displayed in HDX and identicon for destination', () => {
     const balanceTransferCallData =
       '0x0703d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0b00b04e2bde6f'
     const sendingAmount = '123 HDX'
@@ -102,8 +102,8 @@ describe('Verify extrinsics display', () => {
   it('A from call data balances.transferKeepAlive extrinsic is correctly displayed', () => {
     const balanceTransferCallData =
       '0x0703d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0b00b04e2bde6f'
-    const sendingAmount = '"value": "123000000000000"'
-    const expectedRecipient = '"dest": "7NPoMQbiA6trJKkjB35uk96MeJD4PGWkLQLH7k7hXEkZpiba"'
+    const sendingAmount = 'value: 123 HDX'
+    const expectedRecipient = '7NPoMQ..kZpiba'
 
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
@@ -116,7 +116,9 @@ describe('Verify extrinsics display', () => {
     sendTxModal.callDataInput().click().type(balanceTransferCallData)
     sendTxModal.sendTxContent().within(() => {
       expander.contentExpander().should('contain', sendingAmount)
-      expander.contentExpander().should('contain', expectedRecipient)
+      accountDisplay.addressLabel().should('contain', expectedRecipient)
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.nameLabel().should('contain', extrinsicsDisplayAccounts['Alice'].name)
     })
   })
 })
