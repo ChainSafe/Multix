@@ -4,9 +4,9 @@ import { useNetwork } from '../contexts/NetworkContext'
 export const usePjsLinks = () => {
   const { selectedNetworkInfo } = useNetwork()
   const urlBase = useMemo(() => {
-    if (!selectedNetworkInfo?.rpcUrl) return ''
+    if (!selectedNetworkInfo?.rpcUrls) return ''
 
-    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrl)
+    const encodedRpc = encodeURIComponent(selectedNetworkInfo?.rpcUrls[0])
     return `https://polkadot.js.org/apps/?rpc=${encodedRpc}#`
   }, [selectedNetworkInfo])
 
