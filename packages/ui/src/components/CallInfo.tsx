@@ -58,8 +58,8 @@ const isBatchedCall = (type: string, value: string) => {
   return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(`${type}.${value}`)
 }
 
-const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman) => (
-  <li>
+const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman, id: string) => (
+  <li key={id}>
     {label}:{' '}
     {formatBigIntBalance(amount, chainInfo?.tokenDecimals, {
       tokenSymbol: chainInfo?.tokenSymbol
@@ -67,32 +67,32 @@ const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman)
   </li>
 )
 
-const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman) => {
+const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman, id: string) => {
   // for transfer, nomination, staking, bounties
   const bigIntKey = ['value', 'fee', 'max_additional'].find((key) => typeof value[key] === 'bigint')
 
   if (bigIntKey) {
-    return formatBalance(value[bigIntKey], bigIntKey, chainInfo)
+    return formatBalance(value[bigIntKey], bigIntKey, chainInfo, id)
   }
 
   // for Staking.nominate
   if (Array.isArray(value.targets) && value.targets.length > 0) {
     return (
-      <li key="targets">
+      <li key={`${id}-targets`}>
         targets:{' '}
         <ul>
-          {value.targets.map((target: any) => {
+          {value.targets.map((target: any, index) => {
             const address = target.type === 'Id' ? target.value : null
 
             if (address) {
               return (
-                <li key={address}>
+                <li key={`${index}-${address}`}>
                   <MultisigCompactDisplay address={address} />
                 </li>
               )
             }
 
-            return <li key={address}>{JSONprint(target)}</li>
+            return <li key={`${index}-${address}`}>{JSONprint(target)}</li>
           })}
         </ul>
       </li>
@@ -130,7 +130,7 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
     )
   }
 
-  return <li key="not-pretty-decoded">{JSONprint(value)} </li>
+  return <li key={`not-pretty-decoded-${id}`}>{JSONprint(value)} </li>
 }
 
 const preparedCall = (
@@ -163,8 +163,8 @@ const preparedCall = (
             </ExtrinsicNameStyled>
           )}
           <ul>
-            {Object.entries(lowerLevelCall).map(([key, value]) =>
-              eachFieldRendered({ [key]: value }, chainInfo)
+            {Object.entries(lowerLevelCall).map(([key, value], index) =>
+              eachFieldRendered({ [key]: value }, chainInfo, `${decodedCall.type}-${index}`)
             )}
           </ul>
         </>

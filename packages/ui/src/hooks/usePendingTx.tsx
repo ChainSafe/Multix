@@ -56,7 +56,6 @@ const getMultisigInfo = async (
   api: ApiType
 ): Promise<Partial<CallDataInfoFromChain>[]> => {
   const compatibilityToken = await api.compatibilityToken
-
   const result: any[] = []
 
   // console.log('----for call', JSONprint(call));
@@ -99,7 +98,6 @@ const getMultisigInfo = async (
   }
 
   getCallResults(call)
-  // console.log('result', JSONprint(result))
   return result
 }
 
@@ -143,9 +141,7 @@ const getCallDataFromChainPromise = (
     // get the timestamp which is an unsigned extrinsic set by the validator in each block
     // the information for each of the contained extrinsics
     allDecodedTxs.some(({ decodedCall: { type, value } }) => {
-      // check for timestamp.set
-      if (type === 'Timestamp' && value.type === 'Set') {
-        // extract the Option<Moment> as Moment
+      if (type === 'Timestamp' && value.type === 'set') {
         const moment = value.value.now as string
 
         // convert to date (unix ms since epoch in Moment - exactly as per the Rust code)
@@ -157,10 +153,6 @@ const getCallDataFromChainPromise = (
     })
 
     const ext = allDecodedTxs[pendingTx.info.when.index]
-
-    // const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
-    // console.log('pendingTxData', pendingTxData)
-    // console.log('decoded', decoded)
     const multisigTxs = (await getMultisigInfo(ext.decodedCall, api)) || []
 
     const multisigTxInfo = multisigTxs.find((info) => {

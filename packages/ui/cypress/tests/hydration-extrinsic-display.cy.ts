@@ -27,6 +27,7 @@ describe('Verify extrinsics display', () => {
       .should('be.visible')
       .within(() => {
         multisigPage.pendingTransactionItem().should('have.length', 1)
+        multisigPage.dateLabel().should('have.length', 1).contains('November 5, 2024')
         multisigPage.pendingTransactionItem().within(() => {
           multisigPage.pendingTransactionCallName().should('contain.text', 'Router.sell')
           multisigPage.unknownCallIcon().should('not.exist')
