@@ -57,6 +57,8 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         - Requested: ${chains}
         - Current: ${currentNamespace}`
       )
+    } else {
+      setErrorMessage('')
     }
   }, [chains, currentNamespace, sessionProposal, web3wallet])
 
