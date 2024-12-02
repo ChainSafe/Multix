@@ -1,13 +1,21 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
 
 export const useGetWalletConnectNamespace = () => {
-  const { api } = useApi()
-  const genesisTruncated = useMemo(() => {
-    if (!api) return ''
+  const { client } = useApi()
+  const [genesisHash, setGenesisHash] = useState('')
 
-    return api.genesisHash.toHex().substring(2, 34)
-  }, [api])
+  useEffect(() => {
+    if (!client) return
+
+    client
+      .getChainSpecData()
+      .then((data) => setGenesisHash(data.genesisHash))
+      .catch(console.error)
+  }, [client])
+
+  const genesisTruncated = useMemo(() => genesisHash.substring(2, 34), [genesisHash])
+
   const namespace = useMemo(() => `polkadot:${genesisTruncated}`, [genesisTruncated])
 
   const getAccountsWithNamespace = useCallback(

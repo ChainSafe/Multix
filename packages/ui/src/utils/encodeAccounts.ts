@@ -1,26 +1,34 @@
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { encodesubstrateAddress } from './encodeSubstrateAddress'
+import { InjectedPolkadotAccount } from 'polkadot-api/pjs-signer'
 
-export const encodeAccounts = (
-  accounts: InjectedAccountWithMeta[] | string[],
+export function encodeAccounts(accounts: string[], ss58Format: number): string[]
+export function encodeAccounts(
+  accounts: InjectedPolkadotAccount[],
   ss58Format: number
-) => {
-  return accounts
+): InjectedPolkadotAccount[]
+export function encodeAccounts(accounts: unknown[], ss58Format: number): unknown[] {
+  if (!accounts || accounts.length === 0) return []
+
+  if (typeof accounts[0] === 'string') {
+    return (accounts as string[])
+      .map((account) => encodesubstrateAddress(account, ss58Format))
+      .filter(Boolean) as string[]
+  }
+
+  return (accounts as InjectedPolkadotAccount[])
     .map((account) => {
-      const addressToEncode = typeof account === 'string' ? account : account.address
+      const addressToEncode = account.address
 
       const encodedAddress = encodesubstrateAddress(addressToEncode, ss58Format)
 
-      if (typeof account === 'string') {
-        return encodedAddress
+      if (!encodedAddress) {
+        return null
       }
 
-      return encodedAddress
-        ? ({
-            ...account,
-            address: encodedAddress
-          } as InjectedAccountWithMeta)
-        : null
+      return {
+        ...account,
+        address: encodedAddress
+      } as InjectedPolkadotAccount
     })
-    .filter((acc) => !!acc) as (string | InjectedAccountWithMeta)[]
+    .filter(Boolean) as InjectedPolkadotAccount[]
 }

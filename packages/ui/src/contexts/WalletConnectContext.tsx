@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { Core } from '@walletconnect/core'
 import { ICore, PairingTypes } from '@walletconnect/types'
 import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet'
+import { DAPP_NAME } from '../constants'
 
 export type WalletConnect = { [address: string]: string }
 
@@ -35,7 +36,7 @@ const WalletConnectContextProvider = ({ children }: WalletConnectContextProps) =
     return Web3Wallet.init({
       core,
       metadata: {
-        name: 'Multix',
+        name: DAPP_NAME,
         description: 'Multix Client as Wallet/Peer',
         url: 'multix.chainsafe.io',
         icons: ['https://avatars.githubusercontent.com/u/37784886']

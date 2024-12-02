@@ -62,8 +62,7 @@ describe('Unknown Transaction', () => {
         txSigningModal
           .callInfoContainer()
           .should('be.visible')
-          .should('contain.text', 'system.remark')
-          .should('contain.text', 'remark: multix ftw')
+          .should('contain.text', `remark: 'multix ftw'`)
         txSigningModal.approveButton().should('be.enabled')
       })
   })

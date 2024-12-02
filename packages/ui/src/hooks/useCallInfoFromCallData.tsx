@@ -1,49 +1,56 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { HexString, SubmittingCall } from '../types'
-import { GenericCall } from '@polkadot/types'
+import { SubmittingCall } from '../types'
 import { PAYMENT_INFO_ACCOUNT } from '../constants'
+import { Binary, HexString } from 'polkadot-api'
+import { hashFromTx } from '../utils/txHash'
 
 export const useCallInfoFromCallData = (callData?: HexString) => {
-  const { api } = useApi()
+  const { api, compatibilityToken } = useApi()
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
 
   useEffect(() => {
     if (!callData) {
       setCallInfo(undefined)
+      setIsGettingCallInfo(false)
       return
     }
 
-    if (!api) {
+    if (!api || !compatibilityToken) {
       setCallInfo(undefined)
-      return
-    }
-
-    let call: GenericCall
-    try {
-      call = api.createType('Call', callData)
-    } catch (error) {
-      console.error(error)
-      setCallInfo({})
+      setIsGettingCallInfo(false)
       return
     }
 
     setIsGettingCallInfo(true)
-    api
-      .tx(call)
-      .paymentInfo(PAYMENT_INFO_ACCOUNT)
-      .then(({ weight }) => {
-        setCallInfo({
-          call,
-          weight,
-          method: call.method,
-          section: call.section
+
+    try {
+      const tx = api.txFromCallData(Binary.fromHex(callData), compatibilityToken)
+
+      tx.getPaymentInfo(PAYMENT_INFO_ACCOUNT, { at: 'best' })
+        .then(({ weight }) => {
+          setCallInfo({
+            decodedCall: tx?.decodedCall,
+            call: tx,
+            hash: hashFromTx(callData),
+            weight: { proof_size: weight.proof_size, ref_time: weight.ref_time },
+            section: tx?.decodedCall.type,
+            method: tx?.decodedCall.value.type
+          })
+          setIsGettingCallInfo(false)
         })
-      })
-      .catch(console.error)
-      .finally(() => setIsGettingCallInfo(false))
-  }, [api, callData])
+        .catch((e) => {
+          console.error(e)
+          setIsGettingCallInfo(false)
+          setCallInfo(undefined)
+        })
+    } catch (e) {
+      console.error(e)
+      setIsGettingCallInfo(false)
+      setCallInfo(undefined)
+    }
+  }, [api, callData, compatibilityToken])
 
   return { callInfo, isGettingCallInfo }
 }

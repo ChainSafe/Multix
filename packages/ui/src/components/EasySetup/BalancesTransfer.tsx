@@ -1,21 +1,20 @@
 import { Box, InputAdornment } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { ISubmittableResult } from '@polkadot/types/types'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
-import BN from 'bn.js'
-import { getGlobalMaxValue, inputToBn } from '../../utils'
+import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
 import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
+import { dot, MultiAddress } from '@polkadot-api/descriptors'
+import { Transaction, TypedApi } from 'polkadot-api'
 
 interface Props {
   className?: string
   from: string
-  onSetExtrinsic: (ext?: SubmittableExtrinsic<'promise', ISubmittableResult>) => void
+  onSetExtrinsic: (ext?: Transaction<any, any, any, any>) => void
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
 }
 
@@ -24,7 +23,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
   const { api, chainInfo } = useApi()
   const [amountString, setAmountString] = useState('')
-  const [amount, setAmount] = useState<BN | undefined>()
+  const [amount, setAmount] = useState<bigint | undefined>()
   const [amountError, setAmountError] = useState('')
   const { hasEnoughFreeBalance } = useCheckBalance({
     min: amount,
@@ -52,7 +51,12 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    onSetExtrinsic(api.tx.balances.transferKeepAlive(toAddress, amount.toString()))
+    onSetExtrinsic(
+      (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+        dest: MultiAddress.Id(toAddress),
+        value: amount
+      })
+    )
   }, [amount, api, chainInfo, onSetExtrinsic, toAddress])
 
   const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
@@ -68,7 +72,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
       if (!decimals) {
         onSetErrorMessage('Invalid network decimals')
-        setAmount(new BN(0))
+        setAmount(0n)
         return
       }
 
@@ -78,19 +82,19 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       if (!stringInput.match('^[0-9]+([.][0-9]+)?$')) {
         setAmountError('Only numbers and "." are accepted.')
         onSetErrorMessage('Invalid amount')
-        setAmount(new BN(0))
+        setAmount(0n)
         return
       }
 
-      const bnResult = inputToBn(decimals, stringInput)
+      const bigintResult = inputToBigInt(decimals, stringInput)
 
-      if (bnResult.gte(maxValue)) {
+      if (bigintResult > maxValue) {
         setAmountError('Amount too large')
         onSetErrorMessage('Amount too large')
         return
       }
 
-      setAmount(bnResult)
+      setAmount(bigintResult)
     },
     [chainInfo, maxValue, onSetErrorMessage]
   )

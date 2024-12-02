@@ -1,18 +1,19 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
-import { AnyJson } from '@polkadot/types/types'
 import { ReactNode, useMemo } from 'react'
-import { useApi } from '../contexts/ApiContext'
-import { getExtrinsicName, isProxyCall } from '../utils'
-import { formatBnBalance } from '../utils/formatBnBalance'
-import MultisigCompactDisplay from './MultisigCompactDisplay'
+import { ApiType, useApi } from '../contexts/ApiContext'
+import { getExtrinsicName } from '../utils/getExtrinsicName'
+import { isProxyCall } from '../utils/isProxyCall'
+import { formatBigIntBalance } from '../utils/formatBnBalance'
 import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
 import { Link } from './library'
 import { usePjsLinks } from '../hooks/usePjsLinks'
 import { Alert } from '@mui/material'
-import { ApiPromise } from '@polkadot/api'
-import { isTypeBalanceWithBalanceCall, isTypeAccount } from '../utils'
 import { CallDataInfoFromChain } from '../hooks/usePendingTx'
+import { JSONprint } from '../utils/jsonPrint'
+import { Transaction } from 'polkadot-api'
+import MultisigCompactDisplay from './MultisigCompactDisplay'
+import { ChainInfoHuman } from '../contexts/PeopleChainApiContext'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -24,162 +25,181 @@ interface Props {
 }
 
 interface CreateTreeParams {
-  args: AnyJson
+  decodedCall?: Transaction<any, any, any, any>['decodedCall']
   decimals: number
   unit: string
   name?: string
-  api: ApiPromise
-  typeName?: string
+  api: ApiType
+  chainInfo?: ChainInfoHuman
 }
 
-const handleCallDisplay = ({
-  call,
-  decimals,
-  unit,
-  api,
-  key
-}: {
-  call: any
-  decimals: number
-  unit: string
-  key: string
-  api: ApiPromise
-}) => {
-  const name = `${call.section}.${call.method}`
-  return (
-    <>
-      <li key={key}>{name}</li>
-      {createUlTree({
-        name: `${call.section}.${call.method}`,
-        args: call.args,
-        decimals,
-        unit,
-        api
-      })}
-    </>
-  )
+const isWhiteListedCall = (type: string, value: string) => {
+  return [
+    'Balances.transfer',
+    'Balances.transfer_keep_alive',
+    'Balances.transfer_all',
+    'Balances.transfer_allow_death',
+    'Bounties.award_bounty',
+    'ChildBounties.award_child_bounty',
+    'ChildBounties.add_child_bounty',
+    'ChildBounties.propose_curator',
+    'Staking.bond',
+    'Staking.unbond',
+    'Staking.bond_extra',
+    'Staking.rebond',
+    'Staking.nominate',
+    'Proxy.add_proxy',
+    'Proxy.remove_proxy',
+    'Proxy.kill_pure'
+  ].includes(`${type}.${value}`)
 }
 
-const handleBatchDisplay = ({
-  value,
-  decimals,
-  unit,
-  api,
-  key
-}: {
-  value: any[]
-  decimals: number
-  unit: string
-  key: string
-  api: ApiPromise
-}) =>
-  value.map((call: any, index: number) =>
-    handleCallDisplay({ call, decimals, unit, api, key: `${key}-${index}` })
-  )
-
-const handleBalanceDisplay = ({
-  value,
-  decimals,
-  unit,
-  key
-}: {
-  value: any
-  decimals: number
-  unit: string
-  key: string
-}) => {
-  const balance = formatBnBalance(value.replace(/,/g, ''), decimals, {
-    withThousandDelimiter: true,
-    tokenSymbol: unit,
-    numberAfterComma: 4
-  })
-
-  return (
-    <li key={key}>
-      {key}: {balance}
-    </li>
-  )
+const isBatchedCall = (type: string, value: string) => {
+  return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(`${type}.${value}`)
 }
 
-const handleValueDisplay = ({ value, typeName }: { value: any; typeName: string | undefined }) =>
-  typeName === 'bool' ? (value ? 'true' : 'false') : value
+const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman) => (
+  <li>
+    {label}:{' '}
+    {formatBigIntBalance(amount, chainInfo?.tokenDecimals, {
+      tokenSymbol: chainInfo?.tokenSymbol
+    })}
+  </li>
+)
 
-const getTypeName = (index: number, name: string, api: ApiPromise) => {
-  const [pallet, method] = name.split('.')
-  const metaArgs = !!pallet && !!method && api.tx[pallet][method]?.meta?.args
+const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman) => {
+  // for transfer, nomination, staking, bounties
+  const bigIntKey = ['value', 'fee', 'max_additional'].find((key) => typeof value[key] === 'bigint')
 
-  return (
-    (!!metaArgs && metaArgs[index] && (metaArgs[index].toHuman().typeName as string)) || undefined
+  if (bigIntKey) {
+    return formatBalance(value[bigIntKey], bigIntKey, chainInfo)
+  }
+
+  // for Staking.nominate
+  if (Array.isArray(value.targets) && value.targets.length > 0) {
+    return (
+      <li key="targets">
+        targets:{' '}
+        <ul>
+          {value.targets.map((target: any) => {
+            const address = target.type === 'Id' ? target.value : null
+
+            if (address) {
+              return (
+                <li key={address}>
+                  <MultisigCompactDisplay address={address} />
+                </li>
+              )
+            }
+
+            return <li key={address}>{JSONprint(target)}</li>
+          })}
+        </ul>
+      </li>
+    )
+  }
+
+  // for Staking.bond
+  if (value.payee?.type === 'Account') {
+    return (
+      <li key={`payee-${value.payee?.value}`}>
+        payee: <MultisigCompactDisplay address={value.payee?.value} />
+      </li>
+    )
+  }
+
+  // old style accounts
+  if (value.dest && typeof value.dest === 'string') {
+    return (
+      <li key={`dest-${value.dest}`}>
+        dest: <MultisigCompactDisplay address={value.dest} />
+      </li>
+    )
+  }
+
+  // that's an Account with MultiAddress.Id
+  const multiAddressKey = ['dest', 'beneficiary', 'curator', 'delegate', 'spawner'].find(
+    (key) => typeof value[key] === 'object' && value[key].type === 'Id'
   )
+
+  if (multiAddressKey) {
+    return (
+      <li key={`multiadd-${value[multiAddressKey]?.value}`}>
+        {multiAddressKey}: <MultisigCompactDisplay address={value[multiAddressKey]?.value} />
+      </li>
+    )
+  }
+
+  return <li key="not-pretty-decoded">{JSONprint(value)} </li>
 }
 
-const createUlTree = ({ name, args, decimals, unit, api, typeName }: CreateTreeParams) => {
-  if (!args) return
+const preparedCall = (
+  decodedCall: CreateTreeParams['decodedCall'],
+  chainInfo: ChainInfoHuman,
+  isBatch = false
+) => {
+  if (!decodedCall) return
+
+  if (isBatchedCall(decodedCall.type, decodedCall.value.type)) {
+    const lowerLevelCalls = decodedCall.value.value.calls as Array<Record<string, any>>
+
+    return lowerLevelCalls.map((call, index) => {
+      return (
+        <BatchCallStyled key={`${call.type}-${index}`}>
+          {preparedCall(call as CreateTreeParams['decodedCall'], chainInfo, true)}
+        </BatchCallStyled>
+      )
+    })
+  }
+
+  if (isWhiteListedCall(decodedCall.type, decodedCall.value.type)) {
+    const lowerLevelCall = decodedCall.value.value
+    if (typeof lowerLevelCall === 'object') {
+      return (
+        <>
+          {isBatch && (
+            <ExtrinsicNameStyled>
+              {getExtrinsicName(decodedCall.type, decodedCall.value.type)}
+            </ExtrinsicNameStyled>
+          )}
+          <ul>
+            {Object.entries(lowerLevelCall).map(([key, value]) =>
+              eachFieldRendered({ [key]: value }, chainInfo)
+            )}
+          </ul>
+        </>
+      )
+    } else {
+      return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
+    }
+  }
+
+  return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
+}
+
+const createUlTree = ({ name, decodedCall, chainInfo }: CreateTreeParams) => {
+  if (!decodedCall) return
   if (!name) return
+  if (!chainInfo) return
 
-  return (
-    <ul className="params">
-      {Object.entries(args).map(([key, value], index) => {
-        const _typeName = typeName || getTypeName(index, name, api)
-
-        if (_typeName === 'Vec<RuntimeCall>') {
-          return handleBatchDisplay({ value, decimals, unit, api, key: `${key}-batch` })
-        }
-
-        if (_typeName === 'RuntimeCall') {
-          return handleCallDisplay({ call: value, decimals, unit, api, key: `${key}-call` })
-        }
-
-        // generically show nice value for Balance type
-        if (isTypeBalanceWithBalanceCall(_typeName, name)) {
-          return handleBalanceDisplay({ value, decimals, unit, key })
-        }
-
-        const destAddress = value?.Id || value
-        if (isTypeAccount(_typeName) && typeof destAddress === 'string') {
-          return (
-            <li key={key}>
-              {key}: {<MultisigCompactDisplay address={destAddress} />}
-            </li>
-          )
-        }
-
-        return (
-          <li key={`${key}-root-${index}`}>
-            {key}:{' '}
-            {typeof value === 'object'
-              ? createUlTree({
-                  name,
-                  args: value,
-                  decimals,
-                  unit,
-                  api,
-                  typeName: _typeName
-                })
-              : handleValueDisplay({ value, typeName: _typeName })}
-          </li>
-        )
-      })}
-    </ul>
-  )
+  return preparedCall(decodedCall, chainInfo)
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
-  const { args, name } = agg
+  const { decodedCall, name } = agg
   const isProxy = isProxyCall(name)
 
-  if (!isProxy || !(args as { [index: string]: AnyJson })?.call) {
+  if (!isProxy || !decodedCall?.value.value.call) {
     return agg
   }
 
-  const call = (args as any).call
+  const call = decodedCall.value.value.call
 
-  const newName = getExtrinsicName(call?.section, call?.method)
-  const newArgs = call?.args
+  const newName = getExtrinsicName(call.type, call.value.type)
   return {
     ...agg,
     name: newName,
-    args: newArgs
+    decodedCall: call
   }
 }
 
@@ -191,7 +211,9 @@ const CallInfo = ({
   withLink = false,
   withProxyFiltered = true
 }: Props) => {
-  const { args, name } = withProxyFiltered ? filterProxyProxy(aggregatedData) : aggregatedData
+  const { decodedCall, name } = withProxyFiltered
+    ? filterProxyProxy(aggregatedData)
+    : aggregatedData
   const { chainInfo, api } = useApi()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
@@ -200,7 +222,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
-  const hasArgs = useMemo(() => args && Object.keys(args).length > 0, [args])
+  const hasArgs = useMemo(() => decodedCall && Object.keys(decodedCall).length > 0, [decodedCall])
 
   return (
     <div
@@ -213,12 +235,12 @@ const CallInfo = ({
       >
         {name}
         {!!aggregatedData.callData && withLink && (
-          <Linkstyled
+          <LinkStyled
             href={link}
             target="_blank"
           >
             <LaunchIcon size={20} />
-          </Linkstyled>
+          </LinkStyled>
         )}
       </CallNameStyled>
       {!aggregatedData.callData && (
@@ -236,7 +258,7 @@ const CallInfo = ({
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, args, decimals, unit, api })}
+          content={createUlTree({ name, decodedCall, decimals, unit, api, chainInfo })}
         />
       )}
       {children}
@@ -256,9 +278,32 @@ const CallNameStyled = styled('h4')`
   align-items: center;
 `
 
-const Linkstyled = styled(Link)`
+const LinkStyled = styled(Link)`
   display: flex;
   padding-left: 0.5rem;
+`
+
+const PreStyled = styled('pre')`
+  overflow: auto;
+`
+
+const BatchCallStyled = styled('div')`
+  border-radius: ${({ theme }) => theme.custom.borderRadius};
+  border: 1px solid ${({ theme }) => theme.custom.gray[400]};
+  margin-top: 1rem;
+  margin-left: 1rem;
+  padding: 1rem;
+  padding-top: 0;
+`
+
+const ExtrinsicNameStyled = styled('span')`
+  font-weight: 500;
+  background-color: ${({ theme }) => theme.palette.primary.main};
+  color: white;
+  margin-left: -1rem;
+  border-top-left-radius: 0.75rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+  display: inline-block;
 `
 
 export default styled(CallInfo)`

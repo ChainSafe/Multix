@@ -7,7 +7,8 @@ import '@chainsafe/cypress-polkadot-wallet'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
-const LOCALSTORAGE_EXTENSION_CONNECTION_KEY = 'multix.canConnectToExtension'
+const LOCALSTORAGE_EXTENSION_CONNECTION_KEY = '@reactive-dot/wallet/injected/polkadot-js/connected'
+const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
 export const MULTIX_DAPP_NAME = 'Multix'
 
 Cypress.Commands.add('rejectCurrentMultisigTx', rejectCurrentMultisigTxs)
@@ -51,8 +52,10 @@ Cypress.Commands.add(
         !!accountNames &&
           win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
 
-        !!extensionConnectionAllowed &&
+        if (extensionConnectionAllowed) {
+          win.localStorage.setItem(LOCALSTORAGE_ALLOWED_CONNECTION_KEY, 'true')
           win.localStorage.setItem(LOCALSTORAGE_EXTENSION_CONNECTION_KEY, 'true')
+        }
       }
     })
 

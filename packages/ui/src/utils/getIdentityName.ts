@@ -1,25 +1,22 @@
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types'
+import { IdentityInfo } from '../hooks/useGetIdentity'
 
 export interface IdentityNameResults {
   identityName: string
   sub: string
 }
 
-export const getIdentityName = (
-  identity: DeriveAccountRegistration | undefined | null
-): IdentityNameResults => {
+export const getIdentityName = (identity?: IdentityInfo): IdentityNameResults => {
   if (!identity) return { identityName: '', sub: '' }
 
-  if (identity.displayParent && identity.display) {
-    // when an identity is a sub identity `displayParent` is set
-    // and `display` get the sub identity
+  if (identity.sub && identity.display) {
+    // when an identity is a sub identity, `sub` is set
+    // and `display` is the parent identity
     return {
-      identityName: identity.displayParent,
-      sub: identity.display
+      identityName: identity.display,
+      sub: identity.sub
     }
   } else {
-    // There should not be a `displayParent` without a `display`
-    // but we can't be too sure.
+    // There there is no sub.
     return {
       identityName: identity.displayParent || identity.display || '',
       sub: ''

@@ -1,55 +1,58 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useApi } from '../contexts/ApiContext'
-import BN from 'bn.js'
-import { formatBnBalance } from '../utils/formatBnBalance'
-import { IdentityFields } from '../components/EasySetup/SetIdentity'
-import { getByteCount } from '../utils'
+// import { useEffect, useMemo, useState } from 'react'
+// import { useApi } from '../contexts/ApiContext'
+// // import { formatBigIntBalance } from '../utils/formatBnBalance'
+// import { IdentityFields } from '../components/EasySetup/SetIdentity'
+// import { getByteCount } from '../utils'
+// import { TypedApi } from 'polkadot-api'
+// import { dotPpl } from '@polkadot-api/descriptors'
 
-export const useSetIdentityReservedFunds = (identityFields?: IdentityFields) => {
-  const { api, chainInfo } = useApi()
-  const [reserved, setReserved] = useState(new BN(0))
-  const identityfieldNumber = useMemo(() => {
-    if (!identityFields) return 0
+// export const useSetIdentityReservedFunds = (identityFields?: IdentityFields) => {
+//   const { api, chainInfo, compatibilityToken } = useApi()
+//   const [reserved, setReserved] = useState(0n)
+//   const identityfieldNumber = useMemo(() => {
+//     if (!identityFields) return 0
 
-    return Object.values(identityFields).filter((value) => !!value).length
-  }, [identityFields])
+//     return Object.values(identityFields).filter((value) => !!value).length
+//   }, [identityFields])
 
-  const fieldBytes = useMemo(() => {
-    if (!identityFields) return 0
+//   const fieldBytes = useMemo(() => {
+//     if (!identityFields) return 0
 
-    const allfields = Object.values(identityFields)
-      .filter((value) => !!value)
-      .join('')
+//     const allfields = Object.values(identityFields)
+//       .filter((value) => !!value)
+//       .join('')
 
-    return getByteCount(allfields)
-  }, [identityFields])
+//     return getByteCount(allfields)
+//   }, [identityFields])
 
-  useEffect(() => {
-    if (!api || !identityFields) return
+//   useEffect(() => {
+//     if (!api || !identityFields || !compatibilityToken) return
 
-    if (!chainInfo?.tokenDecimals) return
+//     if (!chainInfo?.tokenDecimals) return
 
-    const byteDeposit = api.consts?.identity?.byteDeposit as unknown as BN
-    const fieldDeposit = api.consts?.identity?.fieldDeposit as unknown as BN
-    const basicDepost = api.consts?.identity?.basicDeposit as unknown as BN
+//     const byteDeposit = (
+//       api as unknown as TypedApi<typeof dotPpl>
+//     ).constants?.Identity?.ByteDeposit(compatibilityToken)
 
-    if (!basicDepost || (!fieldDeposit && !byteDeposit)) return
+//     const basicDeposit = (
+//       api as unknown as TypedApi<typeof dotPpl>
+//     ).constants?.Identity.BasicDeposit(compatibilityToken)
 
-    const reservedFields = fieldDeposit
-      ? fieldDeposit.muln(identityfieldNumber)
-      : byteDeposit.muln(fieldBytes)
+//     if (!basicDeposit || !byteDeposit) return
 
-    const res = reservedFields.add(basicDepost)
+//     const reservedFields = byteDeposit * BigInt(fieldBytes)
 
-    console.log(
-      'res',
-      formatBnBalance(res, chainInfo.tokenDecimals, {
-        tokenSymbol: chainInfo?.tokenSymbol,
-        numberAfterComma: 6
-      })
-    )
-    setReserved(res)
-  }, [api, chainInfo, fieldBytes, identityFields, identityfieldNumber])
+//     const res = reservedFields + basicDeposit
 
-  return { reserved }
-}
+//     // console.log(
+//     //   'res',
+//     //   formatBnBalance(res, chainInfo.tokenDecimals, {
+//     //     tokenSymbol: chainInfo?.tokenSymbol,
+//     //     numberAfterComma: 6
+//     //   })
+//     // )
+//     setReserved(res)
+//   }, [api, chainInfo, compatibilityToken, fieldBytes, identityFields, identityfieldNumber])
+
+//   return { reserved }
+// }

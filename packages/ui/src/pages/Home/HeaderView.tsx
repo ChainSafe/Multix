@@ -13,10 +13,8 @@ const HeaderView = () => {
   const [searchParams] = useSearchParams()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
 
-  const selectedAddress = useMemo((): string => {
-    return String(
-      selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
-    )
+  const selectedAddress = useMemo(() => {
+    return selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
   }, [selectedHasProxy, selectedMultiProxy])
 
   return (
@@ -36,26 +34,28 @@ const HeaderView = () => {
           <HiOutlineArrowLongRight size={24} />
         </ButtonWithIcon>
       </OverviewWrapper>
-      <PureHeaderStyled>
-        <AccountDisplayStyled
-          iconSize={'large'}
-          address={selectedAddress}
-          badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
-          canEdit
-          canCopy
-        />
-        <BalanceStyledWrapper>
-          <BalanceStyled>
-            <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
-            <BalanceAmountStyled data-cy="label-account-balance">
-              <Balance address={selectedAddress} />
-            </BalanceAmountStyled>
-          </BalanceStyled>
-        </BalanceStyledWrapper>
-        <BoxStyled>
-          <MultisigActionMenu withNewTransactionButton={!selectedIsWatched} />
-        </BoxStyled>
-      </PureHeaderStyled>
+      {selectedAddress && (
+        <PureHeaderStyled>
+          <AccountDisplayStyled
+            iconSize={'large'}
+            address={selectedAddress}
+            badge={selectedHasProxy ? AccountBadge.PURE : AccountBadge.MULTI}
+            canEdit
+            canCopy
+          />
+          <BalanceStyledWrapper>
+            <BalanceStyled>
+              <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+              <BalanceAmountStyled data-cy="label-account-balance">
+                <Balance address={selectedAddress} />
+              </BalanceAmountStyled>
+            </BalanceStyled>
+          </BalanceStyledWrapper>
+          <BoxStyled>
+            <MultisigActionMenu withNewTransactionButton={!selectedIsWatched} />
+          </BoxStyled>
+        </PureHeaderStyled>
+      )}
     </PureProxyWrapper>
   )
 }

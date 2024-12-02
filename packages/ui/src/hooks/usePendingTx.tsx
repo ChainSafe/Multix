@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { HexString, MultisigStorageInfo } from '../types'
+import { MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
-import { isEmptyArray } from '../utils'
+import { isEmptyArray } from '../utils/arrayUtils'
+import { isProxyCall } from '../utils/isProxyCall'
 import { useAccountId } from './useAccountId'
-import { ApiPromise } from '@polkadot/api'
-import { useApi } from '../contexts/ApiContext'
-import { ISanitizedCall, getDisplayArgs, isProxyCall, parseGenericCall } from '../utils'
-import { GenericCall } from '@polkadot/types'
-import { AnyJson, AnyTuple } from '@polkadot/types/types'
+import { ApiType, useApi } from '../contexts/ApiContext'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import { PolkadotClient, Transaction } from 'polkadot-api'
+import { Bin, Binary, compact, HexString, Tuple } from '@polkadot-api/substrate-bindings'
+import { hashFromTx } from '../utils/txHash'
+import { getEncodedCallFromDecodedTx } from '../utils/getEncodedCallFromDecodedTx'
+import { getExtrinsicDecoder } from '@polkadot-api/tx-utils'
+
 dayjs.extend(localizedFormat)
 
 export interface PendingTx {
@@ -21,9 +24,9 @@ export interface PendingTx {
 
 export interface CallDataInfoFromChain {
   callData?: HexString
+  decodedCall?: Transaction<any, any, any, any>['decodedCall']
   hash?: string
   name?: string
-  args?: AnyJson
   info?: PendingTx['info']
   from: string
   timestamp?: Date
@@ -32,55 +35,118 @@ export interface CallDataInfoFromChain {
 
 type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 
-export const getMultisigInfo = (call: ISanitizedCall): Partial<CallDataInfoFromChain>[] => {
-  const result: Partial<CallDataInfoFromChain>[] = []
+const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
-  const getCallResult = ({ args, method }: ISanitizedCall) => {
-    if (typeof method !== 'string' && method.pallet === 'multisig') {
-      if (method.method === 'asMulti' && typeof args.call?.method !== 'string') {
+const getExtDecoderAt = async (api: ApiType, client: PolkadotClient, blockHash?: string) => {
+  const rawMetadata = await (blockHash
+    ? client
+        ._request<{
+          result: HexString
+        }>('archive_unstable_call', [blockHash, 'Metadata_metadata', ''])
+        .then((x) => opaqueMetadata(x.result)[1])
+    : api.apis.Metadata.metadata())
+
+  const decoder = await getExtrinsicDecoder(rawMetadata.asOpaqueBytes())
+
+  return decoder
+}
+
+const getMultisigInfo = async (
+  call: Transaction<any, any, any, any>['decodedCall'],
+  api: ApiType
+): Promise<Partial<CallDataInfoFromChain>[]> => {
+  const compatibilityToken = await api.compatibilityToken
+
+  const result: any[] = []
+
+  // console.log('----for call', JSONprint(call));
+
+  const getCallResults = (call: Transaction<any, any, any, any>['decodedCall']) => {
+    if (call.type === 'Multisig') {
+      if (call.value.type === 'as_multi') {
+        const callDatawithout0x = getEncodedCallFromDecodedTx(
+          api,
+          call.value.value.call,
+          compatibilityToken
+        )
+        const callData = `0x${callDatawithout0x}`
+        const hash = hashFromTx(callData)
+        // console.log('----- callData', callData);
+        // console.log('----- hash', hash);
         result.push({
-          name: `${args.call?.method?.pallet}.${args.call?.method.method}`,
-          hash: args.call?.hash,
-          callData: args.callData as CallDataInfoFromChain['callData']
+          name: `${call.value.value.call.type}.${call.value.value.call.value.type}`,
+          hash,
+          callData
         })
-      } else {
+      } else if (call.value.type === 'approve_as_multi') {
         result.push({
           name: 'Unknown call',
-          hash: (args?.call_hash as Uint8Array).toString() || undefined,
+          // the call_hash is of type FixedSizeBinary<32> which is
+          // an instance of instance Binary and can be converted to a hex
+          hash: call.value.value.call_hash.asHex(),
           callData: undefined
         })
       }
-      // this is not a multisig call
-      // try to dig deeper
     } else {
-      if (args.calls) {
-        for (const call of args.calls) {
-          getCallResult(call)
-        }
-      } else if (args.call) {
-        getCallResult(args.call)
+      if (call.value.value.call) {
+        getCallResults(call.value.value.call)
+      }
+
+      if (call.value.value.calls) {
+        call.value.value.calls.forEach((c: any) => getCallResults(c))
       }
     }
   }
 
-  getCallResult(call)
+  getCallResults(call)
+  // console.log('result', JSONprint(result))
   return result
 }
 
-const getCallDataFromChainPromise = (pendingTxData: PendingTx[], api: ApiPromise) =>
+const getCallDataFromChainPromise = (
+  pendingTxData: PendingTx[],
+  api: ApiType,
+  client: PolkadotClient
+) =>
   pendingTxData.map(async (pendingTx) => {
-    const blockHash = await api.rpc.chain.getBlockHash(pendingTx.info.when.height)
-    const signedBlock = await api.rpc.chain.getBlock(blockHash)
+    const blockNumber = pendingTx.info.when.height
+    const blockHash = (
+      await client._request('archive_unstable_hashByHeight', [blockNumber])
+    )?.[0] as HexString | undefined
+
+    if (!blockHash) {
+      console.log('no hash found for height', blockNumber)
+      return
+    }
+
+    const body: HexString[] = await client._request('archive_unstable_body', [blockHash])
 
     let date: Date | undefined
 
+    const decoder = await getExtDecoderAt(api, client, blockHash)
+
+    const txPromises = body.map((extrinsics) => {
+      const decodedExtrinsic = decoder(extrinsics)
+      const toDecode = decodedExtrinsic.callData
+      // console.log('-----------------------------')
+      // console.log(decodedExtrinsic)
+      return api.txFromCallData(toDecode)
+    })
+
+    const allDecodedTxs = await Promise.all(txPromises)
+
+    // allDecodedTxs.forEach((txs) => {
+    //   console.log('-------------decoded')
+    //   console.log(txs)
+    // })
+
     // get the timestamp which is an unsigned extrinsic set by the validator in each block
     // the information for each of the contained extrinsics
-    signedBlock.block.extrinsics.some(({ method: { args, method, section } }) => {
+    allDecodedTxs.some(({ decodedCall: { type, value } }) => {
       // check for timestamp.set
-      if (section === 'timestamp' && method === 'set') {
+      if (type === 'Timestamp' && value.type === 'Set') {
         // extract the Option<Moment> as Moment
-        const moment = args.toString()
+        const moment = value.value.now as string
 
         // convert to date (unix ms since epoch in Moment - exactly as per the Rust code)
         date = new Date(Number(moment))
@@ -90,40 +156,34 @@ const getCallDataFromChainPromise = (pendingTxData: PendingTx[], api: ApiPromise
       return false
     })
 
-    const ext = signedBlock.block.extrinsics[pendingTx.info.when.index]
+    const ext = allDecodedTxs[pendingTx.info.when.index]
 
-    const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
+    // const decoded = parseGenericCall(ext.method as GenericCall, ext.registry)
     // console.log('pendingTxData', pendingTxData)
     // console.log('decoded', decoded)
-    const multisigInfos = getMultisigInfo(decoded) || {}
+    const multisigTxs = (await getMultisigInfo(ext.decodedCall, api)) || []
 
-    const info = multisigInfos.find(({ name, hash, callData }) => {
-      if (!!hash && hash === pendingTx.hash) {
-        return { name, hash, callData }
+    const multisigTxInfo = multisigTxs.find((info) => {
+      if (!!info.hash && info.hash === pendingTx.hash) {
+        return info
       }
 
       return false
     })
 
-    if (!info) {
-      console.log('oops we did not find the right extrinsic', multisigInfos, pendingTx.hash)
+    if (!multisigTxInfo) {
+      console.log('oops we did not find the right extrinsic', multisigTxs, pendingTx.hash)
       return
     }
 
-    const { name, hash, callData } = info
-
-    let call: false | GenericCall<AnyTuple> = false
-    try {
-      call = !!callData && !!hash && ext.registry.createType('Call', callData)
-    } catch (error) {
-      console.error('Error in getCallDataFromChainPromise', error)
-    }
+    const { name, hash, callData } = multisigTxInfo
 
     return {
       callData,
       hash: hash || pendingTx.hash,
       name,
-      args: getDisplayArgs(call),
+      decodedCall:
+        (callData && (await api.txFromCallData(Binary.fromHex(callData))).decodedCall) || {},
       info: pendingTx.info,
       from: pendingTx.from,
       timestamp: date
@@ -138,7 +198,7 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
 
 export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false) => {
   const [isLoading, setIsLoading] = useState(true)
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, client } = useApi()
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()
 
@@ -146,28 +206,28 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
   const refresh = useCallback(async () => {
     setTxWithCallDataByDate({})
 
-    if (!api) return
+    if (!api || !client) return
 
     if (isEmptyArray(multisigAddresses)) return
 
-    if (!api?.query?.multisig?.multisigs) return
+    if (!api?.query?.Multisig?.Multisigs) return
 
     setIsLoading(true)
 
     const pendingMultisigTxs: PendingTx[] = []
 
     const callsPromises = multisigAddresses.map((address) =>
-      api.query.multisig.multisigs.entries(address)
+      api.query.Multisig.Multisigs.getEntries(address, { at: 'best' })
     )
 
     await Promise.all(callsPromises)
       .then((res1) => {
         res1.forEach((res, index) => {
-          res.forEach((storage) => {
+          res.forEach(({ keyArgs, value }) => {
             // this is supposed to be the multisig address that we asked the storage for
-            const multisigFromChain = (storage[0].toHuman() as Array<string>)[0]
-            const hash = (storage[0].toHuman() as Array<string>)[1]
-            const info = storage[1].toJSON() as unknown as MultisigStorageInfo
+            const multisigFromChain = keyArgs[0]
+            const hash = keyArgs[1].asHex()
+            const info = value as MultisigStorageInfo
             if (chainInfo?.isEthereum) {
               info.approvals = info.approvals.map((approval) => approval.toLowerCase())
             }
@@ -176,9 +236,10 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
             // These 2 should be the same
             if (multisigFromChain.toLowerCase() !== multisigAddresses[index].toLowerCase()) {
               console.error(
-                'The onchain call and the one found in the block donot correspond',
-                multisigFromChain,
-                multisigAddresses[index]
+                'The multisig we requested the calls for and the one found in the block do not correspond. Requested:',
+                multisigAddresses[index],
+                'received: ',
+                multisigFromChain
               )
               return
             }
@@ -199,7 +260,11 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
       return
     }
 
-    const callDataInfoFromChainPromises = getCallDataFromChainPromise(pendingMultisigTxs, api)
+    const callDataInfoFromChainPromises = getCallDataFromChainPromise(
+      pendingMultisigTxs,
+      api,
+      client
+    )
 
     await Promise.all(callDataInfoFromChainPromises)
       .then((res) => {
@@ -210,14 +275,15 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
         const relevantTxs = definedTxs.filter((agg) => {
           if (
             !isProxyCall(agg.name) ||
-            !agg?.args ||
-            !(agg.args as any).real.Id ||
+            !agg?.decodedCall ||
+            !agg.decodedCall.value.value.real.value ||
             skipProxyCheck
           ) {
             return true
           }
 
-          const isForCurrentProxy = (agg.args as any).real.Id === selectedMultiProxy?.proxy
+          const isForCurrentProxy =
+            agg.decodedCall.value.value.real.value === selectedMultiProxy?.proxy
 
           if (!isForCurrentProxy) {
             console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)
@@ -242,7 +308,14 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
         setIsLoading(false)
       })
       .catch(console.error)
-  }, [api, chainInfo?.isEthereum, multisigAddresses, selectedMultiProxy?.proxy, skipProxyCheck])
+  }, [
+    api,
+    chainInfo?.isEthereum,
+    client,
+    multisigAddresses,
+    selectedMultiProxy?.proxy,
+    skipProxyCheck
+  ])
 
   useEffect(() => {
     refresh()

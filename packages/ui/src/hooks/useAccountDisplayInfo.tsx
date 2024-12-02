@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { useIdentity } from './useIdentity'
+import { useEffect, useMemo, useState } from 'react'
+import { IdentityInfo, useGetIdentity } from './useGetIdentity'
 import { useAccountNames } from '../contexts/AccountNamesContext'
 import { getDisplayName } from '../utils/getDisplayName'
 import { getIdentityName } from '../utils/getIdentityName'
@@ -9,11 +9,16 @@ interface Props {
 }
 
 export const useAccountDisplayInfo = ({ address }: Props) => {
-  const identity = useIdentity(address)
+  const getIdentity = useGetIdentity()
   const { getNamesWithExtension } = useAccountNames()
   const localName = useMemo(() => getNamesWithExtension(address), [address, getNamesWithExtension])
   const isLocalNameDisplayed = useMemo(() => !!localName, [localName])
+  const [identity, setIdentity] = useState<IdentityInfo | undefined>()
   const { identityName, sub } = useMemo(() => getIdentityName(identity), [identity])
+
+  useEffect(() => {
+    getIdentity(address).then(setIdentity).catch(console.error)
+  }, [address, getIdentity])
 
   const displayName = useMemo(
     () => getDisplayName(localName || '', identityName),

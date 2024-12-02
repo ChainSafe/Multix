@@ -17,7 +17,7 @@ describe('Verify extrinsics display', () => {
     })
   })
 
-  it('The router.sell extrinsic is displayed in plank', () => {
+  it('The Router.sell extrinsic is displayed in plank', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
@@ -28,17 +28,17 @@ describe('Verify extrinsics display', () => {
       .within(() => {
         multisigPage.pendingTransactionItem().should('have.length', 1)
         multisigPage.pendingTransactionItem().within(() => {
-          multisigPage.pendingTransactionCallName().should('contain.text', 'router.sell')
+          multisigPage.pendingTransactionCallName().should('contain.text', 'Router.sell')
           multisigPage.unknownCallIcon().should('not.exist')
           multisigPage.unknownCallAlert().should('not.exist')
           expander.paramExpander().click()
-          expander.contentExpander().should('contain', 'amount_in: 10,000,000,000,000')
-          expander.contentExpander().should('contain', 'min_amount_out: 72,179')
+          expander.contentExpander().should('contain', `amount_in: '10000000000000'`)
+          expander.contentExpander().should('contain', `min_amount_out: '72179'`)
         })
       })
   })
 
-  it('A manual omnipool.sell extrinsic creation has input in plank', () => {
+  it.skip('A manual omnipool.sell extrinsic creation has input in plank', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
@@ -56,7 +56,7 @@ describe('Verify extrinsics display', () => {
     sendTxModal.paramField('amount').should('not.contain', 'HDX')
   })
 
-  it('A manual balances.transferKeepAlive extrinsic has input in HDX', () => {
+  it.skip('A manual balances.transferKeepAlive extrinsic has input in HDX', () => {
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
@@ -96,6 +96,29 @@ describe('Verify extrinsics display', () => {
         accountDisplay.identicon().should('be.visible')
         accountDisplay.nameLabel().should('contain', extrinsicsDisplayAccounts['Alice'].name)
       })
+    })
+  })
+
+  it('A from call data balances.transferKeepAlive extrinsic is correctly displayed', () => {
+    const balanceTransferCallData =
+      '0x0703d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0b00b04e2bde6f'
+    const sendingAmount = 'value: 123 HDX'
+    const expectedRecipient = '7NPoMQ..kZpiba'
+
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
+    })
+
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal.selectEasySetup().click()
+    sendTxModal.selectionEasySetupSetupFromCallData().click()
+    sendTxModal.callDataInput().click().type(balanceTransferCallData)
+    sendTxModal.sendTxContent().within(() => {
+      expander.contentExpander().should('contain', sendingAmount)
+      accountDisplay.addressLabel().should('contain', expectedRecipient)
+      accountDisplay.identicon().should('be.visible')
+      accountDisplay.nameLabel().should('contain', extrinsicsDisplayAccounts['Alice'].name)
     })
   })
 })

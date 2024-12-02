@@ -9,9 +9,9 @@ interface DrawerComponentProps {
   handleDrawerClose: () => void
 }
 
-function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
+function MobileDrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
   return (
-    <DrawerStyledMobile
+    <DrawerStyled
       variant="temporary"
       anchor="right"
       open={open}
@@ -21,11 +21,11 @@ function DrawerComponent({ open, handleDrawerClose }: DrawerComponentProps) {
       }}
     >
       <DrawerMenu handleDrawerClose={handleDrawerClose} />
-    </DrawerStyledMobile>
+    </DrawerStyled>
   )
 }
 
-const DrawerStyledMobile = styled(Drawer)`
+const DrawerStyled = styled(Drawer)`
   width: ${DRAWER_WIDTH}px;
   flex-shrink: 0;
 
@@ -38,4 +38,4 @@ const DrawerStyledMobile = styled(Drawer)`
   }
 `
 
-export default DrawerComponent
+export default MobileDrawerComponent

@@ -1,17 +1,57 @@
-import React, { useMemo } from 'react'
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
-import '@polkadot/api-augment'
+import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
+import { getWsProvider } from 'polkadot-api/ws-provider/web'
+import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
+import {
+  acala,
+  bifrostDot,
+  dot,
+  dotAssetHub,
+  // dotPpl,
+  hydration,
+  khala,
+  ksm,
+  ksmAssetHub,
+  // ksmPpl,
+  paseo,
+  phala
+  // rhala,
+  // rococo,
+  // rococoAssetHub,
+  // rococoPpl
+} from '@polkadot-api/descriptors'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
+export type ApiType = TypedApi<
+  | typeof dot
+  | typeof dotAssetHub
+  // | typeof dotPpl
+  | typeof ksm
+  | typeof ksmAssetHub
+  // | typeof ksmPpl
+  | typeof hydration
+  | typeof acala
+  | typeof bifrostDot
+  | typeof phala
+  | typeof khala
+  // | typeof rhala
+  // | typeof rococo
+  // | typeof rococoAssetHub
+  // | typeof rococoPpl
+  | typeof paseo
+>
+
 export interface IApiContext {
-  api?: false | ApiPromise
+  api?: ApiType
   chainInfo?: ChainInfoHuman
+  client?: PolkadotClient
+  compatibilityToken?: Awaited<ReturnType<PolkadotClient['getTypedApi']>['compatibilityToken']>
 }
 
 interface ChainInfoHuman {
@@ -21,69 +61,119 @@ interface ChainInfoHuman {
   isEthereum: boolean
 }
 
-interface RawChainInfoHuman {
-  ss58Format: string
-  tokenDecimals: string[]
-  tokenSymbol: string[]
-}
-
 const ApiContext = createContext<IApiContext | undefined>(undefined)
 
 const ApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const [chainInfo, setChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [apiPromise, setApiPromise] = useState<ApiPromise | undefined>()
-  const [isApiReady, setIsApiReady] = useState(false)
-  const provider = useMemo(
-    () => !!selectedNetworkInfo?.rpcUrl && new WsProvider(selectedNetworkInfo?.rpcUrl),
-    [selectedNetworkInfo]
-  )
+  const [chainInfo, setChainInfo] = useState<IApiContext['chainInfo']>()
+  const [client, setClient] = useState<IApiContext['client']>()
+  const [api, setApi] = useState<IApiContext['api']>()
+  const [compatibilityToken, setCompatibilityToken] = useState<IApiContext['compatibilityToken']>()
 
   useEffect(() => {
-    if (!provider) return
+    if (!selectedNetworkInfo) return
 
-    // console.log('---> connecting to', provider.endpoint)
-    setIsApiReady(false)
-    const api = new ApiPromise({ provider })
-    api.isReady.then((newApi) => setApiPromise(newApi)).catch(console.error)
+    let cl: PolkadotClient
+    let typedApi: ApiType
 
-    return () => {
-      // console.log('<---disconnecting')
-      setIsApiReady(false)
-      !!api && api.disconnect()
-      setApiPromise(undefined)
+    switch (selectedNetworkInfo?.chainId) {
+      case 'kusama':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(ksm)
+        break
+      case 'asset-hub-dot':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(dotAssetHub)
+        break
+      case 'asset-hub-ksm':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(ksmAssetHub)
+        break
+      case 'acala':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(acala)
+        break
+      case 'bifrost-dot':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(bifrostDot)
+        break
+      case 'phala':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(phala)
+        break
+      // case 'rhala':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rhala)
+      //   break
+      case 'khala':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(khala)
+        break
+      // case 'rococo':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rococo)
+      //   break
+      // case 'rococo-asset-hub':
+      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
+      //   typedApi = cl.getTypedApi(rococoAssetHub)
+      //   break
+      case 'hydradx':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(hydration)
+        break
+      case 'paseo':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(paseo)
+        break
+
+      default:
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrl)))
+        typedApi = cl.getTypedApi(dot)
     }
-
-    // prevent an infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider])
+    setClient(cl)
+    setApi(typedApi)
+  }, [selectedNetworkInfo])
 
   useEffect(() => {
-    if (!apiPromise) return
+    if (!client || !api) return
 
-    apiPromise.isReady
-      .then((api) => {
-        setIsApiReady(true)
+    client?.getChainSpecData().then(async ({ properties, name }) => {
+      if (!properties || !compatibilityToken) return
 
-        const info = api.registry.getChainProperties()
-        const raw = info?.toHuman() as unknown as RawChainInfoHuman
-        const isEthereum = ethereumChains.includes(api.runtimeVersion.specName.toString())
-        setChainInfo({
-          // some parachains such as interlay have a comma in the format, e.g: "2,042"
-          ss58Format: Number(raw?.ss58Format.replace(',', '')) || 0,
-          tokenDecimals: Number(raw?.tokenDecimals[0]) || 0,
-          tokenSymbol: raw?.tokenSymbol[0] || '',
-          isEthereum
-        })
+      const ss58prefix = api.constants.System.SS58Prefix(compatibilityToken)
+      const tokenDecimals = Array.isArray(properties?.tokenDecimals)
+        ? properties?.tokenDecimals[0]
+        : properties?.tokenDecimals
+
+      const tokensymbol = Array.isArray(properties?.tokenSymbol)
+        ? properties?.tokenSymbol[0]
+        : properties?.tokenSymbol
+
+      const isEthereum = ethereumChains.includes(name)
+
+      setChainInfo({
+        // some parachains such as interlay have a comma in the format, e.g: "2,042"
+        ss58Format: Number(ss58prefix) || 0,
+        tokenDecimals: Number(tokenDecimals) || 0,
+        tokenSymbol: tokensymbol || '',
+        isEthereum
       })
-      .catch(console.error)
-  }, [apiPromise])
+    })
+  }, [client, api, compatibilityToken])
+
+  useEffect(() => {
+    if (!api) return
+
+    api.compatibilityToken.then(setCompatibilityToken).catch(console.error)
+  }, [api])
 
   return (
     <ApiContext.Provider
       value={{
-        api: isApiReady && apiPromise,
-        chainInfo
+        api,
+        chainInfo,
+        client,
+        compatibilityToken
       }}
     >
       {children}

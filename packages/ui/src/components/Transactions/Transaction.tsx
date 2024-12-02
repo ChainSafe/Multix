@@ -5,7 +5,7 @@ import CallInfo from '../CallInfo'
 import { MdOutlineGesture as GestureIcon } from 'react-icons/md'
 import { HiOutlineQuestionMarkCircle as QuestionMarkIcon } from 'react-icons/hi2'
 import { useCallback, useMemo } from 'react'
-import { isProxyCall } from '../../utils'
+import { isProxyCall } from '../../utils/isProxyCall'
 import { AccountBadge } from '../../types'
 import TransactionProgress from './TransactionProgress'
 import { useModals } from '../../contexts/ModalsContext'
@@ -32,7 +32,6 @@ const Transaction = ({
 }: Props) => {
   const { onOpenSigningModal } = useModals()
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
-  // FIXME this is duplicated
   const appliedClass = useMemo(() => (isProxy ? 'blue' : 'red'), [isProxy])
 
   const onOpenModal = useCallback(() => {
@@ -70,7 +69,7 @@ const Transaction = ({
       <TransactionCallInfoBoxStyled>
         <CallInfo
           withLink
-          aggregatedData={aggregatedData}
+          aggregatedData={{ ...aggregatedData }}
         >
           {(isProposer || possibleSigners.length > 0) && (
             <TransactionFooterStyled>

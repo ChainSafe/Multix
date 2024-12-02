@@ -1,13 +1,15 @@
 import { styled } from '@mui/material'
-import { useAccounts } from '../contexts/AccountsContext'
+// import { useAccounts } from '../contexts/AccountsContext'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useNetwork } from '../contexts/NetworkContext'
+import { useAccounts } from '../contexts/AccountsContext'
 
 export const ConnectOrWatch = () => {
-  const { isAllowedToConnectToExtension, allowConnectionToExtension } = useAccounts()
+  const { setIsConnectionDialogOpen, isAllowedToConnectToExtension, allowConnectionToExtension } =
+    useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -47,7 +49,10 @@ export const ConnectOrWatch = () => {
         ) : (
           <Button
             variant="primary"
-            onClick={allowConnectionToExtension}
+            onClick={() => {
+              setIsConnectionDialogOpen(true)
+              allowConnectionToExtension()
+            }}
             data-cy="button-connect-wallet"
           >
             Connect Wallet

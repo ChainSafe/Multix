@@ -10,18 +10,18 @@ import NameSelection from './NameSelection'
 import Summary from './Summary'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { useToasts } from '../../contexts/ToastContext'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
-import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import WithProxySelection from './WithProxySelection'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { Binary, Enum, Transaction, TypedApi } from 'polkadot-api'
+import { dot, MultiAddress } from '@polkadot-api/descriptors'
 
 interface Props {
   className?: string
@@ -29,17 +29,17 @@ interface Props {
 
 const steps = ['Signatories', 'Threshold & Name', 'Review']
 const MultisigCreation = ({ className }: Props) => {
-  const { getSubscanExtrinsicLink } = useGetSubscanLinks()
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, compatibilityToken } = useApi()
   const [threshold, setThreshold] = useState<number | undefined>()
-  const { selectedSigner, selectedAccount, ownAddressList } = useAccounts()
+  const { selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams({ creationInProgress: 'false' })
   const signCallBack = useSigningCallback({
     onSuccess: () => {
+      setRefetchMultisigTimeoutMinutes(1)
       navigate({
         pathname: '/',
         search: createSearchParams({
@@ -47,11 +47,11 @@ const MultisigCreation = ({ className }: Props) => {
           creationInProgress: 'true'
         }).toString()
       })
-    }
+    },
+    onError: () => setIsSubmitted(false)
   })
   const { setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { getSortAddress } = useGetSortAddress()
-  const { addToast } = useToasts()
   const [name, setName] = useState('')
   const { addName, getNamesWithExtension } = useAccountNames()
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -63,13 +63,16 @@ const MultisigCreation = ({ className }: Props) => {
   const { pureProxyCreationNeededFunds, reserved: proxyReserved } =
     usePureProxyCreationNeededFunds()
   const supportsProxy = useMemo(() => {
-    const hasProxyPallet = !!api && !!api.tx.proxy
+    const hasProxyPallet = !!api && !!(api as TypedApi<typeof dot>).tx.Proxy
     // Moonbeam and moonriver have the pallet, but it's deactivated
     return hasProxyPallet && !chainInfo?.isEthereum
   }, [api, chainInfo])
   const multiAddress = useGetMultisigAddress(signatories, threshold)
   const [withProxy, setWithProxy] = useState(false)
-  const remarkCall = useMemo(() => {
+  const [remarkCall, setRemarkCall] = useState<Transaction<any, any, any, any> | undefined>()
+  const [batchCall, setBatchCall] = useState<Transaction<any, any, any, any> | undefined>()
+
+  useEffect(() => {
     if (withProxy) {
       // this call is only useful if the user does not want a proxy.
       return
@@ -102,19 +105,40 @@ const MultisigCreation = ({ className }: Props) => {
     const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const remarkTx = api.tx.system.remark(`Multix creation ${multiAddress}`)
-    return getAsMultiTx({ api, threshold, otherSignatories, tx: remarkTx })
-  }, [api, getSortAddress, multiAddress, selectedAccount, signatories, threshold, withProxy])
+    const remarkTx = api.tx.System.remark({
+      remark: Binary.fromText(`Multix creation ${multiAddress}`)
+    })
+    const remarkCall = getAsMultiTx({
+      api,
+      threshold,
+      otherSignatories,
+      tx: remarkTx,
+      compatibilityToken
+    })
+
+    setRemarkCall(remarkCall)
+  }, [
+    api,
+    compatibilityToken,
+    getSortAddress,
+    multiAddress,
+    selectedAccount,
+    signatories,
+    threshold,
+    withProxy
+  ])
+
   const originalName = useMemo(
     () => multiAddress && getNamesWithExtension(multiAddress),
     [getNamesWithExtension, multiAddress]
   )
-  const batchCall = useMemo(() => {
+
+  useEffect(() => {
     if (!withProxy) {
       // this batchCall is only useful if the user wants a proxy.
       return
     }
-    if (!api) {
+    if (!api || !compatibilityToken) {
       // console.error('api is not ready')
       return
     }
@@ -141,23 +165,38 @@ const MultisigCreation = ({ className }: Props) => {
     const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const proxyTx = api.tx.proxy.createPure('Any', 0, 0)
-    const multiSigProxyCall = getAsMultiTx({ api, threshold, otherSignatories, tx: proxyTx })
+    const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.create_pure({
+      proxy_type: Enum('Any'),
+      delay: 0,
+      index: 0
+    })
+    const multiSigProxyCall = getAsMultiTx({
+      api,
+      threshold,
+      otherSignatories,
+      tx: proxyTx,
+      compatibilityToken
+    })
 
     // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx = api.tx.balances.transferKeepAlive(
-      multiAddress,
-      pureProxyCreationNeededFunds.toString()
-    )
+    const transferTx = (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+      dest: MultiAddress.Id(multiAddress),
+      value: pureProxyCreationNeededFunds
+    })
 
     if (!multiSigProxyCall) {
       console.error('multiSigProxyCall is undefined in Creation index.tsx')
       return
     }
 
-    return api.tx.utility.batchAll([transferTx, multiSigProxyCall])
+    setBatchCall(
+      api.tx.Utility.batch_all({
+        calls: [transferTx.decodedCall, multiSigProxyCall.decodedCall]
+      })
+    )
   }, [
     api,
+    compatibilityToken,
     getSortAddress,
     multiAddress,
     pureProxyCreationNeededFunds,
@@ -180,7 +219,7 @@ const MultisigCreation = ({ className }: Props) => {
   const neededBalance = useMemo(
     () =>
       withProxy
-        ? pureProxyCreationNeededFunds.add(multisigProposalNeededFunds)
+        ? pureProxyCreationNeededFunds + multisigProposalNeededFunds
         : multisigProposalNeededFunds,
     [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
@@ -250,7 +289,7 @@ const MultisigCreation = ({ className }: Props) => {
     }
 
     if (!selectedAccount) {
-      console.error('no selected address')
+      console.error('no selected account')
       return
     }
 
@@ -258,39 +297,13 @@ const MultisigCreation = ({ className }: Props) => {
     setIsSubmitted(true)
 
     remarkCall
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner, withSignedTransaction: true },
-        signCallBack
-      )
-      .then(() => {
-        setRefetchMultisigTimeoutMinutes(1)
-      })
-      .catch((error: Error) => {
-        setIsSubmitted(false)
-
-        addToast({
-          title: error.message,
-          type: 'error',
-          link: getSubscanExtrinsicLink(remarkCall.hash.toHex())
-        })
-      })
-  }, [
-    addName,
-    addToast,
-    getSubscanExtrinsicLink,
-    multiAddress,
-    name,
-    remarkCall,
-    selectedAccount,
-    selectedSigner,
-    setRefetchMultisigTimeoutMinutes,
-    signCallBack
-  ])
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack)
+  }, [addName, multiAddress, name, remarkCall, selectedAccount, signCallBack])
 
   const handleCreateWithPure = useCallback(async () => {
     if (!selectedAccount || !batchCall) {
-      console.error('no selected address')
+      console.error('no selected signer')
       return
     }
 
@@ -298,33 +311,9 @@ const MultisigCreation = ({ className }: Props) => {
     setIsSubmitted(true)
 
     batchCall
-      .signAndSend(
-        selectedAccount.address,
-        { signer: selectedSigner, withSignedTransaction: true },
-        signCallBack
-      )
-      .then(() => setRefetchMultisigTimeoutMinutes(1))
-      .catch((error: Error) => {
-        setIsSubmitted(false)
-
-        addToast({
-          title: error.message,
-          type: 'error',
-          link: getSubscanExtrinsicLink(batchCall.hash.toHex())
-        })
-      })
-  }, [
-    addName,
-    addToast,
-    batchCall,
-    getSubscanExtrinsicLink,
-    multiAddress,
-    name,
-    selectedAccount,
-    selectedSigner,
-    setRefetchMultisigTimeoutMinutes,
-    signCallBack
-  ])
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
+      .subscribe(signCallBack)
+  }, [addName, batchCall, multiAddress, name, selectedAccount, signCallBack])
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
@@ -450,7 +439,7 @@ const MultisigCreation = ({ className }: Props) => {
               threshold={threshold}
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
-              reservedBalance={withProxy ? multisigReserved.add(proxyReserved) : multisigReserved}
+              reservedBalance={withProxy ? multisigReserved + proxyReserved : multisigReserved}
               balanceMin={neededBalance}
               withProxy={withProxy}
               isSubmittingExtrinsic={isSubmitted}

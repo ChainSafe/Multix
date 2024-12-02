@@ -39,7 +39,7 @@ export const AccountSelect: React.FC<Props> = ({ anchorEl, onClose, ...props }) 
                 <MultixIdenticon value={account.address} />
               </IconButton>
             }
-            title={account.meta.name}
+            title={account.name}
             subheader={account.address}
           />
         </MenuItem>

@@ -1,4 +1,5 @@
 export const landingPage = {
+  connectionDialog: () => cy.get('[data-cy=dialog-connection]'),
   multixIntroHeader: () => cy.get('[data-cy=header-multix-introduction]', { timeout: 10000 }),
   interactionPromptLabel: () => cy.get('[data-cy=label-interaction-prompt]'),
   noMultisigFoundError: () => cy.get('[data-cy=label-no-multisig-found]', { timeout: 10000 }),

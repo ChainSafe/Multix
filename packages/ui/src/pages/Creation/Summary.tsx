@@ -5,10 +5,9 @@ import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import SignerSelection from '../../components/select/SignerSelection'
 import { MultiProxy } from '../../contexts/MultiProxyContext'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { getIntersection } from '../../utils'
+import { getIntersection } from '../../utils/arrayUtils'
 import { AccountBadge } from '../../types'
-import BN from 'bn.js'
-import { formatBnBalance } from '../../utils/formatBnBalance'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useApi } from '../../contexts/ApiContext'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 
@@ -19,8 +18,8 @@ interface Props {
   name?: string
   proxyAddress?: string
   isCreationSummary?: boolean
-  balanceMin?: BN
-  reservedBalance: BN
+  balanceMin?: bigint
+  reservedBalance: bigint
   isBalanceError?: boolean
   selectedMultisig?: MultiProxy['multisigs'][0] // this is only relevant for swaps
   withProxy?: boolean
@@ -52,16 +51,18 @@ const Summary = ({
     }
 
     const requiredBalanceString =
-      balanceMin &&
-      formatBnBalance(balanceMin, chainInfo?.tokenDecimals, {
-        tokenSymbol: chainInfo?.tokenSymbol
-      })
-
-    const reservedString = reservedBalance.isZero()
-      ? ''
-      : formatBnBalance(reservedBalance, chainInfo?.tokenDecimals, {
+      (balanceMin !== undefined &&
+        formatBigIntBalance(balanceMin, chainInfo?.tokenDecimals, {
           tokenSymbol: chainInfo?.tokenSymbol
-        })
+        })) ||
+      ''
+
+    const reservedString =
+      reservedBalance === 0n
+        ? ''
+        : formatBigIntBalance(reservedBalance, chainInfo?.tokenDecimals, {
+            tokenSymbol: chainInfo?.tokenSymbol
+          })
 
     const errorWithReservedFunds = getErrorMessageReservedFunds(
       'selected signer',
