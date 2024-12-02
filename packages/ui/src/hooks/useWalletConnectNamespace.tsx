@@ -10,7 +10,10 @@ export const useGetWalletConnectNamespace = () => {
 
     client
       .getChainSpecData()
-      .then((data) => setGenesisHash(data.genesisHash))
+      .then((data) => {
+        console.log('---> data', data.genesisHash)
+        setGenesisHash(data.genesisHash)
+      })
       .catch(console.error)
   }, [client])
 
@@ -18,6 +21,7 @@ export const useGetWalletConnectNamespace = () => {
 
   const namespace = useMemo(() => `polkadot:${genesisTruncated}`, [genesisTruncated])
 
+  console.log('namespace', namespace)
   const getAccountsWithNamespace = useCallback(
     (accounts: string[]) => {
       return accounts.map((address) => `${namespace}:${address}`)

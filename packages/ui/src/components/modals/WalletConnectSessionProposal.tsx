@@ -48,6 +48,9 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
     [sessionProposal?.params]
   )
 
+  console.log('currentNamespace', currentNamespace)
+  console.log('chains.includes(currentNamespace)', chains.includes(currentNamespace))
+  console.log('chains', chains)
   useEffect(() => {
     if (!web3wallet || !sessionProposal) return
 
@@ -57,6 +60,8 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         - Requested: ${chains}
         - Current: ${currentNamespace}`
       )
+    } else {
+      setErrorMessage('')
     }
   }, [chains, currentNamespace, sessionProposal, web3wallet])
 
