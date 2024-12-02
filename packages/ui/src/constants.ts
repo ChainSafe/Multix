@@ -39,7 +39,7 @@ export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow/v/v4
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
-const polkadotPplChain = 'wss://sys.ibp.network/people-polkadot'
+const polkadotPplChain = 'wss://rpc-people-polkadot.luckyfriday.io'
 const kusamaPplChain = 'wss://sys.ibp.network/people-kusama'
 const westendPplChain = 'wss://sys.dotters.network/people-westend'
 
@@ -48,7 +48,7 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'polkadot',
     explorerNetworkName: 'polkadot',
     pplChainRpcUrl: polkadotPplChain,
-    rpcUrl: 'wss://rpc.ibp.network/polkadot',
+    rpcUrl: 'wss://rpc-polkadot.luckyfriday.io',
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsPolkadotCircleSVG
   },
