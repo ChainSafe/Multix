@@ -41,26 +41,26 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
   }, [pplApi])
 
   useEffect(() => {
-    if (!selectedNetworkInfo?.pplChainRpcUrl) return
+    if (!selectedNetworkInfo?.pplChainRpcUrls) return
 
     let cl: PolkadotClient | undefined
     let typedApi: PplApiType | undefined
 
     switch (selectedNetworkInfo?.chainId) {
       case 'kusama':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
         typedApi = cl.getTypedApi(ksmPpl)
         break
       case 'polkadot':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
         typedApi = cl.getTypedApi(dotPpl)
         break
       case 'paseo':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
         typedApi = cl.getTypedApi(pasPpl)
         break
       case 'westend':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrl))
+        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
         typedApi = cl.getTypedApi(wesPpl)
         break
     }
