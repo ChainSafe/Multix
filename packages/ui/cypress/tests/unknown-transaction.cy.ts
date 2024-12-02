@@ -22,6 +22,8 @@ describe('Unknown Transaction', () => {
       .should('be.visible')
       .within(() => {
         multisigPage.pendingTransactionItem().should('have.length', 2)
+        multisigPage.dateLabel().should('have.length', 2)
+        multisigPage.dateLabel().eq(0).contains('September 12, 2024')
         multisigPage
           .pendingTransactionItem()
           .eq(1)

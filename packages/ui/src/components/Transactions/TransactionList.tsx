@@ -53,7 +53,7 @@ const TransactionList = ({ className }: Props) => {
         Object.entries(txWithCallDataByDate).map(([date, aggregatedData]) => {
           return (
             <TransactionWrapper key={date}>
-              <DateContainerStyled>{date}</DateContainerStyled>
+              <DateContainerStyled data-cy="label-date">{date}</DateContainerStyled>
               {aggregatedData.map((agg, index) => {
                 const { callData, info, from } = agg
                 const { threshold, signatories } =
