@@ -44,11 +44,22 @@ export const ROUTES: Route[] = [
   }
 ]
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <App />,
+      errorElement: <ErrorFallback />,
+      children: ROUTES
+    }
+  ],
   {
-    path: '/',
-    element: <App />,
-    errorElement: <ErrorFallback />,
-    children: ROUTES
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true
+    }
   }
-])
+)

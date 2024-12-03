@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 
 export const useSwitchAddress = () => {
-  const [searchParams, setSearchParams] = useSearchParams({
+  const [searchParams] = useSearchParams({
     address: '',
     network: ''
   })
   const urlAddress = useMemo(() => {
     return searchParams.get('address') || ''
   }, [searchParams])
+
   const {
     multiProxyList,
     isLoading: isMultiproxyLoading,
@@ -19,59 +20,34 @@ export const useSwitchAddress = () => {
     setCanFindMultiProxyFromUrl
   } = useMultiProxy()
 
-  const setAddress = useCallback(
-    (address: string) => {
-      setSearchParams((prev) => {
-        prev.set('address', address)
-        return prev
-      })
-    },
-    [setSearchParams]
-  )
-
   useEffect(() => {
     if (isMultiproxyLoading) {
       // we're not yet initialized
+      return
+    }
+
+    if (!!urlAddress && !selectedMultiProxyAddress) {
+      // this looks like a first load with an address
+      const isSuccess = selectMultiProxy(urlAddress)
+      setCanFindMultiProxyFromUrl(isSuccess)
+
       return
     }
 
     if (!urlAddress && !!defaultAddress) {
-      // no address in the url, init with the first multiProxy from the list
-      setAddress(defaultAddress)
+      // no address in the url, init with the default
+      const isSuccess = selectMultiProxy(defaultAddress)
+      setCanFindMultiProxyFromUrl(isSuccess)
+
       return
     }
   }, [
     defaultAddress,
     isMultiproxyLoading,
-    multiProxyList,
-    setAddress,
-    setCanFindMultiProxyFromUrl,
-    urlAddress
-  ])
-
-  // the url address is driving the UI if there's a mismatch
-  // force the url address to match
-  useEffect(() => {
-    if (isMultiproxyLoading) {
-      // we're not yet initialized
-      return
-    }
-
-    if (!urlAddress || urlAddress === selectedMultiProxyAddress) {
-      setCanFindMultiProxyFromUrl(true)
-    }
-
-    if (!!urlAddress && urlAddress !== selectedMultiProxyAddress) {
-      const isSuccess = selectMultiProxy(urlAddress)
-      setCanFindMultiProxyFromUrl(isSuccess)
-    }
-  }, [
-    urlAddress,
     multiProxyList,
     selectMultiProxy,
-    defaultAddress,
     selectedMultiProxyAddress,
-    isMultiproxyLoading,
-    setCanFindMultiProxyFromUrl
+    setCanFindMultiProxyFromUrl,
+    urlAddress
   ])
 }
