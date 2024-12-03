@@ -339,7 +339,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
           <Grid size={{ xs: 12, md: 10 }}>{easySetupOptions[selectedEasyOption]}</Grid>
           {(!!easyOptionErrorMessage || !!errorMessage) && (
             <>
-              <Grid size={{ xs: 12, md: 2 }} />
+              <Grid size={{ xs: 0, md: 2 }} />
               <Grid
                 size={{ xs: 12, md: 10 }}
                 className="errorMessage"
