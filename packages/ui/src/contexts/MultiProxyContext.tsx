@@ -11,7 +11,7 @@ import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { useQueryPure } from '../hooks/useQueryPure'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]

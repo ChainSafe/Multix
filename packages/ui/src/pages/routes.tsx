@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
 import { About, Creation, Home, Overview, Settings } from './index'
 import React from 'react'
 import App from '../App'
@@ -44,22 +44,11 @@ export const ROUTES: Route[] = [
   }
 ]
 
-export const router = createBrowserRouter(
-  [
-    {
-      path: '/',
-      element: <App />,
-      errorElement: <ErrorFallback />,
-      children: ROUTES
-    }
-  ],
+export const router = createBrowserRouter([
   {
-    future: {
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_skipActionErrorRevalidation: true
-    }
+    path: '/',
+    element: <App />,
+    errorElement: <ErrorFallback />,
+    children: ROUTES
   }
-)
+])

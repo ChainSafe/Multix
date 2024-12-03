@@ -9,7 +9,7 @@ import NetworkSelection from '../select/NetworkSelection'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { ROUTES } from '../../pages/routes'
 import { Button, NavLink } from '../library'
-import { createSearchParams, useSearchParams } from 'react-router-dom'
+import { createSearchParams, useSearchParams } from 'react-router'
 
 interface DrawerMenuProps {
   handleDrawerClose: () => void

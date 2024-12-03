@@ -11,7 +11,7 @@ import { isEmptyArray } from '../../utils/arrayUtils'
 import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
 import useWalletConnectEventsManager from '../../hooks/useWalletConnectEventsManager'
-import { Link, createSearchParams, useSearchParams } from 'react-router-dom'
+import { Link, createSearchParams, useSearchParams } from 'react-router'
 import { useSwitchAddress } from '../../hooks/useSwitchAddress'
 import { ConnectionDialog } from 'dot-connect/react.js'
 

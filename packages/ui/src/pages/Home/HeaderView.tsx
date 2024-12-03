@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
-import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { useMemo } from 'react'
 
 const HeaderView = () => {

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Box, Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import SuccessCreation from '../../components/SuccessCreation'
 import NewMulisigAlert from '../../components/NewMulisigAlert'
 import { styled } from '@mui/material/styles'

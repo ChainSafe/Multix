@@ -9,7 +9,7 @@ import { Button, Link } from '../components/library'
 import { Center } from '../components/layout/Center'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { useNetwork } from '../contexts/NetworkContext'
 
 export const useDisplayError = () => {
