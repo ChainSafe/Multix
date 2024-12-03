@@ -281,12 +281,12 @@ export const networkList: Record<string, NetworkInfo> = {
     explorerNetworkName: 'westend',
     pplChainRpcUrls: westendPplChains,
     rpcUrls: [
+      'wss://westend-rpc.polkadot.io',
       'wss://westend-rpc.dwellir.com',
       'wss://westend-rpc-tn.dwellir.com',
       'wss://rpc.ibp.network/westend',
       'wss://westend.dotters.network',
       'wss://westend.api.onfinality.io/public-ws',
-      'wss://westend-rpc.polkadot.io',
       'wss://westend.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
@@ -296,11 +296,11 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'paseo',
     explorerNetworkName: 'paseo',
     rpcUrls: [
-      'wss://paseo.rpc.amforc.com',
+      'wss://pas-rpc.stakeworld.io',
       'wss://paseo-rpc.dwellir.com',
+      'wss://paseo.rpc.amforc.com',
       'wss://rpc.ibp.network/paseo',
-      'wss://paseo.dotters.network',
-      'wss://pas-rpc.stakeworld.io'
+      'wss://paseo.dotters.network'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     pplChainRpcUrls: ['wss://people-paseo.rpc.amforc.com', 'wss://people-paseo.dotters.network'],

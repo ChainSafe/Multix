@@ -16,7 +16,7 @@ export const useDisplayError = () => {
   const { ownAccountList, isAllowedToConnectToExtension } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams({ address: '' })
   const { selectedNetwork } = useNetwork()
 
   if (
@@ -71,7 +71,7 @@ export const useDisplayError = () => {
     )
   }
 
-  if (!canFindMultiProxyFromUrl) {
+  if (!canFindMultiProxyFromUrl && !!searchParams.get('address')) {
     return (
       <CenterStyled>
         <ErrorMessageStyled>
