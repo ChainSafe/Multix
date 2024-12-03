@@ -1,5 +1,5 @@
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid2 as Grid } from '@mui/material'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router'
 import SuccessCreation from '../../components/SuccessCreation'
@@ -69,28 +69,19 @@ const Home = ({ className }: HomeProps) => {
       )}
       {/* <CurrentReferendumBanner /> */}
       <Grid
-        item
         alignItems="center"
-        xs={12}
+        size={{ xs: 12 }}
       >
         <HeaderView />
       </Grid>
       <Grid
-        item
         alignItems="center"
-        xs={12}
-        md={5}
-        lg={4}
+        size={{ xs: 12, md: 5, lg: 4 }}
       >
         <MultisigView />
       </Grid>
       {multiProxyList.length > 0 && (
-        <Grid
-          item
-          xs={12}
-          md={7}
-          lg={8}
-        >
+        <Grid size={{ xs: 12, md: 7, lg: 8 }}>
           <TransactionsWrapperStyled data-cy="container-transaction-list">
             <TransactionList />
           </TransactionsWrapperStyled>

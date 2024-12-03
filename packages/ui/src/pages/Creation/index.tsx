@@ -1,4 +1,12 @@
-import { Alert, Box, CircularProgress, Grid, Step, StepLabel, Stepper } from '@mui/material'
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Grid2 as Grid,
+  Step,
+  StepLabel,
+  Stepper
+} from '@mui/material'
 import { Button, ButtonWithIcon } from '../../components/library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -337,21 +345,15 @@ const MultisigCreation = ({ className }: Props) => {
       container
       spacing={2}
     >
-      <Grid
-        item
-        xs={12}
-        md={4}
-      >
+      <Grid size={{ xs: 12, md: 4 }}>
         <h1 className="title">{steps[currentStep] || ''}</h1>
       </Grid>
       <Grid
-        item
         container
         direction="row"
         justifyContent="center"
         alignItems="center"
-        xs={12}
-        md={8}
+        size={{ xs: 12, md: 8 }}
       >
         <Box className="stepsContainer">
           <Stepper
@@ -374,15 +376,10 @@ const MultisigCreation = ({ className }: Props) => {
       </Grid>
       <Grid
         container
-        item
-        xs={12}
+        size={{ xs: 12 }}
       >
         {currentStep === 0 && (
-          <Grid
-            item
-            xs={12}
-            md={8}
-          >
+          <Grid size={{ xs: 12, md: 8 }}>
             <Alert
               className="infoBox"
               severity="info"
@@ -397,11 +394,7 @@ const MultisigCreation = ({ className }: Props) => {
           </Grid>
         )}
         {currentStep === 1 && (
-          <Grid
-            item
-            xs={12}
-            md={6}
-          >
+          <Grid size={{ xs: 12, md: 6 }}>
             <ThresholdSelection
               setThreshold={setThreshold}
               threshold={threshold}
@@ -429,11 +422,7 @@ const MultisigCreation = ({ className }: Props) => {
           </Grid>
         )}
         {currentStep === 2 && (
-          <Grid
-            item
-            xs={12}
-            md={6}
-          >
+          <Grid size={{ xs: 12, md: 6 }}>
             <Summary
               signatories={signatories}
               threshold={threshold}
@@ -448,9 +437,8 @@ const MultisigCreation = ({ className }: Props) => {
         )}
       </Grid>
       <Grid
-        item
         container
-        xs={12}
+        size={{ xs: 12 }}
         justifyContent="center"
         className="buttonContainer"
         flexDirection="column"

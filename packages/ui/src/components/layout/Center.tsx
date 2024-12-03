@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid } from '@mui/material'
+import { Grid2 as Grid } from '@mui/material'
 
 interface Props {
   className?: string
@@ -15,11 +15,6 @@ export const Center = ({ children, className }: Props) => (
     justifyContent="center"
     style={{ height: '100%' }}
   >
-    <Grid
-      item
-      xs={3}
-    >
-      {children}
-    </Grid>
+    <Grid size={{ xs: 3 }}>{children}</Grid>
   </Grid>
 )

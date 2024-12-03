@@ -5,7 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid
+  Grid2 as Grid
 } from '@mui/material'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -347,10 +347,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
         <Grid container>
           {currentStep === 'selection' && (
             <>
-              <Grid
-                item
-                xs={12}
-              >
+              <Grid size={{ xs: 12 }}>
                 {!hasProxyEnoughFunds && (
                   <Alert severity="error">
                     The pure account doesn&apos;t have enough funds. It needs at least{' '}
@@ -383,10 +380,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   </>
                 )}
               </Grid>
-              <Grid
-                item
-                xs={12}
-              >
+              <Grid size={{ xs: 12 }}>
                 <h4>Signatories</h4>
                 <Box className="subSection">
                   <SignatorySelection
@@ -395,10 +389,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                   />
                 </Box>
               </Grid>
-              <Grid
-                item
-                xs={12}
-              >
+              <Grid size={{ xs: 12 }}>
                 <h4>Threshold</h4>
                 <Box className="subSection">
                   <ThresholdSelection
@@ -446,8 +437,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             </Grid>
           )}
           <Grid
-            item
-            xs={12}
+            size={{ xs: 12 }}
             className="buttonContainer"
           >
             {!!errorMessage && <AlertStyled severity="warning">{errorMessage}</AlertStyled>}

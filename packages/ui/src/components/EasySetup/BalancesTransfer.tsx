@@ -134,10 +134,12 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         value={amountString}
         helperText={amountError}
         error={!!amountError}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
-          )
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">{chainInfo?.tokenSymbol || ''}</InputAdornment>
+            )
+          }
         }}
       />
     </Box>

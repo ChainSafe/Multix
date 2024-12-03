@@ -1,4 +1,11 @@
-import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import {
+  Alert,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid2 as Grid
+} from '@mui/material'
 import { Button, TextField } from '../library'
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -215,38 +222,18 @@ const DeepTxCreationModal = ({
       <DialogTitle>Create Transaction</DialogTitle>
       <DialogContent>
         <Grid container>
-          <Grid
-            item
-            xs={0}
-            md={1}
-          />
-          <Grid
-            item
-            xs={12}
-            md={6}
-          >
+          <Grid size={{ xs: 0, md: 1 }} />
+          <Grid size={{ xs: 12, md: 6 }}>
             <SignerSelection
               label="Signing with"
               possibleSigners={possibleSigners}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid
-            item
-            xs={0}
-            md={5}
-          />
+          <Grid size={{ xs: 0, md: 5 }} />
           <>
-            <Grid
-              item
-              xs={0}
-              md={1}
-            />
-            <HashGridStyled
-              item
-              xs={12}
-              md={11}
-            >
+            <Grid size={{ xs: 0, md: 1 }} />
+            <HashGridStyled size={{ xs: 12, md: 11 }}>
               <span className="title">Call hash</span>
               <br />
               <span
@@ -259,16 +246,8 @@ const DeepTxCreationModal = ({
           </>
           {!proposalData.callData && (
             <>
-              <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
+              <Grid size={{ xs: 0, md: 1 }} />
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   className="addedCallData"
                   label={`Call data ${mustSubmitCallData ? '' : '(optional)'}`}
@@ -278,24 +257,14 @@ const DeepTxCreationModal = ({
                   data-cy="input-call-data"
                 />
               </Grid>
-              <Grid
-                item
-                xs={0}
-                md={5}
-              />
+              <Grid size={{ xs: 0, md: 5 }} />
             </>
           )}
           {!!parentCallInfo?.call && (
             <>
+              <Grid size={{ xs: 0, md: 1 }} />
               <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={11}
+                size={{ xs: 12, md: 11 }}
                 className="callInfo"
               >
                 <CallInfo
@@ -315,15 +284,9 @@ const DeepTxCreationModal = ({
           )}
           {!!errorMessage && (
             <>
+              <Grid size={{ xs: 0, md: 1 }} />
               <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={11}
+                size={{ xs: 12, md: 11 }}
                 className="errorMessage"
               >
                 <Alert severity="error">{errorMessage}</Alert>
@@ -331,8 +294,7 @@ const DeepTxCreationModal = ({
             </>
           )}
           <Grid
-            item
-            xs={12}
+            size={{ xs: 12 }}
             className="buttonContainer"
           >
             {!isGettingParentCallInfo && (

@@ -75,6 +75,7 @@ const Autocomplete = <
   return (
     <AutocompleteWrapper className={className}>
       <AutocompleteMui
+        {...props}
         handleHomeEndKeys={handleHomeEndKeys}
         selectOnFocus={selectOnFocus}
         clearOnBlur={clearOnBlur}
@@ -91,7 +92,6 @@ const Autocomplete = <
         renderOption={renderOption}
         popupIcon={<HiOutlineChevronDown />}
         renderInput={renderInput}
-        {...props}
         slots={{
           popper: PopperStyled
         }}

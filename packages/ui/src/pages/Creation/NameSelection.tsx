@@ -26,7 +26,9 @@ const NameSelection = ({ className, name, setName, originalName = '' }: Props) =
         label="Multisig name"
         value={name}
         onChange={handleChange}
-        inputProps={{ 'data-cy': 'input-name-creation' }}
+        slotProps={{
+          htmlInput: { 'data-cy': 'input-name-creation' }
+        }}
       />
       {!!originalName && (
         <AlertStyled severity="info">

@@ -1,4 +1,4 @@
-import { Alert, Box, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Alert, Box, Dialog, DialogContent, DialogTitle, Grid2 as Grid } from '@mui/material'
 import { Button } from '../library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -109,10 +109,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
       <DialogContent className="generalContainer">
         <Grid container>
           {!!errorMessage && <AlertStyled severity="error">{errorMessage}</AlertStyled>}
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid size={12}>
             <AppInfoStyled>From:</AppInfoStyled> {sessionProposal?.params.proposer.metadata.name}
             <br />
             <AppInfoStyled>Website:</AppInfoStyled> {sessionProposal?.params.proposer.metadata.url}
@@ -121,10 +118,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
             <br />
             <AppInfoStyled>Events:</AppInfoStyled> {events.join(', ')}
           </Grid>
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid size={12}>
             <TitleStyled>The following accounts will be shared:</TitleStyled>
             <AccountWrapperStyled>
               {selectedMultiProxy?.proxy && (
@@ -149,8 +143,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
             </AccountWrapperStyled>
           </Grid>
           <ButtonContainerStyled
-            item
-            xs={12}
+            size={12}
             className="buttonContainer"
           >
             <Button

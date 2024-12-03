@@ -150,9 +150,9 @@ const MultiProxySelection = ({ className, testId = '' }: Props) => {
   ): React.ReactNode => {
     return (
       <Box
+        {...props}
         key={option.address}
         component="li"
-        {...props}
         data-cy={`select-multiproxy-option-${testId}`}
       >
         <AccountDisplay

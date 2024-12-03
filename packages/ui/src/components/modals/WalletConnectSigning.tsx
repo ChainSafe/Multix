@@ -1,4 +1,11 @@
-import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import {
+  Alert,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid2 as Grid
+} from '@mui/material'
 import { Button } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -201,18 +208,10 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
         >
           {isProxySelected && multisigList.length > 1 && (
             <>
-              <Grid
-                item
-                xs={12}
-                md={2}
-              >
+              <Grid size={{ sm: 12, md: 2 }}>
                 <h4>Using</h4>
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md={10}
-              >
+              <Grid size={{ sm: 12, md: 10 }}>
                 <GenericAccountSelection
                   className="multiSelection"
                   accountList={multisigList}
@@ -227,52 +226,32 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               </Grid>
             </>
           )}
-          <Grid
-            item
-            xs={12}
-            md={2}
-          >
+          <Grid size={{ sm: 12, md: 2 }}>
             <h4>Signing with</h4>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
+          <Grid size={{ sm: 12, md: 10 }}>
             <SignerSelection
               possibleSigners={selectedMultisig?.signatories || []}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-          >
+          <Grid size={{ sm: 12, md: 2 }}>
             <h4>Call hash</h4>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
+          <Grid size={{ sm: 12, md: 10 }}>
             <HashGridStyled>{callInfo?.hash}</HashGridStyled>
           </Grid>
 
           {!!callInfo?.call && (
             <>
               <Grid
-                item
-                xs={12}
-                md={2}
+                size={{ sm: 12, md: 2 }}
                 alignSelf="flex-start"
               >
                 <CallTitleStyled>Call</CallTitleStyled>
               </Grid>
               <Grid
-                item
-                xs={12}
-                md={10}
+                size={{ sm: 12, md: 10 }}
                 className="callInfo"
               >
                 <CallInfo
@@ -288,25 +267,16 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
           )}
           {!!errorMessage && (
             <>
+              <Grid size={{ xs: 0, md: 2 }} />
               <Grid
-                item
-                xs={0}
-                md={2}
-              />
-              <Grid
-                item
-                xs={12}
-                md={10}
+                size={{ sm: 12, md: 10 }}
                 className="errorMessage"
               >
                 <Alert severity="error">{errorMessage}</Alert>
               </Grid>
             </>
           )}
-          <ButtonContainerStyled
-            item
-            xs={12}
-          >
+          <ButtonContainerStyled size={{ sm: 12 }}>
             {!isGettingCallInfo && (
               <>
                 <Button
