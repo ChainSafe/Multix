@@ -6,7 +6,7 @@ import { WalletConnectActiveSessions } from '../../components/WalletConnect/Wall
 import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icons/hi2'
 import { theme } from '../../styles/theme'
 import { useCallback, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import WalletConnectSVG from '../../logos/walletConnectSVG.svg?react'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'

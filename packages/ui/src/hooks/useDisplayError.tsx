@@ -9,14 +9,14 @@ import { Button, Link } from '../components/library'
 import { Center } from '../components/layout/Center'
 import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { useNetwork } from '../contexts/NetworkContext'
 
 export const useDisplayError = () => {
   const { ownAccountList, isAllowedToConnectToExtension } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams({ address: '' })
   const { selectedNetwork } = useNetwork()
 
   if (
@@ -71,7 +71,7 @@ export const useDisplayError = () => {
     )
   }
 
-  if (!canFindMultiProxyFromUrl) {
+  if (!canFindMultiProxyFromUrl && !!searchParams.get('address')) {
     return (
       <CenterStyled>
         <ErrorMessageStyled>

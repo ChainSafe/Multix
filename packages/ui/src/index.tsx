@@ -3,7 +3,7 @@ import '@fontsource/jost/400.css'
 import '@fontsource/jost/500.css'
 import '@fontsource/jost/700.css'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router/dom'
 import { router } from './pages/routes'
 import { StrictMode } from 'react'
 

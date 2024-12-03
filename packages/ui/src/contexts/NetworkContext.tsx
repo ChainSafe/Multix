@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { NetworkInfo, SupportedNetworks, networkList } from '../constants'
 
 const LOCALSTORAGE_SELECTED_NETWORK = 'multix.selectedNetwork'

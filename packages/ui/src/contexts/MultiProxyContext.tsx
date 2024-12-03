@@ -11,7 +11,7 @@ import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { useQueryPure } from '../hooks/useQueryPure'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
@@ -77,6 +77,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [multisigList, pureProxyList])
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
+
   const getMultiProxyByAddress = useCallback(
     (address?: string) => {
       if (!address) return undefined
@@ -118,6 +119,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     () => isWatchedAccount(selectedMultiProxy),
     [isWatchedAccount, selectedMultiProxy]
   )
+
   const [, setSearchParams] = useSearchParams({
     address: ''
   })
@@ -126,7 +128,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     setMultisigList(null)
     setPureProxyList(null)
   }, [])
-
   const setAddressInUrl = useCallback(
     (address: string) => {
       setSearchParams((prev) => {

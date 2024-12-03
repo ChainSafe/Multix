@@ -278,7 +278,10 @@ describe('Account address in the address bar', () => {
     })
 
     // check that there is an address in the address bar
-    cy.url().should('include', address)
+    cy.url({ timeout: 3000 }).should('include', address)
+
+    // react-router takes some time to get the search params inside the links
+    cy.wait(500)
 
     topMenuItems.homeButton().click()
     cy.url().should('include', address)
