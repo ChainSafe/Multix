@@ -281,7 +281,8 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
             console.warn('call filtered, current proxy:', selectedMultiProxy?.proxy, 'call:', agg)
           }
 
-          return isForCurrentProxy
+          // return isForCurrentProxy
+          return true
         })
 
         // sort by date, the newest first
