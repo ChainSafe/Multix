@@ -47,9 +47,9 @@ const polkadotPplChains = [
   // 'wss://people-polkadot.public.curie.radiumblock.co/ws'
 ]
 const kusamaPplChains = [
-  'wss://people-kusama-rpc.dwellir.com',
-  'wss://sys.ibp.network/people-kusama',
-  'wss://people-kusama.dotters.network',
+  // 'wss://people-kusama-rpc.dwellir.com',
+  // 'wss://sys.ibp.network/people-kusama',
+  // 'wss://people-kusama.dotters.network',
   'wss://rpc-people-kusama.luckyfriday.io'
   // 'wss://kusama-people-rpc.polkadot.io',
   // 'wss://ksm-rpc.stakeworld.io/people'
@@ -69,10 +69,10 @@ export const networkList: Record<string, NetworkInfo> = {
     rpcUrls: [
       // 'wss://polkadot-rpc.publicnode.com',
       // 'wss://polkadot-public-rpc.blockops.network/ws',
-      'wss://polkadot-rpc.dwellir.com',
-      'wss://polkadot-rpc-tn.dwellir.com',
-      'wss://rpc.ibp.network/polkadot',
-      'wss://polkadot.dotters.network',
+      // 'wss://polkadot-rpc.dwellir.com',
+      // 'wss://polkadot-rpc-tn.dwellir.com',
+      // 'wss://rpc.ibp.network/polkadot',
+      // 'wss://polkadot.dotters.network',
       'wss://rpc-polkadot.luckyfriday.io'
       // 'wss://polkadot.api.onfinality.io/public-ws'
       // 'wss://polkadot.public.curie.radiumblock.co/ws',
@@ -89,10 +89,10 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: kusamaPplChains,
     rpcUrls: [
       // 'wss://kusama-rpc.publicnode.com',
-      'wss://kusama-rpc.dwellir.com',
-      'wss://kusama-rpc-tn.dwellir.com',
-      'wss://rpc.ibp.network/kusama',
-      'wss://kusama.dotters.network',
+      // 'wss://kusama-rpc.dwellir.com',
+      // 'wss://kusama-rpc-tn.dwellir.com',
+      // 'wss://rpc.ibp.network/kusama',
+      // 'wss://kusama.dotters.network',
       'wss://rpc-kusama.luckyfriday.io'
       // 'wss://kusama.api.onfinality.io/public-ws',
       // 'wss://rockx-ksm.w3node.com/polka-public-ksm/ws',
@@ -106,10 +106,10 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrls: [
-      'wss://asset-hub-polkadot-rpc.dwellir.com',
-      'wss://statemint-rpc-tn.dwellir.com',
-      'wss://sys.ibp.network/asset-hub-polkadot',
-      'wss://asset-hub-polkadot.dotters.network',
+      // 'wss://asset-hub-polkadot-rpc.dwellir.com',
+      // 'wss://statemint-rpc-tn.dwellir.com',
+      // 'wss://sys.ibp.network/asset-hub-polkadot',
+      // 'wss://asset-hub-polkadot.dotters.network',
       'wss://rpc-asset-hub-polkadot.luckyfriday.io'
       // 'wss://statemint.api.onfinality.io/public-ws',
       // 'wss://polkadot-asset-hub-rpc.polkadot.io',
@@ -124,10 +124,10 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrls: [
-      'wss://asset-hub-kusama-rpc.dwellir.com',
-      'wss://statemine-rpc-tn.dwellir.com',
-      'wss://sys.ibp.network/statemine',
-      'wss://asset-hub-kusama.dotters.network',
+      // 'wss://asset-hub-kusama-rpc.dwellir.com',
+      // 'wss://statemine-rpc-tn.dwellir.com',
+      // 'wss://sys.ibp.network/statemine',
+      // 'wss://asset-hub-kusama.dotters.network',
       'wss://rpc-asset-hub-kusama.luckyfriday.io'
       // 'wss://kusama-asset-hub-rpc.polkadot.io',
       // 'wss://statemine.public.curie.radiumblock.co/ws',
