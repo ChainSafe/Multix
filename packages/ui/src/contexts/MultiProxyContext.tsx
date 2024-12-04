@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import {
   MultisigsBySignatoriesOrWatchedQuery,
   ProxyType,
-  PureByIdsQueryQuery
+  PureByIdsQuery
 } from '../../types-and-hooks'
 import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
 import { useQueryMultisigs } from '../hooks/useQueryMultisigs'
@@ -233,7 +233,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     [watchedAddresses]
   )
 
-  const refreshPureList = useCallback((data: PureByIdsQueryQuery) => {
+  const refreshPureList = useCallback((data: PureByIdsQuery) => {
     const pureProxyMap = new Map<string, Omit<MultiProxy, 'proxy'>>()
     // we do have an answer, but there is nothing
     if (!!data?.accounts && data.accounts.length === 0) {

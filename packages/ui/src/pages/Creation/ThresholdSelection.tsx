@@ -63,14 +63,16 @@ const ThresholdSelection = ({ className, threshold, setThreshold, signatoriesNum
         error={!!error}
         helperText={error}
         label=""
-        InputProps={{
-          endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
+        slotProps={{
+          input: {
+            endAdornment: <InputAdornment position="end">/{signatoriesNumber}</InputAdornment>
+          },
+          htmlInput: { 'data-cy': 'input-threshold-creation' },
+          // @ts-expect-error
+          formHelperText: { 'data-cy': 'input-warning-message' }
         }}
         value={threshold || ''}
         onChange={handleChange}
-        inputProps={{ 'data-cy': 'input-threshold-creation' }}
-        // @ts-expect-error
-        FormHelperTextProps={{ 'data-cy': 'input-warning-message' }}
       />
     </Box>
   )

@@ -1,4 +1,4 @@
-import { Alert, Box, CircularProgress, Grid, Tooltip, styled } from '@mui/material'
+import { Alert, Box, CircularProgress, Grid2 as Grid, Tooltip, styled } from '@mui/material'
 import { Button, InputField } from '../library'
 import { useCallback, useMemo, useState, ChangeEvent } from 'react'
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
@@ -35,10 +35,7 @@ export const WalletConnectSession = () => {
       container
       spacing={2}
     >
-      <Grid
-        item
-        alignItems="center"
-      >
+      <Grid alignItems="center">
         {!canUseWalletConnect && (
           <AlertStyled
             severity="warning"
@@ -50,11 +47,7 @@ export const WalletConnectSession = () => {
           </AlertStyled>
         )}
       </Grid>
-      <Grid
-        xs={12}
-        md={8}
-        item
-      >
+      <Grid size={{ xs: 12, md: 8 }}>
         <Grid
           container
           direction="column"

@@ -1,4 +1,4 @@
-import { Alert, Box, Grid } from '@mui/material'
+import { Alert, Box, Grid2 as Grid } from '@mui/material'
 import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
@@ -149,17 +149,13 @@ const AccountSelection = ({
     <Grid container>
       {!!errorMessage && (
         <Grid
-          item
-          xs={12}
+          size={12}
           data-cy="label-add-account-error"
         >
           <AlertStyled severity="warning">{errorMessage}</AlertStyled>
         </Grid>
       )}
-      <Grid
-        item
-        xs={12}
-      >
+      <Grid size={12}>
         <BoxStyled className={className}>
           <GenericAccountSelection
             allowAnyAddressInput={true}

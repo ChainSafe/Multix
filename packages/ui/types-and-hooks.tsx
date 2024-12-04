@@ -714,21 +714,21 @@ export type MultisigByIdQueryVariables = Exact<{
 }>;
 
 
-export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', threshold?: number | null, id: string, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', id: string, address: string } }> }> };
+export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }> }> };
 
 export type MultisigCallsByMultisigIdQueryVariables = Exact<{
   multisigs?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 
-export type MultisigCallsByMultisigIdQuery = { __typename?: 'Query', multisigCalls: Array<{ __typename?: 'MultisigCall', blockHash: string, callIndex: number, id: string, timestamp: any }> };
+export type MultisigCallsByMultisigIdQuery = { __typename?: 'Query', multisigCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, callIndex: number, timestamp: any }> };
 
 export type MultisigsByMultisigOrPureSignatoriesQueryVariables = Exact<{
   accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 
-export type MultisigsByMultisigOrPureSignatoriesQuery = { __typename?: 'Query', accountMultisigs: Array<{ __typename?: 'AccountMultisig', multisig: { __typename?: 'Account', address: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }> } }> };
+export type MultisigsByMultisigOrPureSignatoriesQuery = { __typename?: 'Query', accountMultisigs: Array<{ __typename?: 'AccountMultisig', id: string, multisig: { __typename?: 'Account', id: string, address: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }> } }> };
 
 export type MultisigsBySignatoriesOrWatchedQueryVariables = Exact<{
   accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -736,28 +736,29 @@ export type MultisigsBySignatoriesOrWatchedQueryVariables = Exact<{
 }>;
 
 
-export type MultisigsBySignatoriesOrWatchedQuery = { __typename?: 'Query', accountMultisigs: Array<{ __typename?: 'AccountMultisig', multisig: { __typename?: 'Account', address: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', type: ProxyType, delegator: { __typename?: 'Account', address: string, isPureProxy?: boolean | null } }> } }> };
+export type MultisigsBySignatoriesOrWatchedQuery = { __typename?: 'Query', accountMultisigs: Array<{ __typename?: 'AccountMultisig', id: string, multisig: { __typename?: 'Account', id: string, address: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, address: string, isPureProxy?: boolean | null } }> } }> };
 
-export type PureByIdsQueryQueryVariables = Exact<{
+export type PureByIdsQueryVariables = Exact<{
   pureIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 
-export type PureByIdsQueryQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', address: string, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', signatory: { __typename?: 'Account', address: string } }> } }> }> };
+export type PureByIdsQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, address: string, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', id: string, address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }> } }> }> };
 
 
 
 export const MultisigByIdDocument = `
     query MultisigById($id: String!) {
   accounts(where: {id_eq: $id, isMultisig_eq: true}) {
+    id
+    threshold
     signatories(limit: 50) {
+      id
       signatory {
         id
         address
       }
     }
-    threshold
-    id
   }
 }
     `;
@@ -785,9 +786,9 @@ export const MultisigCallsByMultisigIdDocument = `
     orderBy: timestamp_DESC
     where: {multisig: {id_in: $multisigs}}
   ) {
+    id
     blockHash
     callIndex
-    id
     timestamp
   }
 }
@@ -810,13 +811,17 @@ export const useMultisigCallsByMultisigIdQuery = <
     )};
 
 export const MultisigsByMultisigOrPureSignatoriesDocument = `
-    query multisigsByMultisigOrPureSignatories($accountIds: [String!]) {
+    query MultisigsByMultisigOrPureSignatories($accountIds: [String!]) {
   accountMultisigs(where: {signatory: {id_in: $accountIds}}, limit: 10) {
+    id
     multisig {
+      id
       address
       threshold
       signatories(limit: 10) {
+        id
         signatory {
+          id
           address
         }
       }
@@ -835,7 +840,7 @@ export const useMultisigsByMultisigOrPureSignatoriesQuery = <
     
     return useQuery<MultisigsByMultisigOrPureSignatoriesQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['multisigsByMultisigOrPureSignatories'] : ['multisigsByMultisigOrPureSignatories', variables],
+    queryKey: variables === undefined ? ['MultisigsByMultisigOrPureSignatories'] : ['MultisigsByMultisigOrPureSignatories', variables],
     queryFn: useFetchData<MultisigsByMultisigOrPureSignatoriesQuery, MultisigsByMultisigOrPureSignatoriesQueryVariables>(MultisigsByMultisigOrPureSignatoriesDocument).bind(null, variables),
     ...options
   }
@@ -847,17 +852,23 @@ export const MultisigsBySignatoriesOrWatchedDocument = `
     where: {OR: [{multisig: {id_in: $watchedAccountIds}}, {signatory: {id_in: $accountIds}}, {signatory: {id_in: $watchedAccountIds}}]}
     limit: 500
   ) {
+    id
     multisig {
+      id
       address
       threshold
       signatories(limit: 100) {
+        id
         signatory {
+          id
           address
         }
       }
       delegateeFor(limit: 100) {
+        id
         type
         delegator {
+          id
           address
           isPureProxy
         }
@@ -883,19 +894,23 @@ export const useMultisigsBySignatoriesOrWatchedQuery = <
   }
     )};
 
-export const PureByIdsQueryDocument = `
-    query PureByIdsQuery($pureIds: [String!]) {
+export const PureByIdsDocument = `
+    query PureByIds($pureIds: [String!]) {
   accounts(where: {AND: [{id_in: $pureIds}, {isPureProxy_eq: true}]}, limit: 50) {
+    id
     address
     delegatorFor(limit: 50) {
       id
       type
       delegatee {
+        id
         address
         isMultisig
         threshold
         signatories(limit: 50) {
+          id
           signatory {
+            id
             address
           }
         }
@@ -905,18 +920,18 @@ export const PureByIdsQueryDocument = `
 }
     `;
 
-export const usePureByIdsQueryQuery = <
-      TData = PureByIdsQueryQuery,
+export const usePureByIdsQuery = <
+      TData = PureByIdsQuery,
       TError = unknown
     >(
-      variables?: PureByIdsQueryQueryVariables,
-      options?: Omit<UseQueryOptions<PureByIdsQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<PureByIdsQueryQuery, TError, TData>['queryKey'] }
+      variables?: PureByIdsQueryVariables,
+      options?: Omit<UseQueryOptions<PureByIdsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<PureByIdsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<PureByIdsQueryQuery, TError, TData>(
+    return useQuery<PureByIdsQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['PureByIdsQuery'] : ['PureByIdsQuery', variables],
-    queryFn: useFetchData<PureByIdsQueryQuery, PureByIdsQueryQueryVariables>(PureByIdsQueryDocument).bind(null, variables),
+    queryKey: variables === undefined ? ['PureByIds'] : ['PureByIds', variables],
+    queryFn: useFetchData<PureByIdsQuery, PureByIdsQueryVariables>(PureByIdsDocument).bind(null, variables),
     ...options
   }
     )};

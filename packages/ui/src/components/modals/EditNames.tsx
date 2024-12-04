@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, Grid2 as Grid } from '@mui/material'
 import { Button } from '../library'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -58,10 +58,7 @@ const EditNames = ({ onClose, className }: Props) => {
       <DialogTitle>Edit names</DialogTitle>
       <DialogContent className="generalContainer">
         <Grid container>
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid size={12}>
             {!!selectedMultiProxy?.proxy && (
               <>
                 <h4>Proxy</h4>
@@ -74,10 +71,7 @@ const EditNames = ({ onClose, className }: Props) => {
               </>
             )}
           </Grid>
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid size={12}>
             <h4>
               {renderMultisigHeading(
                 !!selectedMultiProxy?.multisigs?.length && selectedMultiProxy.multisigs.length > 1
@@ -93,10 +87,7 @@ const EditNames = ({ onClose, className }: Props) => {
               />
             ))}
           </Grid>
-          <Grid
-            item
-            xs={12}
-          >
+          <Grid size={12}>
             <h4>Signatories</h4>
             {signatories.map((signatory) => (
               <AccountEditName
@@ -109,8 +100,7 @@ const EditNames = ({ onClose, className }: Props) => {
             ))}
           </Grid>
           <Grid
-            item
-            xs={12}
+            size={12}
             className="buttonContainer"
           >
             <Button

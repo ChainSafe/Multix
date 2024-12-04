@@ -1,4 +1,4 @@
-import { usePureByIdsQueryQuery } from '../../types-and-hooks'
+import { usePureByIdsQuery } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
@@ -13,7 +13,7 @@ export const useQueryPure = ({ pureIds, shouldRefetch = false }: Args) => {
   const { selectedNetwork } = useNetwork()
   const hasSomethingToQuery = useMemo(() => pureIds.length > 0, [pureIds])
 
-  const { error, data, isLoading, refetch } = usePureByIdsQueryQuery(
+  const { error, data, isLoading, refetch } = usePureByIdsQuery(
     { pureIds },
     {
       enabled: hasSomethingToQuery,

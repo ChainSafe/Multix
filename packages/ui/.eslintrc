@@ -51,11 +51,15 @@
       "extends": "plugin:@graphql-eslint/schema-recommended",
       "rules": {
         "@graphql-eslint/known-type-names": "error"
-      },
-      "parserOptions": {
-        "schema": "https://chainsafe.squids.live/multix-arrow/v/v4/graphql"
       }
-    }
+      },
+      {
+        "files": ["*.graphql"],
+        "extends": ["plugin:@graphql-eslint/operations-recommended"],
+        "rules": {
+          "@graphql-eslint/require-selections": "error"
+        }
+      }
   ],
-  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "src/gql/**/*"]
+  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "build"]
 }

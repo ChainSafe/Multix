@@ -9,17 +9,23 @@ query MultisigsBySignatoriesOrWatched($accountIds: [String!], $watchedAccountIds
     }
     limit: 500
   ) {
+    id
     multisig {
+      id
       address
       threshold
       signatories(limit: 100) {
+        id
         signatory {
+          id
           address
         }
       }
       delegateeFor(limit: 100) {
+        id
         type
         delegator {
+          id
           address
           isPureProxy
         }

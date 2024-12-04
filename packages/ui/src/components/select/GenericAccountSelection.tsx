@@ -155,6 +155,7 @@ const GenericAccountSelection = ({
     return (
       <OptionMenuItem
         keyValue={option.address}
+        key={option.address}
         {...props}
       >
         <AccountDisplay
@@ -171,18 +172,20 @@ const GenericAccountSelection = ({
       {...params}
       inputRef={inputRef}
       label={label}
-      InputProps={{
-        ...params.InputProps,
-        startAdornment: valueAddress ? (
-          <InputAdornment position="start">
-            <IdenticonBadge
-              address={valueAddress}
-              badge={valueBadge}
-              sideBadge
-              size="small"
-            />
-          </InputAdornment>
-        ) : null
+      slotProps={{
+        input: {
+          ...params.InputProps,
+          startAdornment: valueAddress && (
+            <InputAdornment position="start">
+              <IdenticonBadge
+                address={valueAddress}
+                badge={valueBadge}
+                sideBadge
+                size="small"
+              />
+            </InputAdornment>
+          )
+        }
       }}
       onBlur={onInputBlur}
       onKeyDown={handleSpecialKeys}

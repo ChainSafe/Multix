@@ -4,7 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid,
+  Grid2 as Grid,
   SelectChangeEvent
 } from '@mui/material'
 import { Button, ButtonWithIcon, Select } from '../library'
@@ -281,18 +281,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
           alignItems="center"
           container
         >
-          <Grid
-            item
-            xs={12}
-            md={2}
-          >
+          <Grid size={{ xs: 12, md: 2 }}>
             <h4>From</h4>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
+          <Grid size={{ xs: 12, md: 10 }}>
             <GenericAccountSelection
               accountList={possibleOrigin}
               onChange={handleSelectOrigin}
@@ -302,18 +294,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
           </Grid>
           {isProxySelected && multisigList.length > 1 && (
             <>
-              <Grid
-                item
-                xs={12}
-                md={2}
-              >
+              <Grid size={{ xs: 12, md: 2 }}>
                 <h4>Using</h4>
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md={10}
-              >
+              <Grid size={{ xs: 12, md: 10 }}>
                 <GenericAccountSelection
                   className="multiSelection"
                   accountList={multisigList}
@@ -328,35 +312,19 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
               </Grid>
             </>
           )}
-          <Grid
-            item
-            xs={12}
-            md={2}
-          >
+          <Grid size={{ xs: 12, md: 2 }}>
             <h4>Signing with</h4>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
+          <Grid size={{ xs: 12, md: 10 }}>
             <SignerSelection
               possibleSigners={selectedMultisig?.signatories || []}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-          >
+          <Grid size={{ xs: 12, md: 2 }}>
             <h4>Transaction</h4>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
+          <Grid size={{ xs: 12, md: 10 }}>
             <Select
               value={selectedEasyOption}
               onChange={onChangeEasySetupOption}
@@ -367,29 +335,13 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
               testId="easy-setup"
             />
           </Grid>
-          <Grid
-            item
-            xs={0}
-            md={2}
-          />
-          <Grid
-            item
-            xs={12}
-            md={10}
-          >
-            {easySetupOptions[selectedEasyOption]}
-          </Grid>
+          <Grid size={{ xs: 0, md: 2 }} />
+          <Grid size={{ xs: 12, md: 10 }}>{easySetupOptions[selectedEasyOption]}</Grid>
           {(!!easyOptionErrorMessage || !!errorMessage) && (
             <>
+              <Grid size={{ xs: 0, md: 2 }} />
               <Grid
-                item
-                xs={0}
-                md={2}
-              />
-              <Grid
-                item
-                xs={12}
-                md={10}
+                size={{ xs: 12, md: 10 }}
                 className="errorMessage"
               >
                 <Alert
@@ -402,8 +354,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
             </>
           )}
           <Grid
-            item
-            xs={12}
+            size={{ xs: 12 }}
             className="buttonContainer"
           >
             {isSubmitting ? (

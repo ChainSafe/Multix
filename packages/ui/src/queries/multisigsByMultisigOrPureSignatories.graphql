@@ -1,10 +1,14 @@
-query multisigsByMultisigOrPureSignatories($accountIds: [String!]) {
+query MultisigsByMultisigOrPureSignatories($accountIds: [String!]) {
   accountMultisigs(where: { signatory: { id_in: $accountIds } }, limit: 10) {
+    id
     multisig {
+      id
       address
       threshold
       signatories(limit: 10) {
+        id
         signatory {
+          id
           address
         }
       }

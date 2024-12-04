@@ -40,7 +40,7 @@
     "concurrently": "^9.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3"
+    "prettier": "^3.4.2"
   },
   "resolutions": {
     "graphql": "^16.0.0",

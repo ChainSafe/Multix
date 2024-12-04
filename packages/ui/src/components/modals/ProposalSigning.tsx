@@ -1,4 +1,11 @@
-import { Alert, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@mui/material'
+import {
+  Alert,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid2 as Grid
+} from '@mui/material'
 import { Button, TextField } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -289,38 +296,18 @@ const ProposalSigning = ({
       <DialogTitle>Transaction signing</DialogTitle>
       <DialogContent>
         <Grid container>
-          <Grid
-            item
-            xs={0}
-            md={1}
-          />
-          <Grid
-            item
-            xs={12}
-            md={6}
-          >
+          <Grid size={{ xs: 0, md: 1 }} />
+          <Grid size={{ xs: 12, md: 6 }}>
             <SignerSelection
               label="Signing with"
               possibleSigners={possibleSigners}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid
-            item
-            xs={0}
-            md={5}
-          />
+          <Grid size={{ xs: 0, md: 5 }} />
           <>
-            <Grid
-              item
-              xs={0}
-              md={1}
-            />
-            <HashGridStyled
-              item
-              xs={12}
-              md={11}
-            >
+            <Grid size={{ xs: 0, md: 1 }} />
+            <HashGridStyled size={{ xs: 12, md: 11 }}>
               <span className="title">Call hash</span>
               <br />
               <span
@@ -333,16 +320,8 @@ const ProposalSigning = ({
           </>
           {!proposalData.callData && (
             <>
-              <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
+              <Grid size={{ xs: 0, md: 1 }} />
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   className="addedCallData"
                   label={`Call data ${mustProvideCallData ? '' : '(optional)'}`}
@@ -352,24 +331,14 @@ const ProposalSigning = ({
                   data-cy="input-call-data"
                 />
               </Grid>
-              <Grid
-                item
-                xs={0}
-                md={5}
-              />
+              <Grid size={{ xs: 0, md: 5 }} />
             </>
           )}
           {!!callInfo?.call && (
             <>
+              <Grid size={{ xs: 0, md: 1 }} />
               <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={11}
+                size={{ xs: 12, md: 11 }}
                 className="callInfo"
               >
                 <CallInfo
@@ -389,25 +358,16 @@ const ProposalSigning = ({
           )}
           {!!errorMessage && (
             <>
+              <Grid size={{ xs: 0, md: 1 }} />
               <Grid
-                item
-                xs={0}
-                md={1}
-              />
-              <Grid
-                item
-                xs={12}
-                md={11}
+                size={{ xs: 12, md: 11 }}
                 className="errorMessage"
               >
                 <Alert severity="error">{errorMessage}</Alert>
               </Grid>
             </>
           )}
-          <ButtonContainerStyled
-            item
-            xs={12}
-          >
+          <ButtonContainerStyled size={12}>
             {!isGettingCallInfo && isProposerSelected && (
               <Button
                 variant="negative"

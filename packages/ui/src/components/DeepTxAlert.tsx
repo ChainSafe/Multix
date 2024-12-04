@@ -1,4 +1,4 @@
-import { Alert, Grid } from '@mui/material'
+import { Alert, Grid2 as Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMultisigsByMultisigOrPureSignatoriesQuery } from '../../types-and-hooks'
@@ -217,18 +217,11 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
           data-cy="banner-nested-multisig-tx"
         >
           <Grid
-            item
-            xs={12}
-            sm={9}
-            md={9}
+            size={{ xs: 12, sm: 9, md: 9 }}
             container
           >
             <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={6}
+              size={{ xs: 12, sm: 12, md: 12, lg: 6 }}
               display="flex"
               alignItems="center"
               className="gridItem"
@@ -236,11 +229,7 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
               Pending tx <FunctionNameStyled>{data1.name}</FunctionNameStyled>
             </Grid>
             <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={6}
+              size={{ xs: 12, sm: 12, md: 12, lg: 6 }}
               display="flex"
               alignItems="center"
               className="gridItem"
@@ -254,10 +243,7 @@ export const DeepTxAlert = ({ pendingTxCallData }: Props) => {
             </Grid>
           </Grid>
           <Grid
-            item
-            xs={12}
-            sm={3}
-            md={3}
+            size={{ xs: 12, sm: 3, md: 3 }}
             display="flex"
             alignItems="center"
             className="gridItem"

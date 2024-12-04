@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Box, Grid, IconButton, Paper } from '@mui/material'
+import { Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
 import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
@@ -20,11 +20,7 @@ const WatchedAccounts = () => {
         spacing={2}
       >
         {hasWatchedAddresses && (
-          <Grid
-            item
-            xs={12}
-            md={8}
-          >
+          <Grid size={{ xs: 12, md: 8 }}>
             <PaperStyled>
               {watchedAddresses.map((address) => {
                 return (
@@ -50,11 +46,7 @@ const WatchedAccounts = () => {
             </PaperStyled>
           </Grid>
         )}
-        <Grid
-          item
-          xs={12}
-          md={8}
-        >
+        <Grid size={{ xs: 12, md: 8 }}>
           <AccountSelectionWrapperStyled>
             <AccountSelection
               className="accountDropdown"

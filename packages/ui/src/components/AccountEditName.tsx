@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid2 as Grid } from '@mui/material'
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import { useAccounts } from '../contexts/AccountsContext'
 import { useAccountNames } from '../contexts/AccountNamesContext'
@@ -45,10 +45,7 @@ const AccountEditName = ({ address, onNameChange, className, testId }: Props) =>
       spacing={2}
     >
       <Grid
-        item
-        xs={12}
-        sm={6}
-        md={4}
+        size={{ xs: 12, sm: 6, md: 4 }}
         alignItems="center"
       >
         <AccountDisplay
@@ -56,12 +53,7 @@ const AccountEditName = ({ address, onNameChange, className, testId }: Props) =>
           withName={false}
         />
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={8}
-      >
+      <Grid size={{ xs: 12, sm: 6, md: 8 }}>
         <InputField
           label={`Name${isExtensionAccount ? ' (from extension)' : ''}`}
           onChange={onChange}
