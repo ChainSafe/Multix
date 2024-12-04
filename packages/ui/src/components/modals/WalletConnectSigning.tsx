@@ -61,7 +61,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     if (!callInfo?.call) return
     return callInfo.call
   }, [callInfo])
-  // this is a creation, we can force asMulti
+  // this is a creation, we can force axsulti
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
     extrinsicToCall,
@@ -208,10 +208,10 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
         >
           {isProxySelected && multisigList.length > 1 && (
             <>
-              <Grid size={{ sm: 12, md: 2 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <h4>Using</h4>
               </Grid>
-              <Grid size={{ sm: 12, md: 10 }}>
+              <Grid size={{ xs: 12, md: 10 }}>
                 <GenericAccountSelection
                   className="multiSelection"
                   accountList={multisigList}
@@ -226,32 +226,32 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
               </Grid>
             </>
           )}
-          <Grid size={{ sm: 12, md: 2 }}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <h4>Signing with</h4>
           </Grid>
-          <Grid size={{ sm: 12, md: 10 }}>
+          <Grid size={{ xs: 12, md: 10 }}>
             <SignerSelection
               possibleSigners={selectedMultisig?.signatories || []}
               onChange={() => setErrorMessage('')}
             />
           </Grid>
-          <Grid size={{ sm: 12, md: 2 }}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <h4>Call hash</h4>
           </Grid>
-          <Grid size={{ sm: 12, md: 10 }}>
+          <Grid size={{ xs: 12, md: 10 }}>
             <HashGridStyled>{callInfo?.hash}</HashGridStyled>
           </Grid>
 
           {!!callInfo?.call && (
             <>
               <Grid
-                size={{ sm: 12, md: 2 }}
+                size={{ xs: 12, md: 2 }}
                 alignSelf="flex-start"
               >
                 <CallTitleStyled>Call</CallTitleStyled>
               </Grid>
               <Grid
-                size={{ sm: 12, md: 10 }}
+                size={{ xs: 12, md: 10 }}
                 className="callInfo"
               >
                 <CallInfo
@@ -269,14 +269,14 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
             <>
               <Grid size={{ xs: 0, md: 2 }} />
               <Grid
-                size={{ sm: 12, md: 10 }}
+                size={{ xs: 12, md: 10 }}
                 className="errorMessage"
               >
                 <Alert severity="error">{errorMessage}</Alert>
               </Grid>
             </>
           )}
-          <ButtonContainerStyled size={{ sm: 12 }}>
+          <ButtonContainerStyled size={{ xs: 12 }}>
             {!isGettingCallInfo && (
               <>
                 <Button
@@ -311,7 +311,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 const HashGridStyled = styled(Grid)`
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: small;
+  font-size: xsall;
 `
 
 const CallTitleStyled = styled('h4')`
