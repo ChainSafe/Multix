@@ -66,8 +66,6 @@
     "lint:types": "tsc --pretty",
     "lint:fix": "yarn run lint --fix",
     "codegen": "graphql-codegen --config graphql.config.json",
-    "generate:type-from-defs": "dlx ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --endpoint ./node-metadata.json --package src/interfaces --input ./src/interfaces",
-    "generate:types-from-chain": "dlx ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --endpoint wss://rpc.ibp.network/polkadot --output ./src/interfaces",
     "test": "cypress open",
     "test:ci": "cypress run --browser chrome --headless",
     "postinstall": "yarn papi"
