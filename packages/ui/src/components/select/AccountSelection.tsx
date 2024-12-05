@@ -146,7 +146,10 @@ const AccountSelection = ({
   )
 
   return (
-    <Grid container>
+    <Grid
+      container
+      width={'100%'}
+    >
       {!!errorMessage && (
         <Grid
           size={12}
