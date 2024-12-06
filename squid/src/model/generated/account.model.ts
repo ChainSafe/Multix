@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, OneToMany as OneToMany_, BooleanColumn as BooleanColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {AccountMultisig} from "./accountMultisig.model"
 import {ProxyAccount} from "./proxyAccount.model"
 import {MultisigCall} from "./multisigCall.model"
@@ -12,13 +12,13 @@ export class Account {
     @PrimaryColumn_()
     id!: string
 
-    @Column_("text", {nullable: false})
+    @StringColumn_({nullable: false})
     address!: string
 
     @OneToMany_(() => AccountMultisig, e => e.signatory)
     multisigs!: AccountMultisig[]
 
-    @Column_("bool", {nullable: true})
+    @BooleanColumn_({nullable: true})
     isPureProxy!: boolean | undefined | null
 
     @OneToMany_(() => ProxyAccount, e => e.delegator)
@@ -27,13 +27,13 @@ export class Account {
     @OneToMany_(() => ProxyAccount, e => e.delegatee)
     delegateeFor!: ProxyAccount[]
 
-    @Column_("bool", {nullable: true})
+    @BooleanColumn_({nullable: true})
     isMultisig!: boolean | undefined | null
 
     @OneToMany_(() => AccountMultisig, e => e.multisig)
     signatories!: AccountMultisig[]
 
-    @Column_("int4", {nullable: true})
+    @IntColumn_({nullable: true})
     threshold!: number | undefined | null
 
     @OneToMany_(() => MultisigCall, e => e.multisig)

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, DateTimeColumn as DateTimeColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {ProxyType} from "./_proxyType"
 
@@ -22,15 +22,15 @@ export class ProxyAccount {
     @Column_("varchar", {length: 17, nullable: false})
     type!: ProxyType
 
-    @Column_("int4", {nullable: false})
+    @IntColumn_({nullable: false})
     delay!: number
 
-    @Column_("timestamp with time zone", {nullable: false})
+    @DateTimeColumn_({nullable: false})
     createdAt!: Date
 
-    @Column_("int4", {nullable: true})
+    @IntColumn_({nullable: true})
     extrinsicIndex!: number | undefined | null
 
-    @Column_("int4", {nullable: true})
+    @IntColumn_({nullable: true})
     creationBlockNumber!: number | undefined | null
 }

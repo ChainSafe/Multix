@@ -44,6 +44,7 @@ const isWhiteListedCall = (type: string, value: string) => {
     'ChildBounties.add_child_bounty',
     'ChildBounties.propose_curator',
     'ChildBounties.accept_curator',
+    'ChildBounties.claim_child_bounty',
     'Staking.bond',
     'Staking.unbond',
     'Staking.bond_extra',
