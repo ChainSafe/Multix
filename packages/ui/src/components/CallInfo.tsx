@@ -52,7 +52,12 @@ const isWhiteListedCall = (type: string, value: string) => {
     'Staking.nominate',
     'Proxy.add_proxy',
     'Proxy.remove_proxy',
-    'Proxy.kill_pure'
+    'Proxy.kill_pure',
+    'ConvictionVoting.delegate',
+    'ConvictionVoting.vote',
+    'ConvictionVoting.remove_vote',
+    'ConvictionVoting.undelegate',
+    'ConvictionVoting.unlock'
   ].includes(`${type}.${value}`)
 }
 
@@ -71,7 +76,9 @@ const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman,
 
 const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman, id: string) => {
   // for transfer, nomination, staking, bounties
-  const bigIntKey = ['value', 'fee', 'max_additional'].find((key) => typeof value[key] === 'bigint')
+  const bigIntKey = ['value', 'fee', 'max_additional', 'balance'].find(
+    (key) => typeof value[key] === 'bigint'
+  )
 
   if (bigIntKey) {
     return formatBalance(value[bigIntKey], bigIntKey, chainInfo, id)
@@ -120,9 +127,15 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   }
 
   // that's an Account with MultiAddress.Id
-  const multiAddressKey = ['dest', 'beneficiary', 'curator', 'delegate', 'spawner'].find(
-    (key) => typeof value[key] === 'object' && value[key].type === 'Id'
-  )
+  const multiAddressKey = [
+    'dest',
+    'beneficiary',
+    'curator',
+    'delegate',
+    'spawner',
+    'to',
+    'target'
+  ].find((key) => typeof value[key] === 'object' && value[key].type === 'Id')
 
   if (multiAddressKey) {
     return (

@@ -72,7 +72,8 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
           polkadot: {
             accounts: accountsToShare,
             methods,
-            events
+            events,
+            chains
           }
         }
       })
@@ -81,7 +82,7 @@ const WalletConnectSessionProposal = ({ onClose, className, sessionProposal }: P
         onClose()
         refresh()
       })
-  }, [accountsToShare, events, methods, onClose, refresh, sessionProposal, web3wallet])
+  }, [accountsToShare, chains, events, methods, onClose, refresh, sessionProposal, web3wallet])
 
   const onReject = useCallback(() => {
     if (!web3wallet || !sessionProposal) return

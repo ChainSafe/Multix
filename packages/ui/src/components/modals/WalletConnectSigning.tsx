@@ -27,6 +27,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -37,6 +38,7 @@ export interface SigningModalProps {
 
 const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModalProps) => {
   const { api, chainInfo } = useApi()
+  const { currentNamespace } = useGetWalletConnectNamespace()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { web3wallet } = useWalletConnect()
   const {
@@ -80,6 +82,30 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     min: multisigProposalNeededFunds,
     address: selectedAccount?.address
   })
+
+  useEffect(() => {
+    const requestedChainId = request.params.chainId
+    if (requestedChainId !== currentNamespace) {
+      setErrorMessage(
+        `Wrong selected network in Multix. Please reject, then select the correct network and resubmit the transaction. Request with namespace: ${requestedChainId}`
+      )
+    }
+  }, [currentNamespace, originAddress, request.params.chainId])
+
+  const isCorrectMultiproxySelected = useMemo(
+    () =>
+      selectedMultiProxy?.proxy === originAddress ||
+      selectedMultiProxy?.multisigs.map(({ address }) => address).includes(originAddress),
+    [selectedMultiProxy, originAddress]
+  )
+
+  useEffect(() => {
+    if (!isCorrectMultiproxySelected) {
+      setErrorMessage(
+        `Wrong multisig selected in Multix. Please reject, then select the correct multisig and resubmit the transaction. Request with address: ${originAddress}`
+      )
+    }
+  }, [isCorrectMultiproxySelected, originAddress])
 
   useEffect(() => {
     if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
@@ -260,7 +286,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
                     callData,
                     name: getExtrinsicName(callInfo?.section, callInfo?.method)
                   }}
-                  expanded
+                  expanded={!errorMessage}
                 />
               </Grid>
             </>
