@@ -58,7 +58,6 @@ export const fields = {
 }
 
 const processor = new SubstrateBatchProcessor()
-  .setGateway(env.gatewayUrl)
   .setRpcEndpoint({ url: env.rpcWs, maxBatchCallSize: 1 })
   .setBlockRange({
     from: Number(env.blockstart)
@@ -70,6 +69,8 @@ const processor = new SubstrateBatchProcessor()
   .addEvent({
     name: supportedEvents
   })
+
+!!env.gatewayUrl && processor.setGateway(env.gatewayUrl)
 
 export type Ctx = DataHandlerContext<Store, typeof fields>
 
