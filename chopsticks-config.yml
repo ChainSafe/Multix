@@ -1,6 +1,6 @@
-endpoint: wss://rpc.ibp.network/kusama
+endpoint: wss://people-kusama-rpc.dwellir.com
 mock-signature-host: true
-block: 22568290
+block: 26000000
 db: ./db.sqlite
 # wasm-override: staging_kusama_runtime.wasm
 runtime-log-level: 5
