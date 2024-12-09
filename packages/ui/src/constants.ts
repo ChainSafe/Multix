@@ -40,18 +40,18 @@ export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow/v/v5
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
 const polkadotPplChains = [
-  // 'wss://sys.ibp.network/people-polkadot',
-  // 'wss://people-polkadot.dotters.network',
-  'wss://rpc-people-polkadot.luckyfriday.io'
-  // 'wss://polkadot-people-rpc.polkadot.io',
+  'wss://sys.ibp.network/people-polkadot',
+  'wss://people-polkadot.dotters.network',
+  'wss://rpc-people-polkadot.luckyfriday.io',
+  'wss://polkadot-people-rpc.polkadot.io'
   // 'wss://people-polkadot.public.curie.radiumblock.co/ws'
 ]
 const kusamaPplChains = [
-  // 'wss://people-kusama-rpc.dwellir.com',
-  // 'wss://sys.ibp.network/people-kusama',
-  // 'wss://people-kusama.dotters.network',
-  'wss://rpc-people-kusama.luckyfriday.io'
-  // 'wss://kusama-people-rpc.polkadot.io',
+  'wss://people-kusama-rpc.dwellir.com',
+  'wss://sys.ibp.network/people-kusama',
+  'wss://people-kusama.dotters.network',
+  'wss://rpc-people-kusama.luckyfriday.io',
+  'wss://kusama-people-rpc.polkadot.io'
   // 'wss://ksm-rpc.stakeworld.io/people'
 ]
 const westendPplChains = [
@@ -67,14 +67,14 @@ export const networkList: Record<string, NetworkInfo> = {
     explorerNetworkName: 'polkadot',
     pplChainRpcUrls: polkadotPplChains,
     rpcUrls: [
+      'wss://rpc.ibp.network/polkadot',
+      'wss://rpc-polkadot.luckyfriday.io',
+      'wss://polkadot.dotters.network',
+      'wss://polkadot-rpc.dwellir.com',
+      'wss://polkadot-rpc-tn.dwellir.com'
+      // 'wss://polkadot.api.onfinality.io/public-ws'
       // 'wss://polkadot-rpc.publicnode.com',
       // 'wss://polkadot-public-rpc.blockops.network/ws',
-      // 'wss://polkadot-rpc.dwellir.com',
-      // 'wss://polkadot-rpc-tn.dwellir.com',
-      // 'wss://rpc.ibp.network/polkadot',
-      // 'wss://polkadot.dotters.network',
-      'wss://rpc-polkadot.luckyfriday.io'
-      // 'wss://polkadot.api.onfinality.io/public-ws'
       // 'wss://polkadot.public.curie.radiumblock.co/ws',
       // 'wss://rockx-dot.w3node.com/polka-public-dot/ws',
       // 'wss://dot-rpc.stakeworld.io',
@@ -89,10 +89,10 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: kusamaPplChains,
     rpcUrls: [
       // 'wss://kusama-rpc.publicnode.com',
-      // 'wss://kusama-rpc.dwellir.com',
-      // 'wss://kusama-rpc-tn.dwellir.com',
-      // 'wss://rpc.ibp.network/kusama',
-      // 'wss://kusama.dotters.network',
+      'wss://kusama-rpc.dwellir.com',
+      'wss://kusama-rpc-tn.dwellir.com',
+      'wss://rpc.ibp.network/kusama',
+      'wss://kusama.dotters.network',
       'wss://rpc-kusama.luckyfriday.io'
       // 'wss://kusama.api.onfinality.io/public-ws',
       // 'wss://rockx-ksm.w3node.com/polka-public-ksm/ws',
@@ -124,12 +124,12 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrls: [
-      // 'wss://asset-hub-kusama-rpc.dwellir.com',
-      // 'wss://statemine-rpc-tn.dwellir.com',
-      // 'wss://sys.ibp.network/statemine',
-      // 'wss://asset-hub-kusama.dotters.network',
-      'wss://rpc-asset-hub-kusama.luckyfriday.io'
-      // 'wss://kusama-asset-hub-rpc.polkadot.io',
+      'wss://asset-hub-kusama-rpc.dwellir.com',
+      'wss://statemine-rpc-tn.dwellir.com',
+      'wss://sys.ibp.network/statemine',
+      'wss://asset-hub-kusama.dotters.network',
+      'wss://rpc-asset-hub-kusama.luckyfriday.io',
+      'wss://kusama-asset-hub-rpc.polkadot.io'
       // 'wss://statemine.public.curie.radiumblock.co/ws',
       // 'wss://ksm-rpc.stakeworld.io/assethub'
     ],
@@ -153,11 +153,11 @@ export const networkList: Record<string, NetworkInfo> = {
     chainId: 'coretime-kusama',
     explorerNetworkName: 'coretime-kusama',
     rpcUrls: [
-      // 'wss://coretime-kusama-rpc.dwellir.com',
-      // 'wss://sys.ibp.network/coretime-kusama',
-      // 'wss://coretime-kusama.dotters.network',
-      'wss://rpc-coretime-kusama.luckyfriday.io'
-      // 'wss://kusama-coretime-rpc.polkadot.io',
+      'wss://coretime-kusama-rpc.dwellir.com',
+      'wss://sys.ibp.network/coretime-kusama',
+      'wss://coretime-kusama.dotters.network',
+      'wss://rpc-coretime-kusama.luckyfriday.io',
+      'wss://kusama-coretime-rpc.polkadot.io'
       // 'wss://ksm-rpc.stakeworld.io/coretime'
     ],
     pplChainRpcUrls: kusamaPplChains,
