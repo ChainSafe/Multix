@@ -1,4 +1,3 @@
-import { KnownArchivesSubstrate, lookupArchive } from '@subsquid/archive-registry'
 import { DataHandlerContext, SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
@@ -44,12 +43,6 @@ const supportedEvents = [
 ]
 
 export const env = new Env().getEnv()
-const archiveUrl = env.archiveName
-  ? lookupArchive(env.archiveName as KnownArchivesSubstrate, {
-      release: 'ArrowSquid',
-      type: 'Substrate'
-    })
-  : undefined
 const chainId = env.chainId
 
 export const fields = {
@@ -65,10 +58,7 @@ export const fields = {
 }
 
 const processor = new SubstrateBatchProcessor()
-  .setDataSource({
-    archive: archiveUrl,
-    chain: env.rpcWs
-  })
+  .setRpcEndpoint({ url: env.rpcWs, maxBatchCallSize: 1 })
   .setBlockRange({
     from: Number(env.blockstart)
   })
@@ -79,6 +69,8 @@ const processor = new SubstrateBatchProcessor()
   .addEvent({
     name: supportedEvents
   })
+
+!!env.gatewayUrl && processor.setGateway(env.gatewayUrl)
 
 export type Ctx = DataHandlerContext<Store, typeof fields>
 
