@@ -4,7 +4,7 @@ interface EnvValues {
   blockstart: string
   prefix: number
   rpcWs: string
-  archiveName?: string
+  gatewayUrl: string
   chainId: string
   isEthereum?: boolean
 }
@@ -17,7 +17,7 @@ export class Env {
       blockstart: process.env.BLOCK_START || '',
       prefix: Number(process.env.PREFIX) || 0,
       rpcWs: process.env.RPC_WS || '',
-      archiveName: process.env.ARCHIVE_NAME || '',
+      gatewayUrl: process.env.GATEWAY_URL || '',
       chainId: process.env.CHAIN_ID || '',
       isEthereum: process.env.IS_ETHEREUM === 'true' || false
     }

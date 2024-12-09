@@ -147,13 +147,13 @@ fetch corresponding metadata.
 
 ```bash
 npx squid-substrate-metadata-explorer \
-  --chain wss://rococo-rpc.polkadot.io \
-  --archive https://rococo.indexer.gc.subsquid.io/v4/graphql \
-  --out rococoVersions.json
+  --chain wss://paseo-rpc.polkadot.io \
+  --archive https://paseo.indexer.gc.subsquid.io/v4/graphql \
+  --out paseoVersions.json
 ```
 
 In the above command `--archive` parameter is optional, but it speeds up the process
-significantly. From scratch exploration of rococo network without archive takes 20-30 minutes.
+significantly. From scratch exploration of paseo network without archive takes 20-30 minutes.
 
 You can pass the result of previous exploration to `--out` parameter. In that case exploration will
 start from the last known block and thus will take much less time.
@@ -170,8 +170,8 @@ Where `typegen.json` config file has the following structure:
 ```json5
 {
   outDir: 'src/types',
-  chainVersions: 'rococoVersions.json', // the result of chain exploration
-  typesBundle: 'rococo', // see types bundle section below
+  chainVersions: 'paseoVersions.json', // the result of chain exploration
+  typesBundle: 'paseo', // see types bundle section below
   events: [
     // list of events to generate
     'balances.Transfer'
@@ -202,7 +202,7 @@ information to decode their data. For those chains external
 
 Type definitions (`typesBundle`) can be given to squid tools in two forms:
 
-1. as a name of a known chain (currently only `rococo`)
+1. as a name of a known chain (currently only `paseo`)
 2. as a json file of a structure described below.
 
 ```json5
@@ -247,13 +247,13 @@ DB_PORT=5432
 GQL_PORT=4350
 SQD_DEBUG=sqd:processor:mapping
 
-# rococo
-BLOCK_START=3510000 # this is the starting block of the indexer
+# paseo
+BLOCK_START=0 # this is the starting block of the indexer
 PREFIX=42 # the ss58 prefix for the chain
-RPC_WS="wss://rococo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
-ARCHIVE_NAME="rococo" # optional - must be empty or set to the archive name if part of the @subsquid/archive-registry'
-CHAIN_ID='rococo' # a unique chain id for the database prefix
+RPC_WS="wss://paseo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
+CHAIN_ID='paseo' # a unique chain id for the database prefix
 IS_ETHEREUM='false'
+GATEWAY_URL='https://v2.archive.subsquid.io/network/paseo'
 ```
 
 ## Differences from polkadot.js

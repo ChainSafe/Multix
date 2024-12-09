@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@polkadot/util-crypto": "^13.2.3",
-    "@subsquid/archive-registry": "^3.3.2",
     "@subsquid/graphql-server": "^4.9.0",
     "@subsquid/ss58": "^2.0.2",
     "@subsquid/substrate-processor": "^8.5.2",
