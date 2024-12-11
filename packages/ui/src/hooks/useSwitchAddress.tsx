@@ -15,9 +15,9 @@ export const useSwitchAddress = () => {
     multiProxyList,
     isLoading: isMultiproxyLoading,
     selectMultiProxy,
-    defaultAddress,
     selectedMultiProxyAddress,
-    setCanFindMultiProxyFromUrl
+    setCanFindMultiProxyFromUrl,
+    defaultAddress
   } = useMultiProxy()
 
   useEffect(() => {
@@ -27,6 +27,7 @@ export const useSwitchAddress = () => {
     }
 
     if (!!urlAddress && !selectedMultiProxyAddress) {
+      console.log('last: 1')
       // this looks like a first load with an address
       const isSuccess = selectMultiProxy(urlAddress)
       setCanFindMultiProxyFromUrl(isSuccess)
@@ -35,6 +36,7 @@ export const useSwitchAddress = () => {
     }
 
     if (!urlAddress && !!defaultAddress) {
+      console.log('last: 2', urlAddress, defaultAddress)
       // no address in the url, init with the default
       const isSuccess = selectMultiProxy(defaultAddress)
       setCanFindMultiProxyFromUrl(isSuccess)
