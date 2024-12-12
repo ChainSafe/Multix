@@ -93,47 +93,69 @@ export type AccountMultisigEdge = {
 export enum AccountMultisigOrderByInput {
   IdAsc = 'id_ASC',
   IdAscNullsFirst = 'id_ASC_NULLS_FIRST',
+  IdAscNullsLast = 'id_ASC_NULLS_LAST',
   IdDesc = 'id_DESC',
+  IdDescNullsFirst = 'id_DESC_NULLS_FIRST',
   IdDescNullsLast = 'id_DESC_NULLS_LAST',
   MultisigAddressAsc = 'multisig_address_ASC',
   MultisigAddressAscNullsFirst = 'multisig_address_ASC_NULLS_FIRST',
+  MultisigAddressAscNullsLast = 'multisig_address_ASC_NULLS_LAST',
   MultisigAddressDesc = 'multisig_address_DESC',
+  MultisigAddressDescNullsFirst = 'multisig_address_DESC_NULLS_FIRST',
   MultisigAddressDescNullsLast = 'multisig_address_DESC_NULLS_LAST',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdAscNullsFirst = 'multisig_id_ASC_NULLS_FIRST',
+  MultisigIdAscNullsLast = 'multisig_id_ASC_NULLS_LAST',
   MultisigIdDesc = 'multisig_id_DESC',
+  MultisigIdDescNullsFirst = 'multisig_id_DESC_NULLS_FIRST',
   MultisigIdDescNullsLast = 'multisig_id_DESC_NULLS_LAST',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
   MultisigIsMultisigAscNullsFirst = 'multisig_isMultisig_ASC_NULLS_FIRST',
+  MultisigIsMultisigAscNullsLast = 'multisig_isMultisig_ASC_NULLS_LAST',
   MultisigIsMultisigDesc = 'multisig_isMultisig_DESC',
+  MultisigIsMultisigDescNullsFirst = 'multisig_isMultisig_DESC_NULLS_FIRST',
   MultisigIsMultisigDescNullsLast = 'multisig_isMultisig_DESC_NULLS_LAST',
   MultisigIsPureProxyAsc = 'multisig_isPureProxy_ASC',
   MultisigIsPureProxyAscNullsFirst = 'multisig_isPureProxy_ASC_NULLS_FIRST',
+  MultisigIsPureProxyAscNullsLast = 'multisig_isPureProxy_ASC_NULLS_LAST',
   MultisigIsPureProxyDesc = 'multisig_isPureProxy_DESC',
+  MultisigIsPureProxyDescNullsFirst = 'multisig_isPureProxy_DESC_NULLS_FIRST',
   MultisigIsPureProxyDescNullsLast = 'multisig_isPureProxy_DESC_NULLS_LAST',
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdAscNullsFirst = 'multisig_threshold_ASC_NULLS_FIRST',
+  MultisigThresholdAscNullsLast = 'multisig_threshold_ASC_NULLS_LAST',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
+  MultisigThresholdDescNullsFirst = 'multisig_threshold_DESC_NULLS_FIRST',
   MultisigThresholdDescNullsLast = 'multisig_threshold_DESC_NULLS_LAST',
   SignatoryAddressAsc = 'signatory_address_ASC',
   SignatoryAddressAscNullsFirst = 'signatory_address_ASC_NULLS_FIRST',
+  SignatoryAddressAscNullsLast = 'signatory_address_ASC_NULLS_LAST',
   SignatoryAddressDesc = 'signatory_address_DESC',
+  SignatoryAddressDescNullsFirst = 'signatory_address_DESC_NULLS_FIRST',
   SignatoryAddressDescNullsLast = 'signatory_address_DESC_NULLS_LAST',
   SignatoryIdAsc = 'signatory_id_ASC',
   SignatoryIdAscNullsFirst = 'signatory_id_ASC_NULLS_FIRST',
+  SignatoryIdAscNullsLast = 'signatory_id_ASC_NULLS_LAST',
   SignatoryIdDesc = 'signatory_id_DESC',
+  SignatoryIdDescNullsFirst = 'signatory_id_DESC_NULLS_FIRST',
   SignatoryIdDescNullsLast = 'signatory_id_DESC_NULLS_LAST',
   SignatoryIsMultisigAsc = 'signatory_isMultisig_ASC',
   SignatoryIsMultisigAscNullsFirst = 'signatory_isMultisig_ASC_NULLS_FIRST',
+  SignatoryIsMultisigAscNullsLast = 'signatory_isMultisig_ASC_NULLS_LAST',
   SignatoryIsMultisigDesc = 'signatory_isMultisig_DESC',
+  SignatoryIsMultisigDescNullsFirst = 'signatory_isMultisig_DESC_NULLS_FIRST',
   SignatoryIsMultisigDescNullsLast = 'signatory_isMultisig_DESC_NULLS_LAST',
   SignatoryIsPureProxyAsc = 'signatory_isPureProxy_ASC',
   SignatoryIsPureProxyAscNullsFirst = 'signatory_isPureProxy_ASC_NULLS_FIRST',
+  SignatoryIsPureProxyAscNullsLast = 'signatory_isPureProxy_ASC_NULLS_LAST',
   SignatoryIsPureProxyDesc = 'signatory_isPureProxy_DESC',
+  SignatoryIsPureProxyDescNullsFirst = 'signatory_isPureProxy_DESC_NULLS_FIRST',
   SignatoryIsPureProxyDescNullsLast = 'signatory_isPureProxy_DESC_NULLS_LAST',
   SignatoryThresholdAsc = 'signatory_threshold_ASC',
   SignatoryThresholdAscNullsFirst = 'signatory_threshold_ASC_NULLS_FIRST',
+  SignatoryThresholdAscNullsLast = 'signatory_threshold_ASC_NULLS_LAST',
   SignatoryThresholdDesc = 'signatory_threshold_DESC',
+  SignatoryThresholdDescNullsFirst = 'signatory_threshold_DESC_NULLS_FIRST',
   SignatoryThresholdDescNullsLast = 'signatory_threshold_DESC_NULLS_LAST'
 }
 
@@ -173,23 +195,33 @@ export type AccountMultisigsConnection = {
 export enum AccountOrderByInput {
   AddressAsc = 'address_ASC',
   AddressAscNullsFirst = 'address_ASC_NULLS_FIRST',
+  AddressAscNullsLast = 'address_ASC_NULLS_LAST',
   AddressDesc = 'address_DESC',
+  AddressDescNullsFirst = 'address_DESC_NULLS_FIRST',
   AddressDescNullsLast = 'address_DESC_NULLS_LAST',
   IdAsc = 'id_ASC',
   IdAscNullsFirst = 'id_ASC_NULLS_FIRST',
+  IdAscNullsLast = 'id_ASC_NULLS_LAST',
   IdDesc = 'id_DESC',
+  IdDescNullsFirst = 'id_DESC_NULLS_FIRST',
   IdDescNullsLast = 'id_DESC_NULLS_LAST',
   IsMultisigAsc = 'isMultisig_ASC',
   IsMultisigAscNullsFirst = 'isMultisig_ASC_NULLS_FIRST',
+  IsMultisigAscNullsLast = 'isMultisig_ASC_NULLS_LAST',
   IsMultisigDesc = 'isMultisig_DESC',
+  IsMultisigDescNullsFirst = 'isMultisig_DESC_NULLS_FIRST',
   IsMultisigDescNullsLast = 'isMultisig_DESC_NULLS_LAST',
   IsPureProxyAsc = 'isPureProxy_ASC',
   IsPureProxyAscNullsFirst = 'isPureProxy_ASC_NULLS_FIRST',
+  IsPureProxyAscNullsLast = 'isPureProxy_ASC_NULLS_LAST',
   IsPureProxyDesc = 'isPureProxy_DESC',
+  IsPureProxyDescNullsFirst = 'isPureProxy_DESC_NULLS_FIRST',
   IsPureProxyDescNullsLast = 'isPureProxy_DESC_NULLS_LAST',
   ThresholdAsc = 'threshold_ASC',
   ThresholdAscNullsFirst = 'threshold_ASC_NULLS_FIRST',
+  ThresholdAscNullsLast = 'threshold_ASC_NULLS_LAST',
   ThresholdDesc = 'threshold_DESC',
+  ThresholdDescNullsFirst = 'threshold_DESC_NULLS_FIRST',
   ThresholdDescNullsLast = 'threshold_DESC_NULLS_LAST'
 }
 
@@ -287,39 +319,57 @@ export type MultisigCallEdge = {
 export enum MultisigCallOrderByInput {
   BlockHashAsc = 'blockHash_ASC',
   BlockHashAscNullsFirst = 'blockHash_ASC_NULLS_FIRST',
+  BlockHashAscNullsLast = 'blockHash_ASC_NULLS_LAST',
   BlockHashDesc = 'blockHash_DESC',
+  BlockHashDescNullsFirst = 'blockHash_DESC_NULLS_FIRST',
   BlockHashDescNullsLast = 'blockHash_DESC_NULLS_LAST',
   CallIndexAsc = 'callIndex_ASC',
   CallIndexAscNullsFirst = 'callIndex_ASC_NULLS_FIRST',
+  CallIndexAscNullsLast = 'callIndex_ASC_NULLS_LAST',
   CallIndexDesc = 'callIndex_DESC',
+  CallIndexDescNullsFirst = 'callIndex_DESC_NULLS_FIRST',
   CallIndexDescNullsLast = 'callIndex_DESC_NULLS_LAST',
   IdAsc = 'id_ASC',
   IdAscNullsFirst = 'id_ASC_NULLS_FIRST',
+  IdAscNullsLast = 'id_ASC_NULLS_LAST',
   IdDesc = 'id_DESC',
+  IdDescNullsFirst = 'id_DESC_NULLS_FIRST',
   IdDescNullsLast = 'id_DESC_NULLS_LAST',
   MultisigAddressAsc = 'multisig_address_ASC',
   MultisigAddressAscNullsFirst = 'multisig_address_ASC_NULLS_FIRST',
+  MultisigAddressAscNullsLast = 'multisig_address_ASC_NULLS_LAST',
   MultisigAddressDesc = 'multisig_address_DESC',
+  MultisigAddressDescNullsFirst = 'multisig_address_DESC_NULLS_FIRST',
   MultisigAddressDescNullsLast = 'multisig_address_DESC_NULLS_LAST',
   MultisigIdAsc = 'multisig_id_ASC',
   MultisigIdAscNullsFirst = 'multisig_id_ASC_NULLS_FIRST',
+  MultisigIdAscNullsLast = 'multisig_id_ASC_NULLS_LAST',
   MultisigIdDesc = 'multisig_id_DESC',
+  MultisigIdDescNullsFirst = 'multisig_id_DESC_NULLS_FIRST',
   MultisigIdDescNullsLast = 'multisig_id_DESC_NULLS_LAST',
   MultisigIsMultisigAsc = 'multisig_isMultisig_ASC',
   MultisigIsMultisigAscNullsFirst = 'multisig_isMultisig_ASC_NULLS_FIRST',
+  MultisigIsMultisigAscNullsLast = 'multisig_isMultisig_ASC_NULLS_LAST',
   MultisigIsMultisigDesc = 'multisig_isMultisig_DESC',
+  MultisigIsMultisigDescNullsFirst = 'multisig_isMultisig_DESC_NULLS_FIRST',
   MultisigIsMultisigDescNullsLast = 'multisig_isMultisig_DESC_NULLS_LAST',
   MultisigIsPureProxyAsc = 'multisig_isPureProxy_ASC',
   MultisigIsPureProxyAscNullsFirst = 'multisig_isPureProxy_ASC_NULLS_FIRST',
+  MultisigIsPureProxyAscNullsLast = 'multisig_isPureProxy_ASC_NULLS_LAST',
   MultisigIsPureProxyDesc = 'multisig_isPureProxy_DESC',
+  MultisigIsPureProxyDescNullsFirst = 'multisig_isPureProxy_DESC_NULLS_FIRST',
   MultisigIsPureProxyDescNullsLast = 'multisig_isPureProxy_DESC_NULLS_LAST',
   MultisigThresholdAsc = 'multisig_threshold_ASC',
   MultisigThresholdAscNullsFirst = 'multisig_threshold_ASC_NULLS_FIRST',
+  MultisigThresholdAscNullsLast = 'multisig_threshold_ASC_NULLS_LAST',
   MultisigThresholdDesc = 'multisig_threshold_DESC',
+  MultisigThresholdDescNullsFirst = 'multisig_threshold_DESC_NULLS_FIRST',
   MultisigThresholdDescNullsLast = 'multisig_threshold_DESC_NULLS_LAST',
   TimestampAsc = 'timestamp_ASC',
   TimestampAscNullsFirst = 'timestamp_ASC_NULLS_FIRST',
+  TimestampAscNullsLast = 'timestamp_ASC_NULLS_LAST',
   TimestampDesc = 'timestamp_DESC',
+  TimestampDescNullsFirst = 'timestamp_DESC_NULLS_FIRST',
   TimestampDescNullsLast = 'timestamp_DESC_NULLS_LAST'
 }
 
@@ -418,67 +468,99 @@ export type ProxyAccountEdge = {
 export enum ProxyAccountOrderByInput {
   CreatedAtAsc = 'createdAt_ASC',
   CreatedAtAscNullsFirst = 'createdAt_ASC_NULLS_FIRST',
+  CreatedAtAscNullsLast = 'createdAt_ASC_NULLS_LAST',
   CreatedAtDesc = 'createdAt_DESC',
+  CreatedAtDescNullsFirst = 'createdAt_DESC_NULLS_FIRST',
   CreatedAtDescNullsLast = 'createdAt_DESC_NULLS_LAST',
   CreationBlockNumberAsc = 'creationBlockNumber_ASC',
   CreationBlockNumberAscNullsFirst = 'creationBlockNumber_ASC_NULLS_FIRST',
+  CreationBlockNumberAscNullsLast = 'creationBlockNumber_ASC_NULLS_LAST',
   CreationBlockNumberDesc = 'creationBlockNumber_DESC',
+  CreationBlockNumberDescNullsFirst = 'creationBlockNumber_DESC_NULLS_FIRST',
   CreationBlockNumberDescNullsLast = 'creationBlockNumber_DESC_NULLS_LAST',
   DelayAsc = 'delay_ASC',
   DelayAscNullsFirst = 'delay_ASC_NULLS_FIRST',
+  DelayAscNullsLast = 'delay_ASC_NULLS_LAST',
   DelayDesc = 'delay_DESC',
+  DelayDescNullsFirst = 'delay_DESC_NULLS_FIRST',
   DelayDescNullsLast = 'delay_DESC_NULLS_LAST',
   DelegateeAddressAsc = 'delegatee_address_ASC',
   DelegateeAddressAscNullsFirst = 'delegatee_address_ASC_NULLS_FIRST',
+  DelegateeAddressAscNullsLast = 'delegatee_address_ASC_NULLS_LAST',
   DelegateeAddressDesc = 'delegatee_address_DESC',
+  DelegateeAddressDescNullsFirst = 'delegatee_address_DESC_NULLS_FIRST',
   DelegateeAddressDescNullsLast = 'delegatee_address_DESC_NULLS_LAST',
   DelegateeIdAsc = 'delegatee_id_ASC',
   DelegateeIdAscNullsFirst = 'delegatee_id_ASC_NULLS_FIRST',
+  DelegateeIdAscNullsLast = 'delegatee_id_ASC_NULLS_LAST',
   DelegateeIdDesc = 'delegatee_id_DESC',
+  DelegateeIdDescNullsFirst = 'delegatee_id_DESC_NULLS_FIRST',
   DelegateeIdDescNullsLast = 'delegatee_id_DESC_NULLS_LAST',
   DelegateeIsMultisigAsc = 'delegatee_isMultisig_ASC',
   DelegateeIsMultisigAscNullsFirst = 'delegatee_isMultisig_ASC_NULLS_FIRST',
+  DelegateeIsMultisigAscNullsLast = 'delegatee_isMultisig_ASC_NULLS_LAST',
   DelegateeIsMultisigDesc = 'delegatee_isMultisig_DESC',
+  DelegateeIsMultisigDescNullsFirst = 'delegatee_isMultisig_DESC_NULLS_FIRST',
   DelegateeIsMultisigDescNullsLast = 'delegatee_isMultisig_DESC_NULLS_LAST',
   DelegateeIsPureProxyAsc = 'delegatee_isPureProxy_ASC',
   DelegateeIsPureProxyAscNullsFirst = 'delegatee_isPureProxy_ASC_NULLS_FIRST',
+  DelegateeIsPureProxyAscNullsLast = 'delegatee_isPureProxy_ASC_NULLS_LAST',
   DelegateeIsPureProxyDesc = 'delegatee_isPureProxy_DESC',
+  DelegateeIsPureProxyDescNullsFirst = 'delegatee_isPureProxy_DESC_NULLS_FIRST',
   DelegateeIsPureProxyDescNullsLast = 'delegatee_isPureProxy_DESC_NULLS_LAST',
   DelegateeThresholdAsc = 'delegatee_threshold_ASC',
   DelegateeThresholdAscNullsFirst = 'delegatee_threshold_ASC_NULLS_FIRST',
+  DelegateeThresholdAscNullsLast = 'delegatee_threshold_ASC_NULLS_LAST',
   DelegateeThresholdDesc = 'delegatee_threshold_DESC',
+  DelegateeThresholdDescNullsFirst = 'delegatee_threshold_DESC_NULLS_FIRST',
   DelegateeThresholdDescNullsLast = 'delegatee_threshold_DESC_NULLS_LAST',
   DelegatorAddressAsc = 'delegator_address_ASC',
   DelegatorAddressAscNullsFirst = 'delegator_address_ASC_NULLS_FIRST',
+  DelegatorAddressAscNullsLast = 'delegator_address_ASC_NULLS_LAST',
   DelegatorAddressDesc = 'delegator_address_DESC',
+  DelegatorAddressDescNullsFirst = 'delegator_address_DESC_NULLS_FIRST',
   DelegatorAddressDescNullsLast = 'delegator_address_DESC_NULLS_LAST',
   DelegatorIdAsc = 'delegator_id_ASC',
   DelegatorIdAscNullsFirst = 'delegator_id_ASC_NULLS_FIRST',
+  DelegatorIdAscNullsLast = 'delegator_id_ASC_NULLS_LAST',
   DelegatorIdDesc = 'delegator_id_DESC',
+  DelegatorIdDescNullsFirst = 'delegator_id_DESC_NULLS_FIRST',
   DelegatorIdDescNullsLast = 'delegator_id_DESC_NULLS_LAST',
   DelegatorIsMultisigAsc = 'delegator_isMultisig_ASC',
   DelegatorIsMultisigAscNullsFirst = 'delegator_isMultisig_ASC_NULLS_FIRST',
+  DelegatorIsMultisigAscNullsLast = 'delegator_isMultisig_ASC_NULLS_LAST',
   DelegatorIsMultisigDesc = 'delegator_isMultisig_DESC',
+  DelegatorIsMultisigDescNullsFirst = 'delegator_isMultisig_DESC_NULLS_FIRST',
   DelegatorIsMultisigDescNullsLast = 'delegator_isMultisig_DESC_NULLS_LAST',
   DelegatorIsPureProxyAsc = 'delegator_isPureProxy_ASC',
   DelegatorIsPureProxyAscNullsFirst = 'delegator_isPureProxy_ASC_NULLS_FIRST',
+  DelegatorIsPureProxyAscNullsLast = 'delegator_isPureProxy_ASC_NULLS_LAST',
   DelegatorIsPureProxyDesc = 'delegator_isPureProxy_DESC',
+  DelegatorIsPureProxyDescNullsFirst = 'delegator_isPureProxy_DESC_NULLS_FIRST',
   DelegatorIsPureProxyDescNullsLast = 'delegator_isPureProxy_DESC_NULLS_LAST',
   DelegatorThresholdAsc = 'delegator_threshold_ASC',
   DelegatorThresholdAscNullsFirst = 'delegator_threshold_ASC_NULLS_FIRST',
+  DelegatorThresholdAscNullsLast = 'delegator_threshold_ASC_NULLS_LAST',
   DelegatorThresholdDesc = 'delegator_threshold_DESC',
+  DelegatorThresholdDescNullsFirst = 'delegator_threshold_DESC_NULLS_FIRST',
   DelegatorThresholdDescNullsLast = 'delegator_threshold_DESC_NULLS_LAST',
   ExtrinsicIndexAsc = 'extrinsicIndex_ASC',
   ExtrinsicIndexAscNullsFirst = 'extrinsicIndex_ASC_NULLS_FIRST',
+  ExtrinsicIndexAscNullsLast = 'extrinsicIndex_ASC_NULLS_LAST',
   ExtrinsicIndexDesc = 'extrinsicIndex_DESC',
+  ExtrinsicIndexDescNullsFirst = 'extrinsicIndex_DESC_NULLS_FIRST',
   ExtrinsicIndexDescNullsLast = 'extrinsicIndex_DESC_NULLS_LAST',
   IdAsc = 'id_ASC',
   IdAscNullsFirst = 'id_ASC_NULLS_FIRST',
+  IdAscNullsLast = 'id_ASC_NULLS_LAST',
   IdDesc = 'id_DESC',
+  IdDescNullsFirst = 'id_DESC_NULLS_FIRST',
   IdDescNullsLast = 'id_DESC_NULLS_LAST',
   TypeAsc = 'type_ASC',
   TypeAscNullsFirst = 'type_ASC_NULLS_FIRST',
+  TypeAscNullsLast = 'type_ASC_NULLS_LAST',
   TypeDesc = 'type_DESC',
+  TypeDescNullsFirst = 'type_DESC_NULLS_FIRST',
   TypeDescNullsLast = 'type_DESC_NULLS_LAST'
 }
 
@@ -573,23 +655,15 @@ export enum ProxyType {
 export type Query = {
   __typename?: 'Query';
   accountById?: Maybe<Account>;
-  /** @deprecated Use accountById */
-  accountByUniqueInput?: Maybe<Account>;
   accountMultisigById?: Maybe<AccountMultisig>;
-  /** @deprecated Use accountMultisigById */
-  accountMultisigByUniqueInput?: Maybe<AccountMultisig>;
   accountMultisigs: Array<AccountMultisig>;
   accountMultisigsConnection: AccountMultisigsConnection;
   accounts: Array<Account>;
   accountsConnection: AccountsConnection;
   multisigCallById?: Maybe<MultisigCall>;
-  /** @deprecated Use multisigCallById */
-  multisigCallByUniqueInput?: Maybe<MultisigCall>;
   multisigCalls: Array<MultisigCall>;
   multisigCallsConnection: MultisigCallsConnection;
   proxyAccountById?: Maybe<ProxyAccount>;
-  /** @deprecated Use proxyAccountById */
-  proxyAccountByUniqueInput?: Maybe<ProxyAccount>;
   proxyAccounts: Array<ProxyAccount>;
   proxyAccountsConnection: ProxyAccountsConnection;
   squidStatus?: Maybe<SquidStatus>;
@@ -601,18 +675,8 @@ export type QueryAccountByIdArgs = {
 };
 
 
-export type QueryAccountByUniqueInputArgs = {
-  where: WhereIdInput;
-};
-
-
 export type QueryAccountMultisigByIdArgs = {
   id: Scalars['String']['input'];
-};
-
-
-export type QueryAccountMultisigByUniqueInputArgs = {
-  where: WhereIdInput;
 };
 
 
@@ -653,11 +717,6 @@ export type QueryMultisigCallByIdArgs = {
 };
 
 
-export type QueryMultisigCallByUniqueInputArgs = {
-  where: WhereIdInput;
-};
-
-
 export type QueryMultisigCallsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -679,11 +738,6 @@ export type QueryProxyAccountByIdArgs = {
 };
 
 
-export type QueryProxyAccountByUniqueInputArgs = {
-  where: WhereIdInput;
-};
-
-
 export type QueryProxyAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -701,12 +755,14 @@ export type QueryProxyAccountsConnectionArgs = {
 
 export type SquidStatus = {
   __typename?: 'SquidStatus';
-  /** The height of the processed part of the chain */
+  /** The hash of the last processed finalized block */
+  finalizedHash?: Maybe<Scalars['String']['output']>;
+  /** The height of the last processed finalized block */
+  finalizedHeight?: Maybe<Scalars['Int']['output']>;
+  /** The hash of the last processed block */
+  hash?: Maybe<Scalars['String']['output']>;
+  /** The height of the last processed block */
   height?: Maybe<Scalars['Int']['output']>;
-};
-
-export type WhereIdInput = {
-  id: Scalars['String']['input'];
 };
 
 export type MultisigByIdQueryVariables = Exact<{
@@ -722,6 +778,14 @@ export type MultisigCallsByMultisigIdQueryVariables = Exact<{
 
 
 export type MultisigCallsByMultisigIdQuery = { __typename?: 'Query', multisigCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, callIndex: number, timestamp: any }> };
+
+export type MultisigsAndPureByAccountQueryVariables = Exact<{
+  accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+  watchedAccountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+}>;
+
+
+export type MultisigsAndPureByAccountQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, address: string, isMultisig?: boolean | null, isPureProxy?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }>, delegateeFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegator: { __typename?: 'Account', id: string, address: string, isPureProxy?: boolean | null }, delegatee: { __typename?: 'Account', id: string, address: string, isPureProxy?: boolean | null } }>, delegatorFor: Array<{ __typename?: 'ProxyAccount', id: string, type: ProxyType, delegatee: { __typename?: 'Account', id: string, address: string, isMultisig?: boolean | null, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, address: string } }> } }> }> };
 
 export type MultisigsByMultisigOrPureSignatoriesQueryVariables = Exact<{
   accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -806,6 +870,74 @@ export const useMultisigCallsByMultisigIdQuery = <
       {
     queryKey: variables === undefined ? ['MultisigCallsByMultisigId'] : ['MultisigCallsByMultisigId', variables],
     queryFn: useFetchData<MultisigCallsByMultisigIdQuery, MultisigCallsByMultisigIdQueryVariables>(MultisigCallsByMultisigIdDocument).bind(null, variables),
+    ...options
+  }
+    )};
+
+export const MultisigsAndPureByAccountDocument = `
+    query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [String!]) {
+  accounts(
+    where: {AND: [{OR: [{id_in: $watchedAccountIds}, {signatories_some: {signatory: {id_in: $accountIds}}}, {signatories_some: {signatory: {id_in: $watchedAccountIds}}}]}, {OR: [{isMultisig_eq: true}, {isPureProxy_eq: true}]}]}
+  ) {
+    id
+    address
+    isMultisig
+    isPureProxy
+    threshold
+    signatories {
+      id
+      signatory {
+        id
+        address
+      }
+    }
+    delegateeFor {
+      id
+      type
+      delegator {
+        id
+        address
+        isPureProxy
+      }
+      delegatee {
+        id
+        address
+        isPureProxy
+      }
+    }
+    delegatorFor {
+      id
+      type
+      delegatee {
+        id
+        address
+        isMultisig
+        threshold
+        signatories {
+          id
+          signatory {
+            id
+            address
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+export const useMultisigsAndPureByAccountQuery = <
+      TData = MultisigsAndPureByAccountQuery,
+      TError = unknown
+    >(
+      variables?: MultisigsAndPureByAccountQueryVariables,
+      options?: Omit<UseQueryOptions<MultisigsAndPureByAccountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigsAndPureByAccountQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<MultisigsAndPureByAccountQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['MultisigsAndPureByAccount'] : ['MultisigsAndPureByAccount', variables],
+    queryFn: useFetchData<MultisigsAndPureByAccountQuery, MultisigsAndPureByAccountQueryVariables>(MultisigsAndPureByAccountDocument).bind(null, variables),
     ...options
   }
     )};
