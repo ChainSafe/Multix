@@ -24,7 +24,6 @@ interface OpenWCModalParams {
 }
 
 type SigningInfo = Omit<SigningModalProps, 'onClose'>
-// type DeepTxModalInfo = Omit<DeepTxCreationProps, 'onClose'>
 
 const ModalsContext = createContext<ModalsContextProps | undefined>(undefined)
 
