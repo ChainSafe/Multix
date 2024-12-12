@@ -317,7 +317,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     (newMulti: typeof selectedMultiProxy | string) => {
       let multi: string | undefined
 
-      console.log('last: selectMultiProxy', newMulti)
       if (typeof newMulti === 'string') {
         multi = newMulti
       } else {
@@ -350,12 +349,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK &&
       localStorage.getItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK)
 
-    console.log('lastUsedMultiProxy', lastUsedMultiProxy)
-    console.log('multisigList', multiProxyList)
-    console.log(
-      'last getMultiProxyByAddress(lastUsedMultiProxy)',
-      lastUsedMultiProxy && getMultiProxyByAddress(lastUsedMultiProxy)
-    )
     if (lastUsedMultiProxy && getMultiProxyByAddress(lastUsedMultiProxy)) {
       return lastUsedMultiProxy
     }
