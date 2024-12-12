@@ -61,5 +61,5 @@
         }
       }
   ],
-  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "build"]
+  "ignorePatterns": ["src/interfaces/**/*", "types-and-hooks.tsx", "build", "src/gql"]
 }
