@@ -8,7 +8,6 @@ import React, {
   SetStateAction,
   useEffect
 } from 'react'
-// import { PolkadotSigner } from 'polkadot-api'
 import { useAccounts as useRedotAccounts } from '@reactive-dot/react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
@@ -27,12 +26,8 @@ export interface IAccountContext {
   ownAddressList: string[]
   selectAccount: (account: InjectedPolkadotAccount) => void
   getAccountByAddress: (address: string) => InjectedPolkadotAccount | undefined
-  // isAccountLoading: boolean
-  // isExtensionError: boolean
-  // selectedSigner?: PolkadotSigner
   allowConnectionToExtension: () => void
   isAllowedToConnectToExtension: boolean
-  // isLocalStorageSetupDone: boolean
   isConnectionDialogOpen: boolean
   setIsConnectionDialogOpen: Dispatch<SetStateAction<boolean>>
 }
