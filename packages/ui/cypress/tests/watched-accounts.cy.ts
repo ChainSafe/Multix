@@ -306,12 +306,12 @@ describe('Watched Accounts', () => {
     const { publicKey: signatoryPublicKey } = testAccounts['Multisig Member Account 1']
     const expectedAddresses = [
       {
-        address: knownMultisigs['multisig-with-pure'].pureAddress,
-        expectedBadge: 'pure'
-      },
-      {
         address: knownMultisigs['test-simple-multisig-1'].address,
         expectedBadge: 'multi'
+      },
+      {
+        address: knownMultisigs['multisig-with-pure'].pureAddress,
+        expectedBadge: 'pure'
       }
     ]
 

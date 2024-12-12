@@ -1,4 +1,4 @@
-import { useMultisigsBySignatoriesOrWatchedQuery } from '../../types-and-hooks'
+import { useMultisigsAndPureByAccountQuery } from '../../types-and-hooks'
 import { useMemo } from 'react'
 import { useNetwork } from '../contexts/NetworkContext'
 
@@ -10,7 +10,7 @@ interface Args {
   shouldRefetch?: boolean
 }
 
-export const useQueryMultisigs = ({
+export const useQueryMultisigsAndPureByAccounts = ({
   accountIds,
   watchedAccountIds,
   shouldRefetch = false
@@ -20,7 +20,7 @@ export const useQueryMultisigs = ({
     () => accountIds.length > 0 || watchedAccountIds.length > 0,
     [accountIds, watchedAccountIds]
   )
-  const { error, data, isLoading, refetch } = useMultisigsBySignatoriesOrWatchedQuery(
+  const { error, data, isLoading, refetch } = useMultisigsAndPureByAccountQuery(
     { accountIds, watchedAccountIds },
     {
       enabled: hasSomethingToQuery,
