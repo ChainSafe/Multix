@@ -1,23 +1,23 @@
-query PureByIds($pureIds: [String!]) {
-  accounts(where: { AND: [{ id_in: $pureIds }, { isPureProxy_eq: true }] }, limit: 50) {
-    id
-    address
-    delegatorFor(limit: 50) {
-      id
-      type
-      delegatee {
-        id
-        address
-        isMultisig
-        threshold
-        signatories(limit: 50) {
-          id
-          signatory {
-            id
-            address
-          }
-        }
-      }
-    }
-  }
-}
+# query PureByIds($pureIds: [String!]) {
+#   accounts(where: { AND: [{ id_in: $pureIds }, { isPureProxy_eq: true }] }, limit: 50) {
+#     id
+#     address
+#     delegatorFor(limit: 50) {
+#       id
+#       type
+#       delegatee {
+#         id
+#         address
+#         isMultisig
+#         threshold
+#         signatories(limit: 50) {
+#           id
+#           signatory {
+#             id
+#             address
+#           }
+#         }
+#       }
+#     }
+#   }
+# }

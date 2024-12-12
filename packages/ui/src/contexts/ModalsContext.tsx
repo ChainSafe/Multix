@@ -8,7 +8,7 @@ import WCSessionProposal from '../components/modals/WalletConnectSessionProposal
 import ProposalSigningModal, { SigningModalProps } from '../components/modals/ProposalSigning'
 import WalletConnectSigning from '../components/modals/WalletConnectSigning'
 import { useMultiProxy } from './MultiProxyContext'
-import DeepTxCreationModal, { DeepTxCreationProps } from '../components/modals/DeepTxCreation'
+// import DeepTxCreationModal, { DeepTxCreationProps } from '../components/modals/DeepTxCreation'
 
 interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
@@ -17,8 +17,8 @@ interface ModalsContextProps {
   onCloseSendModal: () => void
   openWalletConnectSessionModal: ({ sessionProposal }: OpenWCModalParams) => void
   onOpenSigningModal: (info: SigningInfo) => void
-  onOpenDeepTxModal: (info: DeepTxModalInfo) => void
-  onCloseDeepTxModal: () => void
+  // onOpenDeepTxModal: (info: DeepTxModalInfo) => void
+  // onCloseDeepTxModal: () => void
   onOpenWalletConnectSigning: (request: SignClientTypes.EventArguments['session_request']) => void
 }
 
@@ -27,7 +27,7 @@ interface OpenWCModalParams {
 }
 
 type SigningInfo = Omit<SigningModalProps, 'onClose'>
-type DeepTxModalInfo = Omit<DeepTxCreationProps, 'onClose'>
+// type DeepTxModalInfo = Omit<DeepTxCreationProps, 'onClose'>
 
 const ModalsContext = createContext<ModalsContextProps | undefined>(undefined)
 
@@ -37,8 +37,8 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const [isWCModalOpen, setIsWCModalOpen] = useState(false)
   const [isSigningModalOpen, setIsSigningModalOpen] = useState(false)
-  const [isDeepTxModalOpen, setIsDeepTxModalOpen] = useState(false)
-  const [deepTxModalInfo, setDeepTxModalInfo] = useState<DeepTxModalInfo | undefined>()
+  // const [isDeepTxModalOpen, setIsDeepTxModalOpen] = useState(false)
+  // const [deepTxModalInfo, setDeepTxModalInfo] = useState<DeepTxModalInfo | undefined>()
   const [signingModalInfo, setSigningModalInfo] = useState<SigningInfo | undefined>()
   const [isOpenWalletConnectSigning, setIsOpenWalletConnectSigning] = useState(false)
   const [sendModalPreselection, setSendModalPreselection] = useState<EasyTransferTitle>(
@@ -100,15 +100,15 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
     setIsSigningModalOpen(true)
   }, [])
 
-  const onOpenDeepTxModal = useCallback((info: DeepTxModalInfo) => {
-    setDeepTxModalInfo(info)
-    setIsDeepTxModalOpen(true)
-  }, [])
+  // const onOpenDeepTxModal = useCallback((info: DeepTxModalInfo) => {
+  //   setDeepTxModalInfo(info)
+  //   setIsDeepTxModalOpen(true)
+  // }, [])
 
-  const onCloseDeepTxModal = useCallback(() => {
-    setDeepTxModalInfo(undefined)
-    setIsDeepTxModalOpen(false)
-  }, [])
+  // const onCloseDeepTxModal = useCallback(() => {
+  //   setDeepTxModalInfo(undefined)
+  //   setIsDeepTxModalOpen(false)
+  // }, [])
 
   const onOpenWalletConnectSigning = useCallback(
     (request: SignClientTypes.EventArguments['session_request']) => {
@@ -132,9 +132,9 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
         onCloseSendModal,
         openWalletConnectSessionModal,
         onOpenSigningModal,
-        onOpenWalletConnectSigning,
-        onOpenDeepTxModal,
-        onCloseDeepTxModal
+        onOpenWalletConnectSigning
+        // onOpenDeepTxModal,
+        // onCloseDeepTxModal
       }}
     >
       {children}
@@ -162,7 +162,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
           onSuccess={signingModalInfo.onSuccess}
         />
       )}
-      {isDeepTxModalOpen && deepTxModalInfo && (
+      {/* {isDeepTxModalOpen && deepTxModalInfo && (
         <DeepTxCreationModal
           possibleSigners={deepTxModalInfo.possibleSigners}
           onClose={onCloseDeepTxModal}
@@ -171,7 +171,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
           parentMultisigInfo={deepTxModalInfo.parentMultisigInfo}
           currentMultisigInvolved={deepTxModalInfo.currentMultisigInvolved}
         />
-      )}
+      )} */}
       {isOpenWalletConnectSigning && !!walletConnectRequest && (
         <WalletConnectSigning
           onClose={onCloseWalletConnectSigning}
