@@ -11,7 +11,6 @@ import { useWatchedAddresses } from './WatchedAddressesContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
 import { useSearchParams } from 'react-router'
-import { useNetwork } from './NetworkContext'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
@@ -76,11 +75,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [multisigList, pureProxyList])
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
-  const { selectedNetwork } = useNetwork()
-  const LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK = useMemo(
-    () => selectedNetwork && `multix.lastUsedMultiProxy.${selectedNetwork}`,
-    [selectedNetwork]
-  )
 
   const getMultiProxyByAddress = useCallback(
     (address?: string) => {
@@ -317,7 +311,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
     (newMulti: typeof selectedMultiProxy | string) => {
       let multi: string | undefined
 
-      console.log('last: selectMultiProxy', newMulti)
       if (typeof newMulti === 'string') {
         multi = newMulti
       } else {
@@ -330,15 +323,11 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
         return false
       }
 
-      if (multiProxyFound && LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK) {
-        localStorage.setItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, multi)
-      }
-
       setAddressInUrl(multi)
       setSelectedMultiProxyAddress(multi)
       return true
     },
-    [LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, getMultiProxyByAddress, setAddressInUrl]
+    [getMultiProxyByAddress, setAddressInUrl]
   )
 
   const defaultAddress = useMemo(() => {
@@ -346,22 +335,14 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       return undefined
     }
 
-    const lastUsedMultiProxy =
-      LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK &&
-      localStorage.getItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK)
-
-    if (lastUsedMultiProxy && getMultiProxyByAddress(lastUsedMultiProxy)) {
-      return lastUsedMultiProxy
-    }
-
     return multiProxyList?.[0].proxy || multiProxyList?.[0].multisigs[0].address
-  }, [LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, getMultiProxyByAddress, isLoading, multiProxyList])
+  }, [isLoading, multiProxyList])
 
   return (
     <MultisigContext.Provider
       value={{
-        defaultAddress,
         selectedMultiProxyAddress,
+        defaultAddress,
         selectedMultiProxy,
         multiProxyList,
         selectMultiProxy,
