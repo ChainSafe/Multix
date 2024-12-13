@@ -148,11 +148,18 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   return <li key={`not-pretty-decoded-${id}`}>{JSONprint(value)} </li>
 }
 
-const preparedCall = (
-  decodedCall: CreateTreeParams['decodedCall'],
-  chainInfo: ChainInfoHuman,
-  isBatch = false
-) => {
+interface PreparedCallParams {
+  decodedCall: CreateTreeParams['decodedCall']
+  chainInfo: ChainInfoHuman
+  isBatch?: boolean
+  isFirstCall?: boolean
+}
+const preparedCall = ({
+  decodedCall,
+  chainInfo,
+  isBatch = false,
+  isFirstCall = false
+}: PreparedCallParams) => {
   if (!decodedCall) return
 
   if (isBatchedCall(decodedCall.type, decodedCall.value.type)) {
@@ -161,7 +168,11 @@ const preparedCall = (
     return lowerLevelCalls.map((call, index) => {
       return (
         <BatchCallStyled key={`${call.type}-${index}`}>
-          {preparedCall(call as CreateTreeParams['decodedCall'], chainInfo, true)}
+          {preparedCall({
+            decodedCall: call as CreateTreeParams['decodedCall'],
+            chainInfo,
+            isBatch: true
+          })}
         </BatchCallStyled>
       )
     })
@@ -189,6 +200,10 @@ const preparedCall = (
     }
   }
 
+  if (isFirstCall) {
+    return <PreStyled>{JSONprint(decodedCall.value.value)}</PreStyled>
+  }
+
   return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
 }
 
@@ -197,7 +212,7 @@ const createUlTree = ({ name, decodedCall, chainInfo }: CreateTreeParams) => {
   if (!name) return
   if (!chainInfo) return
 
-  return preparedCall(decodedCall, chainInfo)
+  return preparedCall({ decodedCall, chainInfo, isFirstCall: true })
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
@@ -299,6 +314,7 @@ const LinkStyled = styled(Link)`
 `
 
 const PreStyled = styled('pre')`
+  margin-top: 0;
   overflow: auto;
 `
 

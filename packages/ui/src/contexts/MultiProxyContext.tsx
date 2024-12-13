@@ -1,9 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import {
-  MultisigsAndPureByAccountQuery,
-  MultisigsBySignatoriesOrWatchedQuery,
-  ProxyType
-} from '../../types-and-hooks'
+import { MultisigsAndPureByAccountQuery, ProxyType } from '../../types-and-hooks'
 import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
 import { useQueryMultisigsAndPureByAccounts } from '../hooks/useQueryMultisigsAndPureByAccounts'
 import { useAccounts } from './AccountsContext'
@@ -55,7 +51,7 @@ export interface IMultisigContext {
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
 const getSignatoriesFromAccount = (
-  signatories: MultisigsBySignatoriesOrWatchedQuery['accountMultisigs'][0]['multisig']['signatories']
+  signatories: MultisigsAndPureByAccountQuery['accounts'][0]['signatories']
 ) => {
   return signatories.map(({ signatory }) => signatory.address)
 }
