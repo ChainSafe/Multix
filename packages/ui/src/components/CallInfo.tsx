@@ -252,7 +252,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
-  const hasArgs = useMemo(() => decodedCall && Object.keys(decodedCall).length > 0, [decodedCall])
+  const hasArgs = useMemo(() => decodedCall && decodedCall?.value.value, [decodedCall])
 
   return (
     <div
