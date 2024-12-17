@@ -61,10 +61,10 @@ export const useGetMultisigTx = ({
     }
 
     if (forceAsMulti && !extrinsicToCall) {
-      console.warn(
-        'The extrinsic call is required when multisig.asMulti is called',
-        extrinsicToCall
-      )
+      // console.warn(
+      //   'The extrinsic call is required when multisig.asMulti is called',
+      //   extrinsicToCall
+      // )
       return
     }
 

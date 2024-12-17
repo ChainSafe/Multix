@@ -50,13 +50,14 @@ const TextFieldStyled = styled(TextField)`
 
     &.Mui-error {
       outline: 3px solid ${({ theme }) => theme.custom.error};
+      margin-bottom: 1rem;
     }
   }
 
   .MuiFormHelperText-root {
     &.Mui-error {
       position: absolute;
-      bottom: -24px;
+      bottom: -1rem;
     }
   }
 `

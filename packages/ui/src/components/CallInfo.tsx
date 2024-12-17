@@ -57,7 +57,9 @@ const isWhiteListedCall = (type: string, value: string) => {
     'ConvictionVoting.vote',
     'ConvictionVoting.remove_vote',
     'ConvictionVoting.undelegate',
-    'ConvictionVoting.unlock'
+    'ConvictionVoting.unlock',
+    // Hydration
+    'Tokens.transfer'
   ].includes(`${type}.${value}`)
 }
 
@@ -76,9 +78,10 @@ const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman,
 
 const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman, id: string) => {
   // for transfer, nomination, staking, bounties
-  const bigIntKey = ['value', 'fee', 'max_additional', 'balance'].find(
-    (key) => typeof value[key] === 'bigint'
-  )
+  // We should make sure this is not done for hydration
+  const bigIntKey =
+    chainInfo.tokenSymbol !== 'HDX' &&
+    ['value', 'fee', 'max_additional', 'balance'].find((key) => typeof value[key] === 'bigint')
 
   if (bigIntKey) {
     return formatBalance(value[bigIntKey], bigIntKey, chainInfo, id)
