@@ -277,12 +277,6 @@ const MultisigCreation = ({ className }: Props) => {
   ])
 
   useEffect(() => {
-    // default to using a proxy
-    if (supportsProxy) {
-      setWithProxy(true)
-    }
-  }, [supportsProxy])
-  useEffect(() => {
     setErrorMessage('')
 
     if (currentStep === 0 && !ownAccountPartOfSignatories && signatories.length >= 2) {

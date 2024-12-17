@@ -99,6 +99,8 @@ describe('Multisig creation', () => {
       // Step 2
       newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.step2.nameInput().type(multisigName)
+      newMultisigPage.step2.checkboxUsePureProxy().click()
+      newMultisigPage.step2.checkboxUsePureProxy().should('be.checked')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
       // Step 3
@@ -136,7 +138,6 @@ describe('Multisig creation', () => {
       // Step 2
       newMultisigPage.step2.thresholdInput().type('3')
       newMultisigPage.step2.nameInput().type(multisigName)
-      newMultisigPage.step2.checkboxUsePureProxy().click()
       newMultisigPage.step2.checkboxUsePureProxy().should('not.be.checked')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 

@@ -8,6 +8,7 @@ import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { usePjsLinks } from '../../hooks/usePjsLinks'
 import { Binary, HexString, Transaction } from 'polkadot-api'
+import { getPapiHowLink } from '../../utils/getPapiHowLink'
 
 interface Props {
   className?: string
@@ -40,7 +41,8 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
         }
 
         return call
-      } catch {
+      } catch (e: unknown) {
+        !!e && setCallDataError(String(e))
         return
       }
     },
@@ -82,13 +84,21 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
   return (
     <Box className={className}>
       <AlertStyled severity="info">
-        Paste below the &quot;encoded call data&quot; from a{' '}
+        Paste below the &quot;encoded call data&quot; from{' '}
+        <a
+          href={getPapiHowLink()}
+          target="_blank"
+          rel="noreferrer"
+        >
+          papi console
+        </a>{' '}
+        or{' '}
         <a
           href={extrinsicUrl}
           target="_blank"
           rel="noreferrer"
         >
-          manual extrinsic
+          pjs manual extrinsic
         </a>
         .<br /> Multix will take care of wrapping it in a multisig/proxy call
       </AlertStyled>
