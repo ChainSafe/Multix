@@ -31,7 +31,8 @@ import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { Enum, TypedApi } from 'polkadot-api'
-import { dot, MultiAddress } from '@polkadot-api/descriptors'
+import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
   onClose: () => void
@@ -41,6 +42,7 @@ interface Props {
 type Step = 'selection' | 'summary' | 'call1' | 'call2'
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
+  const { selectedNetwork } = useNetwork()
   const modalRef = useRef<HTMLDivElement | null>(null)
   const { api, chainInfo, compatibilityToken } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
@@ -87,7 +89,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [callError, setCallError] = useState('')
 
   const secondCall = useMemo(() => {
-    if (!api || !compatibilityToken) {
+    if (!api || !compatibilityToken || !selectedNetwork) {
       // console.error('api is not ready')
       return
     }
@@ -120,17 +122,31 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
 
-    const addProxyTx = (api as TypedApi<typeof dot>).tx.Proxy.add_proxy({
-      delegate: MultiAddress.Id(newMultisigAddress),
-      proxy_type: Enum('Any'),
-      delay: 0
-    })
+    const addProxyTx =
+      selectedNetwork === 'hydration'
+        ? (api as TypedApi<typeof hydration>).tx.Proxy.add_proxy({
+            delegate: newMultisigAddress,
+            proxy_type: Enum('Any'),
+            delay: 0
+          })
+        : (api as TypedApi<typeof dot>).tx.Proxy.add_proxy({
+            delegate: MultiAddress.Id(newMultisigAddress),
+            proxy_type: Enum('Any'),
+            delay: 0
+          })
 
-    const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
-      real: MultiAddress.Id(selectedMultiProxy?.proxy),
-      force_proxy_type: undefined,
-      call: addProxyTx.decodedCall
-    })
+    const proxyTx =
+      selectedNetwork === 'hydration'
+        ? (api as TypedApi<typeof hydration>).tx.Proxy.proxy({
+            real: selectedMultiProxy?.proxy,
+            force_proxy_type: undefined,
+            call: addProxyTx.decodedCall
+          })
+        : (api as TypedApi<typeof dot>).tx.Proxy.proxy({
+            real: MultiAddress.Id(selectedMultiProxy?.proxy),
+            force_proxy_type: undefined,
+            call: addProxyTx.decodedCall
+          })
     // call with the old multisig to delete the new one
     return getAsMultiTx({
       api,
@@ -149,7 +165,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     oldThreshold,
     selectedAccount,
     selectedMultiProxy?.proxy,
-    selectedMultisig
+    selectedMultisig,
+    selectedNetwork
   ])
 
   const firstCall = useMemo(() => {

@@ -8,8 +8,9 @@ import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
 import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
-import { dot, MultiAddress } from '@polkadot-api/descriptors'
+import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
 import { Transaction, TypedApi } from 'polkadot-api'
+import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
   className?: string
@@ -31,6 +32,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
   const toAddress = useMemo(() => selected?.address || '', [selected?.address])
+  const { selectedNetwork } = useNetwork()
 
   useEffect(() => {
     if (!!amount && !hasEnoughFreeBalance) {
@@ -41,7 +43,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !selectedNetwork) {
       onSetExtrinsic(undefined)
       return
     }
@@ -51,13 +53,19 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    onSetExtrinsic(
-      (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
-        dest: MultiAddress.Id(toAddress),
-        value: amount
-      })
-    )
-  }, [amount, api, chainInfo, onSetExtrinsic, toAddress])
+    const extrinsic =
+      selectedNetwork === 'hydration'
+        ? (api as TypedApi<typeof hydration>).tx.Balances.transfer_keep_alive({
+            dest: toAddress,
+            value: amount
+          })
+        : (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+            dest: MultiAddress.Id(toAddress),
+            value: amount
+          })
+
+    onSetExtrinsic(extrinsic)
+  }, [amount, api, chainInfo, onSetExtrinsic, selectedNetwork, toAddress])
 
   const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
     setSelected(account)

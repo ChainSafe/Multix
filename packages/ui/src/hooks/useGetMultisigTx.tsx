@@ -6,7 +6,8 @@ import { getAsMultiTx } from '../utils/getAsMultiTx'
 import { MultisigStorageInfo, Weight } from '../types'
 import { getApproveAsMultiTx } from '../utils/getApproveAsMultiTx'
 import { HexString, Transaction, TypedApi } from 'polkadot-api'
-import { dot, MultiAddress } from '@polkadot-api/descriptors'
+import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { useNetwork } from '../contexts/NetworkContext'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -37,6 +38,7 @@ export const useGetMultisigTx = ({
 }: Params) => {
   const { api, compatibilityToken } = useApi()
   const { getSortAddress } = useGetSortAddress()
+  const { selectedNetwork } = useNetwork()
 
   const multisigTx = useMemo(() => {
     if (!selectedMultisig?.signatories) {
@@ -52,7 +54,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    if (!api) {
+    if (!api || !selectedNetwork) {
       return
     }
 
@@ -85,11 +87,18 @@ export const useGetMultisigTx = ({
     try {
       // the proxy is selected
       if (isProxy && !!extrinsicToCall) {
-        tx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
-          real: MultiAddress.Id(fromAddress),
-          force_proxy_type: undefined,
-          call: extrinsicToCall.decodedCall
-        })
+        tx =
+          selectedNetwork === 'hydration'
+            ? (api as TypedApi<typeof hydration>).tx.Proxy.proxy({
+                real: fromAddress,
+                force_proxy_type: undefined,
+                call: extrinsicToCall.decodedCall
+              })
+            : (api as TypedApi<typeof dot>).tx.Proxy.proxy({
+                real: MultiAddress.Id(fromAddress),
+                force_proxy_type: undefined,
+                call: extrinsicToCall.decodedCall
+              })
         // a multisig is selected
       } else {
         tx = extrinsicToCall
@@ -109,19 +118,20 @@ export const useGetMultisigTx = ({
       console.error(e)
     }
   }, [
-    selectedMultisig?.signatories,
+    selectedMultisig,
     getSortAddress,
     threshold,
     api,
+    selectedNetwork,
     senderAddress,
     fromAddress,
-    extrinsicToCall,
-    isProxy,
     forceAsMulti,
+    extrinsicToCall,
     approvalLength,
+    approveAsMultiHash,
+    isProxy,
     weight,
     when,
-    approveAsMultiHash,
     compatibilityToken
   ])
 
