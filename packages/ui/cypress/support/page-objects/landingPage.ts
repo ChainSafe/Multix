@@ -20,6 +20,7 @@ export const landingPage = {
   multisigCreationInfoBanner: (timeout = 4000) =>
     cy.get('[data-cy=banner-multisig-creation-info]', { timeout }),
   creationInfoBannerCloseButton: () => cy.get('[data-cy=button-close-multisig-creation-info]'),
+  transactionListLoader: () => cy.get('[data-cy=loader-transaction-list]'),
 
   // page specific assertion
   shouldHaveNoAccountErrorAndWikiLink() {
