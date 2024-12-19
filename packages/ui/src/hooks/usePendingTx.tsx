@@ -113,18 +113,12 @@ const getCallDataFromChainPromise = (
       | HexString
       | undefined
 
-    console.log('pendingTx', pendingTx)
-    console.log('blockNumber', blockNumber)
-    console.log('blockHashes', blockHashes)
-    console.log('blockHash', blockHash)
-
     if (!blockHash) {
       console.log('no hash found for height', blockNumber)
       return
     }
 
     const body: HexString[] = await client._request('archive_unstable_body', [blockHash])
-    console.log('body', body)
 
     let date: Date | undefined
 
