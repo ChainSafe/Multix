@@ -15,9 +15,9 @@ export const useSwitchAddress = () => {
     multiProxyList,
     isLoading: isMultiproxyLoading,
     selectMultiProxy,
-    defaultAddress,
     selectedMultiProxyAddress,
-    setCanFindMultiProxyFromUrl
+    setCanFindMultiProxyFromUrl,
+    defaultAddress
   } = useMultiProxy()
 
   useEffect(() => {

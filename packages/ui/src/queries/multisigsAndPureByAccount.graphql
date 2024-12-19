@@ -1,0 +1,62 @@
+query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [String!]) {
+  accounts(
+    where: {
+      AND: [
+        {
+          OR: [
+            { id_in: $watchedAccountIds }
+            { signatories_some: { signatory: { id_in: $accountIds } } }
+            { signatories_some: { signatory: { id_in: $watchedAccountIds } } }
+          ]
+        }
+        { OR: [{ isMultisig_eq: true }, { isPureProxy_eq: true }] }
+      ]
+    }
+  ) {
+    # either it's a multisig or proxy, with direct address match from a watch account
+    # or one of accounts or watch accounts is a signatory
+    id
+    address
+    isMultisig
+    isPureProxy
+    threshold
+    signatories {
+      id
+      signatory {
+        id
+        address
+      }
+    }
+    delegateeFor {
+      id
+      type
+      delegator {
+        id
+        address
+        isPureProxy
+      }
+      delegatee {
+        id
+        address
+        isPureProxy
+      }
+    }
+    delegatorFor {
+      id
+      type
+      delegatee {
+        id
+        address
+        isMultisig
+        threshold
+        signatories {
+          id
+          signatory {
+            id
+            address
+          }
+        }
+      }
+    }
+  }
+}

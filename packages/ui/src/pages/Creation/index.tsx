@@ -29,7 +29,8 @@ import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { Binary, Enum, Transaction, TypedApi } from 'polkadot-api'
-import { dot, MultiAddress } from '@polkadot-api/descriptors'
+import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
   className?: string
@@ -37,6 +38,7 @@ interface Props {
 
 const steps = ['Signatories', 'Threshold & Name', 'Review']
 const MultisigCreation = ({ className }: Props) => {
+  const { selectedNetwork } = useNetwork()
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
@@ -146,7 +148,7 @@ const MultisigCreation = ({ className }: Props) => {
       // this batchCall is only useful if the user wants a proxy.
       return
     }
-    if (!api || !compatibilityToken) {
+    if (!api || !compatibilityToken || !selectedNetwork) {
       // console.error('api is not ready')
       return
     }
@@ -187,10 +189,16 @@ const MultisigCreation = ({ className }: Props) => {
     })
 
     // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx = (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
-      dest: MultiAddress.Id(multiAddress),
-      value: pureProxyCreationNeededFunds
-    })
+    const transferTx =
+      selectedNetwork === 'hydration'
+        ? (api as TypedApi<typeof hydration>).tx.Balances.transfer_keep_alive({
+            dest: multiAddress,
+            value: pureProxyCreationNeededFunds
+          })
+        : (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+            dest: MultiAddress.Id(multiAddress),
+            value: pureProxyCreationNeededFunds
+          })
 
     if (!multiSigProxyCall) {
       console.error('multiSigProxyCall is undefined in Creation index.tsx')
@@ -209,6 +217,7 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress,
     pureProxyCreationNeededFunds,
     selectedAccount,
+    selectedNetwork,
     signatories,
     threshold,
     withProxy
@@ -276,12 +285,6 @@ const MultisigCreation = ({ className }: Props) => {
     threshold
   ])
 
-  useEffect(() => {
-    // default to using a proxy
-    if (supportsProxy) {
-      setWithProxy(true)
-    }
-  }, [supportsProxy])
   useEffect(() => {
     setErrorMessage('')
 

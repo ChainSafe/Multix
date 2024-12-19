@@ -33,7 +33,7 @@ interface CreateTreeParams {
   chainInfo?: ChainInfoHuman
 }
 
-const isWhiteListedCall = (type: string, value: string) => {
+const isWhiteListedCall = (extrinsicName: string) => {
   return [
     'Balances.transfer',
     'Balances.transfer_keep_alive',
@@ -57,12 +57,18 @@ const isWhiteListedCall = (type: string, value: string) => {
     'ConvictionVoting.vote',
     'ConvictionVoting.remove_vote',
     'ConvictionVoting.undelegate',
-    'ConvictionVoting.unlock'
-  ].includes(`${type}.${value}`)
+    'ConvictionVoting.unlock',
+    // Hydration
+    'Tokens.transfer'
+  ].includes(extrinsicName)
 }
 
-const isBatchedCall = (type: string, value: string) => {
-  return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(`${type}.${value}`)
+const isPreventBalanceFormat = (extrinsicName: string) => {
+  return ['Tokens.transfer'].includes(extrinsicName)
+}
+
+const isBatchedCall = (extrinsicName: string) => {
+  return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(extrinsicName)
 }
 
 const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman, id: string) => (
@@ -74,11 +80,23 @@ const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman,
   </li>
 )
 
-const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman, id: string) => {
+interface EachFieldRenderedParams {
+  value: Record<string, any>
+  chainInfo: ChainInfoHuman
+  id: string
+  preventBalanceFormating?: boolean
+}
+const eachFieldRendered = ({
+  value,
+  chainInfo,
+  id,
+  preventBalanceFormating = false
+}: EachFieldRenderedParams) => {
   // for transfer, nomination, staking, bounties
-  const bigIntKey = ['value', 'fee', 'max_additional', 'balance'].find(
-    (key) => typeof value[key] === 'bigint'
-  )
+  // We should make sure this is not done for hydration
+  const bigIntKey =
+    !preventBalanceFormating &&
+    ['value', 'fee', 'max_additional', 'balance'].find((key) => typeof value[key] === 'bigint')
 
   if (bigIntKey) {
     return formatBalance(value[bigIntKey], bigIntKey, chainInfo, id)
@@ -148,38 +166,53 @@ const eachFieldRendered = (value: Record<string, any>, chainInfo: ChainInfoHuman
   return <li key={`not-pretty-decoded-${id}`}>{JSONprint(value)} </li>
 }
 
-const preparedCall = (
-  decodedCall: CreateTreeParams['decodedCall'],
-  chainInfo: ChainInfoHuman,
-  isBatch = false
-) => {
+interface PreparedCallParams {
+  decodedCall: CreateTreeParams['decodedCall']
+  chainInfo: ChainInfoHuman
+  isBatch?: boolean
+  isFirstCall?: boolean
+}
+const preparedCall = ({
+  decodedCall,
+  chainInfo,
+  isBatch = false,
+  isFirstCall = false
+}: PreparedCallParams) => {
   if (!decodedCall) return
 
-  if (isBatchedCall(decodedCall.type, decodedCall.value.type)) {
+  const extrinsicName = getExtrinsicName(decodedCall.type, decodedCall.value.type)
+  const preventBalanceFormating = isPreventBalanceFormat(extrinsicName)
+
+  if (isBatchedCall(extrinsicName)) {
     const lowerLevelCalls = decodedCall.value.value.calls as Array<Record<string, any>>
 
     return lowerLevelCalls.map((call, index) => {
       return (
         <BatchCallStyled key={`${call.type}-${index}`}>
-          {preparedCall(call as CreateTreeParams['decodedCall'], chainInfo, true)}
+          {preparedCall({
+            decodedCall: call as CreateTreeParams['decodedCall'],
+            chainInfo,
+            isBatch: true
+          })}
         </BatchCallStyled>
       )
     })
   }
 
-  if (isWhiteListedCall(decodedCall.type, decodedCall.value.type)) {
+  if (isWhiteListedCall(extrinsicName)) {
     const lowerLevelCall = decodedCall.value.value
     if (typeof lowerLevelCall === 'object') {
       return (
         <>
-          {isBatch && (
-            <ExtrinsicNameStyled>
-              {getExtrinsicName(decodedCall.type, decodedCall.value.type)}
-            </ExtrinsicNameStyled>
-          )}
+          {isBatch && <ExtrinsicNameStyled>{extrinsicName}</ExtrinsicNameStyled>}
           <ul>
             {Object.entries(lowerLevelCall).map(([key, value], index) =>
-              eachFieldRendered({ [key]: value }, chainInfo, `${decodedCall.type}-${index}`)
+              eachFieldRendered({
+                value: { [key]: value },
+                chainInfo,
+                id: `${decodedCall.type}-${index}`,
+                preventBalanceFormating
+              })
             )}
           </ul>
         </>
@@ -187,6 +220,10 @@ const preparedCall = (
     } else {
       return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
     }
+  }
+
+  if (isFirstCall) {
+    return <PreStyled>{JSONprint(decodedCall.value.value)}</PreStyled>
   }
 
   return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
@@ -197,7 +234,7 @@ const createUlTree = ({ name, decodedCall, chainInfo }: CreateTreeParams) => {
   if (!name) return
   if (!chainInfo) return
 
-  return preparedCall(decodedCall, chainInfo)
+  return preparedCall({ decodedCall, chainInfo, isFirstCall: true })
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
@@ -237,7 +274,7 @@ const CallInfo = ({
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]
   )
-  const hasArgs = useMemo(() => decodedCall && Object.keys(decodedCall).length > 0, [decodedCall])
+  const hasArgs = useMemo(() => decodedCall && decodedCall?.value?.value, [decodedCall])
 
   return (
     <div
@@ -299,6 +336,7 @@ const LinkStyled = styled(Link)`
 `
 
 const PreStyled = styled('pre')`
+  margin-top: 0;
   overflow: auto;
 `
 
