@@ -34,7 +34,7 @@ export const useCallInfoFromCallData = (callData?: HexString) => {
             decodedCall: tx?.decodedCall,
             call: tx,
             hash: hashFromTx(callData),
-            weight: { proof_size: weight.proof_size, ref_time: weight.ref_time },
+            weight,
             section: tx?.decodedCall.type,
             method: tx?.decodedCall.value.type
           })

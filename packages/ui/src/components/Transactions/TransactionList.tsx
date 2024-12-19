@@ -29,7 +29,7 @@ const TransactionList = ({ className }: Props) => {
     <Box className={className}>
       <h3>Transactions</h3>
       {isLoadingPendingTxs && (
-        <LoaderStyled>
+        <LoaderStyled data-cy="loader-transaction-list">
           <CircularProgress />
         </LoaderStyled>
       )}

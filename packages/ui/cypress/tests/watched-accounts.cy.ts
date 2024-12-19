@@ -11,9 +11,10 @@ import { multisigPage } from '../support/page-objects/multisigPage'
 import { editNamesModal } from '../support/page-objects/modals/editNamesModal'
 import { testAccounts } from '../fixtures/testAccounts'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
+import { getShortAddress } from '../utils/getShortAddress'
 
 const addWatchAccount = (address: string, name?: string) => {
-  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20 })
+  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20, timeout: 6000 })
 
   if (name) {
     settingsPage.accountNameInput().type(name)
@@ -304,7 +305,7 @@ describe('Watched Accounts', () => {
 
   it('can see all multisigs that a watched signatory is a member of', () => {
     const { publicKey: signatoryPublicKey } = testAccounts['Multisig Member Account 1']
-    const expectedAddresses = [
+    const expectedMultiproxies = [
       {
         address: knownMultisigs['test-simple-multisig-1'].address,
         expectedBadge: 'multi'
@@ -323,24 +324,33 @@ describe('Watched Accounts', () => {
     // ensure all multisigs are displayed in the multiproxy selector
     topMenuItems
       .multiproxySelectorOptionDesktop()
-      .should('have.length', expectedAddresses.length)
-      .each(($el, index) => {
+      .should('have.length', expectedMultiproxies.length)
+      .each(($el) => {
         cy.wrap($el).within(() => {
           accountDisplay
             .addressLabel()
-            .should('contain.text', expectedAddresses[index].address.slice(0, 6))
-          accountDisplay.watchedIcon().should('be.visible')
-          if (expectedAddresses[index].expectedBadge === 'pure') {
-            accountDisplay.pureBadge().should('be.visible')
-          } else {
-            accountDisplay.multisigBadge().should('be.visible')
-          }
+            .invoke('text')
+            .then((address) => {
+              const account = expectedMultiproxies.find((a) => {
+                return getShortAddress(a.address) === (address as unknown as string)
+              })
+              cy.wrap(account).should('not.be.undefined')
+              accountDisplay.watchedIcon().should('be.visible')
+              if (account?.expectedBadge === 'pure') {
+                accountDisplay.pureBadge().should('be.visible')
+              } else {
+                accountDisplay.multisigBadge().should('be.visible')
+              }
+            })
         })
       })
     // ensure each multisig that the signatory is a member of can be viewed
-    expectedAddresses.forEach(({ address }, index) => {
-      topMenuItems.multiproxySelectorDesktop().click()
-      topMenuItems.multiproxySelectorOptionDesktop().eq(index).click()
+    expectedMultiproxies.forEach(({ address }) => {
+      topMenuItems
+        .multiproxySelectorDesktop()
+        .click()
+        .type(`${address.slice(0, 6)}{downArrow}{enter}`)
+
       multisigPage
         .accountHeader()
         .should('be.visible')
