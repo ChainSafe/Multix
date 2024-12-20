@@ -38,7 +38,7 @@ export interface SigningModalProps {
 
 const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModalProps) => {
   const { api, chainInfo } = useApi()
-  const { currentNamespace } = useGetWalletConnectNamespace()
+  const { currentNamespace, isLoading: isNamespaceLoading } = useGetWalletConnectNamespace()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { web3wallet } = useWalletConnect()
   const {
@@ -84,13 +84,15 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   })
 
   useEffect(() => {
+    if (isNamespaceLoading) return
+
     const requestedChainId = request.params.chainId
     if (requestedChainId !== currentNamespace) {
       setErrorMessage(
-        `Wrong selected network in Multix. Please reject, then select the correct network and resubmit the transaction. Request with namespace: ${requestedChainId}`
+        `Wrong selected network in Multix. Please reject, then select the correct network and resubmit the transaction. Current Namespace: ${currentNamespace}, Request with namespace: ${requestedChainId}`
       )
     }
-  }, [currentNamespace, originAddress, request.params.chainId])
+  }, [currentNamespace, isNamespaceLoading, originAddress, request.params.chainId])
 
   const isCorrectMultiproxySelected = useMemo(
     () =>

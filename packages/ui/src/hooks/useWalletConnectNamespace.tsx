@@ -4,6 +4,7 @@ import { useApi } from '../contexts/ApiContext'
 export const useGetWalletConnectNamespace = () => {
   const { client } = useApi()
   const [genesisHash, setGenesisHash] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (!client) return
@@ -12,6 +13,7 @@ export const useGetWalletConnectNamespace = () => {
       .getChainSpecData()
       .then((data) => setGenesisHash(data.genesisHash))
       .catch(console.error)
+      .finally(() => setIsLoading(false))
   }, [client])
 
   const genesisTruncated = useMemo(() => genesisHash.substring(2, 34), [genesisHash])
@@ -25,5 +27,5 @@ export const useGetWalletConnectNamespace = () => {
     [namespace]
   )
 
-  return { currentNamespace: namespace, getAccountsWithNamespace }
+  return { currentNamespace: namespace, getAccountsWithNamespace, isLoading }
 }
