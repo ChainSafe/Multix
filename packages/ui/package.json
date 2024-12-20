@@ -9,7 +9,7 @@
     "@mui/base": "^5.0.0-beta.64",
     "@mui/material": "^6.1.10",
     "@mui/styled-engine": "^6.1.10",
-    "@polkadot-api/descriptors": "portal:.papi/descriptors",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot-api/tx-utils": "^0.0.6",
     "@polkadot-labs/hdkd": "^0.0.10",
     "@polkadot-labs/hdkd-helpers": "^0.0.10",
