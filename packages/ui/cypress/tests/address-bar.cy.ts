@@ -267,7 +267,7 @@ describe('Account address in the address bar', () => {
     cy.url().should('not.include', 'address=')
   })
 
-  it.only('navigating to home, settings, about, overview does not change the address bar', () => {
+  it('navigating to home, settings, about, overview does not change the address bar', () => {
     const { address, publicKey } = knownMultisigs['test-simple-multisig-1']
 
     // we have a watched account that is a multisig

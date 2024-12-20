@@ -4,7 +4,7 @@ import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { multisigPage } from '../support/page-objects/multisigPage'
 
 const lolmcshizPubKey = '0x8aee4e164d5d70ac67308f303c7e063e9156903e42c1087bbc530447487fa47f'
-export const polkadotSelectedMultiproxy = '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K' // CD OpenGov
+const polkadotSelectedMultiproxy = '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K' // CD OpenGov
 
 const kusamaSelectedMultiproxy = 'J7UBNJqKHkRi3NkxMV6Y43cMk1ZjEJWzq4z4XmqmNCcFTfM'
 
