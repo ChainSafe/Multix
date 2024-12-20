@@ -13,7 +13,19 @@ const WithProxySelection = ({ setWithProxy, withProxy, className }: Props) => {
         Pure proxy <InfoBox />
       </TitleBoxStyled>
       <FormControlLabel
-        label="Use a pure proxy (recommended)"
+        label={
+          <>
+            Use a pure proxy (not cross-chain{' '}
+            <a
+              href="https://github.com/ChainSafe/Multix/wiki/When-to-use-a-Pure-proxy-with-a-Multisig"
+              target="_blank"
+              rel="noreferrer"
+            >
+              see here
+            </a>
+            )
+          </>
+        }
         control={
           <Checkbox
             checked={withProxy}
@@ -32,14 +44,13 @@ const InfoBox = ({ className = '' }: { className?: string }) => (
     className={className}
     title={
       <span>
-        Using a proxy makes the multisig more flexible. You can then change the signatories without
-        changing the proxy address. More info{' '}
+        Using a pure proxy has advantages and drawbacks see when it makes sense to use it{' '}
         <a
-          href="https://youtu.be/cQymHtreDUA?t=147"
+          href="https://github.com/ChainSafe/Multix/wiki/When-to-use-a-Pure-proxy-with-a-Multisig"
           target="_blank"
           rel="noreferrer"
         >
-          in this video
+          in the docs
         </a>
         .
       </span>

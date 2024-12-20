@@ -3689,15 +3689,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reactive-dot/react@npm:^0.27.1":
-  version: 0.27.1
-  resolution: "@reactive-dot/react@npm:0.27.1"
+"@reactive-dot/react@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "@reactive-dot/react@npm:0.28.0"
   dependencies:
     "@reactive-dot/core": ^0.27.1
     jotai: ^2.10.3
   peerDependencies:
-    react: 18.x
-  checksum: 5e932f259c0c9ec99e0481f05cbba2f1920805e8df11f13722cd6ba999d588b1552ecf479b6cfe1c2aded27fa7876217b066731355dad4233bf8bb325d6b96e8
+    react: 18.x || 19.x
+  checksum: c23a4f2a400864773c1408770d1bb38454fb02ffb9cb94372e8c2d6cc8d1a0aeb8490816454a6b51bc55a2e9f303bfbfaade76fa16d9e86459f22fe9aee1298f
   languageName: node
   linkType: hard
 
@@ -10166,7 +10166,7 @@ __metadata:
     "@polkadot/react-identicon": ^3.11.3
     "@polkadot/util-crypto": ^13.2.3
     "@reactive-dot/core": ^0.27.1
-    "@reactive-dot/react": ^0.27.1
+    "@reactive-dot/react": ^0.28.0
     "@tanstack/react-query": ^5.62.2
     "@types/node": ^22.10.1
     "@types/react-dom": ^18.3.1

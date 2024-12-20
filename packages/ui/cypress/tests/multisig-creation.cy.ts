@@ -99,6 +99,8 @@ describe('Multisig creation', () => {
       // Step 2
       newMultisigPage.step2.thresholdInput().type('2')
       newMultisigPage.step2.nameInput().type(multisigName)
+      newMultisigPage.step2.checkboxUsePureProxy().click()
+      newMultisigPage.step2.checkboxUsePureProxy().should('be.checked')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
       // Step 3
@@ -115,17 +117,14 @@ describe('Multisig creation', () => {
 
       verifySignatories()
 
-      // this is commented because chopsticks doesnot support archive_unstable_hashByHeight
-      // see https://github.com/AcalaNetwork/chopsticks/issues/852
-
       // there should be a pending pure proxy creation
-      // multisigPage
-      //   .transactionList()
-      //   .should('be.visible')
-      //   .within(() => {
-      //     multisigPage.pendingTransactionItem().should('have.length', 1)
-      //     multisigPage.pendingTransactionCallName().should('contain.text', 'proxy.createPure')
-      //   })
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'Proxy.create_pure')
+        })
     })
 
     it('Create a multisig without a pure proxy', () => {
@@ -136,7 +135,6 @@ describe('Multisig creation', () => {
       // Step 2
       newMultisigPage.step2.thresholdInput().type('3')
       newMultisigPage.step2.nameInput().type(multisigName)
-      newMultisigPage.step2.checkboxUsePureProxy().click()
       newMultisigPage.step2.checkboxUsePureProxy().should('not.be.checked')
       newMultisigPage.nextButton().should('contain', 'Next').click()
 
@@ -173,15 +171,14 @@ describe('Multisig creation', () => {
 
       verifySignatories()
 
-      // this is commented because chopsticks doesnot support archive_unstable_hashByHeight
-      // see https://github.com/AcalaNetwork/chopsticks/issues/852
-      // multisigPage
-      //   .transactionList()
-      //   .should('be.visible')
-      //   .within(() => {
-      //     multisigPage.pendingTransactionItem().should('have.length', 1)
-      //     multisigPage.pendingTransactionCallName().should('contain.text', 'remark:')
-      //   })
+      // there should be a pending remark
+      multisigPage
+        .transactionList()
+        .should('be.visible')
+        .within(() => {
+          multisigPage.pendingTransactionItem().should('have.length', 1)
+          multisigPage.pendingTransactionCallName().should('contain.text', 'System.remark')
+        })
     })
   })
 

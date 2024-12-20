@@ -15,24 +15,17 @@ describe('default Multisigs', () => {
       watchedAccounts: [lolmcshizPubKey]
     })
 
-    multisigPage.accountHeader().within(() => {
-      accountDisplay
-        .addressLabel()
-        .invoke('text')
-        .as('defaultPolkadotAddress')
-        .should('not.contain', polkadotSelectedMultiproxy.slice(0, 6))
-    })
-
-    cy.log('@defaultPolkadotAddress', cy.get('@defaultPolkadotAddress'))
-
     // select another one
-    topMenuItems.desktopMenu().within(() =>
+    topMenuItems.desktopMenu().within(() => {
       topMenuItems
-        .multiproxySelectorDesktop()
-        .wait(1000)
+        .multiproxySelectorInputDesktop()
+        .should('not.have.value', '')
         .click()
-        .type(`${polkadotSelectedMultiproxy.slice(0, 6)}{downArrow}{enter}`)
-    )
+        .type(`${polkadotSelectedMultiproxy.slice(0, 6)}{downArrow}{enter}`, {
+          delay: 100,
+          timeout: 6000
+        })
+    })
 
     // verify that it's displayed
     multisigPage.accountHeader().within(() => {
@@ -47,19 +40,19 @@ describe('default Multisigs', () => {
       accountDisplay
         .addressLabel()
         .invoke('text')
-        .as('defaultKusamaAddress')
         .should('not.contain', kusamaSelectedMultiproxy.slice(0, 6))
     })
-
-    cy.log('@defaultKusamaAddress', cy.get('@defaultKusamaAddress'))
 
     // select another one
     topMenuItems.desktopMenu().within(() =>
       topMenuItems
-        .multiproxySelectorDesktop()
-        .wait(1000)
+        .multiproxySelectorInputDesktop()
+        .should('not.have.value', '')
         .click()
-        .type(`${kusamaSelectedMultiproxy.slice(0, 6)}{downArrow}{enter}`)
+        .type(`${kusamaSelectedMultiproxy.slice(0, 6)}{downArrow}{enter}`, {
+          delay: 100,
+          timeout: 6000
+        })
     )
 
     // verify that it's displayed

@@ -38,7 +38,7 @@ type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
 const getExtDecoderAt = async (api: ApiType, client: PolkadotClient, blockHash?: string) => {
-  const rawMetadata = await (blockHash
+  const rawMetadata = await (blockHash && !import.meta.env.DEV
     ? client
         ._request<{
           result: HexString
@@ -108,9 +108,10 @@ const getCallDataFromChainPromise = (
 ) =>
   pendingTxData.map(async (pendingTx) => {
     const blockNumber = pendingTx.info.when.height
-    const blockHash = (
-      await client._request('archive_unstable_hashByHeight', [blockNumber])
-    )?.[0] as HexString | undefined
+    const blockHashes = await client._request('archive_unstable_hashByHeight', [blockNumber])
+    const blockHash = (Array.isArray(blockHashes) ? blockHashes?.[0] : blockHashes) as
+      | HexString
+      | undefined
 
     if (!blockHash) {
       console.log('no hash found for height', blockNumber)

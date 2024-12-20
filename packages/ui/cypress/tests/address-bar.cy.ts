@@ -277,11 +277,15 @@ describe('Account address in the address bar', () => {
       watchedAccounts: [publicKey]
     })
 
+    multisigPage.accountHeader().within(() => {
+      accountDisplay.addressLabel().should('contain.text', address.slice(0, 6))
+    })
+
     // check that there is an address in the address bar
     cy.url({ timeout: 3000 }).should('include', address)
 
-    // react-router takes some time to get the search params inside the links
-    cy.wait(1000)
+    // wait for the loader to be done otherwise the test fails
+    landingPage.transactionListLoader().should('not.exist')
 
     topMenuItems.homeButton().click()
     cy.url().should('include', address)
