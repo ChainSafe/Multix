@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: multix-arrow
-version: 5
+version: 6
 description: |-
   Arrow Squid for Multix
 
@@ -28,12 +28,12 @@ deploy:
       cmd: ['sqd', 'start-acala']
     - name: bifrost-polkadot-processor
       cmd: ['sqd', 'start-bifrost-polkadot']
-    - name: interlay-processor
-      cmd: ['sqd', 'start-interlay']
+    # - name: interlay-processor
+    #   cmd: ['sqd', 'start-interlay']
     # - name: astar-processor
     #   cmd: ['sqd', 'start-astar']
-    - name: hydradx-processor
-      cmd: ['sqd', 'start-hydradx']
+    - name: hydration-processor
+      cmd: ['sqd', 'start-hydration']
     # - name: moonbeam-processor
     #   cmd: ['sqd', 'start-moonbeam']
     # - name: moonriver-processor
@@ -54,10 +54,12 @@ deploy:
     #   cmd: ['sqd', 'start-pendulum']
     # - name: amplitude-processor
     #   cmd: ['sqd', 'start-amplitude']
-    - name: coretime-kusama-processor
-      cmd: ['sqd', 'start-coretime-kusama']
+    # - name: coretime-kusama-processor
+    #   cmd: ['sqd', 'start-coretime-kusama']
     - name: coretime-polkadot-processor
       cmd: ['sqd', 'start-coretime-polkadot']
+    - name: polimec-processor
+      cmd: ['sqd', 'start-polimec']
   # api:
   #   env:
   # SQD_DEBUG: sqd:graphql-server
