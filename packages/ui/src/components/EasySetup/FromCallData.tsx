@@ -9,13 +9,16 @@ import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { usePjsLinks } from '../../hooks/usePjsLinks'
 import { Binary, HexString, Transaction } from 'polkadot-api'
 import { getPapiHowLink } from '../../utils/getPapiHowLink'
+import { decodeAddress } from '@polkadot/util-crypto'
+import { u8aToHex } from '@polkadot/util'
 
 interface Props {
   className?: string
   onSetExtrinsic: (ext: Transaction<any, any, any, any>) => void
+  currentProxy?: string
 }
 
-const FromCallData = ({ className, onSetExtrinsic }: Props) => {
+const FromCallData = ({ className, onSetExtrinsic, currentProxy }: Props) => {
   const { api } = useApi()
   const [pastedCallData, setPastedCallData] = useState<HexString | undefined>(undefined)
   const [callDataError, setCallDataError] = useState('')
@@ -27,15 +30,25 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
       setIsProxyProxyRemoved(false)
       if (!api) return call
 
+      if (!currentProxy) return call
+
       try {
         const decodedCall = (await api.txFromCallData(Binary.fromHex(call))).decodedCall
 
+        const real = `0x${call.substring(8, 72)}`
+        const currentProxyAddress = u8aToHex(decodeAddress(currentProxy))
+
         // check if this call is a proxy.proxy
-        if (decodedCall.type === 'Proxy' && decodedCall.value.type === 'proxy') {
+        if (
+          decodedCall.type === 'Proxy' &&
+          decodedCall.value.type === 'proxy' &&
+          real === currentProxyAddress
+        ) {
           // a proxy.proxy call is encoded with e.g
           // callIndex 1e00
           // real 00 eb53ed54b7f921a438923e6eb52c4d89afc5c0fed5d0d15fb78648c53da227a0
           // forceProxyType 00
+          // only remove the proxy if it's the proxy associated with the multisig
           setIsProxyProxyRemoved(true)
           return `0x${call.substring(74)}` as HexString
         }
@@ -46,7 +59,7 @@ const FromCallData = ({ className, onSetExtrinsic }: Props) => {
         return
       }
     },
-    [api]
+    [api, currentProxy]
   )
 
   // users may erroneously paste callData from the multisig calldata
