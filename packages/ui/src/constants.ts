@@ -380,10 +380,10 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
 ]
 export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'kusama',
-  'asset-hub-ksm'
+  'asset-hub-ksm',
   // 'coretime-ksm'
   // 'amplitude',
-  // 'khala'
+  'khala'
   // 'moonriver'
 ]
 export const soloChains: Partial<keyof typeof networkList>[] = [

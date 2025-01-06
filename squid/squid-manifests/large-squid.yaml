@@ -38,8 +38,8 @@ deploy:
     #   cmd: ['sqd', 'start-moonbeam']
     # - name: moonriver-processor
     #   cmd: ['sqd', 'start-moonriver']
-    # - name: khala-processor
-    #   cmd: ['sqd', 'start-khala']
+    - name: khala-processor
+      cmd: ['sqd', 'start-khala']
     - name: westend-processor
       cmd: ['sqd', 'start-westend']
     - name: paseo-processor
