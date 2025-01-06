@@ -96,14 +96,14 @@
         "dotenv_config_path=assets/envs/.env.asset-hub-kusama"
       ]
     },
-    "start-hydradx": {
-      "description": "starts the indexer with hydradx",
+    "start-hydration": {
+      "description": "starts the indexer with hydration",
       "cmd": [
         "node",
         "-r",
         "dotenv/config",
         "lib/main",
-        "dotenv_config_path=assets/envs/.env.hydradx"
+        "dotenv_config_path=assets/envs/.env.hydration"
       ]
     },
     "start-amplitude": {
@@ -228,6 +228,16 @@
         "dotenv/config",
         "lib/main",
         "dotenv_config_path=assets/envs/.env.coretime-kusama"
+      ]
+    },
+    "start-polimec": {
+      "description": "starts the indexer with polimec",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.polimec"
       ]
     }
   }

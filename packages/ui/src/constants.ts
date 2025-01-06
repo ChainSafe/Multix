@@ -19,6 +19,7 @@ import { nodesJoystreamSVG } from './logos/joystreamSVG'
 import { chainsWatrPNG } from './logos/watrPNG'
 import paseoSVG from './logos/paseoSVG.svg'
 import { nodesCoretimeSVG } from './logos/coretimeSVG'
+import { polimecSVG } from './logos/polimecSVG'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -35,7 +36,7 @@ export interface NetworkInfo {
   pplChainRpcUrls?: string[]
 }
 
-export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow/v/v5/graphql`
+export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v6/api/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 
@@ -341,6 +342,17 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesKiltPNG
   },
+  polimec: {
+    chainId: 'polimec',
+    explorerNetworkName: 'polimec',
+    rpcUrls: [
+      'wss://polimec.rpc.amforc.com',
+      'wss://rpc.helikon.io/polimec',
+      'wss://polimec.ibp.network'
+    ],
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: polimecSVG
+  },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
@@ -358,19 +370,20 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
   // 'astar',
   'bifrost-dot',
   'hydration',
-  'interlay',
+  // 'interlay',
   // 'kilt',
   // 'moonbeam',
   // 'pendulum',
-  'phala'
+  'phala',
+  'polimec'
   // 'watr'
 ]
 export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'kusama',
   'asset-hub-ksm',
-  'coretime-ksm'
+  // 'coretime-ksm'
   // 'amplitude',
-  // 'khala'
+  'khala'
   // 'moonriver'
 ]
 export const soloChains: Partial<keyof typeof networkList>[] = [
