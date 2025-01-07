@@ -21,12 +21,13 @@ describe('Unknown Transaction', () => {
       .transactionList()
       .should('be.visible')
       .within(() => {
-        multisigPage.pendingTransactionItem().should('have.length', 2)
-        multisigPage.dateLabel().should('have.length', 1)
-        multisigPage.dateLabel().eq(0).contains('September 12, 2024')
+        multisigPage.pendingTransactionItem().should('have.length', 3)
+        multisigPage.dateLabel().should('have.length', 2)
+        multisigPage.dateLabel().eq(0).contains('January 6, 2025')
+        multisigPage.dateLabel().eq(1).contains('September 12, 2024')
         multisigPage
           .pendingTransactionItem()
-          .eq(1)
+          .eq(2)
           .within(() => {
             multisigPage.pendingTransactionCallName().should('contain.text', 'Unknown call')
             multisigPage.unknownCallIcon().should('be.visible')
@@ -73,7 +74,7 @@ describe('Unknown Transaction', () => {
     const callData = '0x000010736f6d65'
     multisigPage
       .pendingTransactionItem(8000)
-      .eq(0)
+      .eq(1)
       .within(() => {
         multisigPage.pendingTransactionCallName().should('contain.text', 'Unknown call')
         multisigPage.unknownCallIcon().should('be.visible')
@@ -95,6 +96,18 @@ describe('Unknown Transaction', () => {
         txSigningModal.callDataInput().type(callData)
         txSigningModal.executeButton().should('be.enabled')
         txSigningModal.rejectButton().should('be.enabled')
+      })
+  })
+
+  it('can display correctly a tx without params', () => {
+    multisigPage
+      .pendingTransactionItem(8000)
+      .eq(0)
+      .within(() => {
+        multisigPage.pendingTransactionCallName().should('contain.text', 'Session.purge_keys')
+        txSigningModal.callInfoContainer().should('not.contain.text', 'Params')
+        multisigPage.unknownCallIcon().should('not.exist')
+        multisigPage.unknownCallAlert().should('not.exist')
       })
   })
 })
