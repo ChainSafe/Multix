@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
     "@vitejs/plugin-react": "^4.3.4",
-    "cypress": "^13.16.0",
+    "cypress": "^13.17.0",
     "cypress-wait-until": "^3.0.2",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",

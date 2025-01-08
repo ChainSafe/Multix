@@ -6620,9 +6620,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^13.16.0":
-  version: 13.16.0
-  resolution: "cypress@npm:13.16.0"
+"cypress@npm:^13.17.0":
+  version: 13.17.0
+  resolution: "cypress@npm:13.17.0"
   dependencies:
     "@cypress/request": ^3.0.6
     "@cypress/xvfb": ^1.2.4
@@ -6669,7 +6669,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: bdda12386d5f0404ef24c9df58e8035af47ba6cdaa09619187ccbb6e69e442cfecf013d03878b9d399eb3538536bde66ad5eea2c17d99c5a56abb1e25024fba2
+  checksum: 159ce620e32d2785082aaa1f4f30f203dcec466df4a8e80dfa299035358772fd513c35820070ba8db52e2bf58078a372ff7009068e26967f993656e7da62e221
   languageName: node
   linkType: hard
 
@@ -10174,7 +10174,7 @@ __metadata:
     "@typescript-eslint/parser": ^8.17.0
     "@vitejs/plugin-react": ^4.3.4
     "@walletconnect/web3wallet": ^1.16.1
-    cypress: ^13.16.0
+    cypress: ^13.17.0
     cypress-wait-until: ^3.0.2
     dayjs: ^1.11.13
     dot-connect: ^0.13.2
