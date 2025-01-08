@@ -162,7 +162,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       //     hasErrorMessage={!!easyOptionErrorMessage}
       //   />
       // ),
-      [EasyTransferTitle.FromCallData]: <FromCallData onSetExtrinsic={setExtrinsicToCall} />
+      [EasyTransferTitle.FromCallData]: (
+        <FromCallData
+          onSetExtrinsic={setExtrinsicToCall}
+          currentProxy={isProxySelected ? selectedOrigin.address : undefined}
+        />
+      )
     } as Partial<Record<EasyTransferTitle, ReactNode>>
 
     // if (hasIdentityPallet && !hasPplChain) {
@@ -176,7 +181,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     // }
 
     return res
-  }, [selectedOrigin.address])
+  }, [selectedOrigin.address, isProxySelected])
 
   const signCallback = useSigningCallback({
     onSuccess: () => {
