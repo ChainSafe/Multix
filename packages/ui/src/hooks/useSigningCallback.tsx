@@ -4,6 +4,7 @@ import { useToasts } from '../contexts/ToastContext'
 // import { getIncompleteMessage } from '../utils/extinsicErrorChecks'
 import { TxEvent } from 'polkadot-api'
 import { JSONprint } from '../utils/jsonPrint'
+import { translateError } from '../utils/translateError'
 
 interface Args {
   onSubmitting?: () => void
@@ -82,8 +83,9 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
         onFinalized && onFinalized()
       }
     },
-    error: (error: Error) => {
-      console.error(error)
+    error: (e: Error) => {
+      console.error(e)
+      const error = translateError(e)
       addToast({ title: error.toString(), type: 'error' })
       onError && onError()
     }
