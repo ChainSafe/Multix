@@ -154,9 +154,9 @@ const GenericAccountSelection = ({
   const getRenderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: AccountBaseInfo) => {
     return (
       <OptionMenuItem
+        {...props}
         keyValue={option.address}
         key={option.address}
-        {...props}
       >
         <AccountDisplay
           address={option.address}

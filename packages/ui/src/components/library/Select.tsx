@@ -28,9 +28,9 @@ const Select = ({
   value,
   onChange,
   menuItems,
-  minified,
+  minified = false,
   fullWidth,
-  inputSize,
+  inputSize = 'medium',
   children,
   sx,
   testId
@@ -69,11 +69,6 @@ const Select = ({
         : children}
     </SelectMuiStyled>
   )
-}
-
-Select.defaultProps = {
-  minified: false,
-  inputSize: 'medium'
 }
 
 const MenuPropsStyles = {
