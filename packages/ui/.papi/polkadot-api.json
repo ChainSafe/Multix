@@ -22,22 +22,6 @@
       "chain": "polkadot_people",
       "metadata": ".papi/metadata/dotPpl.scale"
     },
-    "dotAssetHub": {
-      "chain": "polkadot_asset_hub",
-      "metadata": ".papi/metadata/dotAssetHub.scale"
-    },
-    "rococo": {
-      "chain": "rococo_v2_2",
-      "metadata": ".papi/metadata/rococo.scale"
-    },
-    "rococoAssetHub": {
-      "chain": "rococo_v2_2_asset_hub",
-      "metadata": ".papi/metadata/rococoAssetHub.scale"
-    },
-    "rococoPpl": {
-      "chain": "rococo_v2_2_people",
-      "metadata": ".papi/metadata/rococoPpl.scale"
-    },
     "bifrostDot": {
       "wsUrl": "wss://eu.bifrost-polkadot-rpc.liebi.com/ws",
       "metadata": ".papi/metadata/bifrostDot.scale"
@@ -69,6 +53,18 @@
     "wesPpl": {
       "wsUrl": "wss://westend-people-rpc.polkadot.io",
       "metadata": ".papi/metadata/wesPpl.scale"
+    },
+    "dotAssetHub": {
+      "chain": "polkadot_asset_hub",
+      "metadata": ".papi/metadata/dotAssetHub.scale"
+    },
+    "polimec": {
+      "wsUrl": "wss://polimec.ibp.network",
+      "metadata": ".papi/metadata/polimec.scale"
+    },
+    "coretimeDot": {
+      "wsUrl": "wss://polkadot-coretime-rpc.polkadot.io",
+      "metadata": ".papi/metadata/coretimeDot.scale"
     }
   }
 }

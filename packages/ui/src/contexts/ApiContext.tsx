@@ -17,7 +17,9 @@ import {
   ksmAssetHub,
   // ksmPpl,
   paseo,
-  phala
+  phala,
+  polimec,
+  coretimeDot
   // rhala,
   // rococo,
   // rococoAssetHub,
@@ -45,6 +47,8 @@ export type ApiType = TypedApi<
   // | typeof rococoAssetHub
   // | typeof rococoPpl
   | typeof paseo
+  | typeof polimec
+  | typeof coretimeDot
 >
 
 export interface IApiContext {
@@ -73,6 +77,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   useEffect(() => {
     if (!selectedNetworkInfo) return
 
+    console.log('selectedNetworkInfo', selectedNetworkInfo?.chainId)
     let cl: PolkadotClient
     let typedApi: ApiType
 
@@ -81,11 +86,11 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
         cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
         typedApi = cl.getTypedApi(ksm)
         break
-      case 'asset-hub-dot':
+      case 'asset-hub-polkadot':
         cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
         typedApi = cl.getTypedApi(dotAssetHub)
         break
-      case 'asset-hub-ksm':
+      case 'asset-hub-kusama':
         cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
         typedApi = cl.getTypedApi(ksmAssetHub)
         break
@@ -125,7 +130,14 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
         cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
         typedApi = cl.getTypedApi(paseo)
         break
-
+      case 'polimec':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
+        typedApi = cl.getTypedApi(polimec)
+        break
+      case 'coretime-polkadot':
+        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
+        typedApi = cl.getTypedApi(coretimeDot)
+        break
       default:
         cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
         typedApi = cl.getTypedApi(dot)

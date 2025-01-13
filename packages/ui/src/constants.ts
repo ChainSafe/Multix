@@ -20,12 +20,18 @@ import { chainsWatrPNG } from './logos/watrPNG'
 import paseoSVG from './logos/paseoSVG.svg'
 import { nodesCoretimeSVG } from './logos/coretimeSVG'
 import { polimecSVG } from './logos/polimecSVG'
+import usdc from './logos/usdc.svg'
+import usdt from './logos/usdt.svg'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
 export const ICON_SIZE_MEDIUM = 40
 export const ICON_SIZE_SMALL = 30
 export const DEFAULT_ICON_THEME = 'polkadot'
+export const AH_SUPPORTED_ASSETS = [
+  { assetId: 1984, logo: usdt },
+  { assetId: 1337, logo: usdc }
+]
 
 export interface NetworkInfo {
   chainId: string
@@ -103,15 +109,15 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsKusamaSVG
   },
-  'asset-hub-dot': {
+  'asset-hub-polkadot': {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrls: [
-      // 'wss://asset-hub-polkadot-rpc.dwellir.com',
+      // 'wss://asset-hub-polkadot-rpc.dwellir.com'
       // 'wss://statemint-rpc-tn.dwellir.com',
-      // 'wss://sys.ibp.network/asset-hub-polkadot',
+      'wss://sys.ibp.network/asset-hub-polkadot'
       // 'wss://asset-hub-polkadot.dotters.network',
-      'wss://rpc-asset-hub-polkadot.luckyfriday.io'
+      // 'wss://rpc-asset-hub-polkadot.luckyfriday.io'
       // 'wss://statemint.api.onfinality.io/public-ws',
       // 'wss://polkadot-asset-hub-rpc.polkadot.io',
       // 'wss://statemint.public.curie.radiumblock.co/ws',
@@ -121,7 +127,7 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
   },
-  'asset-hub-ksm': {
+  'asset-hub-kusama': {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrls: [
@@ -138,7 +144,7 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG
   },
-  'coretime-dot': {
+  'coretime-polkadot': {
     chainId: 'coretime-polkadot',
     explorerNetworkName: 'coretime-polkadot',
     rpcUrls: [
@@ -150,7 +156,7 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesCoretimeSVG
   },
-  'coretime-ksm': {
+  'coretime-kusama': {
     chainId: 'coretime-kusama',
     explorerNetworkName: 'coretime-kusama',
     rpcUrls: [
@@ -364,8 +370,8 @@ export const networkList: Record<string, NetworkInfo> = {
 
 export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'polkadot',
-  'asset-hub-dot',
-  'coretime-dot',
+  'asset-hub-polkadot',
+  'coretime-polkadot',
   'acala',
   // 'astar',
   'bifrost-dot',
@@ -380,8 +386,8 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
 ]
 export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'kusama',
-  'asset-hub-ksm',
-  // 'coretime-ksm'
+  'asset-hub-kusama',
+  // 'coretime-kusama'
   // 'amplitude',
   'khala'
   // 'moonriver'
