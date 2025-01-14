@@ -1,7 +1,7 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
 import { ReactNode, useMemo } from 'react'
-import { ApiType, useApi } from '../contexts/ApiContext'
+import { IApiContext, useApi } from '../contexts/ApiContext'
 import { getExtrinsicName } from '../utils/getExtrinsicName'
 import { isProxyCall } from '../utils/isProxyCall'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
@@ -29,7 +29,7 @@ interface CreateTreeParams {
   decimals: number
   unit: string
   name?: string
-  api: ApiType
+  api: IApiContext['api']
   chainInfo?: ChainInfoHuman
 }
 

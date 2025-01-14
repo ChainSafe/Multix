@@ -30,8 +30,8 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
-import { Enum, TypedApi } from 'polkadot-api'
-import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { Enum } from 'polkadot-api'
+import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
@@ -44,7 +44,7 @@ type Step = 'selection' | 'summary' | 'call1' | 'call2'
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { selectedNetwork } = useNetwork()
   const modalRef = useRef<HTMLDivElement | null>(null)
-  const { api, chainInfo, compatibilityToken } = useApi()
+  const { api, chainInfo, compatibilityToken, apiDescriptor } = useApi()
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
@@ -123,30 +123,79 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     )
 
     const addProxyTx =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Proxy.add_proxy({
+      apiDescriptor === 'hydration'
+        ? api.tx.Proxy.add_proxy({
             delegate: newMultisigAddress,
             proxy_type: Enum('Any'),
             delay: 0
           })
-        : (api as TypedApi<typeof dot>).tx.Proxy.add_proxy({
-            delegate: MultiAddress.Id(newMultisigAddress),
-            proxy_type: Enum('Any'),
-            delay: 0
-          })
+        : apiDescriptor === 'acala'
+          ? api.tx.Proxy.add_proxy({
+              delegate: MultiAddress.Id(newMultisigAddress),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
+          : apiDescriptor === 'khala'
+            ? api.tx.Proxy.add_proxy({
+                delegate: MultiAddress.Id(newMultisigAddress),
+                proxy_type: Enum('Any'),
+                delay: 0
+              })
+            : apiDescriptor === 'kusama'
+              ? api.tx.Proxy.add_proxy({
+                  delegate: MultiAddress.Id(newMultisigAddress),
+                  proxy_type: Enum('Any'),
+                  delay: 0
+                })
+              : apiDescriptor === 'phala'
+                ? api.tx.Proxy.add_proxy({
+                    delegate: MultiAddress.Id(newMultisigAddress),
+                    proxy_type: Enum('Any'),
+                    delay: 0
+                  })
+                : api.tx.Proxy.add_proxy({
+                    delegate: MultiAddress.Id(newMultisigAddress),
+                    proxy_type: Enum('Any'),
+                    delay: 0
+                  })
 
     const proxyTx =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Proxy.proxy({
+      apiDescriptor === 'hydration'
+        ? api.tx.Proxy.proxy({
             real: selectedMultiProxy?.proxy,
             force_proxy_type: undefined,
             call: addProxyTx.decodedCall
           })
-        : (api as TypedApi<typeof dot>).tx.Proxy.proxy({
-            real: MultiAddress.Id(selectedMultiProxy?.proxy),
-            force_proxy_type: undefined,
-            call: addProxyTx.decodedCall
-          })
+        : apiDescriptor === 'acala'
+          ? api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: addProxyTx.decodedCall
+            })
+          : apiDescriptor === 'khala'
+            ? api.tx.Proxy.proxy({
+                real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                force_proxy_type: undefined,
+                call: addProxyTx.decodedCall
+              })
+            : apiDescriptor === 'kusama'
+              ? api.tx.Proxy.proxy({
+                  real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                  force_proxy_type: undefined,
+                  call: addProxyTx.decodedCall
+                })
+              : apiDescriptor === 'phala'
+                ? api.tx.Proxy.proxy({
+                    real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                    force_proxy_type: undefined,
+                    call: addProxyTx.decodedCall
+                  })
+                : api.tx.Proxy.proxy({
+                    real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                    force_proxy_type: undefined,
+                    call: addProxyTx.decodedCall
+                  })
+
     // call with the old multisig to delete the new one
     return getAsMultiTx({
       api,
@@ -166,7 +215,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     selectedAccount,
     selectedMultiProxy?.proxy,
     selectedMultisig,
-    selectedNetwork
+    selectedNetwork,
+    apiDescriptor
   ])
 
   const firstCall = useMemo(() => {
@@ -198,16 +248,79 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     const otherNewSignatories = getSortAddress(
       newSignatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const removeProxyTx = (api as TypedApi<typeof dot>).tx.Proxy.remove_proxy({
-      delegate: MultiAddress.Id(selectedMultisig?.address),
-      proxy_type: Enum('Any'),
-      delay: 0
-    })
-    const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
-      real: MultiAddress.Id(selectedMultiProxy?.proxy),
-      force_proxy_type: undefined,
-      call: removeProxyTx.decodedCall
-    })
+    const removeProxyTx =
+      apiDescriptor === 'hydration'
+        ? api.tx.Proxy.remove_proxy({
+            delegate: selectedMultisig?.address,
+            proxy_type: Enum('Any'),
+            delay: 0
+          })
+        : apiDescriptor === 'acala'
+          ? api.tx.Proxy.remove_proxy({
+              delegate: MultiAddress.Id(selectedMultisig?.address),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
+          : apiDescriptor === 'khala'
+            ? api.tx.Proxy.remove_proxy({
+                delegate: MultiAddress.Id(selectedMultisig?.address),
+                proxy_type: Enum('Any'),
+                delay: 0
+              })
+            : apiDescriptor === 'kusama'
+              ? api.tx.Proxy.remove_proxy({
+                  delegate: MultiAddress.Id(selectedMultisig?.address),
+                  proxy_type: Enum('Any'),
+                  delay: 0
+                })
+              : apiDescriptor === 'phala'
+                ? api.tx.Proxy.remove_proxy({
+                    delegate: MultiAddress.Id(selectedMultisig?.address),
+                    proxy_type: Enum('Any'),
+                    delay: 0
+                  })
+                : api.tx.Proxy.remove_proxy({
+                    delegate: MultiAddress.Id(selectedMultisig?.address),
+                    proxy_type: Enum('Any'),
+                    delay: 0
+                  })
+
+    const proxyTx =
+      apiDescriptor === 'hydration'
+        ? api.tx.Proxy.proxy({
+            real: selectedMultiProxy?.proxy,
+            force_proxy_type: undefined,
+            call: removeProxyTx.decodedCall
+          })
+        : apiDescriptor === 'acala'
+          ? api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: removeProxyTx.decodedCall
+            })
+          : apiDescriptor === 'khala'
+            ? api.tx.Proxy.proxy({
+                real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                force_proxy_type: undefined,
+                call: removeProxyTx.decodedCall
+              })
+            : apiDescriptor === 'kusama'
+              ? api.tx.Proxy.proxy({
+                  real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                  force_proxy_type: undefined,
+                  call: removeProxyTx.decodedCall
+                })
+              : apiDescriptor === 'phala'
+                ? api.tx.Proxy.proxy({
+                    real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                    force_proxy_type: undefined,
+                    call: removeProxyTx.decodedCall
+                  })
+                : api.tx.Proxy.proxy({
+                    real: MultiAddress.Id(selectedMultiProxy?.proxy),
+                    force_proxy_type: undefined,
+                    call: removeProxyTx.decodedCall
+                  })
 
     return getAsMultiTx({
       api,
@@ -225,7 +338,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     selectedAccount,
     selectedMultiProxy,
     selectedMultisig,
-    compatibilityToken
+    compatibilityToken,
+    apiDescriptor
   ])
 
   const { multisigProposalNeededFunds: firstCallNeededFunds, reserved: firstCallReserved } =

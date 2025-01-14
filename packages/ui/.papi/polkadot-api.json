@@ -65,6 +65,10 @@
     "coretimeDot": {
       "wsUrl": "wss://polkadot-coretime-rpc.polkadot.io",
       "metadata": ".papi/metadata/coretimeDot.scale"
+    },
+    "westend": {
+      "chain": "westend2",
+      "metadata": ".papi/metadata/westend.scale"
     }
   }
 }

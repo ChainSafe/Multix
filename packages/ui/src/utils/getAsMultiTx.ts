@@ -1,9 +1,9 @@
 import { MultisigStorageInfo, Weight } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
-import { ApiType, IApiContext } from '../contexts/ApiContext'
+import { IApiContext } from '../contexts/ApiContext'
 
 interface Params {
-  api: ApiType
+  api: IApiContext['api']
   threshold: number
   otherSignatories: string[]
   tx?: Transaction<any, any, any, any>
@@ -29,6 +29,7 @@ export const getAsMultiTx = ({
   // we can pass either the tx, or the callData
   if (!callData && !tx) return
   if (!compatibilityToken) return
+  if (!api) return
 
   let txToSend: Transaction<any, any, any, any> | undefined = tx
 

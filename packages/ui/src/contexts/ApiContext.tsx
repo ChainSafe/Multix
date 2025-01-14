@@ -19,44 +19,78 @@ import {
   paseo,
   phala,
   polimec,
-  coretimeDot
+  coretimeDot,
+  westend
   // rhala,
-  // rococo,
-  // rococoAssetHub,
-  // rococoPpl
 } from '@polkadot-api/descriptors'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
-export type ApiType = TypedApi<
-  | typeof dot
-  | typeof dotAssetHub
-  // | typeof dotPpl
-  | typeof ksm
-  | typeof ksmAssetHub
-  // | typeof ksmPpl
-  | typeof hydration
-  | typeof acala
-  | typeof bifrostDot
-  | typeof phala
-  | typeof khala
-  // | typeof rhala
-  // | typeof rococo
-  // | typeof rococoAssetHub
-  // | typeof rococoPpl
-  | typeof paseo
-  | typeof polimec
-  | typeof coretimeDot
->
-
-export interface IApiContext {
-  api?: ApiType
+type BaseContext = {
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
   compatibilityToken?: Awaited<ReturnType<PolkadotClient['getTypedApi']>['compatibilityToken']>
 }
+
+export type IApiContext =
+  | ({
+      api?: TypedApi<typeof dot>
+      apiDescriptor: 'polkadot'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof ksm>
+      apiDescriptor: 'kusama'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof dotAssetHub>
+      apiDescriptor: 'asset-hub-polkadot'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof ksmAssetHub>
+      apiDescriptor: 'asset-hub-kusama'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof coretimeDot>
+      apiDescriptor: 'coretime-polkadot'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof acala>
+      apiDescriptor: 'acala'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof bifrostDot>
+      apiDescriptor: 'bifrost-dot'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof hydration>
+      apiDescriptor: 'hydration'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof khala>
+      apiDescriptor: 'khala'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof phala>
+      apiDescriptor: 'phala'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof westend>
+      apiDescriptor: 'westend'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof paseo>
+      apiDescriptor: 'paseo'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof polimec>
+      apiDescriptor: 'polimec'
+    } & BaseContext)
+  | ({
+      api?: TypedApi<typeof dot>
+      apiDescriptor: 'local'
+    } & BaseContext)
 
 interface ChainInfoHuman {
   ss58Format: number
@@ -75,73 +109,10 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   const [compatibilityToken, setCompatibilityToken] = useState<IApiContext['compatibilityToken']>()
 
   useEffect(() => {
-    if (!selectedNetworkInfo) return
+    if (!selectedNetworkInfo?.chainId || !selectedNetworkInfo?.descriptor) return
 
-    console.log('selectedNetworkInfo', selectedNetworkInfo?.chainId)
-    let cl: PolkadotClient
-    let typedApi: ApiType
-
-    switch (selectedNetworkInfo?.chainId) {
-      case 'kusama':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(ksm)
-        break
-      case 'asset-hub-polkadot':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(dotAssetHub)
-        break
-      case 'asset-hub-kusama':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(ksmAssetHub)
-        break
-      case 'acala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(acala)
-        break
-      case 'bifrost-dot':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(bifrostDot)
-        break
-      case 'phala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(phala)
-        break
-      // case 'rhala':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rhala)
-      //   break
-      case 'khala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(khala)
-        break
-      // case 'rococo':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rococo)
-      //   break
-      // case 'rococo-asset-hub':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rococoAssetHub)
-      //   break
-      case 'hydradx':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(hydration)
-        break
-      case 'paseo':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(paseo)
-        break
-      case 'polimec':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(polimec)
-        break
-      case 'coretime-polkadot':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(coretimeDot)
-        break
-      default:
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(dot)
-    }
+    const cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
+    const typedApi = cl.getTypedApi(selectedNetworkInfo.descriptor)
     setClient(cl)
     setApi(typedApi)
   }, [selectedNetworkInfo])
@@ -182,6 +153,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
   return (
     <ApiContext.Provider
       value={{
+        // @ts-ignore
         api,
         chainInfo,
         client,

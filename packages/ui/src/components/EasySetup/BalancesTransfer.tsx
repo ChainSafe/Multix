@@ -8,8 +8,8 @@ import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
 import { TextField } from '../library'
 import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
-import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
-import { Transaction, TypedApi } from 'polkadot-api'
+import { MultiAddress } from '@polkadot-api/descriptors'
+import { Transaction } from 'polkadot-api'
 import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   const accountBase = useAccountBaseFromAccountList({ withAccountsFromAddressBook: true })
   const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
-  const { api, chainInfo } = useApi()
+  const { api, chainInfo, apiDescriptor } = useApi()
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState<bigint | undefined>()
   const [amountError, setAmountError] = useState('')
@@ -54,18 +54,18 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }
 
     const extrinsic =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Balances.transfer_keep_alive({
+      apiDescriptor === 'hydration'
+        ? api.tx.Balances.transfer_keep_alive({
             dest: toAddress,
             value: amount
           })
-        : (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
+        : api.tx.Balances.transfer_keep_alive({
             dest: MultiAddress.Id(toAddress),
             value: amount
           })
 
     onSetExtrinsic(extrinsic)
-  }, [amount, api, chainInfo, onSetExtrinsic, selectedNetwork, toAddress])
+  }, [amount, api, apiDescriptor, chainInfo, onSetExtrinsic, selectedNetwork, toAddress])
 
   const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
     setSelected(account)
