@@ -21,23 +21,7 @@ import {
   westend
 } from '@polkadot-api/descriptors'
 
-type DescriptorsType = {
-  acala: typeof acala
-  bifrostDot: typeof bifrostDot
-  dot: typeof dot
-  dotAssetHub: typeof dotAssetHub
-  hydration: typeof hydration
-  khala: typeof khala
-  ksm: typeof ksm
-  ksmAssetHub: typeof ksmAssetHub
-  paseo: typeof paseo
-  phala: typeof phala
-  polimec: typeof polimec
-  coretimeDot: typeof coretimeDot
-  westend: typeof westend
-}
-
-export const DESCRIPTORS: DescriptorsType = {
+export const DESCRIPTORS_first = {
   acala,
   bifrostDot,
   dot,
@@ -49,12 +33,22 @@ export const DESCRIPTORS: DescriptorsType = {
   paseo,
   phala,
   polimec,
-  coretimeDot,
+  coretimeDot
+} as const
+
+export const DESCRIPTORS_seconds = {
   westend
 } as const
 
+export const DESCRIPTORS = {
+  ...DESCRIPTORS_first,
+  ...DESCRIPTORS_seconds
+}
+
 export type ApiDescriptors = keyof typeof DESCRIPTORS
 export type Descriptors<Id extends ApiDescriptors> = (typeof DESCRIPTORS)[Id]
+
+export const getDescriptor = (id: ApiDescriptors): Descriptors<ApiDescriptors> => DESCRIPTORS[id]
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -77,13 +71,12 @@ interface ChainInfoHuman {
 
 const ApiContext = createContext<IApiContext<ApiDescriptors> | undefined>(undefined)
 
-const ApiContextProvider = ({ children }: ApiContextProps) => {
+const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const [chainInfo, setChainInfo] = useState<IApiContext<ApiDescriptors>['chainInfo']>()
-  const [client, setClient] = useState<IApiContext<ApiDescriptors>['client']>()
-  const [api, setApi] = useState<IApiContext<ApiDescriptors>['api']>()
-  const [compatibilityToken, setCompatibilityToken] =
-    useState<IApiContext<ApiDescriptors>['compatibilityToken']>()
+  const [chainInfo, setChainInfo] = useState<ChainInfoHuman>()
+  const [client, setClient] = useState<PolkadotClient | undefined>()
+  const [api, setApi] = useState<TypedApi<Descriptors<Id>> | undefined>()
+  const [compatibilityToken, setCompatibilityToken] = useState<CompatibilityToken | undefined>()
   const [apiDescriptor, setApiDescriptor] = useState<IApiContext<ApiDescriptors>['apiDescriptor']>()
 
   useEffect(() => {
@@ -93,7 +86,8 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
     const typedApi = cl.getTypedApi(DESCRIPTORS[selectedNetworkInfo.descriptor])
     setClient(cl)
-    setApi(typedApi)
+    const desc = DESCRIPTORS[selectedNetworkInfo.descriptor]
+    setApi(typedApi as TypedApi<typeof desc>)
     setApiDescriptor(selectedNetworkInfo.descriptor)
   }, [selectedNetworkInfo])
 
@@ -103,7 +97,9 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
     client?.getChainSpecData().then(async ({ properties, name }) => {
       if (!properties || !compatibilityToken) return
 
-      const ss58prefix = api.constants.System.SS58Prefix(compatibilityToken)
+      const ss58prefix = (api as TypedApi<Descriptors<ApiDescriptors>>).constants.System.SS58Prefix(
+        compatibilityToken
+      )
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -126,8 +122,9 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
   useEffect(() => {
     if (!api) return
-
-    api.compatibilityToken.then(setCompatibilityToken).catch(console.error)
+    ;(api as TypedApi<Descriptors<ApiDescriptors>>).compatibilityToken
+      .then(setCompatibilityToken)
+      .catch(console.error)
   }, [api])
 
   return (
