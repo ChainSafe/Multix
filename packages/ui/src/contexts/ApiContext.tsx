@@ -48,8 +48,6 @@ export const DESCRIPTORS = {
 export type ApiDescriptors = keyof typeof DESCRIPTORS
 export type Descriptors<Id extends ApiDescriptors> = (typeof DESCRIPTORS)[Id]
 
-export const getDescriptor = (id: ApiDescriptors): Descriptors<ApiDescriptors> => DESCRIPTORS[id]
-
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
@@ -83,11 +81,14 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
     if (!selectedNetworkInfo?.chainId || !selectedNetworkInfo?.descriptor) return
 
     const cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-
-    const typedApi = cl.getTypedApi(DESCRIPTORS[selectedNetworkInfo.descriptor])
     setClient(cl)
-    const desc = DESCRIPTORS[selectedNetworkInfo.descriptor]
-    setApi(typedApi as TypedApi<typeof desc>)
+    const id = selectedNetworkInfo.descriptor as Id
+    const typedApi = cl.getTypedApi(DESCRIPTORS[id])
+    setApi(typedApi as TypedApi<Descriptors<Id>>)
+
+    // const typedApi = cl.getTypedApi(DESCRIPTORS[selectedNetworkInfo.descriptor])
+    // setClient(cl)
+    // setApi(typedApi as TypedApi<Descriptors<Id>>)
     setApiDescriptor(selectedNetworkInfo.descriptor)
   }, [selectedNetworkInfo])
 
