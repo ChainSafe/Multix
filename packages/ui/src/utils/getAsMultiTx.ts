@@ -1,16 +1,16 @@
 import { MultisigStorageInfo, Weight } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
-import { IApiContext } from '../contexts/ApiContext'
+import { ApiDescriptors, IApiContext } from '../contexts/ApiContext'
 
 interface Params {
-  api: IApiContext['api']
+  api: IApiContext<ApiDescriptors>['api']
   threshold: number
   otherSignatories: string[]
   tx?: Transaction<any, any, any, any>
   callData?: HexString
   weight?: Weight
   when?: MultisigStorageInfo['when']
-  compatibilityToken: IApiContext['compatibilityToken']
+  compatibilityToken: IApiContext<ApiDescriptors>['compatibilityToken']
 }
 
 // TODO check if  we can do this with papi

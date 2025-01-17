@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true,
+    // commenting it out to make TS compiler happy with Papi types
+    // "composite": true,
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

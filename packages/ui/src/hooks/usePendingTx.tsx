@@ -5,7 +5,7 @@ import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils/arrayUtils'
 import { isProxyCall } from '../utils/isProxyCall'
 import { useAccountId } from './useAccountId'
-import { IApiContext, useApi } from '../contexts/ApiContext'
+import { ApiDescriptors, IApiContext, useApi } from '../contexts/ApiContext'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { PolkadotClient, Transaction } from 'polkadot-api'
@@ -38,7 +38,7 @@ type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
 const getExtDecoderAt = async (
-  api: IApiContext['api'],
+  api: IApiContext<ApiDescriptors>['api'],
   client: PolkadotClient,
   blockHash?: string
 ) => {
@@ -59,7 +59,7 @@ const getExtDecoderAt = async (
 
 const getMultisigInfo = async (
   call: Transaction<any, any, any, any>['decodedCall'],
-  api: IApiContext['api']
+  api: IApiContext<ApiDescriptors>['api']
 ): Promise<Partial<CallDataInfoFromChain>[]> => {
   if (!api) return []
 
@@ -111,7 +111,7 @@ const getMultisigInfo = async (
 
 const getCallDataFromChainPromise = (
   pendingTxData: PendingTx[],
-  api: IApiContext['api'],
+  api: IApiContext<ApiDescriptors>['api'],
   client: PolkadotClient
 ) =>
   pendingTxData.map(async (pendingTx) => {

@@ -1,9 +1,9 @@
 import { FixedSizeBinary, HexString } from 'polkadot-api'
-import { IApiContext } from '../contexts/ApiContext'
+import { ApiDescriptors, IApiContext } from '../contexts/ApiContext'
 import { MultisigStorageInfo } from '../types'
 
 interface Params {
-  api: IApiContext['api']
+  api: IApiContext<ApiDescriptors>['api']
   threshold: number
   otherSignatories: string[]
   when?: MultisigStorageInfo['when']

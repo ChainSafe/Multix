@@ -21,7 +21,7 @@ import {
   westend
 } from '@polkadot-api/descriptors'
 
-export const DESCRIPTORS_first = {
+export const DESCRIPTORS = {
   acala,
   bifrostDot,
   dot,
@@ -33,31 +33,67 @@ export const DESCRIPTORS_first = {
   paseo,
   phala,
   polimec,
-  coretimeDot
-} as const
-
-export const DESCRIPTORS_seconds = {
+  coretimeDot,
   westend
 } as const
 
-export const DESCRIPTORS = {
-  ...DESCRIPTORS_first,
-  ...DESCRIPTORS_seconds
-}
+export const DESCRIPTORS_NOT_HYDRATION_1 = {
+  acala,
+  bifrostDot,
+  dot,
+  dotAssetHub,
+  khala,
+  phala,
+  paseo,
+  polimec
+} as const
+
+export const DESCRIPTORS_NOT_HYDRATION_2 = {
+  ksm,
+  ksmAssetHub,
+  coretimeDot,
+  westend
+} as const
 
 export type ApiDescriptors = keyof typeof DESCRIPTORS
+export type ApiDescriptorsNotHydration_1 = keyof typeof DESCRIPTORS_NOT_HYDRATION_1
+export type ApiDescriptorsNotHydration_2 = keyof typeof DESCRIPTORS_NOT_HYDRATION_1
+
 export type Descriptors<Id extends ApiDescriptors> = (typeof DESCRIPTORS)[Id]
+type ApiOf<Id extends ApiDescriptors> = TypedApi<Descriptors<Id>>
+
+export const noHydrationKeys_1 = Object.keys(
+  DESCRIPTORS_NOT_HYDRATION_1
+) as ApiDescriptorsNotHydration_1[]
+
+export const noHydrationKeys_2 = Object.keys(
+  DESCRIPTORS_NOT_HYDRATION_2
+) as ApiDescriptorsNotHydration_2[]
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
 export type IApiContext<Id extends ApiDescriptors> = {
-  api?: TypedApi<Descriptors<Id>>
   apiDescriptor?: Id
+  api?: ApiOf<Id>
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
   compatibilityToken?: CompatibilityToken
+}
+
+export const isContextOf = <Id extends ApiDescriptors>(
+  ctx: unknown,
+  descriptor: Id
+): ctx is IApiContext<Id> => {
+  return !!ctx && (ctx as IApiContext<ApiDescriptors>).apiDescriptor === descriptor
+}
+
+export const isContextIn = <Id extends ApiDescriptors, Ids extends ApiDescriptors[] = Id[]>(
+  api: unknown,
+  descriptors: Id[]
+): api is IApiContext<Ids[number]> => {
+  return descriptors.some((descriptor) => isContextOf(api, descriptor))
 }
 
 interface ChainInfoHuman {
