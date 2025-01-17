@@ -1,6 +1,6 @@
-import { MultisigStorageInfo, Weight } from '../types'
+import { ApiDescriptors, MultisigStorageInfo, Weight } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
-import { ApiDescriptors, IApiContext } from '../contexts/ApiContext'
+import { IApiContext } from '../contexts/ApiContext'
 
 interface Params {
   api: IApiContext<ApiDescriptors>['api']

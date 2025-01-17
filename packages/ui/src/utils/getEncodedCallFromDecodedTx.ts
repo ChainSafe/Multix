@@ -1,5 +1,6 @@
 import { CompatibilityToken, Transaction } from 'polkadot-api'
-import { ApiDescriptors, IApiContext } from '../contexts/ApiContext'
+import { IApiContext } from '../contexts/ApiContext'
+import { ApiDescriptors } from '../types'
 
 export const getEncodedCallFromDecodedTx = (
   api: IApiContext<ApiDescriptors>['api'],

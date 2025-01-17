@@ -1,7 +1,7 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
 import { ReactNode, useMemo } from 'react'
-import { ApiDescriptors, IApiContext, useApi } from '../contexts/ApiContext'
+import { IApiContext, useApi } from '../contexts/ApiContext'
 import { getExtrinsicName } from '../utils/getExtrinsicName'
 import { isProxyCall } from '../utils/isProxyCall'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
@@ -14,6 +14,7 @@ import { JSONprint } from '../utils/jsonPrint'
 import { Transaction } from 'polkadot-api'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { ChainInfoHuman } from '../contexts/PeopleChainApiContext'
+import { ApiDescriptors } from '../types'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>

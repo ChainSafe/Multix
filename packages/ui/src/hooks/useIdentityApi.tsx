@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ChainInfoHuman, IPplApiContext, usePplApi } from '../contexts/PeopleChainApiContext'
-import { ApiDescriptors, IApiContext, useApi } from '../contexts/ApiContext'
+import { IApiContext, useApi } from '../contexts/ApiContext'
+import { ApiDescriptors } from '../types'
 
-export const useIdenityApi = () => {
+export const useIdentityApi = () => {
   const { pplApi, pplChainInfo } = usePplApi()
   const { api, chainInfo } = useApi()
   const [apiToUse, setApiToUse] = useState<

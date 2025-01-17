@@ -31,11 +31,11 @@
 //     if (!chainInfo?.tokenDecimals) return
 
 //     const byteDeposit = (
-//       api as unknown as TypedApi<typeof dotPpl>
+//       api
 //     ).constants?.Identity?.ByteDeposit(compatibilityToken)
 
 //     const basicDeposit = (
-//       api as unknown as TypedApi<typeof dotPpl>
+//       api
 //     ).constants?.Identity.BasicDeposit(compatibilityToken)
 
 //     if (!basicDeposit || !byteDeposit) return

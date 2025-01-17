@@ -1,6 +1,6 @@
 import { FixedSizeBinary, HexString } from 'polkadot-api'
-import { ApiDescriptors, IApiContext } from '../contexts/ApiContext'
-import { MultisigStorageInfo } from '../types'
+import { IApiContext } from '../contexts/ApiContext'
+import { ApiDescriptors, MultisigStorageInfo } from '../types'
 
 interface Params {
   api: IApiContext<ApiDescriptors>['api']

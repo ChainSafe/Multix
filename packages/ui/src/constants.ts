@@ -22,7 +22,7 @@ import { nodesCoretimeSVG } from './logos/coretimeSVG'
 import { polimecSVG } from './logos/polimecSVG'
 import usdc from './logos/usdc.svg'
 import usdt from './logos/usdt.svg'
-import { DESCRIPTORS } from './contexts/ApiContext'
+import { DESCRIPTORS } from './types'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92

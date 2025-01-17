@@ -5,70 +5,7 @@ import { ethereumChains } from '../utils/ethereumChains'
 import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
-import {
-  acala,
-  bifrostDot,
-  dot,
-  dotAssetHub,
-  hydration,
-  khala,
-  ksm,
-  ksmAssetHub,
-  paseo,
-  phala,
-  polimec,
-  coretimeDot,
-  westend
-} from '@polkadot-api/descriptors'
-
-export const DESCRIPTORS = {
-  acala,
-  bifrostDot,
-  dot,
-  dotAssetHub,
-  hydration,
-  khala,
-  ksm,
-  ksmAssetHub,
-  paseo,
-  phala,
-  polimec,
-  coretimeDot,
-  westend
-} as const
-
-export const DESCRIPTORS_NOT_HYDRATION_1 = {
-  acala,
-  bifrostDot,
-  dot,
-  dotAssetHub,
-  khala,
-  phala,
-  paseo,
-  polimec
-} as const
-
-export const DESCRIPTORS_NOT_HYDRATION_2 = {
-  ksm,
-  ksmAssetHub,
-  coretimeDot,
-  westend
-} as const
-
-export type ApiDescriptors = keyof typeof DESCRIPTORS
-export type ApiDescriptorsNotHydration_1 = keyof typeof DESCRIPTORS_NOT_HYDRATION_1
-export type ApiDescriptorsNotHydration_2 = keyof typeof DESCRIPTORS_NOT_HYDRATION_1
-
-export type Descriptors<Id extends ApiDescriptors> = (typeof DESCRIPTORS)[Id]
-type ApiOf<Id extends ApiDescriptors> = TypedApi<Descriptors<Id>>
-
-export const noHydrationKeys_1 = Object.keys(
-  DESCRIPTORS_NOT_HYDRATION_1
-) as ApiDescriptorsNotHydration_1[]
-
-export const noHydrationKeys_2 = Object.keys(
-  DESCRIPTORS_NOT_HYDRATION_2
-) as ApiDescriptorsNotHydration_2[]
+import { ApiDescriptors, ApiOf, Descriptors, DESCRIPTORS } from '../types'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]

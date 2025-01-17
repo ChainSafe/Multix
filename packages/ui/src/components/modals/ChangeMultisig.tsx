@@ -14,16 +14,10 @@ import AccountDisplay from '../AccountDisplay/AccountDisplay'
 import ThresholdSelection from '../../pages/Creation/ThresholdSelection'
 import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
-import {
-  isContextIn,
-  isContextOf,
-  noHydrationKeys_1,
-  noHydrationKeys_2,
-  useApi
-} from '../../contexts/ApiContext'
+import { isContextIn, isContextOf, useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { AccountBadge } from '../../types'
+import { AccountBadge, noHydrationKeys_1, noHydrationKeys_2, noHydrationKeys_3 } from '../../types'
 import { getIntersection } from '../../utils/arrayUtils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
@@ -141,12 +135,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             proxy_type: Enum('Any'),
             delay: 0
           })
-        : isContextIn(ctx, noHydrationKeys_2) &&
-          ctx.api.tx.Proxy.add_proxy({
-            delegate: MultiAddress.Id(newMultisigAddress),
-            proxy_type: Enum('Any'),
-            delay: 0
-          })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.add_proxy({
+              delegate: MultiAddress.Id(newMultisigAddress),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.add_proxy({
+              delegate: MultiAddress.Id(newMultisigAddress),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
 
     if (!addProxyTx) return
 
@@ -162,12 +162,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             force_proxy_type: undefined,
             call: addProxyTx.decodedCall
           })
-        : isContextIn(ctx, noHydrationKeys_2) &&
-          ctx.api.tx.Proxy.proxy({
-            real: MultiAddress.Id(selectedMultiProxy?.proxy),
-            force_proxy_type: undefined,
-            call: addProxyTx.decodedCall
-          })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: addProxyTx.decodedCall
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: addProxyTx.decodedCall
+            })
 
     if (!proxyTx) return
 
@@ -257,12 +263,18 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             force_proxy_type: undefined,
             call: removeProxyTx.decodedCall
           })
-        : isContextIn(ctx, noHydrationKeys_2) &&
-          api.tx.Proxy.proxy({
-            real: MultiAddress.Id(selectedMultiProxy?.proxy),
-            force_proxy_type: undefined,
-            call: removeProxyTx.decodedCall
-          })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: removeProxyTx.decodedCall
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: removeProxyTx.decodedCall
+            })
 
     if (!proxyTx) return
 

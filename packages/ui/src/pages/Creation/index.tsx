@@ -10,7 +10,7 @@ import {
 import { Button, ButtonWithIcon } from '../../components/library'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { useApi } from '../../contexts/ApiContext'
+import { isContextIn, isContextOf, useApi } from '../../contexts/ApiContext'
 import SignatorySelection from '../../components/select/SignatorySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import ThresholdSelection from './ThresholdSelection'
@@ -28,9 +28,15 @@ import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
-import { Binary, Enum, Transaction, TypedApi } from 'polkadot-api'
-import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { Binary, Enum, Transaction } from 'polkadot-api'
+import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../../contexts/NetworkContext'
+import {
+  allDescriptorsKey_1_3,
+  allDescriptorsKey_2_3,
+  allDescriptorsKey_3_3,
+  noHydrationKeys
+} from '../../types'
 
 interface Props {
   className?: string
@@ -42,7 +48,8 @@ const MultisigCreation = ({ className }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
   const isLastStep = useMemo(() => currentStep === steps.length - 1, [currentStep])
-  const { api, chainInfo, compatibilityToken } = useApi()
+  const ctx = useApi()
+  const { api, chainInfo, compatibilityToken } = ctx
   const [threshold, setThreshold] = useState<number | undefined>()
   const { selectedAccount, ownAddressList } = useAccounts()
   const navigate = useNavigate()
@@ -73,7 +80,7 @@ const MultisigCreation = ({ className }: Props) => {
   const { pureProxyCreationNeededFunds, reserved: proxyReserved } =
     usePureProxyCreationNeededFunds()
   const supportsProxy = useMemo(() => {
-    const hasProxyPallet = !!api && !!(api as TypedApi<typeof dot>).tx.Proxy
+    const hasProxyPallet = !!api && !!api.tx.Proxy
     // Moonbeam and moonriver have the pallet, but it's deactivated
     return hasProxyPallet && !chainInfo?.isEthereum
   }, [api, chainInfo])
@@ -148,7 +155,7 @@ const MultisigCreation = ({ className }: Props) => {
       // this batchCall is only useful if the user wants a proxy.
       return
     }
-    if (!api || !compatibilityToken || !selectedNetwork) {
+    if (!ctx?.api || !compatibilityToken || !selectedNetwork) {
       // console.error('api is not ready')
       return
     }
@@ -175,11 +182,28 @@ const MultisigCreation = ({ className }: Props) => {
     const otherSignatories = getSortAddress(
       signatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.create_pure({
-      proxy_type: Enum('Any'),
-      delay: 0,
-      index: 0
-    })
+    const proxyTx =
+      (isContextIn(ctx, allDescriptorsKey_1_3) &&
+        ctx.api.tx.Proxy.create_pure({
+          proxy_type: Enum('Any'),
+          delay: 0,
+          index: 0
+        })) ||
+      (isContextIn(ctx, allDescriptorsKey_2_3) &&
+        ctx.api.tx.Proxy.create_pure({
+          proxy_type: Enum('Any'),
+          delay: 0,
+          index: 0
+        })) ||
+      (isContextIn(ctx, allDescriptorsKey_3_3) &&
+        ctx.api.tx.Proxy.create_pure({
+          proxy_type: Enum('Any'),
+          delay: 0,
+          index: 0
+        }))
+
+    if (!proxyTx) return
+
     const multiSigProxyCall = getAsMultiTx({
       api,
       threshold,
@@ -189,30 +213,36 @@ const MultisigCreation = ({ className }: Props) => {
     })
 
     // Some funds are needed on the multisig for the pure proxy creation
-    const transferTx =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Balances.transfer_keep_alive({
-            dest: multiAddress,
-            value: pureProxyCreationNeededFunds
-          })
-        : (api as TypedApi<typeof dot>).tx.Balances.transfer_keep_alive({
-            dest: MultiAddress.Id(multiAddress),
-            value: pureProxyCreationNeededFunds
-          })
+    const transferTx = isContextOf(ctx, 'hydration')
+      ? ctx.api.tx.Balances.transfer_keep_alive({
+          dest: multiAddress,
+          value: pureProxyCreationNeededFunds
+        })
+      : isContextIn(ctx, noHydrationKeys) &&
+        ctx.api.tx.Balances.transfer_keep_alive({
+          dest: MultiAddress.Id(multiAddress),
+          value: pureProxyCreationNeededFunds
+        })
 
     if (!multiSigProxyCall) {
       console.error('multiSigProxyCall is undefined in Creation index.tsx')
       return
     }
 
+    if (!transferTx) {
+      console.error('transferTx is undefined in Creation index.tsx')
+      return
+    }
+
     setBatchCall(
-      api.tx.Utility.batch_all({
+      ctx.api.tx.Utility.batch_all({
         calls: [transferTx.decodedCall, multiSigProxyCall.decodedCall]
       })
     )
   }, [
     api,
     compatibilityToken,
+    ctx,
     getSortAddress,
     multiAddress,
     pureProxyCreationNeededFunds,
