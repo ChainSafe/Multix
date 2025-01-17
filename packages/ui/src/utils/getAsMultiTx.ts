@@ -1,16 +1,16 @@
-import { MultisigStorageInfo, Weight } from '../types'
+import { ApiDescriptors, MultisigStorageInfo, Weight } from '../types'
 import { Binary, HexString, Transaction } from 'polkadot-api'
-import { ApiType, IApiContext } from '../contexts/ApiContext'
+import { IApiContext } from '../contexts/ApiContext'
 
 interface Params {
-  api: ApiType
+  api: IApiContext<ApiDescriptors>['api']
   threshold: number
   otherSignatories: string[]
   tx?: Transaction<any, any, any, any>
   callData?: HexString
   weight?: Weight
   when?: MultisigStorageInfo['when']
-  compatibilityToken: IApiContext['compatibilityToken']
+  compatibilityToken: IApiContext<ApiDescriptors>['compatibilityToken']
 }
 
 // TODO check if  we can do this with papi
@@ -29,6 +29,7 @@ export const getAsMultiTx = ({
   // we can pass either the tx, or the callData
   if (!callData && !tx) return
   if (!compatibilityToken) return
+  if (!api) return
 
   let txToSend: Transaction<any, any, any, any> | undefined = tx
 

@@ -1,9 +1,9 @@
 import { FixedSizeBinary, HexString } from 'polkadot-api'
-import { ApiType } from '../contexts/ApiContext'
-import { MultisigStorageInfo } from '../types'
+import { IApiContext } from '../contexts/ApiContext'
+import { ApiDescriptors, MultisigStorageInfo } from '../types'
 
 interface Params {
-  api: ApiType
+  api: IApiContext<ApiDescriptors>['api']
   threshold: number
   otherSignatories: string[]
   when?: MultisigStorageInfo['when']
@@ -11,7 +11,7 @@ interface Params {
 }
 
 export const getApproveAsMultiTx = ({ api, threshold, otherSignatories, hash, when }: Params) => {
-  if (!hash) return
+  if (!hash || !api) return
 
   return api.tx.Multisig.approve_as_multi({
     threshold,

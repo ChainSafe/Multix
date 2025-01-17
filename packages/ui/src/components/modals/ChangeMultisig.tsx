@@ -14,10 +14,10 @@ import AccountDisplay from '../AccountDisplay/AccountDisplay'
 import ThresholdSelection from '../../pages/Creation/ThresholdSelection'
 import SignatorySelection from '../select/SignatorySelection'
 import Summary from '../../pages/Creation/Summary'
-import { useApi } from '../../contexts/ApiContext'
+import { isContextIn, isContextOf, useApi } from '../../contexts/ApiContext'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
-import { AccountBadge } from '../../types'
+import { AccountBadge, noHydrationKeys_1, noHydrationKeys_2, noHydrationKeys_3 } from '../../types'
 import { getIntersection } from '../../utils/arrayUtils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
@@ -30,8 +30,8 @@ import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
 import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
-import { Enum, TypedApi } from 'polkadot-api'
-import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { Enum } from 'polkadot-api'
+import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../../contexts/NetworkContext'
 
 interface Props {
@@ -44,7 +44,8 @@ type Step = 'selection' | 'summary' | 'call1' | 'call2'
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { selectedNetwork } = useNetwork()
   const modalRef = useRef<HTMLDivElement | null>(null)
-  const { api, chainInfo, compatibilityToken } = useApi()
+  const ctx = useApi()
+  const { api, chainInfo, compatibilityToken } = ctx
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
   const signCallBack2 = useSigningCallback({
     onSuccess: onClose,
@@ -89,7 +90,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const [callError, setCallError] = useState('')
 
   const secondCall = useMemo(() => {
-    if (!api || !compatibilityToken || !selectedNetwork) {
+    if (!ctx.api || !compatibilityToken || !selectedNetwork) {
       // console.error('api is not ready')
       return
     }
@@ -122,31 +123,60 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       selectedMultisig.signatories.filter((sig) => sig !== selectedAccount.address)
     )
 
-    const addProxyTx =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Proxy.add_proxy({
-            delegate: newMultisigAddress,
-            proxy_type: Enum('Any'),
-            delay: 0
-          })
-        : (api as TypedApi<typeof dot>).tx.Proxy.add_proxy({
+    const addProxyTx = isContextOf(ctx, 'hydration')
+      ? ctx.api.tx.Proxy.add_proxy({
+          delegate: newMultisigAddress,
+          proxy_type: Enum('Any'),
+          delay: 0
+        })
+      : isContextIn(ctx, noHydrationKeys_1)
+        ? ctx.api.tx.Proxy.add_proxy({
             delegate: MultiAddress.Id(newMultisigAddress),
             proxy_type: Enum('Any'),
             delay: 0
           })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.add_proxy({
+              delegate: MultiAddress.Id(newMultisigAddress),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.add_proxy({
+              delegate: MultiAddress.Id(newMultisigAddress),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
 
-    const proxyTx =
-      selectedNetwork === 'hydration'
-        ? (api as TypedApi<typeof hydration>).tx.Proxy.proxy({
-            real: selectedMultiProxy?.proxy,
-            force_proxy_type: undefined,
-            call: addProxyTx.decodedCall
-          })
-        : (api as TypedApi<typeof dot>).tx.Proxy.proxy({
+    if (!addProxyTx) return
+
+    const proxyTx = isContextOf(ctx, 'hydration')
+      ? ctx.api.tx.Proxy.proxy({
+          real: selectedMultiProxy?.proxy,
+          force_proxy_type: undefined,
+          call: addProxyTx.decodedCall
+        })
+      : isContextIn(ctx, noHydrationKeys_1)
+        ? ctx.api.tx.Proxy.proxy({
             real: MultiAddress.Id(selectedMultiProxy?.proxy),
             force_proxy_type: undefined,
             call: addProxyTx.decodedCall
           })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: addProxyTx.decodedCall
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: addProxyTx.decodedCall
+            })
+
+    if (!proxyTx) return
+
     // call with the old multisig to delete the new one
     return getAsMultiTx({
       api,
@@ -156,21 +186,22 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       compatibilityToken
     })
   }, [
-    api,
-    chainInfo,
+    ctx,
     compatibilityToken,
-    getSortAddress,
-    newMultisigAddress,
-    newThreshold,
-    oldThreshold,
+    selectedNetwork,
     selectedAccount,
     selectedMultiProxy?.proxy,
+    chainInfo,
     selectedMultisig,
-    selectedNetwork
+    oldThreshold,
+    newThreshold,
+    newMultisigAddress,
+    getSortAddress,
+    api
   ])
 
   const firstCall = useMemo(() => {
-    if (!api || !compatibilityToken) {
+    if (!ctx?.api || !api || !compatibilityToken) {
       // console.error('api is not ready')
       return
     }
@@ -198,16 +229,54 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     const otherNewSignatories = getSortAddress(
       newSignatories.filter((sig) => sig !== selectedAccount.address)
     )
-    const removeProxyTx = (api as TypedApi<typeof dot>).tx.Proxy.remove_proxy({
-      delegate: MultiAddress.Id(selectedMultisig?.address),
-      proxy_type: Enum('Any'),
-      delay: 0
-    })
-    const proxyTx = (api as TypedApi<typeof dot>).tx.Proxy.proxy({
-      real: MultiAddress.Id(selectedMultiProxy?.proxy),
-      force_proxy_type: undefined,
-      call: removeProxyTx.decodedCall
-    })
+
+    const removeProxyTx = isContextOf(ctx, 'hydration')
+      ? ctx.api.tx.Proxy.remove_proxy({
+          delegate: selectedMultisig?.address,
+          proxy_type: Enum('Any'),
+          delay: 0
+        })
+      : isContextIn(ctx, noHydrationKeys_1)
+        ? ctx.api.tx.Proxy.remove_proxy({
+            delegate: MultiAddress.Id(selectedMultisig?.address),
+            proxy_type: Enum('Any'),
+            delay: 0
+          })
+        : isContextIn(ctx, noHydrationKeys_2) &&
+          ctx.api.tx.Proxy.remove_proxy({
+            delegate: MultiAddress.Id(selectedMultisig?.address),
+            proxy_type: Enum('Any'),
+            delay: 0
+          })
+
+    if (!removeProxyTx) return
+
+    const proxyTx = isContextOf(ctx, 'hydration')
+      ? ctx.api.tx.Proxy.proxy({
+          real: selectedMultiProxy?.proxy,
+          force_proxy_type: undefined,
+          call: removeProxyTx.decodedCall
+        })
+      : isContextIn(ctx, noHydrationKeys_1)
+        ? ctx.api.tx.Proxy.proxy({
+            real: MultiAddress.Id(selectedMultiProxy?.proxy),
+            force_proxy_type: undefined,
+            call: removeProxyTx.decodedCall
+          })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: removeProxyTx.decodedCall
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.proxy({
+              real: MultiAddress.Id(selectedMultiProxy?.proxy),
+              force_proxy_type: undefined,
+              call: removeProxyTx.decodedCall
+            })
+
+    if (!proxyTx) return
 
     return getAsMultiTx({
       api,
@@ -217,15 +286,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       compatibilityToken
     })
   }, [
+    ctx,
     api,
+    compatibilityToken,
+    selectedAccount,
+    selectedMultisig?.address,
+    selectedMultiProxy?.proxy,
     chainInfo,
-    getSortAddress,
     newSignatories,
     newThreshold,
-    selectedAccount,
-    selectedMultiProxy,
-    selectedMultisig,
-    compatibilityToken
+    getSortAddress
   ])
 
   const { multisigProposalNeededFunds: firstCallNeededFunds, reserved: firstCallReserved } =

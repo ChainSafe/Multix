@@ -1,12 +1,18 @@
 import { useMemo } from 'react'
-import { useApi } from '../contexts/ApiContext'
+import { isContextIn, isContextOf, useApi } from '../contexts/ApiContext'
 import { MultiProxy } from '../contexts/MultiProxyContext'
 import { useGetSortAddress } from './useGetSortAddress'
 import { getAsMultiTx } from '../utils/getAsMultiTx'
-import { MultisigStorageInfo, Weight } from '../types'
+import {
+  MultisigStorageInfo,
+  noHydrationKeys_1,
+  noHydrationKeys_2,
+  noHydrationKeys_3,
+  Weight
+} from '../types'
 import { getApproveAsMultiTx } from '../utils/getApproveAsMultiTx'
-import { HexString, Transaction, TypedApi } from 'polkadot-api'
-import { dot, hydration, MultiAddress } from '@polkadot-api/descriptors'
+import { HexString, Transaction } from 'polkadot-api'
+import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../contexts/NetworkContext'
 
 interface Params {
@@ -36,7 +42,8 @@ export const useGetMultisigTx = ({
   forceAsMulti = true,
   approveAsMultiHash
 }: Params) => {
-  const { api, compatibilityToken } = useApi()
+  const ctx = useApi()
+  const { api, compatibilityToken } = ctx
   const { getSortAddress } = useGetSortAddress()
   const { selectedNetwork } = useNetwork()
 
@@ -54,7 +61,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    if (!api || !selectedNetwork) {
+    if (!ctx?.api || !selectedNetwork) {
       return
     }
 
@@ -82,27 +89,41 @@ export const useGetMultisigTx = ({
       return
     }
 
-    let tx: Transaction<any, any, any, any> | undefined
+    let tx: Transaction<any, any, any, any> | false | undefined
 
     try {
       // the proxy is selected
       if (isProxy && !!extrinsicToCall) {
-        tx =
-          selectedNetwork === 'hydration'
-            ? (api as TypedApi<typeof hydration>).tx.Proxy.proxy({
-                real: fromAddress,
-                force_proxy_type: undefined,
-                call: extrinsicToCall.decodedCall
-              })
-            : (api as TypedApi<typeof dot>).tx.Proxy.proxy({
+        tx = isContextOf(ctx, 'hydration')
+          ? ctx.api.tx.Proxy.proxy({
+              real: fromAddress,
+              force_proxy_type: undefined,
+              call: extrinsicToCall.decodedCall
+            })
+          : isContextIn(ctx, noHydrationKeys_1)
+            ? ctx.api.tx.Proxy.proxy({
                 real: MultiAddress.Id(fromAddress),
                 force_proxy_type: undefined,
                 call: extrinsicToCall.decodedCall
               })
+            : isContextIn(ctx, noHydrationKeys_2)
+              ? ctx.api.tx.Proxy.proxy({
+                  real: MultiAddress.Id(fromAddress),
+                  force_proxy_type: undefined,
+                  call: extrinsicToCall.decodedCall
+                })
+              : isContextIn(ctx, noHydrationKeys_3) &&
+                ctx.api.tx.Proxy.proxy({
+                  real: MultiAddress.Id(fromAddress),
+                  force_proxy_type: undefined,
+                  call: extrinsicToCall.decodedCall
+                })
         // a multisig is selected
       } else {
         tx = extrinsicToCall
       }
+
+      if (!tx) return
 
       return forceAsMulti || approvalLength >= threshold - 1
         ? getAsMultiTx({ api, threshold, otherSignatories, tx, weight, when, compatibilityToken })
@@ -121,7 +142,7 @@ export const useGetMultisigTx = ({
     selectedMultisig,
     getSortAddress,
     threshold,
-    api,
+    ctx,
     selectedNetwork,
     senderAddress,
     fromAddress,
@@ -130,6 +151,7 @@ export const useGetMultisigTx = ({
     approvalLength,
     approveAsMultiHash,
     isProxy,
+    api,
     weight,
     when,
     compatibilityToken

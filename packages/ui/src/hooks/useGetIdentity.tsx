@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useIdenityApi } from './useIdentityApi'
+import { useIdentityApi } from './useIdentityApi'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { dotPpl, IdentityData, IdentityJudgement } from '@polkadot-api/descriptors'
 
@@ -9,7 +9,7 @@ export interface IdentityInfo extends Record<string, any> {
 }
 
 export const useGetIdentity = () => {
-  const { api } = useIdenityApi()
+  const { api } = useIdentityApi()
 
   const getIdentity = useCallback(
     async (address: string) => {

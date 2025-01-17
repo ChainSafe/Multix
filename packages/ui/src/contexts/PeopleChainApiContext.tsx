@@ -5,18 +5,33 @@ import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polk
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
 
-export type PplApiType = TypedApi<typeof dotPpl | typeof ksmPpl | typeof pasPpl | typeof wesPpl>
-
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
-export interface IApiContext {
-  pplApi?: false | PplApiType
+type BaseTypes = {
   pplChainInfo?: ChainInfoHuman
   pplClient?: PolkadotClient
   pplCompatibilityToken?: CompatibilityToken
 }
+
+export type IPplApiContext =
+  | ({
+      pplApi?: TypedApi<typeof dotPpl>
+      pplApiDescriptor: 'dotPpl'
+    } & BaseTypes)
+  | ({
+      pplApi?: TypedApi<typeof ksmPpl>
+      pplApiDescriptor: 'ksmPpl'
+    } & BaseTypes)
+  | ({
+      pplApi?: TypedApi<typeof pasPpl>
+      pplApiDescriptor: 'pasPpl'
+    } & BaseTypes)
+  | ({
+      pplApi?: TypedApi<typeof wesPpl>
+      pplApiDescriptor: 'wesPpl'
+    } & BaseTypes)
 
 export interface ChainInfoHuman {
   ss58Format: number
@@ -24,15 +39,15 @@ export interface ChainInfoHuman {
   tokenSymbol: string
 }
 
-const PplApiContext = createContext<IApiContext | undefined>(undefined)
+const PplApiContext = createContext<IPplApiContext | undefined>(undefined)
 
 const PplApiContextProvider = ({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const [pplChainInfo, setPplChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [pplApi, setPplApi] = useState<IApiContext['pplApi']>()
-  const [client, setClient] = useState<IApiContext['pplClient']>()
+  const [pplApi, setPplApi] = useState<IPplApiContext['pplApi']>()
+  const [client, setClient] = useState<IPplApiContext['pplClient']>()
   const [compatibilityToken, setCompatibilityToken] =
-    useState<IApiContext['pplCompatibilityToken']>()
+    useState<IPplApiContext['pplCompatibilityToken']>()
 
   useEffect(() => {
     if (!pplApi) return
@@ -44,7 +59,7 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
     if (!selectedNetworkInfo?.pplChainRpcUrls) return
 
     let cl: PolkadotClient | undefined
-    let typedApi: PplApiType | undefined
+    let typedApi: IPplApiContext['pplApi']
 
     switch (selectedNetworkInfo?.chainId) {
       case 'kusama':
@@ -99,6 +114,7 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
     <PplApiContext.Provider
       value={{
         pplClient: client,
+        // @ts-ignore
         pplApi,
         pplChainInfo,
         pplCompatibilityToken: compatibilityToken

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { MultisigStorageInfo } from '../types'
+import { ApiDescriptors, MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils/arrayUtils'
 import { isProxyCall } from '../utils/isProxyCall'
 import { useAccountId } from './useAccountId'
-import { ApiType, useApi } from '../contexts/ApiContext'
+import { IApiContext, useApi } from '../contexts/ApiContext'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { PolkadotClient, Transaction } from 'polkadot-api'
@@ -37,7 +37,13 @@ type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 
 const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
-const getExtDecoderAt = async (api: ApiType, client: PolkadotClient, blockHash?: string) => {
+const getExtDecoderAt = async (
+  api: IApiContext<ApiDescriptors>['api'],
+  client: PolkadotClient,
+  blockHash?: string
+) => {
+  if (!api) return
+
   const rawMetadata = await (blockHash && !import.meta.env.DEV
     ? client
         ._request<{
@@ -53,8 +59,10 @@ const getExtDecoderAt = async (api: ApiType, client: PolkadotClient, blockHash?:
 
 const getMultisigInfo = async (
   call: Transaction<any, any, any, any>['decodedCall'],
-  api: ApiType
+  api: IApiContext<ApiDescriptors>['api']
 ): Promise<Partial<CallDataInfoFromChain>[]> => {
+  if (!api) return []
+
   const compatibilityToken = await api.compatibilityToken
   const result: any[] = []
 
@@ -103,7 +111,7 @@ const getMultisigInfo = async (
 
 const getCallDataFromChainPromise = (
   pendingTxData: PendingTx[],
-  api: ApiType,
+  api: IApiContext<ApiDescriptors>['api'],
   client: PolkadotClient
 ) =>
   pendingTxData.map(async (pendingTx) => {
@@ -123,6 +131,8 @@ const getCallDataFromChainPromise = (
     let date: Date | undefined
 
     const decoder = await getExtDecoderAt(api, client, blockHash)
+
+    if (!decoder || !api) return
 
     const txPromises = body.map((extrinsics) => {
       const decodedExtrinsic = decoder(extrinsics)

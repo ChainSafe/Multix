@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true,
+    // commenting it out to make TS compiler happy with Papi types
+    // "composite": true,
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -16,7 +17,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "vite-plugin-svgr/client", "cypress", "node", "cypress-wait-until"]
+    "types": ["vite/client", "vite-plugin-svgr/client", "cypress", "node", "cypress-wait-until"],
+    "disableSizeLimit": true
   },
   "include": [
     "src/**/*",
