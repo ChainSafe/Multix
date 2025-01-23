@@ -57,11 +57,8 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
     setClient(cl)
     const id = selectedNetworkInfo.descriptor as Id
     const typedApi = cl.getTypedApi(DESCRIPTORS[id])
-    setApi(typedApi as TypedApi<Descriptors<Id>>)
+    setApi(typedApi)
 
-    // const typedApi = cl.getTypedApi(DESCRIPTORS[selectedNetworkInfo.descriptor])
-    // setClient(cl)
-    // setApi(typedApi as TypedApi<Descriptors<Id>>)
     setApiDescriptor(selectedNetworkInfo.descriptor)
   }, [selectedNetworkInfo])
 
@@ -71,9 +68,7 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
     client?.getChainSpecData().then(async ({ properties, name }) => {
       if (!properties || !compatibilityToken) return
 
-      const ss58prefix = (api as TypedApi<Descriptors<ApiDescriptors>>).constants.System.SS58Prefix(
-        compatibilityToken
-      )
+      const ss58prefix = api.constants.System.SS58Prefix(compatibilityToken)
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -96,9 +91,7 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
 
   useEffect(() => {
     if (!api) return
-    ;(api as TypedApi<Descriptors<ApiDescriptors>>).compatibilityToken
-      .then(setCompatibilityToken)
-      .catch(console.error)
+    api.compatibilityToken.then(setCompatibilityToken).catch(console.error)
   }, [api])
 
   return (

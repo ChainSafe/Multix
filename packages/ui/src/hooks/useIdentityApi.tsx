@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react'
-import { ChainInfoHuman, IPplApiContext, usePplApi } from '../contexts/PeopleChainApiContext'
+import {
+  ChainInfoHuman,
+  IPplApiContext,
+  PplDescriptorKeys,
+  usePplApi
+} from '../contexts/PeopleChainApiContext'
 import { IApiContext, useApi } from '../contexts/ApiContext'
 import { ApiDescriptors } from '../types'
 
@@ -7,7 +12,7 @@ export const useIdentityApi = () => {
   const { pplApi, pplChainInfo } = usePplApi()
   const { api, chainInfo } = useApi()
   const [apiToUse, setApiToUse] = useState<
-    IPplApiContext['pplApi'] | IApiContext<ApiDescriptors>['api'] | null
+    IPplApiContext<PplDescriptorKeys>['pplApi'] | IApiContext<ApiDescriptors>['api'] | null
   >(null)
   const [chainInfoToUse, setChainInfoToUse] = useState<ChainInfoHuman | undefined>(undefined)
 

@@ -23,6 +23,7 @@ import { polimecSVG } from './logos/polimecSVG'
 import usdc from './logos/usdc.svg'
 import usdt from './logos/usdt.svg'
 import { DESCRIPTORS } from './types'
+import { PplDescriptorKeys } from './contexts/PeopleChainApiContext'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
@@ -42,6 +43,7 @@ export interface NetworkInfo {
   logo: string
   pplChainRpcUrls?: string[]
   descriptor: keyof typeof DESCRIPTORS
+  pplChainDescriptor?: PplDescriptorKeys
 }
 
 export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v6/api/graphql`
@@ -91,7 +93,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsPolkadotCircleSVG,
-    descriptor: 'dot'
+    descriptor: 'dot',
+    pplChainDescriptor: 'dotPpl'
   },
   kusama: {
     chainId: 'kusama',
@@ -111,7 +114,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: chainsKusamaSVG,
-    descriptor: 'ksm'
+    descriptor: 'ksm',
+    pplChainDescriptor: 'ksmPpl'
   },
   'asset-hub-polkadot': {
     chainId: 'asset-hub-polkadot',
@@ -130,7 +134,8 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG,
-    descriptor: 'dotAssetHub'
+    descriptor: 'dotAssetHub',
+    pplChainDescriptor: 'dotPpl'
   },
   'asset-hub-kusama': {
     chainId: 'asset-hub-kusama',
@@ -148,7 +153,8 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: kusamaPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesAssetHubSVG,
-    descriptor: 'ksmAssetHub'
+    descriptor: 'ksmAssetHub',
+    pplChainDescriptor: 'ksmPpl'
   },
   'coretime-polkadot': {
     chainId: 'coretime-polkadot',
@@ -161,7 +167,8 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesCoretimeSVG,
-    descriptor: 'coretimeDot'
+    descriptor: 'coretimeDot',
+    pplChainDescriptor: 'dotPpl'
   },
   // 'coretime-kusama': {
   //   chainId: 'coretime-kusama',
@@ -311,7 +318,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     logo: nodesWestendColourSVG,
-    descriptor: 'westend'
+    descriptor: 'westend',
+    pplChainDescriptor: 'wesPpl'
   },
   paseo: {
     chainId: 'paseo',
@@ -326,7 +334,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     pplChainRpcUrls: ['wss://people-paseo.rpc.amforc.com', 'wss://people-paseo.dotters.network'],
     logo: paseoSVG,
-    descriptor: 'paseo'
+    descriptor: 'paseo',
+    pplChainDescriptor: 'pasPpl'
   },
   // amplitude: {
   //   chainId: 'amplitude',
@@ -381,7 +390,8 @@ export const networkList: Record<string, NetworkInfo> = {
     rpcUrls: [import.meta.env.VITE_WS_PROVIDER],
     httpGraphqlUrl: import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER,
     logo: localSVG,
-    descriptor: 'dot'
+    descriptor: 'dot',
+    pplChainDescriptor: 'dotPpl'
   }
 }
 
