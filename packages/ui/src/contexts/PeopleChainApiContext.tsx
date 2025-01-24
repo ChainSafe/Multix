@@ -4,18 +4,45 @@ import { useNetwork } from './NetworkContext'
 import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
+import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 
-export type PplApiType = TypedApi<typeof dotPpl | typeof ksmPpl | typeof pasPpl | typeof wesPpl>
+export const pplDescriptors = {
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
+} as const
+export type PplDescriptorKeys = keyof typeof pplDescriptors
+export type PplDescriptors<Id extends PplDescriptorKeys> = (typeof pplDescriptors)[Id]
+export type ApiOf<Id extends PplDescriptorKeys> = TypedApi<PplDescriptors<Id>>
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
-export interface IApiContext {
-  pplApi?: false | PplApiType
+export type IPplApiContext<Id extends PplDescriptorKeys> = {
+  pplApi?: ApiOf<Id>
+  pplApiDescriptor?: Id
   pplChainInfo?: ChainInfoHuman
   pplClient?: PolkadotClient
   pplCompatibilityToken?: CompatibilityToken
+}
+
+export const isPplContextOf = <Id extends PplDescriptorKeys>(
+  ctx: unknown,
+  descriptor: Id
+): ctx is IPplApiContext<Id> => {
+  return !!ctx && (ctx as IPplApiContext<PplDescriptorKeys>).pplApiDescriptor === descriptor
+}
+
+export const isPplContextIn = <
+  Id extends PplDescriptorKeys,
+  Ids extends PplDescriptorKeys[] = Id[]
+>(
+  api: unknown,
+  descriptors: Id[]
+): api is IPplApiContext<Ids[number]> => {
+  return descriptors.some((descriptor) => isPplContextOf(api, descriptor))
 }
 
 export interface ChainInfoHuman {
@@ -24,60 +51,43 @@ export interface ChainInfoHuman {
   tokenSymbol: string
 }
 
-const PplApiContext = createContext<IApiContext | undefined>(undefined)
+const PplApiContext = createContext<IPplApiContext<PplDescriptorKeys> | undefined>(undefined)
 
-const PplApiContextProvider = ({ children }: ApiContextProps) => {
+const PplApiContextProvider = <Id extends PplDescriptorKeys>({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
   const [pplChainInfo, setPplChainInfo] = useState<ChainInfoHuman | undefined>()
-  const [pplApi, setPplApi] = useState<IApiContext['pplApi']>()
-  const [client, setClient] = useState<IApiContext['pplClient']>()
-  const [compatibilityToken, setCompatibilityToken] =
-    useState<IApiContext['pplCompatibilityToken']>()
+  const [pplApi, setPplApi] = useState<TypedApi<PplDescriptors<Id>>>()
+  const [pplClient, setPplClient] = useState<PolkadotClient>()
+  const [pplCompatibilityToken, setPplCompatibilityToken] = useState<CompatibilityToken>()
+  const [pplApiDescriptor, setPplApiDescriptor] =
+    useState<IPplApiContext<PplDescriptorKeys>['pplApiDescriptor']>()
 
   useEffect(() => {
     if (!pplApi) return
 
-    pplApi.compatibilityToken.then(setCompatibilityToken).catch(console.error)
+    pplApi.compatibilityToken.then(setPplCompatibilityToken).catch(console.error)
   }, [pplApi])
 
   useEffect(() => {
     if (!selectedNetworkInfo?.pplChainRpcUrls) return
 
-    let cl: PolkadotClient | undefined
-    let typedApi: PplApiType | undefined
-
-    switch (selectedNetworkInfo?.chainId) {
-      case 'kusama':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
-        typedApi = cl.getTypedApi(ksmPpl)
-        break
-      case 'polkadot':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
-        typedApi = cl.getTypedApi(dotPpl)
-        break
-      case 'paseo':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
-        typedApi = cl.getTypedApi(pasPpl)
-        break
-      case 'westend':
-        cl = createClient(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
-        typedApi = cl.getTypedApi(wesPpl)
-        break
-    }
-
-    if (!cl || !typedApi) return
-
-    setClient(cl)
+    const cl = createClient(
+      withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.pplChainRpcUrls))
+    )
+    setPplClient(cl)
+    const id = selectedNetworkInfo.pplChainDescriptor as Id
+    const typedApi = cl.getTypedApi(pplDescriptors[id])
     setPplApi(typedApi)
+    setPplApiDescriptor(selectedNetworkInfo.pplChainDescriptor)
   }, [selectedNetworkInfo])
 
   useEffect(() => {
-    if (!client || !pplApi) return
+    if (!pplClient || !pplApi) return
 
-    client?.getChainSpecData().then(async ({ properties }) => {
-      if (!properties || !compatibilityToken) return
+    pplClient?.getChainSpecData().then(async ({ properties }) => {
+      if (!properties || !pplCompatibilityToken) return
 
-      const ss58prefix = pplApi.constants.System.SS58Prefix(compatibilityToken)
+      const ss58prefix = pplApi.constants.System.SS58Prefix(pplCompatibilityToken)
       const tokenDecimals = Array.isArray(properties?.tokenDecimals)
         ? properties?.tokenDecimals[0]
         : properties?.tokenDecimals
@@ -93,15 +103,16 @@ const PplApiContextProvider = ({ children }: ApiContextProps) => {
         tokenSymbol: tokensymbol || ''
       })
     })
-  }, [client, compatibilityToken, pplApi])
+  }, [pplClient, pplCompatibilityToken, pplApi])
 
   return (
     <PplApiContext.Provider
       value={{
-        pplClient: client,
+        pplClient,
+        pplApiDescriptor,
         pplApi,
         pplChainInfo,
-        pplCompatibilityToken: compatibilityToken
+        pplCompatibilityToken
       }}
     >
       {children}

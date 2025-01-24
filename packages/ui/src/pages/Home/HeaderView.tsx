@@ -7,11 +7,19 @@ import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { useMemo } from 'react'
+import { useNetwork } from '../../contexts/NetworkContext'
+import AssetBalance from '../../components/library/AssetBalance'
+import { AH_SUPPORTED_ASSETS } from '../../constants'
 
 const HeaderView = () => {
+  const { selectedNetwork } = useNetwork()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
+  const isAssetHub = useMemo(
+    () => selectedNetwork === 'asset-hub-polkadot' || selectedNetwork === 'asset-hub-kusama',
+    [selectedNetwork]
+  )
 
   const selectedAddress = useMemo(() => {
     return selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
@@ -47,7 +55,19 @@ const HeaderView = () => {
             <BalanceStyled>
               <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
               <BalanceAmountStyled data-cy="label-account-balance">
-                <Balance address={selectedAddress} />
+                <Balance
+                  address={selectedAddress}
+                  withIcon={isAssetHub}
+                />
+                {isAssetHub &&
+                  AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => (
+                    <AssetBalance
+                      key={assetId}
+                      address={selectedAddress}
+                      assetId={assetId}
+                      logo={logo}
+                    />
+                  ))}
               </BalanceAmountStyled>
             </BalanceStyled>
           </BalanceStyledWrapper>

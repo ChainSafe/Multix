@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
-import { TypedApi } from 'polkadot-api'
-import { dot } from '@polkadot-api/descriptors'
 
 export const usePureProxyCreationNeededFunds = () => {
   const { api, chainInfo, compatibilityToken } = useApi()
@@ -11,15 +9,9 @@ export const usePureProxyCreationNeededFunds = () => {
   useEffect(() => {
     if (!api || !compatibilityToken) return
 
-    const existentialDeposit = (api as TypedApi<typeof dot>).constants.Balances.ExistentialDeposit(
-      compatibilityToken
-    )
-    const depositBase = (api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositBase(
-      compatibilityToken
-    )
-    const depositFactor = (api as TypedApi<typeof dot>).constants.Proxy.ProxyDepositFactor(
-      compatibilityToken
-    )
+    const existentialDeposit = api.constants.Balances.ExistentialDeposit(compatibilityToken)
+    const depositBase = api.constants.Proxy.ProxyDepositBase(compatibilityToken)
+    const depositFactor = api.constants.Proxy.ProxyDepositFactor(compatibilityToken)
 
     if (!existentialDeposit || !depositBase || !depositFactor) return
     // if (!chainInfo?.tokenDecimals) return

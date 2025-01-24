@@ -1,31 +1,39 @@
+// import { nodesAstarPNG } from './logos/astarPNG'
+// import { nodesInterlaySVG } from './logos/interlaySVG'
+// import { nodesMoonriverSVG } from './logos/moonriverSVG'
+// import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
+// import { nodesKiltPNG } from './logos/kiltPNG'
+// import { chainsPendulumSVG } from './logos/pendulumSVG'
+// import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
+// import { nodesJoystreamSVG } from './logos/joystreamSVG'
+// import { chainsWatrPNG } from './logos/watrPNG'
 import { nodesKhalaSVG } from './logos/khalaSVG'
 import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
 import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
 import { phalaSVG } from './logos/phalaSVG'
-import { nodesAstarPNG } from './logos/astarPNG'
 import { nodesAssetHubSVG } from './logos/assetHubSVG'
 import { hydrationSVG } from './logos/hydrationSVG'
 import { nodesWestendColourSVG } from './logos/westend_colourSVG'
 import { chainsAcalaSVG } from './logos/acalaSVG'
 import { nodesBifrostSVG } from './logos/bifrostSVG'
-import { nodesInterlaySVG } from './logos/interlaySVG'
-import { nodesMoonriverSVG } from './logos/moonriverSVG'
-import { nodesMoonbeamSVG } from './logos/moonbeamSVG'
-import { nodesKiltPNG } from './logos/kiltPNG'
-import { chainsPendulumSVG } from './logos/pendulumSVG'
-import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
-import { nodesJoystreamSVG } from './logos/joystreamSVG'
-import { chainsWatrPNG } from './logos/watrPNG'
 import paseoSVG from './logos/paseoSVG.svg'
 import { nodesCoretimeSVG } from './logos/coretimeSVG'
 import { polimecSVG } from './logos/polimecSVG'
+import usdc from './logos/usdc.svg'
+import usdt from './logos/usdt.svg'
+import { DESCRIPTORS } from './types'
+import { PplDescriptorKeys } from './contexts/PeopleChainApiContext'
 
 export const DAPP_NAME = 'Multix'
 export const ICON_SIZE_LARGE = 92
 export const ICON_SIZE_MEDIUM = 40
 export const ICON_SIZE_SMALL = 30
 export const DEFAULT_ICON_THEME = 'polkadot'
+export const AH_SUPPORTED_ASSETS = [
+  { assetId: 1984, logo: usdt },
+  { assetId: 1337, logo: usdc }
+]
 
 export interface NetworkInfo {
   chainId: string
@@ -34,6 +42,8 @@ export interface NetworkInfo {
   httpGraphqlUrl: string
   logo: string
   pplChainRpcUrls?: string[]
+  descriptor: keyof typeof DESCRIPTORS
+  pplChainDescriptor?: PplDescriptorKeys
 }
 
 export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v6/api/graphql`
@@ -82,7 +92,9 @@ export const networkList: Record<string, NetworkInfo> = {
       // 'wss://polkadot.rpc.subquery.network/public/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsPolkadotCircleSVG
+    logo: chainsPolkadotCircleSVG,
+    descriptor: 'dot',
+    pplChainDescriptor: 'dotPpl'
   },
   kusama: {
     chainId: 'kusama',
@@ -101,17 +113,19 @@ export const networkList: Record<string, NetworkInfo> = {
       // 'wss://kusama.rpc.subquery.network/public/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsKusamaSVG
+    logo: chainsKusamaSVG,
+    descriptor: 'ksm',
+    pplChainDescriptor: 'ksmPpl'
   },
-  'asset-hub-dot': {
+  'asset-hub-polkadot': {
     chainId: 'asset-hub-polkadot',
     explorerNetworkName: 'assethub-polkadot',
     rpcUrls: [
-      // 'wss://asset-hub-polkadot-rpc.dwellir.com',
+      // 'wss://asset-hub-polkadot-rpc.dwellir.com'
       // 'wss://statemint-rpc-tn.dwellir.com',
-      // 'wss://sys.ibp.network/asset-hub-polkadot',
+      'wss://sys.ibp.network/asset-hub-polkadot'
       // 'wss://asset-hub-polkadot.dotters.network',
-      'wss://rpc-asset-hub-polkadot.luckyfriday.io'
+      // 'wss://rpc-asset-hub-polkadot.luckyfriday.io'
       // 'wss://statemint.api.onfinality.io/public-ws',
       // 'wss://polkadot-asset-hub-rpc.polkadot.io',
       // 'wss://statemint.public.curie.radiumblock.co/ws',
@@ -119,9 +133,11 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesAssetHubSVG
+    logo: nodesAssetHubSVG,
+    descriptor: 'dotAssetHub',
+    pplChainDescriptor: 'dotPpl'
   },
-  'asset-hub-ksm': {
+  'asset-hub-kusama': {
     chainId: 'asset-hub-kusama',
     explorerNetworkName: 'assethub-kusama',
     rpcUrls: [
@@ -136,9 +152,11 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: kusamaPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesAssetHubSVG
+    logo: nodesAssetHubSVG,
+    descriptor: 'ksmAssetHub',
+    pplChainDescriptor: 'ksmPpl'
   },
-  'coretime-dot': {
+  'coretime-polkadot': {
     chainId: 'coretime-polkadot',
     explorerNetworkName: 'coretime-polkadot',
     rpcUrls: [
@@ -148,23 +166,26 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesCoretimeSVG
+    logo: nodesCoretimeSVG,
+    descriptor: 'coretimeDot',
+    pplChainDescriptor: 'dotPpl'
   },
-  'coretime-ksm': {
-    chainId: 'coretime-kusama',
-    explorerNetworkName: 'coretime-kusama',
-    rpcUrls: [
-      'wss://coretime-kusama-rpc.dwellir.com',
-      'wss://sys.ibp.network/coretime-kusama',
-      'wss://coretime-kusama.dotters.network',
-      'wss://rpc-coretime-kusama.luckyfriday.io',
-      'wss://kusama-coretime-rpc.polkadot.io'
-      // 'wss://ksm-rpc.stakeworld.io/coretime'
-    ],
-    pplChainRpcUrls: kusamaPplChains,
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesCoretimeSVG
-  },
+  // 'coretime-kusama': {
+  //   chainId: 'coretime-kusama',
+  //   explorerNetworkName: 'coretime-kusama',
+  //   rpcUrls: [
+  //     'wss://coretime-kusama-rpc.dwellir.com',
+  //     'wss://sys.ibp.network/coretime-kusama',
+  //     'wss://coretime-kusama.dotters.network',
+  //     'wss://rpc-coretime-kusama.luckyfriday.io',
+  //     'wss://kusama-coretime-rpc.polkadot.io'
+  //     // 'wss://ksm-rpc.stakeworld.io/coretime'
+  //   ],
+  //   pplChainRpcUrls: kusamaPplChains,
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesCoretimeSVG,
+  //   descriptor: coretimeKsm
+  // },
   acala: {
     chainId: 'acala',
     explorerNetworkName: 'acala',
@@ -174,21 +195,22 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://acala-polkadot.api.onfinality.io/public-ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsAcalaSVG
+    logo: chainsAcalaSVG,
+    descriptor: 'acala'
   },
-  astar: {
-    chainId: 'astar',
-    explorerNetworkName: 'astar',
-    rpcUrls: [
-      'wss://rpc.astar.network',
-      'wss://1rpc.io/astr',
-      'wss://astar-rpc.dwellir.com',
-      'wss://astar.api.onfinality.io/public-ws',
-      'wss://astar.public.curie.radiumblock.co/ws'
-    ],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesAstarPNG
-  },
+  // astar: {
+  //   chainId: 'astar',
+  //   explorerNetworkName: 'astar',
+  //   rpcUrls: [
+  //     'wss://rpc.astar.network',
+  //     'wss://1rpc.io/astr',
+  //     'wss://astar-rpc.dwellir.com',
+  //     'wss://astar.api.onfinality.io/public-ws',
+  //     'wss://astar.public.curie.radiumblock.co/ws'
+  //   ],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesAstarPNG
+  // },
   'bifrost-dot': {
     chainId: 'bifrost-polkadot',
     explorerNetworkName: 'bifrost',
@@ -201,7 +223,8 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://bifrost.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesBifrostSVG
+    logo: nodesBifrostSVG,
+    descriptor: 'bifrostDot'
   },
   hydration: {
     chainId: 'hydradx',
@@ -214,15 +237,16 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://hydration.dotters.network'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: hydrationSVG
+    logo: hydrationSVG,
+    descriptor: 'hydration'
   },
-  interlay: {
-    chainId: 'interlay',
-    explorerNetworkName: 'interlay',
-    rpcUrls: ['wss://interlay-rpc.dwellir.com'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesInterlaySVG
-  },
+  // interlay: {
+  //   chainId: 'interlay',
+  //   explorerNetworkName: 'interlay',
+  //   rpcUrls: ['wss://interlay-rpc.dwellir.com'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesInterlaySVG,
+  // },
   khala: {
     chainId: 'khala',
     explorerNetworkName: 'khala',
@@ -234,22 +258,23 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://khala.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesKhalaSVG
+    logo: nodesKhalaSVG,
+    descriptor: 'khala'
   },
-  moonbeam: {
-    chainId: 'moonbeam',
-    explorerNetworkName: 'moonbeam',
-    rpcUrls: ['wss://moonbeam-rpc.dwellir.com'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesMoonbeamSVG
-  },
-  moonriver: {
-    chainId: 'moonriver',
-    explorerNetworkName: 'moonriver',
-    rpcUrls: ['wss://moonriver-rpc.dwellir.com'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesMoonriverSVG
-  },
+  // moonbeam: {
+  //   chainId: 'moonbeam',
+  //   explorerNetworkName: 'moonbeam',
+  //   rpcUrls: ['wss://moonbeam-rpc.dwellir.com'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesMoonbeamSVG
+  // },
+  // moonriver: {
+  //   chainId: 'moonriver',
+  //   explorerNetworkName: 'moonriver',
+  //   rpcUrls: ['wss://moonriver-rpc.dwellir.com'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesMoonriverSVG
+  // },
   phala: {
     chainId: 'phala',
     explorerNetworkName: 'phala',
@@ -261,15 +286,16 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://phala.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: phalaSVG
+    logo: phalaSVG,
+    descriptor: 'phala'
   },
-  'rhala testnet': {
-    chainId: 'rhala',
-    explorerNetworkName: '',
-    rpcUrls: ['wss://rhala-node.phala.network/ws'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesKhalaSVG
-  },
+  // 'rhala testnet': {
+  //   chainId: 'rhala',
+  //   explorerNetworkName: '',
+  //   rpcUrls: ['wss://rhala-node.phala.network/ws'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesKhalaSVG
+  // },
   // rococo: {
   //   chainId: 'rococo',
   //   explorerNetworkName: 'rococo',
@@ -291,7 +317,9 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://westend.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesWestendColourSVG
+    logo: nodesWestendColourSVG,
+    descriptor: 'westend',
+    pplChainDescriptor: 'wesPpl'
   },
   paseo: {
     chainId: 'paseo',
@@ -305,43 +333,45 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     pplChainRpcUrls: ['wss://people-paseo.rpc.amforc.com', 'wss://people-paseo.dotters.network'],
-    logo: paseoSVG
+    logo: paseoSVG,
+    descriptor: 'paseo',
+    pplChainDescriptor: 'pasPpl'
   },
-  amplitude: {
-    chainId: 'amplitude',
-    explorerNetworkName: 'amplitude',
-    rpcUrls: ['wss://rpc-amplitude.pendulumchain.tech'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsAmplitudeSVG
-  },
-  pendulum: {
-    chainId: 'pendulum',
-    explorerNetworkName: 'pendulum',
-    rpcUrls: ['wss://rpc-pendulum.prd.pendulumchain.tech'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsPendulumSVG
-  },
-  joystream: {
-    chainId: 'joystream',
-    explorerNetworkName: 'joystream',
-    rpcUrls: ['wss://rpc.joystream.org'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesJoystreamSVG
-  },
-  watr: {
-    chainId: 'watr',
-    explorerNetworkName: '',
-    rpcUrls: ['wss://watr-rpc.watr-api.network'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsWatrPNG
-  },
-  kilt: {
-    chainId: 'kilt',
-    explorerNetworkName: 'spiritnet',
-    rpcUrls: ['wss://spiritnet.kilt.io'],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesKiltPNG
-  },
+  // amplitude: {
+  //   chainId: 'amplitude',
+  //   explorerNetworkName: 'amplitude',
+  //   rpcUrls: ['wss://rpc-amplitude.pendulumchain.tech'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: chainsAmplitudeSVG
+  // },
+  // pendulum: {
+  //   chainId: 'pendulum',
+  //   explorerNetworkName: 'pendulum',
+  //   rpcUrls: ['wss://rpc-pendulum.prd.pendulumchain.tech'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: chainsPendulumSVG
+  // },
+  // joystream: {
+  //   chainId: 'joystream',
+  //   explorerNetworkName: 'joystream',
+  //   rpcUrls: ['wss://rpc.joystream.org'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesJoystreamSVG
+  // },
+  // watr: {
+  //   chainId: 'watr',
+  //   explorerNetworkName: '',
+  //   rpcUrls: ['wss://watr-rpc.watr-api.network'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: chainsWatrPNG
+  // },
+  // kilt: {
+  //   chainId: 'kilt',
+  //   explorerNetworkName: 'spiritnet',
+  //   rpcUrls: ['wss://spiritnet.kilt.io'],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   logo: nodesKiltPNG
+  // },
   polimec: {
     chainId: 'polimec',
     explorerNetworkName: 'polimec',
@@ -351,21 +381,24 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://polimec.ibp.network'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: polimecSVG
+    logo: polimecSVG,
+    descriptor: 'polimec'
   },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
     rpcUrls: [import.meta.env.VITE_WS_PROVIDER],
     httpGraphqlUrl: import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER,
-    logo: localSVG
+    logo: localSVG,
+    descriptor: 'dot',
+    pplChainDescriptor: 'dotPpl'
   }
 }
 
 export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'polkadot',
-  'asset-hub-dot',
-  'coretime-dot',
+  'asset-hub-polkadot',
+  'coretime-polkadot',
   'acala',
   // 'astar',
   'bifrost-dot',
@@ -380,8 +413,8 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
 ]
 export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'kusama',
-  'asset-hub-ksm',
-  // 'coretime-ksm'
+  'asset-hub-kusama',
+  // 'coretime-kusama'
   // 'amplitude',
   'khala'
   // 'moonriver'

@@ -2,56 +2,35 @@ import React from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
-import { createClient, PolkadotClient, TypedApi } from 'polkadot-api'
+import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
-import {
-  acala,
-  bifrostDot,
-  dot,
-  dotAssetHub,
-  // dotPpl,
-  hydration,
-  khala,
-  ksm,
-  ksmAssetHub,
-  // ksmPpl,
-  paseo,
-  phala
-  // rhala,
-  // rococo,
-  // rococoAssetHub,
-  // rococoPpl
-} from '@polkadot-api/descriptors'
+import { ApiDescriptors, ApiOf, Descriptors, DESCRIPTORS } from '../types'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
-export type ApiType = TypedApi<
-  | typeof dot
-  | typeof dotAssetHub
-  // | typeof dotPpl
-  | typeof ksm
-  | typeof ksmAssetHub
-  // | typeof ksmPpl
-  | typeof hydration
-  | typeof acala
-  | typeof bifrostDot
-  | typeof phala
-  | typeof khala
-  // | typeof rhala
-  // | typeof rococo
-  // | typeof rococoAssetHub
-  // | typeof rococoPpl
-  | typeof paseo
->
-
-export interface IApiContext {
-  api?: ApiType
+export type IApiContext<Id extends ApiDescriptors> = {
+  apiDescriptor?: Id
+  api?: ApiOf<Id>
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
-  compatibilityToken?: Awaited<ReturnType<PolkadotClient['getTypedApi']>['compatibilityToken']>
+  compatibilityToken?: CompatibilityToken
+}
+
+export const isContextOf = <Id extends ApiDescriptors>(
+  ctx: unknown,
+  descriptor: Id
+): ctx is IApiContext<Id> => {
+  return !!ctx && (ctx as IApiContext<ApiDescriptors>).apiDescriptor === descriptor
+}
+
+export const isContextIn = <Id extends ApiDescriptors, Ids extends ApiDescriptors[] = Id[]>(
+  api: unknown,
+  descriptors: Id[]
+): api is IApiContext<Ids[number]> => {
+  return descriptors.some((descriptor) => isContextOf(api, descriptor))
 }
 
 interface ChainInfoHuman {
@@ -61,77 +40,26 @@ interface ChainInfoHuman {
   isEthereum: boolean
 }
 
-const ApiContext = createContext<IApiContext | undefined>(undefined)
+const ApiContext = createContext<IApiContext<ApiDescriptors> | undefined>(undefined)
 
-const ApiContextProvider = ({ children }: ApiContextProps) => {
+const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextProps) => {
   const { selectedNetworkInfo } = useNetwork()
-  const [chainInfo, setChainInfo] = useState<IApiContext['chainInfo']>()
-  const [client, setClient] = useState<IApiContext['client']>()
-  const [api, setApi] = useState<IApiContext['api']>()
-  const [compatibilityToken, setCompatibilityToken] = useState<IApiContext['compatibilityToken']>()
+  const [chainInfo, setChainInfo] = useState<ChainInfoHuman>()
+  const [client, setClient] = useState<PolkadotClient | undefined>()
+  const [api, setApi] = useState<TypedApi<Descriptors<Id>> | undefined>()
+  const [compatibilityToken, setCompatibilityToken] = useState<CompatibilityToken | undefined>()
+  const [apiDescriptor, setApiDescriptor] = useState<IApiContext<ApiDescriptors>['apiDescriptor']>()
 
   useEffect(() => {
-    if (!selectedNetworkInfo) return
+    if (!selectedNetworkInfo?.chainId || !selectedNetworkInfo?.descriptor) return
 
-    let cl: PolkadotClient
-    let typedApi: ApiType
-
-    switch (selectedNetworkInfo?.chainId) {
-      case 'kusama':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(ksm)
-        break
-      case 'asset-hub-dot':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(dotAssetHub)
-        break
-      case 'asset-hub-ksm':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(ksmAssetHub)
-        break
-      case 'acala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(acala)
-        break
-      case 'bifrost-dot':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(bifrostDot)
-        break
-      case 'phala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(phala)
-        break
-      // case 'rhala':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rhala)
-      //   break
-      case 'khala':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(khala)
-        break
-      // case 'rococo':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rococo)
-      //   break
-      // case 'rococo-asset-hub':
-      //   cl = createClient(getWsProvider(selectedNetworkInfo.rpcUrl))
-      //   typedApi = cl.getTypedApi(rococoAssetHub)
-      //   break
-      case 'hydradx':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(hydration)
-        break
-      case 'paseo':
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(paseo)
-        break
-
-      default:
-        cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
-        typedApi = cl.getTypedApi(dot)
-    }
+    const cl = createClient(withPolkadotSdkCompat(getWsProvider(selectedNetworkInfo.rpcUrls)))
     setClient(cl)
+    const id = selectedNetworkInfo.descriptor as Id
+    const typedApi = cl.getTypedApi(DESCRIPTORS[id])
     setApi(typedApi)
+
+    setApiDescriptor(selectedNetworkInfo.descriptor)
   }, [selectedNetworkInfo])
 
   useEffect(() => {
@@ -163,7 +91,6 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
 
   useEffect(() => {
     if (!api) return
-
     api.compatibilityToken.then(setCompatibilityToken).catch(console.error)
   }, [api])
 
@@ -171,6 +98,7 @@ const ApiContextProvider = ({ children }: ApiContextProps) => {
     <ApiContext.Provider
       value={{
         api,
+        apiDescriptor,
         chainInfo,
         client,
         compatibilityToken

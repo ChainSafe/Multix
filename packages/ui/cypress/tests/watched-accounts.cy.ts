@@ -14,12 +14,13 @@ import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { getShortAddress } from '../utils/getShortAddress'
 
 const addWatchAccount = (address: string, name?: string) => {
-  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20, timeout: 6000 })
+  settingsPage.accountAddressInput().type(`${address}{enter}`, { delay: 20, timeout: 8000 })
 
   if (name) {
     settingsPage.accountNameInput().type(name)
   }
 
+  settingsPage.addButton().should('be.enabled')
   settingsPage.addButton().click()
 }
 
@@ -27,7 +28,7 @@ const { name: testAccountName, address: testAccountAddress } =
   testAccounts['Multisig Member Account 1']
 
 describe('Watched Accounts', () => {
-  it('can add an account to the watch list', () => {
+  it('can add an account with a name to the watch list', () => {
     cy.visit(landingPageUrl)
     landingPage.watchAccountButton().click()
     addWatchAccount(testAccountAddress, testAccountName)
@@ -39,7 +40,7 @@ describe('Watched Accounts', () => {
     })
   })
 
-  it('can remove an account from the watch list', () => {
+  it('can add without a name, and remove an account from the watch list', () => {
     // add an account first
     cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount(testAccountAddress)
