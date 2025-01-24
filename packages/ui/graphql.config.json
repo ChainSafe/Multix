@@ -1,6 +1,6 @@
 {
   "overwrite": true,
-  "schema": "https://chainsafe.squids.live/multix-arrow/v/v6/graphql",
+  "schema": "https://chainsafe.squids.live/multix-arrow@v6/api/graphql",
   "documents": "src/**/*.graphql",
   "generates": {
     "src/gql/": {
