@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { isContextIn, useApi } from '../contexts/ApiContext'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
-import { DotAssetHubQueries } from '@polkadot-api/descriptors'
 import { assetHubKeys } from '../types'
+import { useAssets } from '../contexts/AssetsContext'
 
 interface useGetBalanceProps {
   address?: string
@@ -18,18 +18,14 @@ export const useGetAssetBalance = ({
   const ctx = useApi()
   const [balance, setBalance] = useState<bigint | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)
-  const [assetMetadata, setAssetMetadata] = useState<
-    DotAssetHubQueries['Assets']['Metadata']['Value'] | null
-  >(null)
+  const { getAssetMetadata } = useAssets()
 
   useEffect(() => {
-    if (!ctx?.api || !isContextIn(ctx, assetHubKeys) || !assetId) return
-    ctx.api.query.Assets.Metadata.getValue(assetId).then(setAssetMetadata).catch(console.error)
-  }, [ctx, assetId])
+    if (!ctx?.api || !isContextIn(ctx, assetHubKeys) || !address || !assetId) return
 
-  useEffect(() => {
-    if (!ctx?.api || !isContextIn(ctx, assetHubKeys) || !address || !assetMetadata || !assetId)
-      return
+    const assetMetadata = getAssetMetadata(assetId)
+
+    if (!assetMetadata) return
 
     const unsub = ctx.api.query.Assets.Account.watchValue(assetId, address, 'best').subscribe(
       (res) => {
@@ -39,14 +35,14 @@ export const useGetAssetBalance = ({
         setFormattedBalance(
           formatBigIntBalance(balance, assetMetadata.decimals, {
             numberAfterComma,
-            tokenSymbol: assetMetadata.symbol.asText()
+            tokenSymbol: assetMetadata.symbol
           })
         )
       }
     )
 
     return () => unsub && unsub.unsubscribe()
-  }, [address, assetId, assetMetadata, ctx, numberAfterComma])
+  }, [address, assetId, ctx, getAssetMetadata, numberAfterComma])
 
   return { balance, balanceFormatted }
 }

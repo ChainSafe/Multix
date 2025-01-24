@@ -17,6 +17,7 @@ import { PplApiContextProvider } from './contexts/PeopleChainApiContext'
 import { ReactiveDotProvider } from '@reactive-dot/react'
 import { config } from './walletConfigs'
 import { Suspense } from 'react'
+import { AssetsContextProvider } from './contexts/AssetsContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -31,19 +32,21 @@ const App = () => {
               <QueryClientProvider client={queryClient}>
                 <ApiContextProvider>
                   <PplApiContextProvider>
-                    <WatchedAddressesContextProvider>
-                      <AccountContextProvider>
-                        <AccountNamesContextProvider>
-                          <MultiProxyContextProvider>
-                            <WalletConnectContextProvider>
-                              <ModalsContextProvider>
-                                <MainLayout />
-                              </ModalsContextProvider>
-                            </WalletConnectContextProvider>
-                          </MultiProxyContextProvider>
-                        </AccountNamesContextProvider>
-                      </AccountContextProvider>
-                    </WatchedAddressesContextProvider>
+                    <AssetsContextProvider>
+                      <WatchedAddressesContextProvider>
+                        <AccountContextProvider>
+                          <AccountNamesContextProvider>
+                            <MultiProxyContextProvider>
+                              <WalletConnectContextProvider>
+                                <ModalsContextProvider>
+                                  <MainLayout />
+                                </ModalsContextProvider>
+                              </WalletConnectContextProvider>
+                            </MultiProxyContextProvider>
+                          </AccountNamesContextProvider>
+                        </AccountContextProvider>
+                      </WatchedAddressesContextProvider>
+                    </AssetsContextProvider>
                   </PplApiContextProvider>
                 </ApiContextProvider>
               </QueryClientProvider>

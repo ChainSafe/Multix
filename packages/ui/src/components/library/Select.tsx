@@ -22,9 +22,11 @@ interface SelectProps {
   children?: React.ReactNode[] | React.ReactNode
   sx?: SxProps<Theme>
   testId?: string
+  className?: string
 }
 
 const Select = ({
+  className = '',
   value,
   onChange,
   menuItems,
@@ -40,6 +42,7 @@ const Select = ({
 
   return (
     <SelectMuiStyled
+      className={className}
       sx={sx}
       slotProps={{ minifiedVersion, inputSize }}
       value={value}
