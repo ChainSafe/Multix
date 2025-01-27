@@ -134,42 +134,44 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     setSelected(account)
   }, [])
 
+  useEffect(() => {
+    if (!selectedAsset) return
+
+    const decimals = selectedAsset.decimals
+
+    if (!decimals) {
+      onSetErrorMessage('Invalid network decimals')
+      setAmount(0n)
+      return
+    }
+
+    if (!amountString.match('^[0-9]+([.][0-9]+)?$')) {
+      setAmountError('Only numbers and "." are accepted.')
+      onSetErrorMessage('Invalid amount')
+      setAmount(0n)
+      return
+    }
+
+    const bigintResult = inputToBigInt(decimals, amountString)
+
+    if (bigintResult > maxValue) {
+      setAmountError('Amount too large')
+      onSetErrorMessage('Amount too large')
+      return
+    }
+
+    setAmount(bigintResult)
+  }, [amountString, maxValue, onSetErrorMessage, selectedAsset])
+
   const onAmountChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setAmountError('')
       onSetErrorMessage('')
 
-      if (!selectedAsset) return
-
-      const decimals = selectedAsset.decimals
-
-      if (!decimals) {
-        onSetErrorMessage('Invalid network decimals')
-        setAmount(0n)
-        return
-      }
-
       const stringInput = event.target.value.trim()
       setAmountString(stringInput)
-
-      if (!stringInput.match('^[0-9]+([.][0-9]+)?$')) {
-        setAmountError('Only numbers and "." are accepted.')
-        onSetErrorMessage('Invalid amount')
-        setAmount(0n)
-        return
-      }
-
-      const bigintResult = inputToBigInt(decimals, stringInput)
-
-      if (bigintResult > maxValue) {
-        setAmountError('Amount too large')
-        onSetErrorMessage('Amount too large')
-        return
-      }
-
-      setAmount(bigintResult)
     },
-    [maxValue, onSetErrorMessage, selectedAsset]
+    [onSetErrorMessage]
   )
 
   const onInputChange = useCallback(

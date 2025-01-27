@@ -321,6 +321,21 @@ export const networkList: Record<string, NetworkInfo> = {
     descriptor: 'westend',
     pplChainDescriptor: 'wesPpl'
   },
+  'asset-hub-westend': {
+    chainId: 'asset-hub-westend',
+    explorerNetworkName: 'assethub-westend',
+    rpcUrls: [
+      'wss://asset-hub-westend-rpc.dwellir.com',
+      'wss://sys.ibp.network/asset-hub-westend',
+      'wss://asset-hub-westend.dotters.network',
+      'wss://westend-asset-hub-rpc.polkadot.io'
+    ],
+    pplChainRpcUrls: westendPplChains,
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    logo: nodesWestendColourSVG,
+    descriptor: 'wesAssetHub',
+    pplChainDescriptor: 'wesPpl'
+  },
   paseo: {
     chainId: 'paseo',
     explorerNetworkName: 'paseo',
@@ -427,6 +442,7 @@ export const testChains: Partial<keyof typeof networkList>[] = [
   'paseo',
   // 'rhala testnet',
   'westend',
+  'asset-hub-westend',
   'local'
 ]
 

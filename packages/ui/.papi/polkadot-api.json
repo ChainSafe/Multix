@@ -35,7 +35,7 @@
       "metadata": ".papi/metadata/khala.scale"
     },
     "phala": {
-      "wsUrl": "wss://api.phala.network/ws",
+      "wsUrl": "wss://phala-rpc.dwellir.com",
       "metadata": ".papi/metadata/phala.scale"
     },
     "paseo": {
@@ -49,10 +49,6 @@
     "pasPpl": {
       "wsUrl": "wss://people-paseo.rpc.amforc.com",
       "metadata": ".papi/metadata/pasPpl.scale"
-    },
-    "wesPpl": {
-      "wsUrl": "wss://westend-people-rpc.polkadot.io",
-      "metadata": ".papi/metadata/wesPpl.scale"
     },
     "dotAssetHub": {
       "chain": "polkadot_asset_hub",
@@ -69,6 +65,14 @@
     "westend": {
       "chain": "westend2",
       "metadata": ".papi/metadata/westend.scale"
+    },
+    "wesPpl": {
+      "chain": "westend2_people",
+      "metadata": ".papi/metadata/wesPpl.scale"
+    },
+    "wesAssetHub": {
+      "chain": "westend2_asset_hub",
+      "metadata": ".papi/metadata/wesAssetHub.scale"
     }
   }
 }
