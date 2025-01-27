@@ -12,7 +12,7 @@ interface useGetBalanceProps {
 
 export const useGetAssetBalance = ({
   address,
-  numberAfterComma = 4,
+  numberAfterComma = 2,
   assetId
 }: useGetBalanceProps) => {
   const ctx = useApi()

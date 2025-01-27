@@ -7,7 +7,7 @@ interface useGetBalanceProps {
   numberAfterComma?: number
 }
 
-export const useGetBalance = ({ address, numberAfterComma = 4 }: useGetBalanceProps) => {
+export const useGetBalance = ({ address, numberAfterComma = 2 }: useGetBalanceProps) => {
   const { api, chainInfo } = useApi()
   const [balance, setBalance] = useState<bigint | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)

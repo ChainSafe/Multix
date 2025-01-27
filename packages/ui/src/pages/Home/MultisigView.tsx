@@ -1,5 +1,5 @@
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
-import { AccountBadge } from '../../types'
+import { AccountBadge, assetHubKeys } from '../../types'
 // import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
 import { Chip } from '@mui/material'
@@ -7,9 +7,15 @@ import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import MultisigAccordion from './MultisigAccordion'
 import { Balance } from '../../components/library'
 import { camelcaseToString } from '../../utils/camelcasetoString'
+import { useMemo } from 'react'
+import { isContextIn, useApi } from '../../contexts/ApiContext'
+import { AH_SUPPORTED_ASSETS } from '../../constants'
+import AssetBalance from '../../components/library/AssetBalance'
 
 const MultisigView = () => {
+  const ctx = useApi()
   const { selectedMultiProxy, selectedHasProxy } = useMultiProxy()
+  const isAssetHub = useMemo(() => isContextIn(ctx, assetHubKeys), [ctx])
 
   return (
     <MultisigViewWrapperStyled>
@@ -38,7 +44,6 @@ const MultisigView = () => {
                     <AccountDisplay
                       address={multisig.address || ''}
                       badge={AccountBadge.MULTI}
-                      withBalance={false}
                       canEdit
                       canCopy
                     />
@@ -57,8 +62,19 @@ const MultisigView = () => {
                   )}
                   {selectedHasProxy && (
                     <ListElement data-cy="list-item-balance">
-                      <ListFieldText>Balance</ListFieldText>
-                      <Balance address={multisig.address} />
+                      <ListFieldText className="isBalance">Balance</ListFieldText>
+                      <BalanceAmountStyled>
+                        <Balance address={multisig.address} />
+                        {isAssetHub &&
+                          AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => (
+                            <AssetBalance
+                              key={assetId}
+                              address={multisig.address}
+                              assetId={assetId}
+                              logo={logo}
+                            />
+                          ))}
+                      </BalanceAmountStyled>
                     </ListElement>
                   )}
                 </List>
@@ -70,6 +86,12 @@ const MultisigView = () => {
     </MultisigViewWrapperStyled>
   )
 }
+
+const BalanceAmountStyled = styled('div')`
+  font-size: 1rem;
+  color: ${({ theme }) => theme.custom.gray[800]};
+  white-space: nowrap;
+`
 
 const HeaderStyled = styled('header')`
   display: flex;
@@ -127,7 +149,6 @@ const ListElement = styled('div')`
   align-items: center;
   padding: 0.75rem;
   margin-bottom: 0.5rem;
-  max-height: 2.9375rem;
   border-radius: ${({ theme }) => theme.custom.borderRadius};
   border: 1px solid ${({ theme }) => theme.custom.gray[400]};
   background: ${({ theme }) => theme.custom.gray[200]};
@@ -137,6 +158,9 @@ const ListFieldText = styled('div')`
   font-size: 1rem;
   font-weight: 400;
   color: ${({ theme }) => theme.custom.gray[800]};
+  &.isBalance {
+    align-self: flex-start;
+  }
 `
 
 const ListFieldValue = styled('div')`

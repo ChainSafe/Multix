@@ -212,6 +212,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         fullWidth
         menuItems={assetList.map(({ logo, symbol }) => ({ value: symbol, logo }))}
         testId="ah-assets"
+        upperCase
       />
     )
   }, [assetList, onAssetSelection, selectedAsset])
@@ -251,10 +252,14 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 }
 
 const SelectStyled = styled(Select)`
+  text-transform: uppercase;
   outline: none !important;
   .MuiSelect-select {
     margin-right: -1rem;
     padding-right: 3rem !important;
+  }
+  li.MuiMenuItem-root {
+    text-transform: uppercase;
   }
 `
 

@@ -14,11 +14,11 @@ const AssetBalance = ({ address, assetId, logo }: BalanceProps) => {
 
   return (
     <BalanceStyled data-cy={`asset-balance-${assetId}`}>
+      {balanceFormatted}
       <ImgStyled
         src={logo}
         alt="balance"
       />
-      {balanceFormatted}
     </BalanceStyled>
   )
 }
@@ -28,10 +28,12 @@ const BalanceStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[700]};
   font-size: 1rem;
   margin-top: 0.5rem;
+  text-transform: uppercase;
+  justify-content: flex-end;
 `
 
 const ImgStyled = styled('img')`
-  margin-right: 0.5rem;
+  margin-left: 0.5rem;
   width: 1.5rem;
 `
 export default AssetBalance
