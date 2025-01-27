@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { useGetBalance } from '../../hooks/useGetBalance'
-import { chainsPolkadotCircleSVG } from '../../logos/polkadot-circleSVG'
+import { useNetwork } from '../../contexts/NetworkContext'
 
 interface BalanceProps {
   address: string
@@ -9,12 +9,13 @@ interface BalanceProps {
 
 const Balance = ({ address, withIcon = false }: BalanceProps) => {
   const { balanceFormatted } = useGetBalance({ address })
+  const { selectedNetworkInfo } = useNetwork()
 
   return (
     <BalanceStyled>
       {withIcon && (
         <ImgStyled
-          src={chainsPolkadotCircleSVG}
+          src={selectedNetworkInfo?.nativeAssetLogo || selectedNetworkInfo?.networkLogo}
           alt="balance"
         />
       )}

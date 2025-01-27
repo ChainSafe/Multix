@@ -64,7 +64,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
     const nativeAssetEntry = {
       id: 0,
-      logo: selectedNetworkInfo?.logo,
+      logo: selectedNetworkInfo?.nativeAssetLogo || selectedNetworkInfo?.networkLogo,
       symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
     } as Option
@@ -135,7 +135,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   }, [])
 
   useEffect(() => {
-    if (!selectedAsset) return
+    if (!selectedAsset || !amountString) return
 
     const decimals = selectedAsset.decimals
 
