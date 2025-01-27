@@ -13,7 +13,7 @@ const AssetBalance = ({ address, assetId, logo }: BalanceProps) => {
   if (!balanceFormatted) return null
 
   return (
-    <BalanceStyled>
+    <BalanceStyled data-cy={`asset-balance-${assetId}`}>
       <ImgStyled
         src={logo}
         alt="balance"

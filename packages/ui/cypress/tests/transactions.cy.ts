@@ -13,6 +13,7 @@ const testAccount2Address = testAccounts['Multisig Member Account 2'].address
 
 const fillAndSubmitTransactionForm = () => {
   sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
+  sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
   sendTxModal.sendTokensFieldAmount().click().type('0.001')
   sendTxModal.buttonSend().should('be.enabled').click()
 }

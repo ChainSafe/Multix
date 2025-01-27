@@ -202,7 +202,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     [assetList]
   )
 
-  const TokenSelection = () => {
+  const TokenSelection = useCallback(() => {
     if (!selectedAsset) return
 
     return (
@@ -211,10 +211,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         onChange={onAssetSelection}
         fullWidth
         menuItems={assetList.map(({ logo, symbol }) => ({ value: symbol, logo }))}
-        testId="easy-setup"
+        testId="ah-assets"
       />
     )
-  }
+  }, [assetList, onAssetSelection, selectedAsset])
 
   return (
     <Box className={className}>

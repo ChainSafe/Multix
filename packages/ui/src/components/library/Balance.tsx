@@ -12,7 +12,7 @@ const Balance = ({ address, withIcon = false }: BalanceProps) => {
   const { selectedNetworkInfo } = useNetwork()
 
   return (
-    <BalanceStyled>
+    <BalanceStyled data-cy="asset-balance-native">
       {withIcon && (
         <ImgStyled
           src={selectedNetworkInfo?.nativeAssetLogo || selectedNetworkInfo?.networkLogo}
