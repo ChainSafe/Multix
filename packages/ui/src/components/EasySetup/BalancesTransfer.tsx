@@ -14,7 +14,6 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import { assetHubKeys, noHydrationKeys } from '../../types'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
 import { Asset, useAssets } from '../../contexts/AssetsContext'
-import { chainsPolkadotCircleSVG } from '../../logos/polkadot-circleSVG'
 
 interface Props {
   className?: string
@@ -43,12 +42,14 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   })
   const maxValue = useMemo(() => getGlobalMaxValue(128), [])
   const toAddress = useMemo(() => selected?.address || '', [selected?.address])
-  const { selectedNetwork } = useNetwork()
+  const { selectedNetwork, selectedNetworkInfo } = useNetwork()
   const { getAssetMetadata } = useAssets()
   const assetList = useMemo(() => {
-    if (!isAssetHub || !chainInfo) return [] as Option[]
+    if (!chainInfo) return [] as Option[]
 
-    const list = AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => {
+    const assetHubList = AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => {
+      if (!isAssetHub) return
+
       const asset = getAssetMetadata(assetId)
 
       if (!asset) return
@@ -61,16 +62,20 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       }
     }).filter(Boolean) as Option[]
 
-    const dotEntry = {
+    const nativeAssetEntry = {
       id: 0,
-      logo: chainsPolkadotCircleSVG,
-      symbol: 'DOT',
+      logo: selectedNetworkInfo?.logo,
+      symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
     } as Option
 
-    return [dotEntry, ...list]
-  }, [chainInfo, getAssetMetadata, isAssetHub])
-  const [selectedAsset, setSelectedAsset] = useState(assetList[0])
+    return [nativeAssetEntry, ...assetHubList]
+  }, [chainInfo, getAssetMetadata, isAssetHub, selectedNetworkInfo])
+  const [selectedAsset, setSelectedAsset] = useState<Option | undefined>(assetList[0])
+
+  useEffect(() => {
+    if (!selectedAsset && !!assetList) setSelectedAsset(assetList[0])
+  }, [assetList, selectedAsset])
 
   useEffect(() => {
     if (!!amount && !hasEnoughFreeBalance) {
@@ -86,12 +91,12 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    if (!toAddress || !amount) {
+    if (!toAddress || !amount || !selectedAsset) {
       onSetExtrinsic(undefined)
       return
     }
 
-    if (isContextIn(ctx, assetHubKeys) && selectedAsset.symbol !== 'DOT') {
+    if (isContextIn(ctx, assetHubKeys) && selectedAsset.symbol !== chainInfo?.tokenSymbol) {
       const extrinsic = ctx.api.tx.Assets.transfer_keep_alive({
         amount,
         id: selectedAsset.id,
@@ -120,8 +125,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     chainInfo,
     ctx,
     onSetExtrinsic,
-    selectedAsset.id,
-    selectedAsset.symbol,
+    selectedAsset,
     selectedNetwork,
     toAddress
   ])
@@ -134,6 +138,8 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setAmountError('')
       onSetErrorMessage('')
+
+      if (!selectedAsset) return
 
       const decimals = selectedAsset.decimals
 
@@ -163,7 +169,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
       setAmount(bigintResult)
     },
-    [maxValue, onSetErrorMessage, selectedAsset.decimals]
+    [maxValue, onSetErrorMessage, selectedAsset]
   )
 
   const onInputChange = useCallback(
@@ -195,6 +201,8 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   )
 
   const TokenSelection = () => {
+    if (!selectedAsset) return
+
     return (
       <SelectStyled
         value={selectedAsset.symbol}
