@@ -45,7 +45,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   const { selectedNetwork, selectedNetworkInfo } = useNetwork()
   const { getAssetMetadata } = useAssets()
   const assetList = useMemo(() => {
-    if (!chainInfo) return [] as Option[]
+    if (!chainInfo || !selectedNetworkInfo) return [] as Option[]
 
     const assetHubList = AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => {
       if (!isAssetHub) return
@@ -64,7 +64,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
     const nativeAssetEntry = {
       id: 0,
-      logo: selectedNetworkInfo?.nativeAssetLogo || selectedNetworkInfo?.networkLogo,
+      logo: selectedNetworkInfo.nativeAssetLogo || selectedNetworkInfo.networkLogo,
       symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
     } as Option
