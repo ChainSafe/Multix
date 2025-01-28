@@ -6,7 +6,6 @@ import { isContextIn, isContextOf, useApi } from '../../contexts/ApiContext'
 import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
 import { Select, TextField } from '../library'
-import { getOptionLabel } from '../../utils/getOptionLabel'
 import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
 import { MultiAddress } from '@polkadot-api/descriptors'
 import { Transaction } from 'polkadot-api'
@@ -96,6 +95,8 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
+    // not re-using isAssetHub here bc TS doesn't type correctly
+    // if we're on AH and *not* sending the native asset use Assets.transfer_keep_alive
     if (isContextIn(ctx, assetHubKeys) && selectedAsset.symbol !== chainInfo?.tokenSymbol) {
       const extrinsic = ctx.api.tx.Assets.transfer_keep_alive({
         amount,
@@ -104,6 +105,8 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       })
 
       !!extrinsic && onSetExtrinsic(extrinsic)
+
+      // we're on AH and sending the native asset use Balances.transfer
     } else {
       const extrinsic = isContextOf(ctx, 'hydration')
         ? ctx.api.tx.Balances.transfer_keep_alive({
@@ -137,14 +140,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   useEffect(() => {
     if (!selectedAsset || !amountString) return
 
-    const decimals = selectedAsset.decimals
-
-    if (!decimals) {
-      onSetErrorMessage('Invalid network decimals')
-      setAmount(0n)
-      return
-    }
-
     if (!amountString.match('^[0-9]+([.][0-9]+)?$')) {
       setAmountError('Only numbers and "." are accepted.')
       onSetErrorMessage('Invalid amount')
@@ -152,7 +147,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       return
     }
 
-    const bigintResult = inputToBigInt(decimals, amountString)
+    const bigintResult = inputToBigInt(selectedAsset.decimals, amountString)
 
     if (bigintResult > maxValue) {
       setAmountError('Amount too large')
@@ -174,21 +169,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     [onSetErrorMessage]
   )
 
-  const onInputChange = useCallback(
-    (
-      _: React.SyntheticEvent<Element, Event>,
-      val: NonNullable<
-        string | AccountBaseInfo | (string | AccountBaseInfo | undefined)[] | undefined
-      >
-    ) => {
-      const value = getOptionLabel(val as string)
-
-      if (!value) {
-        setSelected(undefined)
-      }
-    },
-    []
-  )
   const onAssetSelection = useCallback(
     (event: SelectChangeEvent<unknown>) => {
       const selectedSymbol = event.target.value as string
@@ -209,7 +189,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
       <SelectStyled
         value={selectedAsset.symbol}
         onChange={onAssetSelection}
-        fullWidth
         menuItems={assetList.map(({ logo, symbol }) => ({ value: symbol, logo }))}
         testId="ah-assets"
         upperCase
@@ -225,7 +204,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         value={selected}
         label="to"
         allowAnyAddressInput={true}
-        onInputChange={onInputChange}
         accountList={accountBase}
         testId="send-tokens-field-to"
       />
