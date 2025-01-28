@@ -11,6 +11,7 @@ export interface Asset {
   symbol: string
   decimals: number
   name: string
+  logo: string
 }
 
 export type IAssetsContext = {
@@ -37,10 +38,13 @@ const AssetsContextProvider = ({ children }: AssetsContextProps) => {
 
         data.forEach((metadata, index) => {
           const id = assetIds[index][0]
+          const logo = AH_SUPPORTED_ASSETS.find((asset) => asset.assetId === id)?.logo
+
           result[id] = {
-            symbol: metadata.symbol.asText(),
+            symbol: metadata.symbol.asText().toUpperCase(),
             name: metadata.name.asText(),
-            decimals: metadata.decimals
+            decimals: metadata.decimals,
+            logo
           } as Asset
         })
 

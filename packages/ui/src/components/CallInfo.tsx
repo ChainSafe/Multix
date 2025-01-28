@@ -1,7 +1,7 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
 import { ReactNode, useMemo } from 'react'
-import { IApiContext, useApi } from '../contexts/ApiContext'
+import { useApi } from '../contexts/ApiContext'
 import { getExtrinsicName } from '../utils/getExtrinsicName'
 import { isProxyCall } from '../utils/isProxyCall'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
@@ -14,7 +14,7 @@ import { JSONprint } from '../utils/jsonPrint'
 import { Transaction } from 'polkadot-api'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
 import { ChainInfoHuman } from '../contexts/PeopleChainApiContext'
-import { ApiDescriptors } from '../types'
+import { IAssetsContext, useAssets } from '../contexts/AssetsContext'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -30,8 +30,8 @@ interface CreateTreeParams {
   decimals: number
   unit: string
   name?: string
-  api: IApiContext<ApiDescriptors>['api']
   chainInfo?: ChainInfoHuman
+  ahAssets: IAssetsContext['assets']
 }
 
 const isWhiteListedCall = (extrinsicName: string) => {
@@ -59,6 +59,8 @@ const isWhiteListedCall = (extrinsicName: string) => {
     'ConvictionVoting.remove_vote',
     'ConvictionVoting.undelegate',
     'ConvictionVoting.unlock',
+    //Asset Hub
+    'Assets.transfer_keep_alive',
     // Hydration
     'Tokens.transfer'
   ].includes(extrinsicName)
@@ -72,7 +74,35 @@ const isBatchedCall = (extrinsicName: string) => {
   return ['Utility.batch', 'Utility.batch_all', 'Utility.force_batch'].includes(extrinsicName)
 }
 
-const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman, id: string) => (
+const isAssetTransferCall = (extrinsicName: string) => {
+  return ['Assets.transfer_keep_alive'].includes(extrinsicName)
+}
+
+const getBalanceKey = (value: Record<string, any>) => {
+  return ['value', 'fee', 'max_additional', 'balance'].find((key) => typeof value[key] === 'bigint')
+}
+
+const getMultiAddressKey = (value: Record<string, any>) => {
+  return ['dest', 'beneficiary', 'curator', 'delegate', 'spawner', 'to', 'target'].find(
+    (key) => typeof value[key] === 'object' && value[key].type === 'Id'
+  )
+}
+
+const isAssetTransferValue = (value: Record<string, any>) => {
+  return !!value.id && !!value.amount && !!value.target
+}
+
+const DisplayBalance = ({
+  amount,
+  label,
+  chainInfo,
+  id
+}: {
+  amount: bigint
+  label: string
+  chainInfo: ChainInfoHuman
+  id: string
+}) => (
   <li key={id}>
     {label}:{' '}
     {formatBigIntBalance(amount, chainInfo?.tokenDecimals, {
@@ -81,26 +111,35 @@ const formatBalance = (amount: bigint, label: string, chainInfo: ChainInfoHuman,
   </li>
 )
 
+const DisplayAccount = ({ address, label }: { address: string; label: string }) => (
+  <li key={`multiadd-${address}`}>
+    {label}: <MultisigCompactDisplay address={address} />
+  </li>
+)
+
 interface EachFieldRenderedParams {
+  extrinsicName: string
   value: Record<string, any>
   chainInfo: ChainInfoHuman
   id: string
-  preventBalanceFormating?: boolean
+  ahAssets: IAssetsContext['assets']
 }
-const eachFieldRendered = ({
-  value,
-  chainInfo,
-  id,
-  preventBalanceFormating = false
-}: EachFieldRenderedParams) => {
-  // for transfer, nomination, staking, bounties
-  // We should make sure this is not done for hydration
-  const bigIntKey =
-    !preventBalanceFormating &&
-    ['value', 'fee', 'max_additional', 'balance'].find((key) => typeof value[key] === 'bigint')
 
-  if (bigIntKey) {
-    return formatBalance(value[bigIntKey], bigIntKey, chainInfo, id)
+const eachFieldRendered = ({ value, chainInfo, id, extrinsicName }: EachFieldRenderedParams) => {
+  const preventBalanceFormating = isPreventBalanceFormat(extrinsicName)
+
+  // for transfer, nomination, staking, bounties
+  // We should make sure this is not done for hydration Token transfers
+  const balanceKey = getBalanceKey(value)
+  if (!preventBalanceFormating && !!balanceKey) {
+    return (
+      <DisplayBalance
+        amount={value[balanceKey]}
+        label={balanceKey}
+        chainInfo={chainInfo}
+        id={id}
+      />
+    )
   }
 
   // for Staking.nominate
@@ -145,22 +184,14 @@ const eachFieldRendered = ({
     )
   }
 
-  // that's an Account with MultiAddress.Id
-  const multiAddressKey = [
-    'dest',
-    'beneficiary',
-    'curator',
-    'delegate',
-    'spawner',
-    'to',
-    'target'
-  ].find((key) => typeof value[key] === 'object' && value[key].type === 'Id')
-
+  // if that's an Account with MultiAddress.Id
+  const multiAddressKey = getMultiAddressKey(value)
   if (multiAddressKey) {
     return (
-      <li key={`multiadd-${value[multiAddressKey]?.value}`}>
-        {multiAddressKey}: <MultisigCompactDisplay address={value[multiAddressKey]?.value} />
-      </li>
+      <DisplayAccount
+        address={value[multiAddressKey]?.value}
+        label={multiAddressKey}
+      />
     )
   }
 
@@ -172,17 +203,19 @@ interface PreparedCallParams {
   chainInfo: ChainInfoHuman
   isBatch?: boolean
   isFirstCall?: boolean
+  ahAssets: IAssetsContext['assets']
 }
+
 const preparedCall = ({
   decodedCall,
   chainInfo,
   isBatch = false,
-  isFirstCall = false
+  isFirstCall = false,
+  ahAssets
 }: PreparedCallParams) => {
   if (!decodedCall) return
 
   const extrinsicName = getExtrinsicName(decodedCall.type, decodedCall.value.type)
-  const preventBalanceFormating = isPreventBalanceFormat(extrinsicName)
 
   if (isBatchedCall(extrinsicName)) {
     const lowerLevelCalls = decodedCall.value.value.calls as Array<Record<string, any>>
@@ -193,11 +226,47 @@ const preparedCall = ({
           {preparedCall({
             decodedCall: call as CreateTreeParams['decodedCall'],
             chainInfo,
-            isBatch: true
+            isBatch: true,
+            ahAssets
           })}
         </BatchCallStyled>
       )
     })
+  }
+
+  const ahTransfer = decodedCall.value.value
+  if (
+    isAssetTransferCall(extrinsicName) &&
+    isAssetTransferValue(ahTransfer) &&
+    !!ahAssets &&
+    !!ahAssets[ahTransfer.id]
+  ) {
+    return (
+      <>
+        {isBatch && <ExtrinsicNameStyled>{extrinsicName}</ExtrinsicNameStyled>}
+        <ul>
+          <li>
+            id: {ahTransfer.id} ({ahAssets[ahTransfer.id].name})
+          </li>
+          <StyledAmount>
+            <li>
+              amount:{' '}
+              {formatBigIntBalance(ahTransfer.amount, ahAssets[ahTransfer.id].decimals, {
+                tokenSymbol: ahAssets[ahTransfer.id].symbol
+              })}
+            </li>
+            <ImgStyled
+              alt={`asset-logo-${ahTransfer.id}`}
+              src={ahAssets[ahTransfer.id].logo}
+            />
+          </StyledAmount>
+          <DisplayAccount
+            address={ahTransfer.target.value}
+            label="target"
+          />
+        </ul>
+      </>
+    )
   }
 
   if (isWhiteListedCall(extrinsicName)) {
@@ -212,7 +281,8 @@ const preparedCall = ({
                 value: { [key]: value },
                 chainInfo,
                 id: `${decodedCall.type}-${index}`,
-                preventBalanceFormating
+                extrinsicName,
+                ahAssets
               })
             )}
           </ul>
@@ -230,12 +300,12 @@ const preparedCall = ({
   return <PreStyled>{JSONprint(decodedCall)}</PreStyled>
 }
 
-const createUlTree = ({ name, decodedCall, chainInfo }: CreateTreeParams) => {
+const createTree = ({ name, decodedCall, chainInfo, ahAssets }: CreateTreeParams) => {
   if (!decodedCall) return
   if (!name) return
   if (!chainInfo) return
 
-  return preparedCall({ decodedCall, chainInfo, isFirstCall: true })
+  return preparedCall({ decodedCall, chainInfo, isFirstCall: true, ahAssets })
 }
 
 const filterProxyProxy = (agg: Props['aggregatedData']): Props['aggregatedData'] => {
@@ -267,7 +337,8 @@ const CallInfo = ({
   const { decodedCall, name } = withProxyFiltered
     ? filterProxyProxy(aggregatedData)
     : aggregatedData
-  const { chainInfo, api } = useApi()
+  const { chainInfo } = useApi()
+  const { assets } = useAssets()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
   const { getDecodeUrl } = usePjsLinks()
@@ -307,11 +378,18 @@ const CallInfo = ({
           annoyance.
         </AlertStyled>
       )}
-      {!!api && hasArgs && (
+      {hasArgs && (
         <Expander
           expanded={expanded}
           title="Params"
-          content={createUlTree({ name, decodedCall, decimals, unit, api, chainInfo })}
+          content={createTree({
+            name,
+            decodedCall,
+            decimals,
+            unit,
+            chainInfo,
+            ahAssets: assets
+          })}
         />
       )}
       {children}
@@ -367,4 +445,13 @@ export default styled(CallInfo)`
   .params {
     word-wrap: break-word;
   }
+`
+const ImgStyled = styled('img')`
+  margin-left: 0.5rem;
+  width: 1.5rem;
+`
+
+const StyledAmount = styled('div')`
+  display: inline-flex;
+  align-items: center;
 `
