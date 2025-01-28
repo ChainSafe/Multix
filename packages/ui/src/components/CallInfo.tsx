@@ -92,17 +92,14 @@ const isAssetTransferValue = (value: Record<string, any>) => {
   return !!value.id && !!value.amount && !!value.target
 }
 
-const DisplayBalance = ({
-  amount,
-  label,
-  chainInfo,
-  id
-}: {
+interface DisplayBalanceProps {
   amount: bigint
   label: string
   chainInfo: ChainInfoHuman
   id: string
-}) => (
+}
+
+const DisplayBalance = ({ amount, label, chainInfo, id }: DisplayBalanceProps) => (
   <li key={id}>
     {label}:{' '}
     {formatBigIntBalance(amount, chainInfo?.tokenDecimals, {
@@ -111,7 +108,12 @@ const DisplayBalance = ({
   </li>
 )
 
-const DisplayAccount = ({ address, label }: { address: string; label: string }) => (
+interface DisplayAccountProps {
+  address: string
+  label: string
+}
+
+const DisplayAccount = ({ address, label }: DisplayAccountProps) => (
   <li key={`multiadd-${address}`}>
     {label}: <MultisigCompactDisplay address={address} />
   </li>
@@ -222,7 +224,10 @@ const preparedCall = ({
 
     return lowerLevelCalls.map((call, index) => {
       return (
-        <BatchCallStyled key={`${call.type}-${index}`}>
+        <BatchCallStyled
+          key={`${call.type}-${index}`}
+          data-cy={`batch-call-item`}
+        >
           {preparedCall({
             decodedCall: call as CreateTreeParams['decodedCall'],
             chainInfo,

@@ -1,6 +1,9 @@
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
-import { kusamaAHMemberAccount, expectedKusamaAHMultisigAddress } from '../fixtures/kusamaAssetHub'
+import {
+  polkadotAHMemberAccount,
+  expectedPolkadotAHMultisigAddress
+} from '../fixtures/polkadotAssetHub'
 import { landingPageNetwork, landingPageNetworkAddress } from '../fixtures/landingData'
 import {
   expectedPolkadotMultisigAddressClow,
@@ -12,7 +15,7 @@ describe('Shows the right assets depending on the network', () => {
     cy.setupAndVisit({
       url: landingPageNetwork('asset-hub-polkadot'),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [kusamaAHMemberAccount.Nikos]
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos]
     })
 
     multisigPage
@@ -22,7 +25,7 @@ describe('Shows the right assets depending on the network', () => {
         accountDisplay
           .addressLabel()
           .should('be.visible')
-          .and('contain.text', expectedKusamaAHMultisigAddress.slice(0, 6))
+          .and('contain.text', expectedPolkadotAHMultisigAddress.slice(0, 6))
         multisigPage.assetHubBalance('1337').should('be.visible')
         multisigPage.assetHubBalance('1337').should('contain.text', '1 USDC')
         multisigPage.assetHubBalance('1984').should('be.visible')
