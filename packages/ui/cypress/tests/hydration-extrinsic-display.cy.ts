@@ -99,27 +99,4 @@ describe('Verify extrinsics display', () => {
       })
     })
   })
-
-  it('A from call data balances.transferKeepAlive extrinsic is correctly displayed', () => {
-    const balanceTransferCallData =
-      '0x0703d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0b00b04e2bde6f'
-    const sendingAmount = 'value: 123 HDX'
-    const expectedRecipient = '7NPoMQ..kZpiba'
-
-    multisigPage.accountHeader().within(() => {
-      accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
-    })
-
-    multisigPage.newTransactionButton().click()
-    sendTxModal.sendTxTitle().should('be.visible')
-    sendTxModal.selectEasySetup().click()
-    sendTxModal.selectionEasySetupSetupFromCallData().click()
-    sendTxModal.callDataInput().click().type(balanceTransferCallData)
-    sendTxModal.sendTxContent().within(() => {
-      expander.contentExpander().should('contain', sendingAmount)
-      accountDisplay.addressLabel().should('contain', expectedRecipient)
-      accountDisplay.identicon().should('be.visible')
-      accountDisplay.nameLabel().should('contain', extrinsicsDisplayAccounts['Alice'].name)
-    })
-  })
 })

@@ -8,6 +8,8 @@ export const multisigPage = {
   subscanMenuOption: () => cy.get('[data-cy=menu-option-subscan]'),
   reviewButton: () => cy.get('[data-cy=button-review-tx]'),
   setIdentityMenuOption: () => cy.get('[data-cy=menu-option-set-identity]'),
+  assetHubBalance: (id: string) => cy.get(`[data-cy=asset-balance-${id}]`),
+  nativeBalance: () => cy.get('[data-cy=asset-balance-native]'),
 
   // multisig details elements
   multisigDetailsContainer: () => cy.get('[data-cy=container-multisig-details]'),

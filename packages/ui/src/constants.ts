@@ -40,7 +40,8 @@ export interface NetworkInfo {
   explorerNetworkName?: string
   rpcUrls: string[]
   httpGraphqlUrl: string
-  logo: string
+  networkLogo: string
+  nativeAssetLogo?: string
   pplChainRpcUrls?: string[]
   descriptor: keyof typeof DESCRIPTORS
   pplChainDescriptor?: PplDescriptorKeys
@@ -92,7 +93,7 @@ export const networkList: Record<string, NetworkInfo> = {
       // 'wss://polkadot.rpc.subquery.network/public/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsPolkadotCircleSVG,
+    networkLogo: chainsPolkadotCircleSVG,
     descriptor: 'dot',
     pplChainDescriptor: 'dotPpl'
   },
@@ -113,7 +114,7 @@ export const networkList: Record<string, NetworkInfo> = {
       // 'wss://kusama.rpc.subquery.network/public/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsKusamaSVG,
+    networkLogo: chainsKusamaSVG,
     descriptor: 'ksm',
     pplChainDescriptor: 'ksmPpl'
   },
@@ -133,7 +134,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesAssetHubSVG,
+    nativeAssetLogo: chainsPolkadotCircleSVG,
+    networkLogo: nodesAssetHubSVG,
     descriptor: 'dotAssetHub',
     pplChainDescriptor: 'dotPpl'
   },
@@ -152,7 +154,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: kusamaPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesAssetHubSVG,
+    nativeAssetLogo: chainsKusamaSVG,
+    networkLogo: nodesAssetHubSVG,
     descriptor: 'ksmAssetHub',
     pplChainDescriptor: 'ksmPpl'
   },
@@ -166,7 +169,7 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     pplChainRpcUrls: polkadotPplChains,
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesCoretimeSVG,
+    networkLogo: nodesCoretimeSVG,
     descriptor: 'coretimeDot',
     pplChainDescriptor: 'dotPpl'
   },
@@ -195,7 +198,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://acala-polkadot.api.onfinality.io/public-ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: chainsAcalaSVG,
+    networkLogo: chainsAcalaSVG,
     descriptor: 'acala'
   },
   // astar: {
@@ -223,7 +226,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://bifrost.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesBifrostSVG,
+    networkLogo: nodesBifrostSVG,
     descriptor: 'bifrostDot'
   },
   hydration: {
@@ -237,7 +240,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://hydration.dotters.network'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: hydrationSVG,
+    networkLogo: hydrationSVG,
     descriptor: 'hydration'
   },
   // interlay: {
@@ -258,7 +261,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://khala.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesKhalaSVG,
+    networkLogo: nodesKhalaSVG,
     descriptor: 'khala'
   },
   // moonbeam: {
@@ -286,7 +289,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://phala.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: phalaSVG,
+    networkLogo: phalaSVG,
     descriptor: 'phala'
   },
   // 'rhala testnet': {
@@ -317,8 +320,24 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://westend.public.curie.radiumblock.co/ws'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: nodesWestendColourSVG,
+    networkLogo: nodesWestendColourSVG,
     descriptor: 'westend',
+    pplChainDescriptor: 'wesPpl'
+  },
+  'asset-hub-westend': {
+    chainId: 'asset-hub-westend',
+    explorerNetworkName: 'assethub-westend',
+    rpcUrls: [
+      'wss://asset-hub-westend-rpc.dwellir.com',
+      'wss://sys.ibp.network/asset-hub-westend',
+      'wss://asset-hub-westend.dotters.network',
+      'wss://westend-asset-hub-rpc.polkadot.io'
+    ],
+    pplChainRpcUrls: westendPplChains,
+    httpGraphqlUrl: HTTP_GRAPHQL_URL,
+    nativeAssetLogo: nodesWestendColourSVG,
+    networkLogo: nodesAssetHubSVG,
+    descriptor: 'wesAssetHub',
     pplChainDescriptor: 'wesPpl'
   },
   paseo: {
@@ -333,7 +352,7 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     pplChainRpcUrls: ['wss://people-paseo.rpc.amforc.com', 'wss://people-paseo.dotters.network'],
-    logo: paseoSVG,
+    networkLogo: paseoSVG,
     descriptor: 'paseo',
     pplChainDescriptor: 'pasPpl'
   },
@@ -381,7 +400,7 @@ export const networkList: Record<string, NetworkInfo> = {
       'wss://polimec.ibp.network'
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    logo: polimecSVG,
+    networkLogo: polimecSVG,
     descriptor: 'polimec'
   },
   local: {
@@ -389,7 +408,7 @@ export const networkList: Record<string, NetworkInfo> = {
     explorerNetworkName: import.meta.env.VITE_NETWORK_NAME as 'kusama',
     rpcUrls: [import.meta.env.VITE_WS_PROVIDER],
     httpGraphqlUrl: import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER,
-    logo: localSVG,
+    networkLogo: localSVG,
     descriptor: 'dot',
     pplChainDescriptor: 'dotPpl'
   }
@@ -427,6 +446,7 @@ export const testChains: Partial<keyof typeof networkList>[] = [
   'paseo',
   // 'rhala testnet',
   'westend',
+  'asset-hub-westend',
   'local'
 ]
 

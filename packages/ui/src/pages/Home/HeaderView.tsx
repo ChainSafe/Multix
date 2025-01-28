@@ -1,5 +1,5 @@
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
-import { AccountBadge } from '../../types'
+import { AccountBadge, assetHubKeys } from '../../types'
 import MultisigActionMenu from './MultisigActionMenu'
 import { styled } from '@mui/material/styles'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
@@ -7,19 +7,16 @@ import { Balance, ButtonWithIcon } from '../../components/library'
 import { HiOutlineArrowLongRight } from 'react-icons/hi2'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { useMemo } from 'react'
-import { useNetwork } from '../../contexts/NetworkContext'
 import AssetBalance from '../../components/library/AssetBalance'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
+import { isContextIn, useApi } from '../../contexts/ApiContext'
 
 const HeaderView = () => {
-  const { selectedNetwork } = useNetwork()
+  const ctx = useApi()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { selectedMultiProxy, selectedHasProxy, selectedIsWatched } = useMultiProxy()
-  const isAssetHub = useMemo(
-    () => selectedNetwork === 'asset-hub-polkadot' || selectedNetwork === 'asset-hub-kusama',
-    [selectedNetwork]
-  )
+  const isAssetHub = useMemo(() => isContextIn(ctx, assetHubKeys), [ctx])
 
   const selectedAddress = useMemo(() => {
     return selectedHasProxy ? selectedMultiProxy?.proxy : selectedMultiProxy?.multisigs[0].address
@@ -55,10 +52,7 @@ const HeaderView = () => {
             <BalanceStyled>
               <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
               <BalanceAmountStyled data-cy="label-account-balance">
-                <Balance
-                  address={selectedAddress}
-                  withIcon={isAssetHub}
-                />
+                <Balance address={selectedAddress} />
                 {isAssetHub &&
                   AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => (
                     <AssetBalance

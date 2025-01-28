@@ -5,7 +5,6 @@ import { AccountBadge, IconSizeVariant } from '../../types'
 import { getDisplayAddress } from '../../utils/getDisplayAddress'
 import IdenticonBadge from '../IdenticonBadge'
 import IdentityIcon from '../IdentityIcon'
-import Balance from '../library/Balance'
 import { useGetEncodedAddress } from '../../hooks/useGetEncodedAddress'
 import { IconButton } from '@mui/material'
 import {
@@ -26,7 +25,6 @@ interface Props {
   className?: string
   badge?: AccountBadge
   withName?: boolean
-  withBalance?: boolean
   iconSize?: IconSizeVariant
   canEdit?: boolean
   canCopy?: boolean
@@ -37,7 +35,6 @@ const AccountDisplay = ({
   address,
   badge,
   withName = true,
-  withBalance = false,
   iconSize = 'medium',
   canEdit = false,
   canCopy = false
@@ -152,11 +149,6 @@ const AccountDisplay = ({
             </CopyIconWrapperStyled>
           )}
         </AddressStyled>
-        {withBalance && (
-          <Box>
-            <Balance address={address} />
-          </Box>
-        )}
       </BoxStyled>
     </div>
   )

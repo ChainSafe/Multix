@@ -42,7 +42,7 @@ const NetworkSelection = () => {
         allowedNetworks.includes(networkName)
       )
 
-      return displayedNetworks.map(([networkName, { logo }]) => (
+      return displayedNetworks.map(([networkName, { networkLogo }]) => (
         <MenuItemStyled
           key={networkName}
           value={networkName}
@@ -51,7 +51,7 @@ const NetworkSelection = () => {
         >
           <ImgStyled
             alt={`network-logo-${networkName}`}
-            src={logo}
+            src={networkLogo}
           />
           <ItemNameStyled>{networkName}</ItemNameStyled>
         </MenuItemStyled>

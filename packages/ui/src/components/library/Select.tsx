@@ -22,9 +22,12 @@ interface SelectProps {
   children?: React.ReactNode[] | React.ReactNode
   sx?: SxProps<Theme>
   testId?: string
+  className?: string
+  upperCase?: boolean
 }
 
 const Select = ({
+  className = '',
   value,
   onChange,
   menuItems,
@@ -33,13 +36,15 @@ const Select = ({
   inputSize = 'medium',
   children,
   sx,
-  testId
+  testId,
+  upperCase = false
 }: SelectProps) => {
   const matchesMediumScreen = !useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   const minifiedVersion = minified ?? matchesMediumScreen
 
   return (
     <SelectMuiStyled
+      className={className}
       sx={sx}
       slotProps={{ minifiedVersion, inputSize }}
       value={value}
@@ -52,6 +57,7 @@ const Select = ({
       {menuItems
         ? menuItems.map(({ value, logo }) => (
             <MenuItemStyled
+              className={upperCase ? 'upperCase' : ''}
               key={value}
               value={value}
               data-cy={`select-option-${testId}-${value.toLocaleLowerCase().replace(/ /g, '-')}`}
@@ -145,6 +151,10 @@ const MenuItemStyled = styled(MenuItem)`
   padding: 0.75rem;
   max-width: 9.1875rem;
   box-sizing: content-box;
+
+  &.upperCase {
+    text-transform: uppercase;
+  }
 `
 
 const ImgStyled = styled('img')<

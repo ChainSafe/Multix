@@ -7,4 +7,12 @@ export const getSettingsPageUrl = (network = defaultNetwork) =>
   `${baseUrl}/settings?network=${network}`
 export const getSettingsPageWatchAccountUrl = (network = defaultNetwork) =>
   `${getSettingsPageUrl(network)}#${WATCH_ACCOUNT_ANCHOR}`
-export const landingPageAddressUrl = (address: string) => `${landingPageUrl}&address=${address}`
+export const landingPageNetworkAddress = ({
+  network,
+  address
+}: {
+  network: string
+  address: string
+}) => `${landingPageNetwork(network)}&address=${address}`
+export const landingPageAddressUrl = (address: string) =>
+  landingPageNetworkAddress({ network: defaultNetwork, address })

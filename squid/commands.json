@@ -96,6 +96,16 @@
         "dotenv_config_path=assets/envs/.env.asset-hub-kusama"
       ]
     },
+    "start-asset-hub-westend": {
+      "description": "starts the indexer with asset-hub-westend",
+      "cmd": [
+        "node",
+        "-r",
+        "dotenv/config",
+        "lib/main",
+        "dotenv_config_path=assets/envs/.env.asset-hub-westend"
+      ]
+    },
     "start-hydration": {
       "description": "starts the indexer with hydration",
       "cmd": [
