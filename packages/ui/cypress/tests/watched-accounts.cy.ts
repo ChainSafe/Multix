@@ -32,6 +32,7 @@ describe('Watched Accounts', () => {
     cy.visit(landingPageUrl)
     landingPage.watchAccountButton().click()
     addWatchAccount(testAccountAddress, testAccountName)
+    settingsPage.accountContainer().should('be.visible')
     settingsPage.accountContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.addressLabel().should('be.visible')
@@ -44,6 +45,8 @@ describe('Watched Accounts', () => {
     // add an account first
     cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount(testAccountAddress)
+    settingsPage.accountContainer().should('be.visible')
+
     // now remove it
     settingsPage.accountContainer().within(() => {
       settingsPage.accountDeleteButton().click()
