@@ -23,7 +23,6 @@ interface Props {
 
 interface Option extends Omit<Asset, 'name'> {
   id: number
-  logo: string
 }
 
 const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
@@ -46,7 +45,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
   const assetList = useMemo(() => {
     if (!chainInfo || !selectedNetworkInfo) return [] as Option[]
 
-    const assetHubList = AH_SUPPORTED_ASSETS.map(({ assetId, logo }) => {
+    const assetHubList = AH_SUPPORTED_ASSETS.map(({ assetId }) => {
       if (!isAssetHub) return
 
       const asset = getAssetMetadata(assetId)
@@ -55,14 +54,11 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
       return {
         id: assetId,
-        logo,
-        symbol: asset.symbol,
-        decimals: asset.decimals
+        ...asset
       }
     }).filter(Boolean) as Option[]
 
     const nativeAssetEntry = {
-      id: 0,
       logo: selectedNetworkInfo.nativeAssetLogo || selectedNetworkInfo.networkLogo,
       symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
@@ -106,7 +102,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
       !!extrinsic && onSetExtrinsic(extrinsic)
 
-      // we're on AH and sending the native asset use Balances.transfer
+      // we're sending the native asset (on any network including AH) use Balances.transfer
     } else {
       const extrinsic = isContextOf(ctx, 'hydration')
         ? ctx.api.tx.Balances.transfer_keep_alive({
@@ -191,7 +187,6 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
         onChange={onAssetSelection}
         menuItems={assetList.map(({ logo, symbol }) => ({ value: symbol, logo }))}
         testId="ah-assets"
-        upperCase
       />
     )
   }, [assetList, onAssetSelection, selectedAsset])
@@ -230,14 +225,10 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 }
 
 const SelectStyled = styled(Select)`
-  text-transform: uppercase;
   outline: none !important;
   .MuiSelect-select {
     margin-right: -1rem;
     padding-right: 3rem !important;
-  }
-  li.MuiMenuItem-root {
-    text-transform: uppercase;
   }
 `
 

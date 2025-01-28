@@ -28,5 +28,6 @@ export const multisigPage = {
   dateLabel: () => cy.get('[data-cy=label-date]'),
   pendingTransactionCallName: () => cy.get('[data-cy=label-call-name]'),
   unknownCallIcon: () => cy.get('[data-cy=icon-unknown-call]'),
-  unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]')
+  unknownCallAlert: () => cy.get('[data-cy=alert-no-call-data]'),
+  batchItem: () => cy.get('[data-cy=batch-call-item]')
 }

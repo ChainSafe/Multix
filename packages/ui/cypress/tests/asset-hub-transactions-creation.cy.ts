@@ -1,11 +1,11 @@
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
-import { kusamaAHMemberAccount } from '../fixtures/kusamaAssetHub'
+import { polkadotAHMemberAccount } from '../fixtures/polkadotAssetHub'
 import { landingPageNetwork } from '../fixtures/landingData'
 import { SignerPayloadJSON } from '@polkadot-api/tx-utils'
 
-const testAccount1Address = kusamaAHMemberAccount.Nikos.address
+const testAccount1Address = polkadotAHMemberAccount.Nikos.address
 
 const fillAndSubmitTransactionForm = (assetSymbol = '') => {
   sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
@@ -23,7 +23,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     cy.setupAndVisit({
       url: landingPageNetwork('asset-hub-polkadot'),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [kusamaAHMemberAccount.Nikos]
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos]
     })
   })
 

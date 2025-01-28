@@ -28,7 +28,6 @@ const BalanceStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[700]};
   font-size: 1rem;
   margin-top: 0.5rem;
-  text-transform: uppercase;
   justify-content: flex-end;
 `
 

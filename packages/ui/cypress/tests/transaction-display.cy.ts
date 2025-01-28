@@ -1,8 +1,11 @@
 import { testAccounts } from '../fixtures/testAccounts'
-import { landingPageUrl } from '../fixtures/landingData'
+import { landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
+import { polkadotAHMemberAccount } from '../fixtures/polkadotAssetHub'
+import { expander } from '../support/page-objects/components/expander'
+import { accountDisplay } from '../support/page-objects/components/accountDisplay'
 
 describe('Unknown Transaction', () => {
   beforeEach(() => {
@@ -108,6 +111,70 @@ describe('Unknown Transaction', () => {
         txSigningModal.callInfoContainer().should('not.contain.text', 'Params')
         multisigPage.unknownCallIcon().should('not.exist')
         multisigPage.unknownCallAlert().should('not.exist')
+      })
+  })
+})
+
+describe('Asset hub transactions', () => {
+  it('can display a simple asset hub transactions with the right decimal and symbol', () => {
+    cy.setupAndVisit({
+      url: landingPageNetwork('asset-hub-polkadot'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos]
+    })
+
+    multisigPage
+      .pendingTransactionItem(8000)
+      .eq(1)
+      .within(() => {
+        multisigPage
+          .pendingTransactionCallName()
+          .should('contain.text', 'Assets.transfer_keep_alive')
+
+        expander.paramExpander().click()
+        accountDisplay.identicon().should('be.visible')
+        expander.contentExpander().should('contain', 'id: 1337 (USD Coin)')
+        expander.contentExpander().should('contain', 'amount: 0.01 USDC')
+        expander.contentExpander().should('contain', '1ThiBx..hDvvjg')
+      })
+
+    multisigPage
+      .pendingTransactionItem(8000)
+      .eq(0)
+      .within(() => {
+        multisigPage.pendingTransactionCallName().should('contain.text', 'Utility.batch_all')
+
+        expander.paramExpander().click()
+        multisigPage.batchItem().should('have.length', 3)
+        multisigPage
+          .batchItem()
+          .eq(0)
+          .within((el) => {
+            accountDisplay.identicon().should('be.visible')
+            cy.wrap(el).should('contain', 'id: 1337 (USD Coin)')
+            cy.wrap(el).should('contain', 'amount: 2 USDC')
+            cy.wrap(el).should('contain', 'Nikos')
+          })
+
+        multisigPage
+          .batchItem()
+          .eq(1)
+          .within((el) => {
+            accountDisplay.identicon().should('be.visible')
+            cy.wrap(el).should('contain', 'id: 1984 (Tether USD)')
+            cy.wrap(el).should('contain', 'amount: 0.001 USDT')
+            cy.wrap(el).should('contain', 'Thibaut')
+          })
+
+        multisigPage
+          .batchItem()
+          .eq(2)
+          .within((el) => {
+            accountDisplay.identicon().should('be.visible')
+            cy.wrap(el).should('contain', 'id: 420')
+            cy.wrap(el).should('contain', `amount: '1'`)
+            cy.wrap(el).should('contain', 'Thibaut')
+          })
       })
   })
 })
