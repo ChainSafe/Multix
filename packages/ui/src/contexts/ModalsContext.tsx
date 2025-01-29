@@ -8,6 +8,7 @@ import WCSessionProposal from '../components/modals/WalletConnectSessionProposal
 import ProposalSigningModal, { SigningModalProps } from '../components/modals/ProposalSigning'
 import WalletConnectSigning from '../components/modals/WalletConnectSigning'
 import { useMultiProxy } from './MultiProxyContext'
+import HiddenAccountInfo from '../components/modals/HiddenAccountInfo'
 
 interface ModalsContextProps {
   setIsEditModalOpen: (isOpen: boolean) => void
@@ -17,6 +18,7 @@ interface ModalsContextProps {
   openWalletConnectSessionModal: ({ sessionProposal }: OpenWCModalParams) => void
   onOpenSigningModal: (info: SigningInfo) => void
   onOpenWalletConnectSigning: (request: SignClientTypes.EventArguments['session_request']) => void
+  onOpenHiddenAccountInfoModal: () => void
 }
 
 interface OpenWCModalParams {
@@ -38,6 +40,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
   const [sendModalPreselection, setSendModalPreselection] = useState<EasyTransferTitle>(
     DEFAULT_EASY_SETUP_SELECTION
   )
+  const [isHiddenAccountInfoModalOpen, setIsHiddenAccountInfoModalOpen] = useState(false)
   const [walletConnectRequest, setWalletConnectRequest] = useState<
     SignClientTypes.EventArguments['session_request'] | undefined
   >()
@@ -107,6 +110,10 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
     setIsOpenWalletConnectSigning(false)
   }, [])
 
+  const onOpenHiddenAccountInfoModal = useCallback(() => {
+    setIsHiddenAccountInfoModalOpen(true)
+  }, [])
+
   return (
     <ModalsContext.Provider
       value={{
@@ -116,7 +123,8 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
         onCloseSendModal,
         openWalletConnectSessionModal,
         onOpenSigningModal,
-        onOpenWalletConnectSigning
+        onOpenWalletConnectSigning,
+        onOpenHiddenAccountInfoModal
       }}
     >
       {children}
@@ -149,6 +157,9 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
           onClose={onCloseWalletConnectSigning}
           request={walletConnectRequest}
         />
+      )}
+      {isHiddenAccountInfoModalOpen && (
+        <HiddenAccountInfo onClose={() => setIsHiddenAccountInfoModalOpen(false)} />
       )}
     </ModalsContext.Provider>
   )

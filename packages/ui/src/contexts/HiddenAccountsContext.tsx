@@ -13,6 +13,7 @@ import { useNetwork } from './NetworkContext'
 import { HexString } from 'polkadot-api'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 import { useSearchParams } from 'react-router'
+import { useWatchedAddresses } from './WatchedAddressesContext'
 
 const LOCALSTORAGE_HIDDEN_ACCOUNTS_KEY = 'multix.hiddenAccounts'
 
@@ -42,6 +43,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
   const { selectedNetwork } = useNetwork()
   const getEncodedAddress = useGetEncodedAddress()
   const [searchParams, setSearchParams] = useSearchParams({ address: '' })
+  const { watchedAddresses, removeWatchedAccount } = useWatchedAddresses()
   const networkHiddenAccounts = useMemo(() => {
     if (!selectedNetwork) return []
 
@@ -67,14 +69,21 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
           return prev
         })
       }
-      selectedNetwork &&
-        pubKey &&
-        setHiddenAccounts((prev) => [
-          ...prev,
-          { pubKey, network: selectedNetwork } as HiddenAccount
-        ])
+
+      // if we are hiding a watched account
+      // just remove it from the watch list
+      if (watchedAddresses.includes(address)) {
+        removeWatchedAccount(address)
+      } else {
+        selectedNetwork &&
+          pubKey &&
+          setHiddenAccounts((prev) => [
+            ...prev,
+            { pubKey, network: selectedNetwork } as HiddenAccount
+          ])
+      }
     },
-    [searchParams, selectedNetwork, setSearchParams]
+    [removeWatchedAccount, searchParams, selectedNetwork, setSearchParams, watchedAddresses]
   )
 
   const removeHiddenAccount = useCallback(
