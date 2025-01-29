@@ -12,6 +12,7 @@ import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 import { useNetwork } from './NetworkContext'
 import { HexString } from 'polkadot-api'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
+import { useSearchParams } from 'react-router'
 
 const LOCALSTORAGE_HIDDEN_ACCOUNTS_KEY = 'multix.hiddenAccounts'
 
@@ -40,6 +41,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
   const { chainInfo } = useApi()
   const { selectedNetwork } = useNetwork()
   const getEncodedAddress = useGetEncodedAddress()
+  const [searchParams, setSearchParams] = useSearchParams({ address: '' })
   const networkHiddenAccounts = useMemo(() => {
     if (!selectedNetwork) return []
 
@@ -55,6 +57,16 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
   const addHiddenAccount = useCallback(
     (address: string) => {
       const pubKey = getPubKeyFromAddress(address)
+      const searchParamsAddress = searchParams.get('address')
+      const urlAddressPubKey = searchParamsAddress && getPubKeyFromAddress(searchParamsAddress)
+
+      // if the currently selected account is being hidden
+      if (urlAddressPubKey === pubKey) {
+        setSearchParams((prev) => {
+          prev.delete('address')
+          return prev
+        })
+      }
       selectedNetwork &&
         pubKey &&
         setHiddenAccounts((prev) => [
@@ -62,7 +74,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
           { pubKey, network: selectedNetwork } as HiddenAccount
         ])
     },
-    [selectedNetwork]
+    [searchParams, selectedNetwork, setSearchParams]
   )
 
   const removeHiddenAccount = useCallback(

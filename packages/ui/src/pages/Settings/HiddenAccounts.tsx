@@ -55,7 +55,7 @@ const HiddenAccounts = () => {
           </Grid>
         )}
         <Grid size={{ xs: 12, md: 8 }}>
-          <AccountSelectionWrapperStyled>
+          <AccountSelectionWrapperStyled data-cy="wrapper-hidden-accounts-inputs">
             <AccountSelection
               className="accountDropdown"
               currentSelection={networkHiddenAccounts}
