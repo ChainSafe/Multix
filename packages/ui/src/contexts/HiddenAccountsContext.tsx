@@ -22,7 +22,9 @@ type HiddenAccountsProps = {
 }
 
 export interface IHiddenAccountsContext {
-  addHiddenAccount: (address: string) => void
+  addHiddenAccount: (address: string) => {
+    removedWatchedAccount: boolean
+  }
   removeHiddenAccount: (address: string) => void
   hiddenAccounts: HiddenAccount[]
   networkHiddenAccounts: string[]
@@ -44,6 +46,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
   const getEncodedAddress = useGetEncodedAddress()
   const [searchParams, setSearchParams] = useSearchParams({ address: '' })
   const { watchedAddresses, removeWatchedAccount } = useWatchedAddresses()
+
   const networkHiddenAccounts = useMemo(() => {
     if (!selectedNetwork) return []
 
@@ -74,6 +77,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
       // just remove it from the watch list
       if (watchedAddresses.includes(address)) {
         removeWatchedAccount(address)
+        return { removedWatchedAccount: true }
       } else {
         selectedNetwork &&
           pubKey &&
@@ -81,6 +85,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
             ...prev,
             { pubKey, network: selectedNetwork } as HiddenAccount
           ])
+        return { removedWatchedAccount: false }
       }
     },
     [removeWatchedAccount, searchParams, selectedNetwork, setSearchParams, watchedAddresses]

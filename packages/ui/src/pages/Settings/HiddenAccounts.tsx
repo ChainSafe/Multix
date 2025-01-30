@@ -1,23 +1,48 @@
 import { styled } from '@mui/material/styles'
-import { Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
+import { Alert, Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHiddenAccounts } from '../../contexts/HiddenAccountsContext'
 import { useNetwork } from '../../contexts/NetworkContext'
 
 const HiddenAccounts = () => {
   const { addHiddenAccount, networkHiddenAccounts, removeHiddenAccount } = useHiddenAccounts()
   const { selectedNetwork } = useNetwork()
+  const [showWatchedAccountRemovedWarning, setShowWatchedAccountRemovedWarning] = useState(false)
+
+  useEffect(() => {
+    if (showWatchedAccountRemovedWarning) {
+      setTimeout(() => {
+        setShowWatchedAccountRemovedWarning(false)
+      }, 10000)
+    }
+  }, [showWatchedAccountRemovedWarning])
 
   const hasHiddenAddresses = useMemo(
     () => networkHiddenAccounts.length > 0,
     [networkHiddenAccounts]
   )
 
+  const onHide = useCallback(
+    (address: string) => {
+      const shouldWhoWarning = addHiddenAccount(address)
+      shouldWhoWarning.removedWatchedAccount && setShowWatchedAccountRemovedWarning(true)
+    },
+    [addHiddenAccount]
+  )
+
   return (
     <>
+      {showWatchedAccountRemovedWarning && (
+        <AlertStryled
+          data-cy="alert-removed-watched-account"
+          severity="info"
+        >
+          This account was a &quot;Watched accounts&quot;. It has been removed from the watched list
+        </AlertStryled>
+      )}
       {hasHiddenAddresses && (
         <HiddenAccountsHeaderStyled>
           Hidden accounts for {selectedNetwork}:
@@ -59,7 +84,7 @@ const HiddenAccounts = () => {
             <AccountSelection
               className="accountDropdown"
               currentSelection={networkHiddenAccounts}
-              addAccount={addHiddenAccount}
+              addAccount={onHide}
               actionButtonLabel="Hide"
               actionButtonVariant="primary"
               withAddButton
@@ -128,6 +153,9 @@ const AccountSelectionWrapperStyled = styled(Box)`
       margin-top: 0.5rem;
     }
   }
+`
+const AlertStryled = styled(Alert)`
+  margin-bottom: 1rem;
 `
 
 export default HiddenAccounts

@@ -18,5 +18,6 @@ export const settingsPage = {
   walletConnectAlert: () => cy.get('[data-cy=alert-wallet-connect-warning]'),
   connectDappButton: () => cy.get('[data-cy=button-connect-dapp]'),
   walletConnectKeyInput: () => cy.get('[data-cy=input-wallet-connect-key]'),
-  tooltipInfoIcon: () => cy.get('[data-cy=tooltip-wallet-connect-info]')
+  tooltipInfoIcon: () => cy.get('[data-cy=tooltip-wallet-connect-info]'),
+  hiddenAccountWatchedWarning: () => cy.get('[data-cy=alert-removed-watched-account]')
 }

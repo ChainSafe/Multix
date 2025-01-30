@@ -232,7 +232,7 @@ describe('Hidden Accounts', () => {
     topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
   })
 
-  it.only('removes a watched account if hidding a watched account', () => {
+  it('removes a watched account if hidding a watched account', () => {
     cy.setupAndVisit({
       url: landingPageNetworkAddress({
         network: 'westend',
@@ -255,6 +255,41 @@ describe('Hidden Accounts', () => {
     topMenuItems.multiproxySelectorDesktop().click()
     topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
     goToHiddenAccountSettings()
+    settingsPage.hiddenAccountsContainer().should('not.exist')
+    settingsPage.watchedAccountsAccordion().click()
+    settingsPage.watchedAccountsContainer().should('not.exist')
+  })
+
+  it('shows a warning if hidding a watched account', () => {
+    cy.setupAndVisit({
+      url: landingPageNetworkAddress({
+        network: 'westend',
+        address: westendWatchedAccount.address
+      }),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [westendMemberAccount.hidden.account],
+      watchedAccounts: [westendWatchedAccount.pubKey]
+    })
+
+    // topMenuItems.multiproxySelectorDesktop().click()
+    // topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
+
+    // // hide the watched account
+    // multisigPage.optionsMenuButton().click()
+    // multisigPage.hideAccountMenuOption().should('exist').click()
+    // hiddenAccountInfoModal.body().should('be.visible')
+    // hiddenAccountInfoModal.gotItButton().click()
+
+    // topMenuItems.multiproxySelectorDesktop().click()
+    // topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    goToHiddenAccountSettings()
+    settingsPage.hiddenAccountsContainer().should('not.exist')
+    settingsPage.watchedAccountsAccordion().click()
+    settingsPage.watchedAccountsContainer().should('have.length', 1)
+
+    settingsPage.hiddenAccountsAccordion().click()
+    addHiddenAccount(westendWatchedAccount.address)
+    settingsPage.hiddenAccountWatchedWarning().should('be.visible')
     settingsPage.hiddenAccountsContainer().should('not.exist')
     settingsPage.watchedAccountsAccordion().click()
     settingsPage.watchedAccountsContainer().should('not.exist')
