@@ -26,7 +26,7 @@ describe('Network can be switched', () => {
     cy.url().should('contain', 'network=paseo')
     cy.url().should('contain', `address=${multisigPureAddress}`)
 
-    settingsPage.accountContainer().within(() => {
+    settingsPage.watchedAccountsContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.nameLabel().should('contain', multisigName)
       accountDisplay.addressLabel().contains(multisigAddress.slice(0, 5))
@@ -45,7 +45,7 @@ describe('Network can be switched', () => {
       .desktopMenu()
       .within(() => topMenuItems.multiproxySelectorDesktop().should('not.exist'))
 
-    settingsPage.accountContainer().within(() => {
+    settingsPage.watchedAccountsContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.nameLabel().should('contain', multisigName)
       accountDisplay.addressLabel().contains(kusamaAddress.slice(0, 5))

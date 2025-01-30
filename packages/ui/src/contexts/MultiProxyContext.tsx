@@ -8,6 +8,7 @@ import { useAccountId } from '../hooks/useAccountId'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
 import { useSearchParams } from 'react-router'
 import { useNetwork } from './NetworkContext'
+import { useHiddenAccounts } from './HiddenAccountsContext'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
@@ -57,19 +58,22 @@ const getSignatoriesFromAccount = (
 }
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
+  const { networkHiddenAccounts } = useHiddenAccounts()
   const [refetchMultisigTimeoutMinutes, setRefetchMultisigTimeoutMinutes] = useState(0)
   const [shouldPollMultisigs, setShouldPollMultisigs] = useState(false)
   const [canFindMultiProxyFromUrl, setCanFindMultiProxyFromUrl] = useState(false)
   const [selectedMultiProxyAddress, setSelectedMultiProxyAddress] = useState('')
   // if set to null, it means that it hasn't been initialized yet
-  const [pureProxyList, setPureProxyList] = useState<IMultisigContext['multiProxyList'] | null>(
-    null
-  )
-  // if set to null, it means that it hasn't been initialized yet
   const [multisigList, setMultisigList] = useState<IMultisigContext['multiProxyList'] | null>(null)
   const multiProxyList = useMemo(() => {
-    return [...(pureProxyList || []), ...(multisigList || [])]
-  }, [multisigList, pureProxyList])
+    const filteredMulti = multisigList?.filter(({ proxy, multisigs }) => {
+      if (proxy) return !networkHiddenAccounts.includes(proxy)
+
+      const firstMultisig = multisigs[0].address
+      return !!firstMultisig && !networkHiddenAccounts.includes(firstMultisig)
+    })
+    return filteredMulti || []
+  }, [multisigList, networkHiddenAccounts])
   const { ownAddressList } = useAccounts()
   const { watchedAddresses } = useWatchedAddresses()
   const { selectedNetwork } = useNetwork()
@@ -127,7 +131,6 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
 
   const resetLists = useCallback(() => {
     setMultisigList(null)
-    setPureProxyList(null)
   }, [])
 
   const setAddressInUrl = useCallback(

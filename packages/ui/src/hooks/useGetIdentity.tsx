@@ -43,19 +43,22 @@ export const useGetIdentity = () => {
         }
       ).then((val) => {
         const id: IdentityInfo = { judgements: [], sub }
-        val?.[0].judgements.forEach(([, judgement]) => {
-          id.judgements.push(judgement.type)
-        })
-        Object.entries(val?.[0]?.info || {}).forEach(([key, value]) => {
-          if ((value as IdentityData)?.type !== 'None') {
-            // console.log('key', JSONprint(key));
-            // console.log('value', JSONprint(value));
-            const text = (value as IdentityData)?.value as FixedSizeBinary<2> | undefined
-            if (text) {
-              id[key] = text.asText()
+
+        if (val?.[0]) {
+          val?.[0].judgements.forEach(([, judgement]) => {
+            id.judgements.push(judgement.type)
+          })
+          Object.entries(val?.[0]?.info || {}).forEach(([key, value]) => {
+            if ((value as IdentityData)?.type !== 'None') {
+              // console.log('key', JSONprint(key));
+              // console.log('value', JSONprint(value));
+              const text = (value as IdentityData)?.value as FixedSizeBinary<2> | undefined
+              if (text) {
+                id[key] = text.asText()
+              }
             }
-          }
-        })
+          })
+        }
 
         return id
       })

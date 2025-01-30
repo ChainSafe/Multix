@@ -3,17 +3,27 @@ import { css, styled } from '@mui/material/styles'
 import WatchedAccounts from './WatchedAccounts'
 import { WalletConnectSession } from '../../components/WalletConnect/WalletConnectSession'
 import { WalletConnectActiveSessions } from '../../components/WalletConnect/WalletConnectActiveSessions'
-import { HiOutlineChevronDown as ExpandMoreIcon, HiOutlineEye } from 'react-icons/hi2'
+import {
+  HiOutlineChevronDown as ExpandMoreIcon,
+  HiOutlineEye,
+  HiOutlineEyeSlash
+} from 'react-icons/hi2'
 import { theme } from '../../styles/theme'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import WalletConnectSVG from '../../logos/walletConnectSVG.svg?react'
+import HiddenAccounts from './HiddenAccounts'
 
 const ACCORDION_WATCHED_ACCOUNTS = 'panel-watched-accounts'
 const ACCORDION_WALLET_CONNECT = 'panel-wallet-connect'
+const ACCORDION_HIDDEN_ACCOUNTS = 'panel-hidden-accounts'
 export const WATCH_ACCOUNT_ANCHOR = 'watched-accounts'
+export const HIDDEN_ACCOUNTS_ANCHOR = 'hidden-accounts'
 
-type AccordionNames = typeof ACCORDION_WATCHED_ACCOUNTS | typeof ACCORDION_WALLET_CONNECT
+type AccordionNames =
+  | typeof ACCORDION_WATCHED_ACCOUNTS
+  | typeof ACCORDION_WALLET_CONNECT
+  | typeof ACCORDION_HIDDEN_ACCOUNTS
 
 const Settings = () => {
   const { hash } = useLocation()
@@ -28,6 +38,10 @@ const Settings = () => {
   useEffect(() => {
     if (hash === `#${WATCH_ACCOUNT_ANCHOR}`) {
       onToggle(ACCORDION_WATCHED_ACCOUNTS, true)
+    }
+
+    if (hash === `#${HIDDEN_ACCOUNTS_ANCHOR}`) {
+      onToggle(ACCORDION_HIDDEN_ACCOUNTS, true)
     }
   }, [hash, onToggle])
 
@@ -47,6 +61,21 @@ const Settings = () => {
         </AccordionSummaryStyled>
         <AccordionDetails>
           <WatchedAccounts />
+        </AccordionDetails>
+      </AccordionStyled>
+      <AccordionStyled
+        expanded={expanded === ACCORDION_HIDDEN_ACCOUNTS}
+        onChange={() => onToggle(ACCORDION_HIDDEN_ACCOUNTS)}
+      >
+        <AccordionSummaryStyled
+          expandIcon={<ExpandMoreIcon size={20} />}
+          data-cy="accordion-title-hidden-accounts"
+        >
+          <HiOutlineEyeSlashStyled color={theme.custom.proxyBadge.pure} />
+          <SummaryLabelStyled>Hidden accounts</SummaryLabelStyled>
+        </AccordionSummaryStyled>
+        <AccordionDetails>
+          <HiddenAccounts />
         </AccordionDetails>
       </AccordionStyled>
       <AccordionStyled
@@ -121,6 +150,8 @@ const commonCssImgs = css`
 const WalletConnectSVGStyled = styled(WalletConnectSVG)(commonCssImgs)
 
 const HiOutlineEyeStyled = styled(HiOutlineEye)(commonCssImgs)
+
+const HiOutlineEyeSlashStyled = styled(HiOutlineEyeSlash)(commonCssImgs)
 
 const SummaryLabelStyled = styled('div')`
   color: ${({ theme }) => theme.custom.gray[900]};

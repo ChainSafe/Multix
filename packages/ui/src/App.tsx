@@ -18,6 +18,7 @@ import { ReactiveDotProvider } from '@reactive-dot/react'
 import { config } from './walletConfigs'
 import { Suspense } from 'react'
 import { AssetsContextProvider } from './contexts/AssetsContext'
+import { HiddenAccountsContextProvider } from './contexts/HiddenAccountsContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -26,7 +27,7 @@ const App = () => {
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <ReactiveDotProvider config={config}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div> Loading...</div>}>
           <ToastContextProvider>
             <NetworkContextProvider>
               <QueryClientProvider client={queryClient}>
@@ -34,17 +35,19 @@ const App = () => {
                   <PplApiContextProvider>
                     <AssetsContextProvider>
                       <WatchedAddressesContextProvider>
-                        <AccountContextProvider>
-                          <AccountNamesContextProvider>
-                            <MultiProxyContextProvider>
-                              <WalletConnectContextProvider>
-                                <ModalsContextProvider>
-                                  <MainLayout />
-                                </ModalsContextProvider>
-                              </WalletConnectContextProvider>
-                            </MultiProxyContextProvider>
-                          </AccountNamesContextProvider>
-                        </AccountContextProvider>
+                        <HiddenAccountsContextProvider>
+                          <AccountContextProvider>
+                            <AccountNamesContextProvider>
+                              <MultiProxyContextProvider>
+                                <WalletConnectContextProvider>
+                                  <ModalsContextProvider>
+                                    <MainLayout />
+                                  </ModalsContextProvider>
+                                </WalletConnectContextProvider>
+                              </MultiProxyContextProvider>
+                            </AccountNamesContextProvider>
+                          </AccountContextProvider>
+                        </HiddenAccountsContextProvider>
                       </WatchedAddressesContextProvider>
                     </AssetsContextProvider>
                   </PplApiContextProvider>

@@ -1,17 +1,19 @@
 import { Button } from '../../components/library'
 import OptionsMenu, { MenuOption } from '../../components/OptionsMenu'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { MdOutlineLockReset as LockResetIcon } from 'react-icons/md'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import { useModals } from '../../contexts/ModalsContext'
 import {
   HiOutlineArrowTopRightOnSquare as LaunchIcon,
   HiOutlineUserPlus as IdentityIcon,
-  HiOutlinePencilSquare as PencilIcon
+  HiOutlinePencilSquare as PencilIcon,
+  HiOutlineEyeSlash as EyeSlashIcon
 } from 'react-icons/hi2'
 import { useGetSubscanLinks } from '../../hooks/useSubscanLink'
 import { EasyTransferTitle } from '../../components/modals/Send'
 import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
+import { useHiddenAccounts } from '../../contexts/HiddenAccountsContext'
 
 interface MultisigActionMenuProps {
   withNewTransactionButton?: boolean
@@ -22,10 +24,20 @@ const MultisigActionMenu = ({
   withNewTransactionButton = true,
   menuButtonBorder
 }: MultisigActionMenuProps) => {
-  const { selectedHasProxy, selectedIsWatched, selectedMultiProxy } = useMultiProxy()
+  const { selectedHasProxy, selectedIsWatched, selectedMultiProxy, selectedMultiProxyAddress } =
+    useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, onOpenSendModal } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
   const { hasIdentityPallet, hasPplChain } = useHasIdentityFeature()
+  const { addHiddenAccount } = useHiddenAccounts()
+  const { onOpenHiddenAccountInfoModal } = useModals()
+
+  const onHideAccount = useCallback(() => {
+    if (!selectedMultiProxyAddress) return
+
+    onOpenHiddenAccountInfoModal()
+    addHiddenAccount(selectedMultiProxyAddress)
+  }, [addHiddenAccount, onOpenHiddenAccountInfoModal, selectedMultiProxyAddress])
 
   const options: MenuOption[] = useMemo(() => {
     const opts = [
@@ -33,6 +45,11 @@ const MultisigActionMenu = ({
         text: 'Edit names',
         icon: <PencilIcon size={20} />,
         onClick: () => setIsEditModalOpen(true)
+      },
+      {
+        text: 'Hide this account',
+        icon: <EyeSlashIcon size={20} />,
+        onClick: onHideAccount
       },
       {
         text: 'Subscan',
@@ -63,19 +80,9 @@ const MultisigActionMenu = ({
         onClick: () => setIsChangeMultiModalOpen(true)
       })
 
-    // If we are NOT rendering "new transaction button" and is it's NOT a Watched account,
-    // the "Send transaction" item will appear in the list menu
-    // TODO: Individual transaction button for each mulisig
-    // if (!withNewTransactionButton && !selectedIsWatched) {
-    //   opts.unshift({
-    //     text: 'Send transaction',
-    //     icon: <HiOutlinePaperAirplane size={20} />,
-    //     onClick: () => setIsSendModalOpen(true)
-    //   })
-    // }
-
     return opts
   }, [
+    onHideAccount,
     selectedIsWatched,
     hasPplChain,
     hasIdentityPallet,

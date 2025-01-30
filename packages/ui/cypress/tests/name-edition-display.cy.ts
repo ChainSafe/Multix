@@ -15,7 +15,7 @@ describe('Name Edition and Display', () => {
       watchedAccounts: [purePublicKey]
     })
 
-    settingsPage.accountContainer().within(() => {
+    settingsPage.watchedAccountsContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
       accountDisplay.addressLabel().should('be.visible')
       accountDisplay.noNameLabel().should('have.text', 'No Name')
@@ -32,7 +32,7 @@ describe('Name Edition and Display', () => {
       watchedAccounts: [purePublicKey]
     })
 
-    settingsPage.accountContainer().within(() => {
+    settingsPage.watchedAccountsContainer().within(() => {
       accountDisplay.nameEditButton().click()
       accountDisplay.nameEditionInput().should('be.focused')
       // editing with enter
@@ -62,7 +62,7 @@ describe('Name Edition and Display', () => {
       accountNames: { [purePublicKey]: originalName }
     })
 
-    settingsPage.accountContainer().within(() => {
+    settingsPage.watchedAccountsContainer().within(() => {
       //edit and cancel with Escape
       accountDisplay.nameEditButton().click()
       accountDisplay.nameEditionInput().should('have.value', originalName)

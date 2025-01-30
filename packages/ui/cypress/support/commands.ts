@@ -7,6 +7,7 @@ import '@chainsafe/cypress-polkadot-wallet'
 
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
+const LOCALSTORAGE_HIDDEN_ACCOUNTS_KEY = 'multix.hiddenAccounts'
 const LOCALSTORAGE_EXTENSION_CONNECTION_KEY = '@reactive-dot/wallet/injected/polkadot-js/connected'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
 export const MULTIX_DAPP_NAME = 'Multix'
@@ -28,6 +29,7 @@ Cypress.Commands.add('connectAccounts', (accountAddresses: string[]) => {
 interface IsetupAndVisit {
   url: string
   watchedAccounts?: string[]
+  hiddenAccounts?: Array<{ network: string; pubKey: string }>
   accountNames?: Record<string, string>
   extensionConnectionAllowed?: boolean
   injectExtensionWithAccounts?: InjectedAccountWitMnemonic[]
@@ -38,6 +40,7 @@ Cypress.Commands.add(
   ({
     url,
     watchedAccounts,
+    hiddenAccounts,
     accountNames,
     extensionConnectionAllowed,
     injectExtensionWithAccounts
@@ -49,6 +52,8 @@ Cypress.Commands.add(
             LOCALSTORAGE_WATCHED_ACCOUNTS_KEY,
             JSON.stringify(watchedAccounts)
           )
+        !!hiddenAccounts?.length &&
+          win.localStorage.setItem(LOCALSTORAGE_HIDDEN_ACCOUNTS_KEY, JSON.stringify(hiddenAccounts))
         !!accountNames &&
           win.localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(accountNames))
 

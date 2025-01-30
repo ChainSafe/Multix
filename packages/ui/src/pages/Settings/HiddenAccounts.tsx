@@ -1,32 +1,65 @@
 import { styled } from '@mui/material/styles'
-import { Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
-import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
+import { Alert, Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useHiddenAccounts } from '../../contexts/HiddenAccountsContext'
+import { useNetwork } from '../../contexts/NetworkContext'
 
-const WatchedAccounts = () => {
-  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
-  const hasWatchedAddresses = useMemo(() => watchedAddresses.length > 0, [watchedAddresses])
+const HiddenAccounts = () => {
+  const { addHiddenAccount, networkHiddenAccounts, removeHiddenAccount } = useHiddenAccounts()
+  const { selectedNetwork } = useNetwork()
+  const [showWatchedAccountRemovedWarning, setShowWatchedAccountRemovedWarning] = useState(false)
+
+  useEffect(() => {
+    if (showWatchedAccountRemovedWarning) {
+      setTimeout(() => {
+        setShowWatchedAccountRemovedWarning(false)
+      }, 10000)
+    }
+  }, [showWatchedAccountRemovedWarning])
+
+  const hasHiddenAddresses = useMemo(
+    () => networkHiddenAccounts.length > 0,
+    [networkHiddenAccounts]
+  )
+
+  const onHide = useCallback(
+    (address: string) => {
+      const shouldWhoWarning = addHiddenAccount(address)
+      shouldWhoWarning.removedWatchedAccount && setShowWatchedAccountRemovedWarning(true)
+    },
+    [addHiddenAccount]
+  )
 
   return (
     <>
-      {hasWatchedAddresses && (
-        <WatchAccountsHeaderStyled>Currently watched accounts:</WatchAccountsHeaderStyled>
+      {showWatchedAccountRemovedWarning && (
+        <AlertStryled
+          data-cy="alert-removed-watched-account"
+          severity="info"
+        >
+          This account was a &quot;Watched accounts&quot;. It has been removed from the watched list
+        </AlertStryled>
+      )}
+      {hasHiddenAddresses && (
+        <HiddenAccountsHeaderStyled>
+          Hidden accounts for {selectedNetwork}:
+        </HiddenAccountsHeaderStyled>
       )}
       <Grid
         container
         spacing={2}
       >
-        {hasWatchedAddresses && (
+        {hasHiddenAddresses && (
           <Grid size={{ xs: 12, md: 8 }}>
             <PaperStyled>
-              {watchedAddresses.map((address) => {
+              {networkHiddenAccounts.map((address) => {
                 return (
                   <AccountItemWrapperStyled
                     key={address}
-                    data-cy="container-account-details"
+                    data-cy="container-hidden-account-details"
                   >
                     <AccountDisplayStyled
                       address={address}
@@ -35,8 +68,8 @@ const WatchedAccounts = () => {
                     />
                     <IconButtonDeleteStyled
                       aria-label="delete"
-                      onClick={() => removeWatchedAccount(address)}
-                      data-cy="button-delete-watched-account"
+                      onClick={() => removeHiddenAccount(address)}
+                      data-cy="button-delete-hidden-account"
                     >
                       <HiOutlineXMark />
                     </IconButtonDeleteStyled>
@@ -47,14 +80,13 @@ const WatchedAccounts = () => {
           </Grid>
         )}
         <Grid size={{ xs: 12, md: 8 }}>
-          <AccountSelectionWrapperStyled data-cy="wrapper-watched-accounts-inputs">
+          <AccountSelectionWrapperStyled data-cy="wrapper-hidden-accounts-inputs">
             <AccountSelection
               className="accountDropdown"
-              currentSelection={watchedAddresses}
-              addAccount={addWatchedAccount}
-              actionButtonLabel="Watch"
+              currentSelection={networkHiddenAccounts}
+              addAccount={onHide}
+              actionButtonLabel="Hide"
               actionButtonVariant="primary"
-              withName
               withAddButton
               withPreselection={false}
               //make sure the first state is empty
@@ -67,7 +99,7 @@ const WatchedAccounts = () => {
   )
 }
 
-const WatchAccountsHeaderStyled = styled('h3')`
+const HiddenAccountsHeaderStyled = styled('h3')`
   color: ${({ theme }) => theme.custom.gray[800]};
   font-size: 1rem;
   font-weight: 400;
@@ -122,5 +154,8 @@ const AccountSelectionWrapperStyled = styled(Box)`
     }
   }
 `
+const AlertStryled = styled(Alert)`
+  margin-bottom: 1rem;
+`
 
-export default WatchedAccounts
+export default HiddenAccounts

@@ -20,5 +20,6 @@ export default defineConfig({
   ],
   resolve: {
     preserveSymlinks: true // this is the fix!
-  }
+  },
+  optimizeDeps: { exclude: ['node_modules/.cache'] }
 })
