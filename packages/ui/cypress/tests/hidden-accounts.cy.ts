@@ -9,8 +9,13 @@ import { westendMemberAccount } from '../fixtures/westendAccounts'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { landingPage } from '../support/page-objects/landingPage'
+import { hiddenAccountInfoModal } from '../support/page-objects/modals/hiddenAccountInfoModal'
 
 const randomAddress = 'HeVswqunza8rP2hEWDCThfiB5v2Jxng91yX2oGAZnCKtsgS'
+const westendWatchedAccount = {
+  pubKey: '0xc94fccf2736cad38e169025ed308fdb6ae09185350b05e6193d0f5343ce7362f',
+  address: '5GcfBqhnXDMsUwHaebV9zHew1A6aVHbt4tH2XtdKi7mM48hC'
+}
 
 const addHiddenAccount = (address: string) => {
   settingsPage.hiddenAccountsInputsWrapper().within(() => {
@@ -164,5 +169,94 @@ describe('Hidden Accounts', () => {
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Invalid address')
     settingsPage.hiddenAccountsContainer().should('have.length', 0)
     settingsPage.addButton().should('be.disabled')
+  })
+
+  it('can hide an account from the 3 dots menu', () => {
+    cy.setupAndVisit({
+      url: landingPageNetworkAddress({
+        network: 'westend',
+        address: westendMemberAccount.hidden.expectedPure.address
+      }),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [westendMemberAccount.hidden.account]
+    })
+
+    multisigPage.optionsMenuButton().click()
+    multisigPage.hideAccountMenuOption().should('exist').click()
+    hiddenAccountInfoModal.body().should('be.visible')
+    hiddenAccountInfoModal.checkBoxMessage().should('not.be.checked')
+    hiddenAccountInfoModal.gotItButton().should('be.visible').click()
+    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    goToHiddenAccountSettings()
+    settingsPage
+      .hiddenAccountsContainer()
+      .should('have.length', 1)
+      .within(() => {
+        accountDisplay
+          .addressLabel()
+          .should('contain.text', westendMemberAccount.hidden.expectedPure.address.slice(0, 6))
+      })
+
+    // remove the hidden account
+    settingsPage.hiddenAccountDeleteButton().should('be.visible').click()
+    settingsPage.hiddenAccountsContainer().should('not.exist')
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.homeButton().click()
+
+    // hide it again but say to not view the message again
+    multisigPage.optionsMenuButton().click()
+    multisigPage.hideAccountMenuOption().should('exist').click()
+    hiddenAccountInfoModal.body().should('be.visible')
+    hiddenAccountInfoModal.checkBoxMessage().should('not.be.checked').click()
+    hiddenAccountInfoModal.gotItButton().should('be.visible').click()
+
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    goToHiddenAccountSettings()
+    settingsPage.hiddenAccountsContainer().should('have.length', 1)
+
+    // remove the hidden account
+    settingsPage.hiddenAccountDeleteButton().should('be.visible').click()
+
+    topMenuItems.homeButton().click()
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+
+    multisigPage.optionsMenuButton().click()
+    multisigPage.hideAccountMenuOption().should('exist').click()
+    hiddenAccountInfoModal.body().should('not.exist')
+    topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+  })
+
+  it.only('removes a watched account if hidding a watched account', () => {
+    cy.setupAndVisit({
+      url: landingPageNetworkAddress({
+        network: 'westend',
+        address: westendWatchedAccount.address
+      }),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [westendMemberAccount.hidden.account],
+      watchedAccounts: [westendWatchedAccount.pubKey]
+    })
+
+    topMenuItems.multiproxySelectorDesktop().click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
+
+    // hide the watched account
+    multisigPage.optionsMenuButton().click()
+    multisigPage.hideAccountMenuOption().should('exist').click()
+    hiddenAccountInfoModal.body().should('be.visible')
+    hiddenAccountInfoModal.gotItButton().click()
+
+    topMenuItems.multiproxySelectorDesktop().click()
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    goToHiddenAccountSettings()
+    settingsPage.hiddenAccountsContainer().should('not.exist')
+    settingsPage.watchedAccountsAccordion().click()
+    settingsPage.watchedAccountsContainer().should('not.exist')
   })
 })

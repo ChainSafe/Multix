@@ -55,11 +55,12 @@ const HiddenAccountInfo = ({ onClose, className }: Props) => {
                     setDontShow(!dontShow)
                   }}
                   // @ts-expect-error
-                  inputProps={{ 'data-cy': 'checkbox-message' }}
+                  inputProps={{ 'data-cy': 'checkbox-dont-show-again' }}
                 />
               }
             />
             <Button
+              data-cy="button-hidden-account-info-gotit"
               className="closeButton"
               variant="primary"
               onClick={onClick}
