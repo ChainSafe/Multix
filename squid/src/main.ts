@@ -139,7 +139,6 @@ processor.run(
 
           const multisigAddress = getMultisigAddress(signatories, threshold)
           const newMulti = {
-            id: getAccountId(multisigAddress, chainId),
             address: multisigAddress,
             threshold,
             newSignatories: signatories,
@@ -266,7 +265,6 @@ processor.run(
           if (signatories) {
             ctx.log.info(`---> multisig migration for ${entity}`)
             const manualMultisig = {
-              id: getAccountId(who, chainId),
               address: who,
               threshold,
               newSignatories: signatories,
