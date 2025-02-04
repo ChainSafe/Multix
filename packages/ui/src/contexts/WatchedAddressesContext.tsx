@@ -1,7 +1,14 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
-import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
@@ -21,41 +28,30 @@ export interface IWatchedAddressesContext {
 const WatchedAddressesContext = createContext<IWatchedAddressesContext | undefined>(undefined)
 
 const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) => {
-  const [watchedAddresses, setWatchedAddresses] = useState<string[]>([])
   const [watchedPubKeys, setWatchedPubKeys] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const { chainInfo } = useApi()
-  const getEncodedAddress = useGetEncodedAddress()
+  const watchedAddresses = useMemo(() => {
+    if (!chainInfo) return []
 
-  // update the current account list with the right network prefix
-  // this will run for every network change
-  useEffect(() => {
-    if (chainInfo) {
-      setWatchedAddresses((prev) => {
-        return encodeAccounts(prev, chainInfo.ss58Format) as string[]
-      })
-    }
-  }, [chainInfo])
+    return encodeAccounts(watchedPubKeys, chainInfo.ss58Format)
+  }, [chainInfo, watchedPubKeys])
 
-  const addWatchedAccount = useCallback(
-    (address: string) => {
-      const encodedAddress = getEncodedAddress(address)
-      const pubKey = getPubKeyFromAddress(address)
-      encodedAddress && setWatchedAddresses((prev) => [...prev, encodedAddress])
-      pubKey && setWatchedPubKeys((prev) => [...prev, pubKey])
-    },
-    [getEncodedAddress]
-  )
+  const addWatchedAccount = useCallback((address: string) => {
+    const pubKey = getPubKeyFromAddress(address)
+    pubKey && setWatchedPubKeys((prev) => [...prev, pubKey])
+  }, [])
 
   const removeWatchedAccount = useCallback(
     (addressToRemove: string) => {
-      const filtered = watchedAddresses.filter((address) => address !== addressToRemove)
-      setWatchedAddresses([...filtered])
+      const pubKeyToRemove = getPubKeyFromAddress(addressToRemove)
+      const filtered = watchedPubKeys.filter((pubKey) => pubKey !== pubKeyToRemove)
+      setWatchedPubKeys([...filtered])
     },
-    [watchedAddresses]
+    [watchedPubKeys]
   )
 
-  const loadWatchedAccounts = useCallback(() => {
+  const loadWatchedPubKeys = useCallback(() => {
     if (!chainInfo) {
       return
     }
@@ -65,16 +61,13 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       ? JSON.parse(localStorageWatchedAccount)
       : []
 
-    const encodedAddresses = encodeAccounts(watchedArray, chainInfo.ss58Format) as string[]
-
     setWatchedPubKeys(watchedArray)
-    setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
   }, [chainInfo])
 
   useEffect(() => {
-    !isInitialized && loadWatchedAccounts()
-  }, [isInitialized, loadWatchedAccounts])
+    !isInitialized && loadWatchedPubKeys()
+  }, [isInitialized, loadWatchedPubKeys])
 
   // persist the accounts watched every time there's a change
   useEffect(() => {

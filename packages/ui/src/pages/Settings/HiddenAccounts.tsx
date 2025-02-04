@@ -27,8 +27,8 @@ const HiddenAccounts = () => {
 
   const onHide = useCallback(
     (address: string) => {
-      const shouldWhoWarning = addHiddenAccount(address)
-      shouldWhoWarning.removedWatchedAccount && setShowWatchedAccountRemovedWarning(true)
+      const shouldShowWarning = addHiddenAccount(address)
+      shouldShowWarning.removedWatchedAccount && setShowWatchedAccountRemovedWarning(true)
     },
     [addHiddenAccount]
   )

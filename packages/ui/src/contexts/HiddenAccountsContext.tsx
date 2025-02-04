@@ -73,6 +73,8 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
         })
       }
 
+      console.log('watchedAddresses.includes(address))', watchedAddresses.includes(address))
+      console.log('watchedAddresses', watchedAddresses)
       // if we are hiding a watched account
       // just remove it from the watch list
       if (watchedAddresses.includes(address)) {
