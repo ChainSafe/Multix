@@ -2,7 +2,6 @@ import 'dotenv/config'
 
 interface EnvValues {
   blockstart: string
-  prefix: number
   rpcWs: string
   gatewayUrl: string
   chainId: string
@@ -15,7 +14,6 @@ export class Env {
   constructor() {
     this.env = {
       blockstart: process.env.BLOCK_START || '',
-      prefix: Number(process.env.PREFIX) || 0,
       rpcWs: process.env.RPC_WS || '',
       gatewayUrl: process.env.GATEWAY_URL || '',
       chainId: process.env.CHAIN_ID || '',

@@ -1,12 +1,10 @@
-import { encodeId } from './accountEncoding'
-
 export function getOriginAccount(origin: any): string {
   if (origin && origin.__kind === 'system' && origin.value.__kind === 'Signed') {
     const id = origin.value.value
     if (id.__kind === 'Id') {
-      return encodeId(id.value)
+      return id.value
     } else {
-      return encodeId(id)
+      return id
     }
   } else {
     throw new Error('Unexpected origin')

@@ -4,7 +4,6 @@ import { Ctx, fields } from '../main'
 import { getProxyTypeFromRaw } from './getProxyTypeFromRaw'
 import { ProxyType as ProxyTypeV2005 } from '../types/v2005'
 import { JsonLog } from './JsonLog'
-import { encodeId } from './accountEncoding'
 
 interface Params {
   event: Event<typeof fields>
@@ -31,8 +30,8 @@ export const getPureProxyInfoFromArgs = ({ event, chainId, isAnonymous, ctx }: P
     return
   }
 
-  const _who = (who && encodeId(who)) || ''
-  const _pure = (pure && encodeId(pure)) || ''
+  const _who = who?.toString() || ''
+  const _pure = pure?.toString() || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const id = getProxyAccountId(_who, _pure, _type, disambiguationIndex, chainId)
 

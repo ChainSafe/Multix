@@ -6,23 +6,23 @@ import { getAccountId } from './getAccountId'
 
 export async function getOrCreateAccounts(
   ctx: Ctx,
-  addresses: string[],
+  pubKeys: string[],
   chainId: string
 ): Promise<Account[]> {
-  const ids = addresses.map((address) => getAccountId(address, chainId))
+  const ids = pubKeys.map((pubKey) => getAccountId(pubKey, chainId))
   const dbAccounts = await ctx.store.findBy(Account, { id: In([...ids]) })
 
   // ctx.log.info(`db accounts: ${JsonLog(dbAccounts)}`)
   const accountsMap: Map<string, Account> = new Map()
   for (const account of dbAccounts) accountsMap.set(account.id, account)
   const newAccounts: Set<Account> = new Set()
-  for (const address of addresses) {
-    const id = getAccountId(address, chainId)
+  for (const pubKey of pubKeys) {
+    const id = getAccountId(pubKey, chainId)
     if (accountsMap.has(id)) continue
 
     const account = new Account({
       id,
-      address,
+      pubKey,
       isMultisig: false,
       isPureProxy: false
     })

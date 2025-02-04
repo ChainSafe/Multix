@@ -16,7 +16,7 @@ query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [Str
     # either it's a multisig or proxy, with direct address match from a watch account
     # or one of accounts or watch accounts is a signatory
     id
-    address
+    pubKey
     isMultisig
     isPureProxy
     threshold
@@ -24,7 +24,7 @@ query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [Str
       id
       signatory {
         id
-        address
+        pubKey
       }
     }
     delegateeFor {
@@ -32,12 +32,12 @@ query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [Str
       type
       delegator {
         id
-        address
+        pubKey
         isPureProxy
       }
       delegatee {
         id
-        address
+        pubKey
         isPureProxy
       }
     }
@@ -46,14 +46,14 @@ query MultisigsAndPureByAccount($accountIds: [String!], $watchedAccountIds: [Str
       type
       delegatee {
         id
-        address
+        pubKey
         isMultisig
         threshold
         signatories {
           id
           signatory {
             id
-            address
+            pubKey
           }
         }
       }

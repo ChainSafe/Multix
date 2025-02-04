@@ -9,8 +9,7 @@ import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { usePjsLinks } from '../../hooks/usePjsLinks'
 import { Binary, HexString, Transaction } from 'polkadot-api'
 import { getPapiHowLink } from '../../utils/getPapiHowLink'
-import { decodeAddress } from '@polkadot/util-crypto'
-import { u8aToHex } from '@polkadot/util'
+import { getPubKeyFromAddress } from '../../utils/getPubKeyFromAddress'
 
 interface Props {
   className?: string
@@ -36,7 +35,7 @@ const FromCallData = ({ className, onSetExtrinsic, currentProxy }: Props) => {
         const decodedCall = (await api.txFromCallData(Binary.fromHex(call))).decodedCall
 
         const real = `0x${call.substring(8, 72)}`
-        const currentProxyAddress = u8aToHex(decodeAddress(currentProxy))
+        const currentProxyAddress = getPubKeyFromAddress(currentProxy)
 
         // check if this call is a proxy.proxy
         if (

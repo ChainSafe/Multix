@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
-import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
+import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
@@ -13,6 +13,7 @@ type WatchedAddressesProps = {
 export interface IWatchedAddressesContext {
   addWatchedAccount: (address: string) => void
   removeWatchedAccount: (address: string) => void
+  watchedPubKeys: string[]
   watchedAddresses: string[]
   isInitialized: boolean
 }
@@ -21,6 +22,7 @@ const WatchedAddressesContext = createContext<IWatchedAddressesContext | undefin
 
 const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) => {
   const [watchedAddresses, setWatchedAddresses] = useState<string[]>([])
+  const [watchedPubKeys, setWatchedPubKeys] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const { chainInfo } = useApi()
   const getEncodedAddress = useGetEncodedAddress()
@@ -38,7 +40,9 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   const addWatchedAccount = useCallback(
     (address: string) => {
       const encodedAddress = getEncodedAddress(address)
+      const pubKey = getPubKeyFromAddress(address)
       encodedAddress && setWatchedAddresses((prev) => [...prev, encodedAddress])
+      pubKey && setWatchedPubKeys((prev) => [...prev, pubKey])
     },
     [getEncodedAddress]
   )
@@ -63,6 +67,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
 
     const encodedAddresses = encodeAccounts(watchedArray, chainInfo.ss58Format) as string[]
 
+    setWatchedPubKeys(watchedArray)
     setWatchedAddresses(encodedAddresses)
     setIsInitialized(true)
   }, [chainInfo])
@@ -75,10 +80,8 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   useEffect(() => {
     if (!isInitialized) return
 
-    const pubKeyArray = getPubKeyFromAddress(watchedAddresses)
-
-    localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(pubKeyArray))
-  }, [isInitialized, watchedAddresses])
+    localStorage.setItem(LOCALSTORAGE_WATCHED_ACCOUNTS_KEY, JSON.stringify(watchedPubKeys))
+  }, [isInitialized, watchedPubKeys])
 
   return (
     <WatchedAddressesContext.Provider
@@ -86,6 +89,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
         addWatchedAccount,
         removeWatchedAccount,
         watchedAddresses,
+        watchedPubKeys,
         isInitialized
       }}
     >

@@ -50,6 +50,6 @@ export const handleNewProxies = async (ctx: Ctx, newProxies: NewProxy[], chainId
     )
   }
 
-  // ctx.log.info(`new proxy account to save' ${JsonLog(proxyAccounts)}`)
+  // ctx.log.info(`new proxy account to save ${Array.from(proxyAccounts.values())}`)
   await ctx.store.save(proxyAccounts)
 }

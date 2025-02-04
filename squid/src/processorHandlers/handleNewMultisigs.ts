@@ -1,6 +1,6 @@
 import { Account, AccountMultisig } from '../model'
 import { Ctx } from '../main'
-import { getOrCreateAccounts, getAccountMultisigId, JsonLog } from '../util'
+import { getOrCreateAccounts, getAccountMultisigId } from '../util'
 import { shouldReplicateOn } from '../util/shouldReplicate'
 import { getAccountId } from '../util/getAccountId'
 
@@ -18,14 +18,14 @@ export const handleNewMultisigs = async (
 
   const replicatedNetworks = shouldReplicateOn(chainId) || [chainId]
 
-  for (const { address, newSignatories, threshold, isMultisig, isPureProxy } of multisigs) {
+  for (const { pubKey, newSignatories, threshold, isMultisig, isPureProxy } of multisigs) {
     for (const network of replicatedNetworks) {
       const signatoriesAccounts = await getOrCreateAccounts(ctx, newSignatories, network)
 
-      const multisigId = getAccountId(address, network)
+      const multisigId = getAccountId(pubKey, network)
       const newMultisig = new Account({
         id: multisigId,
-        address,
+        pubKey,
         threshold,
         isMultisig,
         isPureProxy
@@ -44,6 +44,11 @@ export const handleNewMultisigs = async (
         newAccountMultisigs.set(newAccountMultisigId, newAccountMultisig)
       })
     }
+
+    // ctx.log.info(`--> New multisig ${newMultisigs.size}`)
+    // ctx.log.info(JsonLog(Array.from(newMultisigs.keys())))
+    // ctx.log.info(`--> New accountMultisigs ${newAccountMultisigs.size}`)
+    // ctx.log.info(JsonLog(Array.from(newAccountMultisigs.values())))
 
     await ctx.store.save(Array.from(newMultisigs.values()))
     await ctx.store.save(Array.from(newAccountMultisigs.values()))

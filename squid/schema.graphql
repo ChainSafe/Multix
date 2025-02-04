@@ -1,6 +1,6 @@
 type Account @entity {
   id: ID!
-  address: String!
+  pubKey: String!
   multisigs: [AccountMultisig] @derivedFrom(field: "signatory")
   isPureProxy: Boolean
   # it's the origin/delegator for another proxy accounts, a pure must have some
