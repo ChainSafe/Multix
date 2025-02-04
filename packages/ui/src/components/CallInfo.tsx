@@ -61,6 +61,7 @@ const isWhiteListedCall = (extrinsicName: string) => {
     'ConvictionVoting.unlock',
     //Asset Hub
     'Assets.transfer_keep_alive',
+    'Assets.transfer',
     // Hydration
     'Tokens.transfer'
   ].includes(extrinsicName)
@@ -75,7 +76,7 @@ const isBatchedCall = (extrinsicName: string) => {
 }
 
 const isAssetTransferCall = (extrinsicName: string) => {
-  return ['Assets.transfer_keep_alive'].includes(extrinsicName)
+  return ['Assets.transfer_keep_alive', 'Assets.transfer'].includes(extrinsicName)
 }
 
 const getBalanceKey = (value: Record<string, any>) => {
