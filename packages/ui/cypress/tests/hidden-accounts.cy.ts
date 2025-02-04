@@ -232,7 +232,7 @@ describe('Hidden Accounts', () => {
     topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
   })
 
-  it.only('removes a watched account if hidding a watched account', () => {
+  it('removes a watched account if hidding a watched account', () => {
     cy.setupAndVisit({
       url: landingPageNetworkAddress({
         network: 'westend',

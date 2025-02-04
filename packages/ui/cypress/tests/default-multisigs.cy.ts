@@ -1,5 +1,5 @@
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
-import { landingPageNetwork } from '../fixtures/landingData'
+import { landingPageNetwork, landingPageNetworkAddress } from '../fixtures/landingData'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { multisigPage } from '../support/page-objects/multisigPage'
 
@@ -15,11 +15,17 @@ describe('default Multisigs', () => {
       watchedAccounts: [lolmcshizPubKey]
     })
 
+    // verify that it's displayed
+    multisigPage.accountHeader().within(() => {
+      accountDisplay
+        .addressLabel()
+        .should('not.contain.text', polkadotSelectedMultiproxy.slice(0, 6))
+    })
+
     // select another one
     topMenuItems.desktopMenu().within(() => {
       topMenuItems
         .multiproxySelectorInputDesktop()
-        .should('not.have.value', '')
         .click()
         .type(`${polkadotSelectedMultiproxy.slice(0, 6)}{downArrow}{enter}`, {
           delay: 100,
@@ -34,9 +40,14 @@ describe('default Multisigs', () => {
 
     // go on Kusama and do the same
     // check the default multiproxy
-    cy.visit(landingPageNetwork('kusama'))
+    cy.visit(
+      landingPageNetworkAddress({
+        network: 'kusama',
+        address: 'Coo7PHJP8MssUbqeeHwfC6DVjNCccw5N4pCtFwZVPJzb7JM'
+      })
+    )
 
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(8000).within(() => {
       accountDisplay
         .addressLabel()
         .invoke('text')
@@ -56,7 +67,7 @@ describe('default Multisigs', () => {
     )
 
     // verify that it's displayed
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(8000).within(() => {
       accountDisplay.addressLabel().should('contain.text', kusamaSelectedMultiproxy.slice(0, 6))
     })
 
@@ -64,7 +75,7 @@ describe('default Multisigs', () => {
     cy.visit(landingPageNetwork('polkadot'))
 
     // verify that it's displayed
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(8000).within(() => {
       accountDisplay.addressLabel().should('contain.text', polkadotSelectedMultiproxy.slice(0, 6))
     })
 
@@ -74,7 +85,7 @@ describe('default Multisigs', () => {
     cy.visit(landingPageNetwork('kusama'))
 
     // verify that it's displayed
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(8000).within(() => {
       accountDisplay.addressLabel().should('contain.text', kusamaSelectedMultiproxy.slice(0, 6))
     })
 
