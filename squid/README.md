@@ -249,7 +249,6 @@ SQD_DEBUG=sqd:processor:mapping
 
 # paseo
 BLOCK_START=0 # this is the starting block of the indexer
-PREFIX=42 # the ss58 prefix for the chain
 RPC_WS="wss://paseo-rpc.polkadot.io" # a WS endpoint to connect to a blockchain
 CHAIN_ID='paseo' # a unique chain id for the database prefix
 IS_ETHEREUM='false'

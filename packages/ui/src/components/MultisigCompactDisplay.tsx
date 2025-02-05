@@ -6,6 +6,8 @@ import Expander from './Expander'
 import { useMultisigByIdQuery } from '../../types-and-hooks'
 import { useEffect, useState } from 'react'
 import { useAccountId } from '../hooks/useAccountId'
+import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
+import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
 interface Props {
   address: string
@@ -15,7 +17,8 @@ interface Props {
 
 const MultisigCompactDisplay = ({ className, address, expanded = false }: Props) => {
   const [signatories, setSignatories] = useState<string[]>([])
-  const accountId = useAccountId(address)
+  const accountId = useAccountId(getPubKeyFromAddress(address) || '')
+  const getEncodedAddress = useGetEncodedAddress()
   const { data, error, isFetching } = useMultisigByIdQuery({ id: accountId })
   const [badge, setBadge] = useState<AccountBadge | undefined>()
   const [threshold, setThreshold] = useState<number | null | undefined>(null)
@@ -31,11 +34,15 @@ const MultisigCompactDisplay = ({ className, address, expanded = false }: Props)
 
     if (data?.accounts[0]) {
       // this is a query by id, so it should return just 1 account
-      setSignatories(data.accounts[0].signatories.map(({ signatory }) => signatory.address))
+      setSignatories(
+        data.accounts[0].signatories.map(
+          ({ signatory }) => getEncodedAddress(signatory.pubKey) || ''
+        )
+      )
       setThreshold(data.accounts[0].threshold)
       setBadge(AccountBadge.MULTI)
     }
-  }, [data, error, isFetching])
+  }, [data, error, getEncodedAddress, isFetching])
 
   return (
     <Box className={className}>

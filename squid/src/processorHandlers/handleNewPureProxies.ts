@@ -32,7 +32,7 @@ export const handleNewPureProxies = async (
     (pure) =>
       new Account({
         id: getAccountId(pure, chainId),
-        address: pure,
+        pubKey: pure,
         isMultisig: false,
         isPureProxy: true
       })
@@ -60,8 +60,8 @@ export const handleNewPureProxies = async (
     proxyAccounts.push(
       new ProxyAccount({
         id,
-        delegator: pureProxiestoSave.find(({ address }) => pure === address),
-        delegatee: whoAccounts.find(({ address }) => who === address),
+        delegator: pureProxiestoSave.find(({ pubKey }) => pure === pubKey),
+        delegatee: whoAccounts.find(({ pubKey }) => who === pubKey),
         type,
         delay,
         createdAt,
@@ -71,6 +71,6 @@ export const handleNewPureProxies = async (
     )
   }
   // ctx.log.info(`new proxy account to save' ${JsonLog(proxyAccounts)}`)
-
+  // ctx.log.info(`new proxy account to save' ${proxyAccounts.length}`)
   await ctx.store.save(proxyAccounts)
 }

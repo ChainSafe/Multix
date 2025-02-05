@@ -7,14 +7,14 @@ import { styled } from '@mui/material/styles'
 import { useAccounts } from '../contexts/AccountsContext'
 import { Button, Link } from '../components/library'
 import { Center } from '../components/layout/Center'
-import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
+import { useWatchedAccounts } from '../contexts/WatchedAccountsContext'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { useSearchParams } from 'react-router'
 import { useNetwork } from '../contexts/NetworkContext'
 
 export const useDisplayError = () => {
   const { ownAccountList, isAllowedToConnectToExtension } = useAccounts()
-  const { watchedAddresses } = useWatchedAddresses()
+  const { watchedAddresses } = useWatchedAccounts()
   const { error: multisigQueryError, refetch, canFindMultiProxyFromUrl } = useMultiProxy()
   const [searchParams, setSearchParams] = useSearchParams({ address: '' })
   const { selectedNetwork } = useNetwork()

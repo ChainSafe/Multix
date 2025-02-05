@@ -13,7 +13,7 @@ export class Account {
     id!: string
 
     @StringColumn_({nullable: false})
-    address!: string
+    pubKey!: string
 
     @OneToMany_(() => AccountMultisig, e => e.signatory)
     multisigs!: AccountMultisig[]

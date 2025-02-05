@@ -1,6 +1,5 @@
 export { getAccountMultisigId } from './getAccountMultisigId'
-export { encodeId } from './accountEncoding'
-export { getMultisigAddress } from './getMultisigAddress'
+export { getMultisigPubKey } from './getMultisigPubKey'
 export { getMultisigCallId } from './getMultisigCallId'
 export { getOrCreateAccounts } from './entities'
 export { JsonLog } from './JsonLog'

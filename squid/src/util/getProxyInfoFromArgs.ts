@@ -3,7 +3,6 @@ import { getProxyAccountId } from './getProxyAccountId'
 import { Ctx, fields } from '../main'
 import { ProxyType } from '../types/v9111'
 import { JsonLog } from './JsonLog'
-import { encodeId } from './accountEncoding'
 import { Event } from '@subsquid/substrate-processor'
 
 interface Params {
@@ -27,8 +26,8 @@ export const getProxyInfoFromArgs = ({ event, chainId, ctx }: Params) => {
     ctx.log.error(`The proxy could not be determined ${JsonLog(event)}`)
     return
   }
-  const _delegator = (delegator && encodeId(delegator)) || ''
-  const _delegatee = (delegatee && encodeId(delegatee)) || ''
+  const _delegator = delegator?.toString() || ''
+  const _delegatee = delegatee?.toString() || ''
   const _type = getProxyTypeFromRaw(proxyType.__kind)
   const _delay = Number(delay)
   const _id = getProxyAccountId(_delegatee, _delegator, _type, _delay, chainId)

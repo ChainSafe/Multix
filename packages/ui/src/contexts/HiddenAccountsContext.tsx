@@ -13,7 +13,7 @@ import { useNetwork } from './NetworkContext'
 import { HexString } from 'polkadot-api'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 import { useSearchParams } from 'react-router'
-import { useWatchedAddresses } from './WatchedAddressesContext'
+import { useWatchedAccounts } from './WatchedAccountsContext'
 
 const LOCALSTORAGE_HIDDEN_ACCOUNTS_KEY = 'multix.hiddenAccounts'
 
@@ -45,7 +45,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
   const { selectedNetwork } = useNetwork()
   const getEncodedAddress = useGetEncodedAddress()
   const [searchParams, setSearchParams] = useSearchParams({ address: '' })
-  const { watchedAddresses, removeWatchedAccount } = useWatchedAddresses()
+  const { watchedAddresses, removeWatchedAccount } = useWatchedAccounts()
 
   const networkHiddenAccounts = useMemo(() => {
     if (!selectedNetwork) return []

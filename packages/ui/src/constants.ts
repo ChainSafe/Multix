@@ -47,7 +47,7 @@ export interface NetworkInfo {
   pplChainDescriptor?: PplDescriptorKeys
 }
 
-export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v6/api/graphql`
+export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v7/api/graphql`
 
 export const PAYMENT_INFO_ACCOUNT = '5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs'
 

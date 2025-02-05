@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
 import { ApiDescriptors, MultisigStorageInfo } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
@@ -13,6 +13,7 @@ import { Bin, Binary, compact, HexString, Tuple } from '@polkadot-api/substrate-
 import { hashFromTx } from '../utils/txHash'
 import { getEncodedCallFromDecodedTx } from '../utils/getEncodedCallFromDecodedTx'
 import { getExtrinsicDecoder } from '@polkadot-api/tx-utils'
+import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
 dayjs.extend(localizedFormat)
 
@@ -324,7 +325,11 @@ export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false
     refresh()
   }, [refresh])
 
-  const multisigIds = useAccountId(multisigAddresses)
+  const multisigPubKeys = useMemo(
+    () => getPubKeyFromAddress(multisigAddresses),
+    [multisigAddresses]
+  )
+  const multisigIds = useAccountId(multisigPubKeys)
   // re-fetch the on-chain if some new event appeared for any of the
   // multisig we are watching
   const { data: multisigsCallsData } = useMultisigCallQuery({ multisigIds })

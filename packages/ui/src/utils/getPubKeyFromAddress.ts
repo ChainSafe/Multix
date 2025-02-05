@@ -15,11 +15,12 @@ const decode = (address: string) => {
     return null
   }
 }
+
 export function getPubKeyFromAddress(address: string[]): HexString[]
 export function getPubKeyFromAddress(address: string): HexString | null
 export function getPubKeyFromAddress(address: string | string[]) {
   if (Array.isArray(address)) {
-    return address.map(decode).filter((address) => !!address) as HexString[]
+    return address.map(decode).filter(Boolean) as HexString[]
   }
 
   return decode(address)

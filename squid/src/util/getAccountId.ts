@@ -1,1 +1,3 @@
-export const getAccountId = (address: string, chainId: string) => `${chainId}-${address}`
+export const getAccountId = (pubKey: string, chainId: string) => {
+  return `${chainId}-${pubKey}`
+}

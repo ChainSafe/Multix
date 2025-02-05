@@ -2,7 +2,7 @@ import { DataHandlerContext, SubstrateBatchProcessor } from '@subsquid/substrate
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { handleMultisigCall } from './multisigCalls'
 import {
-  getMultisigAddress,
+  getMultisigPubKey,
   getMultisigCallId,
   getOriginAccount,
   getPureProxyInfoFromArgs,
@@ -26,41 +26,13 @@ import { KillPureCallInfo, getProxyKillPureArgs } from './util/getProxyKillPureA
 import { handleProxyKillPure } from './processorHandlers/handleProxyKillPure'
 import { getProxyAccountId } from './util/getProxyAccountId'
 import { ProxyType } from './model'
-
-// Manually add asset hub pure proxies
-// https://polkadot.subsquare.io/referenda/1308
-const PURE_PROXIEs_MIGRATION_BLOCK = 7903349 // <-- this needs to be a block where something happens
-const PURE_PROXIEs_MIGRATION_CHAIN = 'asset-hub-polkadot'
-const PURE_PROXIES_MIGRATION_ARRAY = [
-  {
-    entity: 'Heroic',
-    who: '16Cf2SMFkWMApL7fiaiu3nSFiVk3wZoNHn7QTzTL1KvLDMcT',
-    pure: '12RP5AAF8TEb4qVBgiAgJXMVF8NzYZZPD8XftcKD7sM153E7',
-    signatories: [
-      '17L1abEGisdmSQamtrYvsdsEWhBQiAqSQfjuNYAADYNeivp',
-      '12EeAYWN52HcmCwjPmxyGBZ5H4tXnTL4CZ7z63FBZYWM64mQ',
-      '14H4NwJn122wNmMJaQErbNWZuyNdMAuUrh5W7BpNSDpgiWAj'
-    ],
-    threshold: 2
-  },
-  {
-    entity: 'PBA',
-    who: '1kJLyFPntELGnaawpDLzidR7rXaX4wQMPbd9ShQQZ3LK1Nh',
-    pure: '15UQ1nhCRRJoWf1C4LBraqCVXS91qPiWLiWQfnS3k8Dk4R79'
-  },
-
-  {
-    entity: 'Polytope Labs',
-    who: '12w4jGrxQuWRqHr1dCoJZS8Ez8eoUdqVbCA7n1ze584umJoy',
-    pure: '1tCybVtS7otBAK5CnbDwJQumWmfEWTCXRaYZM9UtihTQ1Dt'
-  },
-
-  {
-    entity: 'Social Media Editorial Board',
-    who: '12k979BFp7JczuaHEvg7KpPwNkpHSNu5NYQRSL9cFjr7rdhh',
-    pure: '1VNSqFCX4Gk7R8kKBbEaYhXSioBGLrrL4kHgLwDkoTLkgqB'
-  }
-]
+import { decodeAddress } from '@polkadot/util-crypto'
+import { u8aToHex } from '@polkadot/util'
+import {
+  PURE_PROXIEs_MIGRATION_BLOCK,
+  PURE_PROXIEs_MIGRATION_CHAIN,
+  PURE_PROXIES_MIGRATION_ARRAY
+} from './constants'
 
 const supportedMultisigCalls = [
   'Multisig.as_multi',
@@ -114,7 +86,7 @@ export type Ctx = DataHandlerContext<Store, typeof fields>
 processor.run(
   new TypeormDatabase({ stateSchema: chainId, isolationLevel: 'READ COMMITTED' }),
   async (ctx) => {
-    const newMultisigsInfo: NewMultisigsInfo[] = []
+    const newMultisigsInfo: Map<string, NewMultisigsInfo> = new Map()
     const newPureProxies: Map<string, NewPureProxy> = new Map()
     const newMultisigCalls: MultisigCallInfo[] = []
     const newProxies: Map<string, NewProxy> = new Map()
@@ -137,22 +109,21 @@ processor.run(
           const { otherSignatories, threshold } = handleMultisigCall(call.args)
           const signatories = [signer, ...otherSignatories]
 
-          const multisigAddress = getMultisigAddress(signatories, threshold)
+          const multisigPubkey = getMultisigPubKey(signatories, threshold)
           const newMulti = {
-            id: getAccountId(multisigAddress, chainId),
-            address: multisigAddress,
+            pubKey: multisigPubkey,
             threshold,
             newSignatories: signatories,
             isMultisig: true,
             isPureProxy: false
           } as NewMultisigsInfo
 
-          newMultisigsInfo.push(newMulti)
+          newMultisigsInfo.set(newMulti.pubKey, newMulti)
           const blockHash = block.header.hash
 
           newMultisigCalls.push({
             id: getMultisigCallId(
-              newMulti.address,
+              newMulti.pubKey,
               blockNumber,
               call.extrinsicIndex,
               call.id,
@@ -160,7 +131,7 @@ processor.run(
             ),
             blockHash,
             callIndex: call.extrinsicIndex,
-            multisigAddress: newMulti.address,
+            multisigPubKey: newMulti.pubKey,
             timestamp
           })
         }
@@ -201,7 +172,7 @@ processor.run(
               if (
                 creationBlockNumber === proxyToKillArgs.blockNumber &&
                 extrinsicIndex === proxyToKillArgs.extrinsicIndex &&
-                proxyToKillArgs.spawner === who
+                proxyToKillArgs.spawnerPubKey === who
               ) {
                 newPureProxies.delete(id)
               }
@@ -262,27 +233,28 @@ processor.run(
 
         PURE_PROXIES_MIGRATION_ARRAY.forEach(({ who, pure, entity, signatories, threshold }) => {
           ctx.log.info(`---> pure migration for ${entity}`)
+          const whoPubKey = u8aToHex(decodeAddress(who))
+          const purePubKey = u8aToHex(decodeAddress(pure))
 
           if (signatories) {
             ctx.log.info(`---> multisig migration for ${entity}`)
             const manualMultisig = {
-              id: getAccountId(who, chainId),
-              address: who,
+              pubKey: whoPubKey,
               threshold,
-              newSignatories: signatories,
+              newSignatories: signatories.map((s) => u8aToHex(decodeAddress(s))),
               isMultisig: true,
               isPureProxy: false
             } as NewMultisigsInfo
 
-            newMultisigsInfo.push(manualMultisig)
+            newMultisigsInfo.set(manualMultisig.pubKey, manualMultisig)
           }
 
-          const id = getProxyAccountId(who, pure, type, delay, chainId)
+          const id = getProxyAccountId(whoPubKey, purePubKey, type, delay, chainId)
 
           newPureProxies.set(id, {
             id,
-            who,
-            pure,
+            who: whoPubKey,
+            pure: purePubKey,
             delay,
             type,
             createdAt: timestamp,
@@ -307,7 +279,8 @@ processor.run(
     }
 
     proxyRemovalIds.size && (await handleProxyRemovals(ctx, Array.from(proxyRemovalIds.values())))
-    newMultisigsInfo.length && (await handleNewMultisigs(ctx, newMultisigsInfo, chainId))
+    newMultisigsInfo.size &&
+      (await handleNewMultisigs(ctx, Array.from(newMultisigsInfo.values()), chainId))
     newMultisigCalls.length && (await handleNewMultisigCalls(ctx, newMultisigCalls, chainId))
     pureToKill.length && (await handleProxyKillPure(ctx, pureToKill))
     newPureProxies.size &&

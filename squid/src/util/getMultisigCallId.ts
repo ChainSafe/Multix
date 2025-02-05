@@ -1,9 +1,9 @@
 export const getMultisigCallId = (
-  address: string,
+  pubKey: string,
   blockNumber: number,
   extrinsicIndex: number,
   callId: string,
   chainId: string
 ) => {
-  return `${chainId}-${address}-${blockNumber}-${extrinsicIndex}-${callId}`
+  return `${chainId}-${pubKey}-${blockNumber}-${extrinsicIndex}-${callId}`
 }

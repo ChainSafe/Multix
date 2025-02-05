@@ -10,7 +10,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { AccountNamesContextProvider } from './contexts/AccountNamesContext'
 import { NetworkContextProvider } from './contexts/NetworkContext'
 import MainLayout from './components/layout/Main'
-import { WatchedAddressesContextProvider } from './contexts/WatchedAddressesContext'
+import { WatchedAccountsContextProvider } from './contexts/WatchedAccountsContext'
 import { WalletConnectContextProvider } from './contexts/WalletConnectContext'
 import { ModalsContextProvider } from './contexts/ModalsContext'
 import { PplApiContextProvider } from './contexts/PeopleChainApiContext'
@@ -34,7 +34,7 @@ const App = () => {
                 <ApiContextProvider>
                   <PplApiContextProvider>
                     <AssetsContextProvider>
-                      <WatchedAddressesContextProvider>
+                      <WatchedAccountsContextProvider>
                         <HiddenAccountsContextProvider>
                           <AccountContextProvider>
                             <AccountNamesContextProvider>
@@ -48,7 +48,7 @@ const App = () => {
                             </AccountNamesContextProvider>
                           </AccountContextProvider>
                         </HiddenAccountsContextProvider>
-                      </WatchedAddressesContextProvider>
+                      </WatchedAccountsContextProvider>
                     </AssetsContextProvider>
                   </PplApiContextProvider>
                 </ApiContextProvider>
