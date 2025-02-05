@@ -3,14 +3,14 @@ import { styled } from '@mui/material'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { Button } from './library'
 import { WATCH_ACCOUNT_ANCHOR } from '../pages/Settings/Settings'
-import { useWatchedAddresses } from '../contexts/WatchedAddressesContext'
+import { useWatchedAccounts } from '../contexts/WatchedAccountsContext'
 import { useNetwork } from '../contexts/NetworkContext'
 import { useAccounts } from '../contexts/AccountsContext'
 
 export const ConnectOrWatch = () => {
   const { setIsConnectionDialogOpen, isAllowedToConnectToExtension, allowConnectionToExtension } =
     useAccounts()
-  const { watchedAddresses } = useWatchedAddresses()
+  const { watchedAddresses } = useWatchedAccounts()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { selectedNetwork } = useNetwork()

@@ -3,7 +3,7 @@ import { MultisigsAndPureByAccountQuery, ProxyType } from '../../types-and-hooks
 import { AccountBaseInfo } from '../components/select/GenericAccountSelection'
 import { useQueryMultisigsAndPureByAccounts } from '../hooks/useQueryMultisigsAndPureByAccounts'
 import { useAccounts } from './AccountsContext'
-import { useWatchedAddresses } from './WatchedAddressesContext'
+import { useWatchedAccounts } from './WatchedAccountsContext'
 import { useAccountId } from '../hooks/useAccountId'
 import { getMultiProxyAddress } from '../utils/getMultiProxyAddress'
 import { useSearchParams } from 'react-router'
@@ -73,7 +73,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   }, [multisigList, networkHiddenAccounts])
   const { ownAddressList } = useAccounts()
   const ownPubKeys = useMemo(() => getPubKeyFromAddress(ownAddressList), [ownAddressList])
-  const { watchedPubKeys } = useWatchedAddresses()
+  const { watchedPubKeys } = useWatchedAccounts()
   const { selectedNetwork } = useNetwork()
   const LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK = useMemo(
     () => selectedNetwork && `multix.lastUsedMultiProxy.${selectedNetwork}`,
@@ -191,8 +191,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
             if (delegatee.isMultisig) {
               const pureAddress = getEncodedAddress(account.pubKey) || ''
               const multisigAddress = getEncodedAddress(delegatee.pubKey) || ''
-              console.log('never empty pureAddress', pureAddress)
-              console.log('never empty multisigAddress', multisigAddress)
+
               const previousMultisigsForProxy = pureProxyMap.get(pureAddress)?.multisigs || []
 
               const isAlreadyInMultisigList = !!previousMultisigsForProxy.find(

@@ -28,10 +28,6 @@ import { Call } from '@subsquid/substrate-processor'
 // },
 
 export const handleMultisigCall = (multisigArgs: Call['args']) => {
-  // const encodedOtherSignatories = multisigArgs['otherSignatories'].map((signatory: string) => {
-  //   return encodeId(signatory)
-  // })
-
   return {
     otherSignatories: multisigArgs['otherSignatories'],
     threshold: multisigArgs['threshold']

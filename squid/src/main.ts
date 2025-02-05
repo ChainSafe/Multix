@@ -118,7 +118,6 @@ processor.run(
             isPureProxy: false
           } as NewMultisigsInfo
 
-          // ctx.log.info(`${blockNumber}-${newMulti.pubKey.slice(0, 10)}-${newMultisigsInfo.size}`)
           newMultisigsInfo.set(newMulti.pubKey, newMulti)
           const blockHash = block.header.hash
 

@@ -13,5 +13,5 @@ export const getProxyAccountId = (
     )
   }
 
-  return `${chainId}-${delegateePubKey.slice(0, 10)}-${delegatorPubKey.slice(0, 10)}-${type}-${delay}`
+  return `${chainId}-${delegateePubKey.substring(20)}-${delegatorPubKey.substring(20)}-${type}-${delay}`
 }

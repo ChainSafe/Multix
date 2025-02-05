@@ -13,11 +13,11 @@ import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
 const LOCALSTORAGE_WATCHED_ACCOUNTS_KEY = 'multix.watchedAccount'
 
-type WatchedAddressesProps = {
+type WatchedAccountsProps = {
   children: ReactNode | ReactNode[]
 }
 
-export interface IWatchedAddressesContext {
+export interface IWatchedAccountsContext {
   addWatchedAccount: (address: string) => void
   removeWatchedAccount: (address: string) => void
   watchedPubKeys: string[]
@@ -25,9 +25,9 @@ export interface IWatchedAddressesContext {
   isInitialized: boolean
 }
 
-const WatchedAddressesContext = createContext<IWatchedAddressesContext | undefined>(undefined)
+const WatchedAccountsContext = createContext<IWatchedAccountsContext | undefined>(undefined)
 
-const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) => {
+const WatchedAccountsContextProvider = ({ children }: WatchedAccountsProps) => {
   const [watchedPubKeys, setWatchedPubKeys] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const { chainInfo } = useApi()
@@ -77,7 +77,7 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
   }, [isInitialized, watchedPubKeys])
 
   return (
-    <WatchedAddressesContext.Provider
+    <WatchedAccountsContext.Provider
       value={{
         addWatchedAccount,
         removeWatchedAccount,
@@ -87,16 +87,16 @@ const WatchedAddressesContextProvider = ({ children }: WatchedAddressesProps) =>
       }}
     >
       {children}
-    </WatchedAddressesContext.Provider>
+    </WatchedAccountsContext.Provider>
   )
 }
 
-const useWatchedAddresses = () => {
-  const context = useContext(WatchedAddressesContext)
+const useWatchedAccounts = () => {
+  const context = useContext(WatchedAccountsContext)
   if (context === undefined) {
-    throw new Error('useWatchedAddresses must be used within a WatchedAddressesContextProvider')
+    throw new Error('useWatchedAddresses must be used within a WatchedAccountsContextProvider')
   }
   return context
 }
 
-export { WatchedAddressesContextProvider, useWatchedAddresses }
+export { WatchedAccountsContextProvider, useWatchedAccounts }

@@ -1,13 +1,13 @@
 import { styled } from '@mui/material/styles'
 import { Box, Grid2 as Grid, IconButton, Paper } from '@mui/material'
-import { useWatchedAddresses } from '../../contexts/WatchedAddressesContext'
+import { useWatchedAccounts } from '../../contexts/WatchedAccountsContext'
 import AccountDisplay from '../../components/AccountDisplay/AccountDisplay'
 import { HiOutlineXMark } from 'react-icons/hi2'
 import AccountSelection from '../../components/select/AccountSelection'
 import { useMemo } from 'react'
 
 const WatchedAccounts = () => {
-  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAddresses()
+  const { watchedAddresses, removeWatchedAccount, addWatchedAccount } = useWatchedAccounts()
   const hasWatchedAddresses = useMemo(() => watchedAddresses.length > 0, [watchedAddresses])
 
   return (
