@@ -183,6 +183,7 @@ const TransferAsset = ({
       container
       spacing={2}
       justifyContent={'center'}
+      data-cy={`transfer-asset-${index}`}
     >
       <Grid2 size={{ xs: 12, md: 7 }}>
         <GenericAccountSelection
@@ -217,13 +218,19 @@ const TransferAsset = ({
                     {isAssetHub ? <TokenSelection /> : chainInfo?.tokenSymbol || ''}
                   </InputAdornment>
                 )
+              },
+              htmlInput: {
+                'data-cy': 'input-send-tokens-amount'
               }
             }}
           />
         </Grid2>
         <Grid2 size={{ xs: 1 }}>
           {withDeleteButton && (
-            <DeleteButtonStyled onClick={onRemove}>
+            <DeleteButtonStyled
+              onClick={onRemove}
+              data-cy="delete-field-button"
+            >
               <HiOutlineTrash />
             </DeleteButtonStyled>
           )}

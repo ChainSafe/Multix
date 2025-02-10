@@ -150,6 +150,7 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
         <AddButtonStyled
           onClick={onAddAField}
           variant="tertiary"
+          data-cy="add-recipient-button"
         >
           <HiOutlinePlusCircle size={24} /> Add recipient
         </AddButtonStyled>

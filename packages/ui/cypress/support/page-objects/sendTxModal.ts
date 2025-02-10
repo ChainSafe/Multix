@@ -1,9 +1,9 @@
 export const sendTxModal = {
   sendTxTitle: () => cy.get('[data-cy=title-send-tx]'),
   sendTxContent: () => cy.get('[data-cy=modal-send-tx]'),
-  sendTokensFieldTo: () => cy.get('[data-cy=send-tokens-field-to]'),
+  sendTokensFieldTo: () => cy.get(`[data-cy=send-tokens-field-to]`),
   sendTokensFieldAmount: () => cy.get('[data-cy=send-tokens-field-amount]'),
-  sendTokensFieldAssetSelection: () => cy.get('[data-cy=select-ah-assets]'),
+  sendTokensFieldAssetSelection: () => cy.get(`[data-cy=select-ah-assets]`),
   buttonSend: () => cy.get('[data-cy=button-send]'),
   buttonSending: () => cy.get('[data-cy=button-sending]'),
   setIdentitySection: () => cy.get('[data-cy=section-set-identity]'),
@@ -25,5 +25,9 @@ export const sendTxModal = {
   paramField: (param: string) => cy.get(`[data-cy=param-field-${param}]`),
   paramInput: (param: string) => cy.get(`[data-cy=param-input-${param}]`),
   callDataInput: () => cy.get('[data-cy=input-from-call-data]'),
-  selectAsset: (symbol: string) => cy.get(`[data-cy=select-option-ah-assets-${symbol}]`)
+  selectAsset: (symbol: string) => cy.get(`[data-cy=select-option-ah-assets-${symbol}]`),
+  buttonAddRecipient: () => cy.get('[data-cy=add-recipient-button]'),
+  wrapperAssetTransfer: (index = 0) => cy.get(`[data-cy=transfer-asset-${index}]`),
+  deleteFieldButton: () => cy.get('[data-cy=delete-field-button]'),
+  inputSendtokenAmount: () => cy.get('[data-cy=input-send-tokens-amount]')
 }
