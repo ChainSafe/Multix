@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'link' | 'negative'
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'link' | 'negative'
   border?: CSSStyleDeclaration['border']
 }
 
@@ -30,7 +30,7 @@ export const Button = styled('button')<ButtonProps>`
     box-shadow: none;
   }
 
-  ${({ variant, theme }) =>
+  ${({ variant = 'secondary', theme }) =>
     variant === 'primary' &&
     `
     background: ${theme.palette.primary.main};
@@ -48,7 +48,7 @@ export const Button = styled('button')<ButtonProps>`
     }
   `}
 
-  ${({ variant, theme }) =>
+  ${({ variant = 'secondary', theme }) =>
     variant === 'secondary' &&
     `
     background: ${theme.custom.gray[100]};
@@ -67,7 +67,7 @@ export const Button = styled('button')<ButtonProps>`
     }
   `}
 
-  ${({ variant, theme }) =>
+  ${({ variant = 'secondary', theme }) =>
     variant === 'link' &&
     `
     background: none;
@@ -84,7 +84,7 @@ export const Button = styled('button')<ButtonProps>`
     }
   `}
 
-  ${({ variant, theme }) =>
+  ${({ variant = 'secondary', theme }) =>
     variant === 'negative' &&
     `
     background: ${theme.palette.error.main};
@@ -101,11 +101,23 @@ export const Button = styled('button')<ButtonProps>`
       box-shadow: none;
     }
   `}
-`
 
-Button.defaultProps = {
-  variant: 'secondary'
-}
+${({ variant = 'secondary', theme }) =>
+    variant === 'tertiary' &&
+    `
+    background: none;
+    box-shadow: none;
+    color: ${theme.custom.text.black};
+    
+    display: flex;
+    align-items: center;
+    color: ${theme.custom.gray[800]};
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  `}
+`
 
 export const ButtonWithIcon = styled(Button)<ButtonProps>`
   display: flex;
