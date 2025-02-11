@@ -1,18 +1,19 @@
-import { Box, InputAdornment, SelectChangeEvent } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { isContextIn, isContextOf, useApi } from '../../contexts/ApiContext'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
-import { inputToBigInt, getGlobalMaxValue } from '../../utils/bnUtils'
-import { Select, TextField } from '../library'
-import { useAccountBaseFromAccountList } from '../../hooks/useAccountBaseFromAccountList'
-import { MultiAddress } from '@polkadot-api/descriptors'
+import { isContextIn, useApi } from '../../contexts/ApiContext'
 import { Transaction } from 'polkadot-api'
+import TransferAsset, { Option } from '../TransferAsset'
+import { Button } from '../library'
+import { Grid2 } from '@mui/material'
+import { HiOutlinePlusCircle } from 'react-icons/hi2'
 import { useNetwork } from '../../contexts/NetworkContext'
-import { assetHubKeys, noHydrationKeys } from '../../types'
+import { useAssets } from '../../contexts/AssetsContext'
+import { assetHubKeys } from '../../types'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
-import { Asset, useAssets } from '../../contexts/AssetsContext'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { useGetAssetBalances } from '../../hooks/useGetAssetBalances'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 
 interface Props {
   className?: string
@@ -21,27 +22,44 @@ interface Props {
   onSetErrorMessage: React.Dispatch<React.SetStateAction<string | ReactNode>>
 }
 
-interface Option extends Omit<Asset, 'name'> {
-  id: number
+export interface FieldInfo {
+  extrinsic?: Transaction<any, any, any, any> | undefined
+  index: number
+  assetId?: number
+  amount?: bigint
 }
 
-const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  const accountBase = useAccountBaseFromAccountList({ withAccountsFromAddressBook: true })
-  const [selected, setSelected] = useState<AccountBaseInfo | undefined>()
+const nonNativeAssetIds = AH_SUPPORTED_ASSETS.map(({ assetId }) => assetId)
+
+export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
+  const [lastIndex, setLastIndex] = useState(0)
   const ctx = useApi()
-  const { api, chainInfo, apiDescriptor } = ctx
+  const [lastAssetId, setLastAssetId] = useState<number | undefined>()
+  const { api, chainInfo } = ctx
+  const { selectedNetworkInfo } = useNetwork()
   const isAssetHub = useMemo(() => isContextIn(ctx, assetHubKeys), [ctx])
-  const [amountString, setAmountString] = useState('')
-  const [amount, setAmount] = useState<bigint | undefined>()
-  const [amountError, setAmountError] = useState('')
-  const { hasEnoughFreeBalance } = useCheckBalance({
-    min: amount,
+  const { getAssetMetadata } = useAssets()
+  const [fieldInfoMap, setFieldInfoMap] = useState<
+    Map<number, Omit<FieldInfo, 'index'> | undefined>
+  >(new Map([[0, undefined]]))
+  const { balances } = useGetAssetBalances({
+    address: from,
+    assetIds: nonNativeAssetIds
+  })
+  const totalPerAsset = useMemo(() => {
+    const res: Record<number, bigint> = {}
+    Array.from(fieldInfoMap.values()).forEach((fieldInfo) => {
+      if (!fieldInfo) return
+      const id = fieldInfo.assetId ?? 0
+      res[id] = (res[id] ?? 0n) + (fieldInfo.amount ?? 0n)
+    })
+    return res
+  }, [fieldInfoMap])
+  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckBalance({
+    min: totalPerAsset[0],
     address: from
   })
-  const maxValue = useMemo(() => getGlobalMaxValue(128), [])
-  const toAddress = useMemo(() => selected?.address || '', [selected?.address])
-  const { selectedNetwork, selectedNetworkInfo } = useNetwork()
-  const { getAssetMetadata } = useAssets()
+
   const assetList = useMemo(() => {
     if (!chainInfo || !selectedNetworkInfo) return [] as Option[]
 
@@ -59,6 +77,7 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
     }).filter(Boolean) as Option[]
 
     const nativeAssetEntry = {
+      id: 0,
       logo: selectedNetworkInfo.nativeAssetLogo || selectedNetworkInfo.networkLogo,
       symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
@@ -66,182 +85,133 @@ const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }
 
     return [nativeAssetEntry, ...assetHubList]
   }, [chainInfo, getAssetMetadata, isAssetHub, selectedNetworkInfo])
-  const [selectedAsset, setSelectedAsset] = useState<Option | undefined>(assetList[0])
+
+  // check for the native asset
+  useEffect(() => {
+    if (!!totalPerAsset[0] && !hasEnoughNativeToken) {
+      const message = getErrorMessageReservedFunds(
+        '"From" address',
+        formatBigIntBalance(totalPerAsset[0], chainInfo?.tokenDecimals, {
+          tokenSymbol: chainInfo?.tokenSymbol
+        })
+      )
+      onSetErrorMessage(message)
+    }
+  }, [chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])
+
+  // check for other assets
+  useEffect(() => {
+    const assetIssue = Object.entries(totalPerAsset).find(([assetId, amount]) => {
+      return balances && balances[Number(assetId)] < amount
+    })
+
+    const asset = assetList.find((asset) => asset.id === Number(assetIssue?.[0]))
+
+    if (assetIssue) {
+      const message = getErrorMessageReservedFunds(
+        '"From" address',
+        formatBigIntBalance(assetIssue[1], asset?.decimals, {
+          tokenSymbol: asset?.symbol
+        })
+      )
+      onSetErrorMessage(message)
+    }
+  }, [assetList, balances, chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])
 
   useEffect(() => {
-    if (!selectedAsset && !!assetList) setSelectedAsset(assetList[0])
-  }, [assetList, selectedAsset])
+    if (!api) return
 
-  useEffect(() => {
-    if (!!amount && !hasEnoughFreeBalance) {
-      onSetErrorMessage('"From" address balance too low')
+    const extrinsicsArray = Array.from(fieldInfoMap.values())
+      .map((fieldInfo) => fieldInfo?.extrinsic)
+      .filter(Boolean) as Transaction<any, any, any, any>[]
+
+    if (extrinsicsArray.length === 0) {
+      onSetExtrinsic(undefined)
+      return
+    }
+
+    if (extrinsicsArray.length === 1) {
+      onSetExtrinsic(extrinsicsArray[0])
     } else {
+      onSetExtrinsic(
+        api.tx.Utility.batch_all({
+          calls: extrinsicsArray.map((extrinsic) => extrinsic.decodedCall)
+        })
+      )
+    }
+  }, [api, fieldInfoMap, onSetExtrinsic])
+
+  const onAddExtrinsic = useCallback(
+    ({ extrinsic, index, amount, assetId }: FieldInfo) => {
       onSetErrorMessage('')
-    }
-  }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
-
-  useEffect(() => {
-    if (!ctx?.api || !api || !selectedNetwork) {
-      onSetExtrinsic(undefined)
-      return
-    }
-
-    if (!toAddress || !amount || !selectedAsset) {
-      onSetExtrinsic(undefined)
-      return
-    }
-
-    // not re-using isAssetHub here bc TS doesn't type correctly
-    // if we're on AH and *not* sending the native asset use Assets.transfer_keep_alive
-    if (isContextIn(ctx, assetHubKeys) && selectedAsset.symbol !== chainInfo?.tokenSymbol) {
-      const extrinsic = ctx.api.tx.Assets.transfer_keep_alive({
-        amount,
-        id: selectedAsset.id,
-        target: MultiAddress.Id(toAddress)
+      setFieldInfoMap((prevExtrinsics) => {
+        const newMap = new Map(prevExtrinsics)
+        newMap.set(index, { extrinsic, amount, assetId })
+        return newMap
       })
-
-      !!extrinsic && onSetExtrinsic(extrinsic)
-
-      // we're sending the native asset (on any network including AH) use Balances.transfer
-    } else {
-      const extrinsic = isContextOf(ctx, 'hydration')
-        ? ctx.api.tx.Balances.transfer_keep_alive({
-            dest: toAddress,
-            value: amount
-          })
-        : isContextIn(ctx, noHydrationKeys) &&
-          ctx.api.tx.Balances.transfer_keep_alive({
-            dest: MultiAddress.Id(toAddress),
-            value: amount
-          })
-
-      !!extrinsic && onSetExtrinsic(extrinsic)
-    }
-  }, [
-    amount,
-    api,
-    apiDescriptor,
-    chainInfo,
-    ctx,
-    onSetExtrinsic,
-    selectedAsset,
-    selectedNetwork,
-    toAddress
-  ])
-
-  const onAddressDestChange = useCallback((account: AccountBaseInfo) => {
-    setSelected(account)
-  }, [])
-
-  useEffect(() => {
-    if (!selectedAsset || !amountString) return
-
-    if (!amountString.match('^[0-9]+([.][0-9]+)?$')) {
-      setAmountError('Only numbers and "." are accepted.')
-      onSetErrorMessage('Invalid amount')
-      setAmount(0n)
-      return
-    }
-
-    const bigintResult = inputToBigInt(selectedAsset.decimals, amountString)
-
-    if (bigintResult > maxValue) {
-      setAmountError('Amount too large')
-      onSetErrorMessage('Amount too large')
-      return
-    }
-
-    setAmount(bigintResult)
-  }, [amountString, maxValue, onSetErrorMessage, selectedAsset])
-
-  const onAmountChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setAmountError('')
-      onSetErrorMessage('')
-
-      const stringInput = event.target.value.trim()
-      setAmountString(stringInput)
     },
     [onSetErrorMessage]
   )
 
-  const onAssetSelection = useCallback(
-    (event: SelectChangeEvent<unknown>) => {
-      const selectedSymbol = event.target.value as string
+  const onAddAField = useCallback(() => {
+    onSetErrorMessage('')
+    setFieldInfoMap((prevExtrinsics) => {
+      const newMap = new Map(prevExtrinsics)
+      const newIndex = lastIndex + 1
+      newMap.set(newIndex, undefined)
+      setLastIndex(newIndex)
+      return newMap
+    })
+  }, [lastIndex, onSetErrorMessage])
 
-      const selected = assetList.find(({ symbol }) => selectedSymbol === symbol)
-
-      if (!selected) return
-
-      setSelectedAsset(selected)
+  const onRemoveItem = useCallback(
+    (index: number) => {
+      onSetErrorMessage('')
+      setFieldInfoMap((prevFieldInfo) => {
+        const newMap = new Map(prevFieldInfo)
+        newMap.delete(index)
+        return newMap
+      })
     },
-    [assetList]
+    [onSetErrorMessage]
   )
 
-  const TokenSelection = useCallback(() => {
-    if (!selectedAsset) return
-
-    return (
-      <SelectStyled
-        value={selectedAsset.symbol}
-        onChange={onAssetSelection}
-        menuItems={assetList.map(({ logo, symbol }) => ({ value: symbol, logo }))}
-        testId="ah-assets"
-      />
-    )
-  }, [assetList, onAssetSelection, selectedAsset])
-
   return (
-    <Box className={className}>
-      <GenericAccountSelection
-        className="to"
-        onChange={onAddressDestChange}
-        value={selected}
-        label="to"
-        allowAnyAddressInput={true}
-        accountList={accountBase}
-        testId="send-tokens-field-to"
-      />
-      <TextFieldStyled
-        className={isAssetHub ? 'assetHub' : ''}
-        data-cy="send-tokens-field-amount"
-        label={`Amount`}
-        onChange={onAmountChange}
-        value={amountString}
-        helperText={amountError}
-        error={!!amountError}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                {isAssetHub ? <TokenSelection /> : chainInfo?.tokenSymbol || ''}
-              </InputAdornment>
-            )
-          }
-        }}
-      />
-    </Box>
+    <>
+      {Array.from(fieldInfoMap.keys()).map((index) => (
+        <TransferAsset
+          key={index}
+          index={index}
+          className={className}
+          onSetErrorMessage={onSetErrorMessage}
+          onSetExtrinsic={onAddExtrinsic}
+          onRemoveItem={onRemoveItem}
+          defaultAssetId={lastAssetId}
+          setLastAssetId={setLastAssetId}
+          withDeleteButton={fieldInfoMap.size > 1}
+          assetList={assetList}
+        />
+      ))}
+      <ButtonGridStyled>
+        <AddButtonStyled
+          onClick={onAddAField}
+          variant="tertiary"
+          data-cy="add-recipient-button"
+        >
+          <HiOutlinePlusCircle size={24} /> Add recipient
+        </AddButtonStyled>
+      </ButtonGridStyled>
+    </>
   )
 }
 
-const SelectStyled = styled(Select)`
-  outline: none !important;
-  .MuiSelect-select {
-    margin-right: -1rem;
-    padding-right: 3rem !important;
+export default styled(BalancesTransfer)``
+
+const AddButtonStyled = styled(Button)`
+  & > svg {
+    margin-right: 0.5rem;
   }
 `
-
-const TextFieldStyled = styled(TextField)`
-  &.assetHub > .MuiOutlinedInput-root {
-    padding-right: 0;
-  }
-`
-
-export default styled(BalancesTransfer)`
-  margin-top: 0.5rem;
-
-  .to {
-    margin-bottom: 0.5rem;
-  }
+const ButtonGridStyled = styled(Grid2)`
+  margin-top: 1rem;
 `

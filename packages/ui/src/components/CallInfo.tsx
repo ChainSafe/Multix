@@ -455,6 +455,7 @@ export default styled(CallInfo)`
 const ImgStyled = styled('img')`
   margin-left: 0.5rem;
   width: 1.5rem;
+  border-radius: 50%;
 `
 
 const StyledAmount = styled('div')`

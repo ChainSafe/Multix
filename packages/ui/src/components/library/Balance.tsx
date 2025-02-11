@@ -31,5 +31,6 @@ const BalanceStyled = styled('div')`
 const ImgStyled = styled('img')`
   margin-left: 0.5rem;
   width: 1.5rem;
+  border-radius: 50%;
 `
 export default Balance
