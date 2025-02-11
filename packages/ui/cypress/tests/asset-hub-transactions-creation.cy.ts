@@ -227,3 +227,65 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     sendTxModal.buttonSend().should('be.enabled')
   })
 })
+
+describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
+  beforeEach(() => {
+    cy.setupAndVisit({
+      url: landingPageNetwork('polkadot'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos],
+      accountNames: { [randomAccount.pubKey]: 'Random' }
+    })
+  })
+
+  it('Shows an error for 1 transfer of tokens', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
+    sendTxModal.inputSendtokenAmount().click().type('10')
+    sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
+
+    sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.01')
+    sendTxModal
+      .sendTxError()
+      .should('be.visible')
+      .contains(`The "Signing with" account doesn't have the required`)
+    sendTxModal.buttonSend().should('be.disabled')
+  })
+
+  it('Shows an error for a batch of tokens', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
+    sendTxModal.inputSendtokenAmount().click().type('0.3')
+    sendTxModal
+      .sendTxError()
+      .should('be.visible')
+      .contains(`The "Signing with" account doesn't have the required`)
+    sendTxModal.buttonSend().should('be.disabled')
+
+    // second DOT field
+    sendTxModal.buttonAddRecipient().click()
+    sendTxModal.wrapperAssetTransfer(1).should('be.visible')
+    sendTxModal.wrapperAssetTransfer(1).within(() => {
+      sendTxModal
+        .sendTokensFieldTo()
+        .click()
+        .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+      sendTxModal.inputSendtokenAmount().click().type('0.9')
+    })
+    sendTxModal.sendTxError().should('be.visible').contains('the required 1.2 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
+  })
+})
