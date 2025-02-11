@@ -6,11 +6,14 @@ import TransferAsset, { Option } from '../TransferAsset'
 import { Button } from '../library'
 import { Grid2 } from '@mui/material'
 import { HiOutlinePlusCircle } from 'react-icons/hi2'
-// import { inputToBigInt } from '../../utils/bnUtils'
 import { useNetwork } from '../../contexts/NetworkContext'
 import { useAssets } from '../../contexts/AssetsContext'
 import { assetHubKeys } from '../../types'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
+import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
+import { useGetAssetBalances } from '../../hooks/useGetAssetBalances'
+import { formatBigIntBalance } from '../../utils/formatBnBalance'
 
 interface Props {
   className?: string
@@ -26,7 +29,9 @@ export interface FieldInfo {
   amount?: bigint
 }
 
-export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage }: Props) => {
+const nonNativeAssetIds = AH_SUPPORTED_ASSETS.map(({ assetId }) => assetId)
+
+export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
   // const { selectedNetwork, selectedNetworkInfo } = useNetwork()
   const [lastIndex, setLastIndex] = useState(0)
   const ctx = useApi()
@@ -38,23 +43,23 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
   const [fieldInfoMap, setFieldInfoMap] = useState<
     Map<number, Omit<FieldInfo, 'index'> | undefined>
   >(new Map([[0, undefined]]))
-  // const [amountString, setAmountString] = useState('')
-  // const [amount, setAmount] = useState<bigint | undefined>()
-  // const [amountError, setAmountError] = useState('')
-  // const { hasEnoughFreeBalance } = useCheckBalance({
-  //   min: amount,
-  //   address: from
-  // })
-  // const maxValue = useMemo(() => getGlobalMaxValue(128), [])
-  // const toAddress = useMemo(() => selected?.address || '', [selected?.address])
-
-  // useEffect(() => {
-  //   if (!!amount && !hasEnoughFreeBalance) {
-  //     onSetErrorMessage('"From" address balance too low')
-  //   } else {
-  //     onSetErrorMessage('')
-  //   }
-  // }, [amount, amountError, hasEnoughFreeBalance, onSetErrorMessage])
+  const { balances } = useGetAssetBalances({
+    address: from,
+    assetIds: nonNativeAssetIds
+  })
+  const totalPerAsset = useMemo(() => {
+    const res: Record<number, bigint> = {}
+    Array.from(fieldInfoMap.values()).forEach((fieldInfo) => {
+      if (!fieldInfo) return
+      const id = fieldInfo.assetId ?? 0
+      res[id] = (res[id] ?? 0n) + (fieldInfo.amount ?? 0n)
+    })
+    return res
+  }, [fieldInfoMap])
+  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckBalance({
+    min: totalPerAsset[0],
+    address: from
+  })
 
   const assetList = useMemo(() => {
     if (!chainInfo || !selectedNetworkInfo) return [] as Option[]
@@ -73,6 +78,7 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
     }).filter(Boolean) as Option[]
 
     const nativeAssetEntry = {
+      id: 0,
       logo: selectedNetworkInfo.nativeAssetLogo || selectedNetworkInfo.networkLogo,
       symbol: chainInfo.tokenSymbol,
       decimals: chainInfo.tokenDecimals
@@ -80,6 +86,38 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
 
     return [nativeAssetEntry, ...assetHubList]
   }, [chainInfo, getAssetMetadata, isAssetHub, selectedNetworkInfo])
+
+  // check for the native asset
+  useEffect(() => {
+    if (!!totalPerAsset[0] && !hasEnoughNativeToken) {
+      const message = getErrorMessageReservedFunds(
+        '"From" address',
+        formatBigIntBalance(totalPerAsset[0], chainInfo?.tokenDecimals, {
+          tokenSymbol: chainInfo?.tokenSymbol
+        })
+      )
+      onSetErrorMessage(message)
+    }
+  }, [chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])
+
+  // check for other assets
+  useEffect(() => {
+    const assetIssue = Object.entries(totalPerAsset).find(([assetId, amount]) => {
+      return balances && balances[Number(assetId)] < amount
+    })
+
+    const asset = assetList.find((asset) => asset.id === Number(assetIssue?.[0]))
+
+    if (assetIssue) {
+      const message = getErrorMessageReservedFunds(
+        '"From" address',
+        formatBigIntBalance(assetIssue[1], asset?.decimals, {
+          tokenSymbol: asset?.symbol
+        })
+      )
+      onSetErrorMessage(message)
+    }
+  }, [assetList, balances, chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])
 
   useEffect(() => {
     if (!api) return
@@ -104,15 +142,20 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
     }
   }, [api, fieldInfoMap, onSetExtrinsic])
 
-  const onAddExtrinsic = useCallback(({ extrinsic: ext, index, amount, assetId }: FieldInfo) => {
-    setFieldInfoMap((prevExtrinsics) => {
-      const newMap = new Map(prevExtrinsics)
-      newMap.set(index, { extrinsic: ext, amount, assetId })
-      return newMap
-    })
-  }, [])
+  const onAddExtrinsic = useCallback(
+    ({ extrinsic: ext, index, amount, assetId }: FieldInfo) => {
+      onSetErrorMessage('')
+      setFieldInfoMap((prevExtrinsics) => {
+        const newMap = new Map(prevExtrinsics)
+        newMap.set(index, { extrinsic: ext, amount, assetId })
+        return newMap
+      })
+    },
+    [onSetErrorMessage]
+  )
 
   const onAddAField = useCallback(() => {
+    onSetErrorMessage('')
     setFieldInfoMap((prevExtrinsics) => {
       const newMap = new Map(prevExtrinsics)
       const newIndex = lastIndex + 1
@@ -120,15 +163,19 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage 
       setLastIndex(newIndex)
       return newMap
     })
-  }, [lastIndex])
+  }, [lastIndex, onSetErrorMessage])
 
-  const onRemoveItem = useCallback((index: number) => {
-    setFieldInfoMap((prevFieldInfo) => {
-      const newMap = new Map(prevFieldInfo)
-      newMap.delete(index)
-      return newMap
-    })
-  }, [])
+  const onRemoveItem = useCallback(
+    (index: number) => {
+      onSetErrorMessage('')
+      setFieldInfoMap((prevFieldInfo) => {
+        const newMap = new Map(prevFieldInfo)
+        newMap.delete(index)
+        return newMap
+      })
+    },
+    [onSetErrorMessage]
+  )
 
   return (
     <>
