@@ -32,7 +32,6 @@ export interface FieldInfo {
 const nonNativeAssetIds = AH_SUPPORTED_ASSETS.map(({ assetId }) => assetId)
 
 export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage, from }: Props) => {
-  // const { selectedNetwork, selectedNetworkInfo } = useNetwork()
   const [lastIndex, setLastIndex] = useState(0)
   const ctx = useApi()
   const [lastAssetId, setLastAssetId] = useState<number | undefined>()
@@ -143,11 +142,11 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
   }, [api, fieldInfoMap, onSetExtrinsic])
 
   const onAddExtrinsic = useCallback(
-    ({ extrinsic: ext, index, amount, assetId }: FieldInfo) => {
+    ({ extrinsic, index, amount, assetId }: FieldInfo) => {
       onSetErrorMessage('')
       setFieldInfoMap((prevExtrinsics) => {
         const newMap = new Map(prevExtrinsics)
-        newMap.set(index, { extrinsic: ext, amount, assetId })
+        newMap.set(index, { extrinsic, amount, assetId })
         return newMap
       })
     },
