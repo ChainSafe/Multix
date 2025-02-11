@@ -6,15 +6,22 @@ import { landingPageNetwork } from '../fixtures/landingData'
 import { SignerPayloadJSON } from '@polkadot-api/tx-utils'
 
 const testAccount1Address = polkadotAHMemberAccount.Nikos.address
+const randomAccount = {
+  address: '1uXsk6gr4CJjQ83K1v2Lk9GFunwmjo49tjKRUY1rhZhTY1u',
+  pubKey: '0x2810b1f4a7ff1cc7bc6c615eae881f971a88c8e7048d6bad52fcbab751966e2d'
+}
 
-const fillAndSubmitTransactionForm = (assetSymbol = '') => {
-  sendTxModal.sendTokensFieldTo().click().type(`${testAccount1Address}{enter}`)
+const fillAndSubmitTransactionForm = (assetSymbol = '', address: string) => {
+  sendTxModal
+    .sendTokensFieldTo()
+    .click()
+    .type(`${address.slice(0, 5)}{downArrow}{enter}`)
   sendTxModal.sendTokensFieldAssetSelection().should('exist')
   if (assetSymbol) {
     sendTxModal.sendTokensFieldAssetSelection().click()
     sendTxModal.selectAsset(assetSymbol).click()
   }
-  sendTxModal.sendTokensFieldAmount().click().type('0.001')
+  sendTxModal.sendTokensFieldAmount().click().type('0.9')
   sendTxModal.buttonSend().should('be.enabled').click()
 }
 
@@ -23,7 +30,8 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     cy.setupAndVisit({
       url: landingPageNetwork('asset-hub-polkadot'),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos]
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos],
+      accountNames: { [randomAccount.pubKey]: 'Random' }
     })
   })
 
@@ -31,7 +39,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     multisigPage.accountHeader(6000).should('be.visible')
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
-    fillAndSubmitTransactionForm()
+    fillAndSubmitTransactionForm('', testAccount1Address)
     waitForTxRequest()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
@@ -41,7 +49,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       // this is a balances.transferKeepAlive
       cy.wrap((txRequests[0].payload as SignerPayloadJSON).method).should(
         'eq',
-        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c000a0300ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a1971025a62020000'
+        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c000a0300ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a197107001a7118020000'
       )
     })
   })
@@ -50,7 +58,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     multisigPage.accountHeader(6000).should('be.visible')
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
-    fillAndSubmitTransactionForm('usdt')
+    fillAndSubmitTransactionForm('usdc', randomAccount.address)
     waitForTxRequest()
     cy.getTxRequests().then((req) => {
       const txRequests = Object.values(req)
@@ -60,7 +68,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       // this is a assets.transferKeepAlive
       cy.wrap((txRequests[0].payload as SignerPayloadJSON).method).should(
         'eq',
-        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c003209011f00ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a1971a10f0000'
+        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c003209e51400ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a197182ee36000000'
       )
     })
   })
@@ -76,10 +84,10 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .click()
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.sendTokensFieldAssetSelection().should('exist')
-      sendTxModal.inputSendtokenAmount().click().type('1')
+      sendTxModal.inputSendtokenAmount().click().type('0.1')
       sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
     })
-    sendTxModal.selectAsset('usdt').click()
+    sendTxModal.selectAsset('usdc').click()
     sendTxModal.buttonAddRecipient().click()
     sendTxModal.wrapperAssetTransfer(1).should('be.visible')
     sendTxModal.wrapperAssetTransfer(1).within(() => {
@@ -88,10 +96,9 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       sendTxModal
         .sendTokensFieldTo()
         .click()
-        .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
-      sendTxModal.sendTokensFieldAssetSelection().contains('USDT').click()
+        .type(`${randomAccount.address.slice(0, 4)}{downArrow}{enter}`)
+      sendTxModal.sendTokensFieldAssetSelection().should('contain', 'USDC')
     })
-    sendTxModal.selectAsset('usdc').click()
 
     // this means there will be 1 empty field
     sendTxModal.buttonAddRecipient().click()
@@ -108,7 +115,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       cy.wrap(txRequests[0].payload.address).should('eq', testAccount1Address)
       cy.wrap((txRequests[0].payload as SignerPayloadJSON).method).should(
         'eq',
-        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c002802083209011f00ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a197102093d003209e51400ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a1971a10f0000'
+        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c002802083209e51400ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a1971821a06003209e514002810b1f4a7ff1cc7bc6c615eae881f971a88c8e7048d6bad52fcbab751966e2da10f0000'
       )
       txRequests[0].reject('not yet')
     })
@@ -120,7 +127,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
 
     sendTxModal.wrapperAssetTransfer(2).within(() => {
       sendTxModal.sendTokensFieldAssetSelection().should('exist')
-      sendTxModal.inputSendtokenAmount().click().type('1')
+      sendTxModal.inputSendtokenAmount().click().type('0.1')
       sendTxModal
         .sendTokensFieldTo()
         .click()
@@ -137,8 +144,148 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       cy.wrap(txRequests[1].payload.address).should('eq', testAccount1Address)
       cy.wrap((txRequests[1].payload as SignerPayloadJSON).method).should(
         'eq',
-        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c002802083209e51400ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a1971a10f0a0300ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a19710700e40b54020000'
+        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c002802083209e514002810b1f4a7ff1cc7bc6c615eae881f971a88c8e7048d6bad52fcbab751966e2da10f0a0300ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a197102286bee0000'
       )
     })
+  })
+
+  it('Shows an error for 1 transfer of native or other assets', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('exist')
+    sendTxModal.inputSendtokenAmount().click().type('10')
+    sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
+    sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
+    sendTxModal.selectAsset('usdt').click()
+    sendTxModal.sendTxError().should('be.visible').contains('the required 10 USDT')
+    sendTxModal.buttonSend().should('be.disabled')
+    sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.01')
+    sendTxModal.sendTokensFieldAssetSelection().click()
+    sendTxModal.selectAsset('usdc').click()
+    sendTxModal.sendTxError().should('not.exist')
+    sendTxModal.buttonSend().should('be.enabled')
+  })
+
+  it('Shows an error for batch transfer of native or other assets', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('exist')
+    sendTxModal.inputSendtokenAmount().click().type('0.3')
+    sendTxModal.sendTxError().should('not.exist')
+    sendTxModal.buttonSend().should('be.enabled')
+
+    // second DOT field
+    sendTxModal.buttonAddRecipient().click()
+    sendTxModal.wrapperAssetTransfer(1).should('be.visible')
+    sendTxModal.wrapperAssetTransfer(1).within(() => {
+      sendTxModal
+        .sendTokensFieldTo()
+        .click()
+        .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+      sendTxModal.inputSendtokenAmount().click().type('0.9')
+    })
+    sendTxModal.sendTxError().should('be.visible').contains('the required 1.2 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
+
+    // change the last field to USDC
+    sendTxModal.wrapperAssetTransfer(1).within(() => {
+      sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
+    })
+    sendTxModal.selectAsset('usdc').click()
+    sendTxModal.sendTxError().should('not.exist')
+    sendTxModal.buttonSend().should('be.enabled')
+
+    //second USDC field
+    sendTxModal.buttonAddRecipient().click()
+    sendTxModal.wrapperAssetTransfer(2).should('be.visible')
+    sendTxModal.wrapperAssetTransfer(2).within(() => {
+      sendTxModal
+        .sendTokensFieldTo()
+        .click()
+        .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+      sendTxModal.inputSendtokenAmount().click().type('0.5')
+    })
+    sendTxModal.sendTxError().should('be.visible').contains('the required 1.4 USDC')
+    sendTxModal.buttonSend().should('be.disabled')
+
+    // we delete the last USDC field
+    sendTxModal.wrapperAssetTransfer(2).within(() => {
+      sendTxModal.deleteFieldButton().click()
+    })
+    sendTxModal.sendTxError().should('not.exist')
+    sendTxModal.buttonSend().should('be.enabled')
+  })
+})
+
+describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
+  beforeEach(() => {
+    cy.setupAndVisit({
+      url: landingPageNetwork('polkadot'),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: [polkadotAHMemberAccount.Nikos],
+      accountNames: { [randomAccount.pubKey]: 'Random' }
+    })
+  })
+
+  it('Shows an error for 1 transfer of tokens', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
+    sendTxModal.inputSendtokenAmount().click().type('10')
+    sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
+
+    sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.01')
+    sendTxModal
+      .sendTxError()
+      .should('be.visible')
+      .contains(`The "Signing with" account doesn't have the required`)
+    sendTxModal.buttonSend().should('be.disabled')
+  })
+
+  it('Shows an error for a batch of tokens', () => {
+    multisigPage.accountHeader(6000).should('be.visible')
+    multisigPage.newTransactionButton().click()
+    sendTxModal.sendTxTitle().should('be.visible')
+    sendTxModal
+      .sendTokensFieldTo()
+      .click()
+      .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+    sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
+    sendTxModal.inputSendtokenAmount().click().type('0.3')
+    sendTxModal
+      .sendTxError()
+      .should('be.visible')
+      .contains(`The "Signing with" account doesn't have the required`)
+    sendTxModal.buttonSend().should('be.disabled')
+
+    // second DOT field
+    sendTxModal.buttonAddRecipient().click()
+    sendTxModal.wrapperAssetTransfer(1).should('be.visible')
+    sendTxModal.wrapperAssetTransfer(1).within(() => {
+      sendTxModal
+        .sendTokensFieldTo()
+        .click()
+        .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
+      sendTxModal.inputSendtokenAmount().click().type('0.9')
+    })
+    sendTxModal.sendTxError().should('be.visible').contains('the required 1.2 DOT')
+    sendTxModal.buttonSend().should('be.disabled')
   })
 })
