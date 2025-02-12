@@ -71,6 +71,12 @@ export const useDisplayError = () => {
     )
   }
 
+  // a user landing from a link with an address param but was never connected
+  // should see the normal landing page and no error
+  if (!isAllowedToConnectToExtension && watchedAddresses.length === 0) {
+    return null
+  }
+
   if (!canFindMultiProxyFromUrl && !!searchParams.get('address')) {
     return (
       <CenterStyled>

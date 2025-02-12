@@ -7,6 +7,7 @@ import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { waitForTxRequest } from '../utils/waitForTxRequests'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
+import { landingPage } from '../support/page-objects/landingPage'
 
 const testAccount1Address = testAccounts['Multisig Member Account 1'].address
 const testAccount2Address = testAccounts['Multisig Member Account 2'].address
@@ -31,6 +32,7 @@ describe('Perform transactions', () => {
   })
 
   it('Abort a multisig tx', () => {
+    landingPage.multisigLoader().should('not.exist')
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('not.have.text', '')
     })
@@ -65,6 +67,7 @@ describe('Perform transactions', () => {
       },
       WSendpoint: 'wss://rpc.ibp.network/paseo'
     })
+    landingPage.multisigLoader().should('not.exist')
     multisigPage.accountHeader().within(() => {
       accountDisplay.addressLabel().should('not.have.text', '')
     })
