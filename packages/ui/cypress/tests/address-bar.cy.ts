@@ -40,15 +40,33 @@ describe('Account address in the address bar', () => {
     })
   })
 
-  it('shows an error with 0 watched, 0 connected account, unknown linked address', () => {
-    cy.visit(landingPageAddressUrl(testAccounts['Non Multisig Member 1'].address))
-    landingPage
-      .linkedAddressNotFound()
-      .should(
-        'contain.text',
-        "The linked address can't be found in your accounts or watched accounts on paseo"
-      )
+  it('shows login screen with 0 watched, 0 connected account, known linked address, then show the multisig when connected', () => {
+    cy.setupAndVisit({
+      url: landingPageAddressUrl(knownMultisigs['multisigs-unique-users'].address),
+      extensionConnectionAllowed: false,
+      injectExtensionWithAccounts: [testAccounts['Multisig Member Account 4']]
+    })
+
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
+    landingPage
+      .multixIntroHeader()
+      .should('contain.text', 'Multix is an interface to easily manage complex multisigs.')
+
+    //shows the known multisig once connected
+    landingPage.connectWalletButton().click()
+    landingPage.connectionDialog().should('exist')
+    landingPage
+      .connectionDialog()
+      .within(() => cy.get('button', { includeShadowDom: true }).contains('Connect').click())
+
+    topMenuItems
+      .multiproxySelectorInputDesktop()
+      .should('have.value', knownMultisigs['multisigs-unique-users'].address)
+    multisigPage.accountHeader().within(() => {
+      accountDisplay
+        .addressLabel()
+        .should('contain.text', knownMultisigs['multisigs-unique-users'].address.slice(0, 6))
+    })
   })
 
   it('shows an error and can reset with 1 watched (multi), 0 connected account, unknown linked address', () => {
