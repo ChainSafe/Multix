@@ -51,3 +51,5 @@ export function inputToBigInt(chainDecimals: number, input: string, isSigned = f
 
   return result
 }
+
+export const bigIntMax = (a: bigint, b: bigint) => (a > b ? a : b)
