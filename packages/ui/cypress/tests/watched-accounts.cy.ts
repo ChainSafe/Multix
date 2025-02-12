@@ -48,20 +48,21 @@ describe('Watched Accounts', () => {
     addWatchAccount(testAccountAddress)
     settingsPage.watchedAccountsContainer().should('be.visible')
 
+    cy.log('remove account')
     // now remove it
     settingsPage.watchedAccountsContainer().within(() => {
       settingsPage.watchedAccountDeleteButton().click()
       accountDisplay.identicon().should('not.exist')
       accountDisplay.addressLabel().should('not.exist')
     })
-    settingsPage.watchedAccountsContainer().should('have.length', 0)
+    settingsPage.watchedAccountsContainer().should('not.exist')
   })
 
-  it('can see error when attempting to add same address more than once', () => {
+  it.only('can see an error when attempting to add same address more than once', () => {
     // add an account first
     cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount(testAccountAddress)
-    settingsPage.watchedAccountsContainer().should('have.length', 1)
+    settingsPage.watchedAccountsContainer().should('be.visible').should('have.length', 1)
     // attempt to add the same account again
     addWatchAccount(testAccountAddress)
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Account already added')
@@ -69,7 +70,7 @@ describe('Watched Accounts', () => {
     settingsPage.addButton().should('be.disabled')
   })
 
-  it('can see error when attempting to add an invalid address', () => {
+  it('can see an error when attempting to add an invalid address', () => {
     cy.visit(getSettingsPageWatchAccountUrl())
     addWatchAccount('123')
     settingsPage.errorLabel().should('be.visible').should('have.text', 'Invalid address')

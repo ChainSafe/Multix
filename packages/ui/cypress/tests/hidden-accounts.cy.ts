@@ -186,6 +186,7 @@ describe('Hidden Accounts', () => {
     hiddenAccountInfoModal.body().should('be.visible')
     hiddenAccountInfoModal.checkBoxMessage().should('not.be.checked')
     hiddenAccountInfoModal.gotItButton().should('be.visible').click()
+    landingPage.transactionListLoader().should('not.exist')
     cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
