@@ -50,7 +50,7 @@ const HeaderView = () => {
           />
           <BalanceStyledWrapper>
             <BalanceStyled>
-              <BalanceHeaderStyled>Balance</BalanceHeaderStyled>
+              <BalanceHeaderStyled>Transferable</BalanceHeaderStyled>
               <BalanceAmountStyled data-cy="label-account-balance">
                 <Balance address={selectedAddress} />
                 {isAssetHub &&

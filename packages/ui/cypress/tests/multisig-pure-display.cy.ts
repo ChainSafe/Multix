@@ -31,7 +31,7 @@ describe('Shows the right assets depending on the network', () => {
         multisigPage.assetHubBalance('1984').should('be.visible')
         multisigPage.assetHubBalance('1984').should('contain.text', '0 USDT')
         multisigPage.nativeBalance().should('be.visible')
-        multisigPage.nativeBalance().should('contain.text', '1 DOT')
+        multisigPage.nativeBalance().should('contain.text', '0.99 DOT')
       })
   })
 
