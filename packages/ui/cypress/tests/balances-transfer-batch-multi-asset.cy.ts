@@ -54,7 +54,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     })
   })
 
-  it.only('Makes an assets.transferKeepAlive for non native assets', () => {
+  it('Makes an assets.transferKeepAlive for non native assets', () => {
     multisigPage.accountHeader(6000).should('be.visible')
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')

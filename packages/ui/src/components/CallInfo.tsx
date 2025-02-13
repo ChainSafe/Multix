@@ -59,11 +59,14 @@ const isWhiteListedCall = (extrinsicName: string) => {
     'ConvictionVoting.remove_vote',
     'ConvictionVoting.undelegate',
     'ConvictionVoting.unlock',
+    'System.remark',
     //Asset Hub
     'Assets.transfer_keep_alive',
     'Assets.transfer',
     // Hydration
-    'Tokens.transfer'
+    'Tokens.transfer',
+    // Polimec
+    'Vesting.vested_transfer'
   ].includes(extrinsicName)
 }
 

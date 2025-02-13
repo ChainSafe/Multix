@@ -2,6 +2,7 @@ import { useApi } from '../contexts/ApiContext'
 import { useCallback } from 'react'
 import { encodesubstrateAddress } from '../utils/encodeSubstrateAddress'
 import { u8aToHex, isU8a } from '@polkadot/util'
+import { isValidAddress } from '../utils/isValidAddress'
 
 export const useGetEncodedAddress = () => {
   const { chainInfo } = useApi()
@@ -9,6 +10,10 @@ export const useGetEncodedAddress = () => {
   const getEncodedAddress = useCallback(
     (address: string | Uint8Array | undefined) => {
       if (!chainInfo || !address || address === 'undefined') {
+        return
+      }
+
+      if (!isValidAddress(address)) {
         return
       }
 

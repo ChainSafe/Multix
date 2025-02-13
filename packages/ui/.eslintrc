@@ -20,8 +20,9 @@
     "tsconfigRootDir": "./",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "prettier", "@typescript-eslint"],
+  "plugins": ["react", "prettier", "@typescript-eslint", "no-only-tests"],
   "rules": {
+    "no-only-tests/no-only-tests": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "react/jsx-max-props-per-line": [
