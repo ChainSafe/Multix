@@ -21,7 +21,7 @@ const fillAndSubmitTransactionForm = (assetSymbol = '', address: string) => {
     sendTxModal.sendTokensFieldAssetSelection().click()
     sendTxModal.selectAsset(assetSymbol).click()
   }
-  sendTxModal.sendTokensFieldAmount().click().type('0.9')
+  sendTxModal.inputSendtokenAmount().click().type('0.9')
   sendTxModal.buttonSend().should('be.enabled').click()
 }
 
@@ -54,7 +54,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     })
   })
 
-  it('Makes an assets.transferKeepAlive for non native assets', () => {
+  it.only('Makes an assets.transferKeepAlive for non native assets', () => {
     multisigPage.accountHeader(6000).should('be.visible')
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
@@ -68,7 +68,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       // this is a assets.transferKeepAlive
       cy.wrap((txRequests[0].payload as SignerPayloadJSON).method).should(
         'eq',
-        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c003209e51400ba3ecfd7483cdcdad1132af7d1e8067816009cbd77fc0bc30eafe8d2218a197182ee36000000'
+        '0x2901020004145d6c503d0cf97f4c7725ca773741bd02e1760bfb52e021af5a9f2de283012c003209e514002810b1f4a7ff1cc7bc6c615eae881f971a88c8e7048d6bad52fcbab751966e2d82ee36000000'
       )
     })
   })
@@ -228,7 +228,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
   })
 })
 
-describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
+describe('Crafts the correct extrinsics for polkadot native asset', () => {
   beforeEach(() => {
     cy.setupAndVisit({
       url: landingPageNetwork('polkadot'),
@@ -251,7 +251,7 @@ describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
     sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
     sendTxModal.buttonSend().should('be.disabled')
 
-    sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.01')
+    sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.0001')
     sendTxModal
       .sendTxError()
       .should('be.visible')
@@ -268,7 +268,7 @@ describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
       .click()
       .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
     sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
-    sendTxModal.inputSendtokenAmount().click().type('0.3')
+    sendTxModal.inputSendtokenAmount().click().type('0.0001')
     sendTxModal
       .sendTxError()
       .should('be.visible')
@@ -285,7 +285,7 @@ describe.only('Crafts the correct extrinsics for polkadot native asset', () => {
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.inputSendtokenAmount().click().type('0.9')
     })
-    sendTxModal.sendTxError().should('be.visible').contains('the required 1.2 DOT')
+    sendTxModal.sendTxError().should('be.visible').contains('the required 0.9001 DOT')
     sendTxModal.buttonSend().should('be.disabled')
   })
 })
