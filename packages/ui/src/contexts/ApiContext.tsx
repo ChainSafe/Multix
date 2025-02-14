@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
@@ -17,6 +17,7 @@ export type IApiContext<Id extends ApiDescriptors> = {
   chainInfo?: ChainInfoHuman
   client?: PolkadotClient
   compatibilityToken?: CompatibilityToken
+  resetApi: () => void
 }
 
 export const isContextOf = <Id extends ApiDescriptors>(
@@ -49,6 +50,13 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
   const [api, setApi] = useState<TypedApi<Descriptors<Id>> | undefined>()
   const [compatibilityToken, setCompatibilityToken] = useState<CompatibilityToken | undefined>()
   const [apiDescriptor, setApiDescriptor] = useState<IApiContext<ApiDescriptors>['apiDescriptor']>()
+
+  const resetApi = useCallback(() => {
+    setChainInfo(undefined)
+    setCompatibilityToken(undefined)
+    setApi(undefined)
+    setApiDescriptor(undefined)
+  }, [])
 
   useEffect(() => {
     if (!selectedNetworkInfo?.chainId || !selectedNetworkInfo?.descriptor) return
@@ -101,7 +109,8 @@ const ApiContextProvider = <Id extends ApiDescriptors>({ children }: ApiContextP
         apiDescriptor,
         chainInfo,
         client,
-        compatibilityToken
+        compatibilityToken,
+        resetApi
       }}
     >
       {children}

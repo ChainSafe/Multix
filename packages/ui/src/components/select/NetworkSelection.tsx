@@ -12,6 +12,7 @@ import {
 } from '../../constants'
 import { theme } from '../../styles/theme'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
+import { useApi } from '../../contexts/ApiContext'
 
 const NetworkSelection = () => {
   const { selectedNetwork, selectNetwork } = useNetwork()
@@ -22,6 +23,7 @@ const NetworkSelection = () => {
       : Object.entries(networkList).filter(([name]) => name !== 'local')
   }, [])
   const { resetLists } = useMultiProxy()
+  const { resetApi } = useApi()
 
   const handleNetworkSelection = useCallback(
     ({ target: { value } }: SelectChangeEvent<unknown>) => {
@@ -31,9 +33,10 @@ const NetworkSelection = () => {
       }
 
       resetLists()
+      resetApi()
       selectNetwork(value, true)
     },
-    [resetLists, selectNetwork]
+    [resetLists, selectNetwork, resetApi]
   )
 
   const renderNetworks = useCallback(
