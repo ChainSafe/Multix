@@ -25,7 +25,7 @@ export const useGetBalance = ({ address, numberAfterComma = 2 }: useGetBalancePr
       ({ data: { free, frozen, reserved } }) => {
         const res = free - bigIntMax(frozen - reserved, existentialDeposit)
         const transferable = res < 0n ? 0n : res
-        setBalance(transferable <= 0n ? 0n : transferable)
+        setBalance(transferable)
         setFormattedBalance(
           formatBigIntBalance(transferable, chainInfo?.tokenDecimals, {
             numberAfterComma,
