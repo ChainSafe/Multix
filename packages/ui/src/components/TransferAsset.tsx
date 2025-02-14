@@ -51,6 +51,7 @@ const TransferAsset = ({
   const toAddress = useMemo(() => selected?.address || '', [selected?.address])
   const [selectedAsset, setSelectedAsset] = useState<Option | undefined>()
 
+  console.log('-->load')
   const isNativeAssetSelected = useMemo(() => {
     if (!selectedAsset || selectedAsset.id === undefined) return true
 
