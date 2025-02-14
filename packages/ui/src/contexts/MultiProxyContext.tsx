@@ -11,6 +11,8 @@ import { useNetwork } from './NetworkContext'
 import { useHiddenAccounts } from './HiddenAccountsContext'
 import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
+import { encodesubstrateAddress } from '../utils/encodeSubstrateAddress'
+import { useApi } from './ApiContext'
 
 interface MultisigContextProps {
   children: React.ReactNode | React.ReactNode[]
@@ -54,6 +56,7 @@ export interface IMultisigContext {
 const MultisigContext = createContext<IMultisigContext | undefined>(undefined)
 
 const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
+  const { chainInfo } = useApi()
   const getEncodedAddress = useGetEncodedAddress()
   const { networkHiddenAccounts } = useHiddenAccounts()
   const [refetchMultisigTimeoutMinutes, setRefetchMultisigTimeoutMinutes] = useState(0)
@@ -76,7 +79,7 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
   const { watchedPubKeys } = useWatchedAccounts()
   const { selectedNetwork } = useNetwork()
   const LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK = useMemo(
-    () => selectedNetwork && `multix.lastUsedMultiProxy.${selectedNetwork}`,
+    () => selectedNetwork && `multix.lastUsedMultiProxy.v2.${selectedNetwork}`,
     [selectedNetwork]
   )
 
@@ -343,7 +346,8 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       }
 
       if (multiProxyFound && LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK) {
-        localStorage.setItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, multi)
+        const pubKey = getPubKeyFromAddress(multi)
+        pubKey && localStorage.setItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, pubKey)
       }
 
       setAddressInUrl(multi)
@@ -358,16 +362,28 @@ const MultiProxyContextProvider = ({ children }: MultisigContextProps) => {
       return undefined
     }
 
-    const lastUsedMultiProxy =
+    const lastUsedMultiProxyPubKey =
       LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK &&
       localStorage.getItem(LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK)
 
-    if (lastUsedMultiProxy && getMultiProxyByAddress(lastUsedMultiProxy)) {
-      return lastUsedMultiProxy
+    if (selectedNetwork && lastUsedMultiProxyPubKey && chainInfo) {
+      const lastUsedAddress = encodesubstrateAddress(lastUsedMultiProxyPubKey, chainInfo.ss58Format)
+      const lastUsedMultiProxy = getMultiProxyByAddress(lastUsedAddress)
+
+      if (lastUsedMultiProxy) {
+        return lastUsedAddress
+      }
     }
 
     return multiProxyList?.[0].proxy || multiProxyList?.[0].multisigs[0].address
-  }, [LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK, getMultiProxyByAddress, isLoading, multiProxyList])
+  }, [
+    LOCALSTORAGE_LAST_MULTIPROXY_KEY_NETWORK,
+    chainInfo,
+    getMultiProxyByAddress,
+    isLoading,
+    multiProxyList,
+    selectedNetwork
+  ])
 
   return (
     <MultisigContext.Provider
