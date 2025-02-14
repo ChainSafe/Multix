@@ -55,7 +55,7 @@ describe('Perform transactions', () => {
     })
   })
 
-  it('Makes a balance transfer multisig tx', () => {
+  it('Makes a balances transfer multisig tx', () => {
     cy.rejectCurrentMultisigTx({
       account: testAccounts['Multisig Member Account 1'],
       multisigInfo: {

@@ -54,7 +54,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     })
   })
 
-  it.only('Makes an assets.transferKeepAlive for non native assets', () => {
+  it('Makes an assets.transferKeepAlive for non native assets', () => {
     multisigPage.accountHeader(6000).should('be.visible')
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
@@ -78,6 +78,8 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     multisigPage.newTransactionButton().click()
     sendTxModal.sendTxTitle().should('be.visible')
     sendTxModal.wrapperAssetTransfer(0).should('be.visible')
+
+    // start wth 0.1 DOT and change the field to USDC
     sendTxModal.wrapperAssetTransfer(0).within(() => {
       sendTxModal
         .sendTokensFieldTo()
@@ -85,9 +87,11 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.sendTokensFieldAssetSelection().should('exist')
       sendTxModal.inputSendtokenAmount().click().type('0.1')
-      sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
     })
+    sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
     sendTxModal.selectAsset('usdc').click()
+
+    // add a new field with 0.001 USDC
     sendTxModal.buttonAddRecipient().click()
     sendTxModal.wrapperAssetTransfer(1).should('be.visible')
     sendTxModal.wrapperAssetTransfer(1).within(() => {
@@ -104,7 +108,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     sendTxModal.buttonAddRecipient().click()
 
     // by clicking now, we should see a batch transaction
-    // with 2 extrinsics
+    // with 2 extrinsics with asset transfer of USDC to 2 different accounts
     sendTxModal.wrapperAssetTransfer(2).should('be.visible')
 
     sendTxModal.buttonSend().should('be.enabled').click()
@@ -125,6 +129,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       sendTxModal.deleteFieldButton().click()
     })
 
+    // change the last firs to now send DOT
     sendTxModal.wrapperAssetTransfer(2).within(() => {
       sendTxModal.sendTokensFieldAssetSelection().should('exist')
       sendTxModal.inputSendtokenAmount().click().type('0.1')
@@ -132,10 +137,14 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .sendTokensFieldTo()
         .click()
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
-      sendTxModal.sendTokensFieldAssetSelection().contains('USDC').click()
     })
+    // this is outside of the within block to prevent the test from failing
+    // because the component is re-rendering
+    sendTxModal.sendTokensFieldAssetSelection().eq(1).contains('USDC').click()
     sendTxModal.selectAsset('dot').click()
 
+    // we should now see a batch transaction with 2 extrinsics
+    // one for USDC and one for DOT to 2 different accounts
     sendTxModal.buttonSend().should('be.enabled').click()
     waitForTxRequest()
     cy.getTxRequests().then((req) => {
