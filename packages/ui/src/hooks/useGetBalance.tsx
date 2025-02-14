@@ -23,9 +23,10 @@ export const useGetBalance = ({ address, numberAfterComma = 2 }: useGetBalancePr
 
     const unsub = api.query.System.Account.watchValue(address, 'best').subscribe(
       ({ data: { free, frozen, reserved } }) => {
-        const transferable = free - bigIntMax(frozen - reserved, existentialDeposit)
-
-        setBalance(transferable)
+        const res = free - bigIntMax(frozen - reserved, existentialDeposit)
+        const transferable = res < 0n ? 0n : res
+        console.log('transferable', transferable)
+        setBalance(transferable <= 0n ? 0n : transferable)
         setFormattedBalance(
           formatBigIntBalance(transferable, chainInfo?.tokenDecimals, {
             numberAfterComma,
