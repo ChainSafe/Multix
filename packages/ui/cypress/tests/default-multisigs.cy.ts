@@ -2,6 +2,7 @@ import { accountDisplay } from '../support/page-objects/components/accountDispla
 import { landingPageNetwork, landingPageNetworkAddress } from '../fixtures/landingData'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 import { multisigPage } from '../support/page-objects/multisigPage'
+import { landingPage } from '../support/page-objects/landingPage'
 
 const lolmcshizPubKey = '0x8aee4e164d5d70ac67308f303c7e063e9156903e42c1087bbc530447487fa47f'
 const polkadotSelectedMultiproxy = '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K' // CD OpenGov
@@ -22,8 +23,13 @@ describe('default Multisigs', () => {
         .should('not.contain.text', polkadotSelectedMultiproxy.slice(0, 6))
     })
 
+    // wait for the transaction list to load
+    landingPage.transactionListLoader().should('not.exist')
+
     // select another one
     topMenuItems.desktopMenu().within(() => {
+      // make sure the multiproxy list is fully loaded
+      topMenuItems.multiproxySelectorInputDesktop().should('not.have.value', '')
       topMenuItems
         .multiproxySelectorInputDesktop()
         .click()
