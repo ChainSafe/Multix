@@ -18,7 +18,7 @@ describe('Verify extrinsics display', () => {
   })
 
   it('The Router.sell extrinsic is displayed in plank', () => {
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(10000).within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
 
@@ -81,7 +81,7 @@ describe('Verify extrinsics display', () => {
     const sendingAmount = '123 HDX'
     const expectedRecipient = '7NPoMQ..kZpiba'
 
-    multisigPage.accountHeader().within(() => {
+    multisigPage.accountHeader(10000).within(() => {
       accountDisplay.addressLabel().should('contain.text', expectedMultisigAddress.slice(0, 6))
     })
 
