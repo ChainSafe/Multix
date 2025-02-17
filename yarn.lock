@@ -4576,6 +4576,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react@npm:^19.0.10":
+  version: 19.0.10
+  resolution: "@types/react@npm:19.0.10"
+  dependencies:
+    csstype: ^3.0.2
+  checksum: 41884cca21850c8b2d6578b172ca0ca4fff6021251a68532b19f2031ac23dc5a9222470208065f8d9985d367376047df2f49ece8d927f7d04cdc94922b1eb34b
+  languageName: node
+  linkType: hard
+
 "@types/sinonjs__fake-timers@npm:8.1.1":
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
@@ -9772,6 +9781,7 @@ __metadata:
     "@reactive-dot/react": ^0.32.0
     "@tanstack/react-query": ^5.66.5
     "@types/node": ^22.13.4
+    "@types/react": ^19.0.10
     "@types/react-dom": ^19.0.4
     "@typescript-eslint/eslint-plugin": ^8.24.0
     "@typescript-eslint/parser": ^8.24.0
