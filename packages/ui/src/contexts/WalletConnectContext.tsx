@@ -2,11 +2,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { Core } from '@walletconnect/core'
 import { ICore, PairingTypes } from '@walletconnect/types'
 import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet'
-import { DAPP_NAME } from '../constants'
+import { DAPP_NAME, WALLETCONNECT_PROJECT_ID } from '../constants'
 
 export type WalletConnect = { [address: string]: string }
 
-const WALLETCONNECT_PROJECT_ID = '3cb99365b226c0f1918b24cbc2b84d49'
 type WalletConnectContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }

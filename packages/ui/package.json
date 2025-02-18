@@ -17,6 +17,7 @@
     "@polkadot/util-crypto": "^13.4.2",
     "@reactive-dot/core": "^0.32.0",
     "@reactive-dot/react": "^0.32.0",
+    "@reactive-dot/wallet-walletconnect": "^0.17.5",
     "@tanstack/react-query": "^5.66.5",
     "@walletconnect/web3wallet": "^1.16.1",
     "dayjs": "^1.11.13",
