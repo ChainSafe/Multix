@@ -1,10 +1,11 @@
-import { defineConfig } from '@reactive-dot/core'
 import { InjectedWalletProvider } from '@reactive-dot/core/wallets.js'
 import { registerDotConnect } from 'dot-connect'
 import { DAPP_NAME, WALLETCONNECT_PROJECT_ID } from './constants'
 import { WalletConnect } from '@reactive-dot/wallet-walletconnect'
+import { Config } from '@reactive-dot/core'
 
-export const config = defineConfig({
+export const config = {
+  chains: {},
   wallets: [
     new InjectedWalletProvider({ originName: DAPP_NAME }),
     new WalletConnect({
@@ -25,7 +26,7 @@ export const config = defineConfig({
       ]
     })
   ]
-})
+} satisfies Config
 
 // Register dot-connect custom elements & configure supported wallets
 registerDotConnect({
