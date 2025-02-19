@@ -3646,18 +3646,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reactive-dot/core@npm:^0.32.0":
-  version: 0.32.0
-  resolution: "@reactive-dot/core@npm:0.32.0"
-  dependencies:
-    "@reactive-dot/utils": ^0.10.0
-    "@substrate/smoldot-discovery": ^2.0.1
-  peerDependencies:
-    polkadot-api: ">= 1.9.x"
-  checksum: 176ec76d4d990061cc02c12ef957a19d8aec00cd77f0cfd492337b4e7fb8ef72cdc0fb62d179610e21cb419ad65bb15eeef8d12645f8fc7582251f18ec084e56
-  languageName: node
-  linkType: hard
-
 "@reactive-dot/core@npm:^0.33.0":
   version: 0.33.0
   resolution: "@reactive-dot/core@npm:0.33.0"
@@ -3670,15 +3658,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reactive-dot/react@npm:^0.32.0":
-  version: 0.32.0
-  resolution: "@reactive-dot/react@npm:0.32.0"
+"@reactive-dot/react@npm:^0.33.0":
+  version: 0.33.0
+  resolution: "@reactive-dot/react@npm:0.33.0"
   dependencies:
-    "@reactive-dot/core": ^0.32.0
+    "@reactive-dot/core": ^0.33.0
     jotai: ^2.12.0
   peerDependencies:
     react: 18.x || 19.x
-  checksum: 5249c531d4839fdc3fa0f3ca8f018539e088b2de08e21e1ec9484a30370260bbda2649aababcf4593c96c3ef1a81d73822862611ca06e71ffc96fc2e4c1f646c
+  checksum: 8c394b5db2bd56e8764a805efbe81287bc9d9c6c76a1db05fdda9fa9b78b5ced775fd344a5e67f78561f15a1f17bcfc3b6499a0ec441e664604731ff5c00058c
   languageName: node
   linkType: hard
 
@@ -10097,8 +10085,8 @@ __metadata:
     "@polkadot-labs/hdkd-helpers": ^0.0.11
     "@polkadot/react-identicon": ^3.12.1
     "@polkadot/util-crypto": ^13.4.2
-    "@reactive-dot/core": ^0.32.0
-    "@reactive-dot/react": ^0.32.0
+    "@reactive-dot/core": ^0.33.0
+    "@reactive-dot/react": ^0.33.0
     "@reactive-dot/wallet-walletconnect": ^0.17.5
     "@tanstack/react-query": ^5.66.5
     "@types/node": ^22.13.4

@@ -23,7 +23,7 @@ export const config = defineConfig({
         'polkadot:b0a8d493285c2df73290dfb7e61f870f', // Kusama
         'polkadot:e143f23803ac50e8f6f8e62695d1ce9e' // Westend
       ]
-    } as WalletConnect)
+    })
   ]
 })
 
