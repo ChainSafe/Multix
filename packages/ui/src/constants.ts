@@ -179,9 +179,7 @@ export const networkList: Record<string, NetworkInfo> = {
     networkLogo: nodesCoretimeSVG,
     descriptor: 'coretimeDot',
     pplChainDescriptor: 'dotPpl',
-    // not set bc not supported by Nova
-    // 0xefb56e30d9b4a24099f88820987d0f45fb645992416535d87650d98e00f46fc4
-    genesisHash: undefined
+    genesisHash: '0xefb56e30d9b4a24099f88820987d0f45fb645992416535d87650d98e00f46fc4'
   },
   // 'coretime-kusama': {
   //   chainId: 'coretime-kusama',
@@ -338,9 +336,7 @@ export const networkList: Record<string, NetworkInfo> = {
     networkLogo: nodesWestendColourSVG,
     descriptor: 'westend',
     pplChainDescriptor: 'wesPpl',
-    // not set bc not supported by Nova
-    // '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e'
-    genesisHash: undefined
+    genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e'
   },
   'asset-hub-westend': {
     chainId: 'asset-hub-westend',
@@ -357,9 +353,7 @@ export const networkList: Record<string, NetworkInfo> = {
     networkLogo: nodesAssetHubSVG,
     descriptor: 'wesAssetHub',
     pplChainDescriptor: 'wesPpl',
-    // not set bc not supported by Nova
-    // '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
-    genesisHash: undefined
+    genesisHash: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
   },
   paseo: {
     chainId: 'paseo',
@@ -376,9 +370,7 @@ export const networkList: Record<string, NetworkInfo> = {
     networkLogo: paseoSVG,
     descriptor: 'paseo',
     pplChainDescriptor: 'pasPpl',
-    genesisHash: undefined
-    // not set bc not supported by Nova
-    //'0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f'
+    genesisHash: '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f'
   },
   // amplitude: {
   //   chainId: 'amplitude',

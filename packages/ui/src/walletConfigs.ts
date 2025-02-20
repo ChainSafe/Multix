@@ -19,7 +19,7 @@ export const config = defineConfig({
           icons: ['https://multix.chainsafe.io/android-chrome-192x192.png?raw=true']
         }
       },
-      chainIds: getAllNetworkWalletConnectIds()
+      optionalChainIds: getAllNetworkWalletConnectIds()
     })
   ]
 })
