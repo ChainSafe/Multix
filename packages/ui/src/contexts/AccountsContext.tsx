@@ -12,6 +12,7 @@ import { useAccounts as useRedotAccounts } from '@reactive-dot/react'
 import { useApi } from './ApiContext'
 import { encodeAccounts } from '../utils/encodeAccounts'
 import { InjectedPolkadotAccount } from 'polkadot-api/pjs-signer'
+import { useGetWalletConnectNamespace } from '../hooks/useWalletConnectNamespace'
 
 const LOCALSTORAGE_SELECTED_ACCOUNT_KEY = 'multix.selectedAccount'
 const LOCALSTORAGE_ALLOWED_CONNECTION_KEY = 'multix.canConnectToExtension'
@@ -35,12 +36,20 @@ export interface IAccountContext {
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
+  const { currentNamespace } = useGetWalletConnectNamespace()
   const redotAccountList = useRedotAccounts()
   const { chainInfo } = useApi()
-  const ownAccountList = useMemo(
-    () => chainInfo && encodeAccounts(redotAccountList, chainInfo.ss58Format),
-    [chainInfo, redotAccountList]
-  )
+  const ownAccountList = useMemo(() => {
+    if (!chainInfo || !redotAccountList) return []
+    // redot would share 10 accounts if we connect say Nova with 1 account, and 10 networks
+    // for this reason, we need to filter out the accounts that are not for the current network
+    // this only applies to wallet-connect accounts
+    const filteredAccounts = redotAccountList.filter((account) => {
+      return account.wallet.id !== 'wallet-connect' || account.genesisHash === currentNamespace
+    })
+    return encodeAccounts(filteredAccounts, chainInfo.ss58Format)
+  }, [chainInfo, currentNamespace, redotAccountList])
+
   const [selectedAccount, setSelected] = useState<InjectedPolkadotAccount | undefined>(
     ownAccountList?.[0]
   )

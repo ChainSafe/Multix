@@ -7,7 +7,7 @@
 // import { chainsAmplitudeSVG } from './logos/amplitudeSVG'
 // import { nodesJoystreamSVG } from './logos/joystreamSVG'
 // import { chainsWatrPNG } from './logos/watrPNG'
-import { nodesKhalaSVG } from './logos/khalaSVG'
+// import { nodesKhalaSVG } from './logos/khalaSVG'
 import { chainsKusamaSVG } from './logos/kusamaSVG '
 import { localSVG } from './logos/localSVG'
 import { chainsPolkadotCircleSVG } from './logos/polkadot-circleSVG'
@@ -35,6 +35,8 @@ export const AH_SUPPORTED_ASSETS = [
   { assetId: 1337, logo: usdc }
 ]
 
+export const WALLETCONNECT_PROJECT_ID = '3cb99365b226c0f1918b24cbc2b84d49'
+
 export interface NetworkInfo {
   chainId: string
   explorerNetworkName?: string
@@ -45,6 +47,7 @@ export interface NetworkInfo {
   pplChainRpcUrls?: string[]
   descriptor: keyof typeof DESCRIPTORS
   pplChainDescriptor?: PplDescriptorKeys
+  genesisHash?: string
 }
 
 export const HTTP_GRAPHQL_URL = `https://chainsafe.squids.live/multix-arrow@v7/api/graphql`
@@ -95,7 +98,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: chainsPolkadotCircleSVG,
     descriptor: 'dot',
-    pplChainDescriptor: 'dotPpl'
+    pplChainDescriptor: 'dotPpl',
+    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3'
   },
   kusama: {
     chainId: 'kusama',
@@ -116,7 +120,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: chainsKusamaSVG,
     descriptor: 'ksm',
-    pplChainDescriptor: 'ksmPpl'
+    pplChainDescriptor: 'ksmPpl',
+    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe'
   },
   'asset-hub-polkadot': {
     chainId: 'asset-hub-polkadot',
@@ -137,7 +142,8 @@ export const networkList: Record<string, NetworkInfo> = {
     nativeAssetLogo: chainsPolkadotCircleSVG,
     networkLogo: nodesAssetHubSVG,
     descriptor: 'dotAssetHub',
-    pplChainDescriptor: 'dotPpl'
+    pplChainDescriptor: 'dotPpl',
+    genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f'
   },
   'asset-hub-kusama': {
     chainId: 'asset-hub-kusama',
@@ -157,7 +163,8 @@ export const networkList: Record<string, NetworkInfo> = {
     nativeAssetLogo: chainsKusamaSVG,
     networkLogo: nodesAssetHubSVG,
     descriptor: 'ksmAssetHub',
-    pplChainDescriptor: 'ksmPpl'
+    pplChainDescriptor: 'ksmPpl',
+    genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'
   },
   'coretime-polkadot': {
     chainId: 'coretime-polkadot',
@@ -171,7 +178,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: nodesCoretimeSVG,
     descriptor: 'coretimeDot',
-    pplChainDescriptor: 'dotPpl'
+    pplChainDescriptor: 'dotPpl',
+    genesisHash: '0xefb56e30d9b4a24099f88820987d0f45fb645992416535d87650d98e00f46fc4'
   },
   // 'coretime-kusama': {
   //   chainId: 'coretime-kusama',
@@ -187,7 +195,8 @@ export const networkList: Record<string, NetworkInfo> = {
   //   pplChainRpcUrls: kusamaPplChains,
   //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
   //   logo: nodesCoretimeSVG,
-  //   descriptor: coretimeKsm
+  //   descriptor: coretimeKsm,
+  //   genesisHash: '0x638cd2b9af4b3bb54b8c1f0d22711fc89924ca93300f0caf25a580432b29d050'
   // },
   acala: {
     chainId: 'acala',
@@ -199,7 +208,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: chainsAcalaSVG,
-    descriptor: 'acala'
+    descriptor: 'acala',
+    genesisHash: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'
   },
   // astar: {
   //   chainId: 'astar',
@@ -227,7 +237,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: nodesBifrostSVG,
-    descriptor: 'bifrostDot'
+    descriptor: 'bifrostDot',
+    genesisHash: '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b'
   },
   hydration: {
     chainId: 'hydradx',
@@ -241,7 +252,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: hydrationSVG,
-    descriptor: 'hydration'
+    descriptor: 'hydration',
+    genesisHash: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d'
   },
   // interlay: {
   //   chainId: 'interlay',
@@ -250,20 +262,20 @@ export const networkList: Record<string, NetworkInfo> = {
   //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
   //   logo: nodesInterlaySVG,
   // },
-  khala: {
-    chainId: 'khala',
-    explorerNetworkName: 'khala',
-    rpcUrls: [
-      'wss://khala-rpc.dwellir.com',
-      'wss://rpc.helikon.io/khala',
-      'wss://khala.api.onfinality.io/public-ws',
-      'wss://khala-api.phala.network/ws',
-      'wss://khala.public.curie.radiumblock.co/ws'
-    ],
-    httpGraphqlUrl: HTTP_GRAPHQL_URL,
-    networkLogo: nodesKhalaSVG,
-    descriptor: 'khala'
-  },
+  // khala: {
+  //   chainId: 'khala',
+  //   explorerNetworkName: 'khala',
+  //   rpcUrls: [
+  //     'wss://khala-rpc.dwellir.com',
+  //     'wss://rpc.helikon.io/khala',
+  //     'wss://khala.api.onfinality.io/public-ws',
+  //     'wss://khala-api.phala.network/ws',
+  //     'wss://khala.public.curie.radiumblock.co/ws'
+  //   ],
+  //   httpGraphqlUrl: HTTP_GRAPHQL_URL,
+  //   networkLogo: nodesKhalaSVG,
+  //   descriptor: 'khala'
+  // },
   // moonbeam: {
   //   chainId: 'moonbeam',
   //   explorerNetworkName: 'moonbeam',
@@ -290,7 +302,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: phalaSVG,
-    descriptor: 'phala'
+    descriptor: 'phala',
+    genesisHash: '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736'
   },
   // 'rhala testnet': {
   //   chainId: 'rhala',
@@ -322,7 +335,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: nodesWestendColourSVG,
     descriptor: 'westend',
-    pplChainDescriptor: 'wesPpl'
+    pplChainDescriptor: 'wesPpl',
+    genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e'
   },
   'asset-hub-westend': {
     chainId: 'asset-hub-westend',
@@ -338,7 +352,8 @@ export const networkList: Record<string, NetworkInfo> = {
     nativeAssetLogo: nodesWestendColourSVG,
     networkLogo: nodesAssetHubSVG,
     descriptor: 'wesAssetHub',
-    pplChainDescriptor: 'wesPpl'
+    pplChainDescriptor: 'wesPpl',
+    genesisHash: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
   },
   paseo: {
     chainId: 'paseo',
@@ -354,7 +369,8 @@ export const networkList: Record<string, NetworkInfo> = {
     pplChainRpcUrls: ['wss://people-paseo.rpc.amforc.com', 'wss://people-paseo.dotters.network'],
     networkLogo: paseoSVG,
     descriptor: 'paseo',
-    pplChainDescriptor: 'pasPpl'
+    pplChainDescriptor: 'pasPpl',
+    genesisHash: '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f'
   },
   // amplitude: {
   //   chainId: 'amplitude',
@@ -401,7 +417,8 @@ export const networkList: Record<string, NetworkInfo> = {
     ],
     httpGraphqlUrl: HTTP_GRAPHQL_URL,
     networkLogo: polimecSVG,
-    descriptor: 'polimec'
+    descriptor: 'polimec',
+    genesisHash: '0x7eb9354488318e7549c722669dcbdcdc526f1fef1420e7944667212f3601fdbd'
   },
   local: {
     chainId: import.meta.env.VITE_CHAIN_ID,
@@ -410,7 +427,8 @@ export const networkList: Record<string, NetworkInfo> = {
     httpGraphqlUrl: import.meta.env.VITE_GRAPHQL_HTTP_PROVIDER,
     networkLogo: localSVG,
     descriptor: 'dot',
-    pplChainDescriptor: 'dotPpl'
+    pplChainDescriptor: 'dotPpl',
+    genesisHash: undefined
   }
 }
 
@@ -432,10 +450,10 @@ export const polkadotNetworksAndParachains: Partial<keyof typeof networkList>[] 
 ]
 export const kusamaNetworksAndParachains: Partial<keyof typeof networkList>[] = [
   'kusama',
-  'asset-hub-kusama',
+  'asset-hub-kusama'
   // 'coretime-kusama'
   // 'amplitude',
-  'khala'
+  // 'khala'
   // 'moonriver'
 ]
 export const soloChains: Partial<keyof typeof networkList>[] = [

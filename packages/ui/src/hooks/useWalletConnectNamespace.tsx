@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
+import { getWalletConnectId } from '../utils/getWalletConnectId'
 
 export const useGetWalletConnectNamespace = () => {
   const { client } = useApi()
@@ -16,9 +17,7 @@ export const useGetWalletConnectNamespace = () => {
       .finally(() => setIsLoading(false))
   }, [client])
 
-  const genesisTruncated = useMemo(() => genesisHash.substring(2, 34), [genesisHash])
-
-  const namespace = useMemo(() => `polkadot:${genesisTruncated}`, [genesisTruncated])
+  const namespace = useMemo(() => getWalletConnectId(genesisHash), [genesisHash])
 
   const getAccountsWithNamespace = useCallback(
     (accounts: string[]) => {
