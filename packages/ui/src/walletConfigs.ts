@@ -3,7 +3,7 @@ import { registerDotConnect } from 'dot-connect'
 import { DAPP_NAME, WALLETCONNECT_PROJECT_ID } from './constants'
 import { WalletConnect } from '@reactive-dot/wallet-walletconnect'
 import { defineConfig } from '@reactive-dot/core'
-import { getAllNetworkWalletConnectIds } from './utils/getAllNetworkWalletConnectIds'
+import { getAllNetworkWalletConnectNameSpaces } from './utils/getAllNetworkWalletConnectNameSpaces'
 
 export const config = defineConfig({
   chains: {},
@@ -19,7 +19,7 @@ export const config = defineConfig({
           icons: ['https://multix.chainsafe.io/android-chrome-192x192.png?raw=true']
         }
       },
-      optionalChainIds: getAllNetworkWalletConnectIds()
+      optionalChainIds: getAllNetworkWalletConnectNameSpaces()
     })
   ]
 })
