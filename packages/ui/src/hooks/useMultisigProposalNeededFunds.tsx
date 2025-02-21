@@ -1,15 +1,36 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { Transaction } from 'polkadot-api'
+import { usePplApi } from '../contexts/PeopleChainApiContext'
 
 interface Props {
   threshold?: number | null
   signatories?: string[]
   call?: Transaction<any, any, any, any>
+  withPplApi?: boolean
 }
 
-export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
-  const { api, chainInfo, compatibilityToken } = useApi()
+export const useMultisigProposalNeededFunds = ({
+  threshold,
+  signatories,
+  call,
+  withPplApi = false
+}: Props) => {
+  const {
+    api: normalApi,
+    chainInfo: normalChainInfo,
+    compatibilityToken: normalCompatibilityToken
+  } = useApi()
+  const { pplApi, pplChainInfo, pplCompatibilityToken } = usePplApi()
+  const api = useMemo(() => (withPplApi ? pplApi : normalApi), [normalApi, pplApi, withPplApi])
+  const chainInfo = useMemo(
+    () => (withPplApi ? pplChainInfo : normalChainInfo),
+    [normalChainInfo, pplChainInfo, withPplApi]
+  )
+  const compatibilityToken = useMemo(
+    () => (withPplApi ? pplCompatibilityToken : normalCompatibilityToken),
+    [normalCompatibilityToken, pplCompatibilityToken, withPplApi]
+  )
   const [min, setMin] = useState(0n)
   const [reserved, setReserved] = useState(0n)
 
@@ -27,6 +48,8 @@ export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }:
 
     if (!multisigDepositFactor || !multisigDepositBase) return
 
+    console.log('call', call)
+    console.log('decoded', call.decodedCall)
     call
       .getEstimatedFees('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
       .then((info) => {

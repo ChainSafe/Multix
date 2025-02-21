@@ -3,25 +3,15 @@ import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
-import { dotPpl, ksmPpl, pasPpl, wesPpl } from '@polkadot-api/descriptors'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
-
-export const pplDescriptors = {
-  dotPpl,
-  ksmPpl,
-  pasPpl,
-  wesPpl
-} as const
-export type PplDescriptorKeys = keyof typeof pplDescriptors
-export type PplDescriptors<Id extends PplDescriptorKeys> = (typeof pplDescriptors)[Id]
-export type ApiOf<Id extends PplDescriptorKeys> = TypedApi<PplDescriptors<Id>>
+import { PplApiOf, PplDescriptorKeys, PplDescriptors, DESCRIPTORS_PPL } from '../types'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
 }
 
 export type IPplApiContext<Id extends PplDescriptorKeys> = {
-  pplApi?: ApiOf<Id>
+  pplApi?: PplApiOf<Id>
   pplApiDescriptor?: Id
   pplChainInfo?: ChainInfoHuman
   pplClient?: PolkadotClient
@@ -76,7 +66,7 @@ const PplApiContextProvider = <Id extends PplDescriptorKeys>({ children }: ApiCo
     )
     setPplClient(cl)
     const id = selectedNetworkInfo.pplChainDescriptor as Id
-    const typedApi = cl.getTypedApi(pplDescriptors[id])
+    const typedApi = cl.getTypedApi(DESCRIPTORS_PPL[id])
     setPplApi(typedApi)
     setPplApiDescriptor(selectedNetworkInfo.pplChainDescriptor)
   }, [selectedNetworkInfo])

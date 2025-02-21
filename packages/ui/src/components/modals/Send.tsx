@@ -24,10 +24,10 @@ import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
-// import SetIdentity from '../EasySetup/SetIdentity'
+import SetIdentity from '../EasySetup/SetIdentity'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
-// import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 import { Transaction } from 'polkadot-api'
+import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -71,7 +71,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
-  // const { hasIdentityPallet, hasPplChain } = useHasIdentityFeature()
+  const { hasPplChain } = useHasIdentityFeature()
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -102,8 +102,10 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,
     signatories: selectedMultisig?.signatories,
-    call: multisigTx
+    call: multisigTx,
+    withPplApi: selectedEasyOption === EasyTransferTitle.SetIdentity
   })
+
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: multisigProposalNeededFunds,
     address: selectedAccount?.address
@@ -170,18 +172,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       )
     } as Partial<Record<EasyTransferTitle, ReactNode>>
 
-    // if (hasIdentityPallet && !hasPplChain) {
-    //   res[EasyTransferTitle.SetIdentity] = (
-    //     <SetIdentity
-    //       from={selectedOrigin.address}
-    //       onSetExtrinsic={setExtrinsicToCall}
-    //       onSetErrorMessage={setEasyOptionErrorMessage}
-    //     />
-    //   )
-    // }
+    if (!isProxySelected && hasPplChain) {
+      res[EasyTransferTitle.SetIdentity] = (
+        <SetIdentity
+          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessage}
+        />
+      )
+    }
 
     return res
-  }, [selectedOrigin.address, isProxySelected])
+  }, [selectedOrigin.address, isProxySelected, hasPplChain])
 
   const signCallback = useSigningCallback({
     onSuccess: () => {
