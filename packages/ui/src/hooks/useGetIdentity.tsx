@@ -60,6 +60,11 @@ export const useGetIdentity = () => {
           })
         }
 
+        if (id.judgements.length === 0 && id.sub === undefined && Object.keys(id).length === 2) {
+          // there's no identity
+          return undefined
+        }
+
         return id
       })
 

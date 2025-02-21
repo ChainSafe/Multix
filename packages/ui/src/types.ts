@@ -71,7 +71,11 @@ import {
   polimec,
   coretimeDot,
   westend,
-  wesAssetHub
+  wesAssetHub,
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
 } from '@polkadot-api/descriptors'
 
 export const DESCRIPTORS = {
@@ -88,7 +92,11 @@ export const DESCRIPTORS = {
   polimec,
   coretimeDot,
   westend,
-  wesAssetHub
+  wesAssetHub,
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
 } as const
 
 export const DESCRIPTORS_NOT_HYDRATION_1_3 = {
@@ -158,3 +166,15 @@ export const allDescriptorsKey_3_3 = Object.keys(
 export const assetHubKeys = Object.keys(
   DESCRIPTORS_ASSET_HUBS
 ) as (keyof typeof DESCRIPTORS_ASSET_HUBS)[]
+
+// Ppl chains
+export const DESCRIPTORS_PPL = {
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
+} as const
+export type PplDescriptorKeys = keyof typeof DESCRIPTORS_PPL
+export type PplDescriptors<Id extends PplDescriptorKeys> = (typeof DESCRIPTORS_PPL)[Id]
+export type PplApiOf<Id extends PplDescriptorKeys> = TypedApi<PplDescriptors<Id>>
+export const pplDescriptorKeys = Object.keys(DESCRIPTORS_PPL) as (keyof typeof DESCRIPTORS_PPL)[]

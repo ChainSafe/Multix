@@ -46,6 +46,7 @@ export const getAsMultiTx = ({
     max_weight: weight || { proof_size: 0n, ref_time: 0n },
     call: txToSend.decodedCall
   })
+
   // return api.tx.multisig.asMulti.meta.args.length === LEGACY_ASMULTI_PARAM_LENGTH
   //   ? api.tx.multisig.asMulti(
   //       threshold,
