@@ -86,7 +86,7 @@ export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onErr
     error: (e: Error) => {
       console.error(e)
       const error = translateError(e)
-      addToast({ title: error.message ?? error.toString(), type: 'error' })
+      addToast({ title: error, type: 'error' })
       onError && onError()
     }
   }

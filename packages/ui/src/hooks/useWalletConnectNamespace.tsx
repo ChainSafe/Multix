@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApi } from '../contexts/ApiContext'
 import { getWalletConnectId } from '../utils/getWalletConnectId'
+import { getWalletConnectNameSpace } from '../utils/getWalletConnectNameSpace'
 
 export const useGetWalletConnectNamespace = () => {
   const { client } = useApi()
@@ -17,7 +18,9 @@ export const useGetWalletConnectNamespace = () => {
       .finally(() => setIsLoading(false))
   }, [client])
 
-  const namespace = useMemo(() => getWalletConnectId(genesisHash), [genesisHash])
+  const walletConnectId = useMemo(() => getWalletConnectId(genesisHash), [genesisHash])
+
+  const namespace = useMemo(() => getWalletConnectNameSpace(walletConnectId), [walletConnectId])
 
   const getAccountsWithNamespace = useCallback(
     (accounts: string[]) => {
@@ -26,5 +29,5 @@ export const useGetWalletConnectNamespace = () => {
     [namespace]
   )
 
-  return { currentNamespace: namespace, getAccountsWithNamespace, isLoading }
+  return { walletConnectId, currentNamespace: namespace, getAccountsWithNamespace, isLoading }
 }

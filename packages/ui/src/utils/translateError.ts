@@ -4,7 +4,7 @@ export const translateError = (error: any) => {
     return 'Not enough funds to pay for the tx'
   }
 
-  return error.toString()
+  return error.message || error.toString()
 }
 
 export const translateErrorInfo = (errorInfo: string) => {

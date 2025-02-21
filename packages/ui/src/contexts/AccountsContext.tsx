@@ -36,7 +36,7 @@ export interface IAccountContext {
 const AccountContext = createContext<IAccountContext | undefined>(undefined)
 
 const AccountContextProvider = ({ children }: AccountContextProps) => {
-  const { currentNamespace } = useGetWalletConnectNamespace()
+  const { walletConnectId } = useGetWalletConnectNamespace()
   const redotAccountList = useRedotAccounts()
   const { chainInfo } = useApi()
   const ownAccountList = useMemo(() => {
@@ -45,10 +45,10 @@ const AccountContextProvider = ({ children }: AccountContextProps) => {
     // for this reason, we need to filter out the accounts that are not for the current network
     // this only applies to wallet-connect accounts
     const filteredAccounts = redotAccountList.filter((account) => {
-      return account.wallet.id !== 'wallet-connect' || account.genesisHash === currentNamespace
+      return account.wallet.id !== 'wallet-connect' || account.genesisHash === walletConnectId
     })
     return encodeAccounts(filteredAccounts, chainInfo.ss58Format)
-  }, [chainInfo, currentNamespace, redotAccountList])
+  }, [chainInfo, walletConnectId, redotAccountList])
 
   const [selectedAccount, setSelected] = useState<InjectedPolkadotAccount | undefined>(
     ownAccountList?.[0]
