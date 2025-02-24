@@ -48,8 +48,6 @@ export const useMultisigProposalNeededFunds = ({
 
     if (!multisigDepositFactor || !multisigDepositBase) return
 
-    console.log('call', call)
-    console.log('decoded', call.decodedCall)
     call
       .getEstimatedFees('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
       .then((info) => {

@@ -14,6 +14,8 @@ import { hashFromTx } from '../utils/txHash'
 import { getEncodedCallFromDecodedTx } from '../utils/getEncodedCallFromDecodedTx'
 import { getExtrinsicDecoder } from '@polkadot-api/tx-utils'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
+import { usePplApi } from '../contexts/PeopleChainApiContext'
+import { useHasIdentityFeature } from './useHasIdentityFeature'
 
 dayjs.extend(localizedFormat)
 
@@ -34,7 +36,7 @@ export interface CallDataInfoFromChain {
   multiProxyAddress?: string
 }
 
-type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
+export type AggGroupedByDate = { [index: string]: CallDataInfoFromChain[] }
 
 const opaqueMetadata = Tuple(compact, Bin(Infinity)).dec
 
@@ -200,9 +202,38 @@ const sortByLatest = (a: CallDataInfoFromChain, b: CallDataInfoFromChain) => {
   return b.timestamp.valueOf() - a.timestamp.valueOf()
 }
 
-export const usePendingTx = (multisigAddresses: string[], skipProxyCheck = false) => {
+interface PendingTxParams {
+  multisigAddresses: string[]
+  skipProxyCheck?: boolean
+  withPplChain?: boolean
+}
+
+export const usePendingTx = ({
+  multisigAddresses,
+  skipProxyCheck = false,
+  withPplChain: withPplChain = false
+}: PendingTxParams) => {
+  const { hasPplChain } = useHasIdentityFeature()
+
   const [isLoading, setIsLoading] = useState(true)
-  const { api, chainInfo, client } = useApi()
+  const { api: normalApi, chainInfo: normalChainInfo, client: normalClient } = useApi()
+  const { pplApi, pplChainInfo, pplClient } = usePplApi()
+  const api = useMemo(() => {
+    if (withPplChain && !hasPplChain) return
+
+    return withPplChain ? pplApi : normalApi
+  }, [normalApi, pplApi, withPplChain, hasPplChain])
+  const chainInfo = useMemo(() => {
+    if (withPplChain && !hasPplChain) return
+
+    return withPplChain ? pplChainInfo : normalChainInfo
+  }, [normalChainInfo, pplChainInfo, withPplChain, hasPplChain])
+  const client = useMemo(() => {
+    if (withPplChain && !hasPplChain) return
+
+    return withPplChain ? pplClient : normalClient
+  }, [normalClient, pplClient, withPplChain, hasPplChain])
+
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()
 

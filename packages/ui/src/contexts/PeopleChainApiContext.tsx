@@ -5,6 +5,7 @@ import { CompatibilityToken, createClient, PolkadotClient, TypedApi } from 'polk
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { PplApiOf, PplDescriptorKeys, PplDescriptors, DESCRIPTORS_PPL } from '../types'
+import { ChainInfoHuman } from './ApiContext'
 
 type ApiContextProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -33,12 +34,6 @@ export const isPplContextIn = <
   descriptors: Id[]
 ): api is IPplApiContext<Ids[number]> => {
   return descriptors.some((descriptor) => isPplContextOf(api, descriptor))
-}
-
-export interface ChainInfoHuman {
-  ss58Format: number
-  tokenDecimals: number
-  tokenSymbol: string
 }
 
 const PplApiContext = createContext<IPplApiContext<PplDescriptorKeys> | undefined>(undefined)
@@ -90,7 +85,8 @@ const PplApiContextProvider = <Id extends PplDescriptorKeys>({ children }: ApiCo
         // some parachains such as interlay have a comma in the format, e.g: "2,042"
         ss58Format: Number(ss58prefix) || 0,
         tokenDecimals: Number(tokenDecimals) || 0,
-        tokenSymbol: tokensymbol || ''
+        tokenSymbol: tokensymbol || '',
+        isEthereum: false
       })
     })
   }, [pplClient, pplCompatibilityToken, pplApi])

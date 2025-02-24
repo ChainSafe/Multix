@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { ChainInfoHuman, IPplApiContext, usePplApi } from '../contexts/PeopleChainApiContext'
-import { IApiContext, useApi } from '../contexts/ApiContext'
+import { IPplApiContext, usePplApi } from '../contexts/PeopleChainApiContext'
+import { ChainInfoHuman, IApiContext, useApi } from '../contexts/ApiContext'
 import { ApiDescriptors, PplDescriptorKeys } from '../types'
 import { CompatibilityToken } from 'polkadot-api'
 

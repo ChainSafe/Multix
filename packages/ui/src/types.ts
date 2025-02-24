@@ -63,7 +63,6 @@ import {
   dot,
   dotAssetHub,
   hydration,
-  khala,
   ksm,
   ksmAssetHub,
   paseo,
@@ -84,7 +83,6 @@ export const DESCRIPTORS = {
   dot,
   dotAssetHub,
   hydration,
-  khala,
   ksm,
   ksmAssetHub,
   paseo,
@@ -107,7 +105,6 @@ export const DESCRIPTORS_NOT_HYDRATION_1_3 = {
 } as const
 
 export const DESCRIPTORS_NOT_HYDRATION_2_3 = {
-  khala,
   ksm,
   ksmAssetHub,
   paseo
@@ -128,7 +125,7 @@ export const DESCRIPTORS_ASSET_HUBS = {
 }
 
 export const DESCRIPTORS_1_3 = { acala, bifrostDot, dot, dotAssetHub, hydration } as const
-export const DESCRIPTORS_2_3 = { khala, ksm, ksmAssetHub, paseo, phala } as const
+export const DESCRIPTORS_2_3 = { ksm, ksmAssetHub, paseo, phala } as const
 export const DESCRIPTORS_3_3 = { polimec, coretimeDot, westend, wesAssetHub } as const
 
 export type ApiDescriptors = keyof typeof DESCRIPTORS

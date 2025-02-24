@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
 import { useIdentityApi } from './useIdentityApi'
-import { FixedSizeBinary, TypedApi } from 'polkadot-api'
-import { dotPpl, IdentityData, IdentityJudgement } from '@polkadot-api/descriptors'
+import { FixedSizeBinary } from 'polkadot-api'
+import { IdentityData, IdentityJudgement, WesPplQueries } from '@polkadot-api/descriptors'
+import { pplDescriptorKeys } from '../types'
+import { isPplContextIn } from '../contexts/PeopleChainApiContext'
 
 export interface IdentityInfo extends Record<string, any> {
   judgements: IdentityJudgement['type'][]
@@ -9,17 +11,18 @@ export interface IdentityInfo extends Record<string, any> {
 }
 
 export const useGetIdentity = () => {
-  const { api } = useIdentityApi()
-
+  const { ctx } = useIdentityApi()
   const getIdentity = useCallback(
     async (address: string) => {
-      if (!api || !address) {
+      if (!ctx || !address || !isPplContextIn(ctx, pplDescriptorKeys)) {
         return
       }
 
-      const { sub, parentAddress } = await (
-        api as TypedApi<typeof dotPpl>
-      ).query.Identity.SuperOf.getValue(address, { at: 'best' }).then((res) => {
+      if (!ctx.pplApi) return
+
+      const { sub, parentAddress } = await ctx.pplApi.query.Identity.SuperOf.getValue(address, {
+        at: 'best'
+      }).then((res) => {
         const [parentAddress, parentIdentity] = res || []
 
         if (!parentAddress || !parentIdentity) {
@@ -36,29 +39,33 @@ export const useGetIdentity = () => {
 
       const addressToUse = parentAddress || address
 
-      const identity = await (api as TypedApi<typeof dotPpl>).query.Identity.IdentityOf.getValue(
-        addressToUse,
-        {
-          at: 'best'
-        }
-      ).then((val) => {
+      const identity = await ctx.pplApi.query.Identity.IdentityOf.getValue(addressToUse, {
+        at: 'best'
+      }).then((res) => {
         const id: IdentityInfo = { judgements: [], sub }
+        let val: WesPplQueries['Identity']['IdentityOf']['Value'] | undefined
 
-        if (val?.[0]) {
-          val?.[0].judgements.forEach(([, judgement]) => {
-            id.judgements.push(judgement.type)
-          })
-          Object.entries(val?.[0]?.info || {}).forEach(([key, value]) => {
-            if ((value as IdentityData)?.type !== 'None') {
-              // console.log('key', JSONprint(key));
-              // console.log('value', JSONprint(value));
-              const text = (value as IdentityData)?.value as FixedSizeBinary<2> | undefined
-              if (text) {
-                id[key] = text.asText()
-              }
-            }
-          })
+        if (Array.isArray(res)) {
+          val = res[0]
+        } else {
+          val = res
         }
+
+        if (!val) return
+
+        val.judgements.forEach(([, judgement]) => {
+          id.judgements.push(judgement.type)
+        })
+        Object.entries(val.info || {}).forEach(([key, value]) => {
+          if ((value as IdentityData)?.type !== 'None') {
+            // console.log('key', JSONprint(key));
+            // console.log('value', JSONprint(value));
+            const text = (value as IdentityData)?.value as FixedSizeBinary<2> | undefined
+            if (text) {
+              id[key] = text.asText()
+            }
+          }
+        })
 
         if (id.judgements.length === 0 && id.sub === undefined && Object.keys(id).length === 2) {
           // there's no identity
@@ -70,7 +77,7 @@ export const useGetIdentity = () => {
 
       return identity
     },
-    [api]
+    [ctx]
   )
 
   return getIdentity

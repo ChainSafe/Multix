@@ -96,7 +96,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     isProxy: isProxySelected,
     fromAddress: selectedOrigin.address,
     threshold,
-    forceAsMulti: true
+    forceAsMulti: true,
+    withPplApi: selectedEasyOption === EasyTransferTitle.SetIdentity
   })
 
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({

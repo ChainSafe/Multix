@@ -25,6 +25,7 @@ import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
 import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
+import { usePplApi } from '../../contexts/PeopleChainApiContext'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -32,6 +33,7 @@ export interface SigningModalProps {
   possibleSigners: string[]
   proposalData: CallDataInfoFromChain
   onSuccess?: () => void
+  isPplChainTx: boolean
 }
 
 const ProposalSigning = ({
@@ -39,9 +41,16 @@ const ProposalSigning = ({
   className,
   possibleSigners,
   proposalData,
-  onSuccess
+  onSuccess,
+  isPplChainTx
 }: SigningModalProps) => {
-  const { api, compatibilityToken } = useApi()
+  const { api: normalApi, compatibilityToken: normalCompatibilityToken } = useApi()
+  const { pplApi, pplCompatibilityToken } = usePplApi()
+  const api = useMemo(() => (isPplChainTx ? pplApi : normalApi), [isPplChainTx, normalApi, pplApi])
+  const compatibilityToken = useMemo(
+    () => (isPplChainTx ? pplCompatibilityToken : normalCompatibilityToken),
+    [isPplChainTx, normalCompatibilityToken, pplCompatibilityToken]
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount } = useAccounts()
@@ -59,6 +68,7 @@ const ProposalSigning = ({
     [proposalData, selectedAccount]
   )
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
+    isPplChainTx,
     proposalData.callData || debouncedAddedCallData
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
@@ -352,6 +362,7 @@ const ProposalSigning = ({
                         }
                   }
                   expanded
+                  isPplChainTx={isPplChainTx}
                 />
               </Grid>
             </>

@@ -53,7 +53,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
     () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
     [selectedMultiProxy?.multisigs]
   )
-  const { refresh } = usePendingTx(multisigAddresses)
+  const { refresh } = usePendingTx({ multisigAddresses })
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [setIsEditModalOpen])
   const onCloseChangeMultiModal = useCallback(
     () => setIsChangeMultiModalOpen(false),
@@ -150,6 +150,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
           onClose={onCloseSigningModal}
           proposalData={signingModalInfo.proposalData}
           onSuccess={signingModalInfo.onSuccess}
+          isPplChainTx={signingModalInfo.isPplChainTx}
         />
       )}
       {isOpenWalletConnectSigning && !!walletConnectRequest && (

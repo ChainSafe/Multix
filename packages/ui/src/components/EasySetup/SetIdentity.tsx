@@ -226,13 +226,6 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
 
     const extrinsicsArgs = getExtrinsicsArgs(identityFields)
     const call = ctx.pplApi.tx.Identity.set_identity(extrinsicsArgs)
-    call
-      .getEstimatedFees('5CXQZrh1MSgnGGCdJu3tqvRfCv7t5iQXGGV9UKotrbfhkavs')
-      .then((info) => {
-        console.log('info', info)
-      })
-      .catch(console.error)
-    console.log('call', call.decodedCall)
     onSetExtrinsic(call)
   }, [
     allFieldsUndefined,

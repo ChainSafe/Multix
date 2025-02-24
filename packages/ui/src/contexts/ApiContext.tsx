@@ -34,7 +34,7 @@ export const isContextIn = <Id extends ApiDescriptors, Ids extends ApiDescriptor
   return descriptors.some((descriptor) => isContextOf(api, descriptor))
 }
 
-interface ChainInfoHuman {
+export interface ChainInfoHuman {
   ss58Format: number
   tokenDecimals: number
   tokenSymbol: string

@@ -289,6 +289,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
                     name: getExtrinsicName(callInfo?.section, callInfo?.method)
                   }}
                   expanded={!errorMessage}
+                  isPplChainTx={false}
                 />
               </Grid>
             </>
