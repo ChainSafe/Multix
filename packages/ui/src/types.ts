@@ -148,7 +148,7 @@ export const noHydrationKeys_3 = Object.keys(
 
 export const noHydrationKeys = [...noHydrationKeys_1, ...noHydrationKeys_2, ...noHydrationKeys_3]
 
-// All descriptors
+// All descriptors but Ppl chains
 export const allDescriptorsKey_1_3 = Object.keys(
   DESCRIPTORS_1_3
 ) as (keyof typeof DESCRIPTORS_1_3)[]

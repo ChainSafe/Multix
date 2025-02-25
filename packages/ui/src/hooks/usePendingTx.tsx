@@ -5,7 +5,7 @@ import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils/arrayUtils'
 import { isProxyCall } from '../utils/isProxyCall'
 import { useAccountId } from './useAccountId'
-import { IApiContext, useApi } from '../contexts/ApiContext'
+import { IApiContext } from '../contexts/ApiContext'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { PolkadotClient, Transaction } from 'polkadot-api'
@@ -14,8 +14,8 @@ import { hashFromTx } from '../utils/txHash'
 import { getEncodedCallFromDecodedTx } from '../utils/getEncodedCallFromDecodedTx'
 import { getExtrinsicDecoder } from '@polkadot-api/tx-utils'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
-import { usePplApi } from '../contexts/PeopleChainApiContext'
 import { useHasIdentityFeature } from './useHasIdentityFeature'
+import { useAnyApi } from './useAnyApi'
 
 dayjs.extend(localizedFormat)
 
@@ -211,28 +211,12 @@ interface PendingTxParams {
 export const usePendingTx = ({
   multisigAddresses,
   skipProxyCheck = false,
-  withPplChain: withPplChain = false
+  withPplChain = false
 }: PendingTxParams) => {
   const { hasPplChain } = useHasIdentityFeature()
 
   const [isLoading, setIsLoading] = useState(true)
-  const { api: normalApi, chainInfo: normalChainInfo, client: normalClient } = useApi()
-  const { pplApi, pplChainInfo, pplClient } = usePplApi()
-  const api = useMemo(() => {
-    if (withPplChain && !hasPplChain) return
-
-    return withPplChain ? pplApi : normalApi
-  }, [normalApi, pplApi, withPplChain, hasPplChain])
-  const chainInfo = useMemo(() => {
-    if (withPplChain && !hasPplChain) return
-
-    return withPplChain ? pplChainInfo : normalChainInfo
-  }, [normalChainInfo, pplChainInfo, withPplChain, hasPplChain])
-  const client = useMemo(() => {
-    if (withPplChain && !hasPplChain) return
-
-    return withPplChain ? pplClient : normalClient
-  }, [normalClient, pplClient, withPplChain, hasPplChain])
+  const { api, chainInfo, client } = useAnyApi({ withPplApi: hasPplChain && withPplChain })
 
   const [txWithCallDataByDate, setTxWithCallDataByDate] = useState<AggGroupedByDate>({})
   const { selectedMultiProxy } = useMultiProxy()

@@ -84,7 +84,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
   const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({
     min: proxyAdditionNeededFunds,
-    address: selectedMultiProxy?.proxy
+    address: selectedMultiProxy?.proxy,
+    withPplApi: false
   })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [callError, setCallError] = useState('')
@@ -316,7 +317,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: false
   })
 
   useEffect(() => {

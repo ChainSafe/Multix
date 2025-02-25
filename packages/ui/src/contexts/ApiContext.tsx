@@ -28,10 +28,10 @@ export const isContextOf = <Id extends ApiDescriptors>(
 }
 
 export const isContextIn = <Id extends ApiDescriptors, Ids extends ApiDescriptors[] = Id[]>(
-  api: unknown,
+  ctx: unknown,
   descriptors: Id[]
-): api is IApiContext<Ids[number]> => {
-  return descriptors.some((descriptor) => isContextOf(api, descriptor))
+): ctx is IApiContext<Ids[number]> => {
+  return descriptors.some((descriptor) => isContextOf(ctx, descriptor))
 }
 
 export interface ChainInfoHuman {

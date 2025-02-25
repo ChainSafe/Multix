@@ -1,4 +1,4 @@
-import { Grid2 as Grid } from '@mui/material'
+import { Alert, Grid2 as Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { TextField } from '../library'
@@ -133,10 +133,10 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   }, [identityFields])
 
   const { reserved: identityReservedFunds } = useSetIdentityReservedFunds(identityFields)
-
   const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckBalance({
     min: identityReservedFunds,
-    address: from
+    address: from,
+    withPplApi: true
   })
 
   useEffect(() => {
@@ -164,11 +164,12 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       const reservedString = formatBigIntBalance(identityReservedFunds, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      const errorWithReservedFunds = getErrorMessageReservedFunds(
-        '"From" account',
+      const errorWithReservedFunds = getErrorMessageReservedFunds({
+        identifier: '"From" account',
         requiredBalanceString,
-        reservedString
-      )
+        reservedString,
+        withPpleChain: true
+      })
 
       onSetErrorMessage(errorWithReservedFunds)
       return
@@ -249,6 +250,16 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       spacing={1}
       data-cy="section-set-identity"
     >
+      <Grid size={{ xs: 12 }}>
+        <AlertStyled
+          className={className}
+          severity="info"
+          data-cy="alert-info-identity"
+        >
+          Identity is managed on the People Chain. You need both the signatories, and the multisig
+          to have funds on this chain.
+        </AlertStyled>
+      </Grid>
       {identityFields &&
         Object.entries(identityFields).map(([fieldName, value]) => {
           const { field, placeholder, required } = fieldNameAndPlaceholder(
@@ -286,12 +297,15 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   )
 }
 
+const AlertStyled = styled(Alert)`
+  border: 0;
+  margin-bottom: 0.5rem;
+`
+
 const TextFieldStyled = styled(TextField)`
   .MuiFormHelperText-root.Mui-error {
     position: initial;
   }
 `
 
-export default styled(SetIdentity)`
-  margin-top: 0.5rem;
-`
+export default styled(SetIdentity)``

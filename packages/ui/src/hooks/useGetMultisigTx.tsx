@@ -46,6 +46,8 @@ export const useGetMultisigTx = ({
   approveAsMultiHash,
   withPplApi = false
 }: Params) => {
+  // we don't use useAnyapi here
+  // bc TS is spitting a bunch of nonsense
   const ctxNormal = useApi()
   const ctxPpl = usePplApi()
   const ctx = withPplApi ? ctxPpl : ctxNormal

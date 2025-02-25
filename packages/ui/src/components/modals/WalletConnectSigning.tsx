@@ -80,7 +80,8 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   })
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: multisigProposalNeededFunds,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: false
   })
 
   useEffect(() => {
@@ -120,11 +121,11 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      const errorWithReservedFunds = getErrorMessageReservedFunds(
-        '"Signing with" account',
+      const errorWithReservedFunds = getErrorMessageReservedFunds({
+        identifier: '"Signing with" account',
         requiredBalanceString,
         reservedString
-      )
+      })
       setErrorMessage(errorWithReservedFunds)
     }
   }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])

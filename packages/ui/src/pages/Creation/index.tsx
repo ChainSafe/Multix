@@ -272,7 +272,8 @@ const MultisigCreation = ({ className }: Props) => {
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: false
   })
   const canGoNext = useMemo(() => {
     // need a threshold set

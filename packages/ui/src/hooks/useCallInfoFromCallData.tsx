@@ -1,19 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useApi } from '../contexts/ApiContext'
+import { useEffect, useState } from 'react'
 import { SubmittingCall } from '../types'
 import { PAYMENT_INFO_ACCOUNT } from '../constants'
 import { Binary, HexString } from 'polkadot-api'
 import { hashFromTx } from '../utils/txHash'
-import { usePplApi } from '../contexts/PeopleChainApiContext'
+import { useAnyApi } from './useAnyApi'
 
 export const useCallInfoFromCallData = (isPplTx: boolean, callData?: HexString) => {
-  const { api: normalApi, compatibilityToken: normalCompatibilityToken } = useApi()
-  const { pplApi, pplCompatibilityToken } = usePplApi()
-  const api = useMemo(() => (isPplTx ? pplApi : normalApi), [isPplTx, normalApi, pplApi])
-  const compatibilityToken = useMemo(
-    () => (isPplTx ? pplCompatibilityToken : normalCompatibilityToken),
-    [isPplTx, normalCompatibilityToken, pplCompatibilityToken]
-  )
+  const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplTx })
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
 

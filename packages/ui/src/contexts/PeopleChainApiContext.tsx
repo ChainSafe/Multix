@@ -30,10 +30,10 @@ export const isPplContextIn = <
   Id extends PplDescriptorKeys,
   Ids extends PplDescriptorKeys[] = Id[]
 >(
-  api: unknown,
+  ctx: unknown,
   descriptors: Id[]
-): api is IPplApiContext<Ids[number]> => {
-  return descriptors.some((descriptor) => isPplContextOf(api, descriptor))
+): ctx is IPplApiContext<Ids[number]> => {
+  return descriptors.some((descriptor) => isPplContextOf(ctx, descriptor))
 }
 
 const PplApiContext = createContext<IPplApiContext<PplDescriptorKeys> | undefined>(undefined)

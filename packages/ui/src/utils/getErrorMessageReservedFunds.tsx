@@ -1,17 +1,24 @@
 export const wikiLinkReservedFunds =
   'https://github.com/ChainSafe/Multix/wiki/Why-are-funds-reserved%3F'
 
-export const getErrorMessageReservedFunds = (
-  identifier: string,
-  requiredBalanceString?: string,
+export const getErrorMessageReservedFunds = ({
+  identifier,
+  requiredBalanceString,
+  reservedString,
+  withPpleChain
+}: {
+  identifier: string
+  requiredBalanceString?: string
   reservedString?: string
-) => {
+  withPpleChain?: boolean
+}) => {
   if (!requiredBalanceString) return ''
 
   return (
     <span>
-      The {identifier} doesn&apos;t have the required {requiredBalanceString} to submit this
-      transaction. <ReservedMessage reservedAmount={reservedString} />
+      The {identifier} doesn&apos;t have the required {requiredBalanceString}
+      {withPpleChain ? ' on the People Chain' : ''} to submit this transaction.{' '}
+      <ReservedMessage reservedAmount={reservedString} />
     </span>
   )
 }

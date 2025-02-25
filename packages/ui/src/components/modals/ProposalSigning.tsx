@@ -10,7 +10,6 @@ import { Button, TextField } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
@@ -25,7 +24,7 @@ import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
 import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
-import { usePplApi } from '../../contexts/PeopleChainApiContext'
+import { useAnyApi } from '../../hooks/useAnyApi'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -44,13 +43,7 @@ const ProposalSigning = ({
   onSuccess,
   isPplChainTx
 }: SigningModalProps) => {
-  const { api: normalApi, compatibilityToken: normalCompatibilityToken } = useApi()
-  const { pplApi, pplCompatibilityToken } = usePplApi()
-  const api = useMemo(() => (isPplChainTx ? pplApi : normalApi), [isPplChainTx, normalApi, pplApi])
-  const compatibilityToken = useMemo(
-    () => (isPplChainTx ? pplCompatibilityToken : normalCompatibilityToken),
-    [isPplChainTx, normalCompatibilityToken, pplCompatibilityToken]
-  )
+  const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplChainTx })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount } = useAccounts()
@@ -73,7 +66,8 @@ const ProposalSigning = ({
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: 0n,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: isPplChainTx
   })
 
   const hasReachedThreshold = useMemo(
@@ -136,9 +130,9 @@ const ProposalSigning = ({
     }
 
     setErrorMessage(
-      "The selected signer doesn't have enough funds to pay for the transaction fees."
+      `The selected signer doesn't have enough funds ${isPplChainTx ? 'on the People Chain ' : ''}to pay for the transaction fees.`
     )
-  }, [hasSignerEnoughFunds])
+  }, [hasSignerEnoughFunds, isPplChainTx])
 
   const onSign = useCallback(
     async (isApproving: boolean) => {
@@ -225,7 +219,6 @@ const ProposalSigning = ({
       setIsSubmitting(true)
       let tx: Transaction<any, any, any, any> | undefined
 
-      console.log('proposalData', proposalData)
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
         tx = api.tx.Multisig.cancel_as_multi({
