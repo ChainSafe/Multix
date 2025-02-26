@@ -1,20 +1,48 @@
-import { landingPageNetwork } from '../fixtures/landingData'
+import { extrinsicsDisplayAccounts } from '../fixtures/extrinsicsDisplayAccounts'
+import { landingPageNetwork, landingPageNetworkAddress } from '../fixtures/landingData'
 import { setIdentityMultisigs } from '../fixtures/setIdentity/setIdentityMultisigs'
-import { setIdentitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'
+import { identitySignatories } from '../fixtures/setIdentity/setIdentitySignatories'
+import { westendMemberAccount } from '../fixtures/westendAccounts'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { sendTxModal } from '../support/page-objects/sendTxModal'
 import { topMenuItems } from '../support/page-objects/topMenuItems'
 // import { waitForTxRequest } from '../utils/waitForTxRequests'
 
 describe('Set an identity', () => {
-  // joystream network isn't supported any more.
-  it.skip('Does not have the identity option if the pallet is not present', () => {
-    const multisigSignatoryWithoutIdentity = setIdentitySignatories[3]
+  // we only support identity on the ppl chain with system chains
+  it('Does not have the identity option if it is a parachain', () => {
     cy.setupAndVisit({
-      url: landingPageNetwork('joystream'),
+      url: landingPageNetwork('hydration'),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: [multisigSignatoryWithoutIdentity]
+      injectExtensionWithAccounts: [extrinsicsDisplayAccounts['Alice']]
     })
+    multisigPage.accountHeader(8000).should('exist')
+    multisigPage.optionsMenuButton().click()
+    multisigPage.setIdentityMenuOption().should('not.exist')
+
+    //click outside to close the menu
+    cy.get('body').click(0, 0)
+    multisigPage.newTransactionButton().click()
+    sendTxModal.selectEasySetup().should('contain', 'Send tokens').click()
+    sendTxModal.selectionEasySetupSetIdentity().should('not.exist')
+  })
+
+  it('Does not have the ability to set a an identity on a pure proxy', () => {
+    cy.setupAndVisit({
+      url: landingPageNetworkAddress({
+        network: 'polkadot',
+        address: setIdentityMultisigs['pure-with-polkadot-identity'].address
+      }),
+      extensionConnectionAllowed: true,
+      injectExtensionWithAccounts: setIdentityMultisigs['pure-with-polkadot-identity'].signatories
+    })
+    // select the right multisig (Alice has a lot)
+    const first5DigitsAddress = setIdentityMultisigs['pure-with-polkadot-identity'].address.slice(
+      0,
+      4
+    )
+    multisigPage.accountHeader().should('contain', first5DigitsAddress)
+
     multisigPage.optionsMenuButton().click()
     multisigPage.setIdentityMenuOption().should('not.exist')
 
@@ -89,26 +117,26 @@ describe('Set an identity', () => {
   //   })
   // })
 
-  // skipping since identity now needs to be handled with the associatedppl chain
-  it.skip('Can edit an identity from the new tx button', () => {
+  it('Can edit an identity from the new tx button', () => {
     cy.setupAndVisit({
-      url: landingPageNetwork('polkadot'),
+      url: landingPageNetworkAddress({
+        network: 'westend',
+        address: westendMemberAccount.hidden.expectedSingleMultisig.westendAddress
+      }),
       extensionConnectionAllowed: true,
-      injectExtensionWithAccounts: setIdentityMultisigs['pure-with-polkadot-identity'].signatories
+      injectExtensionWithAccounts: [westendMemberAccount.hidden.account]
     })
     // select the right multisig (Alice has a lot)
-    const first5DigitsAddress = setIdentityMultisigs['pure-with-polkadot-identity'].address.slice(
-      0,
-      4
-    )
-    topMenuItems
-      .desktopMenu()
-      .within(() =>
-        topMenuItems
-          .multiproxySelectorDesktop()
-          .click()
-          .type(`${first5DigitsAddress}{downArrow}{enter}`)
-      )
+    const first5DigitsAddress =
+      westendMemberAccount.hidden.expectedSingleMultisig.westendAddress.slice(0, 4)
+    // topMenuItems
+    //   .desktopMenu()
+    //   .within(() =>
+    //     topMenuItems
+    //       .multiproxySelectorDesktop()
+    //       .click()
+    //       .type(`${first5DigitsAddress}{downArrow}{enter}`)
+    //   )
     multisigPage.accountHeader().should('contain', first5DigitsAddress)
 
     multisigPage.newTransactionButton().click()
@@ -116,9 +144,9 @@ describe('Set an identity', () => {
     sendTxModal.selectionEasySetupSetIdentity().click()
 
     const expectedIdentity = {
-      display: 'The Kus DOT Delegate',
-      twitter: '@TheKusamarian',
-      email: 'hey@thekusamarian.xyz'
+      display: 'to be hidden',
+      twitter: '@hidden',
+      email: 'hey@hidden.xyz'
     }
 
     // Some fields should be pre-filled

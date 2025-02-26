@@ -1,6 +1,6 @@
 import { InjectedAccountWitMnemonic } from '../testAccounts'
 
-export const setIdentitySignatories = [
+export const identitySignatories = [
   // signatories of multisig-with-identity
   {
     address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',

@@ -54,7 +54,7 @@ describe('Hidden Accounts', () => {
     })
 
     //hide the multisig account
-    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     settingsPage.hiddenAccountsContainer().should('have.length', 2)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     // the multisig should be hidden
@@ -83,14 +83,14 @@ describe('Hidden Accounts', () => {
     goToHiddenAccountSettings()
     addHiddenAccount(westendMemberAccount.hidden.expectedPure.address)
     // we should now have only the single multisig and have it selected
-    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
       accountDisplay
         .addressLabel()
         .should(
           'contain.text',
-          westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress.slice(0, 6)
+          westendMemberAccount.hidden.expectedSingleMultisig.westendAddress.slice(0, 6)
         )
     })
 
@@ -109,7 +109,7 @@ describe('Hidden Accounts', () => {
       })
 
     // hide all accounts and expect an error
-    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
     topMenuItems.homeButton().click()
     landingPage
@@ -187,7 +187,7 @@ describe('Hidden Accounts', () => {
     hiddenAccountInfoModal.checkBoxMessage().should('not.be.checked')
     hiddenAccountInfoModal.gotItButton().should('be.visible').click()
     landingPage.transactionListLoader().should('not.exist')
-    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
     goToHiddenAccountSettings()
