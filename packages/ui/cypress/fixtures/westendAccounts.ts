@@ -1,17 +1,26 @@
 import { InjectedAccountWitMnemonic } from './testAccounts'
 
+const signatory = {
+  address: '5CPG8FMciJBBE47YwSQHte23tTz91egixJw514g6BCt5nHPz',
+  publicKey: '0x0e270b0984354e0f6033dee93293dbeaea366220ca59e584ba7614d8bf393040',
+  name: 'hidden',
+  type: 'sr25519',
+  mnemonic: ''
+} as InjectedAccountWitMnemonic
+
+const leemo = {
+  address: '1HGnvAkk9nbfZ58CzUJhjcrLdEDMkr5qNkqqYkyD5BF5v6Y',
+  publicKey: '0x0c691601793de060491dab143dfae19f5f6413d4ce4c363637e5ceacb2836a4e',
+  name: 'hidden',
+  type: 'sr25519',
+  mnemonic: ''
+} as InjectedAccountWitMnemonic
+
 export const westendMemberAccount = {
   // this is the member of a multisig and a multisig with Pure
   // used in hidden-accounts
-  // used in identity (it has one on Westend)
   hidden: {
-    account: {
-      address: '5CPG8FMciJBBE47YwSQHte23tTz91egixJw514g6BCt5nHPz',
-      publicKey: '0x0e270b0984354e0f6033dee93293dbeaea366220ca59e584ba7614d8bf393040',
-      name: 'hidden',
-      type: 'sr25519',
-      mnemonic: ''
-    } as InjectedAccountWitMnemonic,
+    account: signatory,
     expectedSingleMultisig: {
       westendAddress: '5CvCLBVHufgqTDUVJL3xY6Pd7TVaYtaTGzvYRfGeaAPJLdDS',
       paseoAddress: '1rVUWkMmSxJtkV1Fy6xgFDmy5VEFC8bMVf2axG18FQpX7hE',
@@ -20,6 +29,22 @@ export const westendMemberAccount = {
     expectedPure: {
       address: '5DqS9vsnXotmczKu87xb5KMUARCVF5JUUVveZz9R8UvXKExK',
       pubKey: '0x4e596aec4922957174ba3f86860cca88fa4664006b511f11260cc34ca303d0dd'
+    }
+  },
+  // this one has no identity
+  noIdentity: {
+    account: signatory,
+    expectedSingleMultisig: {
+      westendAddress: '5GAvk9wqjHmXxCJB5UtwghLK4UqDzSD4sduSHwfoqhhYwoRS',
+      pubKey: '0xb5afca4314341bd1048c572e2e358fa00cb02387689a91f20688b9f49f3e64c6'
+    }
+  },
+  polkadotMultisigNoIdentity: {
+    account: leemo,
+    // CD event bounty
+    expectedPure: {
+      address: '13DxmMjYqto1AWsMUSkN8JYNHX6d2vBhuSmapB5iYnEiYaxX',
+      pubkey: '0x625b21fc3cfe39c52cf4d753fe8ad5f3b2ace458d9d11d266f080216e5e885e6'
     }
   }
 }

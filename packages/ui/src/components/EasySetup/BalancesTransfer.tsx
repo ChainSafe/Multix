@@ -55,6 +55,7 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
     })
     return res
   }, [fieldInfoMap])
+  // the assets can be sufficient here so no need to check for the ED
   const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckBalance({
     min: totalPerAsset[0],
     address: from,

@@ -28,6 +28,7 @@ import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReserve
 import { Transaction } from 'polkadot-api'
 import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 import { useAnyApi } from '../../hooks/useAnyApi'
+import { useGetED } from '../../hooks/useGetED'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -112,19 +113,26 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     withPplApi
   })
 
+  const { existentialDeposit } = useGetED({
+    withPplApi
+  })
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !multisigProposalNeededFunds) return
+
+    return multisigProposalNeededFunds + existentialDeposit
+  }, [existentialDeposit, multisigProposalNeededFunds])
+
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: multisigProposalNeededFunds,
+    min: minBalance,
     address: selectedAccount?.address,
     withPplApi
   })
 
   useEffect(() => {
-    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(
-        multisigProposalNeededFunds,
-        chainInfo?.tokenDecimals,
-        { tokenSymbol: chainInfo?.tokenSymbol }
-      )
+    if (!!minBalance && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
 
       const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
@@ -137,7 +145,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       })
       setErrorMessage(errorWithReservedFunds)
     }
-  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds, withPplApi])
+  }, [chainInfo, reserved, hasSignerEnoughFunds, minBalance, withPplApi])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)

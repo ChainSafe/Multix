@@ -25,6 +25,7 @@ import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
 import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
 import { useAnyApi } from '../../hooks/useAnyApi'
+import { useGetED } from '../../hooks/useGetED'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -64,8 +65,11 @@ const ProposalSigning = ({
     isPplChainTx,
     proposalData.callData || debouncedAddedCallData
   )
+  const { existentialDeposit } = useGetED({
+    withPplApi: isPplChainTx
+  })
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: 0n,
+    min: existentialDeposit,
     address: selectedAccount?.address,
     withPplApi: isPplChainTx
   })

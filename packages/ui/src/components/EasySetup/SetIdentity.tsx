@@ -12,6 +12,7 @@ import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { isPplContextIn } from '../../contexts/PeopleChainApiContext'
 import { pplDescriptorKeys } from '../../types'
 import { IdentityData } from '@polkadot-api/descriptors'
+import { useGetED } from '../../hooks/useGetED'
 
 interface Props {
   className?: string
@@ -133,8 +134,16 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   }, [identityFields])
 
   const { reserved: identityReservedFunds } = useSetIdentityReservedFunds(identityFields)
+  const { existentialDeposit } = useGetED({
+    withPplApi: true
+  })
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !identityReservedFunds) return
+
+    return identityReservedFunds + existentialDeposit
+  }, [existentialDeposit, identityReservedFunds])
   const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckBalance({
-    min: identityReservedFunds,
+    min: minBalance,
     address: from,
     withPplApi: true
   })
@@ -154,12 +163,10 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       return
     }
 
-    if (identityReservedFunds !== 0n && !hasOriginEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(
-        identityReservedFunds,
-        chainInfo?.tokenDecimals,
-        { tokenSymbol: chainInfo?.tokenSymbol }
-      )
+    if (!!minBalance && !hasOriginEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
 
       const reservedString = formatBigIntBalance(identityReservedFunds, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
@@ -183,7 +190,8 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     hasOriginEnoughFunds,
     identityFields,
     onSetErrorMessage,
-    identityReservedFunds
+    identityReservedFunds,
+    minBalance
   ])
 
   useEffect(() => {

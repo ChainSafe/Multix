@@ -33,6 +33,7 @@ import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { Enum } from 'polkadot-api'
 import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../../contexts/NetworkContext'
+import { useGetED } from '../../hooks/useGetED'
 
 interface Props {
   onClose: () => void
@@ -81,9 +82,14 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     () => currentStep === 'call1' || currentStep === 'call2',
     [currentStep]
   )
+  const { existentialDeposit } = useGetED({ withPplApi: false })
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
+  const minBalanceProxyAdditionNeededFunds = useMemo(
+    () => (existentialDeposit || 0n) + proxyAdditionNeededFunds,
+    [existentialDeposit, proxyAdditionNeededFunds]
+  )
   const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({
-    min: proxyAdditionNeededFunds,
+    min: minBalanceProxyAdditionNeededFunds,
     address: selectedMultiProxy?.proxy,
     withPplApi: false
   })
@@ -311,9 +317,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       signatories: newSignatories,
       threshold: newThreshold
     })
+
   const neededBalance = useMemo(
-    () => firstCallNeededFunds + secondCallNeededFunds,
-    [firstCallNeededFunds, secondCallNeededFunds]
+    () => firstCallNeededFunds + secondCallNeededFunds + (existentialDeposit || 0n),
+    [existentialDeposit, firstCallNeededFunds, secondCallNeededFunds]
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,
@@ -440,9 +447,13 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {!hasProxyEnoughFunds && (
                   <Alert severity="error">
                     The pure account doesn&apos;t have enough funds. It needs at least{' '}
-                    {formatBigIntBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
-                      tokenSymbol: chainInfo?.tokenSymbol
-                    })}
+                    {formatBigIntBalance(
+                      minBalanceProxyAdditionNeededFunds,
+                      chainInfo?.tokenDecimals,
+                      {
+                        tokenSymbol: chainInfo?.tokenSymbol
+                      }
+                    )}
                   </Alert>
                 )}
                 <h4>Pure proxy (unchanged)</h4>

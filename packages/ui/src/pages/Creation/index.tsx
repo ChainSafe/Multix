@@ -37,6 +37,7 @@ import {
   allDescriptorsKey_3_3,
   noHydrationKeys
 } from '../../types'
+import { useGetED } from '../../hooks/useGetED'
 
 interface Props {
   className?: string
@@ -263,12 +264,15 @@ const MultisigCreation = ({ className }: Props) => {
       signatories,
       call: withProxy ? batchCall : remarkCall
     })
+  const { existentialDeposit } = useGetED({
+    withPplApi: false
+  })
   const neededBalance = useMemo(
     () =>
       withProxy
-        ? pureProxyCreationNeededFunds + multisigProposalNeededFunds
-        : multisigProposalNeededFunds,
-    [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
+        ? pureProxyCreationNeededFunds + multisigProposalNeededFunds + (existentialDeposit || 0n)
+        : multisigProposalNeededFunds + (existentialDeposit || 0n),
+    [existentialDeposit, multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
     min: neededBalance,

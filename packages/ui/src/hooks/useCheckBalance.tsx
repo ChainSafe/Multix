@@ -9,7 +9,6 @@ export interface Props {
 
 export const useCheckBalance = ({ min, address, withPplApi }: Props) => {
   const { balance } = useGetBalance({ address, withPplApi })
-
   const hasEnoughFreeBalance = useMemo(() => {
     if (!address || !balance || min === undefined) {
       return false

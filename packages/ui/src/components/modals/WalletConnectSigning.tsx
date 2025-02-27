@@ -28,6 +28,7 @@ import { useCheckBalance } from '../../hooks/useCheckBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
+import { useGetED } from '../../hooks/useGetED'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -78,8 +79,16 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     signatories: selectedMultisig?.signatories,
     call: multisigTx
   })
+  const { existentialDeposit } = useGetED({
+    withPplApi: false
+  })
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !multisigProposalNeededFunds) return
+
+    return multisigProposalNeededFunds + existentialDeposit
+  }, [existentialDeposit, multisigProposalNeededFunds])
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: multisigProposalNeededFunds,
+    min: minBalance,
     address: selectedAccount?.address,
     withPplApi: false
   })
@@ -111,12 +120,10 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   }, [isCorrectMultiproxySelected, originAddress])
 
   useEffect(() => {
-    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(
-        multisigProposalNeededFunds,
-        chainInfo?.tokenDecimals,
-        { tokenSymbol: chainInfo?.tokenSymbol }
-      )
+    if (!!minBalance && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
 
       const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
@@ -128,7 +135,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       })
       setErrorMessage(errorWithReservedFunds)
     }
-  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
+  }, [chainInfo, reserved, hasSignerEnoughFunds, minBalance])
 
   useEffect(() => {
     selectMultiProxy(request.params.request.params.address)

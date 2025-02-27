@@ -22,7 +22,7 @@ const TransactionList = ({ className }: Props) => {
     txWithCallDataByDate,
     isLoading: isLoadingPendingTxs,
     refresh
-  } = usePendingTx({ multisigAddresses })
+  } = usePendingTx({ multisigAddresses, withPplChain: false })
   const {
     txWithCallDataByDate: pplTx,
     isLoading: isLoadingPplPendingTxs,
