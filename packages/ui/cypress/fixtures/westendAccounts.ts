@@ -32,6 +32,7 @@ export const westendMemberAccount = {
     }
   },
   // this one has no identity
+  // but it has a pending identity tx
   noIdentity: {
     account: signatory,
     expectedSingleMultisig: {
@@ -45,6 +46,13 @@ export const westendMemberAccount = {
     expectedPure: {
       address: '13DxmMjYqto1AWsMUSkN8JYNHX6d2vBhuSmapB5iYnEiYaxX',
       pubkey: '0x625b21fc3cfe39c52cf4d753fe8ad5f3b2ace458d9d11d266f080216e5e885e6'
+    }
+  },
+  // a random multisig on westend with a pending ppl chain tx
+  pendingIdentityTx: {
+    expectedSingleMultisig: {
+      westendAddress: '5DZWSw94BYkPVYF1RgMT261deXgPkeGYw9dQYmXsNSeRbxvs',
+      pubKey: '0x4233f17e78d624edb78296e918a631d3ceaa468167a9be7b16d612e446dd5c0d'
     }
   }
 }

@@ -287,7 +287,7 @@ export const usePendingTx = ({
 
     await Promise.all(callDataInfoFromChainPromises)
       .then((res) => {
-        const definedTxs = res.filter((agg) => agg !== undefined) as CallDataInfoFromChain[]
+        const definedTxs = res.filter(Boolean) as CallDataInfoFromChain[]
         const timestampObj: AggGroupedByDate = {}
 
         // remove the proxy transaction that aren't for the selected proxy
@@ -337,8 +337,13 @@ export const usePendingTx = ({
   ])
 
   useEffect(() => {
+    if (!hasPplChain && withPplChain) {
+      setIsLoading(false)
+      return
+    }
+
     refresh()
-  }, [refresh])
+  }, [refresh, hasPplChain, withPplChain])
 
   const multisigPubKeys = useMemo(
     () => getPubKeyFromAddress(multisigAddresses),
@@ -351,8 +356,13 @@ export const usePendingTx = ({
 
   useEffect(() => {
     if (!multisigsCallsData) return
+    if (!hasPplChain && withPplChain) {
+      setIsLoading(false)
+      return
+    }
+
     refresh()
-  }, [multisigsCallsData, refresh])
+  }, [multisigsCallsData, refresh, withPplChain, hasPplChain])
 
   return { isLoading, txWithCallDataByDate, refresh }
 }
