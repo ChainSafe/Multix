@@ -24,7 +24,7 @@ import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccou
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
@@ -79,16 +79,9 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     signatories: selectedMultisig?.signatories,
     call: multisigTx
   })
-  const { existentialDeposit } = useGetED({
-    withPplApi: false
-  })
-  const minBalance = useMemo(() => {
-    if (!existentialDeposit || !multisigProposalNeededFunds) return
 
-    return multisigProposalNeededFunds + existentialDeposit
-  }, [existentialDeposit, multisigProposalNeededFunds])
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: minBalance,
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: multisigProposalNeededFunds,
     address: selectedAccount?.address,
     withPplApi: false
   })
@@ -118,6 +111,16 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
       )
     }
   }, [isCorrectMultiproxySelected, originAddress])
+
+  const { existentialDeposit } = useGetED({
+    withPplApi: false
+  })
+
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !multisigProposalNeededFunds) return
+
+    return multisigProposalNeededFunds + existentialDeposit
+  }, [existentialDeposit, multisigProposalNeededFunds])
 
   useEffect(() => {
     if (!!minBalance && !hasSignerEnoughFunds) {

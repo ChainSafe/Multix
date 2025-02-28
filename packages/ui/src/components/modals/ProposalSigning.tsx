@@ -19,13 +19,12 @@ import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
 import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
 import { useAnyApi } from '../../hooks/useAnyApi'
-import { useGetED } from '../../hooks/useGetED'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -65,11 +64,9 @@ const ProposalSigning = ({
     isPplChainTx,
     proposalData.callData || debouncedAddedCallData
   )
-  const { existentialDeposit } = useGetED({
-    withPplApi: isPplChainTx
-  })
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: existentialDeposit,
+
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: 0n,
     address: selectedAccount?.address,
     withPplApi: isPplChainTx
   })

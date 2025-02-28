@@ -21,7 +21,7 @@ import { AccountBadge, noHydrationKeys_1, noHydrationKeys_2, noHydrationKeys_3 }
 import { getIntersection } from '../../utils/arrayUtils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
@@ -88,8 +88,8 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     () => (existentialDeposit || 0n) + proxyAdditionNeededFunds,
     [existentialDeposit, proxyAdditionNeededFunds]
   )
-  const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({
-    min: minBalanceProxyAdditionNeededFunds,
+  const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckTransferableBalance({
+    min: proxyAdditionNeededFunds,
     address: selectedMultiProxy?.proxy,
     withPplApi: false
   })
@@ -318,12 +318,12 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       threshold: newThreshold
     })
 
-  const neededBalance = useMemo(
-    () => firstCallNeededFunds + secondCallNeededFunds + (existentialDeposit || 0n),
-    [existentialDeposit, firstCallNeededFunds, secondCallNeededFunds]
+  const neededBalanceWithoutEd = useMemo(
+    () => firstCallNeededFunds + secondCallNeededFunds,
+    [firstCallNeededFunds, secondCallNeededFunds]
   )
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: neededBalance,
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: neededBalanceWithoutEd,
     address: selectedAccount?.address,
     withPplApi: false
   })
@@ -507,7 +507,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               threshold={newThreshold}
               proxyAddress={selectedMultiProxy?.proxy}
               isCreationSummary={false}
-              balanceMin={neededBalance}
+              balanceMin={neededBalanceWithoutEd + (existentialDeposit || 0n)}
               isBalanceError={!hasSignerEnoughFunds}
               selectedMultisig={selectedMultisig}
               reservedBalance={firstCallReserved + secondCallReserved}

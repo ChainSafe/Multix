@@ -10,7 +10,7 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import { useAssets } from '../../contexts/AssetsContext'
 import { assetHubKeys } from '../../types'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useGetAssetBalances } from '../../hooks/useGetAssetBalances'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
@@ -56,7 +56,7 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
     return res
   }, [fieldInfoMap])
   // the assets can be sufficient here so no need to check for the ED
-  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckBalance({
+  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckTransferableBalance({
     min: totalPerAsset[0],
     address: from,
     withPplApi: false

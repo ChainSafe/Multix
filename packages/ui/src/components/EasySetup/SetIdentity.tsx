@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { TextField } from '../library'
 import { IdentityInfo, useGetIdentity } from '../../hooks/useGetIdentity'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useSetIdentityReservedFunds } from '../../hooks/useSetIdentityReservedFunds'
 import { FixedSizeBinary, Transaction } from 'polkadot-api'
@@ -134,16 +134,8 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   }, [identityFields])
 
   const { reserved: identityReservedFunds } = useSetIdentityReservedFunds(identityFields)
-  const { existentialDeposit } = useGetED({
-    withPplApi: true
-  })
-  const minBalance = useMemo(() => {
-    if (!existentialDeposit || !identityReservedFunds) return
-
-    return identityReservedFunds + existentialDeposit
-  }, [existentialDeposit, identityReservedFunds])
-  const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckBalance({
-    min: minBalance,
+  const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckTransferableBalance({
+    min: identityReservedFunds,
     address: from,
     withPplApi: true
   })
@@ -151,6 +143,15 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   useEffect(() => {
     getIdentity(from).then(setChainIdentity).catch(console.error)
   }, [from, getIdentity])
+
+  const { existentialDeposit } = useGetED({
+    withPplApi: true
+  })
+  const minBalanceDisplay = useMemo(() => {
+    if (!existentialDeposit || !identityReservedFunds) return
+
+    return identityReservedFunds + existentialDeposit
+  }, [existentialDeposit, identityReservedFunds])
 
   useEffect(() => {
     if (fieldtooLongError.length > 0) {
@@ -163,10 +164,14 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       return
     }
 
-    if (!!minBalance && !hasOriginEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
-        tokenSymbol: chainInfo?.tokenSymbol
-      })
+    if (!!minBalanceDisplay && !hasOriginEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(
+        minBalanceDisplay,
+        chainInfo?.tokenDecimals,
+        {
+          tokenSymbol: chainInfo?.tokenSymbol
+        }
+      )
 
       const reservedString = formatBigIntBalance(identityReservedFunds, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
@@ -191,7 +196,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     identityFields,
     onSetErrorMessage,
     identityReservedFunds,
-    minBalance
+    minBalanceDisplay
   ])
 
   useEffect(() => {

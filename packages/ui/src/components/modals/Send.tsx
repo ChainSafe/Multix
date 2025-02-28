@@ -18,7 +18,7 @@ import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccou
 // import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
@@ -113,6 +113,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     withPplApi
   })
 
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: multisigProposalNeededFunds,
+    address: selectedAccount?.address,
+    withPplApi
+  })
+
   const { existentialDeposit } = useGetED({
     withPplApi
   })
@@ -121,12 +127,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     return multisigProposalNeededFunds + existentialDeposit
   }, [existentialDeposit, multisigProposalNeededFunds])
-
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: minBalance,
-    address: selectedAccount?.address,
-    withPplApi
-  })
 
   useEffect(() => {
     if (!!minBalance && !hasSignerEnoughFunds) {

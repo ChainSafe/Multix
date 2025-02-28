@@ -19,7 +19,7 @@ import Summary from './Summary'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import WithProxySelection from './WithProxySelection'
@@ -267,15 +267,15 @@ const MultisigCreation = ({ className }: Props) => {
   const { existentialDeposit } = useGetED({
     withPplApi: false
   })
-  const neededBalance = useMemo(
+  const minTransferableBalance = useMemo(
     () =>
       withProxy
-        ? pureProxyCreationNeededFunds + multisigProposalNeededFunds + (existentialDeposit || 0n)
-        : multisigProposalNeededFunds + (existentialDeposit || 0n),
-    [existentialDeposit, multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
+        ? pureProxyCreationNeededFunds + multisigProposalNeededFunds
+        : multisigProposalNeededFunds,
+    [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: neededBalance,
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: minTransferableBalance,
     address: selectedAccount?.address,
     withPplApi: false
   })
@@ -467,7 +467,7 @@ const MultisigCreation = ({ className }: Props) => {
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
               reservedBalance={withProxy ? multisigReserved + proxyReserved : multisigReserved}
-              balanceMin={neededBalance}
+              balanceMin={minTransferableBalance + (existentialDeposit || 0n)}
               withProxy={withProxy}
               isSubmittingExtrinsic={isSubmitted}
             />

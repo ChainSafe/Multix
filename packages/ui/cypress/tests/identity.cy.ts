@@ -87,7 +87,7 @@ describe('Set an identity', () => {
     sendTxModal.buttonSend().should('be.disabled')
 
     // too many bytes should show the From error
-    sendTxModal.setIdentityField('legal').type('{selectall}{del}iiiiiiiiiiiiiiiiiii')
+    sendTxModal.setIdentityField('legal').type('{selectall}{del}aaaaaaaaaaaaaaaaaaa')
     sendTxModal.setIdentityFieldElement('legal', 'label').should('not.have.class', 'Mui-error')
     sendTxModal.sendTxError().should('contain', `The "From" account doesn't have`)
     sendTxModal.sendTxError().should('contain', `People Chain`)
