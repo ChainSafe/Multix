@@ -19,6 +19,7 @@ interface Props {
   multisigSignatories: string[]
   onSuccess: () => void
   threshold: number
+  isPplChainTx?: boolean
 }
 
 const Transaction = ({
@@ -28,7 +29,8 @@ const Transaction = ({
   possibleSigners,
   multisigSignatories,
   onSuccess,
-  threshold
+  threshold,
+  isPplChainTx = false
 }: Props) => {
   const { onOpenSigningModal } = useModals()
   const isProxy = useMemo(() => isProxyCall(aggregatedData.name), [aggregatedData])
@@ -38,9 +40,10 @@ const Transaction = ({
     onOpenSigningModal({
       onSuccess,
       possibleSigners,
-      proposalData: aggregatedData
+      proposalData: aggregatedData,
+      isPplChainTx
     })
-  }, [aggregatedData, onOpenSigningModal, onSuccess, possibleSigners])
+  }, [aggregatedData, isPplChainTx, onOpenSigningModal, onSuccess, possibleSigners])
 
   return (
     <Paper
@@ -70,6 +73,7 @@ const Transaction = ({
         <CallInfo
           withLink
           aggregatedData={{ ...aggregatedData }}
+          isPplChainTx={isPplChainTx}
         >
           {(isProposer || possibleSigners.length > 0) && (
             <TransactionFooterStyled>

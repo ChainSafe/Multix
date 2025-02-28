@@ -10,7 +10,7 @@ import { useNetwork } from '../../contexts/NetworkContext'
 import { useAssets } from '../../contexts/AssetsContext'
 import { assetHubKeys } from '../../types'
 import { AH_SUPPORTED_ASSETS } from '../../constants'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useGetAssetBalances } from '../../hooks/useGetAssetBalances'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
@@ -55,9 +55,11 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
     })
     return res
   }, [fieldInfoMap])
-  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckBalance({
+  // the assets can be sufficient here so no need to check for the ED
+  const { hasEnoughFreeBalance: hasEnoughNativeToken } = useCheckTransferableBalance({
     min: totalPerAsset[0],
-    address: from
+    address: from,
+    withPplApi: false
   })
 
   const assetList = useMemo(() => {
@@ -89,12 +91,12 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
   // check for the native asset
   useEffect(() => {
     if (!!totalPerAsset[0] && !hasEnoughNativeToken) {
-      const message = getErrorMessageReservedFunds(
-        '"From" address',
-        formatBigIntBalance(totalPerAsset[0], chainInfo?.tokenDecimals, {
+      const message = getErrorMessageReservedFunds({
+        identifier: '"From" address',
+        requiredBalanceString: formatBigIntBalance(totalPerAsset[0], chainInfo?.tokenDecimals, {
           tokenSymbol: chainInfo?.tokenSymbol
         })
-      )
+      })
       onSetErrorMessage(message)
     }
   }, [chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])
@@ -108,12 +110,12 @@ export const BalancesTransfer = ({ className, onSetExtrinsic, onSetErrorMessage,
     const asset = assetList.find((asset) => asset.id === Number(assetIssue?.[0]))
 
     if (assetIssue) {
-      const message = getErrorMessageReservedFunds(
-        '"From" address',
-        formatBigIntBalance(assetIssue[1], asset?.decimals, {
+      const message = getErrorMessageReservedFunds({
+        identifier: '"From" address',
+        requiredBalanceString: formatBigIntBalance(assetIssue[1], asset?.decimals, {
           tokenSymbol: asset?.symbol
         })
-      )
+      })
       onSetErrorMessage(message)
     }
   }, [assetList, balances, chainInfo, hasEnoughNativeToken, onSetErrorMessage, totalPerAsset])

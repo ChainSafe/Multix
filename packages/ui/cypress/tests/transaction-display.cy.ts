@@ -1,11 +1,16 @@
 import { testAccounts } from '../fixtures/testAccounts'
-import { landingPageNetwork, landingPageUrl } from '../fixtures/landingData'
+import {
+  landingPageNetwork,
+  landingPageNetworkAddress,
+  landingPageUrl
+} from '../fixtures/landingData'
 import { multisigPage } from '../support/page-objects/multisigPage'
 import { txSigningModal } from '../support/page-objects/modals/txSigningModal'
 import { knownMultisigs } from '../fixtures/knownMultisigs'
 import { polkadotAHMemberAccount } from '../fixtures/polkadotAssetHub'
 import { expander } from '../support/page-objects/components/expander'
 import { accountDisplay } from '../support/page-objects/components/accountDisplay'
+import { westendMemberAccount } from '../fixtures/westendAccounts'
 
 describe('Unknown Transaction', () => {
   beforeEach(() => {
@@ -115,6 +120,27 @@ describe('Unknown Transaction', () => {
   })
 })
 
+describe('People chain', () => {
+  it('can display People chain transactions', () => {
+    cy.setupAndVisit({
+      url: landingPageNetworkAddress({
+        network: 'westend',
+        address: westendMemberAccount.pendingIdentityTx.expectedSingleMultisig.westendAddress
+      }),
+      watchedAccounts: [westendMemberAccount.pendingIdentityTx.expectedSingleMultisig.pubKey]
+    })
+    multisigPage
+      .pendingTransactionItem(8000)
+      .eq(1)
+      .within(() => {
+        multisigPage.pendingTransactionCallName().should('contain.text', 'Identity.set_identity')
+
+        expander.paramExpander().click()
+        expander.contentExpander().should('contain', 'new display')
+        expander.contentExpander().should('contain', 'new legal')
+      })
+  })
+})
 describe('Asset hub transactions', () => {
   it('can display a simple asset hub transactions with the right decimal and symbol', () => {
     cy.setupAndVisit({

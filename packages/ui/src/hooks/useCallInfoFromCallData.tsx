@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useApi } from '../contexts/ApiContext'
 import { SubmittingCall } from '../types'
 import { PAYMENT_INFO_ACCOUNT } from '../constants'
 import { Binary, HexString } from 'polkadot-api'
 import { hashFromTx } from '../utils/txHash'
+import { useAnyApi } from './useAnyApi'
 
-export const useCallInfoFromCallData = (callData?: HexString) => {
-  const { api, compatibilityToken } = useApi()
+export const useCallInfoFromCallData = (isPplTx: boolean, callData?: HexString) => {
+  const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplTx })
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
 

@@ -53,7 +53,8 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
     () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
     [selectedMultiProxy?.multisigs]
   )
-  const { refresh } = usePendingTx(multisigAddresses)
+  const { refresh } = usePendingTx({ multisigAddresses, withPplChain: false })
+  const { refresh: refreshPpl } = usePendingTx({ multisigAddresses, withPplChain: true })
   const onCloseEditModal = useCallback(() => setIsEditModalOpen(false), [setIsEditModalOpen])
   const onCloseChangeMultiModal = useCallback(
     () => setIsChangeMultiModalOpen(false),
@@ -77,11 +78,13 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
   const onSuccessSendModal = useCallback(() => {
     onCloseSendModal()
     refresh()
-  }, [onCloseSendModal, refresh])
+    refreshPpl()
+  }, [onCloseSendModal, refresh, refreshPpl])
 
   const onFinalizedSendModal = useCallback(() => {
     refresh()
-  }, [refresh])
+    refreshPpl()
+  }, [refresh, refreshPpl])
 
   const openWalletConnectSessionModal = useCallback(({ sessionProposal }: OpenWCModalParams) => {
     setWCSessionProposal(sessionProposal)
@@ -150,6 +153,7 @@ const ModalsContextProvider = ({ children }: React.PropsWithChildren) => {
           onClose={onCloseSigningModal}
           proposalData={signingModalInfo.proposalData}
           onSuccess={signingModalInfo.onSuccess}
+          isPplChainTx={signingModalInfo.isPplChainTx}
         />
       )}
       {isOpenWalletConnectSigning && !!walletConnectRequest && (
