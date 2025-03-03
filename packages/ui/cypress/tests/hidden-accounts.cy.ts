@@ -40,12 +40,12 @@ describe('Hidden Accounts', () => {
     })
     goToHiddenAccountSettings()
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
 
     //hide random account
     addHiddenAccount(randomAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
     settingsPage.hiddenAccountsContainer().should('be.visible')
     settingsPage.hiddenAccountsContainer().within(() => {
       accountDisplay.identicon().should('be.visible')
@@ -54,17 +54,17 @@ describe('Hidden Accounts', () => {
     })
 
     //hide the multisig account
-    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     settingsPage.hiddenAccountsContainer().should('have.length', 2)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
     // the multisig should be hidden
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
     topMenuItems
       .multiproxySelectorOptionDesktop()
       .should('contain', westendMemberAccount.hidden.expectedPure.address.slice(0, 6))
   })
 
-  it('hides all accounts sequentially and we switches to the available accounts if any', () => {
+  it('hides all accounts sequentially and it switches to the available accounts if any', () => {
     cy.setupAndVisit({
       url: landingPageNetworkAddress({
         network: 'westend',
@@ -83,19 +83,19 @@ describe('Hidden Accounts', () => {
     goToHiddenAccountSettings()
     addHiddenAccount(westendMemberAccount.hidden.expectedPure.address)
     // we should now have only the single multisig and have it selected
-    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     topMenuItems.homeButton().click()
     multisigPage.accountHeader().within(() => {
       accountDisplay
         .addressLabel()
         .should(
           'contain.text',
-          westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress.slice(0, 6)
+          westendMemberAccount.hidden.expectedSingleMultisig.westendAddress.slice(0, 6)
         )
     })
 
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
     goToHiddenAccountSettings()
     settingsPage
       .hiddenAccountsContainer()
@@ -108,8 +108,9 @@ describe('Hidden Accounts', () => {
         settingsPage.hiddenAccountDeleteButton().should('be.visible')
       })
 
-    // hide all accounts and expect an error
-    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    // hide all other accounts and expect an error
+    addHiddenAccount(westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
+    addHiddenAccount(westendMemberAccount.noIdentity.expectedSingleMultisig.westendAddress)
     topMenuItems.multiproxySelectorDesktop().should('not.exist')
     topMenuItems.homeButton().click()
     landingPage
@@ -187,9 +188,9 @@ describe('Hidden Accounts', () => {
     hiddenAccountInfoModal.checkBoxMessage().should('not.be.checked')
     hiddenAccountInfoModal.gotItButton().should('be.visible').click()
     landingPage.transactionListLoader().should('not.exist')
-    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westEndAddress)
+    cy.url().should('include', westendMemberAccount.hidden.expectedSingleMultisig.westendAddress)
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
     goToHiddenAccountSettings()
     settingsPage
       .hiddenAccountsContainer()
@@ -204,7 +205,7 @@ describe('Hidden Accounts', () => {
     settingsPage.hiddenAccountDeleteButton().should('be.visible').click()
     settingsPage.hiddenAccountsContainer().should('not.exist')
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
     topMenuItems.homeButton().click()
 
     // hide it again but say to not view the message again
@@ -215,7 +216,7 @@ describe('Hidden Accounts', () => {
     hiddenAccountInfoModal.gotItButton().should('be.visible').click()
 
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
     goToHiddenAccountSettings()
     settingsPage.hiddenAccountsContainer().should('have.length', 1)
 
@@ -224,13 +225,13 @@ describe('Hidden Accounts', () => {
 
     topMenuItems.homeButton().click()
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
 
     multisigPage.optionsMenuButton().click()
     multisigPage.hideAccountMenuOption().should('exist').click()
     hiddenAccountInfoModal.body().should('not.exist')
     topMenuItems.multiproxySelectorDesktop().should('be.visible').click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 1)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
   })
 
   it('removes a watched account if hidding a watched account', () => {
@@ -245,7 +246,7 @@ describe('Hidden Accounts', () => {
     })
 
     topMenuItems.multiproxySelectorDesktop().click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 4)
 
     // hide the watched account
     multisigPage.optionsMenuButton().click()
@@ -254,7 +255,7 @@ describe('Hidden Accounts', () => {
     hiddenAccountInfoModal.gotItButton().click()
 
     topMenuItems.multiproxySelectorDesktop().click()
-    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 2)
+    topMenuItems.multiproxySelectorOptionDesktop().should('have.length', 3)
     goToHiddenAccountSettings()
     settingsPage.hiddenAccountsContainer().should('not.exist')
     settingsPage.watchedAccountsAccordion().click()

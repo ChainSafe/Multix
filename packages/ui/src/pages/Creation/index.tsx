@@ -19,7 +19,7 @@ import Summary from './Summary'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router'
 import { useAccountNames } from '../../contexts/AccountNamesContext'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import WithProxySelection from './WithProxySelection'
@@ -37,6 +37,7 @@ import {
   allDescriptorsKey_3_3,
   noHydrationKeys
 } from '../../types'
+import { useGetED } from '../../hooks/useGetED'
 
 interface Props {
   className?: string
@@ -263,16 +264,20 @@ const MultisigCreation = ({ className }: Props) => {
       signatories,
       call: withProxy ? batchCall : remarkCall
     })
-  const neededBalance = useMemo(
+  const { existentialDeposit } = useGetED({
+    withPplApi: false
+  })
+  const minTransferableBalance = useMemo(
     () =>
       withProxy
         ? pureProxyCreationNeededFunds + multisigProposalNeededFunds
         : multisigProposalNeededFunds,
     [multisigProposalNeededFunds, pureProxyCreationNeededFunds, withProxy]
   )
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: neededBalance,
-    address: selectedAccount?.address
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: minTransferableBalance,
+    address: selectedAccount?.address,
+    withPplApi: false
   })
   const canGoNext = useMemo(() => {
     // need a threshold set
@@ -462,7 +467,7 @@ const MultisigCreation = ({ className }: Props) => {
               name={name}
               isBalanceError={!hasSignerEnoughFunds}
               reservedBalance={withProxy ? multisigReserved + proxyReserved : multisigReserved}
-              balanceMin={neededBalance}
+              balanceMin={minTransferableBalance + (existentialDeposit || 0n)}
               withProxy={withProxy}
               isSubmittingExtrinsic={isSubmitted}
             />

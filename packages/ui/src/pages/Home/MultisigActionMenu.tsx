@@ -28,7 +28,7 @@ const MultisigActionMenu = ({
     useMultiProxy()
   const { setIsEditModalOpen, setIsChangeMultiModalOpen, onOpenSendModal } = useModals()
   const { getSubscanAccountLink } = useGetSubscanLinks()
-  const { hasIdentityPallet, hasPplChain } = useHasIdentityFeature()
+  const { hasPplChain } = useHasIdentityFeature()
   const { addHiddenAccount } = useHiddenAccounts()
   const { onOpenHiddenAccountInfoModal } = useModals()
 
@@ -64,8 +64,8 @@ const MultisigActionMenu = ({
     ]
 
     !selectedIsWatched &&
-      !hasPplChain &&
-      hasIdentityPallet &&
+      hasPplChain &&
+      !selectedHasProxy &&
       opts.push({
         text: 'Set identity',
         icon: <IdentityIcon size={20} />,
@@ -85,7 +85,6 @@ const MultisigActionMenu = ({
     onHideAccount,
     selectedIsWatched,
     hasPplChain,
-    hasIdentityPallet,
     selectedHasProxy,
     setIsEditModalOpen,
     selectedMultiProxy,

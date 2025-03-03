@@ -1,22 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useApi } from '../contexts/ApiContext'
+import { useEffect, useState } from 'react'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
 import { bigIntMax } from '../utils/bnUtils'
+import { useAnyApi } from './useAnyApi'
+import { useGetED } from './useGetED'
 
 interface useGetBalanceProps {
   address?: string
   numberAfterComma?: number
+  withPplApi?: boolean
 }
 
-export const useGetBalance = ({ address, numberAfterComma = 2 }: useGetBalanceProps) => {
-  const { api, chainInfo, compatibilityToken } = useApi()
+export const useGetBalance = ({
+  address,
+  numberAfterComma = 2,
+  withPplApi = false
+}: useGetBalanceProps) => {
+  const { api, chainInfo } = useAnyApi({ withPplApi })
   const [balance, setBalance] = useState<bigint | null>(null)
   const [balanceFormatted, setFormattedBalance] = useState<string | null>(null)
-  const existentialDeposit = useMemo(() => {
-    if (!api || !compatibilityToken) return
-
-    return api.constants.Balances.ExistentialDeposit(compatibilityToken)
-  }, [api, compatibilityToken])
+  const { existentialDeposit } = useGetED({ withPplApi })
 
   useEffect(() => {
     if (!api || !address || !existentialDeposit) return

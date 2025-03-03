@@ -10,7 +10,6 @@ import { Button, TextField } from '../library'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import CallInfo from '../CallInfo'
 import SignerSelection from '../select/SignerSelection'
@@ -20,11 +19,12 @@ import { getExtrinsicName } from '../../utils/getExtrinsicName'
 import { useCallInfoFromCallData } from '../../hooks/useCallInfoFromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
 import { debounce } from '../../utils/debounce'
 import { FixedSizeBinary, HexString, Transaction } from 'polkadot-api'
+import { useAnyApi } from '../../hooks/useAnyApi'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -32,6 +32,7 @@ export interface SigningModalProps {
   possibleSigners: string[]
   proposalData: CallDataInfoFromChain
   onSuccess?: () => void
+  isPplChainTx: boolean
 }
 
 const ProposalSigning = ({
@@ -39,9 +40,10 @@ const ProposalSigning = ({
   className,
   possibleSigners,
   proposalData,
-  onSuccess
+  onSuccess,
+  isPplChainTx
 }: SigningModalProps) => {
-  const { api, compatibilityToken } = useApi()
+  const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplChainTx })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount } = useAccounts()
@@ -59,11 +61,14 @@ const ProposalSigning = ({
     [proposalData, selectedAccount]
   )
   const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
+    isPplChainTx,
     proposalData.callData || debouncedAddedCallData
   )
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
+
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
     min: 0n,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: isPplChainTx
   })
 
   const hasReachedThreshold = useMemo(
@@ -126,9 +131,9 @@ const ProposalSigning = ({
     }
 
     setErrorMessage(
-      "The selected signer doesn't have enough funds to pay for the transaction fees."
+      `The selected signer doesn't have enough funds ${isPplChainTx ? 'on the People Chain ' : ''}to pay for the transaction fees.`
     )
-  }, [hasSignerEnoughFunds])
+  }, [hasSignerEnoughFunds, isPplChainTx])
 
   const onSign = useCallback(
     async (isApproving: boolean) => {
@@ -215,7 +220,6 @@ const ProposalSigning = ({
       setIsSubmitting(true)
       let tx: Transaction<any, any, any, any> | undefined
 
-      console.log('proposalData', proposalData)
       // if it's a rejection we can send it right away, no need for weight or calldata
       if (!isApproving) {
         tx = api.tx.Multisig.cancel_as_multi({
@@ -352,6 +356,7 @@ const ProposalSigning = ({
                         }
                   }
                   expanded
+                  isPplChainTx={isPplChainTx}
                 />
               </Grid>
             </>

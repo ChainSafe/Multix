@@ -69,9 +69,9 @@ const FromCallData = ({ className, onSetExtrinsic, currentProxy }: Props) => {
     removeProxyProxyCall(pastedCallData).then(setCallDataToUse).catch(console.error)
   }, [pastedCallData, removeProxyProxyCall])
 
-  const { callInfo } = useCallInfoFromCallData(callDataToUse)
-  const { callInfo: pastedCallInfo } = useCallInfoFromCallData(pastedCallData)
-  const { extrinsicUrl } = usePjsLinks()
+  const { callInfo } = useCallInfoFromCallData(false, callDataToUse)
+  const { callInfo: pastedCallInfo } = useCallInfoFromCallData(false, pastedCallData)
+  const { extrinsicUrl } = usePjsLinks({ isPplChain: false })
 
   useEffect(() => {
     if (!api) {
@@ -137,6 +137,7 @@ const FromCallData = ({ className, onSetExtrinsic, currentProxy }: Props) => {
           }}
           expanded
           withProxyFiltered={false}
+          isPplChainTx={false}
         />
       )}
     </Box>

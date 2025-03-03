@@ -64,11 +64,11 @@ const Summary = ({
             tokenSymbol: chainInfo?.tokenSymbol
           })
 
-    const errorWithReservedFunds = getErrorMessageReservedFunds(
-      'selected signer',
+    const errorWithReservedFunds = getErrorMessageReservedFunds({
+      identifier: 'selected signer',
       requiredBalanceString,
       reservedString
-    )
+    })
     setErrorMessage(errorWithReservedFunds)
   }, [balanceMin, chainInfo, isBalanceError, isCreationSummary, reservedBalance])
 

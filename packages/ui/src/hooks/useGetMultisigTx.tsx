@@ -8,12 +8,14 @@ import {
   noHydrationKeys_1,
   noHydrationKeys_2,
   noHydrationKeys_3,
+  pplDescriptorKeys,
   Weight
 } from '../types'
 import { getApproveAsMultiTx } from '../utils/getApproveAsMultiTx'
 import { HexString, Transaction } from 'polkadot-api'
 import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../contexts/NetworkContext'
+import { isPplContextIn, usePplApi } from '../contexts/PeopleChainApiContext'
 
 interface Params {
   selectedMultisig?: MultiProxy['multisigs'][0]
@@ -27,6 +29,7 @@ interface Params {
   forceAsMulti?: boolean
   approveAsMultiHash?: HexString
   approvalLength?: number
+  withPplApi?: boolean
 }
 
 export const useGetMultisigTx = ({
@@ -40,10 +43,18 @@ export const useGetMultisigTx = ({
   when,
   approvalLength = 0,
   forceAsMulti = true,
-  approveAsMultiHash
+  approveAsMultiHash,
+  withPplApi = false
 }: Params) => {
-  const ctx = useApi()
-  const { api, compatibilityToken } = ctx
+  // we don't use useAnyapi here
+  // bc TS is spitting a bunch of nonsense
+  const ctxNormal = useApi()
+  const ctxPpl = usePplApi()
+  const ctx = withPplApi ? ctxPpl : ctxNormal
+  const api = withPplApi ? ctxPpl.pplApi : ctxNormal.api
+  const compatibilityToken = withPplApi
+    ? ctxPpl.pplCompatibilityToken
+    : ctxNormal.compatibilityToken
   const { getSortAddress } = useGetSortAddress()
   const { selectedNetwork } = useNetwork()
 
@@ -61,7 +72,7 @@ export const useGetMultisigTx = ({
       return
     }
 
-    if (!ctx?.api || !selectedNetwork) {
+    if (!api || !selectedNetwork) {
       return
     }
 
@@ -94,30 +105,38 @@ export const useGetMultisigTx = ({
     try {
       // the proxy is selected
       if (isProxy && !!extrinsicToCall) {
-        tx = isContextOf(ctx, 'hydration')
-          ? ctx.api.tx.Proxy.proxy({
-              real: fromAddress,
-              force_proxy_type: undefined,
-              call: extrinsicToCall.decodedCall
-            })
-          : isContextIn(ctx, noHydrationKeys_1)
+        tx =
+          isContextOf(ctx, 'hydration') && ctx.api
             ? ctx.api.tx.Proxy.proxy({
-                real: MultiAddress.Id(fromAddress),
+                real: fromAddress,
                 force_proxy_type: undefined,
                 call: extrinsicToCall.decodedCall
               })
-            : isContextIn(ctx, noHydrationKeys_2)
+            : isContextIn(ctx, noHydrationKeys_1) && ctx.api
               ? ctx.api.tx.Proxy.proxy({
                   real: MultiAddress.Id(fromAddress),
                   force_proxy_type: undefined,
                   call: extrinsicToCall.decodedCall
                 })
-              : isContextIn(ctx, noHydrationKeys_3) &&
-                ctx.api.tx.Proxy.proxy({
-                  real: MultiAddress.Id(fromAddress),
-                  force_proxy_type: undefined,
-                  call: extrinsicToCall.decodedCall
-                })
+              : isContextIn(ctx, noHydrationKeys_2) && ctx.api
+                ? ctx.api.tx.Proxy.proxy({
+                    real: MultiAddress.Id(fromAddress),
+                    force_proxy_type: undefined,
+                    call: extrinsicToCall.decodedCall
+                  })
+                : isContextIn(ctx, noHydrationKeys_3) && ctx.api
+                  ? ctx.api.tx.Proxy.proxy({
+                      real: MultiAddress.Id(fromAddress),
+                      force_proxy_type: undefined,
+                      call: extrinsicToCall.decodedCall
+                    })
+                  : isPplContextIn(ctx, pplDescriptorKeys) &&
+                    ctx.pplApi &&
+                    ctx.pplApi.tx.Proxy.proxy({
+                      real: MultiAddress.Id(fromAddress),
+                      force_proxy_type: undefined,
+                      call: extrinsicToCall.decodedCall
+                    })
         // a multisig is selected
       } else {
         tx = extrinsicToCall
