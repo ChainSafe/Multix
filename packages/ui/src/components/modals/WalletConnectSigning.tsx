@@ -206,9 +206,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
 
     setIsSubmitting(true)
 
-    multisigTx
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallback)
+    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
   }, [threshold, api, originAddress, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const handleMultisigSelection = useCallback(

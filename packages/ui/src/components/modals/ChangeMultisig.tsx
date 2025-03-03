@@ -385,9 +385,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     setCurrentStep('call2')
 
-    secondCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack2)
+    secondCall.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallBack2)
   }, [callError, api, selectedAccount, secondCall, signCallBack2])
 
   const signCallBack1 = useSigningCallback({
@@ -413,9 +411,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
     setCurrentStep('call1')
 
-    firstCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack1)
+    firstCall.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallBack1)
   }, [api, selectedAccount, firstCall, signCallBack1])
 
   const onClickNext = useCallback(() => {

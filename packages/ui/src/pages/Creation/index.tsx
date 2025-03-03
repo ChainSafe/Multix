@@ -342,9 +342,7 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    remarkCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack)
+    remarkCall.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallBack)
   }, [addName, multiAddress, name, remarkCall, selectedAccount, signCallBack])
 
   const handleCreateWithPure = useCallback(async () => {
@@ -356,9 +354,7 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    batchCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack)
+    batchCall.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallBack)
   }, [addName, batchCall, multiAddress, name, selectedAccount, signCallBack])
 
   const goNext = useCallback(() => {
