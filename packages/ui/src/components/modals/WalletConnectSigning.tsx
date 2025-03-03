@@ -24,10 +24,11 @@ import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccou
 import { useWalletConnect } from '../../contexts/WalletConnectContext'
 import { getWalletConnectErrorResponse } from '../../utils/getWalletConnectErrorResponse'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
 import { useGetWalletConnectNamespace } from '../../hooks/useWalletConnectNamespace'
+import { useGetED } from '../../hooks/useGetED'
 
 export interface SigningModalProps {
   onClose: () => void
@@ -78,9 +79,11 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     signatories: selectedMultisig?.signatories,
     call: multisigTx
   })
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
+
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
     min: multisigProposalNeededFunds,
-    address: selectedAccount?.address
+    address: selectedAccount?.address,
+    withPplApi: false
   })
 
   useEffect(() => {
@@ -109,25 +112,33 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     }
   }, [isCorrectMultiproxySelected, originAddress])
 
+  const { existentialDeposit } = useGetED({
+    withPplApi: false
+  })
+
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !multisigProposalNeededFunds) return
+
+    return multisigProposalNeededFunds + existentialDeposit
+  }, [existentialDeposit, multisigProposalNeededFunds])
+
   useEffect(() => {
-    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(
-        multisigProposalNeededFunds,
-        chainInfo?.tokenDecimals,
-        { tokenSymbol: chainInfo?.tokenSymbol }
-      )
+    if (!!minBalance && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
 
       const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      const errorWithReservedFunds = getErrorMessageReservedFunds(
-        '"Signing with" account',
+      const errorWithReservedFunds = getErrorMessageReservedFunds({
+        identifier: '"Signing with" account',
         requiredBalanceString,
         reservedString
-      )
+      })
       setErrorMessage(errorWithReservedFunds)
     }
-  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
+  }, [chainInfo, reserved, hasSignerEnoughFunds, minBalance])
 
   useEffect(() => {
     selectMultiProxy(request.params.request.params.address)
@@ -289,6 +300,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
                     name: getExtrinsicName(callInfo?.section, callInfo?.method)
                   }}
                   expanded={!errorMessage}
+                  isPplChainTx={false}
                 />
               </Grid>
             </>

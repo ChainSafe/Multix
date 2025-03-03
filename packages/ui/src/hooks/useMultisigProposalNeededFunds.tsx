@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react'
-import { useApi } from '../contexts/ApiContext'
 import { Transaction } from 'polkadot-api'
+import { useAnyApi } from './useAnyApi'
 
 interface Props {
   threshold?: number | null
   signatories?: string[]
   call?: Transaction<any, any, any, any>
+  withPplApi?: boolean
 }
 
-export const useMultisigProposalNeededFunds = ({ threshold, signatories, call }: Props) => {
-  const { api, chainInfo, compatibilityToken } = useApi()
+export const useMultisigProposalNeededFunds = ({
+  threshold,
+  signatories,
+  call,
+  withPplApi = false
+}: Props) => {
+  const { api, compatibilityToken, chainInfo } = useAnyApi({ withPplApi })
   const [min, setMin] = useState(0n)
   const [reserved, setReserved] = useState(0n)
 

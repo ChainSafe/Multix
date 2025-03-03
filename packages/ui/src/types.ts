@@ -63,7 +63,6 @@ import {
   dot,
   dotAssetHub,
   hydration,
-  khala,
   ksm,
   ksmAssetHub,
   paseo,
@@ -71,7 +70,11 @@ import {
   polimec,
   coretimeDot,
   westend,
-  wesAssetHub
+  wesAssetHub,
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
 } from '@polkadot-api/descriptors'
 
 export const DESCRIPTORS = {
@@ -80,7 +83,6 @@ export const DESCRIPTORS = {
   dot,
   dotAssetHub,
   hydration,
-  khala,
   ksm,
   ksmAssetHub,
   paseo,
@@ -88,7 +90,11 @@ export const DESCRIPTORS = {
   polimec,
   coretimeDot,
   westend,
-  wesAssetHub
+  wesAssetHub,
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
 } as const
 
 export const DESCRIPTORS_NOT_HYDRATION_1_3 = {
@@ -99,7 +105,6 @@ export const DESCRIPTORS_NOT_HYDRATION_1_3 = {
 } as const
 
 export const DESCRIPTORS_NOT_HYDRATION_2_3 = {
-  khala,
   ksm,
   ksmAssetHub,
   paseo
@@ -120,7 +125,7 @@ export const DESCRIPTORS_ASSET_HUBS = {
 }
 
 export const DESCRIPTORS_1_3 = { acala, bifrostDot, dot, dotAssetHub, hydration } as const
-export const DESCRIPTORS_2_3 = { khala, ksm, ksmAssetHub, paseo, phala } as const
+export const DESCRIPTORS_2_3 = { ksm, ksmAssetHub, paseo, phala } as const
 export const DESCRIPTORS_3_3 = { polimec, coretimeDot, westend, wesAssetHub } as const
 
 export type ApiDescriptors = keyof typeof DESCRIPTORS
@@ -143,7 +148,7 @@ export const noHydrationKeys_3 = Object.keys(
 
 export const noHydrationKeys = [...noHydrationKeys_1, ...noHydrationKeys_2, ...noHydrationKeys_3]
 
-// All descriptors
+// All descriptors but Ppl chains
 export const allDescriptorsKey_1_3 = Object.keys(
   DESCRIPTORS_1_3
 ) as (keyof typeof DESCRIPTORS_1_3)[]
@@ -158,3 +163,15 @@ export const allDescriptorsKey_3_3 = Object.keys(
 export const assetHubKeys = Object.keys(
   DESCRIPTORS_ASSET_HUBS
 ) as (keyof typeof DESCRIPTORS_ASSET_HUBS)[]
+
+// Ppl chains
+export const DESCRIPTORS_PPL = {
+  dotPpl,
+  ksmPpl,
+  pasPpl,
+  wesPpl
+} as const
+export type PplDescriptorKeys = keyof typeof DESCRIPTORS_PPL
+export type PplDescriptors<Id extends PplDescriptorKeys> = (typeof DESCRIPTORS_PPL)[Id]
+export type PplApiOf<Id extends PplDescriptorKeys> = TypedApi<PplDescriptors<Id>>
+export const pplDescriptorKeys = Object.keys(DESCRIPTORS_PPL) as (keyof typeof DESCRIPTORS_PPL)[]

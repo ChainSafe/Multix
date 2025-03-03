@@ -11,7 +11,6 @@ import { Button, ButtonWithIcon, Select } from '../library'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAccounts } from '../../contexts/AccountsContext'
-import { useApi } from '../../contexts/ApiContext'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'
 import SignerSelection from '../select/SignerSelection'
 import { useSigningCallback } from '../../hooks/useSigningCallback'
@@ -19,15 +18,17 @@ import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccou
 // import ManualExtrinsic from '../EasySetup/ManualExtrinsic'
 import BalancesTransfer from '../EasySetup/BalancesTransfer'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import FromCallData from '../EasySetup/FromCallData'
 import { ModalCloseButton } from '../library/ModalCloseButton'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useGetMultisigTx } from '../../hooks/useGetMultisigTx'
-// import SetIdentity from '../EasySetup/SetIdentity'
+import SetIdentity from '../EasySetup/SetIdentity'
 import { getErrorMessageReservedFunds } from '../../utils/getErrorMessageReservedFunds'
-// import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 import { Transaction } from 'polkadot-api'
+import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
+import { useAnyApi } from '../../hooks/useAnyApi'
+import { useGetED } from '../../hooks/useGetED'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -47,7 +48,6 @@ interface Props {
 }
 
 const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props) => {
-  const { api, chainInfo } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const {
     selectedMultiProxy,
@@ -71,7 +71,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       (a) => !!a.address
     ) as AccountBaseInfo[]
   }, [getMultisigAsAccountBaseInfo, selectedMultiProxy])
-  // const { hasIdentityPallet, hasPplChain } = useHasIdentityFeature()
+  const { hasPplChain } = useHasIdentityFeature()
   const [selectedOrigin, setSelectedOrigin] = useState<AccountBaseInfo>(possibleOrigin[0])
   const isProxySelected = useMemo(() => selectedOrigin.meta?.isProxy, [selectedOrigin])
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -87,8 +87,14 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const [selectedEasyOption, setSelectedEasyOption] = useState<EasyTransferTitle>(
     preselected || DEFAULT_EASY_SETUP_SELECTION
   )
+  const withPplApi = useMemo(
+    () => selectedEasyOption === EasyTransferTitle.SetIdentity,
+    [selectedEasyOption]
+  )
+  const { chainInfo } = useAnyApi({ withPplApi })
 
-  // this is a creation so we can force the asMulti
+  // this is a tx creation and not the signature of an existing tx
+  // so we can force the asMulti
   const multisigTx = useGetMultisigTx({
     selectedMultisig,
     extrinsicToCall,
@@ -96,38 +102,50 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     isProxy: isProxySelected,
     fromAddress: selectedOrigin.address,
     threshold,
-    forceAsMulti: true
+    forceAsMulti: true,
+    withPplApi
   })
 
   const { multisigProposalNeededFunds, reserved } = useMultisigProposalNeededFunds({
     threshold,
     signatories: selectedMultisig?.signatories,
-    call: multisigTx
-  })
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: multisigProposalNeededFunds,
-    address: selectedAccount?.address
+    call: multisigTx,
+    withPplApi
   })
 
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: multisigProposalNeededFunds,
+    address: selectedAccount?.address,
+    withPplApi
+  })
+
+  const { existentialDeposit } = useGetED({
+    withPplApi
+  })
+  const minBalance = useMemo(() => {
+    if (!existentialDeposit || !multisigProposalNeededFunds) return
+
+    return multisigProposalNeededFunds + existentialDeposit
+  }, [existentialDeposit, multisigProposalNeededFunds])
+
   useEffect(() => {
-    if (multisigProposalNeededFunds !== 0n && !hasSignerEnoughFunds) {
-      const requiredBalanceString = formatBigIntBalance(
-        multisigProposalNeededFunds,
-        chainInfo?.tokenDecimals,
-        { tokenSymbol: chainInfo?.tokenSymbol }
-      )
+    if (!!minBalance && !hasSignerEnoughFunds) {
+      const requiredBalanceString = formatBigIntBalance(minBalance, chainInfo?.tokenDecimals, {
+        tokenSymbol: chainInfo?.tokenSymbol
+      })
 
       const reservedString = formatBigIntBalance(reserved, chainInfo?.tokenDecimals, {
         tokenSymbol: chainInfo?.tokenSymbol
       })
-      const errorWithReservedFunds = getErrorMessageReservedFunds(
-        '"Signing with" account',
+      const errorWithReservedFunds = getErrorMessageReservedFunds({
+        identifier: '"Signing with" account',
         requiredBalanceString,
-        reservedString
-      )
+        reservedString,
+        withPpleChain: withPplApi
+      })
       setErrorMessage(errorWithReservedFunds)
     }
-  }, [chainInfo, reserved, hasSignerEnoughFunds, multisigProposalNeededFunds])
+  }, [chainInfo, reserved, hasSignerEnoughFunds, minBalance, withPplApi])
 
   const onSubmitting = useCallback(() => {
     setIsSubmitting(false)
@@ -170,18 +188,18 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       )
     } as Partial<Record<EasyTransferTitle, ReactNode>>
 
-    // if (hasIdentityPallet && !hasPplChain) {
-    //   res[EasyTransferTitle.SetIdentity] = (
-    //     <SetIdentity
-    //       from={selectedOrigin.address}
-    //       onSetExtrinsic={setExtrinsicToCall}
-    //       onSetErrorMessage={setEasyOptionErrorMessage}
-    //     />
-    //   )
-    // }
+    if (!isProxySelected && hasPplChain) {
+      res[EasyTransferTitle.SetIdentity] = (
+        <SetIdentity
+          from={selectedOrigin.address}
+          onSetExtrinsic={setExtrinsicToCall}
+          onSetErrorMessage={setEasyOptionErrorMessage}
+        />
+      )
+    }
 
     return res
-  }, [selectedOrigin.address, isProxySelected])
+  }, [selectedOrigin.address, isProxySelected, hasPplChain])
 
   const signCallback = useSigningCallback({
     onSuccess: () => {
@@ -213,13 +231,6 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       return
     }
 
-    if (!api) {
-      const error = 'Api is not ready'
-      console.error(error)
-      setErrorMessage(error)
-      return
-    }
-
     if (!selectedAccount || !selectedOrigin) {
       const error = 'No selected account or multisig/proxy'
       console.error(error)
@@ -243,7 +254,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     multisigTx
       .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
       .subscribe(signCallback)
-  }, [threshold, api, selectedOrigin, extrinsicToCall, multisigTx, selectedAccount, signCallback])
+  }, [threshold, selectedOrigin, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(
     ({ target: { value } }) => {

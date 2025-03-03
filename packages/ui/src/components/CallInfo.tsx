@@ -1,7 +1,7 @@
 import Expander from './Expander'
 import { styled } from '@mui/material/styles'
 import { ReactNode, useMemo } from 'react'
-import { useApi } from '../contexts/ApiContext'
+import { ChainInfoHuman, useApi } from '../contexts/ApiContext'
 import { getExtrinsicName } from '../utils/getExtrinsicName'
 import { isProxyCall } from '../utils/isProxyCall'
 import { formatBigIntBalance } from '../utils/formatBnBalance'
@@ -13,8 +13,8 @@ import { CallDataInfoFromChain } from '../hooks/usePendingTx'
 import { JSONprint } from '../utils/jsonPrint'
 import { Transaction } from 'polkadot-api'
 import MultisigCompactDisplay from './MultisigCompactDisplay'
-import { ChainInfoHuman } from '../contexts/PeopleChainApiContext'
 import { IAssetsContext, useAssets } from '../contexts/AssetsContext'
+import { usePplApi } from '../contexts/PeopleChainApiContext'
 
 interface Props {
   aggregatedData: Omit<CallDataInfoFromChain, 'from' | 'timestamp'>
@@ -23,6 +23,7 @@ interface Props {
   className?: string
   withLink?: boolean
   withProxyFiltered?: boolean
+  isPplChainTx: boolean
 }
 
 interface CreateTreeParams {
@@ -341,16 +342,22 @@ const CallInfo = ({
   children,
   className,
   withLink = false,
-  withProxyFiltered = true
+  withProxyFiltered = true,
+  isPplChainTx
 }: Props) => {
   const { decodedCall, name } = withProxyFiltered
     ? filterProxyProxy(aggregatedData)
     : aggregatedData
-  const { chainInfo } = useApi()
+  const { chainInfo: chainInfoNormal } = useApi()
+  const { pplChainInfo } = usePplApi()
+  const chainInfo = useMemo(
+    () => (isPplChainTx ? pplChainInfo : chainInfoNormal),
+    [chainInfoNormal, isPplChainTx, pplChainInfo]
+  )
   const { assets } = useAssets()
   const decimals = useMemo(() => chainInfo?.tokenDecimals || 0, [chainInfo])
   const unit = useMemo(() => chainInfo?.tokenSymbol || '', [chainInfo])
-  const { getDecodeUrl } = usePjsLinks()
+  const { getDecodeUrl } = usePjsLinks({ isPplChain: isPplChainTx })
   const link = useMemo(
     () => aggregatedData.callData && getDecodeUrl(aggregatedData.callData),
     [aggregatedData, getDecodeUrl]

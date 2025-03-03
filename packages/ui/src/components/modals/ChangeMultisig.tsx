@@ -21,7 +21,7 @@ import { AccountBadge, noHydrationKeys_1, noHydrationKeys_2, noHydrationKeys_3 }
 import { getIntersection } from '../../utils/arrayUtils'
 import GenericAccountSelection, { AccountBaseInfo } from '../select/GenericAccountSelection'
 import { useProxyAdditionNeededFunds } from '../../hooks/useProxyAdditionNeededFunds'
-import { useCheckBalance } from '../../hooks/useCheckBalance'
+import { useCheckTransferableBalance } from '../../hooks/useCheckTransferableBalance'
 import { formatBigIntBalance } from '../../utils/formatBnBalance'
 import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalNeededFunds'
 import { MdErrorOutline as ErrorOutlineIcon } from 'react-icons/md'
@@ -33,6 +33,7 @@ import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { Enum } from 'polkadot-api'
 import { MultiAddress } from '@polkadot-api/descriptors'
 import { useNetwork } from '../../contexts/NetworkContext'
+import { useGetED } from '../../hooks/useGetED'
 
 interface Props {
   onClose: () => void
@@ -81,10 +82,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     () => currentStep === 'call1' || currentStep === 'call2',
     [currentStep]
   )
+  const { existentialDeposit } = useGetED({ withPplApi: false })
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
-  const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckBalance({
+  const minBalanceProxyAdditionNeededFunds = useMemo(
+    () => (existentialDeposit || 0n) + proxyAdditionNeededFunds,
+    [existentialDeposit, proxyAdditionNeededFunds]
+  )
+  const { hasEnoughFreeBalance: hasProxyEnoughFunds } = useCheckTransferableBalance({
     min: proxyAdditionNeededFunds,
-    address: selectedMultiProxy?.proxy
+    address: selectedMultiProxy?.proxy,
+    withPplApi: false
   })
   const multisigList = useMemo(() => getMultisigAsAccountBaseInfo(), [getMultisigAsAccountBaseInfo])
   const [callError, setCallError] = useState('')
@@ -310,13 +317,15 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       signatories: newSignatories,
       threshold: newThreshold
     })
-  const neededBalance = useMemo(
+
+  const neededBalanceWithoutEd = useMemo(
     () => firstCallNeededFunds + secondCallNeededFunds,
     [firstCallNeededFunds, secondCallNeededFunds]
   )
-  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckBalance({
-    min: neededBalance,
-    address: selectedAccount?.address
+  const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
+    min: neededBalanceWithoutEd,
+    address: selectedAccount?.address,
+    withPplApi: false
   })
 
   useEffect(() => {
@@ -438,9 +447,13 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                 {!hasProxyEnoughFunds && (
                   <Alert severity="error">
                     The pure account doesn&apos;t have enough funds. It needs at least{' '}
-                    {formatBigIntBalance(proxyAdditionNeededFunds, chainInfo?.tokenDecimals, {
-                      tokenSymbol: chainInfo?.tokenSymbol
-                    })}
+                    {formatBigIntBalance(
+                      minBalanceProxyAdditionNeededFunds,
+                      chainInfo?.tokenDecimals,
+                      {
+                        tokenSymbol: chainInfo?.tokenSymbol
+                      }
+                    )}
                   </Alert>
                 )}
                 <h4>Pure proxy (unchanged)</h4>
@@ -494,7 +507,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               threshold={newThreshold}
               proxyAddress={selectedMultiProxy?.proxy}
               isCreationSummary={false}
-              balanceMin={neededBalance}
+              balanceMin={neededBalanceWithoutEd + (existentialDeposit || 0n)}
               isBalanceError={!hasSignerEnoughFunds}
               selectedMultisig={selectedMultisig}
               reservedBalance={firstCallReserved + secondCallReserved}
