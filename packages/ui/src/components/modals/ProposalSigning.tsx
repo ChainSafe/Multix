@@ -258,7 +258,11 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
+      const nonce = await api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+        at: 'best'
+      })
+
+      tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
     },
     [
       getSortAddress,

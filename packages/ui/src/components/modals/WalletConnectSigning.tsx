@@ -205,8 +205,11 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
     }
 
     setIsSubmitting(true)
+    const nonce = await api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+      at: 'best'
+    })
 
-    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner).subscribe(signCallback)
+    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
   }, [threshold, api, originAddress, extrinsicToCall, multisigTx, selectedAccount, signCallback])
 
   const handleMultisigSelection = useCallback(

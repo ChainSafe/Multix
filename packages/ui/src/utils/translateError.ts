@@ -4,6 +4,11 @@ export const translateError = (error: any) => {
     return 'Not enough funds to pay for the tx'
   }
 
+  // { "type": "Invalid", "value": { "type": "Stale" } }
+  if (error.error && error.error.type === 'Invalid' && error.error.value.type === 'Stale') {
+    return 'A transaction with the same nonce has not been finalized yet, please retry'
+  }
+
   return error.message || error.toString()
 }
 
