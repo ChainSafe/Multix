@@ -102,7 +102,11 @@ const ProposalSigning = ({
     onClose()
   }, [mustProvideCallData, onClose, setRefetchMultisigTimeoutMinutes])
 
-  const signCallback = useSigningCallback({ onSuccess, onSubmitting })
+  const signCallback = useSigningCallback({
+    onSuccess,
+    onSubmitting,
+    withSubscanLink: !isPplChainTx
+  })
   const { getSortAddress } = useGetSortAddress()
 
   const debouncedCallDatahange = useMemo(

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMultiProxy } from '../contexts/MultiProxyContext'
-import { ApiDescriptors, MultisigStorageInfo } from '../types'
+import { ApiDescriptors, MultisigStorageInfo, PplDescriptorKeys } from '../types'
 import { useMultisigCallQuery } from './useQueryMultisigCalls'
 import { isEmptyArray } from '../utils/arrayUtils'
 import { isProxyCall } from '../utils/isProxyCall'
@@ -16,6 +16,7 @@ import { getExtrinsicDecoder } from '@polkadot-api/tx-utils'
 import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 import { useHasIdentityFeature } from './useHasIdentityFeature'
 import { useAnyApi } from './useAnyApi'
+import { IPplApiContext } from '../contexts/PeopleChainApiContext'
 
 dayjs.extend(localizedFormat)
 
@@ -62,7 +63,7 @@ const getExtDecoderAt = async (
 
 const getMultisigInfo = async (
   call: Transaction<any, any, any, any>['decodedCall'],
-  api: IApiContext<ApiDescriptors>['api']
+  api: IApiContext<ApiDescriptors>['api'] | IPplApiContext<PplDescriptorKeys>['pplApi']
 ): Promise<Partial<CallDataInfoFromChain>[]> => {
   if (!api) return []
 
@@ -135,7 +136,12 @@ const getCallDataFromChainPromise = (
 
     const decoder = await getExtDecoderAt(api, client, blockHash)
 
-    if (!decoder || !api) return
+    if (!decoder || !api) {
+      !decoder && console.error('usePendingTx: no decoder found')
+      !api && console.error('usePendingTx: no api found')
+
+      return
+    }
 
     const txPromises = body.map((extrinsics) => {
       const decodedExtrinsic = decoder(extrinsics)
@@ -167,7 +173,7 @@ const getCallDataFromChainPromise = (
     })
 
     const ext = allDecodedTxs[pendingTx.info.when.index]
-    const multisigTxs = (await getMultisigInfo(ext.decodedCall, api)) || []
+    const multisigTxs = (ext?.decodedCall && (await getMultisigInfo(ext.decodedCall, api))) || []
 
     const multisigTxInfo = multisigTxs.find((info) => {
       if (!!info.hash && info.hash === pendingTx.hash) {
@@ -178,7 +184,10 @@ const getCallDataFromChainPromise = (
     })
 
     if (!multisigTxInfo) {
-      console.log('oops we did not find the right extrinsic', multisigTxs, pendingTx.hash)
+      console.log('oops we did not find the right extrinsic. Pending tx:', pendingTx)
+      console.log('allDecodedTxs', allDecodedTxs)
+      console.log('multisigTxs', multisigTxs)
+
       return
     }
 
@@ -225,11 +234,21 @@ export const usePendingTx = ({
   const refresh = useCallback(async () => {
     setTxWithCallDataByDate({})
 
-    if (!api || !client) return
+    if (!api || !client) {
+      !api && console.error('usePendingTx: no api found')
+      !client && console.error('usePendingTx: no client found')
+      return
+    }
 
-    if (isEmptyArray(multisigAddresses)) return
+    if (isEmptyArray(multisigAddresses)) {
+      console.error('usePendingTx: empty multisigAddresses found')
+      return
+    }
 
-    if (!api?.query?.Multisig?.Multisigs) return
+    if (!api?.query?.Multisig?.Multisigs) {
+      console.error('usePendingTx: api?.query?.Multisig?.Multisigs is undefined')
+      return
+    }
 
     setIsLoading(true)
 
@@ -314,7 +333,7 @@ export const usePendingTx = ({
         // sort by date, the newest first
         const sorted = relevantTxs.sort(sortByLatest)
 
-        // populate the object and sort by data
+        // populate the object and sort by date
         sorted.forEach((data) => {
           const date = dayjs(data.timestamp).format('LL')
           const previousData = timestampObj[date] || []
@@ -364,5 +383,6 @@ export const usePendingTx = ({
     refresh()
   }, [multisigsCallsData, refresh, withPplChain, hasPplChain])
 
+  console.log('txWithCallDataByDate', txWithCallDataByDate, 'withPplChain', withPplChain)
   return { isLoading, txWithCallDataByDate, refresh }
 }

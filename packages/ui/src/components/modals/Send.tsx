@@ -212,7 +212,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       setIsSubmitting(false)
     },
     onSubmitting,
-    onFinalized
+    onFinalized,
+    withSubscanLink: !withPplApi
   })
 
   const handleMultisigSelection = useCallback(
