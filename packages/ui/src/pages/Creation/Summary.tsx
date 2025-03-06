@@ -140,7 +140,7 @@ const Summary = ({
             )
           ) : (
             <>
-              In the next step you will sign 2 transactions to:
+              In the next step you will sign a batch transaction to:
               <ul>
                 <li>add the new Multisig to the current Pure proxy</li>
                 <li>remove the old Multisig</li>

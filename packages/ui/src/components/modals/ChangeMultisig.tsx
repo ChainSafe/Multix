@@ -40,7 +40,7 @@ interface Props {
   className?: string
 }
 
-type Step = 'selection' | 'summary' | 'call1' | 'call2'
+type Step = 'selection' | 'summary' | 'call'
 
 const ChangeMultisig = ({ onClose, className }: Props) => {
   const { selectedNetwork } = useNetwork()
@@ -48,13 +48,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
   const ctx = useApi()
   const { api, chainInfo, compatibilityToken } = ctx
   const { selectedMultiProxy, getMultisigAsAccountBaseInfo, getMultisigByAddress } = useMultiProxy()
-  const signCallBack2 = useSigningCallback({
-    onSuccess: onClose,
-    onError: (e) => {
-      onClose()
-      onErrorCallback(e)
-    }
-  })
   const { getSortAddress } = useGetSortAddress()
   const { selectedAccount, ownAddressList } = useAccounts()
   const [selectedMultisig, setSelectedMultisig] = useState(selectedMultiProxy?.multisigs[0])
@@ -78,10 +71,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     () => newMultisigAddress !== selectedMultisig?.address,
     [newMultisigAddress, selectedMultisig]
   )
-  const isCallStep = useMemo(
-    () => currentStep === 'call1' || currentStep === 'call2',
-    [currentStep]
-  )
+  const isCallStep = useMemo(() => currentStep === 'call', [currentStep])
   const { existentialDeposit } = useGetED({ withPplApi: false })
   const { proxyAdditionNeededFunds } = useProxyAdditionNeededFunds()
   const minBalanceProxyAdditionNeededFunds = useMemo(
@@ -98,27 +88,27 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   const secondCall = useMemo(() => {
     if (!ctx.api || !compatibilityToken || !selectedNetwork) {
-      // console.error('api is not ready')
+      console.error('api is not ready')
       return
     }
 
     if (!selectedAccount || !selectedMultiProxy?.proxy) {
-      // console.error('no selected address')
+      console.error('no selected address')
       return
     }
 
     if (!chainInfo) {
-      // console.error('no ss58Format from chainInfo')
+      console.error('no ss58Format from chainInfo')
       return
     }
 
     if (!selectedMultisig?.signatories?.includes(selectedAccount.address)) {
-      // console.error("selected account not part of current multisig's signatories")
+      console.error("selected account not part of current multisig's signatories")
       return
     }
 
     if (!oldThreshold || !newThreshold) {
-      // console.error("One of the threshold is invalid", oldThreshold, newThreshold)
+      console.error('One of the threshold is invalid', oldThreshold, newThreshold)
       return
     }
 
@@ -155,7 +145,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               delay: 0
             })
 
-    if (!addProxyTx) return
+    if (!addProxyTx) {
+      console.error('no addProxyTx')
+      return
+    }
 
     const proxyTx = isContextOf(ctx, 'hydration')
       ? ctx.api.tx.Proxy.proxy({
@@ -182,7 +175,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               call: addProxyTx.decodedCall
             })
 
-    if (!proxyTx) return
+    if (!proxyTx) {
+      console.error('no proxyTx')
+      return
+    }
 
     // call with the old multisig to delete the new one
     return getAsMultiTx({
@@ -209,27 +205,22 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
 
   const firstCall = useMemo(() => {
     if (!ctx?.api || !api || !compatibilityToken) {
-      // console.error('api is not ready')
+      console.error('api is not ready')
       return
     }
 
     if (!selectedAccount || !selectedMultisig?.address || !selectedMultiProxy?.proxy) {
-      // console.error('no selected address')
-      return
-    }
-
-    if (!chainInfo) {
-      // console.error('no ss58Format from chainInfo')
+      console.error('no selected address')
       return
     }
 
     if (!newSignatories.includes(selectedAccount.address)) {
-      // console.error("selected account not part of new multisig's signatories")
+      console.error("selected account not part of new multisig's signatories")
       return
     }
 
     if (!newThreshold) {
-      // console.error("Threshold is invalid", newThreshold)
+      console.error('Threshold is invalid', newThreshold)
       return
     }
 
@@ -249,14 +240,23 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
             proxy_type: Enum('Any'),
             delay: 0
           })
-        : isContextIn(ctx, noHydrationKeys_2) &&
-          ctx.api.tx.Proxy.remove_proxy({
-            delegate: MultiAddress.Id(selectedMultisig?.address),
-            proxy_type: Enum('Any'),
-            delay: 0
-          })
+        : isContextIn(ctx, noHydrationKeys_2)
+          ? ctx.api.tx.Proxy.remove_proxy({
+              delegate: MultiAddress.Id(selectedMultisig?.address),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
+          : isContextIn(ctx, noHydrationKeys_3) &&
+            ctx.api.tx.Proxy.remove_proxy({
+              delegate: MultiAddress.Id(selectedMultisig?.address),
+              proxy_type: Enum('Any'),
+              delay: 0
+            })
 
-    if (!removeProxyTx) return
+    if (!removeProxyTx) {
+      console.error('no removeProxyTx')
+      return
+    }
 
     const proxyTx = isContextOf(ctx, 'hydration')
       ? ctx.api.tx.Proxy.proxy({
@@ -283,7 +283,10 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               call: removeProxyTx.decodedCall
             })
 
-    if (!proxyTx) return
+    if (!proxyTx) {
+      console.error('no proxyTx')
+      return
+    }
 
     return getAsMultiTx({
       api,
@@ -299,7 +302,6 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     selectedAccount,
     selectedMultisig?.address,
     selectedMultiProxy?.proxy,
-    chainInfo,
     newSignatories,
     newThreshold,
     getSortAddress
@@ -361,42 +363,16 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
     setCurrentStep('selection')
   }, [])
 
-  // the new multisig will remove the old one from the proxy list
-  const onMakeSecondCall = useCallback(() => {
-    // do not fire the second call if the first had an error
-    if (callError) {
-      console.error('the first call had an error')
-      return
+  const signCallBack = useSigningCallback({
+    onSuccess: onClose,
+    onError: (e) => {
+      onClose()
+      onErrorCallback(e)
     }
-
-    if (!api) {
-      console.error('api is not ready')
-      return
-    }
-
-    if (!selectedAccount) {
-      console.error('no selected address')
-      return
-    }
-
-    if (!secondCall) {
-      return
-    }
-
-    setCurrentStep('call2')
-
-    secondCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack2)
-  }, [callError, api, selectedAccount, secondCall, signCallBack2])
-
-  const signCallBack1 = useSigningCallback({
-    onSuccess: onMakeSecondCall,
-    onError: onErrorCallback
   })
 
   // first we add the new multisig as an any proxy of the pure proxy, signed by the old multisig
-  const onFirstCall = useCallback(async () => {
+  const onCall = useCallback(async () => {
     if (!api) {
       console.error('api is not ready')
       return
@@ -407,25 +383,32 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
       return
     }
 
-    if (!firstCall) {
+    if (!firstCall || !secondCall) {
+      console.error('call missing')
+      console.error('firstCall', firstCall)
+      console.error('secondCall', secondCall)
       return
     }
 
-    setCurrentStep('call1')
+    setCurrentStep('call')
 
-    firstCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack1)
-  }, [api, selectedAccount, firstCall, signCallBack1])
+    const nonce = await api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+      at: 'best'
+    })
+
+    api.tx.Utility.batch_all({ calls: [firstCall.decodedCall, secondCall.decodedCall] })
+      .signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce })
+      .subscribe(signCallBack)
+  }, [api, selectedAccount, firstCall, secondCall, signCallBack])
 
   const onClickNext = useCallback(() => {
     if (currentStep === 'summary') {
-      onFirstCall()
+      onCall()
     } else {
       modalRef.current && modalRef.current.scrollTo(0, 0)
       setCurrentStep('summary')
     }
-  }, [currentStep, onFirstCall])
+  }, [currentStep, onCall])
 
   return (
     <Dialog
@@ -513,7 +496,7 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
               reservedBalance={firstCallReserved + secondCallReserved}
             />
           )}
-          {(currentStep === 'call1' || currentStep === 'call2') && (
+          {isCallStep && (
             <Grid
               container
               spacing={2}
@@ -527,11 +510,11 @@ const ChangeMultisig = ({ onClose, className }: Props) => {
                       : 'An error occurred'}
                   </div>
                 )}
-                {!callError && currentStep === 'call1' && (
-                  <div>Please sign the 1st transaction to create the new multisig.</div>
-                )}
-                {!callError && currentStep === 'call2' && (
-                  <div>Please sign the 2nd transaction to remove the old multisig.</div>
+                {!callError && (
+                  <div>
+                    Please sign the transaction to create the new multisig and later remove the old
+                    one.
+                  </div>
                 )}
               </Box>
             </Grid>

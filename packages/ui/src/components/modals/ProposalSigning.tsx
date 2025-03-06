@@ -102,7 +102,11 @@ const ProposalSigning = ({
     onClose()
   }, [mustProvideCallData, onClose, setRefetchMultisigTimeoutMinutes])
 
-  const signCallback = useSigningCallback({ onSuccess, onSubmitting })
+  const signCallback = useSigningCallback({
+    onSuccess,
+    onSubmitting,
+    withSubscanLink: !isPplChainTx
+  })
   const { getSortAddress } = useGetSortAddress()
 
   const debouncedCallDatahange = useMemo(
@@ -196,9 +200,7 @@ const ProposalSigning = ({
         // In case the tx has been approved between the last couple blocks
         // and the tx in the indexer hasn't been updated we should query the latest state
         // right before sending the tx to have the right amount of signers.
-        const callStorage = await api.query.Multisig.Multisigs.getEntries(multisig.address, {
-          at: 'best'
-        })
+        const callStorage = await api.query.Multisig.Multisigs.getEntries(multisig.address)
 
         callStorage.some((storage) => {
           const hash = storage.keyArgs[1].asHex()
@@ -260,7 +262,11 @@ const ProposalSigning = ({
         return
       }
 
-      tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' }).subscribe(signCallback)
+      const nonce = await api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+        at: 'best'
+      })
+
+      tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
     },
     [
       getSortAddress,

@@ -91,7 +91,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     () => selectedEasyOption === EasyTransferTitle.SetIdentity,
     [selectedEasyOption]
   )
-  const { chainInfo } = useAnyApi({ withPplApi })
+  const { chainInfo, api } = useAnyApi({ withPplApi })
 
   // this is a tx creation and not the signature of an existing tx
   // so we can force the asMulti
@@ -212,7 +212,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       setIsSubmitting(false)
     },
     onSubmitting,
-    onFinalized
+    onFinalized,
+    withSubscanLink: !withPplApi
   })
 
   const handleMultisigSelection = useCallback(
@@ -224,6 +225,8 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   )
 
   const onSign = useCallback(async () => {
+    if (!api) return
+
     if (!threshold) {
       const error = 'Threshold is undefined'
       console.error(error)
@@ -251,10 +254,12 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
 
     setIsSubmitting(true)
 
-    multisigTx
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallback)
-  }, [threshold, selectedOrigin, extrinsicToCall, multisigTx, selectedAccount, signCallback])
+    const nonce = await api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+      at: 'best'
+    })
+
+    multisigTx.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
+  }, [api, threshold, selectedAccount, selectedOrigin, extrinsicToCall, multisigTx, signCallback])
 
   const onChangeEasySetupOption: (event: SelectChangeEvent<unknown>) => void = useCallback(
     ({ target: { value } }) => {

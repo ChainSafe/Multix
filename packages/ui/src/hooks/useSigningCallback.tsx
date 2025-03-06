@@ -1,26 +1,32 @@
 import { useApi } from '../contexts/ApiContext'
 import { useGetSubscanLinks } from './useSubscanLink'
 import { useToasts } from '../contexts/ToastContext'
-// import { getIncompleteMessage } from '../utils/extinsicErrorChecks'
 import { TxEvent } from 'polkadot-api'
 import { JSONprint } from '../utils/jsonPrint'
 import { translateError, translateErrorInfo } from '../utils/translateError'
 
 interface Args {
+  withSubscanLink?: boolean
   onSubmitting?: () => void
   onSuccess?: () => void
   onError?: (message?: string) => void
   onFinalized?: () => void
 }
 
-export const useSigningCallback = ({ onSubmitting, onSuccess, onFinalized, onError }: Args) => {
+export const useSigningCallback = ({
+  onSubmitting,
+  onSuccess,
+  onFinalized,
+  onError,
+  withSubscanLink = true
+}: Args) => {
   const { addToast } = useToasts()
   const { api } = useApi()
   const { getSubscanExtrinsicLink } = useGetSubscanLinks()
 
   return {
     next: (event: TxEvent) => {
-      const link = getSubscanExtrinsicLink(event.txHash)
+      const link = withSubscanLink ? getSubscanExtrinsicLink(event.txHash) : undefined
 
       if (event.type === 'broadcasted') {
         console.log('Transaction hash:', event.txHash)

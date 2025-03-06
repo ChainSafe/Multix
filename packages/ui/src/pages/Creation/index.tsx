@@ -329,6 +329,11 @@ const MultisigCreation = ({ className }: Props) => {
   }, [currentStep, ownAccountPartOfSignatories, signatories])
 
   const handleCreateRemark = useCallback(async () => {
+    if (!ctx.api) {
+      console.error('api undefined')
+      return
+    }
+
     if (!remarkCall) {
       console.error('remark call undefined')
       return
@@ -342,12 +347,18 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    remarkCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack)
-  }, [addName, multiAddress, name, remarkCall, selectedAccount, signCallBack])
+    const nonce = await ctx.api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+      at: 'best'
+    })
+    remarkCall.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallBack)
+  }, [addName, ctx, multiAddress, name, remarkCall, selectedAccount, signCallBack])
 
   const handleCreateWithPure = useCallback(async () => {
+    if (!ctx.api) {
+      console.error('api undefined')
+      return
+    }
+
     if (!selectedAccount || !batchCall) {
       console.error('no selected signer')
       return
@@ -356,10 +367,12 @@ const MultisigCreation = ({ className }: Props) => {
     multiAddress && addName(name, multiAddress)
     setIsSubmitted(true)
 
-    batchCall
-      .signSubmitAndWatch(selectedAccount.polkadotSigner, { at: 'best' })
-      .subscribe(signCallBack)
-  }, [addName, batchCall, multiAddress, name, selectedAccount, signCallBack])
+    const nonce = await ctx.api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
+      at: 'best'
+    })
+
+    batchCall.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallBack)
+  }, [addName, batchCall, ctx.api, multiAddress, name, selectedAccount, signCallBack])
 
   const goNext = useCallback(() => {
     window.scrollTo(0, 0)
