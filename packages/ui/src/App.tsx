@@ -19,6 +19,7 @@ import { config } from './walletConfigs'
 import { Suspense } from 'react'
 import { AssetsContextProvider } from './contexts/AssetsContext'
 import { HiddenAccountsContextProvider } from './contexts/HiddenAccountsContext'
+import { PendingTxsContextProvider } from './contexts/PendingTxContext'
 
 const App = () => {
   const queryClient = new QueryClient()
@@ -40,9 +41,11 @@ const App = () => {
                             <AccountNamesContextProvider>
                               <MultiProxyContextProvider>
                                 <WalletConnectContextProvider>
-                                  <ModalsContextProvider>
-                                    <MainLayout />
-                                  </ModalsContextProvider>
+                                  <PendingTxsContextProvider>
+                                    <ModalsContextProvider>
+                                      <MainLayout />
+                                    </ModalsContextProvider>
+                                  </PendingTxsContextProvider>
                                 </WalletConnectContextProvider>
                               </MultiProxyContextProvider>
                             </AccountNamesContextProvider>

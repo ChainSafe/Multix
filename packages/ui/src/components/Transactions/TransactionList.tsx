@@ -1,33 +1,20 @@
 import { Box, CircularProgress, Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { AggGroupedByDate, usePendingTx } from '../../hooks/usePendingTx'
+import { AggGroupedByDate, usePendingTx } from '../../contexts/PendingTxContext'
 import { MultisigAggregated, useMultiProxy } from '../../contexts/MultiProxyContext'
 import { getDifference, getIntersection } from '../../utils/arrayUtils'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { MdOutlineFlare as FlareIcon } from 'react-icons/md'
 import Transaction from './Transaction'
-import { useMemo } from 'react'
 
 interface Props {
   className?: string
 }
 
 const TransactionList = ({ className }: Props) => {
-  const { getMultisigByAddress, selectedMultiProxy } = useMultiProxy()
-  const multisigAddresses = useMemo(
-    () => selectedMultiProxy?.multisigs.map(({ address }) => address) || [],
-    [selectedMultiProxy?.multisigs]
-  )
-  const {
-    txWithCallDataByDate,
-    isLoading: isLoadingPendingTxs,
-    refresh
-  } = usePendingTx({ multisigAddresses, withPplChain: false })
-  const {
-    txWithCallDataByDate: pplTx,
-    isLoading: isLoadingPplPendingTxs,
-    refresh: refreshPpl
-  } = usePendingTx({ multisigAddresses, withPplChain: true })
+  const { getMultisigByAddress } = useMultiProxy()
+
+  const { tx, pplTx, isLoading: isLoadingPendingTxs, refresh, refreshPpl } = usePendingTx()
 
   const { ownAddressList } = useAccounts()
 
@@ -92,14 +79,13 @@ const TransactionList = ({ className }: Props) => {
   return (
     <Box className={className}>
       <h3>Transactions</h3>
-      {(isLoadingPendingTxs || isLoadingPplPendingTxs) && (
+      {isLoadingPendingTxs && (
         <LoaderStyled data-cy="loader-transaction-list">
           <CircularProgress />
         </LoaderStyled>
       )}
-      {Object.entries(txWithCallDataByDate).length === 0 &&
+      {Object.entries(tx).length === 0 &&
         Object.entries(pplTx).length === 0 &&
-        !isLoadingPplPendingTxs &&
         !isLoadingPendingTxs && (
           <NoCallWrapperStyled>
             <FlareIconStyled size={24} />
@@ -107,7 +93,7 @@ const TransactionList = ({ className }: Props) => {
           </NoCallWrapperStyled>
         )}
       <Transactions
-        groupedTxs={txWithCallDataByDate}
+        groupedTxs={tx}
         isPplChainTxs={false}
         refreshFn={refresh}
       />

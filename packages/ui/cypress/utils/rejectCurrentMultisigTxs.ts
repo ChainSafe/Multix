@@ -1,5 +1,5 @@
 import { InjectedAccountWitMnemonic } from '../fixtures/testAccounts'
-import { PendingTx } from '../../src/hooks/usePendingTx'
+import { PendingTx } from '../../src/contexts/PendingTxContext'
 import { paseo } from '@polkadot-api/descriptors'
 import {
   Binary,
