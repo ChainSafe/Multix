@@ -1,8 +1,0 @@
-query MultisigCallsByMultisigId($multisigs: [String!]) {
-  multisigCalls(limit: 10, orderBy: timestamp_DESC, where: { multisig: { id_in: $multisigs } }) {
-    id
-    blockHash
-    callIndex
-    timestamp
-  }
-}
