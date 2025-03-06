@@ -30,8 +30,8 @@ type PendingTxContextProps = {
 
 export interface IPendingTxContext {
   isLoading: boolean
-  tx: AggGroupedByDate
-  pplTx: AggGroupedByDate
+  pendingTxs: AggGroupedByDate
+  pendingPplTxs: AggGroupedByDate
   refresh: () => Promise<void>
   refreshPpl: () => Promise<void>
 }
@@ -351,17 +351,6 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
   const [txByDate, setTxByDate] = useState<AggGroupedByDate>({})
   const [pplTxByDate, setPplTxByDate] = useState<AggGroupedByDate>({})
 
-  // refresh the pending TX for the set of multisig addresses
-  // const refresh = useCallback(async () =>
-
-  // useEffect(() => {
-  //   if (!hasPplChain && withPplChain) {
-  //     setIsLoading(false)
-  //     return
-  //   }
-
-  //   refresh()
-  // }, [refresh, hasPplChain, withPplChain])
   const refresh = useCallback(
     async (forPplChain?: boolean) => {
       !forPplChain && setTxByDate({})
@@ -372,14 +361,14 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
       const chainInfoToUse = forPplChain ? pplChainInfo : chainInfo
 
       if (!apiToUse || !clientToUse || !chainInfoToUse) {
-        !apiToUse && console.error('usePendingTx: no api found')
-        !clientToUse && console.error('usePendingTx: no client found')
-        !chainInfoToUse && console.error('usePendingTx: no chainInfo found')
+        // !apiToUse && console.error('usePendingTx: no api found')
+        // !clientToUse && console.error('usePendingTx: no client found')
+        // !chainInfoToUse && console.error('usePendingTx: no chainInfo found')
         return
       }
 
       if (isEmptyArray(multisigAddresses)) {
-        console.error('usePendingTx: empty multisigAddresses found')
+        // console.error('usePendingTx: empty multisigAddresses found')
         return
       }
 
@@ -408,18 +397,7 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
     ]
   )
 
-  // const multisigPubKeys = useMemo(
-  //   () => getPubKeyFromAddress(multisigAddresses),
-  //   [multisigAddresses]
-  // )
-  // const multisigIds = useAccountId(multisigPubKeys)
-  // re-fetch the on-chain if some new event appeared for any of the
-  // multisig we are watching
-  // const { data: multisigsCallsData } = useMultisigCallQuery({ multisigIds })
-
   useEffect(() => {
-    // if (!multisigsCallsData) return
-
     if (hasPplChain) {
       refresh(true)
     }
@@ -431,8 +409,8 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
     <PendingTxContext.Provider
       value={{
         isLoading: isLoadingPpl || isLoading,
-        tx: txByDate,
-        pplTx: pplTxByDate,
+        pendingTxs: txByDate,
+        pendingPplTxs: pplTxByDate,
         refresh: () => refresh(false),
         refreshPpl: () => refresh(true)
       }}
@@ -444,7 +422,7 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
 const usePendingTx = () => {
   const context = useContext(PendingTxContext)
   if (context === undefined) {
-    throw new Error('usePendingTx must be used within a UsePendingContextProvider')
+    throw new Error('usePendingTx must be used within a PendingTxContextProvider')
   }
   return context
 }

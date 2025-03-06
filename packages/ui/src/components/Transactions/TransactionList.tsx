@@ -14,7 +14,13 @@ interface Props {
 const TransactionList = ({ className }: Props) => {
   const { getMultisigByAddress } = useMultiProxy()
 
-  const { tx, pplTx, isLoading: isLoadingPendingTxs, refresh, refreshPpl } = usePendingTx()
+  const {
+    pendingTxs: tx,
+    pendingPplTxs: pplTx,
+    isLoading: isLoadingPendingTxs,
+    refresh,
+    refreshPpl
+  } = usePendingTx()
 
   const { ownAddressList } = useAccounts()
 
