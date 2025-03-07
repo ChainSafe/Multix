@@ -89,13 +89,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
     preselected || DEFAULT_EASY_SETUP_SELECTION
   )
 
-  const debouncedSetExtrinsicToCall = useMemo(
-    () =>
-      debounce((extrinsic: Transaction<any, any, any, any> | undefined) => {
-        setExtrinsicToCall(extrinsic)
-      }, 300),
-    []
-  )
+  const debouncedSetExtrinsicToCall = useMemo(() => debounce(setExtrinsicToCall, 300), [])
 
   const withPplApi = useMemo(
     () => selectedEasyOption === EasyTransferTitle.SetIdentity,
