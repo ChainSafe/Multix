@@ -11,6 +11,7 @@ import { MultiAddress } from '@polkadot-api/descriptors'
 import { Select, TextField } from './library'
 import { HiOutlineTrash } from 'react-icons/hi2'
 import { FieldInfo } from './EasySetup/BalancesTransfer'
+import { debounce } from '../utils/debounce'
 
 export interface Option extends Omit<Asset, 'name'> {
   id?: number
@@ -67,6 +68,8 @@ const TransferAsset = ({
     setSelected(account)
   }, [])
 
+  const debounceSetAmount = useMemo(() => debounce(setAmount, 200), [setAmount])
+
   useEffect(() => {
     if (!selectedAsset || !amountString) return
 
@@ -85,8 +88,8 @@ const TransferAsset = ({
       return
     }
 
-    setAmount(bigintResult)
-  }, [amountString, maxValue, onSetErrorMessage, selectedAsset])
+    debounceSetAmount(bigintResult)
+  }, [amountString, maxValue, onSetErrorMessage, selectedAsset, debounceSetAmount])
 
   const onAmountChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

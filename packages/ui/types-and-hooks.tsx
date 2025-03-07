@@ -772,13 +772,6 @@ export type MultisigByIdQueryVariables = Exact<{
 
 export type MultisigByIdQuery = { __typename?: 'Query', accounts: Array<{ __typename?: 'Account', id: string, threshold?: number | null, signatories: Array<{ __typename?: 'AccountMultisig', id: string, signatory: { __typename?: 'Account', id: string, pubKey: string } }> }> };
 
-export type MultisigCallsByMultisigIdQueryVariables = Exact<{
-  multisigs?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
-}>;
-
-
-export type MultisigCallsByMultisigIdQuery = { __typename?: 'Query', multisigCalls: Array<{ __typename?: 'MultisigCall', id: string, blockHash: string, callIndex: number, timestamp: any }> };
-
 export type MultisigsAndPureByAccountQueryVariables = Exact<{
   accountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   watchedAccountIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -817,37 +810,6 @@ export const useMultisigByIdQuery = <
       {
     queryKey: ['MultisigById', variables],
     queryFn: useFetchData<MultisigByIdQuery, MultisigByIdQueryVariables>(MultisigByIdDocument).bind(null, variables),
-    ...options
-  }
-    )};
-
-export const MultisigCallsByMultisigIdDocument = `
-    query MultisigCallsByMultisigId($multisigs: [String!]) {
-  multisigCalls(
-    limit: 10
-    orderBy: timestamp_DESC
-    where: {multisig: {id_in: $multisigs}}
-  ) {
-    id
-    blockHash
-    callIndex
-    timestamp
-  }
-}
-    `;
-
-export const useMultisigCallsByMultisigIdQuery = <
-      TData = MultisigCallsByMultisigIdQuery,
-      TError = unknown
-    >(
-      variables?: MultisigCallsByMultisigIdQueryVariables,
-      options?: Omit<UseQueryOptions<MultisigCallsByMultisigIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MultisigCallsByMultisigIdQuery, TError, TData>['queryKey'] }
-    ) => {
-    
-    return useQuery<MultisigCallsByMultisigIdQuery, TError, TData>(
-      {
-    queryKey: variables === undefined ? ['MultisigCallsByMultisigId'] : ['MultisigCallsByMultisigId', variables],
-    queryFn: useFetchData<MultisigCallsByMultisigIdQuery, MultisigCallsByMultisigIdQueryVariables>(MultisigCallsByMultisigIdDocument).bind(null, variables),
     ...options
   }
     )};

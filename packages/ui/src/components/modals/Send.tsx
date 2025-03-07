@@ -29,6 +29,7 @@ import { Transaction } from 'polkadot-api'
 import { useHasIdentityFeature } from '../../hooks/useHasIdentityFeature'
 import { useAnyApi } from '../../hooks/useAnyApi'
 import { useGetED } from '../../hooks/useGetED'
+import { debounce } from '../../utils/debounce'
 
 export enum EasyTransferTitle {
   SendTokens = 'Send tokens',
@@ -87,6 +88,9 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
   const [selectedEasyOption, setSelectedEasyOption] = useState<EasyTransferTitle>(
     preselected || DEFAULT_EASY_SETUP_SELECTION
   )
+
+  const debouncedSetExtrinsicToCall = useMemo(() => debounce(setExtrinsicToCall, 300), [])
+
   const withPplApi = useMemo(
     () => selectedEasyOption === EasyTransferTitle.SetIdentity,
     [selectedEasyOption]
@@ -168,13 +172,13 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       [EasyTransferTitle.SendTokens]: (
         <BalancesTransfer
           from={selectedOrigin.address}
-          onSetExtrinsic={setExtrinsicToCall}
+          onSetExtrinsic={debouncedSetExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
         />
       ),
       // [EasyTransferTitle.ManualExtrinsic]: (
       //   <ManualExtrinsic
-      //     onSetExtrinsic={setExtrinsicToCall}
+      //     onSetExtrinsic={debouncedSetExtrinsicToCall}
       //     onSetErrorMessage={setEasyOptionErrorMessage}
       //     onSelectFromCallData={() => setSelectedEasyOption(EasyTransferTitle.FromCallData)}
       //     hasErrorMessage={!!easyOptionErrorMessage}
@@ -182,7 +186,7 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       // ),
       [EasyTransferTitle.FromCallData]: (
         <FromCallData
-          onSetExtrinsic={setExtrinsicToCall}
+          onSetExtrinsic={debouncedSetExtrinsicToCall}
           currentProxy={isProxySelected ? selectedOrigin.address : undefined}
         />
       )
@@ -192,14 +196,14 @@ const Send = ({ onClose, className, onSuccess, onFinalized, preselected }: Props
       res[EasyTransferTitle.SetIdentity] = (
         <SetIdentity
           from={selectedOrigin.address}
-          onSetExtrinsic={setExtrinsicToCall}
+          onSetExtrinsic={debouncedSetExtrinsicToCall}
           onSetErrorMessage={setEasyOptionErrorMessage}
         />
       )
     }
 
     return res
-  }, [selectedOrigin.address, isProxySelected, hasPplChain])
+  }, [selectedOrigin.address, isProxySelected, hasPplChain, debouncedSetExtrinsicToCall])
 
   const signCallback = useSigningCallback({
     onSuccess: () => {

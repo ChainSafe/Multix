@@ -24,7 +24,7 @@ import { useMultisigProposalNeededFunds } from '../../hooks/useMultisigProposalN
 import { usePureProxyCreationNeededFunds } from '../../hooks/usePureProxyCreationNeededFunds'
 import WithProxySelection from './WithProxySelection'
 import { useGetSortAddress } from '../../hooks/useGetSortAddress'
-import { useGetMultisigAddress } from '../../contexts/useGetMultisigAddress'
+import { useGetMultisigAddress } from '../../hooks/useGetMultisigAddress'
 import { isEthereumAddress } from '@polkadot/util-crypto'
 import { getAsMultiTx } from '../../utils/getAsMultiTx'
 import { useMultiProxy } from '../../contexts/MultiProxyContext'

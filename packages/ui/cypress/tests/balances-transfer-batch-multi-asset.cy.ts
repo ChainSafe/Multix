@@ -22,6 +22,8 @@ const fillAndSubmitTransactionForm = (assetSymbol = '', address: string) => {
     sendTxModal.selectAsset(assetSymbol).click()
   }
   sendTxModal.inputSendtokenAmount().click().type('0.9')
+  // there's a 300ms debounce for the extrinsic to be set
+  cy.wait(300)
   sendTxModal.buttonSend().should('be.enabled').click()
 }
 
@@ -102,10 +104,13 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .click()
         .type(`${randomAccount.address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.sendTokensFieldAssetSelection().should('contain', 'USDC')
+      // there's a 300ms debounce for the extrinsic to be set
     })
 
     // this means there will be 1 empty field
     sendTxModal.buttonAddRecipient().click()
+    // wait for debounce
+    cy.wait(1000)
 
     // by clicking now, we should see a batch transaction
     // with 2 extrinsics with asset transfer of USDC to 2 different accounts
@@ -129,7 +134,7 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       sendTxModal.deleteFieldButton().click()
     })
 
-    // change the last firs to now send DOT
+    // change the last row to now send DOT
     sendTxModal.wrapperAssetTransfer(2).within(() => {
       sendTxModal.sendTokensFieldAssetSelection().should('exist')
       sendTxModal.inputSendtokenAmount().click().type('0.1')
@@ -141,7 +146,10 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
     // this is outside of the within block to prevent the test from failing
     // because the component is re-rendering
     sendTxModal.sendTokensFieldAssetSelection().eq(1).contains('USDC').click()
+
     sendTxModal.selectAsset('dot').click()
+    // there's a 300ms debounce for the extrinsic to be set
+    cy.wait(1000)
 
     // we should now see a batch transaction with 2 extrinsics
     // one for USDC and one for DOT to 2 different accounts
@@ -168,11 +176,13 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
       .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
     sendTxModal.sendTokensFieldAssetSelection().should('exist')
     sendTxModal.inputSendtokenAmount().click().type('10')
-    sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 10 DOT')
     sendTxModal.buttonSend().should('be.disabled')
     sendTxModal.sendTokensFieldAssetSelection().contains('DOT').click()
     sendTxModal.selectAsset('usdt').click()
-    sendTxModal.sendTxError().should('be.visible').contains('the required 10 USDT')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 10 USDT')
     sendTxModal.buttonSend().should('be.disabled')
     sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.01')
     sendTxModal.sendTokensFieldAssetSelection().click()
@@ -204,7 +214,8 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.inputSendtokenAmount().click().type('0.9')
     })
-    sendTxModal.sendTxError().should('be.visible').contains('the required 1.2 DOT')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 1.2 DOT')
     sendTxModal.buttonSend().should('be.disabled')
 
     // change the last field to USDC
@@ -225,7 +236,8 @@ describe('Crafts the correct extrinsics for asset hub foreign and native assets'
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.inputSendtokenAmount().click().type('0.5')
     })
-    sendTxModal.sendTxError().should('be.visible').contains('the required 1.4 USDC')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 1.4 USDC')
     sendTxModal.buttonSend().should('be.disabled')
 
     // we delete the last USDC field
@@ -257,14 +269,16 @@ describe('Crafts the correct extrinsics for polkadot native asset', () => {
       .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
     sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
     sendTxModal.inputSendtokenAmount().click().type('10')
-    sendTxModal.sendTxError().should('be.visible').contains('the required 10 DOT')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 10 DOT')
     sendTxModal.buttonSend().should('be.disabled')
 
     sendTxModal.inputSendtokenAmount().click().type('{selectall}{del}0.0001')
+    sendTxModal.sendTxError().should('be.visible')
+
     sendTxModal
       .sendTxError()
-      .should('be.visible')
-      .contains(`The "Signing with" account doesn't have the required`)
+      .should('contain', `The "Signing with" account doesn't have the required`)
     sendTxModal.buttonSend().should('be.disabled')
   })
 
@@ -278,10 +292,10 @@ describe('Crafts the correct extrinsics for polkadot native asset', () => {
       .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
     sendTxModal.sendTokensFieldAssetSelection().should('not.exist')
     sendTxModal.inputSendtokenAmount().click().type('0.0001')
+    sendTxModal.sendTxError().should('be.visible')
     sendTxModal
       .sendTxError()
-      .should('be.visible')
-      .contains(`The "Signing with" account doesn't have the required`)
+      .should('contain', `The "Signing with" account doesn't have the required`)
     sendTxModal.buttonSend().should('be.disabled')
 
     // second DOT field
@@ -294,7 +308,8 @@ describe('Crafts the correct extrinsics for polkadot native asset', () => {
         .type(`${testAccount1Address.slice(0, 4)}{downArrow}{enter}`)
       sendTxModal.inputSendtokenAmount().click().type('0.9')
     })
-    sendTxModal.sendTxError().should('be.visible').contains('the required 0.9001 DOT')
+    sendTxModal.sendTxError().should('be.visible')
+    sendTxModal.sendTxError().should('contain', 'the required 0.9001 DOT')
     sendTxModal.buttonSend().should('be.disabled')
   })
 })

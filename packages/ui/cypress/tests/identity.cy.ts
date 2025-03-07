@@ -94,7 +94,10 @@ describe('Set an identity', () => {
     sendTxModal.buttonSend().should('be.disabled')
 
     // removing should remove the error
+    cy.clock()
     sendTxModal.setIdentityField('legal').type('{selectall}{del}leeg')
+    // there's a 300ms debounce for the extrinsic to be set
+    cy.tick(300)
     sendTxModal.sendTxError().should('not.exist')
     sendTxModal.setIdentityFieldElement('legal', 'label').should('not.have.class', 'Mui-error')
     sendTxModal.buttonSend().should('be.enabled')

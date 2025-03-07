@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback, ReactNode } from 'react'
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useNetwork } from './NetworkContext'
 import { ethereumChains } from '../utils/ethereumChains'
@@ -8,7 +8,7 @@ import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { ApiDescriptors, ApiOf, Descriptors, DESCRIPTORS } from '../types'
 
 type ApiContextProps = {
-  children: React.ReactNode | React.ReactNode[]
+  children: ReactNode | ReactNode[]
 }
 
 export type IApiContext<Id extends ApiDescriptors> = {

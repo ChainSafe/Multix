@@ -9,7 +9,7 @@ import { isProxyCall } from '../../utils/isProxyCall'
 import { AccountBadge } from '../../types'
 import TransactionProgress from './TransactionProgress'
 import { useModals } from '../../contexts/ModalsContext'
-import { CallDataInfoFromChain } from '../../hooks/usePendingTx'
+import { CallDataInfoFromChain } from '../../contexts/PendingTxContext'
 
 interface Props {
   className?: string

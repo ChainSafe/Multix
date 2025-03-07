@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { useApi } from './ApiContext'
+import { useApi } from '../contexts/ApiContext'
 import { createKeyMulti } from '@polkadot/util-crypto'
-import { useGetEncodedAddress } from '../hooks/useGetEncodedAddress'
+import { useGetEncodedAddress } from './useGetEncodedAddress'
 
 export const useGetMultisigAddress = (signatories: string[], threshold?: number | null) => {
   const { chainInfo } = useApi()
