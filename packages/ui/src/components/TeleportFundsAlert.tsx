@@ -28,9 +28,6 @@ export const TeleportFundsAlert = ({ className = '', receivingAddress, sendingAm
 
   const fromRelay = useMemo(() => isContextIn(ctx, relayKeys), [ctx])
   const signCallback = useSigningCallback({
-    onSuccess: () => {
-      console.log('--> success')
-    },
     onError: () => {
       setIsSubmitting(false)
     },
@@ -46,6 +43,7 @@ export const TeleportFundsAlert = ({ className = '', receivingAddress, sendingAm
     setIsSubmitting(true)
 
     // even though it could be Kusama, Polkadot, Westend, the asset hubs.. this is working
+    // waiting for https://github.com/paraspell/xcm-tools/issues/738
     const xcmCall = await Builder(ctx.client)
       .from(fromRelay ? 'Polkadot' : 'AssetHubPolkadot')
       .to('PeoplePolkadot')
