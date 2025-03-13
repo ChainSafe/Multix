@@ -67,22 +67,19 @@ export const TeleportFundsAlert = ({ className = '', receivingAddress, sendingAm
         variant="outlined"
       >
         Identity is managed on the People Chain. You need funds there to sign the transaction.
-        {/* sending from a parachain to a parachain doesn't work yet */}
-        {!!fromRelay && (
-          <ButtonWrapper>
-            <Button
-              disabled={isSubmitting}
-              onClick={onTransfer}
-              variant="secondary"
-            >
-              {isSubmitting ? (
-                <CircularProgress size={24} />
-              ) : (
-                `Teleport ${amountString} to People Chain`
-              )}
-            </Button>
-          </ButtonWrapper>
-        )}
+        <ButtonWrapper>
+          <Button
+            disabled={isSubmitting}
+            onClick={onTransfer}
+            variant="secondary"
+          >
+            {isSubmitting ? (
+              <CircularProgress size={24} />
+            ) : (
+              `Teleport ${amountString} to People Chain`
+            )}
+          </Button>
+        </ButtonWrapper>
       </AlertStyled>
     </Grid2>
   )

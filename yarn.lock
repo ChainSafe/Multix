@@ -2683,27 +2683,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-core@npm:8.6.0":
-  version: 8.6.0
-  resolution: "@paraspell/sdk-core@npm:8.6.0"
+"@paraspell/sdk-core@npm:8.7.1":
+  version: 8.7.1
+  resolution: "@paraspell/sdk-core@npm:8.7.1"
   dependencies:
     ethers: ^6.13.5
     viem: ^2.23.5
-  checksum: 9bc378a9d5103acc3406fb422b7b04bf1cf0ff876a73d6551d24b043b4387f45b246f352023303ef776e3335976b589e9e9e68b5f05685397d1c2d53d4029ed6
+  checksum: 4ef8883ecb1e6e6ec696eed617cdb238a7300805c31e81ae634a781246a2140fe2f21da7ddadd5baf878f0423d6ef804723244d3f4bc2aafbba176aade022afa
   languageName: node
   linkType: hard
 
-"@paraspell/sdk@npm:^8.6.0":
-  version: 8.6.0
-  resolution: "@paraspell/sdk@npm:8.6.0"
+"@paraspell/sdk@npm:^8.7.1":
+  version: 8.7.1
+  resolution: "@paraspell/sdk@npm:8.7.1"
   dependencies:
     "@noble/hashes": ^1.7.1
-    "@paraspell/sdk-core": 8.6.0
+    "@paraspell/sdk-core": 8.7.1
     ethers: ^6.13.5
     viem: ^2.23.5
   peerDependencies:
     polkadot-api: ">= 1.9.3 < 2"
-  checksum: 2cdd7ef54652eeffb5c54be1fb4762039b63c85dbcc60ce5d49a80e06d47159fef46b0744dc300fa71b1f305fd467c1e9386b6cc4df71746a8ba208bcdb00ed7
+  checksum: b06f1203c129b6203d31d650f0cd5b89e6e1b6032e5df62ddcb650df926ca967f1fbf24c9915d766fe637dce03292a84d9cdf097d55db624b311a1344493ae57
   languageName: node
   linkType: hard
 
@@ -10145,7 +10145,7 @@ __metadata:
     "@mui/base": ^5.0.0-beta.69
     "@mui/material": ^6.4.4
     "@mui/styled-engine": ^6.4.3
-    "@paraspell/sdk": ^8.6.0
+    "@paraspell/sdk": ^8.7.1
     "@polkadot-api/descriptors": "portal:.papi/descriptors"
     "@polkadot-api/tx-utils": ^0.0.9
     "@polkadot-labs/hdkd": ^0.0.11
