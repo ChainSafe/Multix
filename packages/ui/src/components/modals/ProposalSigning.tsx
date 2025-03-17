@@ -45,9 +45,8 @@ const ProposalSigning = ({
   onSuccess,
   isPplChainTx
 }: SigningModalProps) => {
-  // const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplChainTx })
   const { pplApi, pplCompatibilityToken } = usePplApi()
-  const { api: relayApi, compatibilityToken: relayCompatibilityToken } = useApi()
+  const { api: originApi, compatibilityToken: originCompatibilityToken } = useApi()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { getMultisigByAddress, setRefetchMultisigTimeoutMinutes } = useMultiProxy()
   const { selectedAccount } = useAccounts()
@@ -84,7 +83,7 @@ const ProposalSigning = ({
     return 10n * pplApi.constants.Balances.ExistentialDeposit(pplCompatibilityToken)
   }, [isPplChainTx, pplApi, pplCompatibilityToken])
 
-  const { hasEnoughFreeBalance: hasSignerEnoughRelayFunds } = useCheckTransferableBalance({
+  const { hasEnoughFreeBalance: hasSignerEnoughOriginFunds } = useCheckTransferableBalance({
     min: amountToTeleport,
     address: selectedAccount?.address,
     withPplApi: false
@@ -164,8 +163,8 @@ const ProposalSigning = ({
         signatories.filter((signer) => signer !== selectedAccount?.address)
       )
 
-      const api = isPplChainTx ? pplApi : relayApi
-      const compatibilityToken = isPplChainTx ? pplCompatibilityToken : relayCompatibilityToken
+      const api = isPplChainTx ? pplApi : originApi
+      const compatibilityToken = isPplChainTx ? pplCompatibilityToken : originCompatibilityToken
 
       if (!threshold) {
         const error = 'Threshold is undefined'
@@ -295,9 +294,9 @@ const ProposalSigning = ({
       signatories,
       isPplChainTx,
       pplApi,
-      relayApi,
+      originApi,
       pplCompatibilityToken,
-      relayCompatibilityToken,
+      originCompatibilityToken,
       threshold,
       proposalData,
       selectedAccount,
@@ -340,6 +339,18 @@ const ProposalSigning = ({
             />
           </Grid>
           <Grid size={{ xs: 0, md: 5 }} />
+          {!!isPplChainTx && hasSignerEnoughOriginFunds && !hasSignerEnoughFunds && (
+            <>
+              <Grid size={{ xs: 0, md: 1 }} />
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TeleportFundsAlert
+                  receivingAddress={selectedAccount?.address || ''}
+                  sendingAmount={amountToTeleport}
+                />
+              </Grid>
+              <Grid size={{ xs: 0, md: 5 }} />
+            </>
+          )}
           <>
             <Grid size={{ xs: 0, md: 1 }} />
             <HashGridStyled size={{ xs: 12, md: 11 }}>
@@ -392,7 +403,7 @@ const ProposalSigning = ({
               </Grid>
             </>
           )}
-          {!!isPplChainTx && !hasSignerEnoughRelayFunds && !hasSignerEnoughFunds && (
+          {!!isPplChainTx && !hasSignerEnoughOriginFunds && !hasSignerEnoughFunds && (
             <>
               <Grid size={{ xs: 0, md: 1 }} />
               <Grid
@@ -401,16 +412,11 @@ const ProposalSigning = ({
               >
                 <Alert severity="error">
                   The &quot;Signing with&quot; account doesn&apos;t have enough funds on the People
-                  Chain to pay for the transaction, and not enough on the Relay either to teleport.
+                  Chain to pay for the transaction, and not enough on the origin chain either to
+                  teleport.
                 </Alert>
               </Grid>
             </>
-          )}
-          {!!isPplChainTx && hasSignerEnoughRelayFunds && !hasSignerEnoughFunds && (
-            <TeleportFundsAlert
-              receivingAddress={selectedAccount?.address || ''}
-              sendingAmount={amountToTeleport}
-            />
           )}
           {!!errorMessage && (
             <>
@@ -448,7 +454,7 @@ const ProposalSigning = ({
             )}
             {isGettingCallInfo && (
               <Button disabled>
-                <CircularProgress size="1rem" />
+                <CircularProgress size={20} />
               </Button>
             )}
           </ButtonContainerStyled>

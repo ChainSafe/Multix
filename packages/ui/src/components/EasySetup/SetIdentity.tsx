@@ -146,7 +146,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     )
   }, [api, compatibilityToken, identityReservedFunds])
 
-  const { hasEnoughFreeBalance: hasOriginEnoughFunds } = useCheckTransferableBalance({
+  const { hasEnoughFreeBalance: hasMultisigEnoughPplFunds } = useCheckTransferableBalance({
     min: identityReservedFunds,
     address: from,
     withPplApi: true
@@ -159,7 +159,7 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
   const { existentialDeposit } = useGetED({
     withPplApi: true
   })
-  const minBalanceDisplay = useMemo(() => {
+  const minOriginBalanceDisplay = useMemo(() => {
     if (!existentialDeposit || !identityReservedFunds) return
 
     return identityReservedFunds + existentialDeposit
@@ -176,9 +176,9 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       return
     }
 
-    if (!!minBalanceDisplay && !hasOriginEnoughFunds) {
+    if (!!minOriginBalanceDisplay && !hasMultisigEnoughPplFunds) {
       const requiredBalanceString = formatBigIntBalance(
-        minBalanceDisplay,
+        minOriginBalanceDisplay,
         chainInfo?.tokenDecimals,
         {
           tokenSymbol: chainInfo?.tokenSymbol
@@ -205,11 +205,11 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
     chainInfo,
     fieldtooLongError,
     hasChangedAtLeastAField,
-    hasOriginEnoughFunds,
+    hasMultisigEnoughPplFunds,
     identityFields,
     onSetErrorMessage,
     identityReservedFunds,
-    minBalanceDisplay
+    minOriginBalanceDisplay
   ])
 
   useEffect(() => {
@@ -276,10 +276,12 @@ const SetIdentity = ({ className, onSetExtrinsic, from, onSetErrorMessage }: Pro
       spacing={1}
       data-cy="section-set-identity"
     >
-      {!!minBalanceDisplay && !hasOriginEnoughFunds && (
+      {!!minOriginBalanceDisplay && !hasMultisigEnoughPplFunds && (
         <TeleportFundsAlert
+          receivingName="The Multisig"
           receivingAddress={from}
           sendingAmount={amountToSend}
+          batchWithSignerIfNeeded={true}
         />
       )}
       {identityFields &&
