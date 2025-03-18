@@ -92,32 +92,33 @@ export const TeleportFundsAlert = ({
 
     // even though it could be Kusama, Polkadot, Westend, the asset hubs.. this is working
     // waiting for https://github.com/paraspell/xcm-tools/issues/738
-    const xcmCall = await Builder(ctx.client)
+    const xcmCall1 = await Builder(ctx.client)
       .from(fromRelay ? 'Polkadot' : 'AssetHubPolkadot')
       .to('PeoplePolkadot')
       .currency({ symbol: 'DOT', amount: sendingAmount.toString() })
       .address(receivingAddress)
+      .build()
 
-    let call: TPapiTransaction
+    let xcmCall2: TPapiTransaction | undefined
 
     if (batchWithSignerIfNeeded && !hasSignerEnoughPplFunds) {
-      call = await xcmCall
-        .addToBatch()
+      xcmCall2 = await Builder(ctx.client)
         .from(fromRelay ? 'Polkadot' : 'AssetHubPolkadot')
         .to('PeoplePolkadot')
         .currency({ symbol: 'DOT', amount: amountToSendToSigner.toString() })
         .address(selectedAccount.address)
-        .addToBatch()
-        .buildBatch()
-    } else {
-      call = await xcmCall.build()
+        .build()
     }
+
+    const tx = xcmCall2
+      ? ctx.api.tx.Utility.batch_all({ calls: [xcmCall1.decodedCall, xcmCall2.decodedCall] })
+      : xcmCall1
 
     const nonce = await ctx.api.apis.AccountNonceApi.account_nonce(selectedAccount.address, {
       at: 'best'
     })
 
-    call.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
+    tx.signSubmitAndWatch(selectedAccount.polkadotSigner, { nonce }).subscribe(signCallback)
   }, [
     amountToSendToSigner,
     batchWithSignerIfNeeded,
