@@ -3,7 +3,7 @@ import { useWatchedAccounts } from '../contexts/WatchedAccountsContext'
 import { HiddenAccount, useHiddenAccounts } from '../contexts/HiddenAccountsContext'
 import { AccountNames, useAccountNames } from '../contexts/AccountNamesContext'
 
-interface EncodeDataParams {
+export interface MigratedData {
   watchedPubKeys?: string[]
   hiddenAccounts?: HiddenAccount[]
   pubKeyNames?: AccountNames
@@ -15,7 +15,7 @@ interface ObjectToEncode {
   n?: AccountNames
 }
 
-const encodeData = ({ watchedPubKeys, hiddenAccounts, pubKeyNames }: EncodeDataParams) => {
+const encodeData = ({ watchedPubKeys, hiddenAccounts, pubKeyNames }: MigratedData) => {
   const obj: ObjectToEncode = {}
 
   if (watchedPubKeys && watchedPubKeys.length > 0) {
@@ -37,7 +37,7 @@ const encodeData = ({ watchedPubKeys, hiddenAccounts, pubKeyNames }: EncodeDataP
   return urlSafeData
 }
 
-const decodeData = (encodedData: string): EncodeDataParams => {
+const decodeData = (encodedData: string): MigratedData => {
   if (!encodedData) return { watchedPubKeys: [], hiddenAccounts: [], pubKeyNames: {} }
   const decodedData = decodeURIComponent(encodedData)
   const stringData = atob(decodedData)
@@ -61,7 +61,7 @@ export const useImportExportLocalData = () => {
   }, [watchedPubKeys, hiddenAccounts, pubKeyNames])
 
   const mergeWithLocalData = useCallback(
-    (newData: EncodeDataParams) => {
+    (newData: MigratedData) => {
       if (newData.watchedPubKeys && newData.watchedPubKeys.length > 0) {
         const newWatchedPubKeys = new Set(watchedPubKeys || [])
         newData.watchedPubKeys.forEach((pubKey) => {
@@ -71,11 +71,16 @@ export const useImportExportLocalData = () => {
       }
 
       if (newData.hiddenAccounts && newData.hiddenAccounts.length > 0) {
-        const newHiddenAccounts = new Set(hiddenAccounts || [])
+        const newHiddenAccounts = [...hiddenAccounts]
+
         newData.hiddenAccounts.forEach((account) => {
-          newHiddenAccounts.add(account)
+          const alreadyExists = hiddenAccounts.find(
+            ({ network, pubKey }) => account.network === network && account.pubKey === pubKey
+          )
+          !alreadyExists && newHiddenAccounts.push(account)
         })
-        setHiddenAccounts(Array.from(newHiddenAccounts))
+
+        setHiddenAccounts(newHiddenAccounts)
       }
 
       if (newData.pubKeyNames && Object.entries(newData.pubKeyNames).length > 0) {

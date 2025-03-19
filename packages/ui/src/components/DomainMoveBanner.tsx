@@ -1,8 +1,8 @@
 import { Alert, IconButton, styled } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HiOutlineXMark as CloseIcon } from 'react-icons/hi2'
-import { HiOutlineArrowTopRightOnSquare as LaunchIcon } from 'react-icons/hi2'
-import { Link } from './library'
+import { Button } from './library'
+import { useImportExportLocalData } from '../hooks/useImportExportLocalData'
 
 interface Props {
   className?: string
@@ -14,6 +14,7 @@ export const DomainMoveBanner = ({ className = '' }: Props) => {
   const [isVisible, setIsVisible] = useState(false)
   const doNotDisplay = localStorage.getItem(DISMISSED_BANNER_KEY) === 'true'
   const isOnMultixCloud = useMemo(() => window.location.hostname.includes('multix.cloud'), [])
+  const { encodedData } = useImportExportLocalData()
 
   useEffect(() => {
     if (!doNotDisplay) {
@@ -22,9 +23,14 @@ export const DomainMoveBanner = ({ className = '' }: Props) => {
   }, [doNotDisplay])
 
   const onClose = useCallback(() => {
-    localStorage.setItem(DISMISSED_BANNER_KEY, 'true')
+    // always show it no matter what
+    // localStorage.setItem(DISMISSED_BANNER_KEY, 'true')
     setIsVisible(false)
   }, [])
+
+  const onMigrate = useCallback(() => {
+    window.open(`https://multix.cloud/migrate?d=${encodedData}`)
+  }, [encodedData])
 
   if (!isVisible || isOnMultixCloud) return null
 
@@ -34,14 +40,20 @@ export const DomainMoveBanner = ({ className = '' }: Props) => {
       className={className}
     >
       <InfoTextStyled>
-        Multix is moving to a new domain. Please update your bookmarks to
-        <Linkstyled href="https://multix.cloud">
-          multix.cloud
+        Multix has to a new domain: multix.cloud
+        <Button
+          variant="secondary"
+          onClick={onMigrate}
+        >
+          Migrate now
+        </Button>
+        {/* <Linkstyled href="https://multix.cloud">
+          Migrate your data!
           <LaunchIcon
             className="icon"
             size={20}
           />
-        </Linkstyled>
+        </Linkstyled> */}
       </InfoTextStyled>
       <IconButton
         className="closeButton"
@@ -56,17 +68,12 @@ export const DomainMoveBanner = ({ className = '' }: Props) => {
   )
 }
 
-const Linkstyled = styled(Link)`
-  display: inline-flex;
-  padding: 0 0 0 0.5rem;
-
-  .icon {
-    padding-left: 0.5rem;
-  }
-`
-
 const InfoTextStyled = styled('div')`
   flex: 1;
+
+  & > button {
+    margin-left: 1rem;
+  }
 `
 
 export default styled(DomainMoveBanner)`

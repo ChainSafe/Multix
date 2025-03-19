@@ -4182,9 +4182,9 @@ __metadata:
   linkType: hard
 
 "@substrate/connect-known-chains@npm:^1.1.5":
-  version: 1.9.2
-  resolution: "@substrate/connect-known-chains@npm:1.9.2"
-  checksum: 730ed1420ae0cf33d7c9479cf180ca386edae72f6b9261cc8ac1381cd803142eb0b75df35ad939a4d8c7a0acb83da2840d948066c2950b201c9037f4ef75287c
+  version: 1.9.3
+  resolution: "@substrate/connect-known-chains@npm:1.9.3"
+  checksum: 4266d8fcfad2d8e8502c739242c5bd23e603a11183550474dce33922be471e1d5e9c4ff3417edb5a81247af8ab9c08432b2eb0457d2bce3b9bd02e5192e811a3
   languageName: node
   linkType: hard
 
@@ -4812,11 +4812,11 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^19.0.10":
-  version: 19.0.11
-  resolution: "@types/react@npm:19.0.11"
+  version: 19.0.12
+  resolution: "@types/react@npm:19.0.12"
   dependencies:
     csstype: ^3.0.2
-  checksum: 386cdde579b60e22160d6894a985655742703346bdc71fed9809f8f90ca87e2dd0252e86b81f92621a2c1de8d0fbf35e3963996db8c451cc670570061ed62f29
+  checksum: c814b6af5c0fbcf5c65d031b1c9bf98c5b857e015254d95811f2851b27b869c3d31c6f35dab127dc6921a3dbda0b0622c6323d493a14b31b231a6a58c41c5e84
   languageName: node
   linkType: hard
 
