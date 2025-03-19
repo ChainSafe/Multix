@@ -31,6 +31,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_MULTIX_CLOUD }}
           accountId: 8c558f9b31e53240659ee45069b7ec2b
-          projectName: multix.cloud
+          projectName: multix-cloud
           directory: ./packages/ui/build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
