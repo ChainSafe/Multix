@@ -5,7 +5,13 @@ import { Binary, HexString } from 'polkadot-api'
 import { hashFromTx } from '../utils/txHash'
 import { useAnyApi } from './useAnyApi'
 
-export const useCallInfoFromCallData = (isPplTx: boolean, callData?: HexString) => {
+export const useCallInfoFromCallData = ({
+  isPplTx,
+  callData
+}: {
+  isPplTx: boolean
+  callData?: HexString
+}) => {
   const { api, compatibilityToken } = useAnyApi({ withPplApi: isPplTx })
   const [callInfo, setCallInfo] = useState<SubmittingCall | undefined>(undefined)
   const [isGettingCallInfo, setIsGettingCallInfo] = useState(false)
