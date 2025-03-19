@@ -60,10 +60,10 @@ const ProposalSigning = ({
     () => proposalData?.info?.depositor === selectedAccount?.address,
     [proposalData, selectedAccount]
   )
-  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
-    isPplChainTx,
-    proposalData.callData || debouncedAddedCallData
-  )
+  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData({
+    isPplTx: isPplChainTx,
+    callData: proposalData.callData || debouncedAddedCallData
+  })
 
   const { hasEnoughFreeBalance: hasSignerEnoughFunds } = useCheckTransferableBalance({
     min: 0n,
