@@ -21,6 +21,7 @@ export interface IWatchedAccountsContext {
   addWatchedAccount: (address: string) => void
   removeWatchedAccount: (address: string) => void
   watchedPubKeys: string[]
+  setWatchedPubKeys: (pubKeys: string[]) => void
   watchedAddresses: string[]
   isInitialized: boolean
 }
@@ -83,6 +84,7 @@ const WatchedAccountsContextProvider = ({ children }: WatchedAccountsProps) => {
         removeWatchedAccount,
         watchedAddresses,
         watchedPubKeys,
+        setWatchedPubKeys,
         isInitialized
       }}
     >

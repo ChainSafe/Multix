@@ -11,6 +11,7 @@ import TransactionList from '../../components/Transactions/TransactionList'
 import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
 import { useDisplayLoader } from '../../hooks/useDisplayLoader'
 import { useDisplayError } from '../../hooks/useDisplayError'
+import { useImportExportLocalData } from '../../hooks/useImportExportLocalData'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
 // import DomainMoveBanner from '../../components/DomainMoveBanner'
 
@@ -26,6 +27,7 @@ const Home = ({ className }: HomeProps) => {
   const [showNewMultisigAlert, setShowNewMultisigAlert] = useState(false)
   const DisplayError = useDisplayError()
   const DisplayLoader = useDisplayLoader()
+  useImportExportLocalData()
 
   const onClosenewMultisigAlert = useCallback(() => {
     setShowNewMultisigAlert(false)
