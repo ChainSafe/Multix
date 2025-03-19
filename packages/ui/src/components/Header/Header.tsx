@@ -6,7 +6,7 @@ import MuiAppBar from '@mui/material/AppBar'
 import MultiProxySelection from '../select/MultiProxySelection'
 import { useAccounts } from '../../contexts/AccountsContext'
 import { HiOutlineWallet, HiOutlineBars3 as MenuIcon } from 'react-icons/hi2'
-import { ROUTES } from '../../pages/routes'
+import { MENU_ROUTES } from '../../pages/routes'
 import { isEmptyArray } from '../../utils/arrayUtils'
 import NetworkSelection from '../select/NetworkSelection'
 import multixLogo from '../../logos/multix-logo.svg'
@@ -55,7 +55,7 @@ const Header = ({ handleDrawerOpen }: Props) => {
           </LogoWrapperStyled>
           <DesktopMenuStyled data-cy="menu-desktop">
             <MenuWrapperStyled>
-              {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
+              {MENU_ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
                 const paramsString = createSearchParams(params).toString()
 
                 return isAccountConnected || isDisplayWhenNoWallet ? (

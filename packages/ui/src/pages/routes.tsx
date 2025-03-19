@@ -11,7 +11,7 @@ interface Route {
   isDisplayWhenNoWallet: boolean
 }
 
-export const ROUTES: Route[] = [
+export const MENU_ROUTES: Route[] = [
   {
     path: '/',
     element: <Home />,
@@ -44,11 +44,20 @@ export const ROUTES: Route[] = [
   }
 ]
 
+export const HIDDEN_ROUTES: Route[] = [
+  {
+    path: 'migrate',
+    element: <About />,
+    name: 'Migrate',
+    isDisplayWhenNoWallet: true
+  }
+]
+
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     errorElement: <ErrorFallback />,
-    children: ROUTES
+    children: MENU_ROUTES.concat(HIDDEN_ROUTES)
   }
 ])
