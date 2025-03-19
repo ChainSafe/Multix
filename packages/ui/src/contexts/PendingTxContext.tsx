@@ -408,7 +408,7 @@ const PendingTxsContextProvider = ({ children }: PendingTxContextProps) => {
   return (
     <PendingTxContext.Provider
       value={{
-        isLoading: isLoadingPpl || isLoading,
+        isLoading: (hasPplChain && isLoadingPpl) || isLoading,
         pendingTxs: txByDate,
         pendingPplTxs: pplTxByDate,
         refresh: () => refresh(false),
