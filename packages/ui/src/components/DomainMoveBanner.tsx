@@ -40,7 +40,7 @@ export const DomainMoveBanner = ({ className = '' }: Props) => {
       className={className}
     >
       <InfoTextStyled>
-        Multix has to a new domain: multix.cloud
+        Multix moved to a new domain: multix.cloud
         <Button
           variant="secondary"
           onClick={onMigrate}
