@@ -1,4 +1,4 @@
-name: UI deployment
+name: UI deployment CS
 on:
   push:
     branches: ['main']
