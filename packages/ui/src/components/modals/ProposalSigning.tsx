@@ -63,10 +63,10 @@ const ProposalSigning = ({
     () => proposalData?.info?.depositor === selectedAccount?.address,
     [proposalData, selectedAccount]
   )
-  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(
-    isPplChainTx,
-    proposalData.callData || debouncedAddedCallData
-  )
+  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData({
+    isPplTx: isPplChainTx,
+    callData: proposalData.callData || debouncedAddedCallData
+  })
 
   // check if the signer has enough funds to pay for the transaction fees
   // in case of a ppl chain tx, we need to check the balance on the ppl chain

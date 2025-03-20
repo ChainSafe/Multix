@@ -59,7 +59,7 @@ const ProposalSigning = ({ onClose, className, request, onSuccess }: SigningModa
   )
   const callData = useMemo(() => request.params.request.params.transactionPayload.method, [request])
   const threshold = useMemo(() => selectedMultisig?.threshold, [selectedMultisig])
-  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData(callData)
+  const { callInfo, isGettingCallInfo } = useCallInfoFromCallData({ isPplTx: false, callData })
   const extrinsicToCall = useMemo(() => {
     if (!callInfo?.call) return
     return callInfo.call

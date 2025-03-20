@@ -45,6 +45,7 @@ export default styled(Expander)`
   }
 
   .expanderIcon {
+    margin-right: 0.5rem;
     transition: transform 0.2s ease-in-out;
     &.rotated {
       transform: rotate(90deg);

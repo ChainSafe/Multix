@@ -1,4 +1,4 @@
-name: UI deployment CS
+name: UI deployment Multix.cloud
 on:
   push:
     branches: ['main']
@@ -29,8 +29,8 @@ jobs:
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 2238a825c5aca59233eab1f221f7aefb
-          projectName: multix
+          apiToken: ${{ secrets.CLOUDFLARE_MULTIX_CLOUD }}
+          accountId: 8c558f9b31e53240659ee45069b7ec2b
+          projectName: multix-cloud
           directory: ./packages/ui/build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

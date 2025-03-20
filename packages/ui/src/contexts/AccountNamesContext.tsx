@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useAccounts } from './AccountsContext'
 import { useApi } from './ApiContext'
-import { decodeNames, encodeNames } from '../utils/namesUtil'
+import { encodeNames } from '../utils/namesUtil'
+import { getPubKeyFromAddress } from '../utils/getPubKeyFromAddress'
 
-export type AccountNames = { [address: string]: string }
+export type AccountNames = { [pubKey: string]: string }
 const LOCALSTORAGE_ACCOUNT_NAMES_KEY = 'multix.accountNames'
 
 type AccountNamesContextProps = {
@@ -14,15 +15,18 @@ const MAX_NAME_LENGTH = 50
 
 export interface IAccountNamesContext {
   accountNames: AccountNames
+  pubKeyNames: AccountNames
   getNamesWithExtension: (address: string) => string | undefined
   addName: (name: string, address: string) => void
   addNames: (newAdditions: AccountNames) => void
+  setPubKeyNames: React.Dispatch<React.SetStateAction<AccountNames>>
 }
 
 const AccountNamesContext = createContext<IAccountNamesContext | undefined>(undefined)
 
 const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => {
   const [accountNames, setAccountNames] = useState<AccountNames>({})
+  const [pubKeyNames, setPubKeyNames] = useState<AccountNames>({})
   const { getAccountByAddress } = useAccounts()
   const { chainInfo } = useApi()
 
@@ -41,50 +45,58 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
   const loadNames = useCallback(() => {
     const namesHexString = localStorage.getItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY)
 
-    if (!chainInfo) {
-      return
-    }
-
     if (!namesHexString) {
       console.error('No local name to load')
       return
     }
     const namePubkeyParsed = JSON.parse(namesHexString) as AccountNames
+    setPubKeyNames(namePubkeyParsed)
+  }, [])
 
-    const namesString = encodeNames(namePubkeyParsed, chainInfo.ss58Format)
+  useEffect(() => {
+    if (!chainInfo) {
+      return
+    }
+    const namesString = encodeNames(pubKeyNames, chainInfo.ss58Format)
     setAccountNames(namesString)
-  }, [chainInfo])
+  }, [chainInfo, pubKeyNames])
 
   const saveNames = useCallback(() => {
-    if (!Object.entries(accountNames).length) return
+    if (!Object.entries(pubKeyNames).length) return
 
-    const decodedNames = decodeNames(accountNames)
-    localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(decodedNames))
-  }, [accountNames])
+    localStorage.setItem(LOCALSTORAGE_ACCOUNT_NAMES_KEY, JSON.stringify(pubKeyNames))
+  }, [pubKeyNames])
 
   const addName = useCallback(
     (name: string, address: string) => {
-      setAccountNames({
-        ...accountNames,
-        ...{ [address]: name.slice(0, MAX_NAME_LENGTH) }
+      const pubKey = getPubKeyFromAddress(address)
+
+      if (!pubKey) return
+
+      setPubKeyNames({
+        ...pubKeyNames,
+        ...{ [pubKey]: name.slice(0, MAX_NAME_LENGTH) }
       })
     },
-    [accountNames, setAccountNames]
+    [pubKeyNames]
   )
 
   const addNames = useCallback(
     (newAdditions: AccountNames) => {
-      const truncated = Object.entries(newAdditions).reduce(
-        (acc, [address, name]) => ({
+      const truncated = Object.entries(newAdditions).reduce((acc, [address, name]) => {
+        const pubKey = getPubKeyFromAddress(address)
+
+        if (!pubKey) return acc
+
+        return {
           ...acc,
-          [address]: name.slice(0, MAX_NAME_LENGTH)
-        }),
-        {}
-      )
-      const newNames = { ...accountNames, ...truncated }
-      setAccountNames(newNames)
+          [pubKey]: name.slice(0, MAX_NAME_LENGTH)
+        }
+      }, {})
+      const newNames = { ...pubKeyNames, ...truncated }
+      setPubKeyNames(newNames)
     },
-    [accountNames]
+    [pubKeyNames]
   )
 
   useEffect(() => {
@@ -94,12 +106,14 @@ const AccountNamesContextProvider = ({ children }: AccountNamesContextProps) => 
   // save names each time it changes
   useEffect(() => {
     saveNames()
-  }, [accountNames, saveNames])
+  }, [pubKeyNames, saveNames])
 
   return (
     <AccountNamesContext.Provider
       value={{
         accountNames,
+        pubKeyNames,
+        setPubKeyNames,
         addName,
         addNames,
         getNamesWithExtension

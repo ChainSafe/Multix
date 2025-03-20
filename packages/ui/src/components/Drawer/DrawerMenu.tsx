@@ -7,7 +7,7 @@ import { useAccounts } from '../../contexts/AccountsContext'
 import { styled } from '@mui/material/styles'
 import NetworkSelection from '../select/NetworkSelection'
 import MultiProxySelection from '../select/MultiProxySelection'
-import { ROUTES } from '../../pages/routes'
+import { MENU_ROUTES } from '../../pages/routes'
 import { Button, NavLink } from '../library'
 import { createSearchParams, useSearchParams } from 'react-router'
 
@@ -58,7 +58,7 @@ function DrawerMenu({ handleDrawerClose }: DrawerMenuProps) {
         <ListItemStyled>
           <NetworkSelection />
         </ListItemStyled>
-        {ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
+        {MENU_ROUTES.map(({ path, name, isDisplayWhenNoWallet }) => {
           const paramsString = createSearchParams(params).toString()
 
           return (

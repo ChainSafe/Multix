@@ -29,6 +29,7 @@ export interface IHiddenAccountsContext {
   hiddenAccounts: HiddenAccount[]
   networkHiddenAccounts: string[]
   isInitialized: boolean
+  setHiddenAccounts: (hiddenAccounts: HiddenAccount[]) => void
 }
 
 export interface HiddenAccount {
@@ -133,6 +134,7 @@ const HiddenAccountsContextProvider = ({ children }: HiddenAccountsProps) => {
         addHiddenAccount,
         removeHiddenAccount,
         hiddenAccounts,
+        setHiddenAccounts,
         isInitialized,
         networkHiddenAccounts
       }}

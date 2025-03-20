@@ -12,6 +12,7 @@ import { ConnectOrWatch } from '../../components/ConnectCreateOrWatch'
 import { useDisplayLoader } from '../../hooks/useDisplayLoader'
 import { useDisplayError } from '../../hooks/useDisplayError'
 // import CurrentReferendumBanner from '../../components/CurrentReferendumBanner'
+// import DomainMoveBanner from '../../components/DomainMoveBanner'
 
 interface HomeProps {
   className?: string
@@ -68,6 +69,7 @@ const Home = ({ className }: HomeProps) => {
         <NewMulisigAlert onClose={onClosenewMultisigAlert} />
       )}
       {/* <CurrentReferendumBanner /> */}
+      {/* <DomainMoveBanner /> */}
       <Grid
         alignItems="center"
         size={{ xs: 12 }}

@@ -3,6 +3,7 @@ import { About, Creation, Home, Overview, Settings } from './index'
 import React from 'react'
 import App from '../App'
 import ErrorFallback from '../components/ErrorFallback/ErrorFallback'
+import Migrate from './Migrate/Migrate'
 
 interface Route {
   path: string
@@ -11,7 +12,7 @@ interface Route {
   isDisplayWhenNoWallet: boolean
 }
 
-export const ROUTES: Route[] = [
+export const MENU_ROUTES: Route[] = [
   {
     path: '/',
     element: <Home />,
@@ -44,11 +45,20 @@ export const ROUTES: Route[] = [
   }
 ]
 
+export const HIDDEN_ROUTES: Route[] = [
+  {
+    path: 'migrate',
+    element: <Migrate />,
+    name: 'Migrate',
+    isDisplayWhenNoWallet: true
+  }
+]
+
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     errorElement: <ErrorFallback />,
-    children: ROUTES
+    children: MENU_ROUTES.concat(HIDDEN_ROUTES)
   }
 ])
