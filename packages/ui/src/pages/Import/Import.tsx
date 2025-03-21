@@ -69,12 +69,13 @@ const Import = ({ className }: Props) => {
           alignItems="center"
         >
           <Grid size={{ xs: 12 }}>The following data will be imported:</Grid>
-
-          <ExportedData
-            hiddenAccounts={decodedData?.hiddenAccounts}
-            watchedPubKeys={decodedData?.watchedPubKeys}
-            pubKeyNames={decodedData?.pubKeyNames}
-          />
+          <Grid size={{ xs: 12 }}>
+            <ExportedData
+              hiddenAccounts={decodedData?.hiddenAccounts}
+              watchedPubKeys={decodedData?.watchedPubKeys}
+              pubKeyNames={decodedData?.pubKeyNames}
+            />
+          </Grid>
           {!!error && <AlertStyled severity="error">{error}</AlertStyled>}
 
           <ButtonWrapper

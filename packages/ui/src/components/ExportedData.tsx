@@ -24,7 +24,7 @@ const ExportedData = ({
     <div className={className}>
       {watchedPubKeys && watchedPubKeys.length > 0 && (
         <>
-          <ExpanderWrapper size={{ xs: 12, sm: 8, lg: 6 }}>
+          <ExpanderWrapper size={{ xs: 12 }}>
             <Expander
               title={`Watched accounts (${watchedPubKeys.length})`}
               content={watchedPubKeys.map((pubKey) => (
@@ -38,12 +38,11 @@ const ExportedData = ({
               ))}
             />
           </ExpanderWrapper>
-          <Grid size={{ xs: 0, sm: 4, lg: 6 }} />
         </>
       )}
       {hiddenAccounts && hiddenAccounts.length > 0 && (
         <>
-          <ExpanderWrapper size={{ xs: 12, sm: 8, lg: 6 }}>
+          <ExpanderWrapper size={{ xs: 12 }}>
             <Expander
               title={`Hidden accounts (${hiddenAccounts.length})`}
               content={hiddenAccounts.map(({ pubKey, network }) => (
@@ -58,12 +57,11 @@ const ExportedData = ({
               ))}
             />
           </ExpanderWrapper>
-          <Grid size={{ xs: 0, sm: 4, lg: 6 }} />
         </>
       )}
       {pubKeyNames && Object.entries(pubKeyNames).length > 0 && (
         <>
-          <ExpanderWrapper size={{ xs: 12, sm: 8, lg: 6 }}>
+          <ExpanderWrapper size={{ xs: 12 }}>
             <Expander
               title={`Account names (${Object.entries(pubKeyNames).length})`}
               content={Object.entries(pubKeyNames).map(([pubKey, name]) => (
@@ -79,7 +77,6 @@ const ExportedData = ({
               ))}
             />
           </ExpanderWrapper>
-          <Grid size={{ xs: 0, sm: 4, lg: 6 }} />
         </>
       )}
     </div>
